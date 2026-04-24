@@ -181,7 +181,7 @@ Structured categories are the single highest-leverage addition to the feedback l
 
 EXPAND-2 (auto-escalation) is the right long-term shape but depends on Q-I's Escalation entity being locked in /plan-eng-review. Proposal: land EXPAND-2 in Phase 1.1 as the first consumer of the Escalation entity. Flag to /plan-eng-review that the Escalation entity should support feedback-origin creation.
 
-**Flag on Axis 2 + Axis 3 combo:** HOLD-on-Axis-2 + HOLD-on-Axis-3 (embedded feedback) actually implies a minimal candidate-auth surface already, because the feedback form needs some form of "prove you're the SPOC of this school" check when submitted. This is a smaller form of the D7 partial-revocation flagged under Axis 2 EXPAND-1. If the feedback form submission uses a single-use HMAC token (same key as the magic-link), it's a single function, not a whole cookie session. Worth /plan-eng-review attention but not a blocker.
+The Axis 2 + Axis 3 combo implies a candidate-auth surface even at HOLD-on-both; that observation is lifted into the new "Locked-decision tensions surfaced (new from this ceremony)" section below rather than buried here.
 
 ---
 
@@ -213,7 +213,7 @@ Cons: the button exists only on cadence screens, not on other ops-outgoing commu
 
 Effort: +S over HOLD. Risk: Low.
 
-Pros: consistent UX. Ops never has to think "does this email have a WhatsApp button or not?" It always does. The shared template-rendering primitive makes this nearly free once HOLD is built.
+Pros: consistent UX. Ops never has to think "does this email have a WhatsApp button or not?" It always does. Incremental cost over HOLD is ~2-3 days (template-prose variants for ~5 more template types) once HOLD is built.
 Cons: slightly more template work. Each template needs a WhatsApp-prose variant (WhatsApp formatting is looser than email; the text needs to read well as a chat message, not as a formal letter).
 
 ### EXPAND-2
@@ -225,6 +225,8 @@ Effort: +S over EXPAND-1 (JSONL append + a dashboard tile). Risk: Low.
 Pros: converts "the system knows nothing about what happened after copy" into "the system knows how often ops needed the copy path." If a particular school's copy-rate is high, suggests email isn't landing for that school (corroborates the Item I bounce-rate trigger from 6.5). Cheap observability.
 Cons: adds a small data stream. Ops staff may feel surveilled ("my copy clicks are being logged"); framing in the UI matters ("this helps us see which schools have email delivery issues").
 
+Mitigation for /plan-devex-review to pressure-test: CommunicationCopyLog is anonymized-by-default from the dashboard view: shows copy-rate-per-school aggregates, not per-user attribution. Per-user attribution only accessible via the admin audit route, not the dashboard. This framing is a UX constraint, not just a tone note.
+
 ### Cross-axis interactions
 
 - Item I (email deliverability) in 6.5 explicitly names WhatsApp click-to-copy as the first fallback. Axis 4 HOLD is the implementation of that fallback. Strong coherence: if Axis 4 is CONTRACT, Item I's rollback path gets more expensive.
@@ -233,7 +235,7 @@ Cons: adds a small data stream. Ops staff may feel surveilled ("my copy clicks a
 
 ### Recommendation (Axis 4): HOLD + EXPAND-1 + EXPAND-2
 
-Three expansions bundled, all at S cost, because the work compounds: once the template system knows how to produce a WhatsApp-variant and wire up a copy button, applying it to every template and logging every click is essentially free.
+Three expansions bundled, all at S cost: HOLD is 1-2 days, EXPAND-1 adds 2-3 days of template-prose work, EXPAND-2 adds 1 day for JSONL + dashboard tile. The work compounds because the template-rendering primitive is shared.
 
 - HOLD: the button exists at all.
 - EXPAND-1: on every outgoing communication, not just cadence.
@@ -297,7 +299,7 @@ EXPAND-1 (incremental) is the right move in two scenarios:
 1. Ameet says "include legacy" on Item C. At that point EXPAND-1 is effectively mandatory.
 2. /plan-devex-review surfaces a day-one developer-experience issue that blocks a clean big-bang.
 
-Default now: HOLD. Flip to EXPAND-1 if either condition triggers. Anish's call at Ameet-answer time.
+Default now: HOLD. Flip to EXPAND-1 if either condition triggers. Anish holds this decision. Ameet's legacy answer forces a mechanical flip; devex-review-surfaced blocker requires Anish's judgment call. The decision locks at /plan-eng-review start. If Ameet has not answered by then, HOLD applies and any legacy-include later becomes a Phase 1.1 conversation rather than a Phase 1 re-plan.
 
 ---
 
@@ -363,6 +365,16 @@ No other cross-axis interaction requires re-thinking 6.5. Items A through J's de
 
 ---
 
+## Locked-decision tensions surfaced (new from this ceremony)
+
+**Tension 4 (extends step 6 Tension 2): Axis 3 HOLD (embedded feedback) also partially revokes D7.**
+
+Step 6 identified Tension 2 as "P4 approach (b) ↔ D7 middleware pattern" (i.e., IF we chose the magic-link portal, D7's staff-JWT-only simplification would be partially revoked). This ceremony surfaces a second instance at a smaller scope: the recommended Axis 3 HOLD + EXPAND-1 (embedded structured-category feedback form) ALSO requires minimal candidate-auth. Feedback form submission needs to prove "you are the SPOC of this school" or the form is unauthenticated and spammable. Single-use HMAC token (same key as any future magic-link) is a single function, not a whole cookie session. But it is still a partial D7 revocation.
+
+Implication: D7 "staff-JWT-only middleware" is not literally tenable at the recommended Phase 1 scope. The minimum viable surface is staff-JWT-middleware + HMAC-verified public feedback endpoint. /plan-eng-review locks this explicitly. Decision in this ceremony: feedback submission CAN live in Phase 1 at HMAC-token scope without reintroducing the full candidate-cookie session; D7 remains "no full candidate session cookie in Phase 1" while accepting a narrow HMAC-verification surface. This is a meaningful refinement of D7, not a full revocation.
+
+---
+
 ## Pending-ask sensitivity
 
 **Ameet on Item C (legacy-school import):**
@@ -393,7 +405,7 @@ The CEO review recommends:
 - **EXPAND on Dashboard** (Axis 1) because it's where step 6.5's ship-without-shadow-call rigor lives or dies.
 - **HOLD on SPOC Portal** (Axis 2) + CONTRACT (email status block in scope). Devex-review pressure-tests the status-block UX, not the inclusion decision.
 - **EXPAND on Feedback** (Axis 3) with structured categories; defer auto-escalation to Phase 1.1.
-- **EXPAND on WhatsApp draft** (Axis 4) bundling all three levels (HOLD + button-everywhere + copy-logging) because the compounding template work is nearly free.
+- **EXPAND on WhatsApp draft** (Axis 4) bundling all three levels (3-5 days total of compounding template work).
 - **HOLD on Launch strategy** (Axis 5) with incremental as the fallback if Ameet includes legacy.
 
 Net: 8-14 days (~2 weeks) of marginal work over the handoff baseline, decomposed per axis in the Combined Recommendation table. All of it load-bearing for step 6.5's monitored-triggers posture or Ameet's ranked priorities. Nothing silently expanded into Phase 2. No locked decisions re-debated.
