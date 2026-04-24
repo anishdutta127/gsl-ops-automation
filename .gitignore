@@ -1,0 +1,47 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# local env files
+.env*.local
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# claude code session state
+.claude/
+
+# onedrive data (symlink to external OneDrive folder)
+onedrive-data
+
+# ops-data xlsx — contact data (SPOC phones/emails) and live master sheets;
+# single source of truth is the app, not these files. The 3 MDs alongside
+# (handoff, exec brief, ground-truth report) stay tracked as documentation.
+ops-data/*.xlsx
