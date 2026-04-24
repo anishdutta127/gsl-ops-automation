@@ -119,13 +119,13 @@ Cons: scope doubles. Every uploaded photo needs size limits, format validation, 
 - D7 tension (step 6 Tension 2): EXPAND-1 partially revokes D7's "staff-JWT only" simplification. HR's candidate-cookie code path comes back. Not a blocker (HR has proven code), but it needs to be flagged in /plan-eng-review.
 - Item F (GSTIN) in 6.5 becomes easier with EXPAND-2 because schools could self-submit their GSTIN. But EXPAND-2 is Phase 2; don't drag GSTIN-self-submit into the decision.
 
-### Recommendation (Axis 2): HOLD with a tilt toward CONTRACT via /plan-devex-review
+### Recommendation (Axis 2): HOLD (no portal) + CONTRACT (rich email status block, IN Phase 1 scope)
 
-HOLD is the default. But CONTRACT (rich email status block) is a genuinely cheap addition that captures much of EXPAND-1's delight without the D7 revocation or the 1-2 weeks of critical-path time. Cost of CONTRACT is S (email template work); delight delivered is ~60% of what EXPAND-1 would deliver.
+HOLD remains the default for any portal in Phase 1. CONTRACT (rich email status block in every system notification) is a genuinely cheap addition that captures much of EXPAND-1's delight without the D7 revocation or the 1-2 weeks of critical-path time. Cost of CONTRACT is S (email template work); delight delivered is ~60% of what EXPAND-1 would deliver. **CEO review puts CONTRACT firmly IN Phase 1 scope.**
 
 The push-back on EXPAND-1 is this: the /office-hours output flagged it as a "live candidate in /plan-ceo-review," and this review is saying **no for Phase 1**. Reasoning: Ameet's priority #3 doesn't earn 1-2 weeks of critical-path time before priority #1 is proven end-to-end. Ship the internal loop; prove the data flows; add the magic-link portal in a fast Phase 1.1 once the internal surface is stable and Axis 3's feedback mechanism has locked.
 
-Concrete ask: **/plan-devex-review decides whether CONTRACT (email status block) is in or out.** The call belongs with devex-review because it is primarily a template-copy decision, not an architecture decision. This doc's vote is CONTRACT should be in.
+What /plan-devex-review pressure-tests on CONTRACT: the status-block copy, the layout inside the email template, whether the 94%-email-reach threshold is good enough UX for priority #3 (delight), any visual or accessibility details. Devex-review does not re-decide inclusion; inclusion is settled here.
 
 ---
 
@@ -308,12 +308,23 @@ Picking one level per axis:
 | # | Axis | Level | Net effort over handoff baseline |
 |---|---|---|---|
 | 1 | Dashboard depth | EXPAND-1 (exception feed + escalation + 5 health tiles + trigger instrumentation) | M+ (trigger tiles add on top of the 5 health tiles) |
-| 2 | SPOC Portal | HOLD, with /plan-devex-review to decide CONTRACT adds email-status-block | S if CONTRACT accepted downstream, else 0 |
+| 2 | SPOC Portal | HOLD (no portal) + CONTRACT (email status block, in scope) | S (email template work) |
 | 3 | Feedback loop | HOLD + EXPAND-1 (structured categories) | S+ (category enum + per-category aggregation) |
 | 4 | WhatsApp draft button | HOLD + EXPAND-1 + EXPAND-2 (button everywhere, copy events logged) | S (compounding template work) |
 | 5 | Launch strategy | HOLD (big-bang), contingent on Ameet=exclude-legacy | 0 |
 
-Effort sum over handoff: M+ on dashboard plus S+S+S+S on three other axes ≈ 1 additional week of work. Not overscope.
+Effort sum over handoff: 8-14 days (~2 weeks) of marginal work, decomposed as:
+
+| Item | Actual days |
+|---|---|
+| Axis 1 EXPAND-1 (trigger tiles on top of HOLD dashboard; aggregation layer + ~10 tile components) | 3-5 days |
+| Axis 2 CONTRACT (rich email status block template + placeholders across existing notification types) | 1-2 days |
+| Axis 3 HOLD + EXPAND-1 (Feedback entity + submission UI + per-category aggregation view) | 1-2 days |
+| Axis 4 HOLD + EXPAND-1 + EXPAND-2 (3-cadence copy button + extend to ~5 more templates + CommunicationCopyLog + dashboard tile) | 3-5 days |
+| Axis 5 HOLD | 0 |
+| **Total** | **8-14 days** |
+
+Not overscope: Phase 1's "MOU-to-Delivery-to-Paid loop" (exec brief) still fits. But the honest number is ~2 weeks of marginal work over the handoff baseline, not 1. Earlier drafts of this doc said "about one additional week"; that compressed three to five days into prose and papered over real cost. Corrected here.
 
 ---
 
@@ -334,7 +345,7 @@ The recommendation is coherent as a Phase 1 scope, matches handoff priorities, a
 
 ## Axes where the recommendation pushes back on Anish's prior framing
 
-1. **Axis 2 (SPOC Portal) recommendation is HOLD, not EXPAND-1.** Anish's framing in step 6 (office-hours) positioned (b) as "live candidate in /plan-ceo-review." This review says NO for Phase 1, recommends the CONTRACT fallback (rich email status block) via /plan-devex-review instead. Rationale: the 1-2 weeks of critical-path time is better spent proving the internal loop than on priority-#3 delight work before priority-#1 accuracy is proven end-to-end.
+1. **Axis 2 (SPOC Portal) recommendation is HOLD, not EXPAND-1, with CONTRACT (email status block) IN Phase 1 scope.** Anish's framing in step 6 (office-hours) positioned (b) as "live candidate in /plan-ceo-review." This review says NO for Phase 1 on the portal itself, and YES on the CONTRACT fallback (rich email status block). Rationale: the 1-2 weeks of critical-path time is better spent proving the internal loop than on priority-#3 delight work before priority-#1 accuracy is proven end-to-end. CONTRACT is IN Phase 1 scope; devex-review pressure-tests its UX, not whether to include it.
 
 2. **Axis 1 (Dashboard) recommendation is EXPAND-1, adding scope vs the handoff's implicit "exception feed + escalation" only.** The trigger instrumentation IS the thing that makes step 6.5's "ship with defaults + triggers" framing operational. Without instrumentation, triggers are aspirational. With it, observability is a single surface.
 
@@ -368,7 +379,7 @@ So of the two pending asks, only Ameet's has a material effect on this CEO revie
 
 ## Asks surfaced for downstream ceremonies
 
-- **/plan-devex-review**: decide whether Axis 2 CONTRACT (rich email status block in every notification) is in or out. This doc's vote: IN. Low cost, S, delivers ~60% of the EXPAND-1 delight without D7 revocation.
+- **/plan-devex-review**: pressure-test the Axis 2 CONTRACT status-block copy, layout, accessibility, and whether the 94% email-reach threshold is good enough UX for priority #3 (delight). Inclusion is already decided here (IN scope). Devex-review owns the how-it-feels, not the whether-to-include.
 - **/plan-eng-review**: lock the Escalation entity (Q-I) in a shape that supports feedback-origin creation. This doc's vote: EXPAND-2 on Axis 3 (negative-feedback auto-escalation) becomes the first consumer in Phase 1.1.
 - **/plan-eng-review**: confirm that the dashboard trigger-tile infrastructure (Axis 1 EXPAND-1) can read per-item metrics cheaply from the data files. Each item in 6.5 already names its "monitoring mechanism"; /plan-eng-review should confirm that aggregation is a read-only JSON traversal, not an expensive query.
 - **/plan-eng-review**: Axis 3 HOLD + EXPAND-1 (structured categories) requires the Feedback entity schema to include per-category ratings. Lock the shape early.
@@ -380,11 +391,11 @@ So of the two pending asks, only Ameet's has a material effect on this CEO revie
 The CEO review recommends:
 
 - **EXPAND on Dashboard** (Axis 1) because it's where step 6.5's ship-without-shadow-call rigor lives or dies.
-- **HOLD on SPOC Portal** (Axis 2) with /plan-devex-review deciding the cheap CONTRACT addition.
+- **HOLD on SPOC Portal** (Axis 2) + CONTRACT (email status block in scope). Devex-review pressure-tests the status-block UX, not the inclusion decision.
 - **EXPAND on Feedback** (Axis 3) with structured categories; defer auto-escalation to Phase 1.1.
 - **EXPAND on WhatsApp draft** (Axis 4) bundling all three levels (HOLD + button-everywhere + copy-logging) because the compounding template work is nearly free.
 - **HOLD on Launch strategy** (Axis 5) with incremental as the fallback if Ameet includes legacy.
 
-Net: about one additional week of work over the handoff baseline, all of it load-bearing for step 6.5's monitored-triggers posture or Ameet's ranked priorities. Nothing silently expanded into Phase 2. No locked decisions re-debated.
+Net: 8-14 days (~2 weeks) of marginal work over the handoff baseline, decomposed per axis in the Combined Recommendation table. All of it load-bearing for step 6.5's monitored-triggers posture or Ameet's ranked priorities. Nothing silently expanded into Phase 2. No locked decisions re-debated.
 
 The single meaningful push-back is Axis 2: SPOC Portal approach (b) does not earn Phase 1 scope. Stage the magic-link portal for Phase 1.1 once the internal loop is proven. The CONTRACT fallback (email status block) covers the delight gap in the meantime.
