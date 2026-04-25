@@ -852,6 +852,7 @@ Phase 1 is "done" when this 12-step flow works against real seeded data at launc
 - Legacy-school import: 51 SPOC-DB-only schools + 148 MOU backlog (if Item C flips).
 - Bulk CSV GSTIN import (if Item F trigger fires at 30%+ null-GSTIN rate).
 - P2 Approach C migration (if step 6.5 Item A trigger fires: override count exceeds 3/week for 2 weeks).
+- WhatsApp-copy surveillance-mitigation tooltip (step 7 Fix 5, Surface 4): localStorage-backed first-hover-per-session reveal that frames the copy-logging as anonymous + per-school. Deferred from Item 11C; the underlying anonymisation guarantee already lives in `canViewAuditEntry` (Phase 1 dashboard tile aggregates per-school, not per-user). The tooltip is polish, not the guarantee.
 - Trainer scheduling (handoff Phase 2).
 - Vendor warehouse inventory forecasting (handoff Phase 2).
 - WhatsApp Business API (handoff Phase 2).
