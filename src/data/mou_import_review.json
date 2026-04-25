@@ -15,6 +15,7 @@
     },
     "validationFailed": "tax_inversion",
     "quarantineReason": "spWithTax (4500) is less than spWithoutTax (5000); tax-inverted pricing. Also studentsMou (25000) exceeds plausibility threshold (20000).",
+    "candidates": null,
     "resolvedAt": null,
     "resolvedBy": null,
     "resolution": null

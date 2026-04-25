@@ -52,6 +52,8 @@ export type AuditAction =
   | 'whatsapp-draft-copied'
   // Feedback auto-escalation (Update 3)
   | 'auto-create-from-feedback'
+  // Q-A importer: legacy-include flag (Item C INCLUDED flip path)
+  | 'legacy-include-import'
 
 export interface AuditEntry {
   timestamp: string                // ISO
@@ -444,11 +446,18 @@ export type MouImportValidationCategory =
   | 'schoolname_implausible'
   | 'id_format'
 
+export interface MouImportReviewCandidate {
+  schoolId: string                 // FK to schools.json
+  schoolName: string               // denormalised for reviewer convenience
+  matchKey: string                 // the normalised tuple that matched
+}
+
 export interface MouImportReviewItem {
   queuedAt: string                 // ISO
   rawRecord: unknown               // full MOU record as received
   validationFailed: MouImportValidationCategory | null
   quarantineReason: string         // human-readable summary
+  candidates: MouImportReviewCandidate[] | null  // populated for school-matcher zero/multi paths; sorted by schoolId asc
   resolvedAt: string | null
   resolvedBy: string | null
   resolution: 'imported' | 'rejected' | 'punted-upstream' | null

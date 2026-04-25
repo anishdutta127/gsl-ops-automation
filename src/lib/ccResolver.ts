@@ -63,15 +63,7 @@ import schoolsJson from '@/data/schools.json'
 import mousJson from '@/data/mous.json'
 import usersJson from '@/data/users.json'
 import salesTeamJson from '@/data/sales_team.json'
-
-// SPOC-DB legacy city names mapped to the canonical names used in
-// school records. Lowercased on both sides.
-const CITY_ALIASES: Record<string, string> = {
-  bengaluru: 'bangalore',
-  bombay: 'mumbai',
-  calcutta: 'kolkata',
-  madras: 'chennai',
-}
+import { normaliseCity } from '@/lib/cityAliases'
 
 // SPOC-DB rule text uses 'TTT' / 'GSL-Trainer'; the canonical
 // TrainerModel enum uses 'TT' / 'GSL-T'. Normalise both sides through
@@ -97,11 +89,6 @@ const NORTH_SR_NO: Record<string, number> = {
   'SCH-HERITAGE-IND': 3,
   'SCH-BRIGHTSIDE-LKO': 4,
   'SCH-PEARL-JAI': 5,
-}
-
-function normaliseCity(city: string): string {
-  const lower = city.toLowerCase().trim()
-  return CITY_ALIASES[lower] ?? lower
 }
 
 function ruleMatchesContext(rule: CcRule, context: CcRuleContext): boolean {
