@@ -549,7 +549,7 @@ The Escalation entity schema (above in this Q-I section) already supports `origi
 
 ### MagicLinkToken (supporting entity, renamed and extended per Update 2)
 
-The HMAC token entity supporting both narrow public surfaces: `/api/feedback/submit` (POST, single-use, 48h expiry) and `/portal/status/[tokenId]` (GET, multi-use, 30-day expiry). Renamed from `FeedbackHmacToken` post-ceremony when the read-only status portal landed in Phase 1; the broader name reflects the dual purpose. Stored in `src/data/magic_link_tokens.json` (not embedded on Communication) because tokens are high-churn artefacts; embedding would bloat Communication long-term.
+The HMAC token entity supporting both narrow public surfaces: `/api/feedback/submit` (POST, single-use, 48h expiry) and `/portal/status/[tokenId]` (GET, multi-use, 30-day expiry). Extended FeedbackHmacToken into MagicLinkToken with a purpose enum rather than creating a separate StatusViewToken. Reasoning: same lifecycle (issued via Communication, consumed by SPOC, audit-archived on prune), same HMAC verification logic, same expiry-and-rotation pattern. Two separate entities would duplicate roughly 80% of the schema and the pruning script. The purpose enum cleanly distinguishes feedback-submit (single-use, 48h expiry) from status-view (multi-use, 30-day expiry). Stored in `src/data/magic_link_tokens.json` (not embedded on Communication) because tokens are high-churn artefacts; embedding would bloat Communication long-term.
 
 ```ts
 export type MagicLinkPurpose = 'feedback-submit' | 'status-view'
