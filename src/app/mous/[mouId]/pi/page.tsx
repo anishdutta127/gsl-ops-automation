@@ -1,5 +1,153 @@
-import { RoutePlaceholder } from '@/components/ops/RoutePlaceholder'
+/*
+ * /mous/[mouId]/pi
+ *
+ * PI generation form. Per Phase C4 hybrid: form renders + role gates,
+ * but the submit endpoint is a 501 stub. Real implementation lands in
+ * Phase D when docxtemplater + the PI template asset come online.
+ *
+ * Roles: Admin + Finance per 'mou:generate-pi'. Other roles see an
+ * inline message instead of the form.
+ *
+ * GSTIN gate: per Item F, PI generation is blocked when the school's
+ * gstNumber is null. We surface that block on the page even before
+ * the API exists, so testers see the right "GSTIN required" UX
+ * pre-D.
+ */
 
-export default function Page() {
-  return <RoutePlaceholder title="PI generation" description="Stage 4: PI generation (Send + Copy WhatsApp draft)." />
+import Link from 'next/link'
+import { notFound } from 'next/navigation'
+import { AlertTriangle, Info } from 'lucide-react'
+import type { MOU, Payment, School, User } from '@/lib/types'
+import mousJson from '@/data/mous.json'
+import schoolsJson from '@/data/schools.json'
+import paymentsJson from '@/data/payments.json'
+import { getCurrentUser } from '@/lib/auth/session'
+import { canPerform } from '@/lib/auth/permissions'
+import { TopNav } from '@/components/ops/TopNav'
+import { PageHeader } from '@/components/ops/PageHeader'
+import { DetailHeaderCard } from '@/components/ops/DetailHeaderCard'
+import { formatRs } from '@/lib/format'
+
+const allMous = mousJson as unknown as MOU[]
+const allSchools = schoolsJson as unknown as School[]
+const allPayments = paymentsJson as unknown as Payment[]
+
+interface PageProps {
+  params: Promise<{ mouId: string }>
+}
+
+function isVisibleToUser(mou: MOU, user: User | null): boolean {
+  if (!user) return false
+  if (user.role === 'SalesRep') return mou.salesPersonId === user.id
+  return true
+}
+
+const FIELD_INPUT_CLASS =
+  'block w-full rounded-md border border-input bg-card px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-brand-navy'
+const FIELD_LABEL_CLASS = 'block text-sm font-medium text-brand-navy mb-1'
+
+export default async function PiPage({ params }: PageProps) {
+  const { mouId } = await params
+  const user = await getCurrentUser()
+  const mou = allMous.find((m) => m.id === mouId)
+  if (!mou || !isVisibleToUser(mou, user)) notFound()
+
+  const school = allSchools.find((s) => s.id === mou.schoolId)
+  const pendingInstallments = allPayments.filter(
+    (p) => p.mouId === mou.id && (p.status === 'Pending' || p.status === 'PI Sent' || p.status === 'Due Soon' || p.status === 'Overdue'),
+  )
+  const allowed = user ? canPerform(user, 'mou:generate-pi') : false
+  const gstinBlocked = !school || school.gstNumber === null
+
+  return (
+    <>
+      <TopNav currentPath="/mous" />
+      <main id="main-content">
+        <PageHeader
+          title={`${mou.schoolName} PI`}
+          breadcrumb={[
+            { label: 'MOUs', href: '/mous' },
+            { label: mou.id, href: `/mous/${mou.id}` },
+            { label: 'PI' },
+          ]}
+        />
+        <div className="mx-auto flex max-w-screen-xl flex-col gap-4 px-4 py-6">
+
+          <DetailHeaderCard
+            title={mou.id}
+            subtitle="Generate proforma invoice for the next pending instalment"
+            metadata={[
+              { label: 'School', value: school?.name ?? mou.schoolName },
+              { label: 'GSTIN', value: gstinBlocked ? <span className="text-signal-alert">Missing; PI blocked</span> : <span className="font-mono text-xs">{school?.gstNumber}</span> },
+              { label: 'Programme', value: `${mou.programme}${mou.programmeSubType ? ' / ' + mou.programmeSubType : ''}` },
+              { label: 'Pending instalments', value: String(pendingInstallments.length) },
+            ]}
+          />
+
+          <p className="flex items-start gap-2 rounded-md border border-signal-attention bg-card p-3 text-xs text-foreground">
+            <Info aria-hidden className="size-4 shrink-0 text-signal-attention" />
+            <span>
+              Phase 1 note: this submit endpoint is wired in Phase D. Form renders for layout review; submitting returns a 501 stub until the docx template + counter atomic increment land.
+            </span>
+          </p>
+
+          {gstinBlocked ? (
+            <div role="alert" className="flex items-start gap-2 rounded-md border border-signal-alert bg-card p-3 text-sm text-foreground">
+              <AlertTriangle aria-hidden className="size-4 shrink-0 text-signal-alert" />
+              <div>
+                <p className="font-medium text-brand-navy">GSTIN required</p>
+                <p className="text-xs text-muted-foreground">
+                  PI generation is blocked until the school&apos;s GSTIN is captured. Update at <Link href={`/schools/${mou.schoolId}/edit`} className="text-brand-navy underline">/schools/{mou.schoolId}/edit</Link>.
+                </p>
+              </div>
+            </div>
+          ) : null}
+
+          {allowed ? (
+            <form
+              action="/api/pi/generate"
+              method="POST"
+              className="space-y-4 rounded-lg border border-border bg-card p-4 sm:p-6"
+            >
+              <input type="hidden" name="mouId" value={mou.id} />
+              <div>
+                <label htmlFor="installmentSeq" className={FIELD_LABEL_CLASS}>Instalment</label>
+                <select id="installmentSeq" name="installmentSeq" required className={FIELD_INPUT_CLASS}>
+                  {pendingInstallments.length === 0 ? (
+                    <option value="">No pending instalments</option>
+                  ) : (
+                    pendingInstallments.map((p) => (
+                      <option key={p.id} value={p.instalmentSeq}>
+                        {p.instalmentLabel} - {formatRs(p.expectedAmount)} ({p.status})
+                      </option>
+                    ))
+                  )}
+                </select>
+              </div>
+              <div className="flex flex-wrap gap-2 border-t border-border pt-4">
+                <button
+                  type="submit"
+                  disabled={gstinBlocked || pendingInstallments.length === 0}
+                  className="inline-flex min-h-11 items-center rounded-md bg-brand-teal px-4 py-2 text-sm font-medium text-brand-navy hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-brand-navy disabled:opacity-50"
+                >
+                  Generate PI
+                </button>
+                <Link
+                  href={`/mous/${mou.id}`}
+                  className="inline-flex min-h-11 items-center rounded-md border border-border bg-card px-4 py-2 text-sm font-medium hover:bg-muted focus:outline-none focus:ring-2 focus:ring-brand-navy"
+                >
+                  Cancel
+                </Link>
+              </div>
+            </form>
+          ) : (
+            <p role="status" className="rounded-md border border-border bg-muted/30 p-3 text-sm text-foreground">
+              Generating a PI requires the Finance or Admin role.
+            </p>
+          )}
+
+        </div>
+      </main>
+    </>
+  )
 }

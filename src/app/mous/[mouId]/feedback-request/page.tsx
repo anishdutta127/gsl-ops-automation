@@ -1,5 +1,150 @@
-import { RoutePlaceholder } from '@/components/ops/RoutePlaceholder'
+/*
+ * /mous/[mouId]/feedback-request
+ *
+ * Send feedback magic-link surface. Per Phase C4 hybrid: form
+ * renders + role gates, but submit is a 501 stub. Real implementation
+ * lands in Phase D when SMTP integration + MagicLinkToken issuance
+ * + email template come online.
+ *
+ * Roles: Admin + OpsHead per 'mou:send-feedback-request'. The SPOC
+ * email is read from school.email; if absent, we surface a
+ * communication-failure pre-block similar to the GSTIN pattern.
+ */
 
-export default function Page() {
-  return <RoutePlaceholder title="Feedback request" description="Stage 8 trigger: send feedback magic-link." />
+import Link from 'next/link'
+import { notFound } from 'next/navigation'
+import { AlertTriangle, Info } from 'lucide-react'
+import type { Dispatch, MOU, School, User } from '@/lib/types'
+import mousJson from '@/data/mous.json'
+import schoolsJson from '@/data/schools.json'
+import dispatchesJson from '@/data/dispatches.json'
+import { getCurrentUser } from '@/lib/auth/session'
+import { canPerform } from '@/lib/auth/permissions'
+import { TopNav } from '@/components/ops/TopNav'
+import { PageHeader } from '@/components/ops/PageHeader'
+import { DetailHeaderCard } from '@/components/ops/DetailHeaderCard'
+
+const allMous = mousJson as unknown as MOU[]
+const allSchools = schoolsJson as unknown as School[]
+const allDispatches = dispatchesJson as unknown as Dispatch[]
+
+interface PageProps {
+  params: Promise<{ mouId: string }>
+}
+
+function isVisibleToUser(mou: MOU, user: User | null): boolean {
+  if (!user) return false
+  if (user.role === 'SalesRep') return mou.salesPersonId === user.id
+  return true
+}
+
+const FIELD_INPUT_CLASS =
+  'block w-full rounded-md border border-input bg-card px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-brand-navy'
+const FIELD_LABEL_CLASS = 'block text-sm font-medium text-brand-navy mb-1'
+
+export default async function FeedbackRequestPage({ params }: PageProps) {
+  const { mouId } = await params
+  const user = await getCurrentUser()
+  const mou = allMous.find((m) => m.id === mouId)
+  if (!mou || !isVisibleToUser(mou, user)) notFound()
+
+  const school = allSchools.find((s) => s.id === mou.schoolId)
+  const deliveredDispatches = allDispatches.filter(
+    (d) => d.mouId === mou.id && (d.stage === 'delivered' || d.stage === 'acknowledged'),
+  )
+  const allowed = user ? canPerform(user, 'mou:send-feedback-request') : false
+  const emailMissing = !school?.email
+
+  return (
+    <>
+      <TopNav currentPath="/mous" />
+      <main id="main-content">
+        <PageHeader
+          title={`${mou.schoolName} feedback request`}
+          breadcrumb={[
+            { label: 'MOUs', href: '/mous' },
+            { label: mou.id, href: `/mous/${mou.id}` },
+            { label: 'Feedback request' },
+          ]}
+        />
+        <div className="mx-auto flex max-w-screen-xl flex-col gap-4 px-4 py-6">
+
+          <DetailHeaderCard
+            title={mou.id}
+            subtitle="Send the SPOC a magic link to submit feedback for a delivered instalment"
+            metadata={[
+              { label: 'School', value: mou.schoolName },
+              { label: 'SPOC contact', value: school?.contactPerson ?? 'not set' },
+              { label: 'SPOC email', value: emailMissing ? <span className="text-signal-alert">Missing</span> : school?.email },
+              { label: 'Delivered instalments eligible', value: String(deliveredDispatches.length) },
+            ]}
+          />
+
+          <p className="flex items-start gap-2 rounded-md border border-signal-attention bg-card p-3 text-xs text-foreground">
+            <Info aria-hidden className="size-4 shrink-0 text-signal-attention" />
+            <span>
+              Phase 1 note: this submit endpoint is wired in Phase D. SMTP integration plus the MagicLinkToken issuance + email template land alongside the API.
+            </span>
+          </p>
+
+          {emailMissing ? (
+            <div role="alert" className="flex items-start gap-2 rounded-md border border-signal-alert bg-card p-3 text-sm text-foreground">
+              <AlertTriangle aria-hidden className="size-4 shrink-0 text-signal-alert" />
+              <div>
+                <p className="font-medium text-brand-navy">SPOC email required</p>
+                <p className="text-xs text-muted-foreground">
+                  Capture the school&apos;s SPOC email at <Link href={`/schools/${mou.schoolId}/edit`} className="text-brand-navy underline">/schools/{mou.schoolId}/edit</Link> before sending a feedback request.
+                </p>
+              </div>
+            </div>
+          ) : null}
+
+          {allowed ? (
+            <form
+              action="/api/communications/send"
+              method="POST"
+              className="space-y-4 rounded-lg border border-border bg-card p-4 sm:p-6"
+            >
+              <input type="hidden" name="mouId" value={mou.id} />
+              <input type="hidden" name="type" value="feedback-request" />
+              <div>
+                <label htmlFor="installmentSeq" className={FIELD_LABEL_CLASS}>Instalment</label>
+                <select id="installmentSeq" name="installmentSeq" required className={FIELD_INPUT_CLASS}>
+                  {deliveredDispatches.length === 0 ? (
+                    <option value="">No delivered instalments eligible</option>
+                  ) : (
+                    deliveredDispatches.map((d) => (
+                      <option key={d.id} value={d.installmentSeq}>
+                        Inst {d.installmentSeq} (delivered {d.deliveredAt?.slice(0, 10) ?? ''})
+                      </option>
+                    ))
+                  )}
+                </select>
+              </div>
+              <div className="flex flex-wrap gap-2 border-t border-border pt-4">
+                <button
+                  type="submit"
+                  disabled={emailMissing || deliveredDispatches.length === 0}
+                  className="inline-flex min-h-11 items-center rounded-md bg-brand-teal px-4 py-2 text-sm font-medium text-brand-navy hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-brand-navy disabled:opacity-50"
+                >
+                  Send feedback request
+                </button>
+                <Link
+                  href={`/mous/${mou.id}`}
+                  className="inline-flex min-h-11 items-center rounded-md border border-border bg-card px-4 py-2 text-sm font-medium hover:bg-muted focus:outline-none focus:ring-2 focus:ring-brand-navy"
+                >
+                  Cancel
+                </Link>
+              </div>
+            </form>
+          ) : (
+            <p role="status" className="rounded-md border border-border bg-muted/30 p-3 text-sm text-foreground">
+              Sending a feedback request requires the OpsHead or Admin role.
+            </p>
+          )}
+
+        </div>
+      </main>
+    </>
+  )
 }

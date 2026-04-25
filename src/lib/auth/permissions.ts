@@ -37,8 +37,13 @@ export type Action =
   | 'dispatch:acknowledge-override'
   // Drift approval (Sales Head queue per step 6.5 Item B)
   | 'drift:approve'
+  // MOU lifecycle stage actions (Phase C4)
+  | 'mou:confirm-actuals'
+  | 'mou:generate-pi'
+  | 'mou:raise-dispatch'
+  | 'mou:send-feedback-request'
+  | 'mou:upload-delivery-ack'
   // Finance flow (Q-B + step 8 acceptance criteria)
-  | 'pi:generate'
   | 'payment:reconcile'
   // MOU import review (Q-A)
   | 'mou-import-review:resolve'
@@ -68,12 +73,15 @@ const ROLE_BASE_ACTIONS: Record<UserRole, Set<Action> | typeof ADMIN_WILDCARD> =
   ]),
   SalesHead: new Set<Action>([
     'drift:approve',
+    'mou:confirm-actuals',
     'escalation:resolve',
   ]),
   SalesRep: new Set<Action>([
-    // Phase 1: scoped MOU view only; no admin actions on the matrix.
-    // Per step 10 Item 8 the SalesRep can be assigned MOUs but not
-    // create schools / SPOCs / sales-team rows.
+    // Phase 1: scoped MOU view only; the only mutation a SalesRep can
+    // perform is confirming actuals on their own assignments. Per
+    // Item B "SalesRep gathers actuals; Sales Head signs off"; both
+    // submit, SalesHead reviews queue when variance > 10%.
+    'mou:confirm-actuals',
   ]),
   OpsHead: new Set<Action>([
     'cc-rule:toggle',
@@ -82,6 +90,9 @@ const ROLE_BASE_ACTIONS: Record<UserRole, Set<Action> | typeof ADMIN_WILDCARD> =
     // per step 10 Item 8 (Misba flips to OpsHead-allowed on day 31). Add
     // 'cc-rule:create' to this set when the flip lands.
     'mou-import-review:resolve',
+    'mou:raise-dispatch',
+    'mou:send-feedback-request',
+    'mou:upload-delivery-ack',
     'school:create',
     'school:edit',
     'spoc:create',
@@ -95,7 +106,7 @@ const ROLE_BASE_ACTIONS: Record<UserRole, Set<Action> | typeof ADMIN_WILDCARD> =
     // come through effectiveRoles() below.
   ]),
   Finance: new Set<Action>([
-    'pi:generate',
+    'mou:generate-pi',
     'payment:reconcile',
     'dispatch:acknowledge-override',
   ]),

@@ -172,7 +172,7 @@ describe('permissions: Admin wildcard', () => {
     expect(canPerform(anish, 'cc-rule:toggle')).toBe(true)
     expect(canPerform(anish, 'cc-rule:create')).toBe(true)
     expect(canPerform(anish, 'dispatch:override-gate')).toBe(true)
-    expect(canPerform(anish, 'pi:generate')).toBe(true)
+    expect(canPerform(anish, 'mou:generate-pi')).toBe(true)
     expect(canPerform(anish, 'school-group:create')).toBe(true)
     expect(canPerform(anish, 'escalation:resolve')).toBe(true)
   })
