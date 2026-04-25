@@ -423,6 +423,17 @@ Differ by surface. Deliberate.
 
 ---
 
+## Known data normalisations
+
+Source-data drift between SPOC-DB rule text and current canonical fixtures is handled by small alias maps in the resolver layer, never silently. Each new alias is added on observation (not pre-emptively) and lives in the file that uses it.
+
+- City aliases (Bengaluru ≡ Bangalore, Bombay ≡ Mumbai, Calcutta ≡ Kolkata, Madras ≡ Chennai): `src/lib/ccResolver.ts` `CITY_ALIASES`. Used by sub-region scope matching where SPOC-DB rules name legacy city forms while school records carry the official current name.
+- Trainer-mode aliases (TTT ≡ TT, GSL-Trainer ≡ GSL-T): same file, `TRAINER_MODE_ALIASES`. Used by training-mode scope matching where SPOC-DB phrasing differs from the canonical `TrainerModel` enum.
+
+When you encounter a third drift form, add the alias entry, document it here in one line, and write a regression test in the resolver's test file. Do not "fix upstream" by mutating fixtures or renaming canonical enums; the resolver layer absorbs source variance.
+
+---
+
 ## Tooling notes
 
 - shadcn/ui primitives in `src/components/ui/`. Ops-specific components in `src/components/ops/`.

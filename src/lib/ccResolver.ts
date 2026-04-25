@@ -88,6 +88,9 @@ const TRAINER_MODE_ALIASES: Record<string, string> = {
 // North-sheet sr-no lookup. Sr-no is a SPOC-DB-only attribute (not a
 // first-class School field); preserved here so CCR-NORTH-1-7 and any
 // future sr-no-range rule can match without bloating the School type.
+// Covers all 5 currently-seeded North schools; the rule scope of '1..7'
+// in source data accommodates schools beyond the dev fixture, so the
+// map will grow as production North schools are imported.
 const NORTH_SR_NO: Record<string, number> = {
   'SCH-OAKWOOD-DEL': 1,
   'SCH-NORTHWOOD-CHD': 2,
