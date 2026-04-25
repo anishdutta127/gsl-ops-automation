@@ -89,6 +89,21 @@ export interface User {
   auditLog: AuditEntry[]
 }
 
+/**
+ * Staff JWT session claims. Signed by src/lib/crypto/jwt.ts; verified by
+ * src/middleware.ts on every request. Cookie name: 'gsl_ops_session'.
+ */
+export interface SessionClaims {
+  sub: string                                   // User.id
+  email: string
+  name: string
+  role: UserRole
+  iat?: number                                  // standard JWT (issued-at)
+  exp?: number                                  // standard JWT (expires-at)
+  iss?: string                                  // 'gsl-ops-automation'
+  aud?: string                                  // 'staff'
+}
+
 // ============================================================================
 // Programme (Update 1: GSLT-Cretile is a STEAM sub-type via programmeSubType)
 // ============================================================================
