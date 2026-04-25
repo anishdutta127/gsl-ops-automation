@@ -423,6 +423,18 @@ Differ by surface. Deliberate.
 
 ---
 
+## Audit log conventions
+
+Audit log entries record the EVENT, not the cascade. When entity B is created as a consequence of an action on entity A, A's auditLog carries the semantic action ('p2-override', 'feedback-submitted', etc.); B's auditLog uses generic 'create' with a forward-pointer in notes. Single source of truth on originating events. Queries like "how many P2 overrides occurred this week" read from A's auditLog only.
+
+Examples:
+- A `Dispatch` p2-override fires `'p2-override'` on `Dispatch.auditLog`. The paired `Escalation` record uses `'create'` with notes `"Auto-created from dispatch p2-override on <id>"`.
+- A `Feedback` submission fires `'feedback-submitted'` on `Feedback.auditLog`. The auto-created `Escalation` (Update 3 hook) uses `'auto-create-from-feedback'` (a domain-specific create-action) with notes pointing back at the originating Feedback id; the originating event still lives on the Feedback, not the Escalation.
+
+When introducing a new domain action, decide first whether the EVENT happens on the originating entity (likely yes) and avoid coining a parallel action on the consequent entity.
+
+---
+
 ## Known data normalisations
 
 Source-data drift between SPOC-DB rule text and current canonical fixtures is handled by small alias maps in the resolver layer, never silently. Each new alias is added on observation (not pre-emptively) and lives in the file that uses it.
