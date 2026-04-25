@@ -1,5 +1,160 @@
-import { RoutePlaceholder } from '@/components/ops/RoutePlaceholder'
+/*
+ * /mous list page.
+ *
+ * Filters: status (MouStatus), programme, region (derived from
+ * school.region), search (free-text against id + schoolName +
+ * programmeSubType + notes).
+ *
+ * Per-role scoping: SalesRep sees only own-assigned MOUs
+ * (salesPersonId === user.id); other roles see all.
+ *
+ * Phase 1 simplification: stage filter uses MOU.status (Draft /
+ * Active / Completed / Expired / Renewed / Pending Signature). A
+ * later phase may compute a derived "lifecycle stage" combining
+ * status + dispatch + payment state, but that is out of scope here.
+ */
 
-export default function Page() {
-  return <RoutePlaceholder title="MOUs" description="MOU list with stage / programme / region filters." />
+import type { MOU, School, User } from '@/lib/types'
+import mousJson from '@/data/mous.json'
+import schoolsJson from '@/data/schools.json'
+import { getCurrentUser } from '@/lib/auth/session'
+import { TopNav } from '@/components/ops/TopNav'
+import { PageHeader } from '@/components/ops/PageHeader'
+import { FilterRail, type FilterDimension } from '@/components/ops/FilterRail'
+import { EntityListTable, type ColumnDef } from '@/components/ops/EntityListTable'
+import { EmptyState } from '@/components/ops/EmptyState'
+import {
+  parseDimensions,
+  applyDimensionFilters,
+  applyTextSearch,
+} from '@/lib/filterParsing'
+
+const allMous = mousJson as unknown as MOU[]
+const allSchools = schoolsJson as unknown as School[]
+
+const DIMENSION_KEYS = ['status', 'programme', 'region'] as const
+
+function scopeMousForUser(mous: MOU[], user: User | null): MOU[] {
+  if (!user) return mous
+  if (user.role === 'SalesRep') {
+    return mous.filter((m) => m.salesPersonId === user.id)
+  }
+  return mous
+}
+
+function regionFor(mou: MOU, schoolById: Map<string, School>): string | null {
+  const s = schoolById.get(mou.schoolId)
+  return s?.region ?? null
+}
+
+interface PageProps {
+  searchParams: Promise<Record<string, string | string[] | undefined>>
+}
+
+export default async function MousListPage({ searchParams }: PageProps) {
+  const sp = await searchParams
+  const user = await getCurrentUser()
+  const schoolById = new Map(allSchools.map((s) => [s.id, s]))
+  const scoped = scopeMousForUser(allMous, user)
+
+  const active = parseDimensions(sp, DIMENSION_KEYS as unknown as string[])
+  const search = typeof sp.q === 'string' ? sp.q : ''
+
+  const filtered = applyTextSearch(
+    applyDimensionFilters(scoped, active, {
+      status: (m) => m.status,
+      programme: (m) => m.programme,
+      region: (m) => regionFor(m, schoolById),
+    }),
+    search,
+    (m) => [m.id, m.schoolName, m.programmeSubType ?? '', m.notes ?? ''],
+  )
+
+  const dimensions: FilterDimension[] = [
+    {
+      key: 'status',
+      label: 'Status',
+      options: ['Active', 'Pending Signature', 'Completed', 'Expired', 'Renewed', 'Draft'].map((v) => ({
+        value: v,
+        label: v,
+      })),
+    },
+    {
+      key: 'programme',
+      label: 'Programme',
+      options: ['STEAM', 'TinkRworks', 'Young Pioneers', 'Harvard HBPE', 'VEX'].map((v) => ({
+        value: v,
+        label: v,
+      })),
+    },
+    {
+      key: 'region',
+      label: 'Region',
+      options: ['East', 'North', 'South-West'].map((v) => ({ value: v, label: v })),
+    },
+  ]
+
+  const columns: ColumnDef<MOU>[] = [
+    {
+      key: 'id',
+      header: 'MOU id',
+      render: (m) => <span className="font-mono text-xs">{m.id}</span>,
+    },
+    { key: 'school', header: 'School', render: (m) => m.schoolName },
+    {
+      key: 'programme',
+      header: 'Programme',
+      render: (m) => (
+        <span>
+          {m.programme}
+          {m.programmeSubType ? <span className="text-muted-foreground"> / {m.programmeSubType}</span> : null}
+        </span>
+      ),
+    },
+    { key: 'status', header: 'Status', render: (m) => m.status },
+    {
+      key: 'students',
+      header: 'Students',
+      align: 'right',
+      render: (m) =>
+        m.studentsActual !== null
+          ? `${m.studentsActual.toLocaleString('en-IN')} / ${m.studentsMou.toLocaleString('en-IN')}`
+          : `n/a / ${m.studentsMou.toLocaleString('en-IN')}`,
+    },
+  ]
+
+  return (
+    <>
+      <TopNav currentPath="/mous" />
+      <main id="main-content">
+        <PageHeader
+          title="MOUs"
+          subtitle={`${filtered.length} of ${scoped.length} matching`}
+        />
+        <div className="mx-auto flex max-w-screen-xl flex-col gap-4 px-4 py-6 sm:flex-row">
+          <FilterRail
+            basePath="/mous"
+            dimensions={dimensions}
+            active={active}
+            search={{ value: search, placeholder: 'Search id / school / notes' }}
+          />
+          <div className="min-w-0 flex-1">
+            <EntityListTable
+              rows={filtered}
+              columns={columns}
+              rowHref={(m) => `/mous/${m.id}`}
+              rowKey={(m) => m.id}
+              caption="MOUs"
+              empty={
+                <EmptyState
+                  title="No MOUs match the current filters."
+                  description="Adjust filters or clear them to see the full list."
+                />
+              }
+            />
+          </div>
+        </div>
+      </main>
+    </>
+  )
 }
