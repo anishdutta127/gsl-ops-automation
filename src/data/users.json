@@ -1,0 +1,104 @@
+[
+  {
+    "id": "anish.d",
+    "name": "Anish Dutta",
+    "email": "anish.d@getsetlearn.info",
+    "role": "Admin",
+    "testingOverride": false,
+    "active": true,
+    "passwordHash": "$2b$12$If0xRbk1VrDxTv52vbltu.KmEbiAwwu4nSRHLD7oUU2oIR9PJ.WqK",
+    "createdAt": "2026-04-25T00:00:00Z",
+    "auditLog": []
+  },
+  {
+    "id": "ameet.z",
+    "name": "Ameet Zaveri",
+    "email": "ameet.z@getsetlearn.info",
+    "role": "Leadership",
+    "testingOverride": false,
+    "active": true,
+    "passwordHash": "$2b$12$OFOCJJZomlVt1eF2EeZCruQqwupfLN7lFsCVvgBJUFCmvt1z/Eoaa",
+    "createdAt": "2026-04-25T00:00:00Z",
+    "auditLog": []
+  },
+  {
+    "id": "pratik.d",
+    "name": "Pratik D.",
+    "email": "pratik.d@getsetlearn.info",
+    "role": "SalesHead",
+    "testingOverride": false,
+    "active": true,
+    "passwordHash": "$2b$12$BbNcV.TDy6iJ55r7IvvCce1Y6KD57PgJfYaqZmzwR50rjwotBWDYe",
+    "createdAt": "2026-04-25T00:00:00Z",
+    "auditLog": []
+  },
+  {
+    "id": "vishwanath.g",
+    "name": "Vishwanath G.",
+    "email": "vishwanath.g@getsetlearn.info",
+    "role": "SalesRep",
+    "testingOverride": false,
+    "active": true,
+    "passwordHash": "$2b$12$63TFLJi1309qqLrx2rf6Q.LX.UX0knFU.4RDJxKH1SWMafUw8..e2",
+    "createdAt": "2026-04-25T00:00:00Z",
+    "auditLog": []
+  },
+  {
+    "id": "misba.m",
+    "name": "Misba M.",
+    "email": "misba.m@getsetlearn.info",
+    "role": "OpsEmployee",
+    "testingOverride": true,
+    "testingOverridePermissions": [
+      "OpsHead"
+    ],
+    "active": true,
+    "passwordHash": "$2b$12$Es.ETZxLXL1c30Cl62wQouMlurEjQFPhECBuwHLZLzWYyQvWpZUSO",
+    "createdAt": "2026-04-25T00:00:00Z",
+    "auditLog": []
+  },
+  {
+    "id": "pradeep.r",
+    "name": "Pradeep R.",
+    "email": "pradeep.r@getsetlearn.info",
+    "role": "OpsHead",
+    "testingOverride": false,
+    "active": true,
+    "passwordHash": "$2b$12$hsHxtL9yAcaQfXCI5.yIwOQYLgjHrGy6az2OsJePiOQjm3GI2QjLO",
+    "createdAt": "2026-04-25T00:00:00Z",
+    "auditLog": []
+  },
+  {
+    "id": "shubhangi.g",
+    "name": "Shubhangi G.",
+    "email": "shubhangi.g@getsetlearn.info",
+    "role": "Finance",
+    "testingOverride": false,
+    "active": true,
+    "passwordHash": "$2b$12$mJWA49vCC5QjOlYNgXiw2.wshYxubNEWIqfiwyS4KnRMNA5pRRKKC",
+    "createdAt": "2026-04-25T00:00:00Z",
+    "auditLog": []
+  },
+  {
+    "id": "pranav.b",
+    "name": "Pranav B.",
+    "email": "pranav.b@getsetlearn.info",
+    "role": "Finance",
+    "testingOverride": false,
+    "active": true,
+    "passwordHash": "$2b$12$.NEoPqYSHzmzKl4RDZN11eEmKWlvKvbERqd8sQbmiHZ3oNfQQ66C6",
+    "createdAt": "2026-04-25T00:00:00Z",
+    "auditLog": []
+  },
+  {
+    "id": "shashank.s",
+    "name": "Shashank S.",
+    "email": "shashank.s@getsetlearn.info",
+    "role": "TrainerHead",
+    "testingOverride": false,
+    "active": true,
+    "passwordHash": "$2b$12$j5HqWvzzIXO1y6sIAp5Wou0TNEbcxnr6HjcVaEK6Kb5cPwFWOffWm",
+    "createdAt": "2026-04-25T00:00:00Z",
+    "auditLog": []
+  }
+]

@@ -1,0 +1,30 @@
+[
+  {
+    "id": "MLT-FB-001",
+    "purpose": "feedback-submit",
+    "mouId": "MOU-STEAM-2627-001",
+    "installmentSeq": 1,
+    "spocEmail": "spoc.greenfield@example.test",
+    "issuedAt": "2026-04-25T10:00:00Z",
+    "expiresAt": "2026-04-27T10:00:00Z",
+    "usedAt": null,
+    "usedByIp": null,
+    "lastViewedAt": null,
+    "viewCount": 0,
+    "communicationId": "COM-FBR-001"
+  },
+  {
+    "id": "MLT-SV-001",
+    "purpose": "status-view",
+    "mouId": "MOU-STEAM-2627-001",
+    "installmentSeq": 1,
+    "spocEmail": "spoc.greenfield@example.test",
+    "issuedAt": "2026-04-15T10:00:00Z",
+    "expiresAt": "2026-05-15T10:00:00Z",
+    "usedAt": null,
+    "usedByIp": null,
+    "lastViewedAt": "2026-04-20T14:33:00Z",
+    "viewCount": 3,
+    "communicationId": "COM-PIS-001"
+  }
+]

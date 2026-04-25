@@ -1,0 +1,88 @@
+[
+  {
+    "id": "sp-vikram",
+    "name": "Vikram T.",
+    "email": "vikram.t@getsetlearn.info",
+    "phone": "+91-98100-00001",
+    "territories": [
+      "Pune",
+      "Mumbai",
+      "Nashik"
+    ],
+    "programmes": [
+      "STEAM",
+      "TinkRworks"
+    ],
+    "active": true,
+    "joinedDate": "2025-06-01"
+  },
+  {
+    "id": "sp-vishwanath",
+    "name": "Vishwanath G.",
+    "email": "vishwanath.g@getsetlearn.info",
+    "phone": "+91-98100-00002",
+    "territories": [
+      "Bengaluru",
+      "Hyderabad",
+      "Chennai"
+    ],
+    "programmes": [
+      "STEAM",
+      "Young Pioneers"
+    ],
+    "active": true,
+    "joinedDate": "2025-07-15"
+  },
+  {
+    "id": "sp-neha",
+    "name": "Neha A.",
+    "email": "neha.a@getsetlearn.info",
+    "phone": "+91-98100-00003",
+    "territories": [
+      "New Delhi",
+      "Chandigarh",
+      "Jaipur"
+    ],
+    "programmes": [
+      "STEAM",
+      "Harvard HBPE"
+    ],
+    "active": true,
+    "joinedDate": "2025-09-01"
+  },
+  {
+    "id": "sp-rohan",
+    "name": "Rohan B.",
+    "email": "rohan.b@getsetlearn.info",
+    "phone": "+91-98100-00004",
+    "territories": [
+      "Kolkata",
+      "Asansol",
+      "Durgapur",
+      "Burdwan"
+    ],
+    "programmes": [
+      "STEAM",
+      "Young Pioneers"
+    ],
+    "active": true,
+    "joinedDate": "2025-10-10"
+  },
+  {
+    "id": "sp-arjun",
+    "name": "Arjun K.",
+    "email": "arjun.k@getsetlearn.info",
+    "phone": "+91-98100-00005",
+    "territories": [
+      "Lucknow",
+      "Indore",
+      "Coimbatore"
+    ],
+    "programmes": [
+      "TinkRworks",
+      "VEX"
+    ],
+    "active": true,
+    "joinedDate": "2026-01-05"
+  }
+]

@@ -1,0 +1,274 @@
+[
+  {
+    "id": "FBK-001",
+    "schoolId": "SCH-GREENFIELD-PUNE",
+    "mouId": "MOU-STEAM-2627-001",
+    "installmentSeq": 1,
+    "submittedAt": "2026-04-26T11:30:00Z",
+    "submittedBy": "spoc",
+    "submitterEmail": "spoc.greenfield@example.test",
+    "ratings": [
+      {
+        "category": "training-quality",
+        "rating": 5,
+        "comment": null
+      },
+      {
+        "category": "kit-condition",
+        "rating": 5,
+        "comment": "Kits arrived in pristine condition."
+      },
+      {
+        "category": "delivery-timing",
+        "rating": 5,
+        "comment": null
+      },
+      {
+        "category": "trainer-rapport",
+        "rating": 5,
+        "comment": null
+      }
+    ],
+    "overallComment": "Smooth start to the year. Thanks to the GSL team.",
+    "magicLinkTokenId": "MLT-FB-001",
+    "auditLog": []
+  },
+  {
+    "id": "FBK-002",
+    "schoolId": "SCH-SPRINGWOOD-KOL",
+    "mouId": "MOU-STEAM-2627-003",
+    "installmentSeq": 1,
+    "submittedAt": "2026-04-22T15:00:00Z",
+    "submittedBy": "spoc",
+    "submitterEmail": "spoc.springwood@example.test",
+    "ratings": [
+      {
+        "category": "training-quality",
+        "rating": 4,
+        "comment": null
+      },
+      {
+        "category": "kit-condition",
+        "rating": 5,
+        "comment": null
+      },
+      {
+        "category": "delivery-timing",
+        "rating": 4,
+        "comment": "Delivery was a day late but acceptable."
+      },
+      {
+        "category": "trainer-rapport",
+        "rating": null,
+        "comment": null
+      }
+    ],
+    "overallComment": null,
+    "magicLinkTokenId": null,
+    "auditLog": []
+  },
+  {
+    "id": "FBK-LOW-001",
+    "schoolId": "SCH-NARAYANA-ASN",
+    "mouId": "MOU-STEAM-2627-004",
+    "installmentSeq": 1,
+    "submittedAt": "2026-04-24T13:50:00Z",
+    "submittedBy": "spoc",
+    "submitterEmail": "spoc.narayana.asn@example.test",
+    "ratings": [
+      {
+        "category": "training-quality",
+        "rating": 1,
+        "comment": "Trainer cancelled twice last week without notice."
+      },
+      {
+        "category": "kit-condition",
+        "rating": 4,
+        "comment": null
+      },
+      {
+        "category": "delivery-timing",
+        "rating": 3,
+        "comment": null
+      },
+      {
+        "category": "trainer-rapport",
+        "rating": 2,
+        "comment": "Trainer seemed disengaged in the morning sessions."
+      }
+    ],
+    "overallComment": "Training quality is the main concern.",
+    "magicLinkTokenId": null,
+    "auditLog": []
+  },
+  {
+    "id": "FBK-003",
+    "schoolId": "SCH-NARAYANA-DUR",
+    "mouId": "MOU-STEAM-2627-004",
+    "installmentSeq": 1,
+    "submittedAt": "2026-04-25T16:00:00Z",
+    "submittedBy": "ops-on-behalf",
+    "submitterEmail": null,
+    "ratings": [
+      {
+        "category": "training-quality",
+        "rating": 4,
+        "comment": null
+      },
+      {
+        "category": "kit-condition",
+        "rating": 5,
+        "comment": null
+      },
+      {
+        "category": "delivery-timing",
+        "rating": 5,
+        "comment": null
+      },
+      {
+        "category": "trainer-rapport",
+        "rating": 4,
+        "comment": null
+      }
+    ],
+    "overallComment": "Captured by Misba on behalf of the SPOC over a phone call.",
+    "magicLinkTokenId": null,
+    "auditLog": []
+  },
+  {
+    "id": "FBK-004",
+    "schoolId": "SCH-CEDARHEIGHTS-CHN",
+    "mouId": null,
+    "installmentSeq": 1,
+    "submittedAt": "2026-04-20T11:30:00Z",
+    "submittedBy": "spoc",
+    "submitterEmail": "spoc.cedarheights@example.test",
+    "ratings": [
+      {
+        "category": "training-quality",
+        "rating": 2,
+        "comment": "Some sessions felt rushed."
+      },
+      {
+        "category": "kit-condition",
+        "rating": 4,
+        "comment": null
+      },
+      {
+        "category": "delivery-timing",
+        "rating": 5,
+        "comment": null
+      },
+      {
+        "category": "trainer-rapport",
+        "rating": 3,
+        "comment": null
+      }
+    ],
+    "overallComment": null,
+    "magicLinkTokenId": null,
+    "auditLog": []
+  },
+  {
+    "id": "FBK-005",
+    "schoolId": "SCH-OAKWOOD-DEL",
+    "mouId": "MOU-TINK-2627-002",
+    "installmentSeq": 1,
+    "submittedAt": "2026-04-18T10:00:00Z",
+    "submittedBy": "spoc",
+    "submitterEmail": "spoc.oakwood@example.test",
+    "ratings": [
+      {
+        "category": "training-quality",
+        "rating": 5,
+        "comment": null
+      },
+      {
+        "category": "kit-condition",
+        "rating": null,
+        "comment": null
+      },
+      {
+        "category": "delivery-timing",
+        "rating": null,
+        "comment": null
+      },
+      {
+        "category": "trainer-rapport",
+        "rating": 5,
+        "comment": "Trainer is excellent."
+      }
+    ],
+    "overallComment": "Great start. Skipped kit + delivery questions because we are still pre-dispatch.",
+    "magicLinkTokenId": null,
+    "auditLog": []
+  },
+  {
+    "id": "FBK-006",
+    "schoolId": "SCH-MAPLELEAF-BLR",
+    "mouId": "MOU-STEAM-2627-005",
+    "installmentSeq": 1,
+    "submittedAt": "2026-04-16T14:30:00Z",
+    "submittedBy": "spoc",
+    "submitterEmail": "spoc.mapleleaf@example.test",
+    "ratings": [
+      {
+        "category": "training-quality",
+        "rating": 4,
+        "comment": null
+      },
+      {
+        "category": "kit-condition",
+        "rating": 4,
+        "comment": null
+      },
+      {
+        "category": "delivery-timing",
+        "rating": 4,
+        "comment": null
+      },
+      {
+        "category": "trainer-rapport",
+        "rating": 4,
+        "comment": null
+      }
+    ],
+    "overallComment": null,
+    "magicLinkTokenId": null,
+    "auditLog": []
+  },
+  {
+    "id": "FBK-007",
+    "schoolId": "SCH-RIVERDALE-MUM",
+    "mouId": null,
+    "installmentSeq": 1,
+    "submittedAt": "2026-04-15T09:45:00Z",
+    "submittedBy": "spoc",
+    "submitterEmail": "spoc.riverdale@example.test",
+    "ratings": [
+      {
+        "category": "training-quality",
+        "rating": 3,
+        "comment": null
+      },
+      {
+        "category": "kit-condition",
+        "rating": 3,
+        "comment": null
+      },
+      {
+        "category": "delivery-timing",
+        "rating": 3,
+        "comment": null
+      },
+      {
+        "category": "trainer-rapport",
+        "rating": 3,
+        "comment": null
+      }
+    ],
+    "overallComment": "All meh. Will share specifics over a call.",
+    "magicLinkTokenId": null,
+    "auditLog": []
+  }
+]

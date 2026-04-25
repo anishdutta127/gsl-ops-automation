@@ -9,12 +9,14 @@
     "lint": "next lint",
     "test": "vitest run",
     "test:watch": "vitest",
-    "docs-lint": "bash scripts/docs-lint.sh"
+    "docs-lint": "bash scripts/docs-lint.sh",
+    "seed:dev": "node scripts/seed-dev.mjs"
   },
   "simple-git-hooks": {
     "pre-commit": "bash scripts/docs-lint.sh"
   },
   "dependencies": {
+    "bcryptjs": "^3.0.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",

@@ -1,0 +1,39 @@
+[
+  {
+    "id": "SG-NARAYANA_WB",
+    "name": "Narayana Group of Schools, West Bengal",
+    "region": "East",
+    "createdAt": "2026-04-15T00:00:00Z",
+    "createdBy": "anish.d",
+    "memberSchoolIds": [
+      "SCH-NARAYANA-ASN",
+      "SCH-NARAYANA-DUR",
+      "SCH-NARAYANA-BRD"
+    ],
+    "groupMouId": "MOU-STEAM-2627-004",
+    "notes": "Pre-seeded chain MOU per step 8 Q-I SchoolGroup spec. 3 member campuses (Asansol, Durgapur, Burdwan).",
+    "auditLog": []
+  },
+  {
+    "id": "SG-TECHNO_INDIA",
+    "name": "Techno India Group of Schools",
+    "region": "East",
+    "createdAt": "2026-04-15T00:00:00Z",
+    "createdBy": "anish.d",
+    "memberSchoolIds": [],
+    "groupMouId": null,
+    "notes": "Pre-seeded; member campuses to be added when first chain MOU is signed.",
+    "auditLog": []
+  },
+  {
+    "id": "SG-CARMEL",
+    "name": "Carmel Group of Schools",
+    "region": "South-West",
+    "createdAt": "2026-04-15T00:00:00Z",
+    "createdBy": "anish.d",
+    "memberSchoolIds": [],
+    "groupMouId": null,
+    "notes": "Pre-seeded; member campuses to be added when first chain MOU is signed.",
+    "auditLog": []
+  }
+]

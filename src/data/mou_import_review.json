@@ -1,0 +1,22 @@
+[
+  {
+    "queuedAt": "2026-04-22T13:45:00Z",
+    "rawRecord": {
+      "id": "MOU-VEX-2627-XX1",
+      "schoolName": "Stonebridge Academy, Ahmedabad",
+      "programme": "VEX",
+      "studentsMou": 25000,
+      "spWithoutTax": 5000,
+      "spWithTax": 4500,
+      "contractValue": 12500000,
+      "academicYear": "2026-27",
+      "startDate": "2026-04-01",
+      "endDate": "2027-03-31"
+    },
+    "validationFailed": "tax_inversion",
+    "quarantineReason": "spWithTax (4500) is less than spWithoutTax (5000); tax-inverted pricing. Also studentsMou (25000) exceeds plausibility threshold (20000).",
+    "resolvedAt": null,
+    "resolvedBy": null,
+    "resolution": null
+  }
+]
