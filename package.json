@@ -10,7 +10,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "docs-lint": "bash scripts/docs-lint.sh",
-    "seed:dev": "node scripts/seed-dev.mjs"
+    "seed:dev": "node scripts/seed-dev.mjs",
+    "smoke:test": "bash scripts/smoke-test.sh"
   },
   "simple-git-hooks": {
     "pre-commit": "bash scripts/docs-lint.sh"

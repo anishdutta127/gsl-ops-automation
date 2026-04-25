@@ -1,8 +1,14 @@
 @import "tw-animate-css";
-@import "shadcn/tailwind.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+/*
+ * Note: shadcn v4 init wrote `@import "shadcn/tailwind.css"` here,
+ * which assumes Tailwind v4. We are on Tailwind v3.4.1; the colour
+ * tokens that import would have provided are now declared directly
+ * in tailwind.config.ts (see the colors map there). Re-introduce
+ * the import only when the project upgrades to Tailwind v4.
+ */
 
 @layer utilities {
   .text-balance {
@@ -122,7 +128,7 @@
     --sidebar-ring: oklch(0.556 0 0);
   }
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border;
   }
   body {
     @apply bg-background text-foreground;
