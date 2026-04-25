@@ -143,6 +143,52 @@ describe('stripClassNames: line-number stability', () => {
   })
 })
 
+describe('stripClassNames: style attribute', () => {
+  it('strips inline style object with CSS property names', () => {
+    const src = `<div style={{color: '#073393', backgroundColor: '#ffffff'}}>x</div>`
+    const out = strip(src)
+    expect(out).not.toContain('color')
+    expect(out).not.toContain('backgroundColor')
+    expect(out).toContain('x</div>')
+  })
+
+  it('strips style="..." string attributes', () => {
+    const src = `<div style="color: red; text-align: center">x</div>`
+    const out = strip(src)
+    expect(out).not.toContain('color: red')
+    expect(out).not.toContain('center')
+    expect(out).toContain('x</div>')
+  })
+
+  it('does not strip myStyle or data-style', () => {
+    const src = `<Foo myStyle={{color: 'red'}} data-style="color: red" />`
+    const out = strip(src)
+    expect(out).toContain("color")
+  })
+
+  it('handles style with nested object values like {fontSize: \"16px\"}', () => {
+    const src = `<div style={{
+      color: '#073393',
+      borderTop: '1px solid #E2E8F0',
+      fontFamily: "'Open Sans', Arial, sans-serif"
+    }}>hi</div>`
+    const out = strip(src)
+    expect(out).not.toContain('color')
+    expect(out).not.toContain('borderTop')
+    expect(out).toContain('hi</div>')
+  })
+
+  it('preserves line count when stripping multi-line style object', () => {
+    const src = `<div style={{
+      color: '#073393',
+      fontSize: '14px',
+      fontWeight: 600
+    }}>hi</div>`
+    const out = strip(src)
+    expect(out.split('\n').length).toBe(src.split('\n').length)
+  })
+})
+
 describe('stripClassNames: real-world shadcn primitive shapes', () => {
   it('strips cva() string arguments without mistaking them for English', () => {
     const src = `const buttonVariants = cva(

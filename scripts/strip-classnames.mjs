@@ -1,31 +1,40 @@
 /*
  * scripts/strip-classnames.mjs
  *
- * Strips className attribute values from JSX/TSX content while preserving
- * line numbers (newlines are kept; values are replaced with empty
- * placeholders). Used by scripts/docs-lint.sh as the British-English
- * preprocessor: Tailwind utility classes (text-center, transition-colors)
- * inside className attributes contain words that look like American
- * spellings but are CSS class names, not user-facing English.
+ * Strips JSX attribute values from .ts/.tsx content while preserving
+ * line numbers (newlines kept; values replaced with empty placeholders).
+ * Used by scripts/docs-lint.sh as the British-English preprocessor:
+ * Tailwind utility classes inside className (text-center, transition-
+ * colors) and CSS-in-JS property names inside style (color, backgroundColor)
+ * contain words that look like American spellings but are code, not
+ * user-facing English.
  *
- * Three className forms are recognised, per Fix-14:
- *   1. className="..."       (double-quoted attribute)
- *   2. className='...'       (single-quoted attribute)
- *   3. className={...}       (JSX expression: template literals, cn() calls,
- *                             ternaries, anything brace-balanced)
+ * Two attribute names are recognised:
+ *   1. className=
+ *   2. style=
  *
- * Attribute-boundary check: only matches `className=` preceded by a
- * non-identifier character (whitespace, `<`, `(`, `,`, `;`, `{`, `[`),
- * so `data-className=` is left intact.
+ * For each, three value forms are handled:
+ *   a. =""    (double-quoted)
+ *   b. =''    (single-quoted)
+ *   c. ={...} (JSX expression: template literals, cn() calls, object
+ *              literals like style={{color: '#xxx'}}, ternaries, anything
+ *              brace-balanced)
  *
- * The function is pure and exported for testing. The same file is also
- * a CLI: when invoked directly via `node scripts/strip-classnames.mjs`,
- * it reads stdin and writes the stripped output to stdout.
+ * Attribute-boundary check: only matches `<attr>=` preceded by a non-
+ * identifier character (whitespace, `<`, `(`, `,`, `;`, `{`, `[`), so
+ * `data-className=` and `myClassName=` are left intact.
+ *
+ * The exported function name is stripClassNames for backward compat with
+ * Fix-14 imports; functionally it is a multi-attribute stripper.
+ *
+ * CLI: invoke via `node scripts/strip-classnames.mjs`, reads stdin,
+ * writes stripped output to stdout.
  */
 
 import { readFileSync } from 'node:fs'
 
 const NAME_CHAR = /[A-Za-z0-9_$-]/
+const ATTRS_TO_STRIP = ['className', 'style']
 
 export function stripClassNames(input) {
   const out = []
@@ -33,17 +42,17 @@ export function stripClassNames(input) {
   const n = input.length
 
   while (i < n) {
-    // Match `className=` only at attribute boundaries.
-    if (input.startsWith('className=', i)) {
+    const matched = matchAttrPrefix(input, i)
+    if (matched) {
       const prev = i > 0 ? input[i - 1] : ''
       if (prev && NAME_CHAR.test(prev)) {
-        // Part of a longer identifier (e.g., data-className). Skip.
+        // Part of a longer identifier (data-className, myStyle, etc.). Skip.
         out.push(input[i])
         i++
         continue
       }
-      out.push('className=')
-      i += 'className='.length
+      out.push(matched)
+      i += matched.length
 
       const ch = input[i]
       if (ch === '"' || ch === "'") {
@@ -59,6 +68,14 @@ export function stripClassNames(input) {
   }
 
   return out.join('')
+}
+
+function matchAttrPrefix(input, i) {
+  for (const attr of ATTRS_TO_STRIP) {
+    const prefix = `${attr}=`
+    if (input.startsWith(prefix, i)) return prefix
+  }
+  return null
 }
 
 // Advance past a quoted string starting at i (input[i] is the opening quote).
