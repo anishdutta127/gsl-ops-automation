@@ -1,34 +1,101 @@
 /*
  * scripts/strip-classnames.mjs
  *
- * Strips JSX attribute values from .ts/.tsx content while preserving
- * line numbers (newlines kept; values replaced with empty placeholders).
- * Used by scripts/docs-lint.sh as the British-English preprocessor:
- * Tailwind utility classes inside className (text-center, transition-
- * colors) and CSS-in-JS property names inside style (color, backgroundColor)
- * contain words that look like American spellings but are code, not
- * user-facing English.
+ * Preprocessor for the British-English check in scripts/docs-lint.sh.
+ * Strips selected JSX attribute values from .ts/.tsx content while
+ * preserving line numbers (newlines kept; values replaced with empty
+ * placeholders so error reports point at the right line).
  *
- * Two attribute names are recognised:
- *   1. className=
- *   2. style=
+ * The function exported as stripClassNames() is now a multi-attribute
+ * stripper despite the name (kept for backward compat with the Fix-14
+ * import). Renaming would force a coordinated change in docs-lint.sh,
+ * the CLI invocation, and the test imports.
  *
- * For each, three value forms are handled:
- *   a. =""    (double-quoted)
- *   b. =''    (single-quoted)
- *   c. ={...} (JSX expression: template literals, cn() calls, object
- *              literals like style={{color: '#xxx'}}, ternaries, anything
- *              brace-balanced)
+ * ============================================================================
+ * What gets stripped (attribute scope)
+ * ============================================================================
  *
- * Attribute-boundary check: only matches `<attr>=` preceded by a non-
- * identifier character (whitespace, `<`, `(`, `,`, `;`, `{`, `[`), so
- * `data-className=` and `myClassName=` are left intact.
+ * Attribute name        Why it's stripped
+ * --------------------  ----------------------------------------------------
+ * className=            Tailwind utility classes (text-center, transition-
+ *                       colors, items-center) contain words that look like
+ *                       American spellings but are CSS class identifiers.
+ * style=                CSS-in-JS object keys (color, backgroundColor,
+ *                       textAlign) and string-form CSS values (color: red)
+ *                       contain CSS property names, not English prose.
  *
- * The exported function name is stripClassNames for backward compat with
- * Fix-14 imports; functionally it is a multi-attribute stripper.
+ * ============================================================================
+ * What value forms are handled (per attribute)
+ * ============================================================================
  *
- * CLI: invoke via `node scripts/strip-classnames.mjs`, reads stdin,
- * writes stripped output to stdout.
+ * Value form                                    Example
+ * --------------------------------------------  --------------------------
+ * 1. ="..." double-quoted attribute             className="text-center"
+ * 2. ='...' single-quoted attribute             className='text-center'
+ * 3. ={`...`} JSX expression: static template   className={`text-center`}
+ *    literal
+ * 4. ={`...${x}...`} JSX expression: template   className={`p-2 ${active
+ *    literal with ${...} interpolation,         ? "bg-teal" : "bg-slate"}`}
+ *    nested-brace-aware
+ * 5. ={cn(...)} JSX expression: function call,  className={cn("text-center",
+ *    nested-string-aware                        active && "text-blue")}
+ * 6. ={{ ... }} JSX expression: object literal  style={{ color: "#073393",
+ *    (style attr's idiomatic form)              fontSize: "14px" }}
+ * 7. ={someVar} JSX expression: identifier      className={baseClasses}
+ *
+ * Forms 3-7 all flow through a single brace-counted skip that respects
+ * string literals, template literals (including ${...} interpolations),
+ * and nested braces. The skip is in scripts/strip-classnames.mjs's
+ * skipExpression() and friends.
+ *
+ * ============================================================================
+ * What is NOT stripped (deliberate)
+ * ============================================================================
+ *
+ *   data-className=, myClassName=        Attribute-boundary check
+ *                                        (preceding char must be a non-
+ *                                        identifier, not a name char).
+ *   raw object literals at module scope  Only attribute= forms are stripped;
+ *                                        const FOO = { color: '...' } is
+ *                                        not. Use British 'colour' to
+ *                                        avoid the British-English flag,
+ *                                        or rename if the field name
+ *                                        legitimately requires it.
+ *   cva() calls outside className=       cva strings inside src/components/
+ *                                        ui/ are scope-excluded at the
+ *                                        docs-lint.sh level (vendored
+ *                                        shadcn primitives) rather than
+ *                                        parsed.
+ *   Markdown rule-doc anti-examples      The British English check is
+ *                                        scoped to .ts/.tsx in
+ *                                        docs-lint.sh. Markdown is
+ *                                        reviewer-judged.
+ *   *.test.ts(x) test fixture strings    Excluded at docs-lint.sh level.
+ *
+ * ============================================================================
+ * Extension history
+ * ============================================================================
+ *
+ * Each extension was reactive (a new pattern broke; we added handling).
+ * Pattern observation: keep this header current when adding new attribute
+ * names or value forms so future contributors see the scope at a glance.
+ *
+ *   Item 8       Initial em-dash check; preprocessor only stripped
+ *                className="..." double-quoted attributes.
+ *   Fix-14       Extended to template-literal and cn() forms (JSX
+ *                expressions with brace-balanced skip + string awareness).
+ *                Added attribute-boundary check (NAME_CHAR regex).
+ *   Item 11C     Extended to style= attribute (the same brace-balanced
+ *                skip handled object-literal value forms naturally).
+ *
+ * ============================================================================
+ * CLI
+ * ============================================================================
+ *
+ * Invoke via `node scripts/strip-classnames.mjs`, reads stdin, writes the
+ * stripped output to stdout. The same module is imported by
+ * src/lib/lint/stripClassNames.test.ts as a Vitest fixture for the unit
+ * tests covering each value form above.
  */
 
 import { readFileSync } from 'node:fs'
