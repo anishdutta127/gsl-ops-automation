@@ -102,3 +102,44 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 ---
 
 **These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
+
+---
+
+## Routing tree (post-ceremony, 2026-04)
+
+For any question CC encounters in this repo, this table picks the first document to consult. Read this once; it becomes background.
+
+| Question type | First document | Notes |
+|---|---|---|
+| "What does the system do?" | `ops-data/GSL_Ops_Handoff.md` | Plus the executive brief if the question is strategic. |
+| "What's in Phase 1 scope?" | `plans/anish-ops-ceo-review-2026-04-24.md` | 5 axes; out-of-scope items are explicit. |
+| "What entity / endpoint / test?" | `plans/anish-ops-eng-review-2026-04-24.md` | 6 entity types, 9-test suite, D7 refinement. |
+| "What does it look like / what copy?" | `DESIGN.md` (canonical), then `plans/anish-ops-design-review-2026-04-24.md` (rationale) | DESIGN.md wins on conflict (living source vs review snapshot). |
+| "How do I run / launch / recover?" | `docs/RUNBOOK.md` | Living document; post-incident updates here. |
+| "How do I contribute / first PR?" | `docs/DEVELOPER.md` | 6-command first-run flow. |
+| "What's deferred?" | `plans/anish-ops-eng-review-2026-04-24.md` §"Phase 1.1 backlog" | Plus risk registry above. |
+| "Who can do X without Anish?" | `plans/anish-ops-devex-review-2026-04-24.md` §"Item 8" | Self-maintainability matrix. |
+| "What's the trigger for Item A through J?" | `plans/assumptions-and-triggers-2026-04-24.md` | 10 items A-J with thresholds. |
+| "Why does X have a weird shape?" | grep `plans/` for the relevant Q-x or Tension-x | Decision archive; never silently re-litigated. |
+| "What was decided at office hours?" | `plans/anish-ops-office-hours-2026-04-24.md` | P1-P6 + Q-J resolution. |
+
+For any UI-touching task: always read DESIGN.md before the editor opens.
+For any task: always read CLAUDE.md (this file) at session start.
+
+## Read-order for fresh sessions
+
+For every fresh CC session opening this repo:
+
+1. Read CLAUDE.md (you're already doing this).
+2. Read DESIGN.md (always; visual + copy rules).
+3. If the task touches a Phase 1 decision: read the relevant plans/ artefact.
+4. If the task is implementation: read the file you're touching plus its sibling tests.
+5. If the task is a launch / monitoring / failure question: read docs/RUNBOOK.md.
+
+The goal is enough context to make judgement calls without needing to ask, while not re-reading the entire repo every session.
+
+## Plans are an archive, not a guide
+
+Documents under `plans/` are the decision archive. They explain *why* a Phase 1 decision is the way it is. They are NOT implementation guides; once Phase 1 has landed, the code is the implementation guide and `plans/` answers historical questions only.
+
+Do not reference `plans/` line numbers in implementation code or docstrings; use code self-evidence and DESIGN.md cross-references instead. If you need to cite a plan in a code comment for context, name the section by title, not line number, so the reference survives plan edits.
