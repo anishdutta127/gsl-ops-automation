@@ -284,6 +284,7 @@ These are deliberate Phase 1 scope cuts, not bugs. Each names the trigger that f
 - **Multi-device sessions accepted.** The session cookie is JWT-based with no server-side session list, so Anish on desktop + Anish on phone are two simultaneously-valid sessions. Reconsideration trigger: the audit-log shows a single user-id session being used from geographically-distant IPs simultaneously, suggesting credential leak. Implementation would add `sessions.json` with per-user concurrency limit and a queue write per login.
 - **No `/forgot-password` or `/account/password` route.** Password recovery is a manual edit to `src/data/_fixtures/users.json` + `npm run seed:dev` per `docs/DEVELOPER.md` §"Password recovery (testers)". Phase 1.1 trigger: testers actually ask for self-service.
 - **`/api/health` is binary status only.** Returns `{ status: 'ok', timestamp, version }` for uptime monitors. The graded data-integrity view (queue depth, JSON validity, sync-runner pulse) lives on the dashboard tile instead, where a human can read it usefully.
+- **`AuditLogPanel` renders all entries inline.** Phase 1 audit logs are small (most entities have 0-2 entries today; full-lifecycle MOUs project to 15-25 entries by 8-week pilot end). Phase 1.1 trigger: if any entity's auditLog exceeds 30 entries in production, refactor `AuditLogPanel` to truncate-with-expand or paginate, AND consider extending `AuditFilterRail` to accept `entityId=<id>` for cross-route deep dives from detail pages back into `/admin/audit`.
 
 ### 10.1 Operational notes (developer environment)
 

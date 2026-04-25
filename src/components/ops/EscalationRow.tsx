@@ -8,9 +8,10 @@
  */
 
 import Link from 'next/link'
-import { Briefcase, ChevronRight, GraduationCap, Wrench } from 'lucide-react'
+import { ChevronRight } from 'lucide-react'
 import type { EscalationLane, EscalationLevel } from '@/lib/types'
 import { cn } from '@/lib/utils'
+import { LaneBadge, LANE_LABEL } from './LaneBadge'
 
 interface EscalationRowProps {
   schoolName: string
@@ -22,28 +23,6 @@ interface EscalationRowProps {
   href: string
 }
 
-const LANE_PILL: Record<
-  EscalationLane,
-  { className: string; icon: typeof Wrench; label: string }
-> = {
-  OPS: {
-    className:
-      'bg-[var(--brand-teal)] text-[var(--brand-navy)] border-transparent',
-    icon: Wrench,
-    label: 'Operations lane',
-  },
-  SALES: {
-    className: 'bg-[var(--brand-navy)] text-white border-transparent',
-    icon: Briefcase,
-    label: 'Sales lane',
-  },
-  ACADEMICS: {
-    className: 'bg-amber-700 text-white border-transparent',
-    icon: GraduationCap,
-    label: 'Academics lane',
-  },
-}
-
 export function EscalationRow({
   schoolName,
   description,
@@ -53,8 +32,6 @@ export function EscalationRow({
   daysSince,
   href,
 }: EscalationRowProps) {
-  const pill = LANE_PILL[lane]
-  const PillIcon = pill.icon
   const dayLabel = daysSince === 1 ? '1d' : `${daysSince}d`
   const fanOut =
     notifiedNames.length > 0
@@ -69,22 +46,14 @@ export function EscalationRow({
         'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px]',
         'focus-visible:outline-[var(--brand-navy)]',
       )}
-      aria-label={`${schoolName} escalation, ${pill.label}, level ${level}. ${description}. ${dayLabel} since.`}
+      aria-label={`${schoolName} escalation, ${LANE_LABEL[lane]}, level ${level}. ${description}. ${dayLabel} since.`}
     >
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
           <span className="truncate text-base font-medium text-[var(--brand-navy)]">
             {schoolName}
           </span>
-          <span
-            className={cn(
-              'inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-semibold uppercase',
-              pill.className,
-            )}
-          >
-            <PillIcon aria-hidden className="size-3" />
-            {lane}
-          </span>
+          <LaneBadge lane={lane} />
           <span className="inline-flex items-center rounded-full border border-[var(--brand-navy)] bg-white px-2 py-0.5 text-[11px] font-semibold text-[var(--brand-navy)]">
             {level}
           </span>

@@ -23,7 +23,7 @@ describe('EscalationRow', () => {
     expect(html).toContain('href="/escalations/E-001"')
   })
 
-  it('OPS lane pill uses brand teal background with brand navy text', () => {
+  it('OPS lane pill uses brand teal background with brand navy text (via LaneBadge)', () => {
     const html = renderToStaticMarkup(
       <EscalationRow
         schoolName="x"
@@ -36,8 +36,10 @@ describe('EscalationRow', () => {
       />,
     )
     expect(html).toContain('OPS')
-    expect(html).toContain('var(--brand-teal)')
-    expect(html).toContain('var(--brand-navy)')
+    // Post-LaneBadge-extract: tokens come through Tailwind named classes,
+    // not raw var() refs in the rendered HTML.
+    expect(html).toContain('bg-brand-teal')
+    expect(html).toContain('text-brand-navy')
     expect(html).not.toMatch(/#[0-9a-fA-F]{3,6}/)
   })
 
