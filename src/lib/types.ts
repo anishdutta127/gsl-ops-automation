@@ -323,7 +323,7 @@ export interface CcRule {
   scope: CcRuleScope
   scopeValue: string | string[]    // e.g., 'East', ['Raipur','Pune','Nagpur'], '1..7'
   contexts: CcRuleContext[]        // literal scoping per step 6.5 Item D
-  ccUserIds: string[]              // FK to users.json; resolved to emails at send-time
+  ccUserIds: string[]              // FK to users.json OR sales_team.json; resolved to emails at send-time by ccResolver
   enabled: boolean                 // step 6.5 Item H; default true
   sourceRuleText: string           // original free-text from SPOC DB (audit)
   createdAt: string

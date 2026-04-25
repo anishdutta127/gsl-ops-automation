@@ -1,130 +1,290 @@
 /*
- * Q-G Test 7: ccRuleResolver (TODO scaffold).
+ * Q-G Test 7: ccRuleResolver.
  *
- * This is a Q-G test scaffold landed via Item 15b. The subject is
- * `src/lib/ccResolver.ts` which is Phase 1 implementation work
- * scheduled for Week 2 (NOT Week 1 scaffolding scope per step 10
- * Item 7). When the lib lands, replace each it.todo() with real
- * assertions per the given/when/then comments below.
+ * Drives src/lib/ccResolver.ts against the 10 pre-seeded SPOC-DB
+ * rules in src/data/_fixtures/cc_rules.json and the 15 schools +
+ * 5 MOUs + 9 users + 5 sales people in the matching fixtures.
  *
- * Per step 8 eng review Q-G Test 7:
- *   "for each of the 10 pre-seeded SPOC-DB rules, assert
- *    resolveCcList(context, schoolId, mouId) returns the right CC
- *    list across the context matrix (welcome-note /
- *    three-ping-cadence / dispatch-notification / feedback-request /
- *    closing-letter / escalation-notification / all-communications).
- *    Verifies literal scoping per step 6.5 Item D."
- *
- * The 10 rules are seeded in src/data/_fixtures/cc_rules.json
- * (Item 12). They cover South-West / East / North sheets plus
- * derived training-mode and per-school scopes. Each rule has an
- * explicit `contexts: CcRuleContext[]` array per literal-scoping.
+ * Verifies step 6.5 Item D literal scoping (rule for "welcome notes"
+ * does NOT fire on cadence pings) and the dedupe + disabled-rule
+ * contracts. Final parametric block isolates each rule against an
+ * empty rules array except itself, then asserts deep equality across
+ * the 7-context matrix; this is the strongest possible assertion
+ * because it removes cross-rule interference.
  */
 
-import { describe, it } from 'vitest'
+import { describe, expect, it } from 'vitest'
+import { resolveCcList, type CcResolverDeps } from './ccResolver'
+import type {
+  CcRule,
+  CcRuleContext,
+  MOU,
+  SalesPerson,
+  School,
+  User,
+} from './types'
+import ccRulesJson from '@/data/cc_rules.json'
+import schoolsJson from '@/data/schools.json'
+import mousJson from '@/data/mous.json'
+import usersJson from '@/data/users.json'
+import salesTeamJson from '@/data/sales_team.json'
 
-describe('Q-G Test 7: ccRuleResolver (Week 2 scope)', () => {
-  it.todo(
-    'CCR-SW-RAIPUR-PUNE-NAGPUR fires on all-communications for matching schools',
-    /*
-     * Given: rule scope=sub-region, scopeValue=['Raipur','Pune',
-     *        'Nagpur'], contexts=['all-communications'].
-     * When:  resolveCcList(context: any-of-the-7, schoolId for a
-     *        Pune school, mouId) runs.
-     * Then:  return list includes the rule's ccUserIds resolved
-     *        to email addresses; same for any context (all-
-     *        communications matches everything).
-     */
-  )
+const allRules = ccRulesJson as unknown as CcRule[]
+const allSchools = schoolsJson as unknown as School[]
+const allMous = mousJson as unknown as MOU[]
+const allUsers = usersJson as unknown as User[]
+const allSalesTeam = salesTeamJson as unknown as SalesPerson[]
 
-  it.todo(
-    'CCR-EAST-WELCOME fires only on welcome-note (literal scoping verified)',
-    /*
-     * Given: rule scope=region, scopeValue='East', contexts=
-     *        ['welcome-note'] (note: NOT all-communications).
-     * When:  resolveCcList('welcome-note', schoolId for an East
-     *        school, mouId) runs; then resolveCcList for each of
-     *        the other 6 contexts.
-     * Then:  welcome-note returns the rule's ccUserIds; the
-     *        other 6 contexts return empty (or only matches from
-     *        OTHER rules). Literal scoping per step 6.5 Item D
-     *        verified: a rule for "welcome notes" does NOT fire
-     *        on installment cadence pings.
-     */
-  )
+const defaultDeps: CcResolverDeps = {
+  rules: allRules,
+  schools: allSchools,
+  mous: allMous,
+  users: allUsers,
+  salesTeam: allSalesTeam,
+}
 
-  it.todo(
-    'CCR-NORTH-1-7 sr-no-range scope matches schools in the named range',
-    /*
-     * Given: rule scope=sr-no-range, scopeValue='1..7' on the
-     *        North sheet.
-     * When:  resolveCcList for an N-North school whose sr-no in
-     *        the source SPOC DB is between 1 and 7.
-     * Then:  return list includes the rule's ccUserIds.
-     *
-     * Implementation note: the resolver needs a way to look up a
-     * school's North-sheet sr-no, since that's not a first-class
-     * field on the School entity. Either store sr-no on the
-     * School at import time or maintain a lookup table in the
-     * rule resolver.
-     */
-  )
+const ALL_CONTEXTS: CcRuleContext[] = [
+  'welcome-note',
+  'three-ping-cadence',
+  'dispatch-notification',
+  'feedback-request',
+  'closing-letter',
+  'escalation-notification',
+  'all-communications',
+]
 
-  it.todo(
-    'CCR-TTT-FEEDBACK fires only on TTT-mode schools and only for feedback-request',
-    /*
-     * Given: rule scope=training-mode, scopeValue='TTT',
-     *        contexts=['feedback-request'].
-     * When:  resolveCcList('feedback-request', schoolId for a TTT-
-     *        mode school) and same for a GSL-Trainer-mode school.
-     * Then:  TTT-mode school includes ccUserIds; GSL-Trainer-mode
-     *        school does not. Per step 6.5 Item D literal scoping
-     *        plus training-mode resolution.
-     */
-  )
+function emailFor(id: string): string {
+  const u = allUsers.find((x) => x.id === id)
+  if (u) return u.email
+  const sp = allSalesTeam.find((x) => x.id === id)
+  if (sp) return sp.email
+  throw new Error(`Test fixture mismatch: id ${id} not in users or sales`)
+}
 
-  it.todo(
-    'multiple matching rules dedupe overlapping ccUserIds in the result',
-    /*
-     * Given: a school that matches both CCR-SW-RAIPUR-PUNE-NAGPUR
-     *        (sub-region) AND CCR-NARAYANA-CHAIN (school-specific),
-     *        and both rules name the same user in ccUserIds.
-     * When:  resolveCcList runs.
-     * Then:  the user appears exactly once in the email list (no
-     *        duplicates).
-     */
-  )
+function ruleById(id: string): CcRule {
+  const r = allRules.find((x) => x.id === id)
+  if (!r) throw new Error(`Test fixture mismatch: rule ${id} not found`)
+  return r
+}
 
-  it.todo(
-    'disabled rules (enabled=false) do not contribute to the CC list',
-    /*
-     * Given: rule with enabled=false (per step 6.5 Item H toggle).
-     * When:  resolveCcList runs against a school that would
-     *        otherwise match.
-     * Then:  the rule's ccUserIds are NOT in the result. Toggle-
-     *        off is the live mechanism for Misba to silence a
-     *        rule without deleting it.
-     */
-  )
+describe('Q-G Test 7: ccRuleResolver', () => {
+  it('CCR-SW-RAIPUR-PUNE-NAGPUR fires on all 7 contexts for matching schools', () => {
+    // Greenfield is in Pune, South-West.
+    for (const context of ALL_CONTEXTS) {
+      const result = resolveCcList(
+        { context, schoolId: 'SCH-GREENFIELD-PUNE', mouId: 'MOU-STEAM-2627-001' },
+        defaultDeps,
+      )
+      expect(result).toContain(emailFor('sp-vikram'))
+    }
+  })
 
-  it.todo(
-    'all 10 pre-seeded rules resolve correctly across the 7 context matrix',
-    /*
-     * Given: all 10 rules from cc_rules.json fixture.
-     * When:  resolveCcList runs for each (rule, context) pair;
-     *        70 calls.
-     * Then:  each call returns the expected ccUserIds per the
-     *        rule's contexts[] list.
-     *
-     * Implementation: drive via a parametric loop. Acceptance:
-     *
-     *   for each rule R in cc_rules.json:
-     *     for each context C in CcRuleContext:
-     *       result = await resolveCcList(C, schoolId-matching-R, ...)
-     *       expected = R.contexts.includes(C) || R.contexts.includes('all-communications')
-     *         ? R.ccUserIds.map(id => userEmail(id))
-     *         : []
-     *       assertResult(result, expected)
-     */
-  )
+  it('CCR-SW-RAIPUR-PUNE-NAGPUR does not fire for South-West schools outside the named cities', () => {
+    // Sunrise is in Hyderabad, South-West, but not Raipur/Pune/Nagpur.
+    // Isolate against just this rule.
+    const deps: CcResolverDeps = { ...defaultDeps, rules: [ruleById('CCR-SW-RAIPUR-PUNE-NAGPUR')] }
+    const result = resolveCcList(
+      { context: 'all-communications', schoolId: 'SCH-SUNRISE-HYD', mouId: null },
+      deps,
+    )
+    expect(result).toEqual([])
+  })
+
+  it('CCR-EAST-WELCOME fires only on welcome-note (literal scoping)', () => {
+    // Isolate against just CCR-EAST-WELCOME so other East rules don't pollute.
+    const deps: CcResolverDeps = { ...defaultDeps, rules: [ruleById('CCR-EAST-WELCOME')] }
+    const expected = [emailFor('sp-rohan')]
+
+    expect(
+      resolveCcList(
+        { context: 'welcome-note', schoolId: 'SCH-SPRINGWOOD-KOL', mouId: null },
+        deps,
+      ),
+    ).toEqual(expected)
+
+    for (const context of ALL_CONTEXTS) {
+      if (context === 'welcome-note') continue
+      const result = resolveCcList(
+        { context, schoolId: 'SCH-SPRINGWOOD-KOL', mouId: null },
+        deps,
+      )
+      expect(result).toEqual([])
+    }
+  })
+
+  it('CCR-NORTH-1-7 sr-no-range matches schools in the named range', () => {
+    // SCH-OAKWOOD-DEL is sr-no=1, in 1..7.
+    const deps: CcResolverDeps = { ...defaultDeps, rules: [ruleById('CCR-NORTH-1-7')] }
+    const result = resolveCcList(
+      { context: 'all-communications', schoolId: 'SCH-OAKWOOD-DEL', mouId: null },
+      deps,
+    )
+    expect(result).toEqual([emailFor('sp-neha')])
+  })
+
+  it('CCR-NORTH-1-7 does not match a North school outside the sr-no lookup', () => {
+    // No sr-no entry beyond Pearl (sr-no 5); a school not in the
+    // lookup table should not match even though the range goes to 7.
+    const deps: CcResolverDeps = { ...defaultDeps, rules: [ruleById('CCR-NORTH-1-7')] }
+    const result = resolveCcList(
+      { context: 'all-communications', schoolId: 'SCH-GREENFIELD-PUNE', mouId: null },
+      deps,
+    )
+    expect(result).toEqual([])
+  })
+
+  it('CCR-TTT-FEEDBACK fires only on TT-mode MOUs and only for feedback-request', () => {
+    const deps: CcResolverDeps = { ...defaultDeps, rules: [ruleById('CCR-TTT-FEEDBACK')] }
+    // MOU-TINK-2627-002 is trainerModel='TT' (alias of TTT) for Oakwood.
+    expect(
+      resolveCcList(
+        { context: 'feedback-request', schoolId: 'SCH-OAKWOOD-DEL', mouId: 'MOU-TINK-2627-002' },
+        deps,
+      ),
+    ).toEqual([emailFor('shashank.s')])
+
+    // Same school + same rule, wrong context -> empty.
+    expect(
+      resolveCcList(
+        { context: 'welcome-note', schoolId: 'SCH-OAKWOOD-DEL', mouId: 'MOU-TINK-2627-002' },
+        deps,
+      ),
+    ).toEqual([])
+
+    // GSL-T MOU + feedback-request -> rule does not fire.
+    expect(
+      resolveCcList(
+        { context: 'feedback-request', schoolId: 'SCH-GREENFIELD-PUNE', mouId: 'MOU-STEAM-2627-001' },
+        deps,
+      ),
+    ).toEqual([])
+
+    // mouId=null + feedback-request -> rule does not fire (no trainerModel resolvable).
+    expect(
+      resolveCcList(
+        { context: 'feedback-request', schoolId: 'SCH-OAKWOOD-DEL', mouId: null },
+        deps,
+      ),
+    ).toEqual([])
+  })
+
+  it('CCR-GSLT-ALL fires on every context for GSL-T MOUs (alias normalisation)', () => {
+    const deps: CcResolverDeps = { ...defaultDeps, rules: [ruleById('CCR-GSLT-ALL')] }
+    for (const context of ALL_CONTEXTS) {
+      const result = resolveCcList(
+        { context, schoolId: 'SCH-GREENFIELD-PUNE', mouId: 'MOU-STEAM-2627-001' },
+        deps,
+      )
+      expect(result).toEqual([emailFor('shashank.s')])
+    }
+  })
+
+  it('overlapping ccUserIds dedupe across multiple matching rules', () => {
+    // Narayana ASN is East AND school-specific. Both CCR-EAST-WELCOME
+    // and CCR-NARAYANA-CHAIN name sp-rohan. On welcome-note both fire;
+    // sp-rohan should appear exactly once.
+    const result = resolveCcList(
+      { context: 'welcome-note', schoolId: 'SCH-NARAYANA-ASN', mouId: 'MOU-STEAM-2627-004' },
+      defaultDeps,
+    )
+    const rohan = emailFor('sp-rohan')
+    const occurrences = result.filter((e) => e === rohan).length
+    expect(occurrences).toBe(1)
+  })
+
+  it('disabled rules (enabled=false) do not contribute to the result', () => {
+    // Disable CCR-EAST-WELCOME and assert sp-rohan disappears from
+    // an East-school + welcome-note call (in isolation).
+    const disabled: CcRule = { ...ruleById('CCR-EAST-WELCOME'), enabled: false }
+    const deps: CcResolverDeps = { ...defaultDeps, rules: [disabled] }
+    const result = resolveCcList(
+      { context: 'welcome-note', schoolId: 'SCH-SPRINGWOOD-KOL', mouId: null },
+      deps,
+    )
+    expect(result).toEqual([])
+  })
+
+  it('CCR-ESCALATION-LEADERSHIP region=ALL matches every school but only on escalation-notification', () => {
+    const deps: CcResolverDeps = { ...defaultDeps, rules: [ruleById('CCR-ESCALATION-LEADERSHIP')] }
+    const ameet = emailFor('ameet.z')
+    // Every school, escalation-notification: fires.
+    for (const school of allSchools) {
+      const result = resolveCcList(
+        { context: 'escalation-notification', schoolId: school.id, mouId: null },
+        deps,
+      )
+      expect(result).toEqual([ameet])
+    }
+    // Same school, other context: empty.
+    expect(
+      resolveCcList(
+        { context: 'welcome-note', schoolId: 'SCH-GREENFIELD-PUNE', mouId: null },
+        deps,
+      ),
+    ).toEqual([])
+  })
+
+  it('unknown ccUserId is silently skipped (not crashed on)', () => {
+    const ghost: CcRule = {
+      ...ruleById('CCR-ESCALATION-LEADERSHIP'),
+      ccUserIds: ['does-not-exist', 'ameet.z'],
+    }
+    const deps: CcResolverDeps = { ...defaultDeps, rules: [ghost] }
+    const result = resolveCcList(
+      { context: 'escalation-notification', schoolId: 'SCH-GREENFIELD-PUNE', mouId: null },
+      deps,
+    )
+    expect(result).toEqual([emailFor('ameet.z')])
+  })
+
+  it('unknown schoolId returns []', () => {
+    const result = resolveCcList(
+      { context: 'all-communications', schoolId: 'SCH-DOES-NOT-EXIST', mouId: null },
+      defaultDeps,
+    )
+    expect(result).toEqual([])
+  })
+
+  // Parametric coverage. For each rule, isolate it (rules: [R]) and
+  // pick a school + MOU known to satisfy its scope; then for each of
+  // the 7 contexts assert: the email list equals R.ccUserIds (mapped
+  // through emailFor) when the rule's contexts match C OR include
+  // 'all-communications', else equals []. 70 assertions total.
+  describe('parametric: 10 rules x 7 contexts in isolation', () => {
+    interface Fixture { schoolId: string; mouId: string | null }
+    const RULE_FIXTURES: Record<string, Fixture> = {
+      'CCR-SW-RAIPUR-PUNE-NAGPUR': { schoolId: 'SCH-GREENFIELD-PUNE', mouId: 'MOU-STEAM-2627-001' },
+      'CCR-SW-BANGALORE': { schoolId: 'SCH-MAPLELEAF-BLR', mouId: null },
+      'CCR-EAST-WELCOME': { schoolId: 'SCH-SPRINGWOOD-KOL', mouId: null },
+      'CCR-EAST-DISPATCH': { schoolId: 'SCH-SPRINGWOOD-KOL', mouId: null },
+      'CCR-NORTH-1-7': { schoolId: 'SCH-OAKWOOD-DEL', mouId: null },
+      'CCR-NORTH-WELCOME-CLOSE': { schoolId: 'SCH-OAKWOOD-DEL', mouId: null },
+      'CCR-TTT-FEEDBACK': { schoolId: 'SCH-OAKWOOD-DEL', mouId: 'MOU-TINK-2627-002' },
+      'CCR-GSLT-ALL': { schoolId: 'SCH-GREENFIELD-PUNE', mouId: 'MOU-STEAM-2627-001' },
+      'CCR-NARAYANA-CHAIN': { schoolId: 'SCH-NARAYANA-ASN', mouId: 'MOU-STEAM-2627-004' },
+      'CCR-ESCALATION-LEADERSHIP': { schoolId: 'SCH-GREENFIELD-PUNE', mouId: null },
+    }
+
+    for (const rule of allRules) {
+      const fixture = RULE_FIXTURES[rule.id]
+      if (!fixture) {
+        it.fails(`fixture missing for rule ${rule.id}`, () => {})
+        continue
+      }
+      for (const context of ALL_CONTEXTS) {
+        const fires =
+          rule.contexts.includes(context) ||
+          rule.contexts.includes('all-communications')
+        const expected = fires ? rule.ccUserIds.map((id) => emailFor(id)) : []
+        it(`${rule.id} x ${context} -> ${fires ? expected.join(',') : '[]'}`, () => {
+          const deps: CcResolverDeps = { ...defaultDeps, rules: [rule] }
+          const result = resolveCcList(
+            { context, schoolId: fixture.schoolId, mouId: fixture.mouId },
+            deps,
+          )
+          expect(result.sort()).toEqual(expected.sort())
+        })
+      }
+    }
+  })
 })
