@@ -1,5 +1,4 @@
 import { describe, it, expect } from 'vitest'
-// @ts-expect-error: ESM module import without types; the function is pure JS.
 import { stripClassNames } from '../../../scripts/strip-classnames.mjs'
 
 const strip = stripClassNames as (input: string) => string
