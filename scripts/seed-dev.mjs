@@ -15,10 +15,20 @@
  *   production-like context where the queue is configured).
  *
  * Idempotency:
- *   Running seed:dev multiple times overwrites src/data/*.json with
- *   the fixture content each time. bcrypt is non-deterministic by
- *   design (random salt per call), so user passwordHash bytes differ
- *   between runs; functionally identical (GSL#123 still verifies).
+ *   Byte-stable across runs. Non-user fixtures are byte-copies of the
+ *   tracked _fixtures/ source so they cannot drift. For users.json,
+ *   bcrypt is non-deterministic (random salt per call) so naive
+ *   re-hashing would create noisy diffs in src/data/users.json on
+ *   every run. The transformUsers() pass therefore reads the existing
+ *   src/data/users.json before hashing: for each user, if a hash
+ *   already exists AND verifies the dev password, the existing hash
+ *   is preserved. Only users without a usable existing hash get
+ *   freshly hashed.
+ *
+ *   Pattern chosen because MOU tracks src/data/*.json in git (verified
+ *   2026-04-25 in gsl-mou-system); breaking consistency by gitignoring
+ *   src/data/ in Ops would diverge inheritance. Option (b) of the
+ *   three options surfaced at Item 13 close.
  *
  * Logged output:
  *   For each file: filename, record count, time elapsed. Total at
@@ -66,17 +76,52 @@ function assertNotProduction() {
 // ----------------------------------------------------------------------------
 
 async function transformUsers(records) {
-  // Replace each user's passwordHash placeholder with a fresh bcrypt
-  // hash of the dev password. Records that already carry a real
-  // bcrypt hash (e.g., copied from another seed) are NOT re-hashed.
+  // Skip-if-already-hashed pattern (option b of the Item 13 close
+  // discussion). Read the existing src/data/users.json once; for
+  // each user.id, look up its existing hash. If the existing hash
+  // still verifies the dev password, preserve it byte-identically.
+  // Otherwise hash fresh with random salt.
+  //
+  // Net effect: re-running seed:dev produces no users.json diff
+  // unless the dev password is rotated or a user is added/removed.
+
+  const existingByUserId = new Map()
+  try {
+    const existingRaw = readFileSync(resolve(DATA_DIR, 'users.json'), 'utf-8')
+    const existing = JSON.parse(existingRaw)
+    if (Array.isArray(existing)) {
+      for (const u of existing) {
+        if (
+          u && typeof u.id === 'string' && typeof u.passwordHash === 'string'
+        ) {
+          existingByUserId.set(u.id, u.passwordHash)
+        }
+      }
+    }
+  } catch {
+    // First run, or file is unreadable / malformed; hash fresh below.
+  }
+
   const out = []
   for (const user of records) {
-    if (user.passwordHash === PASSWORD_PLACEHOLDER || !user.passwordHash) {
-      const hash = await bcrypt.hash(DEV_PASSWORD, BCRYPT_COST)
-      out.push({ ...user, passwordHash: hash })
-    } else {
+    // Fixture already carries a real (non-placeholder) hash; uncommon
+    // but trust it.
+    if (user.passwordHash && user.passwordHash !== PASSWORD_PLACEHOLDER) {
       out.push(user)
+      continue
     }
+
+    const existingHash = existingByUserId.get(user.id)
+    if (existingHash && existingHash !== PASSWORD_PLACEHOLDER) {
+      const verifies = await bcrypt.compare(DEV_PASSWORD, existingHash).catch(() => false)
+      if (verifies) {
+        out.push({ ...user, passwordHash: existingHash })
+        continue
+      }
+    }
+
+    const hash = await bcrypt.hash(DEV_PASSWORD, BCRYPT_COST)
+    out.push({ ...user, passwordHash: hash })
   }
   return out
 }
