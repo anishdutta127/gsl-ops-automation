@@ -48,7 +48,7 @@ Supersedes: any prior design intent not captured in `DESIGN.md` (to be created a
 - **Semantic signal colours** (beyond the brand palette) for dashboard tile states:
   - `--signal-ok`: `#22C55E` (Tailwind green-500). Healthy metric, within expected range.
   - `--signal-attention`: `#F59E0B` (amber-500). Metric drifting toward a trigger threshold, not yet breached.
-  - `--signal-alert`: `#EF4444` (red-500). Trigger breached; action required.
+  - `--signal-alert`: `#DC2626` (red-600). Trigger breached; action required.
   - `--signal-neutral`: `#64748B` (slate-500). Informational, no signal.
   - **Colour is never the only signal** (WCAG 2.1 AA requirement). Every coloured state also carries a Lucide icon + text label.
 - **CSS-variable token layer** (inherited pattern from MOU): all design tokens (colours, spacing, typography, radii, shadows) declared as CSS custom properties on `:root`. Tailwind utility classes reference the vars, not hard-coded hex codes. This keeps brand swaps one-edit affairs.
@@ -163,7 +163,7 @@ Each trigger tile's primary number uses the status colour for the number itself 
 Item A's trigger is "3/week × 2 weeks → alert". The three states:
 - **ok** (< 3/week): number renders in `--signal-neutral` slate-700.
 - **attention** (3/week, first week): number renders in `--signal-attention` amber-500 with `AlertTriangle` icon.
-- **alert** (3/week, second consecutive week): number renders in `--signal-alert` red-500 with `AlertTriangle` filled icon.
+- **alert** (3/week, second consecutive week): number renders in `--signal-alert` red-600 with `AlertTriangle` filled icon.
 
 Same pattern across all trigger tiles: neutral / attention / alert, with colour + icon + text all carrying the signal. Never colour alone.
 
@@ -179,7 +179,7 @@ Explicit non-goal: this dashboard is NOT mobile-first. Ameet and ops staff open 
 
 - **Loading**: no spinner. Page is server-rendered; if it renders, data is there. Build failures surface via Vercel; no in-app loading UX needed for Phase 1.
 - **Empty data** (launch day, zero MOUs imported yet): each tile renders with "0" as the primary and a small caption "No data yet". Ameet will see this on launch day for a few hours until the first MOU imports.
-- **Error** (JSON file corrupted, unlikely): page renders with a top banner "Dashboard data unavailable: check sync-runner status. Daily check: [link to GH Actions]." Banner is red-500 background with white text + Lucide `AlertOctagon` icon.
+- **Error** (JSON file corrupted, unlikely): page renders with a top banner "Dashboard data unavailable: check sync-runner status. Daily check: [link to GH Actions]." Banner is red-600 background with white text + Lucide `AlertOctagon` icon.
 
 ---
 
@@ -456,7 +456,7 @@ This is the "shrinking baseline" pattern: launch can ship with some known violat
   - White on navy `#073393`: 12.1:1 ✓
   - Teal `#00D8B9` on white: 2.3:1 ✗
   - Teal on navy: 5.4:1 ✓
-  - White on red-500 `#EF4444`: 4.5:1 ✓ (exactly at threshold)
+  - White on red-600 `#DC2626`: 4.83:1 ✓
   - White on amber-500 `#F59E0B`: 2.1:1 ✗
   - White on green-500 `#22C55E`: 2.7:1 ✗
 - **Fixes applied**:
@@ -464,7 +464,7 @@ This is the "shrinking baseline" pattern: launch can ship with some known violat
   - All amber-background pills use **navy text** or upgrade to amber-700 `#B45309` with white text (5.3:1 ✓).
   - Green-500 is used only as an inline icon colour next to black-on-white text, never as a background for white text. Status signal rendered as green icon + navy-on-white label.
 - **Focus indicators** on every interactive element: 2px solid navy ring with 2px offset (`outline: 2px solid #073393; outline-offset: 2px;`). Matches the HR pattern.
-- **Keyboard navigation**: tab order follows visual order (verified via DOM structure in implementation). Skip-to-content link at top of every authenticated page (visually hidden until focused, then 48px tall white-on-navy bar at top).
+- **Keyboard navigation**: tab order follows visual order (verified via DOM structure in implementation). Skip-to-content link at top of every authenticated page (visually hidden until focused, then 48px tall white-on-navy bar at top). Targets `#main-content` on every page; the page's `<main>` element carries this id. The skip link's `href` is `#main-content` and its on-focus styling reveals it as the 48px white-on-navy bar at the top.
 - **ARIA landmarks**: every page has exactly one `<main>`, one `<nav>` if nav is present, `<header>` and `<footer>` as appropriate.
 - **Screen reader labels**: every icon-only button carries `aria-label`; every form input has an associated `<label>` (visible or `sr-only`).
 - **Live regions** for status updates (copy confirmations, submission results): `aria-live="polite"`.
@@ -514,6 +514,15 @@ Enforced by a `docs-lint` pre-commit script that greps for the American spelling
 Per handoff line 49 (MOU CLAUDE.md inheritance). Blacklist: "dive deep", "robust", "leverage", "comprehensive solution", "seamless", "cutting-edge", "best-in-class", "revolutionary", "unleash", "empower", "elevate", "game-changer".
 
 Applies to user-facing copy (UI strings, emails, notification text) AND internal documentation. Doc-lint script greps for the list; matches warn (do not fail) because these words can legitimately appear in quoted source text; author decides per case.
+
+### Emoji conventions
+
+Emoji conventions differ by surface and that's deliberate.
+
+- Email templates: decorative section markers acceptable (e.g., 📍 above the status block) where they aid scanning. One per section; never mid-sentence.
+- WhatsApp prose: signal-bearing only (📋 reminders, ✅ confirmations, 📦 dispatch updates). One per message maximum; always at start or end of message; never mid-sentence.
+- Dashboard / admin UI: no emoji. Lucide icons only.
+- Internal documentation: no convention enforced (author judgment).
 
 ### Direct voice
 
