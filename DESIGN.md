@@ -428,3 +428,7 @@ Differ by surface. Deliberate.
 - shadcn/ui primitives in `src/components/ui/`. Ops-specific components in `src/components/ops/`.
 - Format helpers in `src/lib/format.ts` (inherited from MOU). Use `formatRs()`, `formatDate()`, `formatPct()`, `formatCount()`. Never inline `toLocaleString` or manual date formatting.
 - Fonts loaded via `next/font` in `src/app/layout.tsx`.
+
+### First-party scope
+
+`src/components/ui/` contains shadcn primitives copied from the upstream registry; conventions follow upstream and the directory is treated as vendored (similar to `node_modules` for lint and review purposes). First-party Ops conventions in this doc apply only to `src/components/ops/`, `src/app/`, and `src/lib/`. Updates to a `src/components/ui/` primitive happen via `npx shadcn@latest add <component>` re-fetch (with manual review) or via a focused customisation commit that documents the divergence from upstream.

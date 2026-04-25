@@ -143,21 +143,29 @@ emdash_check() {
 
 british_check() {
   local files
-  # Exclude src/components/ui/: shadcn primitives are vendored from the
-  # shadcn registry. They contain no user-facing English; their cva()
-  # class strings include Tailwind utilities like "items-center" and
-  # "transition-colors" that the className-strip preprocessor cannot
-  # catch (cva-string-literal scope, not className= scope). Custom
-  # Ops-specific components in src/components/ops/ are still linted.
-  files=$(collect_targets ts tsx | grep -v '^src/components/ui/' | grep -v '/components/ui/')
+  # Exclusions:
+  #   src/components/ui/: shadcn primitives, vendored from the shadcn
+  #     registry. cva() string literals include Tailwind utilities
+  #     (items-center, transition-colors) outside scope of the
+  #     className= preprocessor. First-party conventions apply only
+  #     to src/components/ops/, src/app/, and src/lib/.
+  #   *.test.ts(x): test files contain fixtures that intentionally
+  #     include American spellings to verify the lint pipeline. The
+  #     fixtures are quoted source, not user-facing English.
+  files=$(collect_targets ts tsx \
+    | grep -v '^src/components/ui/' \
+    | grep -v '/components/ui/' \
+    | grep -vE '\.test\.tsx?$')
   local pattern='\b(color|colors|center|centers|behavior|behaviors|organize|organizes|organizing|organized|recognize|recognizes|recognized|analyze|analyzes|analyzed|apologize|apologizes|apologized|favorite|favorites)\b'
   local hit=0
   while IFS= read -r f; do
     [[ -z "$f" ]] && continue
-    # Strip className="..." attributes (single-line); keep line numbers.
-    # Skip lines starting with optional whitespace + //.
+    # Strip className= values (string, template-literal, cn(), etc.)
+    # via the Node preprocessor. Preserves line numbers. Skip lines
+    # that start with optional whitespace + // (heuristic for code
+    # comments).
     local matches
-    matches=$(sed -E 's/className="[^"]*"//g' "$f" \
+    matches=$(node scripts/strip-classnames.mjs < "$f" \
       | grep -nE -- "$pattern" 2>/dev/null \
       | grep -vE '^[0-9]+:\s*//' || true)
     if [[ -n "$matches" ]]; then
@@ -178,8 +186,9 @@ british_check() {
     printf "%sdocs-lint: %s%s  British English\n" "$RED" "$NC_RED" "$RESET"
     printf "  %d American-spelling occurrence(s) in user-facing strings.\n" "$hit"
     printf "  Use British: programme, organise, centre, behaviour, colour, recognised, analyse, apologise, favourite.\n"
-    printf "  className=\"...\" Tailwind classes are excluded by the preprocessor.\n"
+    printf "  className= values (string, template-literal, cn()) are stripped before scan.\n"
     printf "  Code-comment lines (//) are excluded by heuristic.\n"
+    printf "  src/components/ui/ (shadcn primitives) and *.test.ts(x) files are excluded from this check.\n"
     printf "  Markdown rule-doc anti-examples are out of scope; reviewer-judged.\n\n"
     EXIT_CODE=1
   fi
