@@ -99,6 +99,20 @@ describe('parseUrlFilters', () => {
     expect(QUICK_FILTERS['cc-rule-toggles']).toBeDefined()
     expect(QUICK_FILTERS['import-auto-links']).toBeDefined()
   })
+
+  it('every quick-filter parses without error and yields a non-empty filter', () => {
+    // Parametric assertion: each preset must round-trip through
+    // parseUrlFilters and produce at least one of entity / action /
+    // days that downstream applyFilters can act on. Catches the
+    // case where someone adds a new QUICK_FILTERS key with a typo
+    // or empty preset.
+    for (const id of Object.keys(QUICK_FILTERS)) {
+      const f = parseUrlFilters({ filter: id })
+      expect(f.quickFilter).toBe(id)
+      const hasEffect = f.entity.length > 0 || f.action.length > 0 || f.daysWindow !== null
+      expect(hasEffect).toBe(true)
+    }
+  })
 })
 
 describe('applyFilters', () => {
