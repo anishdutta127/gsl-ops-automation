@@ -1,0 +1,19 @@
+name: docs-lint
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Run docs-lint
+        run: bash scripts/docs-lint.sh
+        env:
+          NO_COLOR: "1"

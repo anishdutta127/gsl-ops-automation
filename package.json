@@ -8,7 +8,11 @@
     "start": "next start",
     "lint": "next lint",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "docs-lint": "bash scripts/docs-lint.sh"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "bash scripts/docs-lint.sh"
   },
   "dependencies": {
     "date-fns": "^4.1.0",
@@ -23,6 +27,7 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "@vitejs/plugin-react": "^4.3.3",
+    "simple-git-hooks": "^2.11.1",
     "eslint": "^8",
     "eslint-config-next": "14.2.35",
     "jsdom": "^25.0.1",
