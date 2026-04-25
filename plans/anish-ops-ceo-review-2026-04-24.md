@@ -119,13 +119,21 @@ Cons: scope doubles. Every uploaded photo needs size limits, format validation, 
 - D7 tension (step 6 Tension 2): EXPAND-1 partially revokes D7's "staff-JWT only" simplification. HR's candidate-cookie code path comes back. Not a blocker (HR has proven code), but it needs to be flagged in /plan-eng-review.
 - Item F (GSTIN) in 6.5 becomes easier with EXPAND-2 because schools could self-submit their GSTIN. But EXPAND-2 is Phase 2; don't drag GSTIN-self-submit into the decision.
 
-### Recommendation (Axis 2): HOLD (no portal) + CONTRACT (rich email status block, IN Phase 1 scope)
+### Recommendation (Axis 2): HOLD (no auth-protected portal) + CONTRACT (rich email status block) + EXPAND-1 (magic-link read-only status page)
 
-HOLD remains the default for any portal in Phase 1. CONTRACT (rich email status block in every system notification) is a genuinely cheap addition that captures much of EXPAND-1's delight without the D7 revocation or the 1-2 weeks of critical-path time. Cost of CONTRACT is S (email template work); delight delivered is ~60% of what EXPAND-1 would deliver. **CEO review puts CONTRACT firmly IN Phase 1 scope.**
+**Updated post-ceremony (Update 2):** Anish reinstated the magic-link read-only portal into Phase 1 scope. Schools never become platform users (no accounts, no login); they click a link from any system email and see live status anytime. Combined recommendation is now HOLD + CONTRACT + EXPAND-1.
 
-The push-back on EXPAND-1 is this: the /office-hours output flagged it as a "live candidate in /plan-ceo-review," and this review is saying **no for Phase 1**. Reasoning: Ameet's priority #3 doesn't earn 1-2 weeks of critical-path time before priority #1 is proven end-to-end. Ship the internal loop; prove the data flows; add the magic-link portal in a fast Phase 1.1 once the internal surface is stable and Axis 3's feedback mechanism has locked.
+- **HOLD**: no auth-protected SPOC portal. Schools never log in; no candidate-cookie session.
+- **CONTRACT**: rich email status block in every system notification. Reaches the SPOC's inbox at every milestone (Axis 2 baseline).
+- **EXPAND-1**: magic-link read-only status page at `/portal/status/[tokenId]`. SPOC clicks link from any email; HMAC-verified at page level; renders the same lifecycle-stage view as the email status block but as a live page that reflects current MOU state (not the snapshot frozen at email-send time).
 
-What /plan-devex-review pressure-tests on CONTRACT: the status-block copy, the layout inside the email template, whether the 94%-email-reach threshold is good enough UX for priority #3 (delight), any visual or accessibility details. Devex-review does not re-decide inclusion; inclusion is settled here.
+Cost: CONTRACT is S (email template work, 1-2 days). EXPAND-1 is M (magic-link infra, page route, lifecycle-progress visualisation, 4-6 days). Total Axis 2 scope: 5-8 days.
+
+**Why the change**: the original ceremony pushback on EXPAND-1 was that 1-2 weeks of critical-path time is better spent on priority #1 (accuracy) than priority #3 (delight) before the internal loop is proven. Anish reweighted post-ceremony: schools-without-portal is a smoothness gap that ops teams will route around (calling SPOCs, sending one-off status updates), and the status-view magic-link reuses the same HMAC primitive the feedback form already needed. Marginal effort over CONTRACT-only is 4-6 days; the surface area lands in Phase 1 with the auth primitive (MagicLinkToken) the rest of the system needed anyway.
+
+**What /plan-devex-review pressure-tests on the new EXPAND-1 portal page**: layout, lifecycle-stage visualisation, mobile-first behaviour, accessibility. Inclusion is settled here.
+
+**Phase 2 still defers**: SPOC-facing actions (MOU download, delivery-ack upload, contact-detail update, GSTIN self-submit). Read-only portal in Phase 1; bidirectional portal stays Phase 2 per Axis 2 EXPAND-2 framing.
 
 ---
 
@@ -175,11 +183,15 @@ Cons: threshold calibration is an unknown. "≤2" may fire too often if the 1-5 
 - Axis 1 (dashboard): EXPAND-1's per-category aggregates are the richest dashboard fodder.
 - Axis 5 (launch strategy): feedback loop only produces signal after the first installment is paid, which for new MOUs is 30-90 days post-launch. Launch-day feedback is empty regardless of HOLD/EXPAND.
 
-### Recommendation (Axis 3): HOLD + EXPAND-1
+### Recommendation (Axis 3): HOLD + EXPAND-1 + EXPAND-2
 
-Structured categories are the single highest-leverage addition to the feedback loop. Cost is marginal (S over HOLD); information density jumps from "an average" to "a per-dimension diagnostic." Without this, the aggregate is unactionable; with it, the dashboard becomes diagnostic.
+**Updated post-ceremony (Update 3):** Anish promoted EXPAND-2 (negative-feedback auto-escalation) into Phase 1. Original recommendation deferred it to Phase 1.1 as the first consumer of the Escalation entity; post-ceremony reweighting moved it forward.
 
-EXPAND-2 (auto-escalation) is the right long-term shape but depends on Q-I's Escalation entity being locked in /plan-eng-review. Proposal: land EXPAND-2 in Phase 1.1 as the first consumer of the Escalation entity. Flag to /plan-eng-review that the Escalation entity should support feedback-origin creation.
+- **HOLD**: feedback collected post-installment via magic-link (Axis 3 baseline).
+- **EXPAND-1**: 4 structured categories with per-category 1-5 rating plus optional skip plus optional comment. Information density jumps from "an average" to "a per-dimension diagnostic." Without this, the aggregate is unactionable; with it, the dashboard becomes diagnostic.
+- **EXPAND-2**: any FeedbackRating with `rating <= 2` auto-creates an Escalation routed to the right lane (training-quality and trainer-rapport → ACADEMICS lane; delivery-timing and kit-condition → OPS lane). Severity: `medium` for rating === 2; `high` for rating === 1.
+
+**Why the change**: the Escalation entity is locked at step 8 with full support for `origin: 'feedback'`. The trigger logic is small (one helper function plus one new test in the Q-G suite). Marginal cost is +1 day over EXPAND-1. Phase 1.1 deferral was always conservative; Update 3 brings the loop closure forward so school-feedback-to-ops-action is automatic from day one rather than from Phase 1.1.
 
 The Axis 2 + Axis 3 combo implies a candidate-auth surface even at HOLD-on-both; that observation is lifted into the new "Locked-decision tensions surfaced (new from this ceremony)" section below rather than buried here.
 
@@ -310,8 +322,8 @@ Picking one level per axis:
 | # | Axis | Level | Net effort over handoff baseline |
 |---|---|---|---|
 | 1 | Dashboard depth | EXPAND-1 (exception feed + escalation + 5 health tiles + trigger instrumentation) | M+ (trigger tiles add on top of the 5 health tiles) |
-| 2 | SPOC Portal | HOLD (no portal) + CONTRACT (email status block, in scope) | S (email template work) |
-| 3 | Feedback loop | HOLD + EXPAND-1 (structured categories) | S+ (category enum + per-category aggregation) |
+| 2 | SPOC Portal | HOLD (no auth-protected portal) + CONTRACT (email status block) + EXPAND-1 (magic-link read-only status page; updated per Update 2) | S+M (email + portal page; 5-8 days) |
+| 3 | Feedback loop | HOLD + EXPAND-1 + EXPAND-2 (structured categories + auto-escalation; updated per Update 3) | S+ + S (categories + auto-escalation hook; ~2-3 days) |
 | 4 | WhatsApp draft button | HOLD + EXPAND-1 + EXPAND-2 (button everywhere, copy events logged) | S (compounding template work) |
 | 5 | Launch strategy | HOLD (big-bang), contingent on Ameet=exclude-legacy | 0 |
 
@@ -320,13 +332,13 @@ Effort sum over handoff: 8-14 days (~2 weeks) of marginal work, decomposed as:
 | Item | Actual days |
 |---|---|
 | Axis 1 EXPAND-1 (trigger tiles on top of HOLD dashboard; aggregation layer + ~10 tile components) | 3-5 days |
-| Axis 2 CONTRACT (rich email status block template + placeholders across existing notification types) | 1-2 days |
-| Axis 3 HOLD + EXPAND-1 (Feedback entity + submission UI + per-category aggregation view) | 1-2 days |
+| Axis 2 CONTRACT + EXPAND-1 (rich email status block + magic-link read-only portal page; updated per Update 2) | 5-8 days |
+| Axis 3 HOLD + EXPAND-1 + EXPAND-2 (Feedback entity + submission UI + per-category aggregation view + auto-escalation hook; updated per Update 3) | 2-3 days |
 | Axis 4 HOLD + EXPAND-1 + EXPAND-2 (3-cadence copy button + extend to ~5 more templates + CommunicationCopyLog + dashboard tile) | 3-5 days |
 | Axis 5 HOLD | 0 |
-| **Total** | **8-14 days** |
+| **Total** | **13-21 days** |
 
-Not overscope: Phase 1's "MOU-to-Delivery-to-Paid loop" (exec brief) still fits. But the honest number is ~2 weeks of marginal work over the handoff baseline, not 1. Earlier drafts of this doc said "about one additional week"; that compressed three to five days into prose and papered over real cost. Corrected here.
+Not overscope: Phase 1's "MOU-to-Delivery-to-Paid loop" (exec brief) still fits. The honest number is ~3 weeks of marginal work over the handoff baseline, up from the ~2-week ceremony estimate after Updates 2 (SPOC magic-link portal in Phase 1) and 3 (feedback auto-escalation in Phase 1) landed post-ceremony. Earlier drafts said "about one additional week" and "8-14 days"; both compressed real cost. The 13-21 day range is the corrected post-Update-2-and-3 figure.
 
 ---
 
@@ -334,9 +346,9 @@ Not overscope: Phase 1's "MOU-to-Delivery-to-Paid loop" (exec brief) still fits.
 
 Phase 1 per handoff covers the "MOU-to-Delivery-to-Paid loop" (exec brief). The above recommendations stay inside that loop. Specifically out of scope:
 
-- Full SPOC portal (Axis 2 EXPAND-1 or EXPAND-2): deferred.
+- SPOC-facing actions (Axis 2 EXPAND-2: MOU download, delivery-ack upload, contact-detail update): deferred. Read-only EXPAND-1 magic-link portal IS in Phase 1 per Update 2.
 - Full BI dashboard (Axis 1 EXPAND-2): deferred.
-- Negative-feedback auto-escalation (Axis 3 EXPAND-2): deferred to Phase 1.1 as first consumer of the Escalation entity.
+- (Negative-feedback auto-escalation moved IN to Phase 1 per Update 3; no longer deferred.)
 - WhatsApp Business API (ruled out by office-hours P3): deferred.
 - Incremental rollout + 30-day shadow (Axis 5 EXPAND-2): rejected as anti-pattern.
 - Trainer scheduling, vendor inventory forecasting, multi-tenant: deferred per handoff line 153-160.
@@ -347,7 +359,7 @@ The recommendation is coherent as a Phase 1 scope, matches handoff priorities, a
 
 ## Axes where the recommendation pushes back on Anish's prior framing
 
-1. **Axis 2 (SPOC Portal) recommendation is HOLD, not EXPAND-1, with CONTRACT (email status block) IN Phase 1 scope.** Anish's framing in step 6 (office-hours) positioned (b) as "live candidate in /plan-ceo-review." This review says NO for Phase 1 on the portal itself, and YES on the CONTRACT fallback (rich email status block). Rationale: the 1-2 weeks of critical-path time is better spent proving the internal loop than on priority-#3 delight work before priority-#1 accuracy is proven end-to-end. CONTRACT is IN Phase 1 scope; devex-review pressure-tests its UX, not whether to include it.
+1. **Axis 2 (SPOC Portal) recommendation was originally HOLD + CONTRACT, updated post-ceremony to HOLD + CONTRACT + EXPAND-1.** The original ceremony pushback on EXPAND-1 was that 1-2 weeks of critical-path time is better spent proving the internal loop than on priority-#3 delight work before priority-#1 accuracy is proven end-to-end. Anish reweighted post-ceremony (Update 2): the read-only magic-link portal reuses the same HMAC primitive the feedback form already needs, marginal effort over CONTRACT-only is 4-6 days, and schools-without-portal is a smoothness gap that ops teams will route around. EXPAND-1 read-only portal IS now in Phase 1; EXPAND-2 (SPOC-facing actions) stays deferred to Phase 2.
 
 2. **Axis 1 (Dashboard) recommendation is EXPAND-1, adding scope vs the handoff's implicit "exception feed + escalation" only.** The trigger instrumentation IS the thing that makes step 6.5's "ship with defaults + triggers" framing operational. Without instrumentation, triggers are aspirational. With it, observability is a single surface.
 
@@ -403,11 +415,11 @@ So of the two pending asks, only Ameet's has a material effect on this CEO revie
 The CEO review recommends:
 
 - **EXPAND on Dashboard** (Axis 1) because it's where step 6.5's ship-without-shadow-call rigor lives or dies.
-- **HOLD on SPOC Portal** (Axis 2) + CONTRACT (email status block in scope). Devex-review pressure-tests the status-block UX, not the inclusion decision.
-- **EXPAND on Feedback** (Axis 3) with structured categories; defer auto-escalation to Phase 1.1.
+- **HOLD on SPOC Portal (auth-protected)** (Axis 2) + CONTRACT (email status block) + **EXPAND-1 (magic-link read-only portal)** post-Update-2. Devex-review pressure-tests the portal-page UX; inclusion is settled.
+- **EXPAND on Feedback** (Axis 3) with structured categories AND auto-escalation post-Update-3. Both EXPAND-1 and EXPAND-2 in Phase 1.
 - **EXPAND on WhatsApp draft** (Axis 4) bundling all three levels (3-5 days total of compounding template work).
 - **HOLD on Launch strategy** (Axis 5) with incremental as the fallback if Ameet includes legacy.
 
-Net: 8-14 days (~2 weeks) of marginal work over the handoff baseline, decomposed per axis in the Combined Recommendation table. All of it load-bearing for step 6.5's monitored-triggers posture or Ameet's ranked priorities. Nothing silently expanded into Phase 2. No locked decisions re-debated.
+Net: 13-21 days (~3 weeks) of marginal work over the handoff baseline post-Updates-2-and-3, decomposed per axis in the Combined Recommendation table. All of it load-bearing for step 6.5's monitored-triggers posture or Ameet's ranked priorities. Nothing silently expanded into Phase 2. No locked decisions re-debated.
 
-The single meaningful push-back is Axis 2: SPOC Portal approach (b) does not earn Phase 1 scope. Stage the magic-link portal for Phase 1.1 once the internal loop is proven. The CONTRACT fallback (email status block) covers the delight gap in the meantime.
+The two material post-ceremony updates are Update 2 (Axis 2 EXPAND-1 read-only portal moved IN to Phase 1) and Update 3 (Axis 3 EXPAND-2 auto-escalation moved IN to Phase 1). Both are coherent with the schemas and entities locked at step 8; both add scope the ops loop benefits from on day one rather than in Phase 1.1.

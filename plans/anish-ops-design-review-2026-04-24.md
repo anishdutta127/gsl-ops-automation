@@ -7,8 +7,8 @@ Supersedes: any prior design intent not captured in `DESIGN.md` (to be created a
 
 ## Anchor points (inputs, not subjects of re-debate)
 
-- **step 7 CEO review scope** (commit `8c21ac0`, post-fixes): 5 axes with recommendations. Axis 1 EXPAND-1 (dashboard with 15 tiles), Axis 2 HOLD + CONTRACT (no portal + email status block), Axis 3 HOLD + EXPAND-1 (feedback with 4 structured categories), Axis 4 HOLD + EXPAND-1 + EXPAND-2 (WhatsApp draft buttons with copy-log), Axis 5 HOLD (big-bang launch).
-- **step 8 eng review schemas** (commit `ba66e4d`): Communication (channel × status matrix), Escalation (lane + level), SchoolGroup, CcRule (literal scoping), Feedback (4 categories + null skip), FeedbackHmacToken. Plus D7 refinement (staff-JWT + HMAC endpoint).
+- **step 7 CEO review scope** (commit `8c21ac0`, post-fixes; updated post-ceremony per Updates 2 and 3): 5 axes with recommendations. Axis 1 EXPAND-1 (dashboard with 15 tiles), Axis 2 HOLD + CONTRACT + EXPAND-1 (email status block + magic-link read-only portal page; portal page added per Update 2), Axis 3 HOLD + EXPAND-1 + EXPAND-2 (feedback with 4 structured categories + auto-escalation; auto-escalation added per Update 3), Axis 4 HOLD + EXPAND-1 + EXPAND-2 (WhatsApp draft buttons with copy-log), Axis 5 HOLD (big-bang launch).
+- **step 8 eng review schemas** (commit `ba66e4d`; updated post-ceremony): Communication (channel × status matrix), Escalation (lane + level), SchoolGroup, CcRule (literal scoping), Feedback (4 categories + null skip), MagicLinkToken (renamed and extended from FeedbackHmacToken per Update 2; supports `feedback-submit` and `status-view` purposes). Plus D7 refinement (staff-JWT + two HMAC-verified public surfaces).
 - **handoff line 45** (quoted): *"British English always, Indian money format (Rs / lakh / crore), never emdash"*.
 - **handoff line 46** (quoted): *"Single-tenant clean"* (via `config/company.json`).
 - **handoff WCAG commitment**: WCAG 2.1 AA; axe-core CI with shrinking baseline (inherited from MOU + HR).
@@ -27,6 +27,7 @@ Supersedes: any prior design intent not captured in `DESIGN.md` (to be created a
 - Feedback form mobile-first layout and interaction model.
 - Status-block email template visual and copy (Axis 2 CONTRACT).
 - WhatsApp-draft-copied button placement, affordances, copy-confirmation pattern.
+- Status portal (read-only) mobile-first layout and lifecycle-progress visualisation (Axis 2 EXPAND-1; added per Update 2 post-ceremony).
 - Accessibility baseline policies and axe-core CI shrinking-baseline strategy.
 - British-English copy conventions, Indian money display patterns, no-emdash lint rule.
 
@@ -249,6 +250,14 @@ Disabled state until either at least one category has a non-null rating OR the o
 - **Invalid `tokenId` in URL**: same redirect as 403 path (`/feedback/link-expired`).
 - **No ratings + no comment submitted**: submit button disabled, so this state is unreachable.
 
+### Internal auto-escalation behaviour (per Update 3, not surfaced to SPOC)
+
+Per Update 3 (post-ceremony), any submitted FeedbackRating with `rating <= 2` triggers an internal Escalation routed to the right lane (training-quality and trainer-rapport → ACADEMICS lane; delivery-timing and kit-condition → OPS lane). This is server-side behaviour invisible to the SPOC.
+
+**No SPOC-visible warning.** The form does NOT display "your low rating will create an escalation" or any equivalent prompt. Rationale: warning the SPOC chills genuine feedback. Schools rate honestly when they trust the process is anonymous and non-confrontational; surfacing the auto-escalation would shift the rating distribution upward (to avoid creating internal noise) and degrade the signal. Internal-only behaviour, period.
+
+The post-submit thank-you page reads the same regardless of rating values. Ops sees the escalation in the dashboard escalation list and the audit route; the SPOC sees only the thank-you page.
+
 ### Copy for Surface 2
 
 British English, no em dash, no AI slop, direct voice. Short sentences. Review pass against MOU CLAUDE.md line 49 "avoid `dive deep`, `robust`, `leverage`, `comprehensive solution`" applies.
@@ -424,6 +433,105 @@ The `bodyWhatsApp` is rendered by `src/lib/templates/whatsAppProse.ts` (per step
 
 ---
 
+## Surface 6: Status portal (read-only)
+
+Per step 7 Axis 2 EXPAND-1 (added post-ceremony per Update 2): magic-link read-only status page that any system email can link to. SPOC clicks the link from any of the 7 status-block-carrying email types and lands on a live page showing the current MOU lifecycle state.
+
+### Route and access
+
+`/portal/status/[tokenId]`. Public route per D7 refinement + Update 2 (one of the public paths in Ops middleware, alongside `/api/feedback/submit` and the feedback page family). Page-level HMAC verification before rendering; on failure, the same `link-expired` UI pattern used for the feedback form.
+
+The MagicLinkToken consumed by this route has `purpose: 'status-view'` and a 30-day expiry (vs feedback's single-use 48h). Multi-use; each GET updates `lastViewedAt` and increments `viewCount` on the token record. `viewCount` is an observability signal ("did the SPOC actually visit?"); not enforcement.
+
+### Mobile-first layout (375px target)
+
+Same primary-viewport target as the feedback form (Surface 2): SPOCs read email on phones. Mobile-first 375px viewport with constrained max-width 640px on larger screens; centered.
+
+Vertical regions top-to-bottom:
+
+1. **Header card**: school name (Montserrat 24px navy), MOU programme + sub-type + installment context (Open Sans 14px slate-600). Example: "Don Bosco Bandel" / "STEAM (GSLT-Cretile sub-type), Installment 2 of 4".
+2. **Lifecycle progress visualisation**: 8-stage horizontal stepper on desktop (≥640px); vertical stack on mobile.
+3. **Per-installment summary card**: totals (paid / pending / due dates).
+4. **Next expected milestone**: callout card with date and short copy.
+5. **Footer note**: "This page reflects live data as of [DD-MMM-YYYY HH:mm IST]. Last refreshed automatically when you opened the link." plus "Questions? Contact the ops team at [ops email]." No interactive elements.
+
+### Lifecycle progress component
+
+Eight stages, mapped to the exec-brief lifecycle. Visual treatment per stage:
+
+- **Completed** stages: filled teal circle (`#00D8B9`) with white Lucide `Check` icon (16px); date below (Open Sans 12px navy).
+- **Current** stage: filled amber circle (`#F59E0B`) with white Lucide `Circle` icon (16px); "In progress" label below (Open Sans 12px amber-700 `#B45309` for contrast); expected next-action date below that.
+- **Future** stages: outline slate-300 circle with no icon; date placeholder "TBD" or projected date if known (Open Sans 12px slate-500).
+
+Stage labels (Open Sans 14px navy bold above each circle on desktop, beside on mobile):
+
+1. MOU signed
+2. Actuals confirmed
+3. Cross-verification
+4. Invoice raised
+5. Payment received
+6. Kit dispatched
+7. Delivery acknowledged
+8. Feedback submitted
+
+Stages map directly to MOU lifecycle state per step 8 Q-A and the Communication entity. The same `src/lib/portal/lifecycleProgress.ts` helper (per step 8 Axis 2 EXPAND-1 file list) computes stage state for both this Surface 6 portal page and Surface 3's email status block, so the two surfaces can never disagree.
+
+WCAG 2.1 AA: every stage carries colour + icon + text + date. No colour-only signalling. Touch targets ≥ 44px (the stages are visual-only on the page, but tooltips on tap show full audit context for that stage; tooltip activation area is ≥ 44px).
+
+### Per-installment summary card
+
+Compact card below the lifecycle stepper:
+
+- **Total contract value**: large Montserrat 24px navy. Rs-prefixed, Indian-comma-grouped (`Rs 7,05,000`). Lakh / crore where natural per Surface 5 conventions.
+- **Paid to date**: Open Sans 16px slate-700. Inline progress bar (teal fill, slate-100 background). Percentage shown on the right.
+- **Pending**: Open Sans 16px navy. With "due by [date]" if the next installment due-date is set.
+- **Per-installment grid**: 4 rows max (typical 2-4 installments per MOU). Each row: installment number, status (Paid / Pending / Overdue), amount, date (paid-on or due-by).
+
+### Next expected milestone callout
+
+Single card with:
+
+- **Title**: "What's next" (Open Sans 16px navy bold).
+- **Action**: e.g., "Confirm receipt of training kit" (Open Sans 14px navy). The action wording reads from the lifecycle-stage's expected-action template, never from internal notes.
+- **Date**: e.g., "By 15-May-2026" (Open Sans 14px slate-700).
+- **Icon**: Lucide `ArrowRight` 20px navy.
+
+If the MOU is at Stage 8 (feedback submitted), this card reads "MOU is complete. Thanks for your engagement this academic year." No action prompt.
+
+### Empty / error states
+
+- **Token expired or invalid**: redirect to `/portal/status/link-expired` with copy "This link has expired or is no longer valid. Please contact [ops email] if you need a fresh link."
+- **MOU data missing** (rare; would imply data corruption): same redirect target. Page never renders partial state.
+- **Loading**: no spinner. Server-rendered; if it renders, data is there.
+
+### Data-hygiene boundary
+
+Same as Surface 3 (email status block). Page NEVER references:
+
+- Internal-only fields: `salesPersonId`, `auditLog`, `queuedBy`, bounced-email status on prior communications, override events, escalation history.
+- Financial internals beyond what the SPOC already sees: paid amount fine; outstanding balance fine; the contract-value vs actuals delta is internal and never exposed.
+- Any PII of another school.
+- Ops-team internal annotations (notes fields on any entity).
+- Auto-escalations created by Update 3's hook on this MOU's feedback. The escalation lives on Ops's escalation list; the SPOC's portal stays SPOC-scoped.
+
+### Copy for Surface 6
+
+- British English, no em dash, no AI slop, direct voice.
+- Indian money: `Rs 7,05,000` with Indian comma grouping. Never the `₹` symbol (some browsers render it inconsistently in older Android).
+- Dates: DD-MMM-YYYY (`15-Apr-2026`).
+- Tone: matter-of-fact informational. Not celebratory ("🎉 You're 75% paid up!"); not apologetic ("Sorry your kit hasn't arrived yet"). Just the state.
+
+### Accessibility for Surface 6
+
+- WCAG 2.1 AA throughout.
+- Touch targets ≥ 44px for any tappable element (stage tooltips, ops-email link).
+- Focus indicators on the ops-email link and any other interactive elements: 2px navy ring with 2px offset.
+- ARIA: page has exactly one `<main>` (`#main-content`), `<header>` for the school header card, and ARIA labels on the lifecycle stepper (`aria-label="MOU lifecycle progress"`).
+- Reduced motion: `prefers-reduced-motion: reduce` disables any state transitions if added later.
+- Skip-link still applies (visually hidden until focused; targets `#main-content`).
+
+---
+
 ## Surface 5: Accessibility baseline (cross-cutting)
 
 Applies to every surface above. Policy, tooling, shrinking-baseline strategy.
@@ -562,7 +670,7 @@ Emoji conventions differ by surface and that's deliberate.
 
 ## Summary for Anish
 
-Five surfaces specified: Leadership Console (15 tiles + exception feed + escalation list), feedback form (mobile-first, 4 categories, skip-capable, overall comment), status-block email template (7 Communication types carry it, unicode icons, inline CSS for client compatibility), WhatsApp-draft-copied button (secondary style, 2-second copy-confirm morph, first-session tooltip, anonymous-by-default dashboard aggregation), accessibility baseline (WCAG 2.1 AA, axe-core shrinking baseline, colour-contrast issues flagged and fixed).
+Six surfaces specified: Leadership Console (15 tiles + exception feed + escalation list), feedback form (mobile-first, 4 categories, skip-capable, overall comment, internal-only auto-escalation per Update 3), status-block email template (7 Communication types carry it, unicode icons, inline CSS for client compatibility), WhatsApp-draft-copied button (secondary style, 2-second copy-confirm morph, first-session tooltip, anonymous-by-default dashboard aggregation), status portal read-only (mobile-first, 8-stage lifecycle visualisation, magic-link 30-day expiry, multi-use; added per Update 2), accessibility baseline (WCAG 2.1 AA, axe-core shrinking baseline, colour-contrast issues flagged and fixed).
 
 **Design system locked**: primary teal `#00D8B9`, navy `#073393`, Montserrat + Open Sans, Lucide icons, semantic-signal colour palette (`--signal-ok | attention | alert | neutral`) with icon + text redundancy for every coloured state. No candidate-facing layer (Ops is internal-only in Phase 1).
 

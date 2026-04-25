@@ -9,7 +9,7 @@ Mode: HOLD SCOPE. Step 7 CEO review (post-fix, commit `8c21ac0`) locked per-axis
 - **step 3 reference reads** (13 MOU files, 5 HR files): D1-D8 locked decisions, MOU architecture as ground truth.
 - **step 6 /office-hours**: P1-P6 premises pressure-tested. P1-P5 hold, P6 added (deterministic import). Step 6 Q-J (P2 exception mechanism) resolved to Approach A (CEO-override) via step 6.5 Item A.
 - **step 6.5 assumptions-and-triggers**: 10 items A-J with defaults + observational triggers. Replaces the pre-launch shadow call.
-- **step 7 /plan-ceo-review post-fix**: SELECTIVE EXPANSION with recommendations: Axis 1 EXPAND-1, Axis 2 HOLD + CONTRACT, Axis 3 HOLD + EXPAND-1, Axis 4 HOLD + EXPAND-1 + EXPAND-2, Axis 5 HOLD (contingent on Ameet). D7 refined per Tension 4.
+- **step 7 /plan-ceo-review post-fix + post-ceremony updates**: SELECTIVE EXPANSION with recommendations: Axis 1 EXPAND-1, Axis 2 HOLD + CONTRACT + EXPAND-1 (per Update 2; magic-link read-only portal now in Phase 1), Axis 3 HOLD + EXPAND-1 + EXPAND-2 (per Update 3; auto-escalation now in Phase 1), Axis 4 HOLD + EXPAND-1 + EXPAND-2, Axis 5 HOLD (contingent on Ameet). D7 refined per Tension 4 and re-extended per Update 2 (two narrow public surfaces: feedback POST and status-view GET).
 
 ### Pending-ask status at this review's start
 
@@ -43,15 +43,15 @@ Item F (Shubhangi on GSTIN availability) remains pending. The PI generator block
 
 Phase 1 locks:
 
-- **Data layer**: flat-file-per-entity, JSON array per file, all writes through the queue. ~16 entity files in `src/data/` (MOU-pattern-inherited entity shapes + 5 net-new + 1 supporting `feedback_hmac_tokens.json` + review queues).
+- **Data layer**: flat-file-per-entity, JSON array per file, all writes through the queue. ~16 entity files in `src/data/` (MOU-pattern-inherited entity shapes + 5 net-new + 1 supporting `magic_link_tokens.json` per Update 2 + review queues).
 - **Queue**: `src/lib/pendingUpdates.ts` + `src/lib/githubQueue.ts` copy verbatim from MOU. Four strings edited: `DEFAULT_REPO`, `User-Agent`, `PI_COUNTER_DEFAULT.prefix`, nothing else. Concurrency logic untouched.
 - **Sync runner**: `.github/workflows/sync-and-deploy.yml` adapted from MOU. Self-hosted Windows runner (same laptop, add new repo authorization). Cron `30 3-13 * * 1-5` UTC (IST business hours, hourly Mon-Fri).
 - **Deploy gate**: `vercel.json` byte-identical to MOU (`^chore\(queue\):` ignoreCommand on subject line).
 - **next.config.mjs**: `outputFileTracingIncludes` nested under `experimental` (Next 14.2.x silent-strip gotcha). Paths: `/api/pi/generate`, `/api/dispatch/generate`, `/api/delivery-ack/generate`, `/api/feedback/submit`. Template dir: `./public/ops-templates/**/*`.
-- **Auth**: `src/middleware.ts` from HR; `/portal/*` candidate-cookie branch stripped; one public path `/api/feedback/submit` added per D7 refinement.
+- **Auth**: `src/middleware.ts` from HR; full candidate-cookie session branch stripped; two narrow public surfaces added per D7 refinement and Update 2: `/api/feedback/submit` (HMAC-verified POST) and `/portal/status/[tokenId]` (HMAC-verified GET, page-level). Both consume `MagicLinkToken` records; neither reintroduces a candidate session cookie.
 - **MOU → Ops import**: cron-driven pull from MOU's `mous.json` + `schools.json` via GitHub Contents API. Deterministic school-identity resolution: exact name+location match → audit-logged auto-link; ambiguous → human review queue (`src/data/mou_import_review.json`).
-- **Entities, net-new**: Communication, Escalation, SchoolGroup, CcRule, Feedback. Supporting: FeedbackHmacToken.
-- **Test suite**: 5 mandatory atomicity tests + 3 additional (importer integration, CC resolver, P2 override audit) = 8 tests total.
+- **Entities, net-new**: Communication, Escalation, SchoolGroup, CcRule, Feedback. Supporting: MagicLinkToken (renamed and extended from FeedbackHmacToken per Update 2; carries `purpose: 'feedback-submit' | 'status-view'`).
+- **Test suite**: 5 mandatory atomicity tests + 4 additional (importer integration, CC resolver, P2 override audit, feedback auto-escalation) = 9 tests total. Test 9 added per Update 3.
 
 Everything else (lifecycle stages 1-8, cross-verification matrix, Tally XML generation, ops-templates, dashboard tiles, WhatsApp-draft buttons) is elaboration of these primitives.
 
@@ -137,35 +137,38 @@ const PI_COUNTER_DEFAULT: PiCounter = { fiscalYear: '26-27', next: 1, prefix: 'G
 
 ---
 
-## Q-D: Programme enum expansion (RESOLVED, with one open item flagged)
+## Q-D: Programme enum expansion (RESOLVED)
 
 **Ops Programme enum, locked**:
 ```ts
 export type Programme =
-  | 'STEAM'            // MOU-originating
+  | 'STEAM'            // MOU-originating; covers GSLT-Cretile via programmeSubType
   | 'Young Pioneers'   // MOU-originating
   | 'Harvard HBPE'     // MOU-originating
-  | 'GSLT-Cretile'     // 18 of 24 2026-04 MOUs per ground-truth §1
-  | 'TinkRworks'       // 5 of 24
+  | 'TinkRworks'       // 5 of 24 2026-04 MOUs per ground-truth §1
   | 'VEX'              // 1 of 24; no MOU per MOU's templates.ts line 21-22 comment
 ```
 
-Six values. Three carry from MOU's enum. Three are Ops-native.
+Five values. Three carry from MOU's enum. Two are Ops-native.
 
-### Open item: STEAM vs GSLT-Cretile at import
+**MOU extension for sub-programme classification**:
 
-Ground-truth §1 identifies 18 of 24 MOUs as `GSLT-Cretile`. MOU's enum has only `STEAM`. At import, every `GSLT-Cretile` MOU would hit validator 5 (`unknown_programme`) and land in the review queue unless resolved ahead of time.
+```ts
+// Additional MOU field per Q-D resolution:
+programmeSubType: string | null   // e.g., 'GSLT-Cretile' under 'STEAM'; null for non-sub-typed programmes
+```
 
-**Question for Ameet or Shubhangi** (one-line Slack): *Is `GSLT-Cretile` a sub-programme of `STEAM` (and MOU's enum abstracts it away into `STEAM`), or a distinct programme that just got absorbed under the `STEAM` label in MOU's current data?*
+### GSLT-Cretile resolution
 
-**Phase 1 default until answered**: treat as distinct. Ops's enum has all 6 values; incoming MOUs with `programme: 'STEAM'` import as `STEAM`. If the expected product mix (Cretile kits per student) doesn't materialize at actuals-confirmation, an admin `re-classify-programme` action on the MOU moves it to `GSLT-Cretile`. This is a non-destructive migration (the `programme` field is a value, not a structural identity key).
+Anish confirmed post-ceremony: GSLT-Cretile is a sub-type of STEAM, not a distinct programme. The 18 of 24 2026-04 MOUs that ground-truth §1 identified as `GSLT-Cretile` import as `programme: 'STEAM'` with `programmeSubType: 'GSLT-Cretile'`.
 
-**Migration cost by answer**:
-- *"Distinct, as drafted"* → zero. Current design is correct.
-- *"They are the same, absorbed under STEAM"* → one enum-merge commit + a bulk `programme` update across affected MOUs. Low cost.
-- *"Distinct, but GSLT-Cretile is a STEAM sub-type"* → add `programmeSubType` field on MOU; existing Ops-imported `STEAM` MOUs get reclassified when actuals confirm. Moderate cost.
+This matches the third migration option enumerated when Q-D was first drafted: *"Distinct, but GSLT-Cretile is a STEAM sub-type"* → add `programmeSubType` field on MOU.
 
-**Flagged in**: `docs/OPEN_ITEMS.md` (to be created as part of Phase 1 scaffolding) with the one-line Slack to draft. This open item does NOT block Phase 1; it affects at-launch data hygiene.
+**Importer behaviour**: at Q-A import, the helper sets `programmeSubType: 'GSLT-Cretile'` when MOU records carry that label in the source data; sets `programmeSubType: null` for plain-STEAM, Young Pioneers, TinkRworks, Harvard HBPE, VEX. The `programmeSubType` field is a free-string value (not enum-bound) so future sub-types under any programme do not require schema migration.
+
+**Validator update (Q-A validator 5)**: incoming `programme: 'GSLT-Cretile'` from MOU records is rewritten at ingestion to `programme: 'STEAM', programmeSubType: 'GSLT-Cretile'`. The transformation is logged in the MOU's `auditLog` with `action: 'gslt-cretile-normalisation'` so the source-data shape is recoverable.
+
+No `docs/OPEN_ITEMS.md` is needed for this question. Q-D is closed.
 
 ---
 
@@ -228,7 +231,7 @@ Then:  the commit message recorded by the Contents API matches
 
 Regression-catch rationale: if a refactor drops or mutates the prefix, `vercel.json`'s `ignoreCommand` silently stops skipping queue commits. Every queue write then triggers a Vercel build and burns quota. This test guards the contract explicitly.
 
-### Three additional Phase 1 tests (in Phase 1 scope; not in the "5 mandatory" label but required before launch)
+### Four additional Phase 1 tests (in Phase 1 scope; not in the "5 mandatory" label but required before launch)
 
 **Test 6: `importerIntegration.test.ts`**: end-to-end mock of MOU Contents API responses; drives `fromMou.importOnce()`; asserts import queue items, validation failures, and auto-link decisions match fixtures across 10 representative input shapes (single-school MOU, chain MOU, name+location exact match, near-duplicate name, tax-inverted pricing, date-inverted dates, unknown programme, missing required field).
 
@@ -236,9 +239,26 @@ Regression-catch rationale: if a refactor drops or mutates the prefix, `vercel.j
 
 **Test 8: `p2ExceptionAudit.test.ts`**: CEO-override on a Dispatch writes the expected `auditLog` entry with user, reason, and before/after gate state. Finance acknowledgement writes follow-up entry. State machine transitions are consistent with the Q-J data shape. Covers the Axis 5 Approach-A contract.
 
+**Test 9: `feedbackAutoEscalation.test.ts`** (added per Update 3, Axis 3 EXPAND-2 promoted to Phase 1):
+
+```
+Given: a Feedback record with at least one FeedbackRating.rating <= 2
+       written via the feedback-submit endpoint or the ops-on-behalf path.
+When:  the write completes.
+Then:  exactly one Escalation record exists with origin: 'feedback',
+       originId: <feedback.id>, schoolId: <feedback.schoolId>,
+       mouId: <feedback.mouId>, stage: 'feedback-escalation',
+       lane: <expected per category-to-lane mapping for the lowest-rated category>,
+       level: 'L1',
+       severity: 'high' if any rating === 1 else 'medium',
+       createdBy: 'system'.
+```
+
+Test fixtures cover four cases: (a) single category rating 2 → medium; (b) single category rating 1 → high; (c) multiple categories rated <=2 with mixed values → severity from worst, lane from worst (or first-on-tie); (d) all ratings >= 3 → no Escalation created. Asserts the lane resolver picks the right lane per category, the description includes the worst category and rating, and the auditLog entry on the Escalation records `action: 'auto-create-from-feedback'` with the source feedback id.
+
 ### Acceptance criterion for Q-G
 
-All 8 tests green in `npm test`. Red CI blocks merge. CI runs on every PR.
+All 9 tests green in `npm test`. Red CI blocks merge. CI runs on every PR.
 
 ### Beyond tests: production observability
 
@@ -248,9 +268,9 @@ The daily sync-runner check reads `pi_counter.json` and `pending_updates.json` i
 
 ## Q-I: Five entity schemas (RESOLVED)
 
-All schemas declared in `src/lib/types.ts` (flat types module, matching MOU's pattern: plain TypeScript, no Zod, no runtime validation layer). **Every new entity includes `auditLog: AuditEntry[]` inherited from MOU's pattern** (step 3 §10c): `{timestamp, user, action, before, after, notes}`. Exception: FeedbackHmacToken is a short-lived auth primitive and carries no auditLog (justified inline).
+All schemas declared in `src/lib/types.ts` (flat types module, matching MOU's pattern: plain TypeScript, no Zod, no runtime validation layer). **Every new entity includes `auditLog: AuditEntry[]` inherited from MOU's pattern** (step 3 §10c): `{timestamp, user, action, before, after, notes}`. Exception: MagicLinkToken is a short-lived auth primitive and carries no auditLog (justified inline).
 
-Phase 1 ships six entity types total: Communication, Escalation, SchoolGroup, CcRule, Feedback, plus the supporting FeedbackHmacToken.
+Phase 1 ships six entity types total: Communication, Escalation, SchoolGroup, CcRule, Feedback, plus the supporting MagicLinkToken (renamed from FeedbackHmacToken per Update 2 to support both feedback-submit and status-view purposes).
 
 ### Communication
 
@@ -325,7 +345,7 @@ Phase 1.1 additions (WhatsApp Business API, SMS) extend both enums; the Communic
 
 ### Escalation
 
-The exception-flow entity. Driven by Misba's escalation matrix (lane + level structure from kickoff intel A). Phase 1 writes Escalations for manual flags, P2 CEO-overrides (Q-J), and system-generated cases. Feedback-origin escalations are Phase 1.1 (Axis 3 EXPAND-2) but the schema supports them now, so no migration is needed when the trigger lands.
+The exception-flow entity. Driven by Misba's escalation matrix (lane + level structure from kickoff intel A). Phase 1 writes Escalations for manual flags, P2 CEO-overrides (Q-J), system-generated cases, and feedback-origin auto-escalations (per Update 3, promoted from Phase 1.1 to Phase 1). The schema's `origin: 'feedback'` value is exercised on every Feedback write where any category rating is `<= 2`.
 
 ```ts
 export type EscalationLane = 'OPS' | 'SALES' | 'ACADEMICS'
@@ -492,48 +512,79 @@ export interface Feedback {
   submitterEmail: string | null   // SPOC email at submission; null for ops-on-behalf
   ratings: FeedbackRating[]       // always length 4; categories in fixed order
   overallComment: string | null
-  hmacTokenId: string | null      // FK to FeedbackHmacToken; null for ops-on-behalf
+  magicLinkTokenId: string | null // FK to MagicLinkToken (purpose='feedback-submit'); null for ops-on-behalf
   auditLog: AuditEntry[]          // inherited from MOU pattern
 }
 ```
 
 **Invariants** (enforced at write):
 - `ratings.length === 4`; each category present exactly once; order fixed for aggregation stability.
-- `submittedBy === 'spoc'` requires `hmacTokenId` non-null AND `submitterEmail` non-null.
-- `submittedBy === 'ops-on-behalf'` requires `hmacTokenId === null` (ops manual entry when the SPOC has no email or couldn't use the link); `submitterEmail` optional.
+- `submittedBy === 'spoc'` requires `magicLinkTokenId` non-null AND `submitterEmail` non-null.
+- `submittedBy === 'ops-on-behalf'` requires `magicLinkTokenId === null` (ops manual entry when the SPOC has no email or couldn't use the link); `submitterEmail` optional.
 - Per-category `rating: null` means "SPOC chose to skip"; aggregation excludes null ratings rather than treating as 0.
 
-**Phase 1.1 auto-escalation hook** (Axis 3 EXPAND-2, deferred): any `FeedbackRating.rating <= 2` triggers an `Escalation` with `origin: 'feedback', originId: feedback.id, lane: <category-to-lane mapping>`. Category-to-lane mapping:
+**Phase 1 auto-escalation hook** (Axis 3 EXPAND-2, promoted to Phase 1 per Update 3): on every `Feedback` write, the post-write hook scans `ratings[]` for entries with `rating !== null && rating <= 2`. For the lowest-rated category (or, on tie, the first in fixed order), the hook creates an `Escalation` with:
+
+- `origin: 'feedback'`
+- `originId: feedback.id`
+- `schoolId: feedback.schoolId`
+- `mouId: feedback.mouId`
+- `stage: 'feedback-escalation'`
+- `lane: <category-to-lane mapping>`
+- `level: 'L1'` (entry level; fan-out resolver populates `notifiedEmails` per Misba intel A)
+- `severity: 'high'` if any rating === 1 in the feedback record; `severity: 'medium'` otherwise (i.e., lowest rating === 2)
+- `description`: auto-generated from the worst category and rating, plus the per-category comment if present
+- `createdBy: 'system'`
+
+Category-to-lane mapping:
+
 - `training-quality` → ACADEMICS
 - `trainer-rapport` → ACADEMICS
 - `delivery-timing` → OPS
 - `kit-condition` → OPS
 
-Escalation entity already supports this shape; Phase 1.1 just wires the trigger (no schema change).
+The Escalation entity schema (above in this Q-I section) already supports `origin: 'feedback'`; Phase 1 wires the trigger via `src/lib/feedbackAutoEscalation.ts` (called from the feedback-submit endpoint after Feedback write) and asserts behaviour via Test 9 (added to the Q-G test suite per Update 3).
 
-### FeedbackHmacToken (supporting entity)
+**Threshold calibration** (acknowledging the original ceremony concern that `<= 2` may fire too often): the auto-escalation lane-fan-out is to L1 only on first fire; if the same school accrues 3+ feedback escalations in 30 days, severity is bumped to `high` regardless of rating. This caps single-rating noise without requiring config tuning. Phase 1.1 watch-item: if Misba reports the L1 fan-out is generating too much volume, the `<= 2` threshold can drop to `<= 1` via a config edit; the hook code stays the same.
 
-The single-use HMAC token entity supporting the public `/api/feedback/submit` endpoint (D7 refinement, Tension 4). Stored in a separate file `src/data/feedback_hmac_tokens.json` (not embedded on Communication) because tokens are high-churn single-use artefacts; embedding would bloat Communication long-term.
+### MagicLinkToken (supporting entity, renamed and extended per Update 2)
+
+The HMAC token entity supporting both narrow public surfaces: `/api/feedback/submit` (POST, single-use, 48h expiry) and `/portal/status/[tokenId]` (GET, multi-use, 30-day expiry). Renamed from `FeedbackHmacToken` post-ceremony when the read-only status portal landed in Phase 1; the broader name reflects the dual purpose. Stored in `src/data/magic_link_tokens.json` (not embedded on Communication) because tokens are high-churn artefacts; embedding would bloat Communication long-term.
 
 ```ts
-export interface FeedbackHmacToken {
-  id: string             // UUID; used as the "token" query param on the magic link
+export type MagicLinkPurpose = 'feedback-submit' | 'status-view'
+
+export interface MagicLinkToken {
+  id: string                   // UUID; used as the "tokenId" query param on the magic link
+  purpose: MagicLinkPurpose
   mouId: string
   installmentSeq: number
-  spocEmail: string      // who the link was issued to
-  issuedAt: string       // ISO
-  expiresAt: string      // ISO; +48h from issuedAt
-  usedAt: string | null  // null until consumed
-  usedByIp: string | null
-  communicationId: string // FK to Communication that carried this token
+  spocEmail: string            // who the link was issued to
+  issuedAt: string             // ISO
+  expiresAt: string            // ISO; +48h for feedback-submit, +30 days for status-view
+  usedAt: string | null        // feedback-submit: set on POST consume. status-view: always null.
+  usedByIp: string | null      // feedback-submit: set on consume. status-view: always null.
+  lastViewedAt: string | null  // status-view: updated on each GET. feedback-submit: always null.
+  viewCount: number            // status-view: incremented per GET. feedback-submit: always 0.
+  communicationId: string      // FK to Communication that carried this token
 }
 ```
 
-**No `auditLog` by design**: this is a short-lived auth primitive, not a domain entity. The Communication record that carried the token is the audit anchor; Feedback.hmacTokenId links the submission back to the consumed token. Diverges from the MOU pattern deliberately and flagged here so successor ceremonies don't try to re-add it.
+**Per-purpose semantics**:
 
-**Pruning policy (locked)**: tokens with `usedAt` set AND `expiresAt` in the past are pruned weekly by the sync runner. Before deletion, pruned tokens are archived to `src/data/_audit/feedback_hmac_tokens_YYYY-MM.json` so the observational signal (how many tokens got used, which ones, how long between issuance and use) is preserved. Unused-and-not-yet-expired tokens stay. Unused-and-expired tokens are kept for a 30-day grace window (so Anish can investigate if a SPOC reports a link that should have worked), then archived-and-pruned the same way.
+- `feedback-submit`: 48-hour expiry. Single-use enforced via `usedAt === null` check at endpoint entry; on accept, atomic update sets `usedAt` and `usedByIp`. `lastViewedAt` and `viewCount` always remain null/0. Matches the original D7-Tension-4 contract.
+- `status-view`: 30-day expiry. Multi-use; no `usedAt` gate. Each GET on `/portal/status/[tokenId]` recomputes HMAC, checks `expiresAt > now`, then atomically updates `lastViewedAt` and increments `viewCount`. The view count is an observability signal ("did the SPOC actually visit?") that surfaces on the dashboard via Phase 1.1 if needed; not enforcement.
 
-**HMAC verification**: signature over `${mouId}|${installmentSeq}|${spocEmail}|${issuedAt}` using `GSL_SNAPSHOT_SIGNING_KEY` (same key HR uses for candidate magic links). Endpoint confirms single-use: checks `usedAt === null` before accepting; on accept, atomically updates `usedAt` and `usedByIp`.
+**No `auditLog` by design**: this is a short-lived auth primitive, not a domain entity. The Communication record that carried the token is the audit anchor; `Feedback.hmacTokenId` (renamed in code to `magicLinkTokenId`) links a submission back to the consumed token. Diverges from the MOU pattern deliberately and flagged here so successor ceremonies don't try to re-add it.
+
+**Pruning policy (locked, per-purpose)**:
+
+- `feedback-submit` tokens: with `usedAt` set AND `expiresAt` past → archive to `src/data/_audit/magic_link_tokens_YYYY-MM.json` then delete. Unused-and-not-yet-expired tokens stay. Unused-and-expired kept for a 30-day grace window (Anish investigation) then archived-and-deleted.
+- `status-view` tokens: with `expiresAt` past → archive then delete (no `usedAt` gate; the `lastViewedAt` and `viewCount` snapshot ride along in the archive for observability).
+
+Pruning runs weekly via the sync-runner. Same archive directory pattern, same monthly file rollover.
+
+**HMAC verification**: signature over `${purpose}|${mouId}|${installmentSeq}|${spocEmail}|${issuedAt}` using `GSL_SNAPSHOT_SIGNING_KEY` (same key HR uses for candidate magic links). The `purpose` is included in the signed payload so a feedback-submit token cannot be replayed against the status-view endpoint or vice versa.
 
 ---
 
@@ -588,11 +639,11 @@ Observability: dashboard tile "Import auto-link hits/misses (7d)" (Q-A). If miss
 
 ---
 
-## D7 refinement (Tension 4): staff-JWT middleware + HMAC-verified feedback endpoint
+## D7 refinement (Tension 4 + Update 2): staff-JWT middleware + two HMAC-verified public surfaces
 
-Tension 4 from step 7 established that the recommended Phase 1 scope requires HMAC-token verification on the `/api/feedback/submit` endpoint. D7 originally read "staff-JWT-only middleware, `/portal/*` candidate-cookie branch dropped." Refined as below.
+Tension 4 from step 7 established that the recommended Phase 1 scope requires HMAC-token verification on the `/api/feedback/submit` endpoint. D7 originally read "staff-JWT-only middleware, `/portal/*` candidate-cookie branch dropped." Update 2 (post-ceremony) adds a second narrow surface for the read-only SPOC status portal (`/portal/status/[tokenId]`). Refined as below.
 
-**Middleware**: staff-JWT (from HR's `src/middleware.ts`) with `/portal/*` branch fully stripped. One new public path added:
+**Middleware**: staff-JWT (from HR's `src/middleware.ts`) with full candidate-cookie session branch stripped. Two narrow public paths added:
 
 ```ts
 // Excerpt from Ops's src/middleware.ts (forked from HR):
@@ -601,25 +652,43 @@ const PUBLIC_PATHS = [
   '/api/login',
   '/api/logout',
   '/api/health',
-  '/api/feedback/submit',   // NEW: D7 refinement per Tension 4
+  '/api/feedback/submit',          // D7 refinement per Tension 4: feedback POST
+  '/portal/status/[tokenId]',      // Update 2: status-view GET, page-level HMAC
+  '/feedback/[tokenId]',           // SPOC-facing feedback form (page-level HMAC; landed at step 9)
+  '/feedback/thank-you',
+  '/feedback/link-expired',
 ]
-// No /portal/* branch. No CANDIDATE_SESSION_COOKIE code path in Phase 1.
+// No CANDIDATE_SESSION_COOKIE code path in Phase 1; both magic-link surfaces are stateless HMAC.
 // Everything else remains staff-JWT-gated.
 ```
+
+(The `/feedback/[tokenId]`, `/feedback/thank-you`, `/feedback/link-expired` entries were implicit in step 9 design review; restated here for clarity since the status-view route adds a sibling page-level public surface.)
 
 **Feedback submission endpoint** (`src/app/api/feedback/submit/route.ts`):
 
 1. Parse `tokenId` and the signed HMAC from the query string.
-2. Look up FeedbackHmacToken by id; if not found, or `usedAt !== null`, or `expiresAt < now`, return 403.
-3. Recompute HMAC over `${mouId}|${installmentSeq}|${spocEmail}|${issuedAt}` using `GSL_SNAPSHOT_SIGNING_KEY`; if mismatch, return 403.
+2. Look up MagicLinkToken by id; if not found, or `purpose !== 'feedback-submit'`, or `usedAt !== null`, or `expiresAt < now`, return 403.
+3. Recompute HMAC over `${purpose}|${mouId}|${installmentSeq}|${spocEmail}|${issuedAt}` using `GSL_SNAPSHOT_SIGNING_KEY`; if mismatch, return 403.
 4. Validate submitted Feedback payload (ratings array length 4, each rating in {1..5, null}, etc.).
-5. Write Feedback record via the queue with `hmacTokenId: <token.id>, submittedBy: 'spoc', submitterEmail: <token.spocEmail>`.
-6. Update FeedbackHmacToken atomically: `usedAt: <now>, usedByIp: <x-forwarded-for>`.
-7. Return 201.
+5. Write Feedback record via the queue with `magicLinkTokenId: <token.id>, submittedBy: 'spoc', submitterEmail: <token.spocEmail>`.
+6. Update MagicLinkToken atomically: `usedAt: <now>, usedByIp: <x-forwarded-for>`.
+7. Run feedback auto-escalation hook per Update 3 (creates an Escalation if any rating <= 2).
+8. Return 201.
 
-**Narrow surface principle**: single route, single function, single-use token. Does NOT reintroduce the full candidate-cookie session path from HR. If Phase 1.1 adds the magic-link SPOC status portal (Axis 2 EXPAND-1), THAT is where the candidate-cookie code path returns; the HMAC endpoint stays as a fast-path for direct-from-email feedback submission.
+**Status-view page route** (`src/app/portal/status/[tokenId]/page.tsx`, per Update 2):
 
-**D7 final statement** (supersedes original in step 3): staff-JWT middleware as the single authentication primitive for all authenticated surfaces; one narrow public endpoint with HMAC verification for feedback submission. No full candidate-cookie session in Phase 1. Phase 1.1 may reintroduce the candidate-cookie path when/if the magic-link portal lands.
+1. Page is a Server Component. Render-time HMAC verification before any data load.
+2. Look up MagicLinkToken by id; if not found, or `purpose !== 'status-view'`, or `expiresAt < now`, render the same `link-expired` UI used by the feedback form.
+3. Recompute HMAC over `${purpose}|${mouId}|${installmentSeq}|${spocEmail}|${issuedAt}` using `GSL_SNAPSHOT_SIGNING_KEY`; if mismatch, render link-expired.
+4. Atomically update MagicLinkToken: `lastViewedAt: <now>`, `viewCount: viewCount + 1`. (No usedAt gate; status-view is multi-use.)
+5. Load the MOU's current state (lifecycle stage, installments, dispatch state, feedback history) and render the read-only status-portal page (Surface 6 in design review).
+6. Page is non-interactive: no forms, no edit affordances, no PII of other schools, no internal-only fields. Same data-hygiene boundary as the email status block (Surface 3).
+
+**Narrow surface principle**: two routes, two functions. The feedback POST is single-use; the status-view GET is multi-use within the 30-day expiry. Neither reintroduces a full candidate-cookie session. The MagicLinkToken's `purpose` discriminator + signed HMAC ensures a feedback-submit token cannot be replayed as a status-view (or vice versa); endpoint-level `purpose` checks are the second layer.
+
+**Issuance**: every outbound Communication that includes a magic link issues a fresh MagicLinkToken at send-time. The same Communication may carry both purposes by issuing two tokens; the email body links to `/portal/status/[statusTokenId]` for status-view and (where appropriate) `/feedback/[feedbackTokenId]` for feedback-submit. Tokens are independent records; one expiring or being consumed does not affect the other.
+
+**D7 final statement** (supersedes original in step 3 and the step 8 Tension-4 refinement): staff-JWT middleware as the single authentication primitive for all authenticated surfaces; two narrow public surfaces with HMAC verification (feedback-submit POST and status-view GET); no full candidate-cookie session in Phase 1. Phase 1.1 may reintroduce a candidate-cookie path when/if the bidirectional EXPAND-2 portal (SPOC-facing actions like delivery-ack upload) lands.
 
 ---
 
@@ -641,34 +710,50 @@ Step 7's per-axis recommendations, translated to concrete file paths and per-axi
 - Dashboard is effectively static (weekly cadence); real-time is not a Phase 1 goal.
 - Per-tile component has a unit test asserting the aggregation logic against a fixture `src/data/*.json` snapshot.
 
-### Axis 2: SPOC portal (HOLD + CONTRACT)
+### Axis 2: SPOC portal (HOLD + CONTRACT + EXPAND-1, updated per Update 2)
 
-**Files**:
+**Files (CONTRACT, email status block)**:
 - `src/lib/templates/emailStatusBlock.ts`: helper that renders the "Here's where [school] is" block from MOU + Installment state.
 - Updates to all existing outbound-email templates under `src/lib/templates/` to include the status block.
 
-**Acceptance**:
+**Files (EXPAND-1, magic-link read-only portal, added per Update 2)**:
+- `src/app/portal/status/[tokenId]/page.tsx`: Server Component, page-level HMAC verification, renders the read-only status portal (Surface 6 in design review).
+- `src/app/portal/status/link-expired/page.tsx`: PUBLIC; static expired/used redirect target.
+- `src/lib/portal/lifecycleProgress.ts`: shared helper that computes the lifecycle-stage state per MOU; consumed by both the email status block (CONTRACT) and the portal page (EXPAND-1) so both surfaces show the same state without divergent logic.
+- `src/lib/magicLink.ts`: issuance + verification helpers for both `feedback-submit` and `status-view` purposes; renamed and extended from the step-8 `src/lib/hmac.ts`.
+
+**Acceptance (CONTRACT)**:
 - Every outbound `Communication` with `type IN ('welcome-note', 'three-ping-cadence-*', 'pi-sent', 'dispatch-raised', 'delivery-acknowledgement-reminder')` includes a rendered status block.
 - Snapshot test: block output against fixture MOU state reproduces expected copy to the byte.
 - Status block never references data the SPOC shouldn't see (internal-only fields like `salesPersonId`, audit log entries).
 
-### Axis 3: Feedback loop (HOLD + EXPAND-1)
+**Acceptance (EXPAND-1)**:
+- Every outbound Communication that carries an email status block ALSO carries a `View live status` link to `/portal/status/[tokenId]` with a freshly-issued status-view MagicLinkToken (30-day expiry).
+- Page renders the same lifecycle-progress visualisation as the email status block but pulls live data at render time.
+- Expired or HMAC-mismatched tokens render the link-expired UI without leaking which case happened.
+- `viewCount` and `lastViewedAt` update atomically on every render.
+- No edit affordances on the page; data-hygiene boundary matches Surface 3 / email status block.
+
+### Axis 3: Feedback loop (HOLD + EXPAND-1 + EXPAND-2, updated per Update 3)
 
 **Files**:
-- `src/lib/types.ts`: Feedback + FeedbackHmacToken entities (landed in Write 2).
-- `src/data/feedback.json` and `src/data/feedback_hmac_tokens.json`: storage; both queue-managed.
+- `src/lib/types.ts`: Feedback + MagicLinkToken entities (renamed per Update 2; landed in Write 2).
+- `src/data/feedback.json` and `src/data/magic_link_tokens.json`: storage; both queue-managed.
 - `src/data/_audit/` (directory): archived token JSONL files per pruning policy.
 - `src/app/api/feedback/submit/route.ts`: HMAC-authenticated POST handler (D7 refinement).
-- `src/lib/hmac.ts`: HMAC sign/verify helpers (shared primitive).
+- `src/lib/magicLink.ts`: HMAC sign/verify helpers (shared primitive; serves both feedback-submit and status-view purposes per Update 2).
 - `src/app/feedback/[tokenId]/page.tsx`: SPOC-facing form page; HMAC-gated at page level.
 - `src/lib/dashboard/tiles/feedbackAggregates.ts`: per-category aggregation for dashboard.
+- `src/lib/feedbackAutoEscalation.ts`: auto-escalation hook (added per Update 3); called from feedback-submit endpoint after Feedback write; creates an Escalation if any rating <= 2.
+- `src/lib/feedbackAutoEscalation.test.ts`: Test 9 in the Q-G suite; asserts severity, lane, level, origin, originId match the rules.
 
 **Acceptance**:
 - Submit endpoint rejects expired or already-used tokens with 403.
 - Submit endpoint rejects payloads with `ratings.length !== 4` or rating values outside `{1..5, null}`.
 - Aggregation correctly averages per-category, excluding null ratings.
-- All Feedback + FeedbackHmacToken writes go through the queue (no `fs.writeFile`).
-- Pruning job (`scripts/prune_hmac_tokens.ts` or equivalent sync-runner step) runs weekly, archives before delete.
+- All Feedback + MagicLinkToken writes go through the queue (no `fs.writeFile`).
+- Pruning job (`scripts/prune_magic_link_tokens.ts` or equivalent sync-runner step) runs weekly, archives before delete.
+- Auto-escalation hook fires on every Feedback write where any rating <= 2; Test 9 asserts the correct severity (medium for lowest === 2; high for any === 1) and lane (per category-to-lane mapping) on every fixture case.
 
 ### Axis 4: WhatsApp draft button (HOLD + EXPAND-1 + EXPAND-2)
 
@@ -711,14 +796,14 @@ Files and patterns carried from `gsl-mou-system` into Ops, annotated with what n
 | `.github/workflows/sync-and-deploy.yml` | adapt | Concurrency group `ops-sync` (not `sync`); bot email `sync-bot@gsl-ops.local`; env var strategy differs from MOU (Ops has multi-source ingestion via Q-A, not a single xlsx). Revisit before landing. |
 | `vercel.json` | copy byte-for-byte | Identical `ignoreCommand`. |
 | `next.config.mjs` | fork, new `outputFileTracingIncludes` paths | Route list: `/api/pi/generate`, `/api/dispatch/generate`, `/api/delivery-ack/generate`, `/api/feedback/submit`. Template dir: `./public/ops-templates/**/*`. Keep `experimental.outputFileTracingIncludes` nesting exactly as HR documents it. |
-| `src/middleware.ts` (from HR) | fork; strip `/portal/*`; add `/api/feedback/submit` as public | Per D7 refinement, Tension 4. |
+| `src/middleware.ts` (from HR) | fork; strip full candidate-cookie session branch; add `/api/feedback/submit`, `/portal/status/[tokenId]`, and the `/feedback/*` page family as public | Per D7 refinement, Tension 4 + Update 2. The `/portal/*` URL prefix is reused for the read-only status page only; no candidate-cookie session reintroduced. |
 | `docxtemplater` + `pizzip` | add as runtime deps | For PI / Dispatch Note / Delivery Ack generation. |
 
 ---
 
 ## Phase 1 acceptance criteria (end-to-end demo flow)
 
-Phase 1 is "done" when this 11-step flow works against real seeded data at launch:
+Phase 1 is "done" when this 12-step flow works against real seeded data at launch:
 
 1. **MOU import**: a new MOU in MOU's `mous.json` (e.g., `MOU-STEAM-2627-001`) appears in Ops's `mous.json` within one sync tick. School is auto-linked (exact-match) or queued (ambiguous). **`schoolScope` is set explicitly (`'SINGLE'` or `'GROUP'`), never left undefined.**
 2. **Actuals + cross-verification**: Sales marks actuals confirmed; Ops reviews and confirms; Finance's PI-raise gate unblocks.
@@ -728,11 +813,12 @@ Phase 1 is "done" when this 11-step flow works against real seeded data at launc
 6. **Dispatch gate unlocks**: Installment-1 paid → Ops sees "Raise PO" button on Dispatch screen. If pre-payment dispatch is needed, Ameet's override writes `overrideEvent` per Q-J.
 7. **Dispatch flow**: Ops raises PO → Dispatched → In Transit → Delivered → Acknowledged. Each state change writes to `auditLog`.
 8. **Delivery acknowledgement**: ops uploads signed handover form URL (the `Regular_Kits_Handover_template.xlsx` serves as the source template); Dispatch transitions to Acknowledged.
-9. **Feedback request**: after Installment-1 paid, feedback-request email fires; `FeedbackHmacToken` issued; SPOC clicks magic link, HMAC verified, form submits ratings + comments; Feedback record written.
+9. **Feedback request**: after Installment-1 paid, feedback-request email fires; `MagicLinkToken` (purpose=`feedback-submit`) issued; SPOC clicks magic link, HMAC verified, form submits ratings + comments; Feedback record written; auto-escalation hook fires if any rating <= 2 (Update 3).
 10. **Dashboard**: Ameet's Leadership Console shows accurate 5 health tiles + 10 trigger tiles, pre-populated from live data. Exception feed lists items needing attention.
-11. **Observability**: the daily sync-runner check (Q-G) passes: JSON validity, counter monotonicity, no race anomalies. All 8 tests green in CI.
+11. **Status-view portal** (per Update 2): every outbound email carrying a status block also carries a `View live status` link with a freshly-issued status-view MagicLinkToken (30-day expiry); SPOC clicking the link from any of the 7 email types renders the read-only portal page with current MOU lifecycle state.
+12. **Observability**: the daily sync-runner check (Q-G) passes: JSON validity, counter monotonicity, no race anomalies. All 9 tests green in CI.
 
-**Launch gate**: all 11 flows working end-to-end against at least 3 distinct real MOUs from the 2026-04 cohort: (a) one SINGLE-scope STEAM, (b) one SINGLE-scope TinkRworks or GSLT-Cretile (whichever has a seeded example matched to a GSTIN-captured school), and (c) the Narayana GROUP MOU to exercise the multi-school dispatch path. Any of the 11 flows failing on any of the 3 MOUs = launch blocked. If Ameet flips Item C to legacy-include before launch, add (d) one representative legacy school as the fourth gate.
+**Launch gate**: all 12 flows working end-to-end against at least 3 distinct real MOUs from the 2026-04 cohort: (a) one SINGLE-scope STEAM with `programmeSubType: 'GSLT-Cretile'` (the typical case, 18 of 24 MOUs per Update 1), (b) one SINGLE-scope TinkRworks (GSTIN-captured school), and (c) the Narayana GROUP MOU to exercise the multi-school dispatch path. Any of the 12 flows failing on any of the 3 MOUs = launch blocked. If Ameet flips Item C to legacy-include before launch, add (d) one representative legacy school as the fourth gate.
 
 **Seeding assertion for launch day**: the 2026-04 cohort of 24 MOUs imports with every MOU carrying `schoolScope` set explicitly. The Narayana chain MOU imports as `GROUP` with a pre-seeded `SchoolGroup`; the other 23 import as `SINGLE`. Any MOU without `schoolScope` set at `mous.json` write time fails the Q-A validator and lands in the review queue; this is enforced by a test in `fromMou.test.ts`. Defensive coding in consumer modules (e.g., "if schoolScope undefined, assume SINGLE") is explicitly forbidden: the importer is the single source of truth for this field.
 
@@ -754,14 +840,14 @@ Phase 1 is "done" when this 11-step flow works against real seeded data at launc
 - Launch runbook content (`docs/RUNBOOK.md`).
 - CLAUDE.md routing rules for the prompt library.
 - Developer-first-run experience (setup instructions, test suite onboarding, ops-data staging).
-- `docs/OPEN_ITEMS.md` framing for Q-D's STEAM vs GSLT-Cretile open question (how does it get resolved, by when, who owns it).
+- (Q-D STEAM vs GSLT-Cretile open question is resolved post-ceremony per Update 1; no `docs/OPEN_ITEMS.md` framing required.)
 
 ---
 
 ## Phase 1.1 backlog (deferred)
 
-- Axis 2 EXPAND-1: magic-link read-only SPOC status portal (candidate-cookie code path returns here).
-- Axis 3 EXPAND-2: feedback-driven auto-escalation (wires the Escalation `origin: 'feedback'` trigger).
+- Axis 2 EXPAND-2: SPOC-facing actions (MOU download, delivery-ack upload, contact-detail update, GSTIN self-submit). Read-only Axis 2 EXPAND-1 portal moved IN to Phase 1 per Update 2; bidirectional EXPAND-2 stays Phase 2-territory.
+- (Axis 3 EXPAND-2 feedback-driven auto-escalation moved IN to Phase 1 per Update 3; no longer in this backlog.)
 - Axis 5 EXPAND-1: incremental rollout (flag-gated in Q-A importer; activated if Ameet says include-legacy).
 - Legacy-school import: 51 SPOC-DB-only schools + 148 MOU backlog (if Item C flips).
 - Bulk CSV GSTIN import (if Item F trigger fires at 30%+ null-GSTIN rate).
@@ -780,12 +866,12 @@ Launch risks with mitigations. Eight total (seven called out in your brief plus 
 
 | # | Risk | Mitigation |
 |---|---|---|
-| 1 | Q-G reconciliation plumbing under-exercised in MOU (1 PI issued ever). First prod stress happens on Ops. Race conditions, counter skips, corrupted queue JSON are all plausible. | 8-test suite (5 mandatory + 3 additional) must pass on every PR; daily sync-runner production check on JSON validity and counter monotonicity per step 6.5 Item G. |
+| 1 | Q-G reconciliation plumbing under-exercised in MOU (1 PI issued ever). First prod stress happens on Ops. Race conditions, counter skips, corrupted queue JSON are all plausible. | 9-test suite (5 mandatory + 4 additional, including feedback auto-escalation per Update 3) must pass on every PR; daily sync-runner production check on JSON validity and counter monotonicity per step 6.5 Item G. |
 | 2 | Item C legacy-include flip (Ameet). If he says yes, Phase 1.1 back-fills 51 schools (+ 148 MOU backlog) through the Q-A helper at scale in one import pass. Auto-link misses and validator failures will pile up. | Q-A importer already designed as a flag-gated filter (`academicYear >= '2026-27'`); flip the flag and run one-time import pass. Review queue depth handles volume. No helper rewrite. |
-| 3 | Programme enum ambiguity (Q-D open item). If GSLT-Cretile is actually STEAM or a STEAM sub-type, 18 of 24 2026-04 MOUs either misfile or need migration. | Phase 1 default treats as distinct; migration cost enumerated by answer in Q-D. Flagged for Slack to Ameet/Shubhangi; `docs/OPEN_ITEMS.md` tracks. |
+| 3 | Programme enum ambiguity (Q-D originally open). | RESOLVED post-ceremony per Update 1: GSLT-Cretile is a sub-type of STEAM, captured via the new optional `programmeSubType` field on MOU. Importer rewrites `programme: 'GSLT-Cretile'` in source data to `programme: 'STEAM', programmeSubType: 'GSLT-Cretile'` at ingestion. No risk remaining. |
 | 4 | Item F GSTIN non-availability at launch. If Shubhangi confirms no central GSTIN capture exists, every PI generation for a school with `gstNumber === null` must block. | PI generator blocks per-school on null GSTIN with UI state "GSTIN required" (step 6.5 Item F default). No invalid PIs issued silently. Bulk CSV import path available in Phase 1.1 as additive rollback. |
 | 5 | Ops-team underuse of the WhatsApp copy-log observability (Axis 4 EXPAND-2). If ops staff feel surveilled by copy-logging, they'll route around the button and the signal degrades. | Dashboard view is anonymized-by-default (copy-rate per school, not per user) per step 7 Fix 5 mitigation. Per-user attribution only via admin audit route; framing in the UI is "this helps us see which schools have email delivery issues," not "we're tracking your clicks." |
-| 6 | D7's new HMAC surface (`/api/feedback/submit`) is a novel external entry point. Abuse vectors include: token guessing, token replay, bulk-POST against issued tokens, user-agent/IP enumeration. | 48-hour token expiry; single-use enforced via `usedAt` atomic update; recompute HMAC over `(mouId, installmentSeq, spocEmail, issuedAt)` with `GSL_SNAPSHOT_SIGNING_KEY`; rate-limit the endpoint (20 requests per IP per minute via Vercel edge config). Not a blocker; standard narrow-surface hygiene. |
+| 6 | D7's two HMAC surfaces (`/api/feedback/submit` POST and `/portal/status/[tokenId]` GET, the latter added per Update 2) are novel external entry points. Abuse vectors include: token guessing, token replay across purposes, bulk-GET against issued status tokens for enumeration, user-agent/IP enumeration. | Per-purpose discriminator in the signed HMAC payload prevents cross-purpose replay; 48h expiry on feedback-submit single-use, 30-day expiry on status-view multi-use; recompute HMAC over `(purpose, mouId, installmentSeq, spocEmail, issuedAt)` with `GSL_SNAPSHOT_SIGNING_KEY`; rate-limit both endpoints (20 requests per IP per minute via Vercel edge config); status-view `viewCount` per token gives an observability signal for unusual access patterns. Not a blocker; standard narrow-surface hygiene applied to both surfaces. |
 | 7 | **Sync runner single point of failure (Anish's Windows laptop)**. The runner hosts the self-hosted GitHub Actions worker. If the laptop is offline, asleep, on the go, or has Windows Update restart, the hourly sync stops. The MOU import stops. The dashboard goes stale. Ops team hits "why isn't the new MOU showing up?" Anish is a dependency for sync availability. | Phase 1 mitigation: keep laptop plugged in + awake during business hours; disable automatic Windows Update reboots; monitor workflow run failures via GitHub notifications. Phase 1.1 real fix: migrate sync to a cloud runner (Fly.io, Railway, GitHub-hosted Windows runner) once the core pipeline is stable. Flag added to Phase 1.1 backlog; same risk applies to MOU and HR today, so not strictly an Ops regression, but Ops stakes are higher because it's the active operational system at 240-MOU target scale. Preferred Phase 1.1 path: GitHub-hosted Windows runner if the sync script can be refactored to read xlsx masters via SharePoint Graph API (removing the OneDrive-symlink dependency). Fly.io or Railway only needed if OneDrive filesystem access stays a hard requirement. Evaluate when Phase 1.1 is actually scheduled: the preference may flip if SharePoint Graph proves unreliable or expensive. |
 
 Phase 1.1 backlog (above) already carries items 2, 4, 5-mitigation, 7-real-fix. Risks 1, 3, 6 are architectural and mitigated in the Phase 1 design itself.
@@ -794,11 +880,11 @@ Phase 1.1 backlog (above) already carries items 2, 4, 5-mitigation, 7-real-fix. 
 
 ## Summary for Anish
 
-Architecture locked. Seven Q-series questions resolved. Five net-new entity schemas specified (Communication, Escalation, SchoolGroup, CcRule, Feedback) + one supporting internal entity (FeedbackHmacToken). Eight-test suite specified (5 mandatory + 3 Phase-1 additional). D7 refined per Tension 4: staff-JWT middleware + narrow HMAC-verified public feedback endpoint, no full candidate-cookie session in Phase 1.
+Architecture locked. Seven Q-series questions resolved (Q-D resolved post-ceremony per Update 1). Five net-new entity schemas specified (Communication, Escalation, SchoolGroup, CcRule, Feedback) + one supporting internal entity (MagicLinkToken, renamed and extended from FeedbackHmacToken per Update 2). Nine-test suite specified (5 mandatory + 4 Phase-1 additional, including feedback auto-escalation per Update 3). D7 refined per Tension 4 and re-extended per Update 2: staff-JWT middleware + two narrow HMAC-verified public surfaces (feedback POST and status-view GET); no full candidate-cookie session in Phase 1.
 
 **What carries verbatim from MOU**: `pendingUpdates.ts`, `githubQueue.ts` (modulo 4 strings), `format.ts`, `vercel.json`, the Contents API queue pattern, the sync-and-deploy workflow shape.
 
-**What forks**: `types.ts` (add 5 net-new entities + MOU extensions), `templates.ts` (MOU's templates are MOU-agreements, not PIs; fork the pattern and build new PI / Dispatch Note / Delivery Ack templates), `middleware.ts` (HR origin with `/portal/*` stripped + `/api/feedback/submit` added).
+**What forks**: `types.ts` (add 5 net-new entities + MOU extensions including `programmeSubType` per Update 1), `templates.ts` (MOU's templates are MOU-agreements, not PIs; fork the pattern and build new PI / Dispatch Note / Delivery Ack templates), `middleware.ts` (HR origin with full candidate-cookie session stripped; two narrow public surfaces added per D7 + Update 2: `/api/feedback/submit` POST and `/portal/status/[tokenId]` GET).
 
 **Phase 1 acceptance**: 11-step end-to-end flow from MOU import (with explicit `schoolScope` set on every record) through feedback submission works against real seeded data. Launch-day seeding includes pre-seeded `SchoolGroup` records, 10 `CcRule` records from SPOC DB, real `sales_team.json`, and every 2026-04 MOU imported with explicit scope.
 
@@ -806,6 +892,6 @@ Architecture locked. Seven Q-series questions resolved. Five net-new entity sche
 
 **No D1-D8 reopened**. D7 refined (narrower surface per Tension 4, not full revocation). Two pending asks (Ameet on Item C, Shubhangi on Item F) remain launch-plan inputs; architecture is stable against both outcomes.
 
-**Open items carried forward as non-blockers**: Q-D STEAM vs GSLT-Cretile distinction (one-line Slack), Axis 5 flip-to-incremental trigger (Ameet's Item C answer), Phase 1.1 backlog scheduling.
+**Open items carried forward as non-blockers**: Axis 5 flip-to-incremental trigger (Ameet's Item C answer), Phase 1.1 backlog scheduling. (Q-D STEAM vs GSLT-Cretile distinction resolved post-ceremony per Update 1.)
 
 ---

@@ -303,6 +303,12 @@ src/app/
 │   │   └── page.tsx              # PUBLIC; static thank-you
 │   └── link-expired/
 │       └── page.tsx              # PUBLIC; static expired/used redirect target
+├── portal/
+│   └── status/
+│       ├── [tokenId]/
+│       │   └── page.tsx          # PUBLIC; SPOC read-only status portal (HMAC-gated; per Update 2)
+│       └── link-expired/
+│           └── page.tsx          # PUBLIC; expired/invalid status-view token redirect target
 ├── schools/
 │   ├── page.tsx                  # list view (search + filter by region)
 │   └── [schoolId]/
@@ -384,13 +390,14 @@ src/app/
 MOU's route structure (per step 3 §3): `/`, `/dashboard`, `/admin/*`, `/api/*`. Ops mirrors that. Ops adds:
 
 - `/feedback/*` (entirely new; PUBLIC routes per D7).
+- `/portal/status/*` (entirely new; PUBLIC route per D7 + Update 2; SPOC read-only status portal).
 - `/escalations/*` (new entity; replaces MOU's lighter-touch escalation surface).
 - `/mous/[mouId]/*` deeper nesting (MOU app handles up to Stage 4; Ops covers all 8 stages).
 - `/admin/cc-rules`, `/admin/school-groups`, `/admin/mou-import-review`, `/admin/pi-counter` (Ops-specific admin surfaces).
 
 Routes that are FLAT (single page route, no nested children):
 
-- `/login`, `/logout`, `/feedback/thank-you`, `/feedback/link-expired`, `/dashboard/exceptions`, `/admin/audit`, `/admin/pi-counter`, `/admin/mou-import-review`.
+- `/login`, `/logout`, `/feedback/thank-you`, `/feedback/link-expired`, `/portal/status/link-expired`, `/dashboard/exceptions`, `/admin/audit`, `/admin/pi-counter`, `/admin/mou-import-review`.
 
 Routes that need NESTED routing:
 
@@ -398,9 +405,10 @@ Routes that need NESTED routing:
 - `/admin` (chrome via layout.tsx with left nav).
 - `/mous/[mouId]/*` (lifecycle stages as sub-routes; the parent shows the overview, sub-routes show stage-specific UI).
 - `/feedback/[tokenId]` (dynamic segment; HMAC-gated at page level).
+- `/portal/status/[tokenId]` (dynamic segment; HMAC-gated at page level; per Update 2).
 - `/schools/[schoolId]`, `/escalations/[escalationId]`, `/admin/cc-rules/[ruleId]` (entity detail).
 
-Total Phase 1 routes: ~32 page routes + ~12 API routes = ~44 routes. MOU has ~25, HR has ~30. Ops is largest at ~44 because it covers all 8 lifecycle stages.
+Total Phase 1 routes: ~34 page routes (including the 2 new `/portal/status/*` routes per Update 2) + ~12 API routes = ~46 routes. MOU has ~25, HR has ~30. Ops is largest at ~46 because it covers all 8 lifecycle stages plus the SPOC read-only portal.
 
 ### Layout chrome decisions
 
@@ -412,7 +420,7 @@ Total Phase 1 routes: ~32 page routes + ~12 API routes = ~44 routes. MOU has ~25
 
 ### Route-level auth
 
-- PUBLIC: `/login`, `/feedback/[tokenId]`, `/feedback/thank-you`, `/feedback/link-expired`, `/api/login`, `/api/logout`, `/api/health`, `/api/feedback/submit`. Listed in `PUBLIC_PATHS` in `src/middleware.ts` per D7 refinement.
+- PUBLIC: `/login`, `/feedback/[tokenId]`, `/feedback/thank-you`, `/feedback/link-expired`, `/portal/status/[tokenId]`, `/portal/status/link-expired`, `/api/login`, `/api/logout`, `/api/health`, `/api/feedback/submit`. Listed in `PUBLIC_PATHS` in `src/middleware.ts` per D7 refinement and Update 2.
 - STAFF-JWT-GATED: everything else. Middleware redirects to `/login` on no-cookie or expired-cookie.
 - ROLE-FILTERED (within staff-JWT): `/admin/*` requires Admin or Ops Head role (Anish or Misba). `/escalations/*` shows entries filtered by role per Item 5's permissions matrix. `/dashboard` shows the same data to everyone but tile values are role-scoped (a sales rep sees their own MOUs).
 
@@ -599,7 +607,7 @@ npm run seed:dev
 
 # 5. Run tests
 npm test
-# 8 tests should pass; if any fail, the dev environment is broken
+# 9 tests should pass (per Update 3); if any fail, the dev environment is broken
 
 # 6. Start dev server
 npm run dev
@@ -631,7 +639,7 @@ Five entries:
 
 ### Test suite onboarding
 
-Eight tests in `src/lib/**/*.test.ts` colocated with subjects (per step 8 Q-G). Vitest config in `vitest.config.ts` (matches MOU's pattern). No test-database setup; tests use in-memory JSON fixtures and mock GitHub Contents API responses.
+Nine tests in `src/lib/**/*.test.ts` colocated with subjects (per step 8 Q-G plus Test 9 added per Update 3). Vitest config in `vitest.config.ts` (matches MOU's pattern). No test-database setup; tests use in-memory JSON fixtures and mock GitHub Contents API responses.
 
 Running tests:
 
@@ -639,7 +647,7 @@ Running tests:
 - `npm test -- queueAppend`: single-file watch mode for a focused test.
 - `npm run test:coverage`: with coverage report; CI runs this and asserts >80% for `src/lib/`.
 
-The 8 tests are documented in `src/lib/__tests__/README.md` (or equivalent) with the names from step 8 Q-G plus a one-line description each. New developer reads this README to understand what each test guards.
+The 9 tests are documented in `src/lib/__tests__/README.md` (or equivalent) with the names from step 8 Q-G plus the auto-escalation test from Update 3, a one-line description each. New developer reads this README to understand what each test guards.
 
 ### ops-data staging
 
@@ -647,7 +655,7 @@ The 8 tests are documented in `src/lib/__tests__/README.md` (or equivalent) with
 
 Fixture content:
 
-- `_fixtures/mous.json`: 6 representative MOUs (1 SINGLE STEAM, 1 SINGLE TinkRworks, 1 SINGLE GSLT-Cretile, 1 GROUP Narayana, 1 with null GSTIN, 1 with mid-import-review state).
+- `_fixtures/mous.json`: 6 representative MOUs (1 SINGLE STEAM with `programmeSubType: 'GSLT-Cretile'`, 1 SINGLE STEAM with null sub-type, 1 SINGLE TinkRworks, 1 GROUP Narayana, 1 with null GSTIN, 1 with mid-import-review state).
 - `_fixtures/schools.json`: ~15 representative schools across regions, programmes, and group memberships.
 - `_fixtures/sales_team.json`: 5 placeholder reps (anonymised; not real names).
 - `_fixtures/cc_rules.json`: the 10 SPOC-DB rules per ground-truth §3b.
@@ -865,7 +873,7 @@ Six new risks specific to this review's scope.
 - DESIGN.md initial commit from this review's Item 1 seed plan. Owner: Anish.
 - `scripts/docs-lint.sh` plus simple-git-hooks wiring. Owner: Anish.
 - shadcn/ui scaffold (Tailwind plugins, ~12 primitives copied, Ops-specific components stubbed). Owner: Anish.
-- Route tree creation (~32 page routes + ~12 API routes scaffolded as empty-but-rendering). Owner: Anish.
+- Route tree creation (~34 page routes including the two `/portal/status/*` routes per Update 2 + ~12 API routes scaffolded as empty-but-rendering). Owner: Anish.
 - `/admin/audit` route built per Item 5. Owner: Anish.
 - `docs/RUNBOOK.md` initial commit (sections 1-3 written, 4-7 outlined). Owner: Anish.
 - `docs/DEVELOPER.md` initial commit (Item 7 written up). Owner: Anish.
@@ -901,10 +909,10 @@ Nine items resolved.
 1. **DESIGN.md as a discipline mechanism**: three-layer model (CSS-var code, prescriptive rules, enforcement). Anish owns the rules; whoever lands a UI PR keeps DESIGN.md current. Failure modes are mostly catchable; one soft mitigation for stale-DESIGN.md drift (PR-template checkbox), with a Phase 1.1 CI warning held in reserve.
 2. **docs-lint pre-commit script**: three checks (em-dash zero, British English, AI-slop warning). simple-git-hooks tooling. Em-dash and British English fail; AI-slop warns. Same script in CI. Output is monospace and direct-voice; bypass available via `--no-verify` for emergencies, re-caught by CI.
 3. **Component library**: shadcn/ui. ~1.5 days of Day 1 setup pays back across 5 surfaces and ~12 primitives plus ~10 Ops-specific components. WCAG 2.1 AA freebie via Radix. Phase 2 multi-tenant compatible via the CSS-variable theming layer.
-4. **Page-level route structure**: ~32 page routes + ~12 API routes. Concrete tree under `src/app/`. Inheritance from MOU's flat-page pattern with deeper nesting under `/mous/[mouId]/*` for the 8 lifecycle stages. Five PUBLIC routes per D7. Three role-filtered surfaces (`/admin/*`, `/escalations/*`, `/dashboard`).
+4. **Page-level route structure**: ~34 page routes + ~12 API routes (post-Update-2; +2 page routes for `/portal/status/*`). Concrete tree under `src/app/`. Inheritance from MOU's flat-page pattern with deeper nesting under `/mous/[mouId]/*` for the 8 lifecycle stages. Seven PUBLIC routes per D7 and Update 2. Three role-filtered surfaces (`/admin/*`, `/escalations/*`, `/dashboard`).
 5. **Admin audit route layout**: filter rail (date range, entity chips, action chips, user select, search, quick-filter chips) plus results pane (50 per page, cursor-based, Export CSV). Role-based server-side filtering. Per-user attribution shown to Admin / Leadership / Ops Head; redacted for sales reps and ops staff. URL-shareable filter state.
 6. **docs/RUNBOOK.md outline**: 8 sections. Pre-launch checklist, launch-day sequence, per-user Day-1 actions, cron monitoring expectations, failure modes and recovery, trigger response, Phase 1.1 escalation criteria, contacts. Phase 1 launch ships sections 1-3 written; 4-7 outlined and grow as incidents land. Living document, owned by Anish.
-7. **Developer-first-run experience**: 6 commands from `git clone` to running dev server. ~45 minutes total. 5 secrets in `.env.local` (4 from 1Password, 1 from local file path). Fixture-based seed (no xlsx-read in dev). 8-test suite green within 5 seconds.
+7. **Developer-first-run experience**: 6 commands from `git clone` to running dev server. ~45 minutes total. 5 secrets in `.env.local` (4 from 1Password, 1 from local file path). Fixture-based seed (no xlsx-read in dev). 9-test suite green within 5 seconds (post-Update-3).
 8. **Self-maintainability matrix**: 22 operations classified. ~14 Phase-1 self-serve, ~5 Phase-1 Anish-required, 3 never-self-serve (delete operations preserved for audit purity). Phase 1.1 roadmap to flip the high-leverage Anish-required operations: ~5-7 days of work.
 9. **CLAUDE.md routing tree**: 11-row table mapping question types to first-document-to-consult. Plus a "plans are an archive" rule preventing implementation code from referencing decision documents directly.
 
