@@ -169,6 +169,5 @@ step "5/5  smoke-test PASS"
 echo "All checks green. Dev environment is ready."
 echo ""
 echo "Week 2 deferred (NOT verified by this smoke run):"
-echo "  - Real dashboard rendering (15 tiles + exception + escalation)"
 echo "  - SMTP send / queue Contents API write / sync runner cron"
 exit 0

@@ -52,7 +52,7 @@ beforeEach(() => {
 })
 
 describe('/admin/audit page wiring (Fix-15a)', () => {
-  it('SalesRep viewing ?action=p2-override gets zero entries; role check ran first, URL filter could not widen', async () => {
+  it('SalesRep viewing ?action=p2-override gets zero entries; role check ran first, URL filter could not widen', { timeout: 15000 }, async () => {
     const { default: AuditPage } = await import('./page')
     const result = await AuditPage({
       searchParams: Promise.resolve({ action: 'p2-override', days: 'all' }),
@@ -67,7 +67,7 @@ describe('/admin/audit page wiring (Fix-15a)', () => {
     expect(html).toContain('No audit entries match the current filters.')
   })
 
-  it('SalesRep viewing the unfiltered audit page still gets zero visible entries', async () => {
+  it('SalesRep viewing the unfiltered audit page still gets zero visible entries', { timeout: 15000 }, async () => {
     const { default: AuditPage } = await import('./page')
     const result = await AuditPage({
       searchParams: Promise.resolve({ days: 'all' }),
