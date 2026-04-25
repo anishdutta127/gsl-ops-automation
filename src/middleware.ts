@@ -25,7 +25,20 @@
 
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { SESSION_COOKIE_NAME, verifySessionToken } from '@/lib/crypto/jwt'
+import {
+  SESSION_COOKIE_NAME,
+  issueSessionToken,
+  sessionCookieOptions,
+  verifySessionToken,
+} from '@/lib/crypto/jwt'
+
+// Sliding-refresh threshold (seconds): on every authenticated request,
+// if more than this much time has passed since `iat`, the middleware
+// silently issues a fresh token and rotates the cookie. Active users
+// keep a rolling 7-day session; inactive users still expire after 7
+// idle days. Threshold tuned per Phase B decision 2: 1 day so we
+// re-sign at most once per day of activity.
+const SLIDING_REFRESH_THRESHOLD_SECONDS = 24 * 60 * 60
 
 const PUBLIC_PATHS = [
   '/login',
@@ -69,7 +82,22 @@ export async function middleware(request: NextRequest) {
     return response
   }
 
-  return NextResponse.next()
+  const response = NextResponse.next()
+
+  // Sliding refresh: re-sign at most once per day of activity.
+  const now = Math.floor(Date.now() / 1000)
+  const iat = typeof session.iat === 'number' ? session.iat : now
+  if (now - iat > SLIDING_REFRESH_THRESHOLD_SECONDS) {
+    const fresh = await issueSessionToken({
+      sub: session.sub,
+      email: session.email,
+      name: session.name,
+      role: session.role,
+    })
+    response.cookies.set(SESSION_COOKIE_NAME, fresh, sessionCookieOptions())
+  }
+
+  return response
 }
 
 export const config = {

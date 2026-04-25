@@ -77,6 +77,16 @@ All 9 fixture users authenticate with `GSL#123` (development password only; neve
 
 The `testingOverride` flag pattern is documented in `src/lib/auth/permissions.ts`. Every audit-log entry on Misba's actions records `user: 'misba.m'` (her base id), so post-launch you can grep for what she did under elevated permissions.
 
+### Password recovery (testers)
+
+If a tester forgets or breaks their password:
+
+1. Edit `src/data/_fixtures/users.json`: replace the user's `passwordHash` field with the placeholder marker `"REPLACE_WITH_BCRYPT_HASH"`.
+2. Run `npm run seed:dev`. The seed-dev pipeline detects the placeholder and writes a fresh bcrypt hash of `GSL#123` into `src/data/users.json`.
+3. Tester logs in at `/login` with `GSL#123` and is back in.
+
+There is no `/forgot-password` route in Phase 1. Phase 1.1 may add one if testers ask.
+
 ---
 
 ## Time-to-first-PR target

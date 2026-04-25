@@ -134,8 +134,10 @@ LOGIN_STATUS=$(curl_status "${BASE_URL}/login")
 echo "  /login                                  200 OK"
 
 LOGIN_BODY=$(curl_body "${BASE_URL}/login")
-echo "$LOGIN_BODY" | grep -q "Login" || fail "/login HTML missing the 'Login' title from RoutePlaceholder"
-echo "  /login body has expected placeholder copy"
+echo "$LOGIN_BODY" | grep -q "Sign in" || fail "/login HTML missing the 'Sign in' button label"
+echo "$LOGIN_BODY" | grep -q 'name="email"' || fail "/login HTML missing the email input"
+echo "$LOGIN_BODY" | grep -q 'name="password"' || fail "/login HTML missing the password input"
+echo "  /login body has email + password fields + Sign in button"
 
 DASH_STATUS=$(curl_status "${BASE_URL}/dashboard")
 [[ "$DASH_STATUS" == "307" || "$DASH_STATUS" == "302" ]] \
@@ -167,7 +169,6 @@ step "5/5  smoke-test PASS"
 echo "All checks green. Dev environment is ready."
 echo ""
 echo "Week 2 deferred (NOT verified by this smoke run):"
-echo "  - Login flow (anish.d / GSL#123 -> /api/login -> Dashboard)"
 echo "  - Real dashboard rendering (15 tiles + exception + escalation)"
 echo "  - SMTP send / queue Contents API write / sync runner cron"
 exit 0

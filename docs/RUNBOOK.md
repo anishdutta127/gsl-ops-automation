@@ -272,3 +272,14 @@ Cross-references:
 - Item 15b test scaffolds: `src/lib/reconcile.test.ts`, `src/lib/importer/fromMou.test.ts`, `src/lib/ccResolver.test.ts`, `src/lib/dispatch/overrideAudit.test.ts`.
 - Item 15 real lib: `src/lib/feedback/autoEscalation.ts` (Update 3 promoted to Phase 1).
 - Phase 1.1 backlog: `plans/anish-ops-eng-review-2026-04-24.md` §"Phase 1.1 backlog".
+
+---
+
+## 10. Known Phase 1 limitations
+
+These are deliberate Phase 1 scope cuts, not bugs. Each names the trigger that flips it back into scope.
+
+- **No rate limiting on `/api/login`.** Phase 1 testers are 9 known internal staff; Vercel's platform-level rate limit handles trivially-mal traffic. Phase 1.1 trigger: SPOC portal goes public-internet (any unauthenticated route exposed beyond staff IPs). Implementation will require an external counter store (Vercel KV or similar) since serverless invocations have no shared in-memory state.
+- **Multi-device sessions accepted.** The session cookie is JWT-based with no server-side session list, so Anish on desktop + Anish on phone are two simultaneously-valid sessions. Reconsideration trigger: the audit-log shows a single user-id session being used from geographically-distant IPs simultaneously, suggesting credential leak. Implementation would add `sessions.json` with per-user concurrency limit and a queue write per login.
+- **No `/forgot-password` or `/account/password` route.** Password recovery is a manual edit to `src/data/_fixtures/users.json` + `npm run seed:dev` per `docs/DEVELOPER.md` §"Password recovery (testers)". Phase 1.1 trigger: testers actually ask for self-service.
+- **`/api/health` is binary status only.** Returns `{ status: 'ok', timestamp, version }` for uptime monitors. The graded data-integrity view (queue depth, JSON validity, sync-runner pulse) lives on the dashboard tile instead, where a human can read it usefully.
