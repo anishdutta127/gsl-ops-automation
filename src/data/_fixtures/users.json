@@ -1,0 +1,102 @@
+[
+  {
+    "id": "anish.d",
+    "name": "Anish Dutta",
+    "email": "anish.d@getsetlearn.info",
+    "role": "Admin",
+    "testingOverride": false,
+    "active": true,
+    "passwordHash": "REPLACE_WITH_BCRYPT_HASH",
+    "createdAt": "2026-04-25T00:00:00Z",
+    "auditLog": []
+  },
+  {
+    "id": "ameet.z",
+    "name": "Ameet Zaveri",
+    "email": "ameet.z@getsetlearn.info",
+    "role": "Leadership",
+    "testingOverride": false,
+    "active": true,
+    "passwordHash": "REPLACE_WITH_BCRYPT_HASH",
+    "createdAt": "2026-04-25T00:00:00Z",
+    "auditLog": []
+  },
+  {
+    "id": "pratik.d",
+    "name": "Pratik D.",
+    "email": "pratik.d@getsetlearn.info",
+    "role": "SalesHead",
+    "testingOverride": false,
+    "active": true,
+    "passwordHash": "REPLACE_WITH_BCRYPT_HASH",
+    "createdAt": "2026-04-25T00:00:00Z",
+    "auditLog": []
+  },
+  {
+    "id": "vishwanath.g",
+    "name": "Vishwanath G.",
+    "email": "vishwanath.g@getsetlearn.info",
+    "role": "SalesRep",
+    "testingOverride": false,
+    "active": true,
+    "passwordHash": "REPLACE_WITH_BCRYPT_HASH",
+    "createdAt": "2026-04-25T00:00:00Z",
+    "auditLog": []
+  },
+  {
+    "id": "misba.m",
+    "name": "Misba M.",
+    "email": "misba.m@getsetlearn.info",
+    "role": "OpsEmployee",
+    "testingOverride": true,
+    "testingOverridePermissions": ["OpsHead"],
+    "active": true,
+    "passwordHash": "REPLACE_WITH_BCRYPT_HASH",
+    "createdAt": "2026-04-25T00:00:00Z",
+    "auditLog": []
+  },
+  {
+    "id": "pradeep.r",
+    "name": "Pradeep R.",
+    "email": "pradeep.r@getsetlearn.info",
+    "role": "OpsHead",
+    "testingOverride": false,
+    "active": true,
+    "passwordHash": "REPLACE_WITH_BCRYPT_HASH",
+    "createdAt": "2026-04-25T00:00:00Z",
+    "auditLog": []
+  },
+  {
+    "id": "shubhangi.g",
+    "name": "Shubhangi G.",
+    "email": "shubhangi.g@getsetlearn.info",
+    "role": "Finance",
+    "testingOverride": false,
+    "active": true,
+    "passwordHash": "REPLACE_WITH_BCRYPT_HASH",
+    "createdAt": "2026-04-25T00:00:00Z",
+    "auditLog": []
+  },
+  {
+    "id": "pranav.b",
+    "name": "Pranav B.",
+    "email": "pranav.b@getsetlearn.info",
+    "role": "Finance",
+    "testingOverride": false,
+    "active": true,
+    "passwordHash": "REPLACE_WITH_BCRYPT_HASH",
+    "createdAt": "2026-04-25T00:00:00Z",
+    "auditLog": []
+  },
+  {
+    "id": "shashank.s",
+    "name": "Shashank S.",
+    "email": "shashank.s@getsetlearn.info",
+    "role": "TrainerHead",
+    "testingOverride": false,
+    "active": true,
+    "passwordHash": "REPLACE_WITH_BCRYPT_HASH",
+    "createdAt": "2026-04-25T00:00:00Z",
+    "auditLog": []
+  }
+]

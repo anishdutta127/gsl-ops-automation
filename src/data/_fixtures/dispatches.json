@@ -1,0 +1,100 @@
+[
+  {
+    "id": "DIS-001",
+    "mouId": "MOU-STEAM-2627-001",
+    "schoolId": "SCH-GREENFIELD-PUNE",
+    "installmentSeq": 1,
+    "stage": "delivered",
+    "installment1Paid": true,
+    "overrideEvent": null,
+    "poRaisedAt": "2026-04-23T09:00:00Z",
+    "dispatchedAt": "2026-04-23T15:00:00Z",
+    "deliveredAt": "2026-04-26T11:00:00Z",
+    "acknowledgedAt": null,
+    "acknowledgementUrl": null,
+    "notes": null,
+    "auditLog": []
+  },
+  {
+    "id": "DIS-002",
+    "mouId": null,
+    "schoolId": "SCH-RIVERDALE-MUM",
+    "installmentSeq": 1,
+    "stage": "po-raised",
+    "installment1Paid": false,
+    "overrideEvent": {
+      "overriddenBy": "ameet.z",
+      "overriddenAt": "2026-04-23T16:25:00Z",
+      "reason": "Pilot cohort kicks off 28-Apr; payment confirmed verbally with the principal but bank reference still in transit. Authorising pre-payment dispatch to avoid pilot delay.",
+      "acknowledgedBy": null,
+      "acknowledgedAt": null
+    },
+    "poRaisedAt": "2026-04-23T16:30:00Z",
+    "dispatchedAt": null,
+    "deliveredAt": null,
+    "acknowledgedAt": null,
+    "acknowledgementUrl": null,
+    "notes": "P2 override exercised; ESC-001 raised in parallel.",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-23T16:25:00Z",
+        "user": "ameet.z",
+        "action": "p2-override",
+        "before": { "overrideEvent": null },
+        "after": {
+          "overriddenBy": "ameet.z",
+          "overriddenAt": "2026-04-23T16:25:00Z"
+        },
+        "notes": "Pre-payment dispatch authorised."
+      }
+    ]
+  },
+  {
+    "id": "DIS-003",
+    "mouId": "MOU-STEAM-2627-004",
+    "schoolId": "SCH-NARAYANA-ASN",
+    "installmentSeq": 1,
+    "stage": "in-transit",
+    "installment1Paid": true,
+    "overrideEvent": null,
+    "poRaisedAt": "2026-04-22T10:00:00Z",
+    "dispatchedAt": "2026-04-23T10:00:00Z",
+    "deliveredAt": null,
+    "acknowledgedAt": null,
+    "acknowledgementUrl": null,
+    "notes": "Chain MOU dispatch: split across 3 campuses (Asansol, Durgapur, Burdwan).",
+    "auditLog": []
+  },
+  {
+    "id": "DIS-004",
+    "mouId": "MOU-STEAM-2627-003",
+    "schoolId": "SCH-SPRINGWOOD-KOL",
+    "installmentSeq": 1,
+    "stage": "acknowledged",
+    "installment1Paid": true,
+    "overrideEvent": null,
+    "poRaisedAt": "2026-04-04T09:00:00Z",
+    "dispatchedAt": "2026-04-04T15:00:00Z",
+    "deliveredAt": "2026-04-08T11:00:00Z",
+    "acknowledgedAt": "2026-04-09T14:00:00Z",
+    "acknowledgementUrl": "https://example.test/handover/MOU-STEAM-2627-003-i1.pdf",
+    "notes": null,
+    "auditLog": []
+  },
+  {
+    "id": "DIS-005",
+    "mouId": "MOU-TINK-2627-002",
+    "schoolId": "SCH-OAKWOOD-DEL",
+    "installmentSeq": 1,
+    "stage": "pending",
+    "installment1Paid": false,
+    "overrideEvent": null,
+    "poRaisedAt": null,
+    "dispatchedAt": null,
+    "deliveredAt": null,
+    "acknowledgedAt": null,
+    "acknowledgementUrl": null,
+    "notes": "Awaiting Installment-1 payment before PO can be raised.",
+    "auditLog": []
+  }
+]
