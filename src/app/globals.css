@@ -1,27 +1,133 @@
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-}
-
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+}
+
+/*
+ * Skip-to-content link (DESIGN.md "Surface 6 / Accessibility / Policy rules").
+ * Visually hidden until focused; on focus reveals as a 48px white-on-navy bar
+ * at the top of the viewport. Targets `#main-content`.
+ */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 0;
+  width: 100%;
+  height: 48px;
+  background: var(--brand-navy);
+  color: #ffffff;
+  font-family: var(--font-open-sans), sans-serif;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  z-index: 100;
+}
+
+.skip-link:focus {
+  top: 0;
+  outline: 2px solid var(--brand-teal);
+  outline-offset: -4px;
+}
+
+@layer base {
+  .theme {
+    --font-heading: var(--font-montserrat);
+    --font-sans: var(--font-open-sans);
+  }
+  :root {
+    /* GSL Ops brand tokens (DESIGN.md "Brand palette") */
+    --brand-teal: #00D8B9;
+    --brand-navy: #073393;
+
+    /* GSL Ops semantic signal tokens (DESIGN.md "Semantic signal palette") */
+    --signal-ok: #22C55E;
+    --signal-attention: #F59E0B;
+    --signal-alert: #DC2626;
+    --signal-neutral: #64748B;
+
+    /* shadcn theme variables, mapped to GSL brand where DESIGN.md prescribes */
+    --background: #ffffff;
+    --foreground: #0F172A;
+    --card: #ffffff;
+    --card-foreground: #0F172A;
+    --popover: #ffffff;
+    --popover-foreground: #0F172A;
+    --primary: var(--brand-teal);
+    --primary-foreground: var(--brand-navy);
+    --secondary: oklch(0.97 0 0);
+    --secondary-foreground: var(--brand-navy);
+    --muted: oklch(0.97 0 0);
+    --muted-foreground: oklch(0.556 0 0);
+    --accent: oklch(0.97 0 0);
+    --accent-foreground: var(--brand-navy);
+    --destructive: var(--signal-alert);
+    --border: oklch(0.922 0 0);
+    --input: oklch(0.922 0 0);
+    --ring: var(--brand-navy);
+    --chart-1: var(--brand-teal);
+    --chart-2: var(--brand-navy);
+    --chart-3: var(--signal-ok);
+    --chart-4: var(--signal-attention);
+    --chart-5: var(--signal-alert);
+    --radius: 0.5rem;
+    --sidebar: #F8FAFC;
+    --sidebar-foreground: var(--brand-navy);
+    --sidebar-primary: var(--brand-teal);
+    --sidebar-primary-foreground: var(--brand-navy);
+    --sidebar-accent: oklch(0.97 0 0);
+    --sidebar-accent-foreground: var(--brand-navy);
+    --sidebar-border: oklch(0.922 0 0);
+    --sidebar-ring: var(--brand-navy);
+  }
+  .dark {
+    --background: oklch(0.145 0 0);
+    --foreground: oklch(0.985 0 0);
+    --card: oklch(0.205 0 0);
+    --card-foreground: oklch(0.985 0 0);
+    --popover: oklch(0.205 0 0);
+    --popover-foreground: oklch(0.985 0 0);
+    --primary: oklch(0.922 0 0);
+    --primary-foreground: oklch(0.205 0 0);
+    --secondary: oklch(0.269 0 0);
+    --secondary-foreground: oklch(0.985 0 0);
+    --muted: oklch(0.269 0 0);
+    --muted-foreground: oklch(0.708 0 0);
+    --accent: oklch(0.269 0 0);
+    --accent-foreground: oklch(0.985 0 0);
+    --destructive: oklch(0.704 0.191 22.216);
+    --border: oklch(1 0 0 / 10%);
+    --input: oklch(1 0 0 / 15%);
+    --ring: oklch(0.556 0 0);
+    --chart-1: oklch(0.87 0 0);
+    --chart-2: oklch(0.556 0 0);
+    --chart-3: oklch(0.439 0 0);
+    --chart-4: oklch(0.371 0 0);
+    --chart-5: oklch(0.269 0 0);
+    --sidebar: oklch(0.205 0 0);
+    --sidebar-foreground: oklch(0.985 0 0);
+    --sidebar-primary: oklch(0.488 0.243 264.376);
+    --sidebar-primary-foreground: oklch(0.985 0 0);
+    --sidebar-accent: oklch(0.269 0 0);
+    --sidebar-accent-foreground: oklch(0.985 0 0);
+    --sidebar-border: oklch(1 0 0 / 10%);
+    --sidebar-ring: oklch(0.556 0 0);
+  }
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
   }
 }

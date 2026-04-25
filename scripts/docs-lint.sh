@@ -143,7 +143,13 @@ emdash_check() {
 
 british_check() {
   local files
-  files=$(collect_targets ts tsx)
+  # Exclude src/components/ui/: shadcn primitives are vendored from the
+  # shadcn registry. They contain no user-facing English; their cva()
+  # class strings include Tailwind utilities like "items-center" and
+  # "transition-colors" that the className-strip preprocessor cannot
+  # catch (cva-string-literal scope, not className= scope). Custom
+  # Ops-specific components in src/components/ops/ are still linted.
+  files=$(collect_targets ts tsx | grep -v '^src/components/ui/' | grep -v '/components/ui/')
   local pattern='\b(color|colors|center|centers|behavior|behaviors|organize|organizes|organizing|organized|recognize|recognizes|recognized|analyze|analyzes|analyzed|apologize|apologizes|apologized|favorite|favorites)\b'
   local hit=0
   while IFS= read -r f; do
