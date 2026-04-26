@@ -229,11 +229,12 @@ export type CommunicationType =
   | 'closing-letter'
 
 export type CommunicationStatus =
-  | 'queued'           // email channel only: record written, send not yet attempted
-  | 'sent'             // email channel only: delivered to SMTP OK
-  | 'bounced'          // email channel only: bounce detected
-  | 'failed'           // email channel only: non-bounce send failure
-  | 'draft-copied'     // whatsapp-draft-copied channel only: terminal
+  | 'queued'             // email channel only: record written, automated send not yet attempted
+  | 'queued-for-manual'  // email channel only: composed for clipboard copy, awaiting operator mark-sent
+  | 'sent'               // email channel only: confirmed delivered (manual mark-sent or automated SMTP OK)
+  | 'bounced'            // email channel only: bounce detected
+  | 'failed'             // email channel only: non-bounce send failure
+  | 'draft-copied'       // whatsapp-draft-copied channel only: terminal
 
 export interface Communication {
   id: string                       // UUID
