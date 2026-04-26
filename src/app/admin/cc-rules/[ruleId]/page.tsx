@@ -1,5 +1,273 @@
-import { RoutePlaceholder } from '@/components/ops/RoutePlaceholder'
+/*
+ * /admin/cc-rules/[ruleId] (Phase C5a-1).
+ *
+ * Detail + edit page. Same minimal-shape conventions as /new: scopeValue
+ * is one input parsed at the API layer; contexts is a checkbox group;
+ * ccUserIds is comma-separated text with a datalist.
+ *
+ * Permission gate: Admin or OpsHead (cc-rule:edit). Inputs are
+ * pre-filled with the existing rule values; fields the user does not
+ * change pass through unchanged (the API trims the patch to fields
+ * whose values differ).
+ */
 
-export default function Page() {
-  return <RoutePlaceholder title="CcRule" description="Rule edit detail." />
+import { notFound, redirect } from 'next/navigation'
+import Link from 'next/link'
+import type { CcRule, SalesPerson, User } from '@/lib/types'
+import ccRulesJson from '@/data/cc_rules.json'
+import usersJson from '@/data/users.json'
+import salesTeamJson from '@/data/sales_team.json'
+import { getCurrentUser } from '@/lib/auth/session'
+import { effectiveRoles } from '@/lib/auth/permissions'
+
+const rules = ccRulesJson as unknown as CcRule[]
+const users = usersJson as unknown as User[]
+const salesTeam = salesTeamJson as unknown as SalesPerson[]
+
+const SHEETS = ['South-West', 'East', 'North', 'derived'] as const
+const SCOPES = [
+  'region',
+  'sub-region',
+  'school',
+  'training-mode',
+  'sr-no-range',
+] as const
+const CONTEXTS = [
+  'welcome-note',
+  'three-ping-cadence',
+  'dispatch-notification',
+  'feedback-request',
+  'closing-letter',
+  'escalation-notification',
+  'all-communications',
+] as const
+
+const ERROR_MESSAGES: Record<string, string> = {
+  permission: 'You do not have permission to edit cc rules.',
+  'unknown-user': 'Session user not found. Please log in again.',
+  'rule-not-found': 'Rule was not found in the directory.',
+  'invalid-sheet': 'Sheet is not a valid value.',
+  'invalid-scope': 'Scope is not a valid value.',
+  'invalid-contexts': 'Pick at least one context.',
+  'invalid-scope-value': 'Scope value is required and may not be blank.',
+  'invalid-cc-user-ids': 'Cc user ids must all resolve in users or sales team.',
+  'missing-source-rule-text': 'Source rule text is required.',
+  'no-change': 'No fields were changed.',
+}
+
+function scopeValueToInput(value: string | string[]): string {
+  return Array.isArray(value) ? value.join(', ') : value
+}
+
+export default async function CcRuleDetailPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ ruleId: string }>
+  searchParams: Promise<Record<string, string | string[] | undefined>>
+}) {
+  const { ruleId } = await params
+  const sp = await searchParams
+
+  const user = await getCurrentUser()
+  if (!user) redirect(`/login?next=%2Fadmin%2Fcc-rules%2F${encodeURIComponent(ruleId)}`)
+
+  const roles = effectiveRoles(user)
+  const allowed = roles.includes('Admin') || roles.includes('OpsHead')
+  if (!allowed) redirect('/dashboard')
+
+  const rule = rules.find((r) => r.id === ruleId)
+  if (!rule) notFound()
+
+  const errorKey = typeof sp.error === 'string' ? sp.error : null
+  const errorMessage = errorKey ? ERROR_MESSAGES[errorKey] ?? `Failed: ${errorKey}` : null
+
+  const ccUserOptions: Array<{ id: string; label: string }> = [
+    ...users.map((u) => ({ id: u.id, label: `${u.name} (${u.id})` })),
+    ...salesTeam.map((s) => ({ id: s.id, label: `${s.name} (${s.id})` })),
+  ]
+
+  const contextSet = new Set(rule.contexts)
+
+  return (
+    <div className="p-6 max-w-3xl">
+      <p className="mb-2 text-xs">
+        <Link
+          href="/admin/cc-rules"
+          className="text-[var(--brand-navy)] underline-offset-2 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand-navy)]"
+        >
+          Back to CC rules
+        </Link>
+      </p>
+      <h1 className="text-2xl font-bold text-[var(--brand-navy)]">{rule.id}</h1>
+      <p className="mt-1 text-sm text-slate-700">
+        Created {rule.createdAt.slice(0, 10)} by {rule.createdBy}.{' '}
+        {rule.enabled ? 'Currently enabled.' : 'Currently disabled.'}
+      </p>
+
+      {errorMessage ? (
+        <p
+          role="alert"
+          className="mt-4 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800"
+        >
+          {errorMessage}
+        </p>
+      ) : null}
+
+      <form
+        method="POST"
+        action={`/api/cc-rules/${encodeURIComponent(rule.id)}/edit`}
+        className="mt-6 space-y-5"
+      >
+        <Field label="Sheet" htmlFor="cc-sheet">
+          <select
+            id="cc-sheet"
+            name="sheet"
+            defaultValue={rule.sheet}
+            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand-navy)]"
+          >
+            {SHEETS.map((s) => (
+              <option key={s} value={s}>{s}</option>
+            ))}
+          </select>
+        </Field>
+
+        <Field label="Scope" htmlFor="cc-scope">
+          <select
+            id="cc-scope"
+            name="scope"
+            defaultValue={rule.scope}
+            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand-navy)]"
+          >
+            {SCOPES.map((s) => (
+              <option key={s} value={s}>{s}</option>
+            ))}
+          </select>
+        </Field>
+
+        <Field
+          label="Scope value"
+          htmlFor="cc-scope-value"
+          hint='Comma-separate multi-value scopes. Single token for region or single school.'
+        >
+          <input
+            id="cc-scope-value"
+            name="scopeValue"
+            type="text"
+            defaultValue={scopeValueToInput(rule.scopeValue)}
+            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand-navy)]"
+          />
+        </Field>
+
+        <Field label="Contexts" htmlFor="cc-contexts">
+          <fieldset id="cc-contexts" className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            {CONTEXTS.map((c) => (
+              <label key={c} className="inline-flex items-center gap-2 text-sm">
+                <input
+                  type="checkbox"
+                  name="contexts"
+                  value={c}
+                  defaultChecked={contextSet.has(c)}
+                  className="size-4 rounded border-slate-300 text-[var(--brand-navy)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand-navy)]"
+                />
+                <span className="text-slate-800">{c}</span>
+              </label>
+            ))}
+          </fieldset>
+        </Field>
+
+        <Field
+          label="Cc user ids"
+          htmlFor="cc-user-ids"
+          hint="Comma-separated. Must resolve in users or sales team."
+        >
+          <input
+            id="cc-user-ids"
+            name="ccUserIds"
+            type="text"
+            defaultValue={rule.ccUserIds.join(', ')}
+            list="cc-user-id-options"
+            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand-navy)]"
+          />
+          <datalist id="cc-user-id-options">
+            {ccUserOptions.map((o) => (
+              <option key={o.id} value={o.id} label={o.label} />
+            ))}
+          </datalist>
+        </Field>
+
+        <Field label="Source rule text" htmlFor="cc-source-text">
+          <textarea
+            id="cc-source-text"
+            name="sourceRuleText"
+            rows={3}
+            defaultValue={rule.sourceRuleText}
+            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand-navy)]"
+          />
+        </Field>
+
+        <div className="flex items-center gap-3">
+          <button
+            type="submit"
+            className="inline-flex items-center rounded-md bg-[var(--brand-navy)] px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand-navy)] min-h-[44px]"
+          >
+            Save changes
+          </button>
+          <Link
+            href="/admin/cc-rules"
+            className="text-sm text-slate-700 underline-offset-2 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand-navy)]"
+          >
+            Cancel
+          </Link>
+        </div>
+      </form>
+
+      <section className="mt-10">
+        <h2 className="text-lg font-semibold text-[var(--brand-navy)]">Audit history</h2>
+        {rule.auditLog.length === 0 ? (
+          <p className="mt-2 text-sm text-slate-600">No audit entries yet.</p>
+        ) : (
+          <ul className="mt-2 divide-y divide-slate-200 rounded-md border border-slate-200 bg-white">
+            {rule.auditLog.map((entry, idx) => (
+              <li key={`${entry.timestamp}-${idx}`} className="px-3 py-2 text-xs">
+                <div className="flex items-baseline justify-between gap-2">
+                  <span className="font-medium text-[var(--brand-navy)]">{entry.action}</span>
+                  <span className="text-slate-500">{entry.timestamp}</span>
+                </div>
+                <div className="mt-0.5 text-slate-700">
+                  by {entry.user}
+                  {entry.notes ? `: ${entry.notes}` : ''}
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+    </div>
+  )
+}
+
+function Field({
+  label,
+  htmlFor,
+  hint,
+  children,
+}: {
+  label: string
+  htmlFor: string
+  hint?: string
+  children: React.ReactNode
+}) {
+  return (
+    <div>
+      <label
+        htmlFor={htmlFor}
+        className="block text-sm font-medium text-[var(--brand-navy)]"
+      >
+        {label}
+      </label>
+      {hint ? <p className="mt-0.5 text-xs text-slate-600">{hint}</p> : null}
+      <div className="mt-1.5">{children}</div>
+    </div>
+  )
 }

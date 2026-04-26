@@ -1,0 +1,86 @@
+/*
+ * Page-wiring tests for /admin (Phase C5a-1).
+ *
+ * Concern: the role gate on the admin landing must redirect anyone
+ * who is not Admin or OpsHead to /dashboard. testingOverride is
+ * resolved via effectiveRoles() so OpsEmployee + override:OpsHead
+ * lets Misba in.
+ */
+
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { renderToStaticMarkup } from 'react-dom/server'
+
+const cookiesMock = vi.fn()
+const verifyMock = vi.fn()
+
+vi.mock('next/headers', () => ({
+  cookies: cookiesMock,
+}))
+
+vi.mock('@/lib/crypto/jwt', () => ({
+  SESSION_COOKIE_NAME: 'gsl_ops_session',
+  verifySessionToken: verifyMock,
+}))
+
+vi.mock('next/navigation', () => ({
+  redirect: vi.fn((url: string) => {
+    throw new Error(`REDIRECT:${url}`)
+  }),
+}))
+
+vi.mock('@/data/users.json', () => ({
+  default: [
+    { id: 'anish.d', name: 'Anish', email: 'a@example.test', role: 'Admin', testingOverride: false, active: true, passwordHash: 'X', createdAt: '', auditLog: [] },
+    { id: 'misba.m', name: 'Misba', email: 'm@example.test', role: 'OpsEmployee', testingOverride: true, testingOverridePermissions: ['OpsHead'], active: true, passwordHash: 'X', createdAt: '', auditLog: [] },
+    { id: 'pratik.d', name: 'Pratik', email: 'p@example.test', role: 'SalesHead', testingOverride: false, active: true, passwordHash: 'X', createdAt: '', auditLog: [] },
+    { id: 'sp-vikram', name: 'Vikram', email: 'v@example.test', role: 'SalesRep', testingOverride: false, active: true, passwordHash: 'X', createdAt: '', auditLog: [] },
+  ],
+}))
+
+beforeEach(() => {
+  vi.clearAllMocks()
+  cookiesMock.mockResolvedValue({
+    get: () => ({ value: 'mock-jwt' }),
+  })
+})
+
+async function loadPage() {
+  return (await import('./page')).default
+}
+
+describe('/admin landing', () => {
+  it('Admin sees the directory of admin areas', async () => {
+    verifyMock.mockResolvedValue({ sub: 'anish.d', email: 'a@example.test', name: 'Anish', role: 'Admin' })
+    const Page = await loadPage()
+    const html = renderToStaticMarkup(await Page())
+    expect(html).toContain('Welcome, Anish.')
+    expect(html).toContain('CC rules')
+    expect(html).toContain('Audit log')
+    expect(html).toContain('Phase 1 placeholder')
+  })
+
+  it('OpsEmployee with testingOverride [OpsHead] is allowed (Misba)', async () => {
+    verifyMock.mockResolvedValue({ sub: 'misba.m', email: 'm@example.test', name: 'Misba', role: 'OpsEmployee' })
+    const Page = await loadPage()
+    const html = renderToStaticMarkup(await Page())
+    expect(html).toContain('Welcome, Misba.')
+  })
+
+  it('SalesHead is redirected to /dashboard', async () => {
+    verifyMock.mockResolvedValue({ sub: 'pratik.d', email: 'p@example.test', name: 'Pratik', role: 'SalesHead' })
+    const Page = await loadPage()
+    await expect(Page()).rejects.toThrow('REDIRECT:/dashboard')
+  })
+
+  it('SalesRep is redirected to /dashboard', async () => {
+    verifyMock.mockResolvedValue({ sub: 'sp-vikram', email: 'v@example.test', name: 'Vikram', role: 'SalesRep' })
+    const Page = await loadPage()
+    await expect(Page()).rejects.toThrow('REDIRECT:/dashboard')
+  })
+
+  it('unauthenticated viewer redirected to /login with next=/admin', async () => {
+    cookiesMock.mockResolvedValue({ get: () => undefined })
+    const Page = await loadPage()
+    await expect(Page()).rejects.toThrow('REDIRECT:/login?next=%2Fadmin')
+  })
+})
