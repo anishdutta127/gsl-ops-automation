@@ -192,7 +192,7 @@ function QueueRow({ item }: { item: MouImportReviewItem }) {
               htmlFor={`${formIdPrefix}-notes`}
               className="block text-xs font-medium text-slate-700"
             >
-              Notes <span className="text-slate-500">(required for "Other")</span>
+              Notes <span className="text-slate-500">(required for &quot;Other&quot;)</span>
             </label>
             <textarea
               id={`${formIdPrefix}-notes`}

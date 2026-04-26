@@ -69,7 +69,7 @@ import schoolsJson from '@/data/schools.json'
 import mousJson from '@/data/mous.json'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
 import { fetchMouMous, fetchMouSchools } from './mouContentsApi'
-import { findCandidates, type SchoolMatchCandidate } from './schoolMatcher'
+import { findCandidates } from './schoolMatcher'
 import { validate } from './validators'
 
 const CHAIN_NAME_PATTERN = /group\s+of\s+schools/i

@@ -15,7 +15,6 @@
  */
 
 import type {
-  AuditAction,
   AuditEntry,
   EscalationLane,
   EscalationLevel,

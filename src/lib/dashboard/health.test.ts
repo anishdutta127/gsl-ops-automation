@@ -7,7 +7,7 @@ import {
   schoolsNeedingActionTile,
   buildHealthTiles,
 } from './health'
-import type { Dispatch, MOU, Payment, School, User } from '@/lib/types'
+import type { Dispatch, MOU, User } from '@/lib/types'
 
 function mou(overrides: Partial<MOU> = {}): MOU {
   return {

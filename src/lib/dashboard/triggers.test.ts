@@ -8,7 +8,7 @@ import {
   assignmentQueueTile,
   buildTriggerTiles,
 } from './triggers'
-import type { Communication, Dispatch, Escalation, MOU, School } from '@/lib/types'
+import type { Communication, Dispatch, MOU, School } from '@/lib/types'
 
 const NOW = new Date('2026-04-26T12:00:00Z')
 
