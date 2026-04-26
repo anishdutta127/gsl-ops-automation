@@ -16,6 +16,12 @@
  * The 2-column grid layout used by /schools/[id]/edit (C3) is NOT
  * supported here; that page stays inline. FormCard is for the simpler
  * admin-create surfaces.
+ *
+ * Phase 1.1 trigger: if comma-list parsing proliferates (3+ fields
+ * across multiple forms), revisit by adding
+ * `parser?: (raw: string) => unknown` to the field type. Phase 1
+ * keeps the parsing explicit at the API boundary so FormCard stays
+ * a pure rendering primitive.
  */
 
 import { Fragment } from 'react'

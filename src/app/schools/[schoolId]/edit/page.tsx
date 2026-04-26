@@ -1,10 +1,10 @@
 /*
  * /schools/[schoolId]/edit
  *
- * Inline form using shadcn primitives directly. Per Phase C3
- * judgment: FormCard deferred to C5b; this page ships ~60 lines of
- * inline form rather than depending on an abstraction whose API is
- * informed by C5b's diversity.
+ * Inline form (not FormCard). Page uses a 2-column grid layout that
+ * FormCard's vertical-stack doesn't accommodate; trade-off accepted
+ * in C5b to keep FormCard a clean primitive for the simpler admin-
+ * create surfaces.
  *
  * Per-role: OpsHead and Admin only. Non-permitted roles redirect to
  * the read-only /schools/[id] (per C scoping pass: "schools/[id]/edit
@@ -55,16 +55,15 @@ export default async function SchoolEditPage({ params }: PageProps) {
   return (
     <>
       <TopNav currentPath="/schools" />
-      <main id="main-content">
-        <PageHeader
-          title={`Edit ${school.name}`}
-          breadcrumb={[
-            { label: 'Schools', href: '/schools' },
-            { label: school.id, href: `/schools/${school.id}` },
-            { label: 'Edit' },
-          ]}
-        />
-        <div className="mx-auto max-w-2xl px-4 py-6">
+      <PageHeader
+        title={`Edit ${school.name}`}
+        breadcrumb={[
+          { label: 'Schools', href: '/schools' },
+          { label: school.id, href: `/schools/${school.id}` },
+          { label: 'Edit' },
+        ]}
+      />
+      <div className="mx-auto max-w-2xl px-4 py-6">
           <p className="mb-4 rounded-md border border-signal-attention bg-card px-3 py-2 text-xs text-foreground">
             Phase 1 note: form rendering only. The submit endpoint is a 501 stub until the route handler lands in a later phase.
           </p>
@@ -157,7 +156,6 @@ export default async function SchoolEditPage({ params }: PageProps) {
             </div>
           </form>
         </div>
-      </main>
     </>
   )
 }
