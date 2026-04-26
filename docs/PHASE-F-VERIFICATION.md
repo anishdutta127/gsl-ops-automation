@@ -54,6 +54,8 @@ A consolidated list of Phase 1 deferrals captured across Week 2. Each carries a 
 - **Cc-rule create flow allows Admin-only for first 30 days post-launch.** Documented in `permissions.ts:89-91`. Phase 1.1 trigger: day 31 (Misba flips to OpsHead-allowed via 1-line PR).
 - **Cc-rule disable confirmation uses `window.prompt` for the reason.** Functional + accessible-enough. Phase 1.1 trigger: tester aesthetics feedback. Upgrade path documented in `CcRuleToggleRow.tsx`: replace with shadcn Dialog.
 - **Reverse-Excel-sync not built.** Per CLAUDE.md, the app is the single source of truth; the legacy `Mastersheet-Implementation_-_AnishD.xlsx` is what we migrated AWAY from, not a sync target. Reverse-sync is net-new work (not deferral) if GSL wants a spreadsheet view restored.
+- **`SyncFreshnessTile` component built but not mounted on `/dashboard`.** Manual-trigger pattern means a "last sync N hours ago" tile does not add at-a-glance value (operators click Sync now on `/admin` when they want fresh state; the timestamp + status surface there is sufficient). Phase 1.1 trigger: when/if cron auto-sync lands, re-mount the tile on `/dashboard`.
+- **`/help` page added post-Phase-F.** In-app help reachable from the Help link on TopNav (visible to every authenticated user). Four sections: capabilities by role, common workflows, glossary, feedback paths. Plain-language; not a substitute for the launch email walkthrough but a reference once testers are inside the system.
 
 ---
 
@@ -78,8 +80,8 @@ Each section below is what a tester should walk through after first login. Forma
 **Expected landing:** `/dashboard` (Leadership Console).
 
 **Visible chrome:**
-- TopNav with Dashboard, MOUs, Schools, Escalations, and Admin links.
-- Six health tiles in the top row: Active MOUs, Accuracy Health, Collection %, Dispatches in Flight, Schools Needing Action, Sync Freshness.
+- TopNav with Dashboard, MOUs, Schools, Escalations, Admin, and Help links.
+- Five health tiles in the top row: Active MOUs, Accuracy Health, Collection %, Dispatches in Flight, Schools Needing Action. Sync state is surfaced on `/admin` (System sync panel), not the dashboard.
 
 **Walkthrough:**
 
@@ -103,7 +105,7 @@ Each section below is what a tester should walk through after first login. Forma
 **Expected landing:** `/dashboard`.
 
 **Visible chrome:**
-- TopNav: Dashboard, MOUs, Schools, Escalations.
+- TopNav: Dashboard, MOUs, Schools, Escalations, Help.
 - No Admin link (Leadership is not an admin role; admin areas redirect to /dashboard).
 
 **Walkthrough:**
@@ -126,7 +128,7 @@ Each section below is what a tester should walk through after first login. Forma
 **Expected landing:** `/dashboard`.
 
 **Visible chrome:**
-- TopNav: Dashboard, MOUs, Schools, Escalations.
+- TopNav: Dashboard, MOUs, Schools, Escalations, Help.
 - No Admin link.
 
 **Walkthrough:**
@@ -149,7 +151,7 @@ Each section below is what a tester should walk through after first login. Forma
 **Expected landing:** `/dashboard`.
 
 **Visible chrome:**
-- TopNav: Dashboard, MOUs, Schools, Escalations.
+- TopNav: Dashboard, MOUs, Schools, Escalations, Help.
 - No Admin link.
 
 **Walkthrough:**
@@ -172,7 +174,7 @@ Each section below is what a tester should walk through after first login. Forma
 **Expected landing:** `/dashboard`.
 
 **Visible chrome:**
-- TopNav: Dashboard, MOUs, Schools, Escalations, Admin (the override grants admin-area access).
+- TopNav: Dashboard, MOUs, Schools, Escalations, Admin, Help (the override grants admin-area access).
 
 **Walkthrough:**
 
@@ -208,7 +210,7 @@ Each section below is what a tester should walk through after first login. Forma
 **Expected landing:** `/dashboard`.
 
 **Visible chrome:**
-- TopNav: Dashboard, MOUs, Schools, Escalations.
+- TopNav: Dashboard, MOUs, Schools, Escalations, Help.
 - No Admin link.
 
 **Walkthrough:**
@@ -242,7 +244,7 @@ Each section below is what a tester should walk through after first login. Forma
 **Expected landing:** `/dashboard`.
 
 **Visible chrome:**
-- TopNav: Dashboard, MOUs, Schools, Escalations.
+- TopNav: Dashboard, MOUs, Schools, Escalations, Help.
 - No Admin link.
 
 **Walkthrough:**
