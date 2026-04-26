@@ -452,6 +452,20 @@ export interface MouImportReviewCandidate {
   matchKey: string                 // the normalised tuple that matched
 }
 
+/**
+ * Rejection reason enum for import-review resolution=rejected (Phase
+ * C5a-2). Five categories cover the common cases reviewers face;
+ * 'other' requires rejectionNotes so the reviewer can describe the
+ * one-off case in plain language. Future analytics ("what % of
+ * rejections are data-quality vs duplicate") read this enum directly.
+ */
+export type RejectionReason =
+  | 'data-quality-issue'
+  | 'duplicate-of-existing'
+  | 'out-of-scope'
+  | 'awaiting-source-correction'
+  | 'other'
+
 export interface MouImportReviewItem {
   queuedAt: string                 // ISO
   rawRecord: unknown               // full MOU record as received
@@ -461,6 +475,8 @@ export interface MouImportReviewItem {
   resolvedAt: string | null
   resolvedBy: string | null
   resolution: 'imported' | 'rejected' | 'punted-upstream' | null
+  rejectionReason: RejectionReason | null   // populated when resolution === 'rejected'
+  rejectionNotes: string | null             // required when rejectionReason === 'other'
 }
 
 // ============================================================================

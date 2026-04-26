@@ -18,6 +18,8 @@
     "candidates": null,
     "resolvedAt": null,
     "resolvedBy": null,
-    "resolution": null
+    "resolution": null,
+    "rejectionReason": null,
+    "rejectionNotes": null
   }
 ]

@@ -27,6 +27,7 @@ vi.mock('next/navigation', () => ({
   redirect: vi.fn((url: string) => {
     throw new Error(`REDIRECT:${url}`)
   }),
+  useRouter: () => ({ refresh: vi.fn(), push: vi.fn(), replace: vi.fn() }),
 }))
 
 vi.mock('@/data/users.json', () => ({
@@ -94,11 +95,13 @@ describe('/admin/cc-rules list', () => {
     await expect(Page()).rejects.toThrow('REDIRECT:/dashboard')
   })
 
-  it('renders the C5a-2 deferral note for toggle persistence', async () => {
+  it('renders an interactive toggle (no C5a-2 deferral note; toggle is wired)', async () => {
     verifyMock.mockResolvedValue({ sub: 'anish.d', email: 'a@example.test', name: 'Anish', role: 'Admin' })
     const Page = await loadPage()
     const html = renderToStaticMarkup(await Page())
-    expect(html).toContain('toggle persistence wires in C5a-2')
+    expect(html).not.toContain('toggle persistence wires in C5a-2')
+    expect(html).toContain('role="switch"')
+    expect(html).not.toContain('disabled=""')
   })
 
   it('uses CSS variables, no raw hex (DESIGN.md negative match)', async () => {

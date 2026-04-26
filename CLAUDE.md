@@ -126,6 +126,10 @@ For any question CC encounters in this repo, this table picks the first document
 For any UI-touching task: always read DESIGN.md before the editor opens.
 For any task: always read CLAUDE.md (this file) at session start.
 
+### Single-`<main>` rule
+
+The root layout (`src/app/layout.tsx`) owns the only `<main id="main-content">` element. Sub-layouts and sub-pages must NOT add their own `<main>`. The single `<main>` keeps the skip-link target valid across all routes; a duplicate `<main>` in a sub-page would either shadow the root target or yield invalid HTML. Page-level wrappers should use `<div>` or `<section>`. See DESIGN.md "Surface 6 / Skip-to-content link."
+
 ## Read-order for fresh sessions
 
 For every fresh CC session opening this repo:

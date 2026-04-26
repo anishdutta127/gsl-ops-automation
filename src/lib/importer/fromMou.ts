@@ -245,6 +245,8 @@ export async function importOnce(
         resolvedAt: null,
         resolvedBy: null,
         resolution: null,
+        rejectionReason: null,
+        rejectionNotes: null,
       })
       continue
     }
@@ -270,6 +272,8 @@ export async function importOnce(
         resolvedAt: null,
         resolvedBy: null,
         resolution: null,
+        rejectionReason: null,
+        rejectionNotes: null,
       })
       continue
     }
@@ -283,6 +287,8 @@ export async function importOnce(
         resolvedAt: null,
         resolvedBy: null,
         resolution: null,
+        rejectionReason: null,
+        rejectionNotes: null,
       })
       continue
     }
@@ -301,6 +307,8 @@ export async function importOnce(
         resolvedAt: null,
         resolvedBy: null,
         resolution: null,
+        rejectionReason: null,
+        rejectionNotes: null,
       })
       continue
     }

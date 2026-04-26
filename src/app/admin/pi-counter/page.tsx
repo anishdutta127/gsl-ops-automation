@@ -1,5 +1,131 @@
-import { RoutePlaceholder } from '@/components/ops/RoutePlaceholder'
+/*
+ * /admin/pi-counter (Phase C5a-2; Q-G observability).
+ *
+ * Read-only health view for the proforma-invoice counter. Shows:
+ *  - current `next` value, prefix, fiscal year
+ *  - monotonicity indicator (ok / violation) computed from all
+ *    pi-sent communications via checkMonotonicity()
+ *  - last-issued PI summary (latest pi-sent communication by
+ *    queuedAt)
+ *
+ * Permission gate: Admin or OpsHead. Other viewers redirect to
+ * /dashboard. No write actions on this page; counter mutations
+ * happen during PI generation (Phase D) and are tracked in MOU
+ * lifecycle audit logs.
+ */
 
-export default function Page() {
-  return <RoutePlaceholder title="PI counter" description="Counter health + monotonicity check (step 6.5 Item G)." />
+import { redirect } from 'next/navigation'
+import type { Communication, PiCounter } from '@/lib/types'
+import piCounterJson from '@/data/pi_counter.json'
+import communicationsJson from '@/data/communications.json'
+import { getCurrentUser } from '@/lib/auth/session'
+import { effectiveRoles } from '@/lib/auth/permissions'
+import { checkMonotonicity } from '@/lib/piCounter/monotonicity'
+
+const counter = piCounterJson as PiCounter
+const communications = communicationsJson as unknown as Communication[]
+
+function lastIssuedPi(comms: Communication[]): Communication | null {
+  const piComms = comms.filter((c) => c.type === 'pi-sent')
+  if (piComms.length === 0) return null
+  return piComms.reduce((latest, current) =>
+    current.queuedAt > latest.queuedAt ? current : latest,
+  )
+}
+
+export default async function PiCounterPage() {
+  const user = await getCurrentUser()
+  if (!user) redirect('/login?next=%2Fadmin%2Fpi-counter')
+
+  const roles = effectiveRoles(user)
+  const allowed = roles.includes('Admin') || roles.includes('OpsHead')
+  if (!allowed) redirect('/dashboard')
+
+  const monotonicity = checkMonotonicity(communications)
+  const lastIssued = lastIssuedPi(communications)
+  const lastSubject = lastIssued?.subject ?? lastIssued?.bodyWhatsApp ?? null
+  const nextPiNumber = `${counter.prefix}/${counter.fiscalYear}/${String(counter.next).padStart(4, '0')}`
+
+  return (
+    <div className="p-6 max-w-3xl">
+      <h1 className="text-2xl font-bold text-[var(--brand-navy)]">PI counter</h1>
+      <p className="mt-1 text-sm text-slate-700">
+        Read-only health view for the proforma-invoice counter.
+      </p>
+
+      <section className="mt-6 grid gap-4 sm:grid-cols-2">
+        <div className="rounded-md border border-slate-200 bg-white p-4">
+          <p className="text-xs uppercase tracking-wide text-slate-500">
+            Next PI number
+          </p>
+          <p className="mt-1 font-mono text-lg font-semibold text-[var(--brand-navy)]">
+            {nextPiNumber}
+          </p>
+          <p className="mt-2 text-xs text-slate-600">
+            Prefix {counter.prefix} · Fiscal year {counter.fiscalYear} · Counter{' '}
+            {counter.next}
+          </p>
+        </div>
+
+        <div className="rounded-md border border-slate-200 bg-white p-4">
+          <p className="text-xs uppercase tracking-wide text-slate-500">
+            Monotonicity
+          </p>
+          {monotonicity.ok ? (
+            <p
+              className="mt-1 text-lg font-semibold text-[var(--signal-ok)]"
+              data-testid="monotonicity-status"
+            >
+              OK
+            </p>
+          ) : (
+            <p
+              className="mt-1 text-lg font-semibold text-[var(--signal-alert)]"
+              data-testid="monotonicity-status"
+            >
+              Violation
+            </p>
+          )}
+          <p className="mt-2 text-xs text-slate-600">
+            {monotonicity.issuedCount} issued
+            {monotonicity.skippedCount > 0
+              ? `, ${monotonicity.skippedCount} skipped (no parseable PI number)`
+              : ''}
+            {monotonicity.highestSeq !== null
+              ? `. Highest seq ${monotonicity.highestSeq}.`
+              : '.'}
+          </p>
+          {monotonicity.firstViolation ? (
+            <p className="mt-2 rounded-md border border-red-200 bg-red-50 px-2 py-1 text-xs text-red-800">
+              First violation at communication{' '}
+              {monotonicity.firstViolation.communicationId}: previous seq{' '}
+              {monotonicity.firstViolation.previousSeq}, current seq{' '}
+              {monotonicity.firstViolation.currentSeq}.
+            </p>
+          ) : null}
+        </div>
+      </section>
+
+      <section className="mt-6">
+        <h2 className="text-lg font-semibold text-[var(--brand-navy)]">
+          Last-issued PI
+        </h2>
+        {lastIssued ? (
+          <div className="mt-2 rounded-md border border-slate-200 bg-white p-4">
+            <p className="text-sm text-[var(--brand-navy)]">
+              {lastSubject ?? '(no subject parseable)'}
+            </p>
+            <p className="mt-1 text-xs text-slate-600">
+              Queued {lastIssued.queuedAt.slice(0, 10)} by {lastIssued.queuedBy}
+              {' '}via {lastIssued.channel}. Status {lastIssued.status}.
+            </p>
+          </div>
+        ) : (
+          <p className="mt-2 rounded-md border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
+            No PIs issued yet.
+          </p>
+        )}
+      </section>
+    </div>
+  )
 }

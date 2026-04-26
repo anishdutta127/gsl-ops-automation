@@ -1,11 +1,10 @@
 /*
- * /admin/cc-rules (Phase C5a-1).
+ * /admin/cc-rules (Phase C5a-2; toggle persistence wired).
  *
- * Server Component. Lists every CcRule with the existing CcRuleToggle
- * component visible per row. Toggle persistence (cc-rule:toggle write
- * path) lands in C5a-2; for now the toggle is rendered in the disabled
- * state with an inline note clarifying scope. The list itself is real
- * and reads from cc_rules.json.
+ * Server Component. Lists every CcRule with a per-row toggle.
+ * Toggle persistence routes through CcRuleToggleRow (a Client wrapper
+ * that POSTs to /api/cc-rules/[ruleId]/toggle). The page itself reads
+ * cc_rules.json for the current state.
  *
  * Permission gate: Admin or OpsHead. Other viewers redirect to
  * /dashboard.
@@ -17,7 +16,7 @@ import type { CcRule } from '@/lib/types'
 import ccRulesJson from '@/data/cc_rules.json'
 import { getCurrentUser } from '@/lib/auth/session'
 import { effectiveRoles } from '@/lib/auth/permissions'
-import { CcRuleToggle } from '@/components/ops/CcRuleToggle'
+import { CcRuleToggleRow } from '@/components/ops/CcRuleToggleRow'
 
 const rules = ccRulesJson as unknown as CcRule[]
 
@@ -52,12 +51,6 @@ export default async function CcRulesListPage() {
         ) : null}
       </header>
 
-      <p className="mb-3 rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600">
-        Phase 1 note: toggle persistence wires in C5a-2. Click registers in
-        the UI but does not save yet. Edit a rule via its detail page to
-        change its enabled state.
-      </p>
-
       {rules.length === 0 ? (
         <p className="rounded-md border border-slate-200 bg-slate-50 p-6 text-center text-sm text-slate-600">
           No rules yet.
@@ -68,11 +61,7 @@ export default async function CcRulesListPage() {
             <li key={rule.id} className="border-b border-slate-200 last:border-b-0">
               <div className="flex items-stretch">
                 <div className="flex-1">
-                  <CcRuleToggle
-                    rule={rule}
-                    onToggle={async () => {}}
-                    disabled
-                  />
+                  <CcRuleToggleRow rule={rule} />
                 </div>
                 <Link
                   href={`/admin/cc-rules/${rule.id}`}
