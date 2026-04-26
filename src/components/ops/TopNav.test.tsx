@@ -52,6 +52,13 @@ describe('TopNav', () => {
     expect(html).toContain('href="/admin"')
   })
 
+  it('shows Help link for any authenticated user (SalesRep included)', async () => {
+    getCurrentUserMock.mockResolvedValue(makeUser({ role: 'SalesRep' }))
+    const { TopNav } = await import('./TopNav')
+    const html = renderToStaticMarkup(await TopNav({ currentPath: '/dashboard' }))
+    expect(html).toContain('href="/help"')
+  })
+
   it('marks current path with aria-current="page"', async () => {
     getCurrentUserMock.mockResolvedValue(makeUser())
     const { TopNav } = await import('./TopNav')

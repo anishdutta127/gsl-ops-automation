@@ -15,6 +15,7 @@ Full project context and CEO-approved scope live in `ops-data/GSL_Ops_Handoff.md
 - Single source of truth is the app. Excel is a read-only export after go-live.
 - Ops does NOT sync state back to Excel. The legacy `Mastersheet-Implementation_-_AnishD.xlsx` in `ops-data/` is the format being migrated AWAY from, not a sync target. Phase 1.1 may add read-only Excel export if GSL wants the spreadsheet view restored; reverse-sync is net-new work, not a deferral.
 - Phase 1: `import-tick` and `sync/tick` are admin-triggered manually via `/admin`. Phase 1.1 trigger: when sister-project MOU volume grows beyond manual-trigger comfort, add a GitHub Actions cron runner per MOU's pattern. Lib code is reusable; only the trigger layer changes.
+- `SyncFreshnessTile` component exists at `src/components/ops/SyncFreshnessTile.tsx` but is NOT mounted on the dashboard in Phase 1. The manual-trigger pattern means a "last sync N hours ago" tile does not add at-a-glance value (operators click Sync now on `/admin` when they want fresh state; the timestamp + status surface there is sufficient). Phase 1.1 trigger: when/if cron auto-sync lands, re-mount the tile on `/dashboard`.
 - Every write is audited: per-entity `auditLog[]` with `{timestamp, user, action, before, after, notes}`
 - All writes go through the GitHub Contents API queue (pattern inherited from `gsl-mou-system`)
 - Single-tenant. No multi-tenant tax. `config/company.json` holds the identity bundle.

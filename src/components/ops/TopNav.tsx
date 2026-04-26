@@ -31,6 +31,8 @@ const NAV_LINKS: NavLink[] = [
   { href: '/admin', label: 'Admin', visibleTo: ['Admin', 'OpsHead', 'Leadership'] },
 ]
 
+const HELP_LINK: NavLink = { href: '/help', label: 'Help', visibleTo: 'all' }
+
 function isVisible(link: NavLink, user: User | null): boolean {
   if (link.visibleTo === 'all') return true
   if (!user) return false
@@ -83,6 +85,21 @@ export async function TopNav({ currentPath }: TopNavProps = {}) {
           </ul>
         </div>
         <div className="flex items-center gap-3">
+          <Link
+            href={HELP_LINK.href}
+            aria-current={
+              currentPath === HELP_LINK.href || (currentPath?.startsWith(HELP_LINK.href + '/') ?? false)
+                ? 'page'
+                : undefined
+            }
+            className={
+              'flex min-h-11 items-center px-3 text-sm font-medium text-white hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-brand-teal ' +
+              (currentPath === HELP_LINK.href ? 'border-b-2 border-brand-teal' : 'border-b-2 border-transparent')
+            }
+          >
+            {HELP_LINK.label}
+          </Link>
+          <span aria-hidden className="hidden h-6 w-px bg-white/20 sm:inline-block" />
           {user ? (
             <span className="hidden text-sm text-white/80 sm:inline" aria-label="Signed in as">
               {user.name}
