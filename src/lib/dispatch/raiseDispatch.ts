@@ -1,0 +1,372 @@
+/*
+ * Dispatch raise (Phase D2 simplified flow).
+ *
+ * Phase 1 simplified state machine: this lib advances a Dispatch
+ * from `pending` (or non-existent) to `po-raised`, renders the
+ * dispatch note .docx, and writes the audit trail. Intermediate
+ * states (`dispatched`, `in-transit`) are deferred to Phase 1.1
+ * when courier integration lands. State `delivered` is set by D4
+ * (delivery acknowledgement upload).
+ *
+ * Gate predicate (per overrideAudit lib): `installment1Paid ||
+ * overrideEvent !== null`. installment1Paid is resolved from the
+ * Payment record for the (mouId, instalmentSeq) tuple at lib
+ * invocation time. If neither condition holds, the lib returns
+ * 'gate-locked' without writing anything; Leadership pre-creates
+ * a pending Dispatch with overrideEvent via writeOverrideAudit
+ * before re-trying the raise.
+ *
+ * Idempotency: if a Dispatch exists with stage past `pending`, the
+ * lib re-renders the docx without advancing state or writing.
+ * Operators can re-download a previously-raised dispatch note via
+ * the same endpoint without polluting the audit log.
+ *
+ * Failure modes:
+ *  - permission             not Admin or OpsHead
+ *  - unknown-user           session.sub not in users.json
+ *  - mou-not-found
+ *  - school-not-found
+ *  - wrong-status           MOU not Active
+ *  - gate-locked            no payment + no override
+ *  - template-missing       caller surfaces DispatchTemplateMissingError
+ */
+
+import { readFile } from 'node:fs/promises'
+import path from 'node:path'
+import Docxtemplater from 'docxtemplater'
+import PizZip from 'pizzip'
+import type {
+  AuditEntry,
+  Dispatch,
+  DispatchStage,
+  MOU,
+  Payment,
+  School,
+  User,
+} from '@/lib/types'
+import mousJson from '@/data/mous.json'
+import schoolsJson from '@/data/schools.json'
+import usersJson from '@/data/users.json'
+import dispatchesJson from '@/data/dispatches.json'
+import paymentsJson from '@/data/payments.json'
+import companyJson from '../../../config/company.json'
+import { enqueueUpdate } from '@/lib/pendingUpdates'
+import { canPerform } from '@/lib/auth/permissions'
+import { isGateUnblocked } from './overrideAudit'
+import { formatDate } from '@/lib/format'
+import { DISPATCH_TEMPLATE, DispatchTemplateMissingError } from './templates'
+
+interface CompanyConfig {
+  legalEntity: string
+  gstin: string
+  address: string[]
+}
+
+const STAGES_BEYOND_PENDING: ReadonlyArray<DispatchStage> = [
+  'po-raised',
+  'dispatched',
+  'in-transit',
+  'delivered',
+  'acknowledged',
+]
+
+const PAID_STATUSES = new Set(['Received', 'Paid'])
+
+export interface RaiseDispatchArgs {
+  mouId: string
+  installmentSeq: number
+  raisedBy: string
+}
+
+export type RaiseDispatchFailureReason =
+  | 'permission'
+  | 'unknown-user'
+  | 'mou-not-found'
+  | 'school-not-found'
+  | 'wrong-status'
+  | 'gate-locked'
+  | 'template-missing'
+
+export type RaiseDispatchResult =
+  | {
+      ok: true
+      dispatch: Dispatch
+      docxBytes: Uint8Array
+      wasAlreadyRaised: boolean
+    }
+  | {
+      ok: false
+      reason: RaiseDispatchFailureReason
+      templateError?: DispatchTemplateMissingError
+    }
+
+export interface RaiseDispatchDeps {
+  mous: MOU[]
+  schools: School[]
+  users: User[]
+  dispatches: Dispatch[]
+  payments: Payment[]
+  company: CompanyConfig
+  enqueue: typeof enqueueUpdate
+  loadTemplate: (templatePath: string) => Promise<Uint8Array>
+  now: () => Date
+}
+
+const defaultLoadTemplate = async (templatePath: string): Promise<Uint8Array> => {
+  const fullPath = path.join(process.cwd(), templatePath)
+  try {
+    return await readFile(fullPath)
+  } catch (err) {
+    if ((err as NodeJS.ErrnoException).code === 'ENOENT') {
+      throw new DispatchTemplateMissingError(DISPATCH_TEMPLATE.id, DISPATCH_TEMPLATE.file)
+    }
+    throw err
+  }
+}
+
+const defaultDeps: RaiseDispatchDeps = {
+  mous: mousJson as unknown as MOU[],
+  schools: schoolsJson as unknown as School[],
+  users: usersJson as unknown as User[],
+  dispatches: dispatchesJson as unknown as Dispatch[],
+  payments: paymentsJson as unknown as Payment[],
+  company: companyJson as CompanyConfig,
+  enqueue: enqueueUpdate,
+  loadTemplate: defaultLoadTemplate,
+  now: () => new Date(),
+}
+
+interface KitItem {
+  description: string
+  quantity: number
+  grades: string
+}
+
+function totalInstallments(paymentSchedule: string): number {
+  const numbers = paymentSchedule.match(/\d+/g)
+  return numbers && numbers.length > 1 ? numbers.length : 1
+}
+
+function buildKitItems(mou: MOU): { items: KitItem[]; total: number } {
+  // Phase 1 simplified: one kit row per programme. Quantity equals
+  // the actual student count (or MOU count if actuals not yet
+  // confirmed). Grade band is left as a free-form string for the
+  // dispatch coordinator to refine.
+  const quantity = mou.studentsActual ?? mou.studentsMou
+  const subtype = mou.programmeSubType ? ` (${mou.programmeSubType})` : ''
+  return {
+    items: [
+      {
+        description: `${mou.programme}${subtype} kit set`,
+        quantity,
+        grades: 'Per programme rollout plan',
+      },
+    ],
+    total: quantity,
+  }
+}
+
+function dispatchIdFor(mouId: string, installmentSeq: number): string {
+  return `DSP-${mouId}-i${installmentSeq}`
+}
+
+function buildDispatchNotes(dispatch: Dispatch): string {
+  const parts: string[] = []
+  if (dispatch.notes && dispatch.notes.trim() !== '') parts.push(dispatch.notes.trim())
+  if (dispatch.overrideEvent) {
+    parts.push(
+      `Pre-payment dispatch authorised by ${dispatch.overrideEvent.overriddenBy} on ${formatDate(dispatch.overrideEvent.overriddenAt)}: ${dispatch.overrideEvent.reason}`,
+    )
+  }
+  return parts.join(' ')
+}
+
+async function renderDispatchDocx(
+  bag: Record<string, unknown>,
+  loadTemplate: RaiseDispatchDeps['loadTemplate'],
+): Promise<Uint8Array> {
+  const templateBytes = await loadTemplate(DISPATCH_TEMPLATE.file)
+  const zip = new PizZip(templateBytes)
+  const doc = new Docxtemplater(zip, { paragraphLoop: true, linebreaks: true })
+  doc.render(bag)
+  const out = doc.getZip().generate({ type: 'uint8array' })
+  return out as unknown as Uint8Array
+}
+
+export async function raiseDispatch(
+  args: RaiseDispatchArgs,
+  deps: RaiseDispatchDeps = defaultDeps,
+): Promise<RaiseDispatchResult> {
+  const user = deps.users.find((u) => u.id === args.raisedBy)
+  if (!user) return { ok: false, reason: 'unknown-user' }
+  if (!canPerform(user, 'mou:raise-dispatch')) {
+    return { ok: false, reason: 'permission' }
+  }
+
+  const mou = deps.mous.find((m) => m.id === args.mouId)
+  if (!mou) return { ok: false, reason: 'mou-not-found' }
+  if (mou.status !== 'Active') return { ok: false, reason: 'wrong-status' }
+
+  const school = deps.schools.find((s) => s.id === mou.schoolId)
+  if (!school) return { ok: false, reason: 'school-not-found' }
+
+  const existing = deps.dispatches.find(
+    (d) => d.mouId === args.mouId && d.installmentSeq === args.installmentSeq,
+  )
+
+  const ts = deps.now().toISOString()
+  const dispatchId = existing?.id ?? dispatchIdFor(args.mouId, args.installmentSeq)
+
+  // Idempotent re-render path: stage past `pending` -> render docx
+  // from the existing dispatch + return without writing.
+  if (existing && STAGES_BEYOND_PENDING.includes(existing.stage)) {
+    try {
+      const bag = buildPlaceholderBag({
+        dispatch: existing,
+        mou,
+        school,
+        company: deps.company,
+        raisedByName: user.name,
+        ts,
+      })
+      const docxBytes = await renderDispatchDocx(bag, deps.loadTemplate)
+      return { ok: true, dispatch: existing, docxBytes, wasAlreadyRaised: true }
+    } catch (err) {
+      if (err instanceof DispatchTemplateMissingError) {
+        return { ok: false, reason: 'template-missing', templateError: err }
+      }
+      throw err
+    }
+  }
+
+  // Resolve gate. installment1Paid comes from the matching Payment
+  // record (`<mouId>-i<seq>`) when its status is 'Received' or 'Paid'.
+  const paymentId = `${args.mouId}-i${args.installmentSeq}`
+  const payment = deps.payments.find((p) => p.id === paymentId)
+  const installment1Paid = payment ? PAID_STATUSES.has(payment.status) : false
+
+  const baseDispatch: Dispatch = existing ?? {
+    id: dispatchId,
+    mouId: args.mouId,
+    schoolId: school.id,
+    installmentSeq: args.installmentSeq,
+    stage: 'pending',
+    installment1Paid,
+    overrideEvent: null,
+    poRaisedAt: null,
+    dispatchedAt: null,
+    deliveredAt: null,
+    acknowledgedAt: null,
+    acknowledgementUrl: null,
+    notes: null,
+    auditLog: [],
+  }
+
+  const dispatchForGateCheck: Dispatch = {
+    ...baseDispatch,
+    installment1Paid,
+  }
+  if (!isGateUnblocked(dispatchForGateCheck)) {
+    return { ok: false, reason: 'gate-locked' }
+  }
+
+  const auditEntry: AuditEntry = {
+    timestamp: ts,
+    user: args.raisedBy,
+    action: 'dispatch-raised',
+    before: { stage: baseDispatch.stage },
+    after: { stage: 'po-raised' },
+    notes: existing
+      ? 'Advanced from pending to po-raised'
+      : 'Created and raised in single step (simplified Phase 1 flow)',
+  }
+
+  const updatedDispatch: Dispatch = {
+    ...dispatchForGateCheck,
+    stage: 'po-raised',
+    poRaisedAt: ts,
+    auditLog: [...baseDispatch.auditLog, auditEntry],
+  }
+
+  let docxBytes: Uint8Array
+  try {
+    const bag = buildPlaceholderBag({
+      dispatch: updatedDispatch,
+      mou,
+      school,
+      company: deps.company,
+      raisedByName: user.name,
+      ts,
+    })
+    docxBytes = await renderDispatchDocx(bag, deps.loadTemplate)
+  } catch (err) {
+    if (err instanceof DispatchTemplateMissingError) {
+      return { ok: false, reason: 'template-missing', templateError: err }
+    }
+    throw err
+  }
+
+  const mouAuditEntry: AuditEntry = {
+    timestamp: ts,
+    user: args.raisedBy,
+    action: 'dispatch-raised',
+    after: { dispatchId: updatedDispatch.id, instalmentSeq: args.installmentSeq },
+    notes: `Raised dispatch ${updatedDispatch.id} for instalment ${args.installmentSeq}.`,
+  }
+  const updatedMou: MOU = { ...mou, auditLog: [...mou.auditLog, mouAuditEntry] }
+
+  await deps.enqueue({
+    queuedBy: args.raisedBy,
+    entity: 'dispatch',
+    operation: existing ? 'update' : 'create',
+    payload: updatedDispatch as unknown as Record<string, unknown>,
+  })
+  await deps.enqueue({
+    queuedBy: args.raisedBy,
+    entity: 'mou',
+    operation: 'update',
+    payload: updatedMou as unknown as Record<string, unknown>,
+  })
+
+  return { ok: true, dispatch: updatedDispatch, docxBytes, wasAlreadyRaised: false }
+}
+
+interface PlaceholderBagInput {
+  dispatch: Dispatch
+  mou: MOU
+  school: School
+  company: CompanyConfig
+  raisedByName: string
+  ts: string
+}
+
+function buildPlaceholderBag(input: PlaceholderBagInput): Record<string, unknown> {
+  const { dispatch, mou, school, company, raisedByName, ts } = input
+  const totalInsts = totalInstallments(mou.paymentSchedule)
+  const { items, total } = buildKitItems(mou)
+  return {
+    DISPATCH_NUMBER: dispatch.id,
+    DISPATCH_DATE: formatDate(ts),
+    MOU_ID: mou.id,
+    SCHOOL_NAME: school.name,
+    SCHOOL_ADDRESS: [
+      school.legalEntity ?? school.name,
+      `${school.city}, ${school.state}`,
+      school.pinCode ?? '',
+    ].filter((s) => s !== '').join('\n'),
+    GSL_LEGAL_ENTITY: company.legalEntity,
+    GSL_GSTIN: company.gstin,
+    GSL_ADDRESS: company.address.join('\n'),
+    PROGRAMME: mou.programme,
+    PROGRAMME_SUB_TYPE: mou.programmeSubType ?? '',
+    INSTALLMENT_LABEL: `Instalment ${dispatch.installmentSeq} of ${totalInsts}`,
+    KIT_ITEMS: items.map((k) => ({
+      description: k.description,
+      quantity: String(k.quantity),
+      grades: k.grades,
+    })),
+    TOTAL_KITS: String(total),
+    NOTES: buildDispatchNotes(dispatch),
+    AUTHORISED_BY: raisedByName,
+  }
+}
