@@ -36,7 +36,11 @@ function salesRep(id: string): User {
 }
 
 describe('/mous/[mouId] detail page', () => {
-  it('renders MOU detail for Admin', { timeout: 15000 }, async () => {
+  // Phase F: timeout extended to 30s. Test passes <4s in isolation
+  // but races with parallel page-test imports under full-suite load.
+  // Phase 1.1 trigger: investigate vitest pool config or hoist heavy
+  // data-fixture imports out of the per-test loadPage path.
+  it('renders MOU detail for Admin', { timeout: 30000 }, async () => {
     getCurrentUserMock.mockResolvedValue(admin())
     const { default: Page } = await import('./page')
     const html = renderToStaticMarkup(

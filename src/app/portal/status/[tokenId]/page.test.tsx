@@ -102,7 +102,11 @@ function validHmac(): string {
 }
 
 describe('/portal/status/[tokenId] page', () => {
-  it('renders header + lifecycle + summary + next milestone on valid token', async () => {
+  // Phase F: timeout extended to 30s. Test passes <4s in isolation
+  // but races with parallel page-test imports under full-suite load.
+  // Phase 1.1 trigger: investigate vitest pool config or hoist heavy
+  // data-fixture imports out of the per-test loadPage path.
+  it('renders header + lifecycle + summary + next milestone on valid token', { timeout: 30000 }, async () => {
     const Page = await loadPage()
     const html = renderToStaticMarkup(
       await Page({
