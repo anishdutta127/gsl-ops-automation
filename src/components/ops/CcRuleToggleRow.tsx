@@ -29,6 +29,7 @@ export function CcRuleToggleRow({ rule }: Props) {
   async function persistToggle(next: boolean): Promise<void> {
     let reason: string | undefined
     if (!next) {
+      // Phase 1: window.prompt for disable-reason. Phase 1.1 trigger: tester feedback. Upgrade path: replace with <Dialog> from src/components/ui/dialog.tsx (already installed) + small Client Component for form submission.
       const input = window.prompt('Reason for disabling this rule:')
       if (input === null) {
         throw new Error('cancelled')
