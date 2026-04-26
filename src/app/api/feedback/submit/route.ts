@@ -31,9 +31,11 @@ import type {
   Feedback,
   FeedbackCategory,
   FeedbackRating,
+  MOU,
   MagicLinkToken,
 } from '@/lib/types'
 import magicLinkTokensJson from '@/data/magic_link_tokens.json'
+import mousJson from '@/data/mous.json'
 import { verifyMagicLink } from '@/lib/magicLink'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
 import { feedbackAutoEscalation } from '@/lib/feedback/autoEscalation'
@@ -156,10 +158,20 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'invalid-ratings' }, { status: 400 })
   }
 
+  // Resolve schoolId from the MOU before writing. The auto-escalation
+  // hook fires on the same request and reads Feedback.schoolId; if we
+  // left it blank for a queue consumer to fill, the resulting
+  // Escalation would carry the wrong school reference.
+  const mous = mousJson as unknown as MOU[]
+  const mou = mous.find((m) => m.id === token.mouId)
+  if (!mou) {
+    return NextResponse.json({ error: 'mou-not-found' }, { status: 404 })
+  }
+
   const ts = now.toISOString()
   const feedback: Feedback = {
     id: `FBK-${crypto.randomUUID().slice(0, 8)}`,
-    schoolId: '',  // resolved server-side from MOU; left blank for the queue consumer to fill
+    schoolId: mou.schoolId,
     mouId: token.mouId,
     installmentSeq: token.installmentSeq,
     submittedAt: ts,

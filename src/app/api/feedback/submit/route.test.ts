@@ -23,6 +23,11 @@ vi.mock('@/data/magic_link_tokens.json', () => ({
   get default() { return mockTokens.value },
 }))
 
+const mockMous = vi.hoisted(() => ({ value: [] as unknown[] }))
+vi.mock('@/data/mous.json', () => ({
+  get default() { return mockMous.value },
+}))
+
 import { POST } from './route'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
 import { feedbackAutoEscalation } from '@/lib/feedback/autoEscalation'
@@ -85,9 +90,24 @@ afterAll(() => {
   else process.env.GSL_SNAPSHOT_SIGNING_KEY = originalKey
 })
 
+const validMou = {
+  id: 'MOU-X', schoolId: 'SCH-GREENFIELD-PUNE', schoolName: 'Greenfield',
+  programme: 'STEAM', programmeSubType: null, schoolScope: 'SINGLE',
+  schoolGroupId: null, status: 'Active', academicYear: '2026-27',
+  startDate: '2026-04-01', endDate: '2027-03-31',
+  studentsMou: 200, studentsActual: null, studentsVariance: null,
+  studentsVariancePct: null, spWithoutTax: 4000, spWithTax: 5000,
+  contractValue: 1000000, received: 0, tds: 0, balance: 1000000,
+  receivedPct: 0, paymentSchedule: '', trainerModel: 'GSL-T',
+  salesPersonId: null, templateVersion: null, generatedAt: null,
+  notes: null, daysToExpiry: null, auditLog: [],
+}
+
 beforeEach(() => {
   vi.clearAllMocks()
+  vi.resetModules()
   mockTokens.value = [validToken]
+  mockMous.value = [validMou]
 })
 
 describe('POST /api/feedback/submit', () => {
@@ -223,5 +243,28 @@ describe('POST /api/feedback/submit', () => {
     expect(arg.mouId).toBe('MOU-X')
     expect(arg.installmentSeq).toBe(1)
     expect(arg.submittedBy).toBe('spoc')
+  })
+
+  it('resolves Feedback.schoolId from MOU before write (queue payload non-empty)', async () => {
+    await POST(buildRequest(buildBody()))
+    const feedbackPayload = enqueueMock.mock.calls[1]![0].payload
+    expect(feedbackPayload.schoolId).toBe('SCH-GREENFIELD-PUNE')
+    expect(feedbackPayload.schoolId).not.toBe('')
+  })
+
+  it('autoEscalation hook receives the populated schoolId (Escalation reference is correct)', async () => {
+    await POST(buildRequest(buildBody()))
+    const arg = escalateMock.mock.calls[0]![0]
+    expect(arg.schoolId).toBe('SCH-GREENFIELD-PUNE')
+  })
+
+  it('returns 404 when the MOU referenced by the token is missing from mous.json', async () => {
+    mockMous.value = []
+    const res = await POST(buildRequest(buildBody()))
+    expect(res.status).toBe(404)
+    const json = await res.json()
+    expect(json.error).toBe('mou-not-found')
+    expect(enqueueMock).not.toHaveBeenCalled()
+    expect(escalateMock).not.toHaveBeenCalled()
   })
 })
