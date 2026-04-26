@@ -33,6 +33,7 @@ import paymentsJson from '@/data/payments.json'
 import communicationsJson from '@/data/communications.json'
 import feedbackJson from '@/data/feedback.json'
 import escalationsJson from '@/data/escalations.json'
+import syncHealthJson from '@/data/sync_health.json'
 import { getCurrentUser } from '@/lib/auth/session'
 import { buildHealthTiles } from '@/lib/dashboard/health'
 import { buildTriggerTiles } from '@/lib/dashboard/triggers'
@@ -40,9 +41,11 @@ import { buildExceptionFeed } from '@/lib/dashboard/exceptions'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { HealthTile } from '@/components/ops/HealthTile'
+import { SyncFreshnessTile } from '@/components/ops/SyncFreshnessTile'
 import { TriggerTile } from '@/components/ops/TriggerTile'
 import { ExceptionRow } from '@/components/ops/ExceptionRow'
 import { EscalationRow } from '@/components/ops/EscalationRow'
+import type { SyncHealthEntry } from '@/lib/syncHealth/appendEntry'
 
 const mous = mousJson as unknown as MOU[]
 const schools = schoolsJson as unknown as School[]
@@ -51,6 +54,7 @@ const payments = paymentsJson as unknown as Payment[]
 const communications = communicationsJson as unknown as Communication[]
 const feedback = feedbackJson as unknown as Feedback[]
 const escalations = escalationsJson as unknown as Escalation[]
+const syncHealth = syncHealthJson as unknown as SyncHealthEntry[]
 
 const EXCEPTION_PREVIEW = 5
 const ESCALATION_PREVIEW = 5
@@ -65,6 +69,8 @@ export default async function DashboardPage() {
     mous, schools, dispatches, payments, communications, feedback, user,
   })
   const exceptionPreview = exceptions.slice(0, EXCEPTION_PREVIEW)
+  const latestSync: SyncHealthEntry | null =
+    syncHealth.length > 0 ? syncHealth[syncHealth.length - 1] ?? null : null
   const escalationPreview = escalations
     .filter((e) => e.status === 'open')
     .slice(0, ESCALATION_PREVIEW)
@@ -78,7 +84,7 @@ export default async function DashboardPage() {
 
           <section aria-labelledby="health-heading">
             <h2 id="health-heading" className="sr-only">Health</h2>
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-6">
               {healthTiles.map((tile) => (
                 <HealthTile
                   key={tile.label}
@@ -88,6 +94,10 @@ export default async function DashboardPage() {
                   status={tile.status}
                 />
               ))}
+              <SyncFreshnessTile
+                latestAt={latestSync?.at ?? null}
+                ok={latestSync?.ok ?? false}
+              />
             </div>
           </section>
 

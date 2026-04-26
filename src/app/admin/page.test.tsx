@@ -52,7 +52,7 @@ describe('/admin landing', () => {
   it('Admin sees the directory of admin areas', async () => {
     verifyMock.mockResolvedValue({ sub: 'anish.d', email: 'a@example.test', name: 'Anish', role: 'Admin' })
     const Page = await loadPage()
-    const html = renderToStaticMarkup(await Page())
+    const html = renderToStaticMarkup(await Page({ searchParams: Promise.resolve({}) }))
     expect(html).toContain('Welcome, Anish.')
     expect(html).toContain('CC rules')
     expect(html).toContain('Audit log')
@@ -62,25 +62,63 @@ describe('/admin landing', () => {
   it('OpsEmployee with testingOverride [OpsHead] is allowed (Misba)', async () => {
     verifyMock.mockResolvedValue({ sub: 'misba.m', email: 'm@example.test', name: 'Misba', role: 'OpsEmployee' })
     const Page = await loadPage()
-    const html = renderToStaticMarkup(await Page())
+    const html = renderToStaticMarkup(await Page({ searchParams: Promise.resolve({}) }))
     expect(html).toContain('Welcome, Misba.')
   })
 
   it('SalesHead is redirected to /dashboard', async () => {
     verifyMock.mockResolvedValue({ sub: 'pratik.d', email: 'p@example.test', name: 'Pratik', role: 'SalesHead' })
     const Page = await loadPage()
-    await expect(Page()).rejects.toThrow('REDIRECT:/dashboard')
+    await expect(Page({ searchParams: Promise.resolve({}) })).rejects.toThrow('REDIRECT:/dashboard')
   })
 
   it('SalesRep is redirected to /dashboard', async () => {
     verifyMock.mockResolvedValue({ sub: 'sp-vikram', email: 'v@example.test', name: 'Vikram', role: 'SalesRep' })
     const Page = await loadPage()
-    await expect(Page()).rejects.toThrow('REDIRECT:/dashboard')
+    await expect(Page({ searchParams: Promise.resolve({}) })).rejects.toThrow('REDIRECT:/dashboard')
   })
 
   it('unauthenticated viewer redirected to /login with next=/admin', async () => {
     cookiesMock.mockResolvedValue({ get: () => undefined })
     const Page = await loadPage()
-    await expect(Page()).rejects.toThrow('REDIRECT:/login?next=%2Fadmin')
+    await expect(Page({ searchParams: Promise.resolve({}) })).rejects.toThrow('REDIRECT:/login?next=%2Fadmin')
+  })
+
+  it('Admin sees the System sync panel with both trigger buttons', async () => {
+    verifyMock.mockResolvedValue({ sub: 'anish.d', email: 'a@example.test', name: 'Anish', role: 'Admin' })
+    const Page = await loadPage()
+    const html = renderToStaticMarkup(await Page({ searchParams: Promise.resolve({}) }))
+    expect(html).toContain('System sync')
+    expect(html).toContain('action="/api/mou/import-tick"')
+    expect(html).toContain('action="/api/sync/tick"')
+    expect(html).toContain('Run import sync now')
+    expect(html).toContain('Run health check now')
+  })
+
+  it('synced=import-ok query param surfaces a green flash', async () => {
+    verifyMock.mockResolvedValue({ sub: 'anish.d', email: 'a@example.test', name: 'Anish', role: 'Admin' })
+    const Page = await loadPage()
+    const html = renderToStaticMarkup(
+      await Page({ searchParams: Promise.resolve({ synced: 'import-ok' }) }),
+    )
+    expect(html).toContain('Import sync completed without anomalies')
+  })
+
+  it('synced=health-anomaly query param surfaces an amber flash', async () => {
+    verifyMock.mockResolvedValue({ sub: 'anish.d', email: 'a@example.test', name: 'Anish', role: 'Admin' })
+    const Page = await loadPage()
+    const html = renderToStaticMarkup(
+      await Page({ searchParams: Promise.resolve({ synced: 'health-anomaly' }) }),
+    )
+    expect(html).toContain('Health check found anomalies')
+  })
+
+  it('error=permission query param surfaces a red flash', async () => {
+    verifyMock.mockResolvedValue({ sub: 'anish.d', email: 'a@example.test', name: 'Anish', role: 'Admin' })
+    const Page = await loadPage()
+    const html = renderToStaticMarkup(
+      await Page({ searchParams: Promise.resolve({ error: 'permission' }) }),
+    )
+    expect(html).toContain('do not have permission to trigger sync')
   })
 })

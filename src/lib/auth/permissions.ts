@@ -56,6 +56,11 @@ export type Action =
   | 'school-group:edit-members'
   // Escalation lifecycle
   | 'escalation:resolve'
+  // System operations (Phase E manual-trigger pattern)
+  // Admin + OpsHead can manually trigger MOU import + health check
+  // from /admin. Phase 1.1 may add cron-based auto-trigger requiring
+  // a separate 'system:cron-trigger' action with shared-secret auth.
+  | 'system:trigger-sync'
 
 // Sentinel: Admin role grants all actions. Represented as wildcard in the
 // role map so we never have to enumerate the full action list for Admin.
@@ -100,6 +105,7 @@ const ROLE_BASE_ACTIONS: Record<UserRole, Set<Action> | typeof ADMIN_WILDCARD> =
     'school-group:create',
     'school-group:edit-members',
     'escalation:resolve',
+    'system:trigger-sync',
   ]),
   OpsEmployee: new Set<Action>([
     // Phase 1 base: no write actions on the matrix. Misba is OpsEmployee
