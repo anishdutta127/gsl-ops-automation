@@ -97,6 +97,7 @@ const ROLE_BASE_ACTIONS: Record<UserRole, Set<Action> | typeof ADMIN_WILDCARD> =
     'school:edit',
     'spoc:create',
     'sales-rep:create',
+    'school-group:create',
     'school-group:edit-members',
     'escalation:resolve',
   ]),

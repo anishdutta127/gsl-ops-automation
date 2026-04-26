@@ -1,5 +1,93 @@
-import { RoutePlaceholder } from '@/components/ops/RoutePlaceholder'
+/*
+ * /admin/school-groups/new (Phase C5b).
+ *
+ * Server Component. FormCard with the SchoolGroup create shape.
+ * memberSchoolIds is a checkbox-group sourced from schools.json
+ * (multi-select-against-fixture per the FormCard scope shapes). Empty
+ * member list at creation is allowed; the edit-members surface fills
+ * in members later when a chain MOU lands.
+ *
+ * Permission gate: Admin or OpsHead per 'school-group:create'.
+ */
 
-export default function Page() {
-  return <RoutePlaceholder title="New school group" description="Anish-required Phase 1 (step 10 Item 8)." />
+import { redirect } from 'next/navigation'
+import type { School } from '@/lib/types'
+import schoolsJson from '@/data/schools.json'
+import { getCurrentUser } from '@/lib/auth/session'
+import { effectiveRoles } from '@/lib/auth/permissions'
+import { FormCard, type FormCardField } from '@/components/ops/FormCard'
+
+const schools = schoolsJson as unknown as School[]
+
+const REGIONS = [
+  { value: 'East', label: 'East' },
+  { value: 'North', label: 'North' },
+  { value: 'South-West', label: 'South-West' },
+]
+
+const ERROR_MESSAGES: Record<string, string> = {
+  permission: 'You do not have permission to create school groups.',
+  'unknown-user': 'Session user not found. Please log in again.',
+  'duplicate-id': 'A school group with that id already exists.',
+  'invalid-id-format': 'Id must start with "SG-" and use uppercase letters, digits, hyphens, or underscores.',
+  'missing-name': 'Name is required.',
+  'missing-region': 'Region is required.',
+  'invalid-member-school-ids': 'One or more selected schools are not in the directory.',
+}
+
+export default async function NewSchoolGroupPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>
+}) {
+  const sp = await searchParams
+  const user = await getCurrentUser()
+  if (!user) redirect('/login?next=%2Fadmin%2Fschool-groups%2Fnew')
+
+  const roles = effectiveRoles(user)
+  const allowed = roles.includes('Admin') || roles.includes('OpsHead')
+  if (!allowed) redirect('/admin/school-groups')
+
+  const errorKey = typeof sp.error === 'string' ? sp.error : null
+  const errorMessage = errorKey ? ERROR_MESSAGES[errorKey] ?? `Failed: ${errorKey}` : null
+
+  const schoolOptions = schools.map((s) => ({
+    value: s.id,
+    label: `${s.name} (${s.id})`,
+  }))
+
+  const fields: FormCardField[] = [
+    {
+      name: 'id', label: 'Id', type: 'text', required: true,
+      pattern: '^SG-[A-Z0-9_-]+$',
+      placeholder: 'SG-NARAYANA_WB',
+      hint: 'Format: SG-... (uppercase letters, digits, hyphens, or underscores).',
+    },
+    { name: 'name', label: 'Name', type: 'text', required: true },
+    { name: 'region', label: 'Region', type: 'select', required: true, options: REGIONS },
+    {
+      name: 'memberSchoolIds', label: 'Member schools', type: 'checkbox-group',
+      options: schoolOptions,
+      hint: 'Optional at creation. Members can be added later via the edit-members surface.',
+    },
+    { name: 'notes', label: 'Notes', type: 'textarea', rows: 3 },
+  ]
+
+  return (
+    <div className="p-6 max-w-3xl">
+      <h1 className="text-2xl font-bold text-[var(--brand-navy)]">New school group</h1>
+      <p className="mt-1 text-sm text-slate-700">
+        Self-serve per Item 8. Admin or OpsHead.
+      </p>
+      <div className="mt-6">
+        <FormCard
+          action="/api/admin/school-groups/create"
+          submitLabel="Create group"
+          fields={fields}
+          cancelHref="/admin/school-groups"
+          errorMessage={errorMessage}
+        />
+      </div>
+    </div>
+  )
 }
