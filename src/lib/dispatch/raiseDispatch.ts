@@ -21,6 +21,13 @@
  * Operators can re-download a previously-raised dispatch note via
  * the same endpoint without polluting the audit log.
  *
+ * Idempotency divergence vs generatePi: this lib re-renders the
+ * same dispatch document idempotently (returns wasAlreadyRaised:
+ * true). generatePi.ts intentionally differs (counter advances
+ * every call) because dispatch state has internal significance
+ * only; PI numbers have external GST-filing significance. See
+ * RUNBOOK section 10 "PI vs Dispatch idempotency divergence".
+ *
  * Failure modes:
  *  - permission             not Admin or OpsHead
  *  - unknown-user           session.sub not in users.json

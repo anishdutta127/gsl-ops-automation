@@ -21,6 +21,16 @@
  * BEFORE any other write, and the API route reads the returned
  * piNumber into the docx. Re-rendering the same PI uses the same
  * Payment.id (`<mouId>-i<seq>`) so retries do not duplicate.
+ *
+ * Idempotency divergence vs raiseDispatch: this lib advances the PI
+ * counter on every successful call (no per-call idempotency by
+ * design). PI numbers have external significance (GST filing, legal
+ * documents); a duplicate click creates a counter gap rather than
+ * re-rendering the same PI. raiseDispatch.ts intentionally differs
+ * (idempotent re-render). Phase 1.1 may add per-(mouId,
+ * instalmentSeq) lookup to suppress duplicates pre-counter-advance
+ * if testers report accidental duplicates. See RUNBOOK section 10
+ * "PI vs Dispatch idempotency divergence".
  */
 
 import { readFile } from 'node:fs/promises'
