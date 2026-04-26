@@ -19,41 +19,70 @@ function user(role: User['role'], id = 'u'): User {
   }
 }
 
-describe('/mous/[mouId]/delivery-ack page', () => {
-  it('OpsHead sees the form', async () => {
+describe('/mous/[mouId]/delivery-ack page (D4 manual-upload)', () => {
+  it('OpsHead sees Print blank handover form + Record signed form for eligible dispatches', async () => {
     getCurrentUserMock.mockResolvedValue(user('OpsHead', 'pradeep.r'))
     const { default: Page } = await import('./page')
     const html = renderToStaticMarkup(
-      await Page({ params: Promise.resolve({ mouId: 'MOU-STEAM-2627-001' }) }),
+      await Page({
+        params: Promise.resolve({ mouId: 'MOU-STEAM-2627-001' }),
+        searchParams: Promise.resolve({}),
+      }),
     )
-    expect(html).toContain('<form')
-    expect(html).toContain('Record acknowledgement')
+    expect(html).toContain('action="/api/delivery-ack/template"')
+    expect(html).toContain('action="/api/delivery-ack/acknowledge"')
+    expect(html).toContain('Print blank handover form')
+    expect(html).toContain('Record signed form')
+    expect(html).toContain('Signed form URL')
   })
 
-  it('Finance sees inline message', async () => {
-    getCurrentUserMock.mockResolvedValue(user('Finance', 'shubhangi.g'))
+  it('SalesRep on own MOU sees role-locked message (no forms)', async () => {
+    getCurrentUserMock.mockResolvedValue(user('SalesRep', 'sp-vikram'))
     const { default: Page } = await import('./page')
     const html = renderToStaticMarkup(
-      await Page({ params: Promise.resolve({ mouId: 'MOU-STEAM-2627-001' }) }),
+      await Page({
+        params: Promise.resolve({ mouId: 'MOU-STEAM-2627-001' }),
+        searchParams: Promise.resolve({}),
+      }),
     )
-    expect(html).not.toContain('<form')
+    expect(html).not.toContain('action="/api/delivery-ack/template"')
+    expect(html).not.toContain('action="/api/delivery-ack/acknowledge"')
     expect(html).toContain('requires the OpsHead or Admin role')
   })
 
-  it('renders Phase 1 stub note', async () => {
+  it('error=invalid-url surfaces a friendly message', async () => {
     getCurrentUserMock.mockResolvedValue(user('Admin', 'anish.d'))
     const { default: Page } = await import('./page')
     const html = renderToStaticMarkup(
-      await Page({ params: Promise.resolve({ mouId: 'MOU-STEAM-2627-001' }) }),
+      await Page({
+        params: Promise.resolve({ mouId: 'MOU-STEAM-2627-001' }),
+        searchParams: Promise.resolve({ error: 'invalid-url' }),
+      }),
     )
-    expect(html).toContain('Phase 1 note')
+    expect(html).toContain('URL is not valid')
+  })
+
+  it('acknowledged=DSP-... surfaces success message with the dispatch id', async () => {
+    getCurrentUserMock.mockResolvedValue(user('Admin', 'anish.d'))
+    const { default: Page } = await import('./page')
+    const html = renderToStaticMarkup(
+      await Page({
+        params: Promise.resolve({ mouId: 'MOU-STEAM-2627-001' }),
+        searchParams: Promise.resolve({ acknowledged: 'DSP-001' }),
+      }),
+    )
+    expect(html).toContain('DSP-001')
+    expect(html).toContain('recorded as acknowledged')
   })
 
   it('contains no raw hex codes (token discipline)', async () => {
     getCurrentUserMock.mockResolvedValue(user('Admin', 'anish.d'))
     const { default: Page } = await import('./page')
     const html = renderToStaticMarkup(
-      await Page({ params: Promise.resolve({ mouId: 'MOU-STEAM-2627-001' }) }),
+      await Page({
+        params: Promise.resolve({ mouId: 'MOU-STEAM-2627-001' }),
+        searchParams: Promise.resolve({}),
+      }),
     )
     expect(html).not.toMatch(/#[0-9a-fA-F]{3,6}/)
   })
