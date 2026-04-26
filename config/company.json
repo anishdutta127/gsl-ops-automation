@@ -1,18 +1,18 @@
 {
-  "_comment": "GSL identity bundle for the bill-from side of PI / Dispatch / Delivery-Ack. Per CLAUDE.md: single-tenant; no multi-tenant tax. Anish to fill placeholder values with real company details before D1 production use. The values below are PLACEHOLDERS that will render in the PI document until replaced.",
-  "legalEntity": "REPLACE_ME_LEGAL_ENTITY",
-  "gstin": "REPLACE_ME_GSTIN",
+  "_comment": "Phase 1: sample values for testing. Replace with GSL's real registered details before production launch. See docs/RUNBOOK.md section 10 for the swap procedure.",
+  "legalEntity": "Get Set Learn Private Limited",
+  "gstin": "29AAAAA0000A1Z5",
   "address": [
-    "REPLACE_ME_ADDRESS_LINE_1",
-    "REPLACE_ME_ADDRESS_LINE_2",
-    "REPLACE_ME_CITY, REPLACE_ME_STATE - REPLACE_ME_PIN"
+    "Sample Registered Office",
+    "Bengaluru, Karnataka 560001",
+    "India"
   ],
   "accountDetails": [
-    "Bank: REPLACE_ME_BANK_NAME",
-    "Account: REPLACE_ME_ACCOUNT_NUMBER",
-    "IFSC: REPLACE_ME_IFSC",
-    "Branch: REPLACE_ME_BRANCH"
+    "Bank: Sample Bank",
+    "Account: 0000 0000 0000 0000",
+    "IFSC: SAMPLE0000000",
+    "Branch: Sample Branch"
   ],
-  "paymentTerms": "Payment due within 30 days of invoice date. Late payments incur 1.5% monthly interest.",
+  "paymentTerms": "Payment due within 30 days of invoice date.",
   "gstRate": 0.18
 }
