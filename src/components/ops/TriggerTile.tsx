@@ -1,15 +1,23 @@
 /*
- * TriggerTile (DESIGN.md "Surface 1 / Trigger tile component").
+ * TriggerTile (DESIGN.md "Surface 1 / Trigger tile component" + W4-B.2).
  *
- * 10 of these on the Leadership Console mapping to step 6.5 items
- * A through J. Smaller than HealthTile (96px tall vs 144px).
- * The primary number itself takes the status colour because the
- * number IS the signal; an icon plus text-status carry redundant
- * meaning per WCAG 2.1 AA "colour is never the only signal".
+ * Post-W4-A.7 the grid is 9 tiles (Legacy schools EXCLUDED removed).
+ * Smaller than HealthTile (96px tall vs 144px). The primary number
+ * itself takes the status colour because the number IS the signal;
+ * an icon plus text-status carry redundant meaning per WCAG 2.1 AA
+ * "colour is never the only signal".
+ *
+ * W4-B.2 adds a click-and-stay info popover at top-right of each
+ * tile (Info lucide icon; 44px touch target). Content sourced from
+ * src/content/triggerTileInfo.ts keyed by tile label; the popover
+ * itself is the only client-hydrated bit, the rest of the tile stays
+ * server-rendered.
  */
 
 import { AlertTriangle, Minus, TrendingDown, TrendingUp } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { TRIGGER_TILE_INFO } from '@/content/triggerTileInfo'
+import { TriggerTileInfoPopover } from './TriggerTileInfoPopover'
 
 export type TriggerStatus = 'ok' | 'attention' | 'alert' | 'neutral'
 
@@ -50,9 +58,10 @@ export function TriggerTile({
   status = 'neutral',
   trendDirection,
 }: TriggerTileProps) {
+  const info = TRIGGER_TILE_INFO[label]
   return (
     <div
-      className="rounded-lg border border-[var(--signal-neutral)]/20 bg-card p-3 shadow-sm"
+      className="relative rounded-lg border border-[var(--signal-neutral)]/20 bg-card p-3 pr-12 shadow-sm"
       role="group"
       aria-label={`${label}: ${primary}, ${STATUS_LABEL[status]}. ${threshold}`}
     >
@@ -70,6 +79,9 @@ export function TriggerTile({
         <span className="sr-only">{STATUS_LABEL[status]}</span>
       </div>
       <div className="mt-1 text-[11px] text-[var(--signal-neutral)]">{threshold}</div>
+      {info !== undefined ? (
+        <TriggerTileInfoPopover label={label} info={info} />
+      ) : null}
     </div>
   )
 }
