@@ -11,7 +11,7 @@ import dispatchRequestsJson from '@/data/dispatch_requests.json'
 const dispatches = dispatchesJson as unknown as Dispatch[]
 const requests = dispatchRequestsJson as unknown as DispatchRequest[]
 
-const VALID_ORIGINS: ReadonlySet<DispatchOrigin> = new Set([
+const VALID_ORIGINS: ReadonlySet<DispatchOrigin> = new Set<DispatchOrigin>([
   'sales-request',
   'ops-direct',
   'pre-w4d',

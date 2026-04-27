@@ -84,6 +84,15 @@ export type Action =
   // granted because cohort decisions are leadership-level (which AY's
   // cohort counts as the operationally-current pursuit).
   | 'mou:edit-cohort-status'
+  // W4-D.2: Sales submits a DispatchRequest via /dispatch/request. Admin
+  // wildcard + SalesHead + SalesRep grants. Server-side enforcement only;
+  // UI shows the form to every authenticated user (W3-B).
+  | 'dispatch-request:create'
+  // W4-D.3: Ops reviews a DispatchRequest via /admin/dispatch-requests
+  // and either approves (creates Dispatch via conversion) or rejects.
+  // Admin wildcard + OpsHead. Cancel-by-creator is implicit (the
+  // requester compares against requestedBy; no Action gate needed).
+  | 'dispatch-request:review'
 
 // Sentinel: Admin role grants all actions. Represented as wildcard in the
 // role map so we never have to enumerate the full action list for Admin.
@@ -102,6 +111,7 @@ const ROLE_BASE_ACTIONS: Record<UserRole, Set<Action> | typeof ADMIN_WILDCARD> =
   SalesHead: new Set<Action>([
     'drift:approve',
     'mou:confirm-actuals',
+    'dispatch-request:create',
     'escalation:resolve',
   ]),
   SalesRep: new Set<Action>([
@@ -110,6 +120,7 @@ const ROLE_BASE_ACTIONS: Record<UserRole, Set<Action> | typeof ADMIN_WILDCARD> =
     // Item B "SalesRep gathers actuals; Sales Head signs off"; both
     // submit, SalesHead reviews queue when variance > 10%.
     'mou:confirm-actuals',
+    'dispatch-request:create',
   ]),
   OpsHead: new Set<Action>([
     'cc-rule:toggle',
@@ -121,6 +132,7 @@ const ROLE_BASE_ACTIONS: Record<UserRole, Set<Action> | typeof ADMIN_WILDCARD> =
     'mou:raise-dispatch',
     'mou:send-feedback-request',
     'mou:upload-delivery-ack',
+    'dispatch-request:review',
     'school:create',
     'school:edit',
     'spoc:create',
