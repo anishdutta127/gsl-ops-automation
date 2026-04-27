@@ -140,7 +140,7 @@ export default async function DispatchPage({ params, searchParams }: PageProps) 
                     <span className="text-muted-foreground">·</span>{' '}
                     {r.lineItems.length} line(s), total qty {total}{' '}
                     <span className="text-muted-foreground">·</span>{' '}
-                    Reason: "{r.requestReason}"
+                    Reason: &ldquo;{r.requestReason}&rdquo;
                   </li>
                 )
               })}

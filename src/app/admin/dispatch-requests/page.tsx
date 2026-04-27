@@ -193,7 +193,7 @@ export default async function DispatchRequestsQueuePage({ searchParams }: PagePr
                       {sp ? ` (sales: ${sp.name})` : ''} · {new Date(r.requestedAt).toLocaleString('en-IN')}
                     </p>
                     {r.requestReason ? (
-                      <p className="mt-1 text-xs italic text-muted-foreground">"{r.requestReason}"</p>
+                      <p className="mt-1 text-xs italic text-muted-foreground">&ldquo;{r.requestReason}&rdquo;</p>
                     ) : null}
                   </Link>
                 </li>
