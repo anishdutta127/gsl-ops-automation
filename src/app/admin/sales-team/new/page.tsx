@@ -11,7 +11,6 @@
 
 import { redirect } from 'next/navigation'
 import { getCurrentUser } from '@/lib/auth/session'
-import { effectiveRoles } from '@/lib/auth/permissions'
 import { FormCard, type FormCardField } from '@/components/ops/FormCard'
 
 const ERROR_MESSAGES: Record<string, string> = {
@@ -42,10 +41,6 @@ export default async function NewSalesPersonPage({
   const sp = await searchParams
   const user = await getCurrentUser()
   if (!user) redirect('/login?next=%2Fadmin%2Fsales-team%2Fnew')
-
-  const roles = effectiveRoles(user)
-  const allowed = roles.includes('Admin') || roles.includes('OpsHead')
-  if (!allowed) redirect('/admin/sales-team')
 
   const errorKey = typeof sp.error === 'string' ? sp.error : null
   const errorMessage = errorKey ? ERROR_MESSAGES[errorKey] ?? `Failed: ${errorKey}` : null

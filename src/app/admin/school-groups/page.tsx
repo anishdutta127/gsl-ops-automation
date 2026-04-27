@@ -12,17 +12,12 @@ import Link from 'next/link'
 import type { SchoolGroup } from '@/lib/types'
 import schoolGroupsJson from '@/data/school_groups.json'
 import { getCurrentUser } from '@/lib/auth/session'
-import { effectiveRoles } from '@/lib/auth/permissions'
 
 const groups = schoolGroupsJson as unknown as SchoolGroup[]
 
 export default async function SchoolGroupsListPage() {
   const user = await getCurrentUser()
   if (!user) redirect('/login?next=%2Fadmin%2Fschool-groups')
-
-  const roles = effectiveRoles(user)
-  const allowed = roles.includes('Admin') || roles.includes('OpsHead')
-  if (!allowed) redirect('/dashboard')
 
   return (
     <div className="p-6 max-w-4xl">

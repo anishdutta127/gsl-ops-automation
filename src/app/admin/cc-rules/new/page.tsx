@@ -15,7 +15,6 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { getCurrentUser } from '@/lib/auth/session'
-import { effectiveRoles } from '@/lib/auth/permissions'
 import type { SalesPerson, User } from '@/lib/types'
 import usersJson from '@/data/users.json'
 import salesTeamJson from '@/data/sales_team.json'
@@ -62,9 +61,6 @@ export default async function NewCcRulePage({
   const sp = await searchParams
   const user = await getCurrentUser()
   if (!user) redirect('/login?next=%2Fadmin%2Fcc-rules%2Fnew')
-
-  const roles = effectiveRoles(user)
-  if (!roles.includes('Admin')) redirect('/admin/cc-rules')
 
   const errorKey = typeof sp.error === 'string' ? sp.error : null
   const errorMessage = errorKey ? ERROR_MESSAGES[errorKey] ?? `Failed: ${errorKey}` : null

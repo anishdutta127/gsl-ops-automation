@@ -10,17 +10,12 @@ import Link from 'next/link'
 import type { SalesPerson } from '@/lib/types'
 import salesTeamJson from '@/data/sales_team.json'
 import { getCurrentUser } from '@/lib/auth/session'
-import { effectiveRoles } from '@/lib/auth/permissions'
 
 const reps = salesTeamJson as unknown as SalesPerson[]
 
 export default async function SalesTeamListPage() {
   const user = await getCurrentUser()
   if (!user) redirect('/login?next=%2Fadmin%2Fsales-team')
-
-  const roles = effectiveRoles(user)
-  const allowed = roles.includes('Admin') || roles.includes('OpsHead')
-  if (!allowed) redirect('/dashboard')
 
   const activeCount = reps.filter((r) => r.active).length
 

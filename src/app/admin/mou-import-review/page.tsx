@@ -19,7 +19,6 @@ import { redirect } from 'next/navigation'
 import type { MouImportReviewItem } from '@/lib/types'
 import mouImportReviewJson from '@/data/mou_import_review.json'
 import { getCurrentUser } from '@/lib/auth/session'
-import { effectiveRoles } from '@/lib/auth/permissions'
 
 const items = mouImportReviewJson as unknown as MouImportReviewItem[]
 
@@ -62,10 +61,6 @@ export default async function MouImportReviewPage({
   const sp = await searchParams
   const user = await getCurrentUser()
   if (!user) redirect('/login?next=%2Fadmin%2Fmou-import-review')
-
-  const roles = effectiveRoles(user)
-  const allowed = roles.includes('Admin') || roles.includes('OpsHead')
-  if (!allowed) redirect('/dashboard')
 
   const errorKey = typeof sp.error === 'string' ? sp.error : null
   const errorMessage = errorKey ? ERROR_MESSAGES[errorKey] ?? `Failed: ${errorKey}` : null

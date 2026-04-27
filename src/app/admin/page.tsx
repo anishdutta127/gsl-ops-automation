@@ -14,7 +14,6 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { Activity, AlertTriangle, CheckCircle, RefreshCcw } from 'lucide-react'
 import { getCurrentUser } from '@/lib/auth/session'
-import { effectiveRoles, canPerform } from '@/lib/auth/permissions'
 import syncHealthJson from '@/data/sync_health.json'
 import type { SyncHealthEntry } from '@/lib/syncHealth/appendEntry'
 
@@ -98,11 +97,10 @@ export default async function AdminIndexPage({ searchParams }: PageProps) {
   const user = await getCurrentUser()
   if (!user) redirect('/login?next=%2Fadmin')
 
-  const roles = effectiveRoles(user)
-  const allowed = roles.includes('Admin') || roles.includes('OpsHead')
-  if (!allowed) redirect('/dashboard')
-
-  const canTriggerSync = canPerform(user, 'system:trigger-sync')
+  // Phase 1 W3-B: UI gates disabled. Sync triggers render for any
+  // authenticated tester. Server-side canPerform('system:trigger-sync')
+  // in /api/sync/tick + /api/mou/import-tick still enforces.
+  const canTriggerSync = true
 
   const syncedKey = typeof sp.synced === 'string' ? sp.synced : null
   const errorKey = typeof sp.error === 'string' ? sp.error : null

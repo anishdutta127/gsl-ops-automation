@@ -6,11 +6,10 @@
  * in C5b to keep FormCard a clean primitive for the simpler admin-
  * create surfaces.
  *
- * Per-role: OpsHead and Admin only. Non-permitted roles redirect to
- * the read-only /schools/[id] (per C scoping pass: "schools/[id]/edit
- * redirects to /schools/[id], not /dashboard, because the edit page
- * is a privileged version of detail; falling through to the read view
- * is more useful than a context jump").
+ * Per-role: OpsHead and Admin per 'school:edit' (advisory only post
+ * Week 3 W3-B). Page-level UI gate removed; the form renders for any
+ * authenticated user. Server-side enforcement at submit time is the
+ * /api/schools/[id] route's responsibility (Phase 1.1 stub).
  *
  * The form posts to /api/schools/[id] (placeholder route; not in C3
  * scope). For Phase 1 testers, the form renders and submits will
@@ -18,7 +17,7 @@
  */
 
 import { notFound, redirect } from 'next/navigation'
-import type { School, User } from '@/lib/types'
+import type { School } from '@/lib/types'
 import schoolsJson from '@/data/schools.json'
 import { getCurrentUser } from '@/lib/auth/session'
 import { TopNav } from '@/components/ops/TopNav'
@@ -30,13 +29,6 @@ interface PageProps {
   params: Promise<{ schoolId: string }>
 }
 
-function canEdit(user: User | null): boolean {
-  if (!user) return false
-  if (user.role === 'Admin' || user.role === 'OpsHead') return true
-  if (user.testingOverride && user.testingOverridePermissions?.includes('OpsHead')) return true
-  return false
-}
-
 const REGIONS = ['East', 'North', 'South-West'] as const
 
 const FIELD_INPUT_CLASS =
@@ -46,9 +38,7 @@ const FIELD_LABEL_CLASS = 'block text-sm font-medium text-brand-navy mb-1'
 export default async function SchoolEditPage({ params }: PageProps) {
   const { schoolId } = await params
   const user = await getCurrentUser()
-  if (!canEdit(user)) {
-    redirect(`/schools/${schoolId}`)
-  }
+  if (!user) redirect(`/login?next=%2Fschools%2F${encodeURIComponent(schoolId)}%2Fedit`)
   const school = allSchools.find((s) => s.id === schoolId)
   if (!school) notFound()
 

@@ -15,17 +15,12 @@ import Link from 'next/link'
 import type { School } from '@/lib/types'
 import schoolsJson from '@/data/schools.json'
 import { getCurrentUser } from '@/lib/auth/session'
-import { effectiveRoles } from '@/lib/auth/permissions'
 
 const schools = schoolsJson as unknown as School[]
 
 export default async function SchoolsAdminListPage() {
   const user = await getCurrentUser()
   if (!user) redirect('/login?next=%2Fadmin%2Fschools')
-
-  const roles = effectiveRoles(user)
-  const allowed = roles.includes('Admin') || roles.includes('OpsHead')
-  if (!allowed) redirect('/dashboard')
 
   const activeCount = schools.filter((s) => s.active).length
   const missingGstCount = schools.filter((s) => s.gstNumber === null).length

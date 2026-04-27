@@ -14,7 +14,6 @@ import { redirect } from 'next/navigation'
 import type { School } from '@/lib/types'
 import schoolsJson from '@/data/schools.json'
 import { getCurrentUser } from '@/lib/auth/session'
-import { effectiveRoles } from '@/lib/auth/permissions'
 import { FormCard, type FormCardField } from '@/components/ops/FormCard'
 
 const schools = schoolsJson as unknown as School[]
@@ -43,10 +42,6 @@ export default async function NewSchoolGroupPage({
   const sp = await searchParams
   const user = await getCurrentUser()
   if (!user) redirect('/login?next=%2Fadmin%2Fschool-groups%2Fnew')
-
-  const roles = effectiveRoles(user)
-  const allowed = roles.includes('Admin') || roles.includes('OpsHead')
-  if (!allowed) redirect('/admin/school-groups')
 
   const errorKey = typeof sp.error === 'string' ? sp.error : null
   const errorMessage = errorKey ? ERROR_MESSAGES[errorKey] ?? `Failed: ${errorKey}` : null

@@ -20,7 +20,6 @@ import type { School, SchoolGroup } from '@/lib/types'
 import schoolGroupsJson from '@/data/school_groups.json'
 import schoolsJson from '@/data/schools.json'
 import { getCurrentUser } from '@/lib/auth/session'
-import { effectiveRoles } from '@/lib/auth/permissions'
 import { FormCard, type FormCardField } from '@/components/ops/FormCard'
 
 const groups = schoolGroupsJson as unknown as SchoolGroup[]
@@ -46,10 +45,6 @@ export default async function SchoolGroupEditPage({
 
   const user = await getCurrentUser()
   if (!user) redirect(`/login?next=%2Fadmin%2Fschool-groups%2F${encodeURIComponent(groupId)}`)
-
-  const roles = effectiveRoles(user)
-  const allowed = roles.includes('Admin') || roles.includes('OpsHead')
-  if (!allowed) redirect('/dashboard')
 
   const group = groups.find((g) => g.id === groupId)
   if (!group) notFound()

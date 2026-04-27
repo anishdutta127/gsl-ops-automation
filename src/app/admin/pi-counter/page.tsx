@@ -19,7 +19,6 @@ import type { Communication, PiCounter } from '@/lib/types'
 import piCounterJson from '@/data/pi_counter.json'
 import communicationsJson from '@/data/communications.json'
 import { getCurrentUser } from '@/lib/auth/session'
-import { effectiveRoles } from '@/lib/auth/permissions'
 import { checkMonotonicity } from '@/lib/piCounter/monotonicity'
 
 const counter = piCounterJson as PiCounter
@@ -36,10 +35,6 @@ function lastIssuedPi(comms: Communication[]): Communication | null {
 export default async function PiCounterPage() {
   const user = await getCurrentUser()
   if (!user) redirect('/login?next=%2Fadmin%2Fpi-counter')
-
-  const roles = effectiveRoles(user)
-  const allowed = roles.includes('Admin') || roles.includes('OpsHead')
-  if (!allowed) redirect('/dashboard')
 
   const monotonicity = checkMonotonicity(communications)
   const lastIssued = lastIssuedPi(communications)

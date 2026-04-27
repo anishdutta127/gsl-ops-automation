@@ -18,7 +18,6 @@ import ccRulesJson from '@/data/cc_rules.json'
 import usersJson from '@/data/users.json'
 import salesTeamJson from '@/data/sales_team.json'
 import { getCurrentUser } from '@/lib/auth/session'
-import { effectiveRoles } from '@/lib/auth/permissions'
 
 const rules = ccRulesJson as unknown as CcRule[]
 const users = usersJson as unknown as User[]
@@ -71,10 +70,6 @@ export default async function CcRuleDetailPage({
 
   const user = await getCurrentUser()
   if (!user) redirect(`/login?next=%2Fadmin%2Fcc-rules%2F${encodeURIComponent(ruleId)}`)
-
-  const roles = effectiveRoles(user)
-  const allowed = roles.includes('Admin') || roles.includes('OpsHead')
-  if (!allowed) redirect('/dashboard')
 
   const rule = rules.find((r) => r.id === ruleId)
   if (!rule) notFound()

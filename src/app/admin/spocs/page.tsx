@@ -16,15 +16,10 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { getCurrentUser } from '@/lib/auth/session'
-import { effectiveRoles } from '@/lib/auth/permissions'
 
 export default async function SpocsPlaceholderPage() {
   const user = await getCurrentUser()
   if (!user) redirect('/login?next=%2Fadmin%2Fspocs')
-
-  const roles = effectiveRoles(user)
-  const allowed = roles.includes('Admin') || roles.includes('OpsHead')
-  if (!allowed) redirect('/dashboard')
 
   return (
     <div className="p-6 max-w-3xl">

@@ -12,7 +12,6 @@
 
 import { redirect } from 'next/navigation'
 import { getCurrentUser } from '@/lib/auth/session'
-import { effectiveRoles } from '@/lib/auth/permissions'
 import { FormCard, type FormCardField } from '@/components/ops/FormCard'
 
 const REGIONS = [
@@ -44,10 +43,6 @@ export default async function NewSchoolPage({
   const sp = await searchParams
   const user = await getCurrentUser()
   if (!user) redirect('/login?next=%2Fadmin%2Fschools%2Fnew')
-
-  const roles = effectiveRoles(user)
-  const allowed = roles.includes('Admin') || roles.includes('OpsHead')
-  if (!allowed) redirect('/admin/schools')
 
   const errorKey = typeof sp.error === 'string' ? sp.error : null
   const errorMessage = errorKey ? ERROR_MESSAGES[errorKey] ?? `Failed: ${errorKey}` : null

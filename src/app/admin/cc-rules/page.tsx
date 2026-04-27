@@ -15,7 +15,6 @@ import Link from 'next/link'
 import type { CcRule } from '@/lib/types'
 import ccRulesJson from '@/data/cc_rules.json'
 import { getCurrentUser } from '@/lib/auth/session'
-import { effectiveRoles } from '@/lib/auth/permissions'
 import { CcRuleToggleRow } from '@/components/ops/CcRuleToggleRow'
 
 const rules = ccRulesJson as unknown as CcRule[]
@@ -24,11 +23,10 @@ export default async function CcRulesListPage() {
   const user = await getCurrentUser()
   if (!user) redirect('/login?next=%2Fadmin%2Fcc-rules')
 
-  const roles = effectiveRoles(user)
-  const allowed = roles.includes('Admin') || roles.includes('OpsHead')
-  if (!allowed) redirect('/dashboard')
-
-  const canCreate = roles.includes('Admin')
+  // Phase 1 W3-B: UI gates disabled; every authenticated tester can
+  // see and use the New rule button. Server-side canPerform() in
+  // lib/ccRules/createCcRule.ts still enforces.
+  const canCreate = true
   const enabledCount = rules.filter((r) => r.enabled).length
 
   return (
