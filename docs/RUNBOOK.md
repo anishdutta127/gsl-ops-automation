@@ -437,3 +437,28 @@ These are deliberate Phase 1 scope cuts, not bugs. Each item names the **Context
 ### 10.7 Operational notes (developer environment)
 
 - **Windows: orphaned node processes after killed smoke-test or dev-server runs.** The `scripts/smoke-test.sh` trap-based cleanup occasionally leaves child node processes holding ports 3000-3003. On the next dev-server start, Next.js auto-shifts to port 3004 and serves through stale `.next` chunks, which can cause cascading 500s on routes (most often `/feedback/[tokenId]` because its placeholder is the simplest). Workaround when this happens: kill all node processes (`taskkill //F //IM node.exe` on Windows, `pkill -f "next dev"` on macOS/Linux) and `rm -rf .next` before restarting. Not a code defect; an artefact of the Windows process model + Next dev-cache interaction.
+
+---
+
+## 11. Week 4 redesign backlog (W4-A through W4-I)
+
+The Week 3 walkthrough surfaced 12 substantive issues that needed deeper redesign than the W3 polish allowed. The user-approved Week 4 plan ships these across 9 batches (W4-A foundation cleanup through W4-I final verification). Items below capture decisions and deprecations that ship inside the W4 series; they are not Phase 1.1 deferrals (those stay in §10).
+
+### 11.1 W3 dispatch-raise drag flow is deprecated; W4-D supersedes it
+
+- **Context:** dragging a kanban card from `actuals-confirmed` into `kit-dispatched` opens the forward-by-1 dialog and routes to `/mous/[id]/dispatch`. The form there posts to `/api/dispatch/generate` with only a hidden `mouId`; the route handler requires `installmentSeq` (validated at `route.ts:43-46`) and 303-redirects with `?error=invalid-installment-seq` when missing. The form never grew an `installmentSeq` `<select>` to satisfy the API. Anish hit this on the deployed Week 3 build during the W3-G walkthrough.
+- **Decision:** do not patch the W3 form. W4-D rebuilds dispatch end-to-end as a multi-SKU dispatch + Sales request flow that supersedes the single-SKU `installmentSeq`-gated path. Patching the W3 form would create code that needs to be torn out 2-3 batches later.
+- **In the meantime:** operators clicking Raise dispatch on the W3 form get the `?error=invalid-installment-seq` rail. The lib (`src/lib/dispatch/raiseDispatch.ts`) and the API route are still wired for the eventual W4-D form rewrite; only the form input is the missing piece.
+
+### 11.2 W4-A.1 chain-MOU heuristic exception (3 IDs whitelisted)
+
+- **Context:** `src/lib/importer/fromMou.ts` quarantines MOU records when `studentsMou > 1500` (single-school plausibility ceiling) under the chain-MOU heuristic. The Week 3 import quarantined 4 MOUs this way: MOU-STEAM-2627-016 (Tathastu Innovations Meerut, 2000), -018 (SD Senior Secondary, 1700), -051 (Ramanarayana Education Trust, 7950), and MOU-STEAM-2526-027 (Narayana School, 2000).
+- **Decision (W4-A.1):** the first three are legitimately large single-school sites in Anish's active 51-list, so a one-shot migration approves them as `schoolScope: 'SINGLE'` and lands them in `mous.json` with audit-trail entries explaining the override. The fourth (MOU-STEAM-2526-027) is not in the active list and stays quarantined; the heuristic correctly catches its chain-affiliation pattern.
+- **No global threshold relaxation:** Tathastu and Narayana both carry `studentsMou: 2000`, so any global threshold raise above 1500 would auto-pass both. The whitelist approach is the only correct shape here.
+- **Future imports:** the dedup-by-id check in `fromMou.ts` skips records whose IDs already exist in `mous.json`, so re-running the importer will not re-quarantine the 3 approved IDs. No code change to the heuristic itself; the audit log on each MOU records the W4-A.1 manual override.
+
+### 11.3 cohortStatus orthogonal to MouStatus (W4-A.2)
+
+- **Context:** prior to W4-A.2, MOU lifecycle (Active / Pending Signature / Completed / Expired / Renewed) was the only first-class status concept. The kanban + /mous list showed every MOU regardless of academic-year cohort, so prior-AY records (the 92 MOU-STEAM-2526-* and MOU-YP-2526-* rows) cluttered the operationally-current view.
+- **Decision:** added `cohortStatus: 'active' | 'archived'` as an orthogonal field. The W4-A.2 fixture migration tagged the 51 IDs in Anish's active list as `'active'` and the remaining 92 as `'archived'`. A 'Pending Signature' MOU can be cohortStatus 'active' (pursuit-in-progress) or 'archived' (lapsed pursuit) independently.
+- **W4-F implication:** when the sales-pipeline pre-MOU work lands, the type may grow a `'pre-launch'` value alongside active / archived. The kanban filter expression should keep working unchanged because its check is already strictly `cohortStatus === 'active'`.
