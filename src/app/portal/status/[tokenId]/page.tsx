@@ -122,7 +122,7 @@ export default async function StatusPortalPage({
     expectedNextActionDate: null,
   })
 
-  const programmeLine = `${mou.programme}${mou.programmeSubType ? ` - ${mou.programmeSubType}` : ''} - Installment ${token.installmentSeq}`
+  const programmeLine = `${mou.programme}${mou.programmeSubType ? ` - ${mou.programmeSubType}` : ''} - Instalment ${token.installmentSeq}`
 
   // Phase 1 read-mutation: bump lastViewedAt + viewCount on every GET.
   // Deliberately fire-and-forget (no await) so a queue stall does not
@@ -170,7 +170,7 @@ export default async function StatusPortalPage({
           id="installment-heading"
           className="text-base font-bold text-[var(--brand-navy)]"
         >
-          Installment {token.installmentSeq} summary
+          Instalment {token.installmentSeq} summary
         </h2>
         <dl className="mt-3 grid grid-cols-2 gap-3 text-sm">
           <div>

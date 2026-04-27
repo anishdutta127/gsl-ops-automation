@@ -25,47 +25,97 @@ function user(role: User['role'], id = 'u'): User {
   }
 }
 
-describe('/help page', () => {
+describe('/help page (W3-E orientation doc)', () => {
   it('renders for any authenticated user (SalesRep)', async () => {
     getCurrentUserMock.mockResolvedValue(user('SalesRep', 'sp-vikram'))
     const { default: Page } = await import('./page')
     const html = renderToStaticMarkup(await Page())
     expect(html).toContain('Help')
-    expect(html).toContain('What can I do?')
+    expect(html).toContain('What is this system?')
   })
 
-  it('renders all four sections', async () => {
+  it('renders all 7 sections with jump-anchor ids', async () => {
     getCurrentUserMock.mockResolvedValue(user('Admin', 'anish.d'))
     const { default: Page } = await import('./page')
     const html = renderToStaticMarkup(await Page())
-    expect(html).toContain('What can I do?')
-    expect(html).toContain('How do I do X?')
-    expect(html).toContain('What does X mean?')
-    expect(html).toContain('Something is broken or confusing')
+    expect(html).toContain('id="what-is-this"')
+    expect(html).toContain('id="lifecycle-stages"')
+    expect(html).toContain('id="glossary"')
+    expect(html).toContain('id="workflows"')
+    expect(html).toContain('id="what-i-can-change"')
+    expect(html).toContain('id="change-semantics"')
+    expect(html).toContain('id="contact"')
   })
 
-  it('renders capability rows for the documented roles', async () => {
+  it('jump-nav sidebar lists all 7 section links', async () => {
     getCurrentUserMock.mockResolvedValue(user('Admin', 'anish.d'))
     const { default: Page } = await import('./page')
     const html = renderToStaticMarkup(await Page())
-    expect(html).toContain('Admin')
-    expect(html).toContain('Leadership')
-    expect(html).toContain('OpsHead')
-    expect(html).toContain('SalesHead')
-    expect(html).toContain('SalesRep')
-    expect(html).toContain('Finance')
-    expect(html).toContain('TrainerHead')
+    expect(html).toContain('data-testid="help-jump-nav"')
+    expect(html).toContain('href="#what-is-this"')
+    expect(html).toContain('href="#glossary"')
+    expect(html).toContain('href="#workflows"')
+    expect(html).toContain('href="#contact"')
   })
 
-  it('renders workflow steps for the common tasks', async () => {
+  it('renders all 8 lifecycle stages', async () => {
     getCurrentUserMock.mockResolvedValue(user('Admin', 'anish.d'))
     const { default: Page } = await import('./page')
     const html = renderToStaticMarkup(await Page())
-    expect(html).toContain('Confirm actuals on a MOU')
-    expect(html).toContain('Generate a proforma invoice')
-    expect(html).toContain('Raise a dispatch')
-    expect(html).toContain('Send a feedback request')
-    expect(html).toContain('Record a signed delivery acknowledgement')
+    expect(html).toContain('data-testid="help-stage-mou-signed"')
+    expect(html).toContain('data-testid="help-stage-actuals-confirmed"')
+    expect(html).toContain('data-testid="help-stage-cross-verification"')
+    expect(html).toContain('data-testid="help-stage-invoice-raised"')
+    expect(html).toContain('data-testid="help-stage-payment-received"')
+    expect(html).toContain('data-testid="help-stage-kit-dispatched"')
+    expect(html).toContain('data-testid="help-stage-delivery-acknowledged"')
+    expect(html).toContain('data-testid="help-stage-feedback-submitted"')
+  })
+
+  it('glossary surface carries the alphabetical entries (W3-E target: 38 terms)', async () => {
+    getCurrentUserMock.mockResolvedValue(user('Admin', 'anish.d'))
+    const { default: Page } = await import('./page')
+    const html = renderToStaticMarkup(await Page())
+    expect(html).toContain('data-testid="help-glossary-list"')
+    // Sample five canonical terms cover the operational vocabulary.
+    expect(html).toContain('Actuals')
+    expect(html).toContain('GSTIN')
+    expect(html).toContain('Magic link')
+    expect(html).toContain('Pre-Ops Legacy')
+    expect(html).toContain('Server-side enforcement')
+    expect(html).toContain('Idempotent')
+  })
+
+  it('renders the per-role orientation framings (Sales / Ops / Finance / Leadership)', async () => {
+    getCurrentUserMock.mockResolvedValue(user('Admin', 'anish.d'))
+    const { default: Page } = await import('./page')
+    const html = renderToStaticMarkup(await Page())
+    expect(html).toContain('Sales (Pratik, Vishwanath)')
+    expect(html).toContain('Ops core team (Pradeep, Misba, Swati, Shashank)')
+    expect(html).toContain('Finance (Shubhangi, Pranav)')
+    expect(html).toContain('Leadership (Ameet)')
+  })
+
+  it('workflows section enumerates the common tasks', async () => {
+    getCurrentUserMock.mockResolvedValue(user('Admin', 'anish.d'))
+    const { default: Page } = await import('./page')
+    const html = renderToStaticMarkup(await Page())
+    expect(html).toContain('data-testid="help-workflow-list"')
+    expect(html).toContain('Confirming actuals on a MOU')
+    expect(html).toContain('Generating a Proforma Invoice')
+    expect(html).toContain('Raising a dispatch')
+    expect(html).toContain('Sending a feedback request')
+    expect(html).toContain('Recording a signed delivery acknowledgement')
+    expect(html).toContain('Editing a lifecycle rule duration')
+    expect(html).toContain('Moving a kanban card forward')
+  })
+
+  it('footer carries the doc-vs-system drift note', async () => {
+    getCurrentUserMock.mockResolvedValue(user('Admin', 'anish.d'))
+    const { default: Page } = await import('./page')
+    const html = renderToStaticMarkup(await Page())
+    expect(html).toContain('This guide reflects the system as of')
+    expect(html).toContain('tell Anish on Teams')
   })
 
   it('redirects unauthenticated viewers to /login with next preserved', async () => {
@@ -79,5 +129,16 @@ describe('/help page', () => {
     const { default: Page } = await import('./page')
     const html = renderToStaticMarkup(await Page())
     expect(html).not.toMatch(/#[0-9a-fA-F]{3,6}\b/)
+  })
+
+  it('user-facing strings use British "Instalment" not American "Installment" (W3-E sweep)', async () => {
+    getCurrentUserMock.mockResolvedValue(user('Admin', 'anish.d'))
+    const { default: Page } = await import('./page')
+    const html = renderToStaticMarkup(await Page())
+    // The glossary defines "Instalment" as a term; American spelling should
+    // not appear in the rendered prose. Schema field names like
+    // installmentSeq are not user-facing and stay unchanged.
+    const userVisibleAmericanCount = (html.match(/Installment\b/g) ?? []).length
+    expect(userVisibleAmericanCount).toBe(0)
   })
 })

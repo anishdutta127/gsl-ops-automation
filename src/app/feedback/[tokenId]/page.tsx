@@ -66,8 +66,8 @@ export default async function FeedbackTokenPage({
   const mou = mous.find((m) => m.id === token.mouId)
   const heading = mou?.schoolName ?? 'Your training programme'
   const programmeLine = mou
-    ? `${mou.programme}${mou.programmeSubType ? ` - ${mou.programmeSubType}` : ''} - Installment ${token.installmentSeq}`
-    : `Installment ${token.installmentSeq}`
+    ? `${mou.programme}${mou.programmeSubType ? ` - ${mou.programmeSubType}` : ''} - Instalment ${token.installmentSeq}`
+    : `Instalment ${token.installmentSeq}`
 
   return (
     <div className="mx-auto w-full max-w-xl px-4 py-6 sm:px-6">

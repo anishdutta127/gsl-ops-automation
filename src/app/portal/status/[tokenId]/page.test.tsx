@@ -115,7 +115,7 @@ describe('/portal/status/[tokenId] page', () => {
       }),
     )
     expect(html).toContain('Greenfield Academy')
-    expect(html).toContain('Installment 1 summary')
+    expect(html).toContain('Instalment 1 summary')
     expect(html).toContain('What')
     expect(html).toContain('next')
     // Indian-format Rs from formatRs

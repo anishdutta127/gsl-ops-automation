@@ -97,7 +97,7 @@ describe('/feedback/[tokenId] page', () => {
     )
     expect(html).toContain('Greenfield Academy')
     expect(html).toContain('STEAM')
-    expect(html).toContain('Installment 1')
+    expect(html).toContain('Instalment 1')
     expect(html).toContain('spoc@example.test')
     expect(html).toContain('Submit feedback')
   })
