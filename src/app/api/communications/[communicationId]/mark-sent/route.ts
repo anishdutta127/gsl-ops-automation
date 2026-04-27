@@ -26,13 +26,13 @@ export async function POST(
   const session = await getCurrentSession()
   if (!session) {
     const url = new URL('/login', request.url)
-    url.searchParams.set('next', mouId ? `/mous/${mouId}/feedback-request` : '/dashboard')
+    url.searchParams.set('next', mouId ? `/mous/${mouId}/feedback-request` : '/')
     return NextResponse.redirect(url, { status: 303 })
   }
 
   const back = (qs: Record<string, string> = {}) => {
     const url = new URL(
-      mouId ? `/mous/${mouId}/feedback-request` : '/dashboard',
+      mouId ? `/mous/${mouId}/feedback-request` : '/',
       request.url,
     )
     if (mouId) url.searchParams.set('communicationId', communicationId)

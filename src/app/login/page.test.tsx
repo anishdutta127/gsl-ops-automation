@@ -5,8 +5,8 @@
  * @/lib/crypto/jwt verifySessionToken to control the already-
  * logged-in detect path. Asserts:
  *   - valid session + valid next -> redirect to next
- *   - valid session + invalid next -> redirect to /dashboard
- *   - valid session + missing next -> redirect to /dashboard
+ *   - valid session + invalid next -> redirect to / (W3-G default)
+ *   - valid session + missing next -> redirect to / (W3-G default)
  *   - no cookie -> renders form
  *   - error=invalid -> inline error message rendered
  *   - valid next on form -> hidden input present so /api/login can
@@ -56,7 +56,7 @@ describe('/login page (already-logged-in detect)', () => {
     ).rejects.toThrow('REDIRECT:/admin/audit')
   })
 
-  it('valid session + invalid next: redirects to /dashboard', async () => {
+  it('valid session + invalid next: redirects to / (kanban-first default)', async () => {
     cookieGetMock.mockReturnValue({ value: 'real-token' })
     verifyMock.mockResolvedValue({
       sub: 'anish.d',
@@ -69,10 +69,10 @@ describe('/login page (already-logged-in detect)', () => {
       LoginPage({
         searchParams: Promise.resolve({ next: '//evil.com' }),
       }),
-    ).rejects.toThrow('REDIRECT:/dashboard')
+    ).rejects.toThrow('REDIRECT:/')
   })
 
-  it('valid session + missing next: redirects to /dashboard', async () => {
+  it('valid session + missing next: redirects to / (kanban-first default)', async () => {
     cookieGetMock.mockReturnValue({ value: 'real-token' })
     verifyMock.mockResolvedValue({
       sub: 'anish.d',
@@ -83,7 +83,7 @@ describe('/login page (already-logged-in detect)', () => {
     const { default: LoginPage } = await import('./page')
     await expect(
       LoginPage({ searchParams: Promise.resolve({}) }),
-    ).rejects.toThrow('REDIRECT:/dashboard')
+    ).rejects.toThrow('REDIRECT:/')
   })
 
   it('no cookie: renders the form (no redirect thrown)', async () => {

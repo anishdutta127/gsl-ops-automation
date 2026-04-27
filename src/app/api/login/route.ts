@@ -4,8 +4,9 @@
  * Form target for the /login page. Accepts multipart form-data with
  * `email`, `password`, and an optional `next`. On success, sets the
  * session cookie and 303-redirects to the validated `next` (falling
- * back to /dashboard). On any failure (missing fields, unknown user,
- * inactive user, wrong password) returns a 303 redirect to
+ * back to / per W3-G kanban-first nav; /dashboard alias still works
+ * if preserved via `next=`). On any failure (missing fields, unknown
+ * user, inactive user, wrong password) returns a 303 redirect to
  * /login?error=invalid&next=<preserved-if-valid>. The error reason
  * is NOT differentiated in the response, to prevent enumeration.
  *
@@ -50,7 +51,7 @@ export async function POST(request: Request) {
     role: result.user.role,
   })
 
-  const target = validatedNext ?? '/dashboard'
+  const target = validatedNext ?? '/'
   const url = new URL(target, request.url)
   const response = NextResponse.redirect(url, { status: 303 })
   response.cookies.set(SESSION_COOKIE_NAME, token, sessionCookieOptions())

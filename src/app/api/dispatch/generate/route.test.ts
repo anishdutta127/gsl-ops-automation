@@ -95,7 +95,7 @@ describe('POST /api/dispatch/generate', () => {
     expect(json.message).toContain('public/ops-templates/dispatch-template.docx')
   })
 
-  it('missing mouId -> 303 to /dashboard with error=missing-mou (no lib call)', async () => {
+  it('missing mouId -> 303 to / (kanban) with error=missing-mou (no lib call)', async () => {
     const res = await POST(buildRequest({ installmentSeq: '1' }))
     expect(res.headers.get('location')).toContain('error=missing-mou')
     expect(raiseMock).not.toHaveBeenCalled()

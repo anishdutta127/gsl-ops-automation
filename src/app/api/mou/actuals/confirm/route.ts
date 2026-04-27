@@ -22,12 +22,12 @@ export async function POST(request: Request) {
   const session = await getCurrentSession()
   if (!session) {
     const url = new URL('/login', request.url)
-    url.searchParams.set('next', mouId ? `/mous/${mouId}/actuals` : '/dashboard')
+    url.searchParams.set('next', mouId ? `/mous/${mouId}/actuals` : '/')
     return NextResponse.redirect(url, { status: 303 })
   }
 
   const errorTo = (reason: string) => {
-    const url = new URL(mouId ? `/mous/${mouId}/actuals` : '/dashboard', request.url)
+    const url = new URL(mouId ? `/mous/${mouId}/actuals` : '/', request.url)
     url.searchParams.set('error', reason)
     return NextResponse.redirect(url, { status: 303 })
   }

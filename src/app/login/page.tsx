@@ -4,12 +4,15 @@
  * Two responsibilities:
  *   1. Already-logged-in detect: if the request carries a valid
  *      session cookie, redirect away from /login. Honours `?next=`
- *      if present and valid; falls back to /dashboard otherwise.
- *      Reasoning per Phase B judgment 3: the common path to /login
- *      with a valid session is "user clicked a deep link, middleware
- *      added ?next=, but the session was actually still valid"; in
- *      that case sending the user to the original target avoids a
- *      wasted navigation.
+ *      if present and valid; falls back to / (kanban homepage)
+ *      otherwise. Pre-W3-G the fallback was /dashboard; W3-G flipped
+ *      it to / per kanban-first navigation. The /dashboard alias
+ *      still resolves so any preserved deep-link in `?next=` keeps
+ *      working. Reasoning per Phase B judgment 3: the common path
+ *      to /login with a valid session is "user clicked a deep link,
+ *      middleware added ?next=, but the session was actually still
+ *      valid"; in that case sending the user to the original target
+ *      avoids a wasted navigation.
  *   2. Render the form. Plain HTML form posting to /api/login; no
  *      JS required. Errors arrive via ?error=invalid and render
  *      inline as a single generic "Invalid email or password"
@@ -37,7 +40,7 @@ export default async function LoginPage({ searchParams }: PageProps) {
   if (token) {
     const session = await verifySessionToken(token)
     if (session) {
-      redirect(validatedNext ?? '/dashboard')
+      redirect(validatedNext ?? '/')
     }
   }
 

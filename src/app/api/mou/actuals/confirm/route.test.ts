@@ -71,11 +71,14 @@ describe('POST /api/mou/actuals/confirm', () => {
     expect(confirmMock).not.toHaveBeenCalled()
   })
 
-  it('missing mouId -> 303 to /dashboard with error=missing-mou', async () => {
+  it('missing mouId -> 303 to / (kanban) with error=missing-mou', async () => {
     const res = await POST(buildRequest({ studentsActual: '200' }))
     expect(res.status).toBe(303)
     const loc = res.headers.get('location') ?? ''
-    expect(loc).toContain('/dashboard')
+    // W3-G: missing-mouId fallback redirects to / (kanban homepage)
+    // rather than /dashboard. Assert the path component, not just the
+    // substring, so a future "?next=/" doesn't accidentally match.
+    expect(new URL(loc).pathname).toBe('/')
     expect(loc).toContain('error=missing-mou')
   })
 })

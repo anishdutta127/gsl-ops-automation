@@ -62,13 +62,13 @@ beforeEach(() => {
 })
 
 describe('POST /api/login', () => {
-  it('happy path: 303 redirect to /dashboard with Set-Cookie', async () => {
+  it('happy path: 303 redirect to / (kanban-first default) with Set-Cookie', async () => {
     mockAuthn.mockResolvedValue({ ok: true, user: fakeUser() })
     const res = await POST(
       buildRequest({ email: 'anish.d@example.test', password: 'GSL#123' }),
     )
     expect(res.status).toBe(303)
-    expect(res.headers.get('location')).toBe('http://localhost/dashboard')
+    expect(res.headers.get('location')).toBe('http://localhost/')
     const setCookie = res.headers.get('set-cookie') ?? ''
     expect(setCookie).toContain('gsl_ops_session=mock-jwt-token')
   })
@@ -89,7 +89,7 @@ describe('POST /api/login', () => {
     expect(res.headers.get('set-cookie') ?? '').toContain('gsl_ops_session=')
   })
 
-  it('happy path with INVALID next falls back to /dashboard, cookie still set', async () => {
+  it('happy path with INVALID next falls back to / (W3-G default), cookie still set', async () => {
     mockAuthn.mockResolvedValue({ ok: true, user: fakeUser() })
     const res = await POST(
       buildRequest({
@@ -99,7 +99,7 @@ describe('POST /api/login', () => {
       }),
     )
     expect(res.status).toBe(303)
-    expect(res.headers.get('location')).toBe('http://localhost/dashboard')
+    expect(res.headers.get('location')).toBe('http://localhost/')
     expect(res.headers.get('set-cookie') ?? '').toContain('gsl_ops_session=')
   })
 

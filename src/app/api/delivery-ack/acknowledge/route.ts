@@ -23,13 +23,13 @@ export async function POST(request: Request) {
   const session = await getCurrentSession()
   if (!session) {
     const url = new URL('/login', request.url)
-    url.searchParams.set('next', mouId ? `/mous/${mouId}/delivery-ack` : '/dashboard')
+    url.searchParams.set('next', mouId ? `/mous/${mouId}/delivery-ack` : '/')
     return NextResponse.redirect(url, { status: 303 })
   }
 
   const errorTo = (reason: string) => {
     const url = new URL(
-      mouId ? `/mous/${mouId}/delivery-ack` : '/dashboard',
+      mouId ? `/mous/${mouId}/delivery-ack` : '/',
       request.url,
     )
     url.searchParams.set('error', reason)
@@ -48,7 +48,7 @@ export async function POST(request: Request) {
   if (!result.ok) return errorTo(result.reason)
 
   const url = new URL(
-    mouId ? `/mous/${mouId}/delivery-ack` : '/dashboard',
+    mouId ? `/mous/${mouId}/delivery-ack` : '/',
     request.url,
   )
   url.searchParams.set('acknowledged', result.dispatch.id)

@@ -88,7 +88,7 @@ describe('POST /api/pi/generate', () => {
     expect(json.message).toContain('not yet authored')
   })
 
-  it('missing mouId -> 303 to /dashboard with error=missing-mou (no lib call)', async () => {
+  it('missing mouId -> 303 to / (kanban) with error=missing-mou (no lib call)', async () => {
     const res = await POST(buildRequest({ instalmentSeq: '1' }))
     expect(res.headers.get('location')).toContain('error=missing-mou')
     expect(generateMock).not.toHaveBeenCalled()
