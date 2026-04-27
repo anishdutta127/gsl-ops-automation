@@ -44,3 +44,21 @@ W4-A added a per-MOU `cohortStatus: active | archived` flag and two surfaces (`/
 
 **Phase 2 trigger:** if pilot operators report friction on this gate (e.g., Misba routinely needs to reactivate a wrongly-archived MOU and Anish is unavailable), revisit by adding `mou:edit-cohort-status` to the OpsHead grant set in `src/lib/auth/permissions.ts`. The 1-line change matches the cc-rule:create flip pattern.
 
+
+---
+
+## 2026-04-28: dispatch-request:create + dispatch-request:review (W4-D)
+
+W4-D introduced the Sales-initiated dispatch flow. Two new Action gates landed in `src/lib/auth/permissions.ts`:
+
+- `dispatch-request:create`: Admin wildcard + SalesHead + SalesRep. Sales submits a DispatchRequest at `/dispatch/request`; the lib enforces this gate at submit time.
+- `dispatch-request:review`: Admin wildcard + OpsHead. Ops approves / rejects via `/admin/dispatch-requests/[id]`; cancel-by-requester is implicit ownership (compares `user.id` against `DispatchRequest.requestedBy`) and does not need an Action gate.
+
+**Phase 2 trigger awareness:** the OpsHead grant on `dispatch-request:review` is for the post-pilot role re-introduction. During the current pilot, the Ops core team (Pradeep, Misba, Swati, Shashank) all carry Admin role per the 2026-04-27 promotion, so they exercise the gate via the Admin wildcard. When the role-design conversation revisits separation-of-duties post-pilot, the OpsHead grant kicks in for any future OpsHead user not on the core team.
+
+**`dispatch:override-gate` stays Leadership-only.** The pre-payment override is a P2 exception that lives outside the Sales request workflow; Leadership (Ameet) authorises, Finance (Shubhangi / Pranav) acknowledges via `dispatch:acknowledge-override`. The Sales request flow only handles the standard payment-then-dispatch path.
+
+**References:**
+- `src/lib/dispatch/createRequest.ts`: Sales submission lib.
+- `src/lib/dispatch/reviewRequest.ts`: approve / reject / cancel lib.
+- `docs/RUNBOOK.md` §11.6: W4-D dispatch redesign overview.

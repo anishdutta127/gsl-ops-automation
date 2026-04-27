@@ -108,6 +108,13 @@ describe('/help page (W3-E orientation doc)', () => {
     expect(html).toContain('Recording a signed delivery acknowledgement')
     expect(html).toContain('Editing a lifecycle rule duration')
     expect(html).toContain('Moving a kanban card forward')
+    // W4-D.7: 3 new dispatch workflow articles + glossary additions
+    expect(html).toContain('Submitting a dispatch request as Sales')
+    expect(html).toContain('Reviewing and approving a dispatch request as Ops')
+    expect(html).toContain('Workflow-aware /mous/[id]/dispatch')
+    expect(html).toContain('DispatchRequest')
+    expect(html).toContain('raisedFrom origin')
+    expect(html).toContain('Line items (dispatch)')
   })
 
   it('footer carries the doc-vs-system drift note', async () => {

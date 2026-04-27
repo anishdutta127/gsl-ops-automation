@@ -68,15 +68,15 @@ export const HELP_INTRO = {
 export const HELP_ROLES: RoleOrientation[] = [
   {
     role: 'Sales (Pratik, Vishwanath)',
-    framing: 'You are closest to the schools. Your work moves MOUs from signed to actuals confirmed.',
-    workstream: 'Confirm the actual student count once a programme starts. Resolve sales-lane escalations. Spot-check school records when you visit.',
-    whereTime: 'The kanban’s actuals-confirmed column (the queue waiting for you) and the SALES-lane filter on /escalations.',
+    framing: 'You are closest to the schools. Your work moves MOUs from signed to actuals confirmed and starts the kit-dispatch flow with multi-SKU requests.',
+    workstream: 'Confirm the actual student count once a programme starts. Submit DispatchRequests at /dispatch/request when the school needs kits (Ops reviews and approves). Resolve sales-lane escalations. Spot-check school records when you visit.',
+    whereTime: 'The kanban’s actuals-confirmed column (the queue waiting for you), /dispatch/request to start a kit shipment, and the SALES-lane filter on /escalations.',
   },
   {
     role: 'Ops core team (Pradeep, Misba, Swati, Shashank)',
     framing: 'You are the operational backbone. The kanban is your command centre; drive every transition forward.',
-    workstream: 'Raise dispatches, send feedback requests, record delivery acknowledgements, manage CC rules and lifecycle rules, resolve OPS-lane escalations, triage MOU import review queue. You can do everything an Admin can do.',
-    whereTime: 'The full kanban (every column, every drag), /admin surfaces, /admin/audit for the system view of who-did-what.',
+    workstream: 'Review and convert Sales DispatchRequests at /admin/dispatch-requests, raise direct dispatches when Sales has not requested, send feedback requests, record delivery acknowledgements (renamed Confirm delivery in W4-D.6), manage CC rules and lifecycle rules, resolve OPS-lane escalations, triage MOU import review queue. You can do everything an Admin can do.',
+    whereTime: 'The full kanban (every column, every drag), /admin surfaces, /admin/dispatch-requests for the Sales-side review queue, /admin/audit for the system view of who-did-what.',
   },
   {
     role: 'Finance (Shubhangi, Pranav)',
@@ -158,9 +158,9 @@ export const HELP_LIFECYCLE_STAGES: LifecycleStageEntry[] = [
     number: '7',
     key: 'kit-dispatched',
     title: 'Kit dispatched',
-    whatHappens: 'Ops raises a dispatch (the kit ships from GSL warehouse to the school). Click Raise dispatch; a dispatch note .docx downloads. Re-clicking re-downloads the same document without changing state (idempotent).',
-    whoInvolved: 'Ops core team',
-    systemTracks: 'dispatch.poRaisedAt, dispatch.dispatchedAt, dispatch.stage',
+    whatHappens: 'Ops raises a dispatch (the kit ships from GSL warehouse to the school). Two paths land here: Sales submits a DispatchRequest at /dispatch/request and Ops approves it via /admin/dispatch-requests (multi-SKU + per-grade); or Ops raises directly from /mous/[id]/dispatch (standard programme kit set, single line item). The page is workflow-state-aware: it surfaces any pending DispatchRequest for the MOU + installment so Ops does not raise a duplicate. The dispatch note .docx renders the line items in two conditional sections (flat-quantity items + per-grade allocations) and downloads on raise.',
+    whoInvolved: 'Sales submits multi-SKU requests; Ops core team reviews + raises.',
+    systemTracks: 'dispatch.poRaisedAt, dispatch.dispatchedAt, dispatch.stage, dispatch.lineItems, dispatch.raisedFrom (sales-request | ops-direct | pre-w4d), dispatch.requestId when converted from a request.',
     typicalDays: '5 days transit + delivery confirmation.',
   },
   {
@@ -221,7 +221,23 @@ export const HELP_GLOSSARY: GlossaryItem[] = [
   },
   {
     term: 'Dispatch',
-    definition: 'The shipment of programme materials (the "kit") to a school. Each instalment of an MOU has its own dispatch record. Stage progresses pending → po-raised → dispatched → in-transit → delivered → acknowledged.',
+    definition: 'The shipment of programme materials (the "kit") to a school. Each instalment of an MOU has its own dispatch record. Stage progresses pending → po-raised → dispatched → in-transit → delivered → acknowledged. Each Dispatch carries lineItems (multi-SKU + per-grade), a raisedFrom origin (sales-request | ops-direct | pre-w4d), and optionally a requestId pointing back to the DispatchRequest it converted from.',
+  },
+  {
+    term: 'DispatchRequest',
+    definition: 'A Sales-submitted request for a kit dispatch (W4-D). Sales fills /dispatch/request with line items + reason + installment; Ops reviews on /admin/dispatch-requests and either approves (creates a Dispatch with raisedFrom=sales-request), rejects with a reason, or the requester cancels before review. The conversion path lets Ops edit line items during approval; the audit captures any Ops-side edits.',
+  },
+  {
+    term: 'Line items (dispatch)',
+    definition: 'The multi-SKU contents of a Dispatch or DispatchRequest. Two shapes via discriminated union: flat ({ skuName, quantity }) for TinkRworks-style single-quantity rows, and per-grade ({ skuName, gradeAllocations: [{ grade, quantity }] }) for Cretile-style per-grade allocations. The dispatch note .docx renders flat and per-grade sections conditionally; both render together for mixed dispatches.',
+  },
+  {
+    term: 'requestedBy vs raisedBy',
+    definition: 'Two attribution fields on the Sales request flow. requestedBy is the Sales user who submitted the DispatchRequest; raisedBy is the user who actually created the resulting Dispatch (Ops on the conversion path; the requester themselves on the rare same-person scenario). Kept separate so the Sales/Ops handoff stays in the audit trail.',
+  },
+  {
+    term: 'raisedFrom origin',
+    definition: 'Discriminator on the Dispatch entity: sales-request (Ops approved a Sales DispatchRequest), ops-direct (Ops raised straight from /mous/[id]/dispatch without a request), or pre-w4d (synthetic seed records migrated by the W4-D.1 schema change; not authoritative product detail).',
   },
   {
     term: 'Drift',
@@ -389,9 +405,44 @@ export const HELP_WORKFLOWS: WorkflowItem[] = [
     precondition: 'Payment received OR Leadership has authorised a P2 override.',
     steps: [
       'Find the MOU on the kanban. Click into it.',
-      'Click Raise dispatch on the detail page.',
-      'A dispatch note .docx downloads. Stage advances to po-raised.',
+      'Click Raise dispatch on the detail page. /mous/[id]/dispatch is workflow-state-aware: if Sales has submitted a pending DispatchRequest for this MOU + installment, the page surfaces it at the top with a link to /admin/dispatch-requests/[id] for review. Convert the request rather than raising a duplicate.',
+      'For the standard programme kit set without a pending request, fill the installment dropdown and submit. A dispatch note .docx downloads. Stage advances to po-raised.',
+      'For multi-SKU or per-grade dispatches, send Sales to /dispatch/request first; Ops reviews and converts.',
       'If a dispatch is already raised, the same docx re-downloads without writing again (idempotent).',
+    ],
+  },
+  {
+    task: 'Submitting a dispatch request as Sales (W4-D)',
+    steps: [
+      'Go to /dispatch/request.',
+      'Pick the MOU from the dropdown (active-cohort MOUs only). The page auto-fills the school name and intake recipient if intake is complete.',
+      'Pick the installment number.',
+      'Add line items. Each line is either flat (one quantity for all grades) or per-grade (a list of grade-band allocations). Click Add flat line or Add per-grade line; click the kind toggle to flip a row.',
+      'Write a request reason (pilot kickoff, post-payment, etc.).',
+      'Click Submit dispatch request. The page surfaces any soft warnings (V3 intake-not-completed, V4 SKU-programme mismatch, V5 student count variance, V6 grade-out-of-range, V8 duplicate pending request) but still submits when those fire.',
+      'Hard errors (V1 archived MOU, V2 missing sales owner) block the submission.',
+    ],
+    precondition: 'You have SalesHead, SalesRep, or Admin role.',
+  },
+  {
+    task: 'Reviewing and approving a dispatch request as Ops (W4-D)',
+    steps: [
+      'Go to /admin/dispatch-requests. Pending requests sort to the top.',
+      'Click a row to open the detail page. Review the line items, the request reason, and the audit log entries from Sales submission.',
+      'To approve as submitted, click Approve & convert with no edits. A new Dispatch lands with raisedFrom=sales-request and the DispatchRequest moves to approved with conversionDispatchId set.',
+      'To approve with edits, paste an updated JSON line items array into the Edited line items field, then click Approve & convert. The audit captures that Ops edited.',
+      'To reject, write a rejection reason and click Reject. The DispatchRequest moves to rejected; no Dispatch is created.',
+      'To cancel before review (visible to the requester or Ops), click Cancel request.',
+    ],
+    precondition: 'You have OpsHead or Admin role.',
+  },
+  {
+    task: 'Workflow-aware /mous/[id]/dispatch (Specific C path a)',
+    steps: [
+      'When you drag a card from payment-received to kit-dispatched on the kanban, the system routes you to /mous/[id]/dispatch.',
+      'If a pending DispatchRequest exists for this MOU + installment, the page shows a "Pending dispatch requests" alert at the top with a link to the admin detail page. Convert the request there rather than raising direct (avoids duplicate Dispatches).',
+      'If no pending request exists, the direct-raise form is the path. Pick installment, submit, dispatch note .docx downloads.',
+      'Existing dispatches list shows a raisedFrom badge: pre-w4d (synthetic seed migrations), ops-direct (direct raise), sales-request (converted from a DispatchRequest).',
     ],
   },
   {
@@ -412,7 +463,7 @@ export const HELP_WORKFLOWS: WorkflowItem[] = [
       'Click Print blank handover form. A .docx downloads. Print it.',
       'Take the printed form to the school. Get it stamped and signed by the responsible person.',
       'Scan or photograph the signed form. Upload to GSL Drive (or wherever your team stores signed paperwork).',
-      'Paste the resulting URL into the Signed form URL field. Click Record signed form.',
+      'Paste the resulting URL into the Signed form URL field. Click Confirm delivery.',
       'Stage advances to acknowledged. The MOU lifecycle is complete for that instalment.',
     ],
   },
