@@ -1,14 +1,29 @@
 /*
  * Role-based permission matrix for GSL Ops Automation.
  *
- * Per step 10 Item 8 self-maintainability matrix and Week 1 fixture spec.
- * 8 base UserRole values; Misba's testingOverride pattern grants elevated
- * permissions while keeping audit-log attribution accurate (her base role
- * stays OpsEmployee; testingOverridePermissions: ['OpsHead'] adds OpsHead
- * grants on top).
+ * Phase 1 status (post Week 3 W3-B): UI gating disabled across page-level
+ * surfaces. Every authenticated tester sees every page and every form. The
+ * matrix below remains advisory; canPerform() is still called by server-
+ * side mutators in src/lib/* (defense in depth, audit-log attribution
+ * stays accurate) and by canViewAuditEntry (audit-row visibility is
+ * separation-of-duties not feature discoverability, so it stays scoped).
  *
- * Audit-route visibility is enforced server-side. URL query-string filters
- * may narrow the user's allowed set but never widen it.
+ * The directive (Anish, 2026-04-27): testers reported the system was
+ * confusing because functions were hidden behind role gates. Opening
+ * everything to everyone removes that friction during the pilot. Phase 2
+ * trigger: re-enable UI gates after testers internalise the system and
+ * after a follow-up role-design conversation revisits separation-of-
+ * duties for the trusted core team. See docs/role-decisions.md.
+ *
+ * Per step 10 Item 8 self-maintainability matrix and Week 1 fixture spec.
+ * 8 base UserRole values; the testingOverride pattern is no longer in use
+ * on the test roster (Pradeep, Misba, Swati, Shashank are Admin per the
+ * 2026-04-27 role-decisions change) but the code path remains for any
+ * future user that needs scoped temporary elevation.
+ *
+ * Audit-route visibility is enforced server-side via canViewAuditEntry.
+ * URL query-string filters may narrow the user's allowed set but never
+ * widen it. UI gating removal does NOT touch this branch.
  *
  * L3 escalation routing (post-Update-2 + Week 1 option (a)): Ameet
  * (Leadership) is the L3 fallback for OPS, SALES, and ACADEMICS lanes.

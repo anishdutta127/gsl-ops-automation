@@ -14,8 +14,10 @@
  * show the recorded URL with a "View signed form" link, no edit
  * affordance. Phase 1.1 may add an "amend URL" flow if testers ask.
  *
- * Roles: Admin + OpsHead per 'mou:upload-delivery-ack'. Other roles
- * see a read-only summary.
+ * Roles: Admin + OpsHead per 'mou:upload-delivery-ack' (advisory only
+ * post Week 3 W3-B). Page-level UI gate removed; both forms render for
+ * any authenticated user. Server-side canPerform() in
+ * lib/deliveryAck/acknowledgeDispatch.ts still enforces at submit time.
  */
 
 import Link from 'next/link'
@@ -25,7 +27,6 @@ import type { Dispatch, MOU, User } from '@/lib/types'
 import mousJson from '@/data/mous.json'
 import dispatchesJson from '@/data/dispatches.json'
 import { getCurrentUser } from '@/lib/auth/session'
-import { canPerform } from '@/lib/auth/permissions'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { DetailHeaderCard } from '@/components/ops/DetailHeaderCard'
@@ -76,7 +77,6 @@ export default async function DeliveryAckPage({ params, searchParams }: PageProp
   const mou = allMous.find((m) => m.id === mouId)
   if (!mou || !isVisibleToUser(mou, user)) notFound()
 
-  const allowed = user ? canPerform(user, 'mou:upload-delivery-ack') : false
   const dispatches = allDispatches.filter((d) => d.mouId === mou.id)
   const eligible = dispatches.filter((d) => ELIGIBLE_FOR_ACK.includes(d.stage))
   const acknowledged = dispatches.filter((d) => d.stage === 'acknowledged')
@@ -158,51 +158,45 @@ export default async function DeliveryAckPage({ params, searchParams }: PageProp
               </p>
             </header>
 
-            {allowed ? (
-              <div className="grid gap-3 sm:grid-cols-2">
-                <form action="/api/delivery-ack/template" method="POST">
-                  <input type="hidden" name="dispatchId" value={d.id} />
-                  <input type="hidden" name="mouId" value={mou.id} />
-                  <button
-                    type="submit"
-                    className="inline-flex min-h-11 w-full items-center justify-center rounded-md border border-brand-navy bg-card px-4 py-2 text-sm font-medium text-brand-navy hover:bg-muted focus:outline-none focus:ring-2 focus:ring-brand-navy"
-                  >
-                    Print blank handover form
-                  </button>
-                </form>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <form action="/api/delivery-ack/template" method="POST">
+                <input type="hidden" name="dispatchId" value={d.id} />
+                <input type="hidden" name="mouId" value={mou.id} />
+                <button
+                  type="submit"
+                  className="inline-flex min-h-11 w-full items-center justify-center rounded-md border border-brand-navy bg-card px-4 py-2 text-sm font-medium text-brand-navy hover:bg-muted focus:outline-none focus:ring-2 focus:ring-brand-navy"
+                >
+                  Print blank handover form
+                </button>
+              </form>
 
-                <form action="/api/delivery-ack/acknowledge" method="POST" className="space-y-2">
-                  <input type="hidden" name="dispatchId" value={d.id} />
-                  <input type="hidden" name="mouId" value={mou.id} />
-                  <div>
-                    <label
-                      htmlFor={`url-${d.id}`}
-                      className={FIELD_LABEL_CLASS}
-                    >
-                      Signed form URL
-                    </label>
-                    <input
-                      id={`url-${d.id}`}
-                      name="signedHandoverFormUrl"
-                      type="url"
-                      required
-                      placeholder="https://drive.google.com/..."
-                      className={FIELD_INPUT_CLASS}
-                    />
-                  </div>
-                  <button
-                    type="submit"
-                    className="inline-flex min-h-11 w-full items-center justify-center rounded-md bg-brand-teal px-4 py-2 text-sm font-medium text-brand-navy hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-brand-navy"
+              <form action="/api/delivery-ack/acknowledge" method="POST" className="space-y-2">
+                <input type="hidden" name="dispatchId" value={d.id} />
+                <input type="hidden" name="mouId" value={mou.id} />
+                <div>
+                  <label
+                    htmlFor={`url-${d.id}`}
+                    className={FIELD_LABEL_CLASS}
                   >
-                    Record signed form
-                  </button>
-                </form>
-              </div>
-            ) : (
-              <p role="status" className="text-sm text-muted-foreground">
-                Recording delivery acknowledgement requires the OpsHead or Admin role.
-              </p>
-            )}
+                    Signed form URL
+                  </label>
+                  <input
+                    id={`url-${d.id}`}
+                    name="signedHandoverFormUrl"
+                    type="url"
+                    required
+                    placeholder="https://drive.google.com/..."
+                    className={FIELD_INPUT_CLASS}
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="inline-flex min-h-11 w-full items-center justify-center rounded-md bg-brand-teal px-4 py-2 text-sm font-medium text-brand-navy hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-brand-navy"
+                >
+                  Record signed form
+                </button>
+              </form>
+            </div>
           </section>
         ))}
 

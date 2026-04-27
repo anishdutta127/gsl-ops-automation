@@ -5,8 +5,10 @@
  * but the submit endpoint is a 501 stub. Real implementation lands in
  * Phase D when docxtemplater + the PI template asset come online.
  *
- * Roles: Admin + Finance per 'mou:generate-pi'. Other roles see an
- * inline message instead of the form.
+ * Roles: Admin + Finance per 'mou:generate-pi' (advisory only post
+ * Week 3 W3-B). Page-level UI gate removed; the form renders for any
+ * authenticated user. Server-side canPerform() in lib/pi/generatePi.ts
+ * still enforces at submit time.
  *
  * GSTIN gate: per Item F, PI generation is blocked when the school's
  * gstNumber is null. We surface that block on the page even before
@@ -22,7 +24,6 @@ import mousJson from '@/data/mous.json'
 import schoolsJson from '@/data/schools.json'
 import paymentsJson from '@/data/payments.json'
 import { getCurrentUser } from '@/lib/auth/session'
-import { canPerform } from '@/lib/auth/permissions'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { DetailHeaderCard } from '@/components/ops/DetailHeaderCard'
@@ -56,7 +57,6 @@ export default async function PiPage({ params }: PageProps) {
   const pendingInstallments = allPayments.filter(
     (p) => p.mouId === mou.id && (p.status === 'Pending' || p.status === 'PI Sent' || p.status === 'Due Soon' || p.status === 'Overdue'),
   )
-  const allowed = user ? canPerform(user, 'mou:generate-pi') : false
   const gstinBlocked = !school || school.gstNumber === null
 
   return (
@@ -103,48 +103,42 @@ export default async function PiPage({ params }: PageProps) {
             </div>
           ) : null}
 
-          {allowed ? (
-            <form
-              action="/api/pi/generate"
-              method="POST"
-              className="space-y-4 rounded-lg border border-border bg-card p-4 sm:p-6"
-            >
-              <input type="hidden" name="mouId" value={mou.id} />
-              <div>
-                <label htmlFor="installmentSeq" className={FIELD_LABEL_CLASS}>Instalment</label>
-                <select id="installmentSeq" name="installmentSeq" required className={FIELD_INPUT_CLASS}>
-                  {pendingInstallments.length === 0 ? (
-                    <option value="">No pending instalments</option>
-                  ) : (
-                    pendingInstallments.map((p) => (
-                      <option key={p.id} value={p.instalmentSeq}>
-                        {p.instalmentLabel} - {formatRs(p.expectedAmount)} ({p.status})
-                      </option>
-                    ))
-                  )}
-                </select>
-              </div>
-              <div className="flex flex-wrap gap-2 border-t border-border pt-4">
-                <button
-                  type="submit"
-                  disabled={gstinBlocked || pendingInstallments.length === 0}
-                  className="inline-flex min-h-11 items-center rounded-md bg-brand-teal px-4 py-2 text-sm font-medium text-brand-navy hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-brand-navy disabled:opacity-50"
-                >
-                  Generate PI
-                </button>
-                <Link
-                  href={`/mous/${mou.id}`}
-                  className="inline-flex min-h-11 items-center rounded-md border border-border bg-card px-4 py-2 text-sm font-medium hover:bg-muted focus:outline-none focus:ring-2 focus:ring-brand-navy"
-                >
-                  Cancel
-                </Link>
-              </div>
-            </form>
-          ) : (
-            <p role="status" className="rounded-md border border-border bg-muted/30 p-3 text-sm text-foreground">
-              Generating a PI requires the Finance or Admin role.
-            </p>
-          )}
+          <form
+            action="/api/pi/generate"
+            method="POST"
+            className="space-y-4 rounded-lg border border-border bg-card p-4 sm:p-6"
+          >
+            <input type="hidden" name="mouId" value={mou.id} />
+            <div>
+              <label htmlFor="installmentSeq" className={FIELD_LABEL_CLASS}>Instalment</label>
+              <select id="installmentSeq" name="installmentSeq" required className={FIELD_INPUT_CLASS}>
+                {pendingInstallments.length === 0 ? (
+                  <option value="">No pending instalments</option>
+                ) : (
+                  pendingInstallments.map((p) => (
+                    <option key={p.id} value={p.instalmentSeq}>
+                      {p.instalmentLabel} - {formatRs(p.expectedAmount)} ({p.status})
+                    </option>
+                  ))
+                )}
+              </select>
+            </div>
+            <div className="flex flex-wrap gap-2 border-t border-border pt-4">
+              <button
+                type="submit"
+                disabled={gstinBlocked || pendingInstallments.length === 0}
+                className="inline-flex min-h-11 items-center rounded-md bg-brand-teal px-4 py-2 text-sm font-medium text-brand-navy hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-brand-navy disabled:opacity-50"
+              >
+                Generate PI
+              </button>
+              <Link
+                href={`/mous/${mou.id}`}
+                className="inline-flex min-h-11 items-center rounded-md border border-border bg-card px-4 py-2 text-sm font-medium hover:bg-muted focus:outline-none focus:ring-2 focus:ring-brand-navy"
+              >
+                Cancel
+              </Link>
+            </div>
+          </form>
 
         </div>
       </main>

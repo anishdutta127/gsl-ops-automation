@@ -6,10 +6,11 @@
  * implementation lands in Phase D when the dispatch-note docx
  * template + state-transition lib come online.
  *
- * Roles: Admin + OpsHead per 'mou:raise-dispatch'. P2 gate uses the
- * existing isGateUnblocked predicate from Phase A2 (overrideAudit).
- * Leadership override flow is at /mous/[id]/dispatch as a separate
- * action (Phase D).
+ * Roles: Admin + OpsHead per 'mou:raise-dispatch' (advisory only post
+ * Week 3 W3-B). Page-level UI gate removed; the form renders for any
+ * authenticated user. Server-side canPerform() in lib/dispatch/raiseDispatch.ts
+ * still enforces at submit time. P2 gate uses the existing isGateUnblocked
+ * predicate from Phase A2.
  */
 
 import Link from 'next/link'
@@ -19,7 +20,6 @@ import type { Dispatch, MOU, User } from '@/lib/types'
 import mousJson from '@/data/mous.json'
 import dispatchesJson from '@/data/dispatches.json'
 import { getCurrentUser } from '@/lib/auth/session'
-import { canPerform } from '@/lib/auth/permissions'
 import { isGateUnblocked } from '@/lib/dispatch/overrideAudit'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
@@ -45,7 +45,6 @@ export default async function DispatchPage({ params }: PageProps) {
   if (!mou || !isVisibleToUser(mou, user)) notFound()
 
   const mouDispatches = allDispatches.filter((d) => d.mouId === mou.id)
-  const allowed = user ? canPerform(user, 'mou:raise-dispatch') : false
 
   return (
     <>
@@ -107,33 +106,27 @@ export default async function DispatchPage({ params }: PageProps) {
             )}
           </section>
 
-          {allowed ? (
-            <form
-              action="/api/dispatch/generate"
-              method="POST"
-              className="space-y-4 rounded-lg border border-border bg-card p-4 sm:p-6"
-            >
-              <input type="hidden" name="mouId" value={mou.id} />
-              <div className="flex flex-wrap gap-2 border-t border-border pt-4">
-                <button
-                  type="submit"
-                  className="inline-flex min-h-11 items-center rounded-md bg-brand-teal px-4 py-2 text-sm font-medium text-brand-navy hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-brand-navy"
-                >
-                  Raise dispatch
-                </button>
-                <Link
-                  href={`/mous/${mou.id}`}
-                  className="inline-flex min-h-11 items-center rounded-md border border-border bg-card px-4 py-2 text-sm font-medium hover:bg-muted focus:outline-none focus:ring-2 focus:ring-brand-navy"
-                >
-                  Cancel
-                </Link>
-              </div>
-            </form>
-          ) : (
-            <p role="status" className="rounded-md border border-border bg-muted/30 p-3 text-sm text-foreground">
-              Raising a dispatch requires the OpsHead or Admin role.
-            </p>
-          )}
+          <form
+            action="/api/dispatch/generate"
+            method="POST"
+            className="space-y-4 rounded-lg border border-border bg-card p-4 sm:p-6"
+          >
+            <input type="hidden" name="mouId" value={mou.id} />
+            <div className="flex flex-wrap gap-2 border-t border-border pt-4">
+              <button
+                type="submit"
+                className="inline-flex min-h-11 items-center rounded-md bg-brand-teal px-4 py-2 text-sm font-medium text-brand-navy hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-brand-navy"
+              >
+                Raise dispatch
+              </button>
+              <Link
+                href={`/mous/${mou.id}`}
+                className="inline-flex min-h-11 items-center rounded-md border border-border bg-card px-4 py-2 text-sm font-medium hover:bg-muted focus:outline-none focus:ring-2 focus:ring-brand-navy"
+              >
+                Cancel
+              </Link>
+            </div>
+          </form>
 
         </div>
       </main>

@@ -9,12 +9,10 @@
  * stage pages render forms with explicit "Phase 1 note: wired in
  * Phase D" inline notes.
  *
- * Roles: Admin / SalesHead / SalesRep can submit per Item B
- * ("SalesRep gathers; SalesHead signs off"). Cross-verify
- * (per handoff: OpsHead reads the detail page) is documentation-grade
- * in Phase 1; no separate UI button. Phase 1.1 may add a
- * 'mou:verify-actuals' Action and "Verify" button on this page if
- * testers ask.
+ * Roles: Admin / SalesHead / SalesRep per 'mou:confirm-actuals'
+ * (advisory only post Week 3 W3-B). Page-level UI gate removed; the
+ * form renders for any authenticated user. Server-side canPerform()
+ * in lib/mou/confirmActuals.ts still enforces at submit time.
  *
  * Drift badge: appears when |variancePct| > 0.10 strictly
  * (computed by isDriftReviewRequired in confirmActuals.ts). Routing
@@ -27,7 +25,6 @@ import { AlertTriangle } from 'lucide-react'
 import type { MOU, User } from '@/lib/types'
 import mousJson from '@/data/mous.json'
 import { getCurrentUser } from '@/lib/auth/session'
-import { canPerform } from '@/lib/auth/permissions'
 import { isDriftReviewRequired } from '@/lib/mou/confirmActuals'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
@@ -66,7 +63,6 @@ export default async function ActualsPage({ params, searchParams }: PageProps) {
   const mou = allMous.find((m) => m.id === mouId)
   if (!mou || !isVisibleToUser(mou, user)) notFound()
 
-  const allowed = user ? canPerform(user, 'mou:confirm-actuals') : false
   const hasActuals = mou.studentsActual !== null
   const variancePct = mou.studentsVariancePct ?? 0
   const driftFlag = hasActuals && isDriftReviewRequired(variancePct)
@@ -121,65 +117,56 @@ export default async function ActualsPage({ params, searchParams }: PageProps) {
             </p>
           ) : null}
 
-          {allowed ? (
-            <form
-              action="/api/mou/actuals/confirm"
-              method="POST"
-              className="space-y-4 rounded-lg border border-border bg-card p-4 sm:p-6"
-            >
-              <input type="hidden" name="mouId" value={mou.id} />
-              <div>
-                <label htmlFor="studentsActual" className={FIELD_LABEL_CLASS}>
-                  Actual student count
-                </label>
-                <input
-                  id="studentsActual"
-                  name="studentsActual"
-                  type="number"
-                  min="1"
-                  max="20000"
-                  defaultValue={mou.studentsActual ?? mou.studentsMou}
-                  required
-                  autoFocus
-                  className={FIELD_INPUT_CLASS}
-                />
-                <p className="mt-1 text-xs text-muted-foreground">
-                  Range: 1 to 20,000. Current MOU value: {mou.studentsMou.toLocaleString('en-IN')}.
-                </p>
-              </div>
-              <div>
-                <label htmlFor="notes" className={FIELD_LABEL_CLASS}>Notes (optional)</label>
-                <textarea
-                  id="notes"
-                  name="notes"
-                  rows={2}
-                  className={FIELD_INPUT_CLASS}
-                  placeholder="Source of count, register reference, etc."
-                />
-              </div>
-              <div className="flex flex-wrap gap-2 border-t border-border pt-4">
-                <button
-                  type="submit"
-                  className="inline-flex min-h-11 items-center rounded-md bg-brand-teal px-4 py-2 text-sm font-medium text-brand-navy hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-brand-navy"
-                >
-                  Confirm actuals
-                </button>
-                <Link
-                  href={`/mous/${mou.id}`}
-                  className="inline-flex min-h-11 items-center rounded-md border border-border bg-card px-4 py-2 text-sm font-medium hover:bg-muted focus:outline-none focus:ring-2 focus:ring-brand-navy"
-                >
-                  Cancel
-                </Link>
-              </div>
-            </form>
-          ) : (
-            <p
-              role="status"
-              className="rounded-md border border-border bg-muted/30 p-3 text-sm text-foreground"
-            >
-              Confirming actuals requires the SalesRep, SalesHead, or Admin role.
-            </p>
-          )}
+          <form
+            action="/api/mou/actuals/confirm"
+            method="POST"
+            className="space-y-4 rounded-lg border border-border bg-card p-4 sm:p-6"
+          >
+            <input type="hidden" name="mouId" value={mou.id} />
+            <div>
+              <label htmlFor="studentsActual" className={FIELD_LABEL_CLASS}>
+                Actual student count
+              </label>
+              <input
+                id="studentsActual"
+                name="studentsActual"
+                type="number"
+                min="1"
+                max="20000"
+                defaultValue={mou.studentsActual ?? mou.studentsMou}
+                required
+                autoFocus
+                className={FIELD_INPUT_CLASS}
+              />
+              <p className="mt-1 text-xs text-muted-foreground">
+                Range: 1 to 20,000. Current MOU value: {mou.studentsMou.toLocaleString('en-IN')}.
+              </p>
+            </div>
+            <div>
+              <label htmlFor="notes" className={FIELD_LABEL_CLASS}>Notes (optional)</label>
+              <textarea
+                id="notes"
+                name="notes"
+                rows={2}
+                className={FIELD_INPUT_CLASS}
+                placeholder="Source of count, register reference, etc."
+              />
+            </div>
+            <div className="flex flex-wrap gap-2 border-t border-border pt-4">
+              <button
+                type="submit"
+                className="inline-flex min-h-11 items-center rounded-md bg-brand-teal px-4 py-2 text-sm font-medium text-brand-navy hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-brand-navy"
+              >
+                Confirm actuals
+              </button>
+              <Link
+                href={`/mous/${mou.id}`}
+                className="inline-flex min-h-11 items-center rounded-md border border-border bg-card px-4 py-2 text-sm font-medium hover:bg-muted focus:outline-none focus:ring-2 focus:ring-brand-navy"
+              >
+                Cancel
+              </Link>
+            </div>
+          </form>
 
         </div>
       </main>

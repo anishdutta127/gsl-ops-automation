@@ -35,7 +35,6 @@ import schoolsJson from '@/data/schools.json'
 import dispatchesJson from '@/data/dispatches.json'
 import communicationsJson from '@/data/communications.json'
 import { getCurrentUser } from '@/lib/auth/session'
-import { canPerform } from '@/lib/auth/permissions'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { DetailHeaderCard } from '@/components/ops/DetailHeaderCard'
@@ -86,7 +85,6 @@ export default async function FeedbackRequestPage({ params, searchParams }: Page
   const deliveredDispatches = allDispatches.filter(
     (d) => d.mouId === mou.id && (d.stage === 'delivered' || d.stage === 'acknowledged'),
   )
-  const allowed = user ? canPerform(user, 'mou:send-feedback-request') : false
   const emailMissing = !school?.email
 
   const errorKey = typeof sp.error === 'string' ? sp.error : null
@@ -171,7 +169,7 @@ export default async function FeedbackRequestPage({ params, searchParams }: Page
               </p>
             </div>
           </div>
-        ) : allowed ? (
+        ) : (
           <form
             action="/api/communications/compose"
             method="POST"
@@ -208,10 +206,6 @@ export default async function FeedbackRequestPage({ params, searchParams }: Page
               </Link>
             </div>
           </form>
-        ) : (
-          <p role="status" className="rounded-md border border-border bg-muted/30 p-3 text-sm text-foreground">
-            Sending a feedback request requires the OpsHead or Admin role.
-          </p>
         )}
 
       </div>
