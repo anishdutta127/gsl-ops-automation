@@ -103,8 +103,8 @@ describe('buildForwardFormPath', () => {
     expect(buildForwardFormPath('mou-signed', 'M1')).toBeNull()
   })
 
-  it('payment-received (Finance flow not wired) returns /mous/{id} detail page', () => {
-    expect(buildForwardFormPath('payment-received', 'M1')).toBe('/mous/M1')
+  it('payment-received returns /mous/{id}/payment-receipt (W4-B.5)', () => {
+    expect(buildForwardFormPath('payment-received', 'M1')).toBe('/mous/M1/payment-receipt')
   })
 
   it('pre-ops returns null (no form for the holding bay)', () => {

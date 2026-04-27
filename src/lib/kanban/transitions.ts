@@ -61,13 +61,12 @@ const STAGE_INDEX: Record<KanbanStageKey, number> = (() => {
  *
  * mouId is interpolated by the caller via `forwardFormPath.replace`.
  *
- * Stages without a dedicated form (cross-verification, payment-received,
- * delivery-acknowledged, feedback-submitted) point at the MOU detail page;
- * the operator picks the right action from there. cross-verification has
- * no surface in Phase 1 (auto-skipped by deriveStage); payment-received
- * is a Finance reconcile flow not yet wired; delivery-acknowledged maps
- * to the existing delivery-ack page; feedback-submitted maps to the
- * feedback-request compose page.
+ * Stages without a dedicated form (cross-verification, mou-signed) point
+ * at the MOU detail page; the operator picks the right action from there.
+ * cross-verification has no surface in Phase 1 (auto-skipped by
+ * deriveStage); mou-signed is paired with the W4-C intake form (not yet
+ * wired). All other stages map to their per-stage form. payment-received
+ * gained its form in W4-B.5 (/mous/{id}/payment-receipt).
  */
 const STAGE_FORM_PATH: Record<KanbanStageKey, string | null> = {
   'pre-ops': null,
@@ -75,7 +74,7 @@ const STAGE_FORM_PATH: Record<KanbanStageKey, string | null> = {
   'actuals-confirmed': '/mous/{id}/actuals',
   'cross-verification': null,                  // auto-skipped; no form
   'invoice-raised': '/mous/{id}/pi',
-  'payment-received': '/mous/{id}',           // Finance flow not yet wired; detail page
+  'payment-received': '/mous/{id}/payment-receipt',  // W4-B.5
   'kit-dispatched': '/mous/{id}/dispatch',
   'delivery-acknowledged': '/mous/{id}/delivery-ack',
   'feedback-submitted': '/mous/{id}/feedback-request',
