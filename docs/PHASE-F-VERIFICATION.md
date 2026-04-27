@@ -1,6 +1,6 @@
-# PHASE F: Verification + Per-Tester Walkthrough
+# PHASE F + WEEK 3: Verification + Per-Tester Walkthrough
 
-Final verification gate for Week 2 build. Run before distributing tester credentials. This doc is the testing-email backbone; sections 2 and 4 below copy directly into the launch email.
+Verification gate covering the Week 2 build (Phases A through F) plus the Week 3 redesign (W3-A through W3-G). Run before distributing tester credentials for round 2. This doc is the testing-email backbone; sections 2 and 4 below copy directly into the launch email. The Phase 1.1 backlog has moved to `docs/RUNBOOK.md` §10 (single source of truth); this doc keeps only the Week-3-specific verification gates.
 
 ---
 
@@ -9,14 +9,27 @@ Final verification gate for Week 2 build. Run before distributing tester credent
 | Gate | Result |
 |---|---|
 | `tsc --noEmit` | clean (0 errors) |
-| `npm run docs-lint` | passed with 8 warnings (AI-slop vocab in pre-existing plan/design docs; reviewer-judged) |
+| `npm run docs-lint` | passed with 8 warnings (AI-slop vocab in pre-existing plan / design docs; reviewer-judged) |
 | em-dash zero across `src/` | 0 occurrences |
 | em-dash zero across committed `docs/` and `CLAUDE.md` | 0 occurrences |
-| `npm test` (3 consecutive runs post-fix) | 910 / 910 passing each run; 0 flakes |
+| `npm test` (3 consecutive runs at end of W3-G) | 1127 / 1127 passing each run; 0 flakes |
 | `npm run smoke:test` | passing (wraps `npm test`) |
-| Total commits across Week 2 build | 63 |
-| Total test files / tests | 114 / 910 |
+| Total commits across Week 2 + Week 3 builds | ≈85 (63 Week 2 + ≈22 Week 3) |
+| Total test files / tests | 135 / 1127 |
 | TypeScript strict + `noUncheckedIndexedAccess` | enabled and clean |
+| W3-G commit hash | filled in on final merge |
+
+### Week 3 changes since the Phase F build (testers should expect)
+
+- **Kanban-first navigation (W3-F).** Homepage at `/` is now the kanban (9 columns, every Active MOU as a card). The Leadership Console (5 health tiles + exception feed + escalation list + 10 trigger tiles) moved to `/overview`. A `Kanban` / `Overview` tab strip lives at the top of both routes. `/dashboard` keeps resolving (alias of `/overview`) so existing bookmarks work.
+- **Drag handle + cursor differentiation (W3-F.5).** Each kanban card has a small grip icon at its top-right corner. Click anywhere on the card body to navigate to detail; click-and-drag the handle to move the card to another column. Mouse activation 8px, touch activation 15px, keyboard via Space/Enter on the focused handle.
+- **Login lands on `/` (W3-G).** Post-login default redirect target flipped from `/dashboard` to `/`; consistent with kanban-first nav. Deep-link `?next=...` still honoured if valid.
+- **TopNav rename (W3-F).** First nav link is now "Home" (points at `/`). The "Dashboard" label is gone from the global nav; the in-page tabs handle the kanban / overview switch.
+- **Roles open up for testing (W3-B).** UI-side role gating is dropped on most surfaces so every tester sees every page; server-side enforcement at submit time still rejects writes that exceed the role's grant set. This means a SalesRep can navigate to `/admin/lifecycle-rules` and see the form; the server rejects on submit with `?error=permission`.
+- **Editable lifecycle rules (W3-D).** `/admin/lifecycle-rules` shows 7 rows (one per stage transition). Admins can change the `defaultDays` value; changing a rule retroactively recomputes overdue badges across all MOUs at that stage. Audit log captures who-changed-what.
+- **GSTIN tile + data-completeness signal (W3-C).** A "Schools needing data" tile sits above the kanban; clicking it deep-links to `/schools?incomplete=yes`.
+- **In-app help (W3-E).** Help link in TopNav opens an orientation doc with role-by-role capabilities, lifecycle stages, glossary (38 entries), and 18 step-by-step workflows. Sticky sidebar on desktop ≥1024px; jump-anchors throughout.
+- **Phase 1.1 backlog consolidated.** `docs/RUNBOOK.md` §10 is now the canonical Phase 1.1 deferral list (24 items grouped into Auth, Data, Lifecycle, UI, Email, Operational, Operational-developer-environment).
 
 ### Suite-stability investigation
 
@@ -34,28 +47,19 @@ Phase 1.1 trigger: investigate `vitest.config` pool / `vmThreads` settings or ho
 
 ### Known issues / Phase 1.1 backlog
 
-A consolidated list of Phase 1 deferrals captured across Week 2. Each carries a Phase 1.1 trigger condition.
+The canonical Phase 1.1 backlog now lives in `docs/RUNBOOK.md` §10. Each item there carries `Context` / `Trigger` / `Implementation` for the deferred behaviour.
 
-- **Rate limiting on /api/login is absent.** Phase 1 testers are 9 known internal staff; Vercel platform rate limits handle trivially-malicious traffic. Phase 1.1 trigger: any unauthenticated route exposed beyond staff IPs. Implementation: external counter store (Vercel KV).
-- **Login response timing is not equalized across reject reasons.** Known-user-with-wrong-password runs bcrypt; unknown-user does not, leaking enumeration via timing. Phase 1 acceptable (9 known testers). Phase 1.1 trigger: any public-facing login surface.
-- **Multi-device sessions accepted.** No server-side session list; same user-id from multiple IPs is allowed. Phase 1.1 trigger: audit-log shows credential-leak suggestive pattern.
-- **No /forgot-password.** Recovery is manual edit to fixtures + reseed per `docs/DEVELOPER.md`. Phase 1.1 trigger: testers ask for self-service.
-- **/api/health is binary status only.** Graded data-integrity view lives on the dashboard tile.
-- **AuditLogPanel renders all entries inline.** Phase 1.1 trigger: any entity's auditLog exceeds 30 entries.
-- **SPOC entity model deferred.** Phase 1 ships SPOC contact as embedded fields on School. /admin/spocs is a placeholder pointing testers at /schools/[id]/edit. Phase 1.1 trigger: tester feedback on SPOC cardinality (single-per-school vs multi-per-school vs per-MOU-overrides).
-- **`config/company.json` ships with sample identity values.** Production swap (real registered legal entity, real GSTIN, real bank, real address) is a single file edit + commit before the first production PI leaves the system.
-- **PI vs Dispatch idempotency divergence.** `generatePi` advances counter every call (PI numbers have external GST-filing significance); `raiseDispatch` re-renders idempotently (state has internal significance only). Phase 1.1 trigger: tester reports of accidental duplicate-click PIs.
-- **Email template uses `style="text-align:center;"` not legacy `align="center"`.** Modern Outlook renders correctly; older Outlook (2007 / 2010) may render the wrapper layout differently. Phase 1 testers run Outlook 365. Phase 1.1 trigger: older Outlook install in broader pilot reports broken layout.
-- **PI / Dispatch / Delivery-Ack templates authored programmatically.** Production-quality but text-only with no embedded GSL logo. Phase 1.1 trigger: brand polish ask from testers.
-- **D3 feedback request uses manual-send (Outlook clipboard) pattern.** No SMTP integration. Lib code is reusable. Phase 1.1 trigger: GSL wants automated sending; swap the Copy button for a Send-via-provider button on the same compose surface.
-- **D4 delivery-ack URL is operator-pasted (Drive / SharePoint / Dropbox link).** No file upload + storage infrastructure. Phase 1.1 trigger: GSL wants centralised storage.
-- **D4 collapses delivered + acknowledged into a single transition.** Schema supports both; Phase 1 simplified flow sets all three timestamps + URL at once. Phase 1.1 trigger: courier integration that confirms physical delivery before paperwork lands.
-- **Phase 1: import-tick + sync/tick are admin-triggered manually via /admin.** Phase 1.1 trigger: sister-project MOU volume grows beyond manual-trigger comfort. Implementation: port MOU's GitHub Actions workflow yml + add shared-secret bearer auth alongside session auth.
-- **Cc-rule create flow allows Admin-only for first 30 days post-launch.** Documented in `permissions.ts:89-91`. Partially obsolete on the test roster after the 2026-04-27 role-decisions change (`docs/role-decisions.md`): Pradeep, Misba, Swati are now Admin and can create CC rules immediately via the Admin wildcard. The flip-to-OpsHead-allowed semantic still applies to any FUTURE OpsHead user who is not on the Ops team. Phase 1.1 trigger: day 31 + a non-Ops-team OpsHead user actually exists (1-line PR to add `cc-rule:create` to the OpsHead grant set).
-- **Cc-rule disable confirmation uses `window.prompt` for the reason.** Functional + accessible-enough. Phase 1.1 trigger: tester aesthetics feedback. Upgrade path documented in `CcRuleToggleRow.tsx`: replace with shadcn Dialog.
-- **Reverse-Excel-sync not built.** Per CLAUDE.md, the app is the single source of truth; the legacy `Mastersheet-Implementation_-_AnishD.xlsx` is what we migrated AWAY from, not a sync target. Reverse-sync is net-new work (not deferral) if GSL wants a spreadsheet view restored.
-- **`SyncFreshnessTile` component built but not mounted on `/dashboard`.** Manual-trigger pattern means a "last sync N hours ago" tile does not add at-a-glance value (operators click Sync now on `/admin` when they want fresh state; the timestamp + status surface there is sufficient). Phase 1.1 trigger: when/if cron auto-sync lands, re-mount the tile on `/dashboard`.
-- **`/help` page added post-Phase-F.** In-app help reachable from the Help link on TopNav (visible to every authenticated user). Four sections: capabilities by role, common workflows, glossary, feedback paths. Plain-language; not a substitute for the launch email walkthrough but a reference once testers are inside the system.
+The §10 sections are:
+
+- **§10.1 Auth and access:** rate limiting, login timing, multi-device sessions, API rejection clarity, lifecycle-rules permission post-attempt.
+- **§10.2 Data and schema:** SPOC entity model, `installmentSeq` American identifiers.
+- **§10.3 Lifecycle and rules:** PI vs Dispatch idempotency divergence, Pre-Ops triage budget hardcoded, `cc-rule:create` 30-day Admin-only flip, D4 delivered + acknowledged collapse.
+- **§10.4 UI and UX:** mobile drag, contextual helpers per page, duplicate `/dashboard` layout header, AuditLogPanel pagination, SyncFreshnessTile mounting, CC-rule disable `window.prompt`.
+- **§10.5 Email and templates:** Outlook 2007 / 2010 CSS centring caveat, no GSL logo on DOCX templates, D3 manual-send Outlook-clipboard pattern, D4 operator-pasted URL.
+- **§10.6 Operational and runtime:** no `/forgot-password`, `/api/health` binary, `config/company.json` sample values, manual `import-tick` + `sync/tick`, no reverse-Excel-sync.
+- **§10.7 Operational notes (developer environment):** Windows orphaned-node-processes after smoke-test interruption.
+
+Testers do not need to memorise this list; the Universal launch-day instruction §2.5 says "do not report items already on the Phase 1.1 backlog." If a tester is unsure whether their finding is on the backlog, they report it; Anish triages.
 
 ---
 
@@ -81,21 +85,26 @@ Each section below is what a tester should walk through after first login. Forma
 
 **Role:** Admin. Wildcard permissions across the entire system.
 
-**Expected landing:** `/dashboard` (Leadership Console).
+**Expected landing:** `/` (kanban homepage; click the `Overview` tab to see the Leadership Console).
 
 **Visible chrome:**
 - TopNav with Home, MOUs, Schools, Escalations, Admin, and Help links.
-- Five health tiles in the top row: Active MOUs, Accuracy Health, Collection %, Dispatches in Flight, Schools Needing Action. Sync state is surfaced on `/admin` (System sync panel), not the dashboard.
+- On `/` (Home / kanban): a one-line interaction hint, the "Schools needing data" tile, and the kanban grid (9 columns; cards have a grip icon at the top-right).
+- On `/overview` (Overview tab): five health tiles in the top row (Active MOUs, Accuracy Health, Collection %, Dispatches in Flight, Schools Needing Action), exception feed, open-escalation list, 10 trigger tiles. Sync state is surfaced on `/admin`, not on the Overview tab.
 
 **Walkthrough:**
 
-1. Dashboard tiles render with current numbers (no "0" everywhere unless the seed is genuinely empty).
-2. Click into any health tile or exception row; verify it lands on the corresponding detail page.
-3. Visit `/admin`. The System sync panel should be visible at the top with two buttons: "Run import sync now" and "Run health check now". Click "Run health check now"; verify the page redirects with a green flash and the latest entry below shows kind=health, ok=true, your name as triggeredBy.
-4. Visit `/admin/cc-rules`. List shows all pre-seeded rules with toggle switches. Toggle one off; the system should prompt for a reason, then refresh with the rule disabled. Toggle back on; refresh shows it enabled again.
-5. Visit `/admin/cc-rules/new`. As Admin you should see the form (OpsHead does not for the first 30 days post-launch). Create a test rule, submit, verify it appears on the list.
-6. Visit `/admin/audit`. Filter by entity, by action, by user. Confirm CSV export downloads.
-7. Visit any MOU detail page. Click "Confirm actuals", "Generate PI", "Raise dispatch", "Compose feedback request", "Record delivery ack". Each should work end-to-end.
+1. Kanban renders ~140 MOUs distributed across 9 columns; every Active MOU appears in exactly one column.
+2. Click a MOU card body; verify it navigates to `/mous/[id]`. Drag the grip icon at the card's top-right; verify a transition dialog opens with the destination column. (Forward-by-1: routes you to the matching per-stage form. Forward-skip / backward / Pre-Ops exit: requires a reason; writes a `kanban-stage-transition` audit entry.)
+3. Click the "Schools needing data" tile above the kanban; verify it deep-links to `/schools?incomplete=yes`. Click any school in that list; verify `/schools/[id]/edit` opens with the missing-field input(s) highlighted.
+4. Click the `Overview` tab; verify the 5 health tiles render with current numbers. Click a tile or any exception row; verify it lands on the corresponding detail page. Click `Kanban` to switch back.
+5. Visit `/help`; verify the orientation doc renders with all 7 sections (Roles, Lifecycle stages, Glossary, Workflows, Changeable settings, Change semantics, Feedback paths). On a desktop ≥1024px, the sticky sidebar should highlight the section you are reading; jump-anchor links scroll smoothly.
+6. Visit `/admin`. The System sync panel should be visible at the top with two buttons: "Run import sync now" and "Run health check now". Click "Run health check now"; verify the page redirects with a green flash and the latest entry below shows kind=health, ok=true, your name as triggeredBy.
+7. Visit `/admin/lifecycle-rules`. The page lists 7 rules (one per stage transition). Edit one rule's `defaultDays` (small change, e.g., 14 → 16); submit. Verify the green flash names the rule, and the audit log records `lifecycle-rule-edited`. Returning to the kanban, verify cards at that stage now use the new threshold for overdue badges.
+8. Visit `/admin/cc-rules`. List shows all pre-seeded rules with toggle switches. Toggle one off; the system should prompt for a reason, then refresh with the rule disabled. Toggle back on; refresh shows it enabled again.
+9. Visit `/admin/cc-rules/new`. As Admin you should see the form (any future non-team OpsHead would not for the first 30 days). Create a test rule, submit, verify it appears on the list.
+10. Visit `/admin/audit`. Filter by entity, by action, by user. Confirm CSV export downloads.
+11. Visit any MOU detail page. Click "Confirm actuals", "Generate PI", "Raise dispatch", "Compose feedback request", "Record delivery ack". Each should work end-to-end.
 
 **Negative tests:**
 - (none - Admin sees and does everything by design)
@@ -106,22 +115,24 @@ Each section below is what a tester should walk through after first login. Forma
 
 **Role:** Leadership. Authorised to override the P2 dispatch gate and resolve escalations across all three lanes (OPS, SALES, ACADEMICS).
 
-**Expected landing:** `/dashboard`.
+**Expected landing:** `/` (kanban homepage; click the `Overview` tab to see the Leadership Console).
 
 **Visible chrome:**
-- TopNav: Home, MOUs, Schools, Escalations, Help.
-- No Admin link (Leadership is not an admin role; admin areas redirect to /dashboard).
+- TopNav: Home, MOUs, Schools, Escalations, Help. No Admin link (Leadership role does not include the Admin grant).
+- On `/`: kanban with grip-handle cards.
+- On `/overview`: 5 health tiles, exception feed, full escalation list (Leadership sees every lane), 10 trigger tiles.
 
 **Walkthrough:**
 
-1. Dashboard tiles + escalation list load. Escalation list shows open items across OPS, SALES, ACADEMICS lanes (Leadership sees everything).
-2. Visit any escalation detail page. Click "Resolve"; submit notes; the escalation status flips to resolved with your name on the audit entry.
-3. Visit a Dispatch detail page where `installment1Paid: false` and `overrideEvent: null`. Click "Authorise pre-payment dispatch"; provide reason; the dispatch gets an overrideEvent and a paired Escalation auto-creates in the OPS lane.
-4. Visit `/admin/audit`. Full visibility (Admin + Leadership see everything).
+1. Kanban renders on `/`; click `Overview` to see Leadership Console tiles. Both surfaces should load with current numbers.
+2. On the Overview tab, the escalation list shows open items across OPS, SALES, ACADEMICS lanes (Leadership sees everything).
+3. Visit any escalation detail page. Click "Resolve"; submit notes; the escalation status flips to resolved with your name on the audit entry.
+4. Visit a Dispatch detail page where `installment1Paid: false` and `overrideEvent: null`. Click "Authorise pre-payment dispatch"; provide reason; the dispatch gets an overrideEvent and a paired Escalation auto-creates in the OPS lane.
+5. Visit `/admin/audit`. Full visibility (Admin + Leadership see everything; the role-aware filter is wider for these two roles).
+6. Click `Help` in the TopNav; skim the orientation doc.
 
 **Negative tests:**
-- Visit `/admin`. Should redirect to `/dashboard` (admin area is Admin + OpsHead only).
-- Visit `/admin/cc-rules/new`. Same redirect.
+- Visit `/admin`. The page renders (W3-B disabled UI-side role gating; every authenticated user reaches admin surfaces). Click any admin-write surface (e.g., `/admin/cc-rules/new`); the form is visible. Attempting to submit the create form 303-redirects with `?error=permission`. This confirms server-side enforcement is the live gate, not the UI.
 
 ---
 
@@ -129,22 +140,25 @@ Each section below is what a tester should walk through after first login. Forma
 
 **Role:** SalesHead. Approves drift on actuals confirmations; resolves SALES-lane escalations.
 
-**Expected landing:** `/dashboard`.
+**Expected landing:** `/` (kanban homepage; click the `Overview` tab to see the Leadership Console).
 
 **Visible chrome:**
-- TopNav: Home, MOUs, Schools, Escalations, Help.
-- No Admin link.
+- TopNav: Home, MOUs, Schools, Escalations, Help. No Admin link.
+- On `/`: kanban with grip-handle cards.
+- On `/overview`: 5 health tiles + escalation list filtered to SALES-lane items + items you can act on.
 
 **Walkthrough:**
 
-1. Dashboard tiles render. Escalation list filters to SALES-lane items + items you can act on.
-2. Visit any MOU detail page. Click "Confirm actuals" on an Active MOU; submit a value within 10% of the MOU's `studentsMou` baseline; verify the MOU's actuals fields update and the audit entry records `actuals-confirmed` with your user id.
-3. Submit actuals with variance > 10% on a different MOU; the response should include `needsDriftReview: true`. (Phase 1: drift queue review surface lands later; for now the flag is captured but no separate queue page exists.)
-4. Visit `/admin/audit`. Filter for entity=MOU action=actuals-confirmed; should show your action.
+1. Kanban renders on `/`. Click a card body to navigate to detail; drag a card's grip handle for a stage transition.
+2. Click `Overview`; verify health tiles + the role-scoped escalation list render.
+3. Visit any MOU detail page. Click "Confirm actuals" on an Active MOU; submit a value within 10% of the MOU's `studentsMou` baseline; verify the MOU's actuals fields update and the audit entry records `actuals-confirmed` with your user id.
+4. Submit actuals with variance > 10% on a different MOU; the response should include `needsDriftReview: true`. (Phase 1: drift queue review surface lands later; for now the flag is captured but no separate queue page exists.)
+5. Visit `/admin/audit`. Filter for entity=MOU action=actuals-confirmed; should show your action.
+6. Click `Help` in the TopNav; skim the orientation doc.
 
 **Negative tests:**
-- Visit `/admin`. Redirect to `/dashboard`.
-- Visit `/admin/audit` directly. Page loads but only SALES-lane entries + reassignment + actuals-confirmed actions are visible (per role-scoping in `canViewAuditEntry`).
+- Visit `/admin/lifecycle-rules`. The page is visible (W3-B). Edit a rule's defaultDays and submit; the system 303-redirects with `?error=permission` because `lifecycle-rule:edit` is Admin-only. The error rail surfaces "Editing lifecycle rules requires the Admin role."
+- Visit `/admin/audit` directly. Page loads; only SALES-lane entries + reassignment + actuals-confirmed actions are visible (per role-scoping in `canViewAuditEntry`).
 
 ---
 
@@ -152,22 +166,24 @@ Each section below is what a tester should walk through after first login. Forma
 
 **Role:** SalesRep. Confirms actuals on own assignments only. Scoped to MOUs where `salesPersonId === your id`.
 
-**Expected landing:** `/dashboard`.
+**Expected landing:** `/` (kanban homepage; click the `Overview` tab to see the Leadership Console).
 
 **Visible chrome:**
-- TopNav: Home, MOUs, Schools, Escalations, Help.
-- No Admin link.
+- TopNav: Home, MOUs, Schools, Escalations, Help. No Admin link.
+- On `/`: kanban with grip-handle cards (your scoping limits which cards you can drag forward; some cards may render as read-only).
+- On `/overview`: tiles reflect own-MOU scope only.
 
 **Walkthrough:**
 
-1. Dashboard tiles render. Numbers reflect own-MOU scope only.
+1. Kanban renders on `/`. Click any card body; verify it navigates. If the MOU is assigned to you, the detail page is fully populated; if not, you get a 404 per the `isVisibleToUser` guard.
 2. Visit `/mous`. List shows only MOUs assigned to you (`salesPersonId` matches).
 3. Click into one of your MOUs. Confirm actuals; verify the audit entry records your user id.
+4. Click `Help` in the TopNav; skim the orientation doc (your role's section spells out exactly what is in scope).
 
 **Negative tests:**
-- Visit `/admin`. Redirect to `/dashboard`.
+- Visit `/admin/lifecycle-rules`. Page is visible (W3-B). Submit-attempt redirects with `?error=permission`; lifecycle-rule:edit is Admin-only.
 - Visit a MOU detail page for a MOU NOT assigned to you (try any `MOU-...` you can guess). Page returns 404 (notFound) per the `isVisibleToUser` guard.
-- Visit `/admin/audit`. Phase 1 ships SalesRep with no audit-route visibility at all; the page renders but the filtered list is empty.
+- Visit `/admin/audit`. Page renders; the filtered list is empty for SalesRep (no `canViewAuditEntry` matches in Phase 1).
 
 ---
 
@@ -175,25 +191,29 @@ Each section below is what a tester should walk through after first login. Forma
 
 **Role:** Admin (per the 2026-04-27 role-decisions change; see `docs/role-decisions.md`). Wildcard permissions across the entire system. This is your daily driver during the pilot.
 
-**Expected landing:** `/dashboard`.
+**Expected landing:** `/` (kanban homepage; click the `Overview` tab to see the Leadership Console).
 
 **Visible chrome:**
 - TopNav with Home, MOUs, Schools, Escalations, Admin, and Help links.
-- Five health tiles in the top row.
+- On `/`: kanban with grip-handle cards; "Schools needing data" tile above the grid; one-line interaction hint.
+- On `/overview`: five health tiles in the top row, exception feed, escalation list, 10 trigger tiles.
 
 **Walkthrough:**
 
-1. Dashboard tiles render with full operational view.
-2. Visit `/admin`. System sync panel + admin areas grid both visible. Try "Run import sync now"; verify it completes with a green flash.
-3. Visit `/admin/cc-rules`. List + toggles work. The "New rule" button IS visible (Admin wildcard). Toggle one off, then back on; verify the audit entries.
-4. Visit `/admin/cc-rules/new`. Create a test rule; submit; verify it appears on the list.
-5. Visit `/admin/cc-rules/<existing-id>`. Edit form works; submit a small change; verify it persists.
-6. Visit `/admin/mou-import-review`. Quarantined MOU records are shown with a Reject form. Pick one; reject with reason `data-quality-issue`; verify the queue shrinks.
-7. Visit `/admin/pi-counter`. Health view shows current `next` value, monotonicity OK, last-issued PI summary.
-8. Visit `/admin/audit`. Full visibility (Admin wildcard). Filter by entity, by action, by user. Confirm CSV export downloads.
-9. Visit `/admin/sales-team` + `/admin/schools` + `/admin/school-groups`. Each list works; "New rep" / "New school" / "New group" forms work.
-10. Visit `/admin/spocs`. Placeholder page redirects you to /schools/[id]/edit per the deferral.
-11. Visit a MOU detail page. Click "Confirm actuals", "Generate PI", "Raise dispatch", "Compose feedback request", "Record delivery ack". Each should work end-to-end.
+1. Kanban on `/` renders with current MOUs in 9 columns. Click a card body; verify it navigates. Drag a card's grip handle to the next column; verify the transition dialog opens; confirm it.
+2. Click the `Overview` tab; verify the 5 health tiles + exception feed + escalation list + 10 trigger tiles render.
+3. Click `Help` in the TopNav; skim the orientation doc to confirm it loads.
+4. Visit `/admin`. System sync panel + admin areas grid both visible. Try "Run import sync now"; verify it completes with a green flash.
+5. Visit `/admin/lifecycle-rules`. Edit one rule's `defaultDays` (small change, e.g., 14 → 16); submit. Verify the green flash; verify the audit log records `lifecycle-rule-edited`. Returning to the kanban, the new threshold drives overdue badges at that stage.
+6. Visit `/admin/cc-rules`. List + toggles work. The "New rule" button IS visible (Admin wildcard). Toggle one off, then back on; verify the audit entries.
+7. Visit `/admin/cc-rules/new`. Create a test rule; submit; verify it appears on the list.
+8. Visit `/admin/cc-rules/<existing-id>`. Edit form works; submit a small change; verify it persists.
+9. Visit `/admin/mou-import-review`. Quarantined MOU records are shown with a Reject form. Pick one; reject with reason `data-quality-issue`; verify the queue shrinks.
+10. Visit `/admin/pi-counter`. Health view shows current `next` value, monotonicity OK, last-issued PI summary.
+11. Visit `/admin/audit`. Full visibility (Admin wildcard). Filter by entity, by action, by user. Confirm CSV export downloads.
+12. Visit `/admin/sales-team` + `/admin/schools` + `/admin/school-groups`. Each list works; "New rep" / "New school" / "New group" forms work.
+13. Visit `/admin/spocs`. Placeholder page redirects you to `/schools/[id]/edit` per the deferral.
+14. Visit a MOU detail page. Click "Confirm actuals", "Generate PI", "Raise dispatch", "Compose feedback request", "Record delivery ack". Each should work end-to-end.
 
 **Negative tests:**
 - (none; Admin sees and does everything by design)
@@ -224,23 +244,26 @@ Each section below is what a tester should walk through after first login. Forma
 
 **Role:** Finance. Generates PIs, reconciles payments, acknowledges P2 overrides.
 
-**Expected landing:** `/dashboard`.
+**Expected landing:** `/` (kanban homepage; click the `Overview` tab to see the Leadership Console).
 
 **Visible chrome:**
-- TopNav: Home, MOUs, Schools, Escalations, Help.
-- No Admin link.
+- TopNav: Home, MOUs, Schools, Escalations, Help. No Admin link.
+- On `/`: kanban with grip-handle cards (you can drag actuals-confirmed cards toward invoice-raised; the dialog routes you to `/mous/[id]/pi`).
+- On `/overview`: 5 health tiles + 10 trigger tiles; numbers reflect full operational view.
 
 **Walkthrough:**
 
-1. Dashboard tiles render. Numbers reflect full operational view.
-2. Visit a MOU detail page where actuals are confirmed and the school has a non-null `gstNumber`. Click "Generate PI"; verify a `.docx` downloads with PI number `GSL/OPS/26-27/000N` and the placeholder values from `config/company.json` (sample bank, sample GSTIN, etc.) rendered.
-3. Visit a different MOU where the school's `gstNumber` is null. Click "Generate PI"; verify a friendly error: "GSTIN required" and a link to `/schools/[id]/edit`.
-4. Visit a Dispatch with an unack'd `overrideEvent`. Click "Acknowledge override"; verify the audit entry + state.
+1. Kanban on `/` renders with current MOUs. Click `Overview`; verify tiles render. Click `Kanban` to switch back.
+2. On the kanban, find a MOU at the actuals-confirmed stage; drag its grip handle to the invoice-raised column. The forward-by-1 dialog should route you to `/mous/[id]/pi`.
+3. Visit a MOU detail page where actuals are confirmed and the school has a non-null `gstNumber`. Click "Generate PI"; verify a `.docx` downloads with PI number `GSL/OPS/26-27/000N` and the placeholder values from `config/company.json` (sample bank, sample GSTIN, etc.) rendered.
+4. Visit a different MOU where the school's `gstNumber` is null. Click "Generate PI"; verify a friendly error: "GSTIN required" and a link to `/schools/[id]/edit`.
+5. Visit a Dispatch with an unack'd `overrideEvent`. Click "Acknowledge override"; verify the audit entry + state.
+6. Click `Help` in the TopNav; the Finance section of the orientation doc spells out the PI-generation + drift-flag flow.
 
 **Negative tests:**
-- Visit `/admin`. Redirect to `/dashboard`.
-- Visit `/admin/audit`. Page loads; only Finance-relevant entries (pi-issued, p2-override-acknowledged) visible.
-- Try raising a dispatch (button visible? No - that's OpsHead).
+- Visit `/admin/lifecycle-rules`. Page renders (W3-B). Submit-attempt redirects with `?error=permission`.
+- Visit `/admin/audit`. Page loads; only Finance-relevant entries (pi-issued, p2-override-acknowledged) visible per role-scoping.
+- On a MOU detail page that has actuals confirmed, the "Raise dispatch" button is not visible to you (Finance does not have `dispatch:raise`); the kanban drag from actuals-confirmed → kit-dispatched would also be rejected by the server.
 
 ---
 
@@ -258,19 +281,22 @@ Each section below is what a tester should walk through after first login. Forma
 
 **Role:** Admin (per the 2026-04-27 role-decisions change; see `docs/role-decisions.md`). Wildcard permissions across the entire system. Originally TrainerHead with ACADEMICS-lane scope; promoted to Admin alongside the Ops team so the trusted core team can drive every flow end-to-end during the pilot.
 
-**Expected landing:** `/dashboard`.
+**Expected landing:** `/` (kanban homepage; click the `Overview` tab to see the Leadership Console).
 
 **Visible chrome:**
 - TopNav with Home, MOUs, Schools, Escalations, Admin, and Help links.
-- Five health tiles in the top row.
+- On `/`: kanban with grip-handle cards.
+- On `/overview`: 5 health tiles + exception feed + escalation list (full visibility) + 10 trigger tiles.
 
 **Walkthrough:**
 
-1. Dashboard tiles render with full operational view.
+1. Kanban on `/` renders with current MOUs. Click `Overview`; verify tiles + escalation list render with full operational view.
 2. Visit any escalation detail page in the ACADEMICS lane (e.g., one auto-created from a feedback record with rating <= 2 on training-quality or trainer-rapport). Click "Resolve"; submit resolution notes; your historical TrainerHead workflow remains unchanged in shape, only the role label has changed.
 3. Visit `/admin/audit`. Full visibility (Admin wildcard); filter by lane, by entity, by user. Confirm CSV export downloads.
 4. Visit `/admin`. System sync panel + admin areas grid both visible.
-5. Spot-check a non-academics flow (e.g., open a MOU detail page; the Generate PI / Raise dispatch / Confirm actuals buttons are now visible to you because Admin grants every action).
+5. Visit `/admin/lifecycle-rules`. Edit one rule's `defaultDays`; verify the audit log + retroactive overdue-badge recompute.
+6. Spot-check a non-academics flow (e.g., open a MOU detail page; the Generate PI / Raise dispatch / Confirm actuals buttons are now visible to you because Admin grants every action).
+7. Click `Help` in the TopNav; skim the orientation doc.
 
 **Negative tests:**
 - (none; Admin sees and does everything by design)

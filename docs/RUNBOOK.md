@@ -288,23 +288,152 @@ Cross-references:
 
 ---
 
-## 10. Known Phase 1 limitations
+## 10. Phase 1.1 backlog (deferred behaviours and deliberate scope cuts)
 
-These are deliberate Phase 1 scope cuts, not bugs. Each names the trigger that flips it back into scope.
+These are deliberate Phase 1 scope cuts, not bugs. Each item names the **Context** (what the deferred behaviour is today), the **Trigger** (when to revisit), and the **Implementation path** (what changing it would involve). Items are grouped thematically; ordering within a group is not significance-based.
 
-- **No rate limiting on `/api/login`.** Phase 1 testers are 10 known internal staff; Vercel's platform-level rate limit handles trivially-mal traffic. Phase 1.1 trigger: SPOC portal goes public-internet (any unauthenticated route exposed beyond staff IPs). Implementation will require an external counter store (Vercel KV or similar) since serverless invocations have no shared in-memory state.
-- **Login response timing is not equalized across reject reasons.** Known-user-with-wrong-password takes longer than unknown-user (the bcrypt compare runs only after the user lookup succeeds). An attacker measuring response time can distinguish "user exists" from "user does not exist." Phase 1 acceptable (10 known internal testers). Phase 1.1 trigger: any public-facing login surface; mitigation is to run bcrypt against a placeholder hash on every code path so timing is constant.
-- **Multi-device sessions accepted.** The session cookie is JWT-based with no server-side session list, so Anish on desktop + Anish on phone are two simultaneously-valid sessions. Reconsideration trigger: the audit-log shows a single user-id session being used from geographically-distant IPs simultaneously, suggesting credential leak. Implementation would add `sessions.json` with per-user concurrency limit and a queue write per login.
-- **No `/forgot-password` or `/account/password` route.** Password recovery is a manual edit to `src/data/_fixtures/users.json` + `npm run seed:dev` per `docs/DEVELOPER.md` §"Password recovery (testers)". Phase 1.1 trigger: testers actually ask for self-service.
-- **`/api/health` is binary status only.** Returns `{ status: 'ok', timestamp, version }` for uptime monitors. The graded data-integrity view (queue depth, JSON validity, sync-runner pulse) lives on the dashboard tile instead, where a human can read it usefully.
-- **`AuditLogPanel` renders all entries inline.** Phase 1 audit logs are small (most entities have 0-2 entries today; full-lifecycle MOUs project to 15-25 entries by 8-week pilot end). Phase 1.1 trigger: if any entity's auditLog exceeds 30 entries in production, refactor `AuditLogPanel` to truncate-with-expand or paginate, AND consider extending `AuditFilterRail` to accept `entityId=<id>` for cross-route deep dives from detail pages back into `/admin/audit`.
-- **SPOC entity model deferred to Phase 1.1.** The devex review assumed a separate Spoc entity managed at `/admin/spocs/new`; the eng review didn't model one. Phase 1 ships SPOC contact as embedded fields on School (`contactPerson`, `email`, `phone`); testers edit via `/schools/[id]/edit`. `/admin/spocs` is a placeholder that redirects readers to the schools surface. Phase 1.1 trigger: tester feedback on SPOC cardinality (single-per-school vs multi-per-school vs per-MOU-overrides) settles the model, then a `Spoc` interface, `spocs.json` fixture, and the `'spoc'` `PendingUpdateEntity` are added together with the live admin surface.
-- **`config/company.json` ships with sample identity values.** Phase 1 testing uses `Get Set Learn Private Limited` + a sample GSTIN (`29AAAAA0000A1Z5`) + sample bank account so generated PIs / dispatch notes / delivery acks render end-to-end with realistic shapes. **Anish swaps in real values before the first production PI ever leaves the system.** Edit `config/company.json` with: real registered legal entity name, real GSTIN, real registered office address (multi-line array), real bank account details (multi-line array), and confirm the GST rate (18% standard for educational services in India per current CBIC notification). No code changes needed; the file edit propagates everywhere. Phase 1.1 trigger: production launch.
-- **PI vs Dispatch idempotency divergence.** `generatePi` advances the PI counter on every successful call (no per-call idempotency). `raiseDispatch` idempotently re-renders for already-raised dispatches and returns `wasAlreadyRaised: true`. Rationale: PI numbers have external GST-filing significance, so accidental duplicates are tracked as counter gaps (recoverable) rather than silent re-render of the same number; dispatch state has internal significance only, so re-download is the right default. Phase 1.1 trigger: tester reports of accidental duplicate-click PIs would push us toward per-(mouId, instalmentSeq) lookup pre-counter-advance.
-- **Email template centring uses modern CSS, not legacy HTML attribute.** D3's `feedbackRequest` template uses `style="text-align:center;"` instead of the legacy `align="center"` HTML attribute. Modern Outlook (365 / 2016+) and all webmail clients render this correctly; older Outlook desktop (2007 / 2010) had patchier CSS support and may render the wrapper layout differently. Phase 1 testers run Outlook 365, so this is fine. Phase 1.1 trigger: if an older Outlook install surfaces in the broader pilot and reports broken layout, swap to the legacy attribute or include both for redundancy. Same caveat applies to any future email templates we author.
-- **`SyncFreshnessTile` component is built but not mounted on `/dashboard`.** Manual-trigger pattern means a "last sync N hours ago" tile does not add at-a-glance value; operators click Sync now on `/admin` when they want fresh state, and the timestamp + status surface there is sufficient. Phase 1.1 trigger: when/if cron auto-sync lands, re-mount the tile on `/dashboard`.
-- **`cc-rule:create` 30-day Admin-only flip is partially obsolete.** The original design (per `permissions.ts` comments) gated `cc-rule:create` to Admin-only for the first 30 days post-launch, with Misba (OpsHead) flipping to allowed on day 31. The 2026-04-27 role-decisions change (see `docs/role-decisions.md`) promoted Pradeep, Misba, and Swati to Admin, so they can create CC rules immediately via the Admin wildcard. The flip-to-OpsHead-allowed semantic still applies to any FUTURE OpsHead user who is not on the Ops team; if such a user is added before day 31, they hit the same Admin-only restriction. The 1-line PR to add `cc-rule:create` to the OpsHead role's grant set is still the day-31 action for that hypothetical future user.
+### 10.1 Auth and access
 
-### 10.1 Operational notes (developer environment)
+- **No rate limiting on `/api/login`.**
+  - **Context:** the route accepts unbounded login attempts; only Vercel's platform-level rate limit stands between us and brute-force.
+  - **Trigger:** any unauthenticated route is exposed beyond staff IPs (in particular, the SPOC portal going public-internet).
+  - **Implementation:** add an external counter store (Vercel KV or Upstash) keyed by `email + IP` with sliding-window decay; serverless invocations have no shared in-memory state, so the counter cannot be in-process.
+
+- **Login response timing is not equalised across reject reasons.**
+  - **Context:** known-user-with-wrong-password runs the bcrypt compare; unknown-user does not. An attacker measuring response time can distinguish "user exists" from "user does not."
+  - **Trigger:** any public-facing login surface (Phase 1's 10 known testers do not need timing equalisation).
+  - **Implementation:** run bcrypt against a placeholder hash on every code path so the bcrypt cost is constant regardless of branch.
+
+- **Multi-device sessions accepted.**
+  - **Context:** session cookie is JWT-based with no server-side session list, so the same user-id from multiple IPs is allowed simultaneously.
+  - **Trigger:** the audit log shows a single user-id session used from geographically-distant IPs in a short window, suggesting credential leak.
+  - **Implementation:** add `sessions.json` with a per-user concurrency limit (1 active or 2 active typical), enqueue a queue write per login that revokes prior sessions, and read-check on every authenticated request.
+
+- **API rejection message clarity when role gating returns is terse.**
+  - **Context:** when an API write fails the permission check, the route 303-redirects back with `?error=permission`; the destination page renders a generic "Editing requires Admin" string. The user does not learn which permission was denied or how to escalate.
+  - **Trigger:** non-Admin testers report confusion about what they cannot do or whom to ask.
+  - **Implementation:** extend the error rail to surface the action attempted (e.g., `lifecycle-rule:edit`) and a "Contact Anish" affordance; the lib mutators already return a structured `reason` so the route handler can pass it through verbatim.
+
+- **Lifecycle-rules permission shows error post-attempt rather than pre-attempt.**
+  - **Context:** W3-B disabled UI gating; SalesRep, OpsHead, etc., all see `/admin/lifecycle-rules` and the edit form. Submission triggers the server-side `lifecycle-rule:edit` Admin-only check, which 303-redirects with `?error=permission`. The user fills out the form and only then learns they cannot save.
+  - **Trigger:** testers complain that the lifecycle-rules page lets them write a value they cannot submit.
+  - **Implementation:** either (a) re-enable UI gating on this single surface so non-Admin sees a read-only view with a "Contact Anish to change rules" footer, or (b) keep the current open-access shape but disable the form inputs + Save button when `user.role !== 'Admin'`. (a) is cleaner; (b) preserves the W3-B "everyone sees everything" principle.
+
+### 10.2 Data and schema
+
+- **SPOC entity model deferred to Phase 1.1.**
+  - **Context:** the devex review assumed a separate `Spoc` entity managed at `/admin/spocs/new`; the eng review modelled SPOC contact as embedded fields on `School` (`contactPerson`, `email`, `phone`). Phase 1 ships the embedded-fields shape; `/admin/spocs` is a placeholder pointing testers to `/schools/[id]/edit`.
+  - **Trigger:** tester feedback that resolves SPOC cardinality (single-per-school vs multi-per-school vs per-MOU-overrides).
+  - **Implementation:** add a `Spoc` interface in `src/lib/types.ts`, `src/data/spocs.json` fixture, the `'spoc'` `PendingUpdateEntity`, and a real admin surface; backfill the existing School embedded fields into the new entity in a one-shot migration script.
+
+- **`installmentSeq` schema identifiers stay American-English.**
+  - **Context:** the schema uses American "installment" while user-facing strings (and most Indian English usage) prefer British "instalment". A pragmatic split landed on 2026-04-26: user-facing strings were Britishised in 4 files; schema identifiers (`installmentSeq`, `installment1Paid`, etc.) stayed American to avoid a 75-file refactor across types, fixtures, libs, routes, tests.
+  - **Trigger:** any large-scale schema migration (e.g., when SPOC entity lands or fixtures move to a real database) creates a natural opportunity to rename in one shot.
+  - **Implementation:** ts-codemod or rg-replace across the 75 files; update fixture files; rerun `npm run seed:dev`; verify all tests still pass; commit as a single rename PR.
+
+### 10.3 Lifecycle and rules
+
+- **PI vs Dispatch idempotency divergence.**
+  - **Context:** `generatePi` advances the PI counter on every successful call; `raiseDispatch` idempotently re-renders already-raised dispatches and returns `wasAlreadyRaised: true`. Rationale: PI numbers have external GST-filing significance, so accidental duplicates are tracked as counter gaps (recoverable) rather than silent same-number re-render; dispatch state is internal only, so re-download is the right default.
+  - **Trigger:** Finance reports of accidental duplicate-click PIs.
+  - **Implementation:** add a per-`(mouId, instalmentSeq)` lookup pre-counter-advance; if a successful PI already exists for that pair, return `{ ok: true, piNumber: existing, wasAlreadyGenerated: true }` and re-stream the existing docx without advancing the counter.
+
+- **Pre-Ops triage budget is hardcoded; not in the editable lifecycle-rules table.**
+  - **Context:** the 7 forward-stage transitions (MOU signed → Actuals confirmed, etc.) are editable at `/admin/lifecycle-rules` per W3-D. The Pre-Ops Legacy 30-day triage budget stays hardcoded as `PRE_OPS_TRIAGE_DAYS` in `src/lib/kanban/stageDurations.ts`. Pre-Ops is structurally not a forward stage transition (it's a holding bay with one-way exit), so the JSON shape would need a separate row type to accommodate it.
+  - **Trigger:** pilot operators want to tune the Pre-Ops triage budget (likely if real data shows the 30-day default is wrong for the imported MOU cohort).
+  - **Implementation:** extend `lifecycle_rules.json` with an optional `kind: 'holding-bay'` discriminator alongside the existing forward-stage rows; teach `getStageDurationDays(stage)` to read Pre-Ops from JSON when present and fall back to the hardcoded 30-day default; add a Pre-Ops row to the `/admin/lifecycle-rules` UI that explains the holding-bay semantics.
+
+- **D4 delivery-ack collapses physical delivery + paperwork acknowledgement into a single transition.**
+  - **Context:** schema supports both events (`deliveredAt` and `acknowledgedAt` are distinct fields); the Phase 1 simplified flow sets all three timestamps + the signed-handover-form URL at once when an operator records the ack.
+  - **Trigger:** courier integration confirms physical delivery before the school's signed paperwork is uploaded.
+  - **Implementation:** split the form into two steps; the first sets `deliveredAt` (and optionally a tracking-number); the second sets `acknowledgedAt` + `signedHandoverFormUrl`. Both write through the same lib mutator; the form just gates which fields are required at which step.
+
+- **`cc-rule:create` 30-day Admin-only flip is partially obsolete.**
+  - **Context:** original design gated `cc-rule:create` to Admin for the first 30 days, with OpsHead flipping to allowed on day 31. The 2026-04-27 role-decisions change promoted Misba, Pradeep, Swati (and originally OpsHead Misba) to Admin, so they can already create CC rules via the Admin wildcard.
+  - **Trigger:** any future OpsHead user who is *not* on the trusted core team is added before day 31 of their tenure.
+  - **Implementation:** the day-31 action is a 1-line edit to add `'cc-rule:create'` to the OpsHead role's grant set in `src/lib/auth/permissions.ts`. The 30-day flip remains a per-user judgment call rather than calendar-driven.
+
+### 10.4 UI and UX
+
+- **Mobile drag is deliberately not in Phase 1.**
+  - **Context:** kanban renders columns as a vertical stack on mobile (`md:flex-row` in `src/components/ops/KanbanBoard.tsx`); the W3-F.5 drag handle still renders, and TouchSensor (15px activation) is wired, but mobile is not a primary use case for Phase 1 (Anish + the Ops team work on desktop). Mobile cards are tap-to-detail; drag works in principle on tablets but is not the supported flow.
+  - **Trigger:** testers report wanting kanban drag on phones.
+  - **Implementation:** mobile-specific re-layout (e.g., a "move to..." dropdown alongside the handle) rather than relying on touch drag in a vertical-stack layout that does not visually accommodate drop zones.
+
+- **No contextual helpers (per-page modals or tooltips) for first-time-tester confusion.**
+  - **Context:** Anish considered adding inline `?` icons that pop a 1-2 sentence helper per surface. Decision: the `/help` orientation doc + the new W3-F.5 inline hint on `/` cover the discoverability gap; per-page contextual helpers would add maintenance burden and visual noise.
+  - **Trigger:** round 2 testers report specific surfaces where `/help` or the inline hint did not orient them.
+  - **Implementation:** add a `<HelpPopover>` component with target props pointing into the `HELP_*` content modules; mount on the surfaces testers flag.
+
+- **Duplicate `<header><h2>Ops at a glance</h2></header>` in `/dashboard` layout.**
+  - **Context:** `src/app/dashboard/layout.tsx` renders an extra header with the same title that `PageHeader` already shows. Pre-existing across the W3 series; the W3-F /dashboard alias did not introduce or fix it. Cosmetic; does not affect functionality or accessibility (single `<main>` invariant is still respected).
+  - **Trigger:** any /dashboard layout cleanup pass, or tester feedback that the duplicate title looks unprofessional.
+  - **Implementation:** delete the `<header>` block in `src/app/dashboard/layout.tsx` so the layout becomes a pass-through `<>{children}</>` (or remove the layout entirely if `/dashboard` no longer needs route-specific chrome). `PageHeader` in the page component continues to render the title.
+
+- **`AuditLogPanel` renders all entries inline.**
+  - **Context:** Phase 1 audit logs are small (most entities have 0-2 entries today; full-lifecycle MOUs project to 15-25 by 8-week pilot end), so unbounded inline rendering is fine.
+  - **Trigger:** any entity's auditLog exceeds 30 entries in production.
+  - **Implementation:** refactor `AuditLogPanel` to truncate-with-expand or paginate; extend `AuditFilterRail` to accept `entityId=<id>` for cross-route deep dives from detail pages back into `/admin/audit`.
+
+- **`SyncFreshnessTile` is built but not mounted on `/overview`.**
+  - **Context:** manual-trigger pattern means a "last sync N hours ago" tile does not add at-a-glance value. Operators click "Sync now" on `/admin` when they want fresh state; the timestamp + status surface there is sufficient.
+  - **Trigger:** cron auto-sync lands.
+  - **Implementation:** mount the existing `SyncFreshnessTile` component on `/overview` (the W3-F canonical Leadership Console route).
+
+- **CC-rule disable confirmation uses `window.prompt` for the reason.**
+  - **Context:** `CcRuleToggleRow.tsx` calls `window.prompt('Reason for disabling?')` on toggle-off. Functional, accessible-enough (screen readers handle native prompt), and small surface area; not a deal-breaker but visually inconsistent with the rest of the app.
+  - **Trigger:** tester aesthetics feedback that the prompt feels like leftover debug UI.
+  - **Implementation:** replace with the existing shadcn `Dialog` pattern used by `TransitionDialog`; require a non-empty reason; keep the same audit-write payload shape.
+
+### 10.5 Email and templates
+
+- **Email templates use modern CSS centring, not the legacy `align="center"` HTML attribute.**
+  - **Context:** D3 `feedbackRequest` template uses `style="text-align:center;"`. Modern Outlook (365 / 2016+) and all webmail render this correctly; older Outlook (2007 / 2010) has patchier CSS support and may render the wrapper layout differently.
+  - **Trigger:** older Outlook install surfaces in broader pilot and reports broken layout.
+  - **Implementation:** swap to legacy `align="center"`, or include both attributes for redundancy. Same caveat applies to any future email templates.
+
+- **PI / Dispatch / Delivery-Ack DOCX templates are authored programmatically with no embedded GSL logo.**
+  - **Context:** the docx files in `public/ops-templates/` are production-quality but text-only. No image assets, no header band, no footer band. Output is correct and regulator-acceptable; the visual brand polish is missing.
+  - **Trigger:** brand-polish ask from testers or from GSL's external-comms expectations.
+  - **Implementation:** swap the docx files for designer-authored templates that embed the GSL logo and brand colours; the docxtemplater placeholders ({{piNumber}}, etc.) stay identical so no lib code changes.
+
+- **D3 feedback request uses manual-send (Outlook clipboard) pattern; no SMTP integration.**
+  - **Context:** the Compose surface renders the email body; the operator clicks "Copy to clipboard" and pastes into Outlook. Lib code that constructs the body is reusable and unit-tested.
+  - **Trigger:** GSL wants automated sending (e.g., the Ops team is sending too many feedback requests for manual-clipboard to be tractable).
+  - **Implementation:** swap the Copy button for a Send-via-provider button on the same compose surface; backend route accepts the same payload and dispatches via the chosen provider (SES, SendGrid, etc.). Audit log captures provider message id.
+
+- **D4 delivery-ack URL is operator-pasted (Drive / SharePoint / Dropbox link).**
+  - **Context:** there is no file-upload + storage infrastructure. Operators upload the signed handover form to their team's existing storage and paste the shareable link into the form.
+  - **Trigger:** GSL wants centralised storage (e.g., compliance audit demands all signed handover forms in a single GSL-controlled location).
+  - **Implementation:** add an S3-compatible storage layer (Vercel Blob or similar); replace the URL-paste field with a file-upload control; the lib mutator stores the resulting URL in the same field so consumers do not change.
+
+### 10.6 Operational and runtime
+
+- **No `/forgot-password` or `/account/password` route.**
+  - **Context:** password recovery is a manual edit to `src/data/_fixtures/users.json` + `npm run seed:dev` per `docs/DEVELOPER.md` §"Password recovery (testers)".
+  - **Trigger:** testers ask for self-service.
+  - **Implementation:** standard email-token flow: POST `/api/forgot-password` enqueues a token, email contains a `/reset-password?token=...` link, GET renders a password form, POST `/api/reset-password` updates `passwordHash` via the queue. Reuse magic-link patterns already in the codebase.
+
+- **`/api/health` is binary status only.**
+  - **Context:** returns `{ status, timestamp, version }` for uptime monitors. The graded data-integrity view (queue depth, JSON validity, sync-runner pulse) lives on the dashboard tile instead.
+  - **Trigger:** uptime monitor needs a graded health signal (e.g., paging on data-integrity drop, not just process up/down).
+  - **Implementation:** extend `/api/health?detail=1` to surface the same checks the tile renders, gated behind a header token so external scrapers cannot enumerate internal state.
+
+- **`config/company.json` ships with sample identity values.**
+  - **Context:** Phase 1 testing uses `Get Set Learn Private Limited` + a sample GSTIN + sample bank so generated PIs / dispatch notes / delivery acks render end-to-end with realistic shapes.
+  - **Trigger:** production launch (the first PI that leaves the system to a real school).
+  - **Implementation:** Anish edits `config/company.json` with real registered legal entity, real GSTIN, real registered office address (multi-line array), real bank account details (multi-line array), and confirms the GST rate (18% standard for educational services per current CBIC notification). No code changes; the file edit propagates everywhere.
+
+- **`import-tick` and `sync/tick` are admin-triggered manually via `/admin`.**
+  - **Context:** Phase 1 keeps sync simple: an Admin clicks "Run import sync now" or "Run health check now" on `/admin`; lib code runs the same path that a cron-runner would. No GitHub Actions workflow attached yet.
+  - **Trigger:** sister-project MOU volume grows beyond manual-trigger comfort (e.g., the Ops team forgets to run sync for several days and stale data starts confusing the kanban).
+  - **Implementation:** port the gsl-mou-system GitHub Actions workflow YAML; add shared-secret bearer auth alongside session auth so the cron call does not need a logged-in user; mount `SyncFreshnessTile` on `/overview` (see 10.4).
+
+- **No reverse-Excel-sync; the app is the single source of truth.**
+  - **Context:** per `CLAUDE.md`, the legacy `Mastersheet-Implementation_-_AnishD.xlsx` in `ops-data/` is what we migrated AWAY from. The app does not write back to Excel. Reverse-sync is net-new work, not a deferral.
+  - **Trigger:** GSL wants a spreadsheet view restored (likely for stakeholders who do not log in to the app).
+  - **Implementation:** add a read-only `/admin/export-excel` route that streams a freshly-generated `.xlsx` from current state. Single-direction; consumers treat the export as a snapshot, not a sync target.
+
+### 10.7 Operational notes (developer environment)
 
 - **Windows: orphaned node processes after killed smoke-test or dev-server runs.** The `scripts/smoke-test.sh` trap-based cleanup occasionally leaves child node processes holding ports 3000-3003. On the next dev-server start, Next.js auto-shifts to port 3004 and serves through stale `.next` chunks, which can cause cascading 500s on routes (most often `/feedback/[tokenId]` because its placeholder is the simplest). Workaround when this happens: kill all node processes (`taskkill //F //IM node.exe` on Windows, `pkill -f "next dev"` on macOS/Linux) and `rm -rf .next` before restarting. Not a code defect; an artefact of the Windows process model + Next dev-cache interaction.
