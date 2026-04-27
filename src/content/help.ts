@@ -93,11 +93,11 @@ export const HELP_ROLES: RoleOrientation[] = [
 ]
 
 // ----------------------------------------------------------------------------
-// Section 2: The 8 lifecycle stages
+// Section 2: The 9 lifecycle stages (W4-C.1 added post-signing-intake)
 // ----------------------------------------------------------------------------
 
 export const HELP_LIFECYCLE_INTRO =
-  'Every MOU passes through 8 stages, displayed as columns on the kanban homepage. Cards drag forward as work happens; cards sit in place when blocked. Pre-Ops Legacy (the muted column on the left) is a holding bay for MOUs imported in Pending Signature status; cards leave it but never return.'
+  'Every MOU passes through 9 stages, displayed as columns on the kanban homepage. Cards drag forward as work happens; cards sit in place when blocked. Pre-Ops Legacy (the muted column on the left) is a holding bay for MOUs imported in Pending Signature status; cards leave it but never return.'
 
 export const HELP_LIFECYCLE_STAGES: LifecycleStageEntry[] = [
   {
@@ -111,15 +111,24 @@ export const HELP_LIFECYCLE_STAGES: LifecycleStageEntry[] = [
   },
   {
     number: '2',
+    key: 'post-signing-intake',
+    title: 'Post-signing intake',
+    whatHappens: 'The 22-field intake form is captured at /mous/[id]/intake: sales owner, location, grades, recipient details for the welcome note, students at intake, MOU duration, signed-copy URL, school POC. Replaces the legacy Google Form. Submitting the form auto-drafts the welcome note (compose-and-copy via clipboard).',
+    whoInvolved: 'Ops core team (Misba / Pradeep / Swati)',
+    systemTracks: 'IntakeRecord (22 fields); audit captures variances against MOU baseline (students, programme, training mode).',
+    typicalDays: '14 days from signing to intake completion (default; editable at /admin/lifecycle-rules).',
+  },
+  {
+    number: '3',
     key: 'actuals-confirmed',
     title: 'Actuals confirmed',
     whatHappens: 'The actual student count is recorded. If more than 10% off the contracted count, a drift badge flags it for Sales Head review.',
     whoInvolved: 'Sales rep gathers, Sales Head signs off',
     systemTracks: 'studentsActual, studentsVariance, studentsVariancePct',
-    typicalDays: '14 days from signing to actuals confirmed.',
+    typicalDays: '14 days from intake completion to actuals confirmed.',
   },
   {
-    number: '3',
+    number: '4',
     key: 'cross-verification',
     title: 'Cross-verification',
     whatHappens: 'Auto-skipped in Phase 1. Was meant to be an Ops review step before PI generation; operators verify at actuals confirmation instead. Cards flow through automatically.',
@@ -128,7 +137,7 @@ export const HELP_LIFECYCLE_STAGES: LifecycleStageEntry[] = [
     typicalDays: 'Instant (auto-advance).',
   },
   {
-    number: '4',
+    number: '5',
     key: 'invoice-raised',
     title: 'Invoice raised',
     whatHappens: 'Finance generates a Proforma Invoice (PI). The school must have a GSTIN on file. Click Generate PI on the MOU detail page; a .docx downloads with the school GSTIN, contract value, and a sequential PI number.',
@@ -137,7 +146,7 @@ export const HELP_LIFECYCLE_STAGES: LifecycleStageEntry[] = [
     typicalDays: '30 days from PI issue to payment (Net 30).',
   },
   {
-    number: '5',
+    number: '6',
     key: 'payment-received',
     title: 'Payment received',
     whatHappens: 'The school has paid the relevant instalment. Finance reconciles the incoming payment against the PI.',
@@ -146,7 +155,7 @@ export const HELP_LIFECYCLE_STAGES: LifecycleStageEntry[] = [
     typicalDays: '7 days before kit dispatch is raised.',
   },
   {
-    number: '6',
+    number: '7',
     key: 'kit-dispatched',
     title: 'Kit dispatched',
     whatHappens: 'Ops raises a dispatch (the kit ships from GSL warehouse to the school). Click Raise dispatch; a dispatch note .docx downloads. Re-clicking re-downloads the same document without changing state (idempotent).',
@@ -155,7 +164,7 @@ export const HELP_LIFECYCLE_STAGES: LifecycleStageEntry[] = [
     typicalDays: '5 days transit + delivery confirmation.',
   },
   {
-    number: '7',
+    number: '8',
     key: 'delivery-acknowledged',
     title: 'Delivery acknowledged',
     whatHappens: 'A signed handover form has been collected from the school SPOC, scanned, uploaded to GSL Drive, and the URL recorded. Click Delivery ack on the MOU detail page; print blank form, get it signed, paste the URL.',
@@ -164,7 +173,7 @@ export const HELP_LIFECYCLE_STAGES: LifecycleStageEntry[] = [
     typicalDays: '7 days from dispatch to acknowledgement.',
   },
   {
-    number: '8',
+    number: '9',
     key: 'feedback-submitted',
     title: 'Feedback submitted',
     whatHappens: 'The SPOC has submitted feedback via a magic link sent after delivery. Any rating of 2 or below on training quality or trainer rapport auto-creates an ACADEMICS-lane escalation for Shashank.',
