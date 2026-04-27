@@ -38,8 +38,8 @@
  * client wrapper handles interactivity.
  */
 
-import { useMemo, useState } from 'react'
-import { GripVertical, X } from 'lucide-react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { ChevronLeft, ChevronRight, GripVertical, X } from 'lucide-react'
 import {
   DndContext,
   DragOverlay,
@@ -216,6 +216,44 @@ export function KanbanBoard({ initialBuckets, cardMeta = {} }: KanbanBoardProps)
     setDialog({ open: false, classification: null, mou: null })
   }
 
+  // W4-A.8: trackpad horizontal-scroll ergonomics + visible chevron
+  // controls. scroll-snap on the grid + columns means a horizontal swipe
+  // lands cleanly on a column boundary rather than mid-column. Chevron
+  // buttons fade based on scrollLeft / scrollWidth so the operator sees
+  // them only when more content exists in that direction.
+  const scrollRef = useRef<HTMLDivElement | null>(null)
+  const [scrollEdges, setScrollEdges] = useState<{ left: boolean; right: boolean }>({
+    left: false,
+    right: false,
+  })
+  useEffect(() => {
+    const el = scrollRef.current
+    if (!el) return
+    const update = () => {
+      const maxScroll = el.scrollWidth - el.clientWidth
+      setScrollEdges({
+        left: el.scrollLeft > 4,
+        right: el.scrollLeft < maxScroll - 4,
+      })
+    }
+    update()
+    el.addEventListener('scroll', update, { passive: true })
+    window.addEventListener('resize', update)
+    return () => {
+      el.removeEventListener('scroll', update)
+      window.removeEventListener('resize', update)
+    }
+  }, [])
+  const COLUMN_SCROLL_STEP = 304  // w-72 (288px) + gap-3 (12px) + a touch
+  const scrollByColumn = (direction: 1 | -1) => {
+    const el = scrollRef.current
+    if (!el) return
+    // The grid container carries the `md:scroll-smooth` class so the CSS
+    // `scroll-behaviour` property handles the easing; passing it via the
+    // JS ScrollToOptions argument is therefore redundant.
+    el.scrollBy({ left: direction * COLUMN_SCROLL_STEP })
+  }
+
   return (
     <>
       <DndContext
@@ -225,8 +263,38 @@ export function KanbanBoard({ initialBuckets, cardMeta = {} }: KanbanBoardProps)
         onDragEnd={handleDragEnd}
         onDragCancel={() => setActiveMou(null)}
       >
+        <div className="relative">
+          <button
+            type="button"
+            onClick={() => scrollByColumn(-1)}
+            aria-label="Scroll to previous columns"
+            className={
+              'absolute left-1 top-1/2 z-10 hidden size-11 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-card shadow-sm hover:bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy md:flex '
+              + (scrollEdges.left ? 'opacity-100' : 'pointer-events-none opacity-0')
+            }
+            data-testid="kanban-scroll-left"
+            aria-hidden={scrollEdges.left ? undefined : true}
+            tabIndex={scrollEdges.left ? 0 : -1}
+          >
+            <ChevronLeft aria-hidden className="size-5 text-foreground" />
+          </button>
+          <button
+            type="button"
+            onClick={() => scrollByColumn(1)}
+            aria-label="Scroll to next columns"
+            className={
+              'absolute right-1 top-1/2 z-10 hidden size-11 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-card shadow-sm hover:bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy md:flex '
+              + (scrollEdges.right ? 'opacity-100' : 'pointer-events-none opacity-0')
+            }
+            data-testid="kanban-scroll-right"
+            aria-hidden={scrollEdges.right ? undefined : true}
+            tabIndex={scrollEdges.right ? 0 : -1}
+          >
+            <ChevronRight aria-hidden className="size-5 text-foreground" />
+          </button>
         <div
-          className="flex flex-col gap-3 pb-2 md:flex-row md:overflow-x-auto"
+          ref={scrollRef}
+          className="flex flex-col gap-3 pb-2 md:flex-row md:overflow-x-auto md:scroll-smooth md:snap-x md:snap-mandatory"
           role="region"
           aria-label="MOU lifecycle kanban board"
           data-testid="kanban-board"
@@ -258,6 +326,7 @@ export function KanbanBoard({ initialBuckets, cardMeta = {} }: KanbanBoardProps)
               </DroppableStageColumn>
             )
           })}
+        </div>
         </div>
         <DragOverlay>
           {activeMou ? (
@@ -321,7 +390,11 @@ function DroppableStageColumn({ columnKey, label, variant, count, children }: Dr
   // all-schools-at-this-stage detail view.
   const headerHref = `/mous?stage=${encodeURIComponent(columnKey)}`
   return (
-    <div ref={setNodeRef} className={overClass} data-testid={`droppable-${columnKey}`}>
+    <div
+      ref={setNodeRef}
+      className={`md:snap-start ${overClass}`.trim()}
+      data-testid={`droppable-${columnKey}`}
+    >
       <StageColumn
         columnKey={columnKey}
         label={label}
