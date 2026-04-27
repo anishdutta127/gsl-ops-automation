@@ -54,6 +54,16 @@ export type AuditAction =
   | 'auto-create-from-feedback'
   // Q-A importer: legacy-include flag (Item C INCLUDED flip path)
   | 'legacy-include-import'
+  // W3-C C2: kanban skip / backward / Pre-Ops exit transitions. Forward-by-1
+  // drags do NOT emit this action (the per-stage action like 'pi-issued' is
+  // already the substantive audit record); skip / backward / Pre-Ops drags
+  // emit this entry with the operator's reason in the notes field.
+  | 'kanban-stage-transition'
+  // W3-C C1 fold-in: emitted when a school/MOU edit form saves a real
+  // startDate over the synthesised AY-start placeholder (e.g., 2025-04-01)
+  // that deriveStage uses as a fallback when upstream startDate is null.
+  // Phase 1.1 audit query: count MOUs that still carry the synthetic.
+  | 'startdate-synthesis-replaced'
 
 export interface AuditEntry {
   timestamp: string                // ISO

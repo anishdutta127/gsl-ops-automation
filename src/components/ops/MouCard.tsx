@@ -1,23 +1,25 @@
 /*
- * MouCard (Week 3 W3-C C1; kanban card).
+ * MouCard (W3-C C1 + C2; kanban card).
  *
- * Compact card surface visible inside a kanban column. Click navigates
- * to /mous/[id] for the existing detail page (preserves the back-button
- * scroll-restore that browsers handle for free). Touch target is the
- * full card; min-h is set so the tap area meets the 44px spec on
- * mobile.
+ * Click navigates to /mous/[id]. Drag (when wrapped in a kanban
+ * DndContext with PointerSensor's 8px activation distance) initiates
+ * a stage transition. Below 8px movement the click registers and
+ * navigation fires; above 8px the drag activates and click is
+ * suppressed by dnd-kit until drop. This is how dnd-kit
+ * disambiguates click-vs-drag without a separate drag handle.
  *
- * C1 data shape (refined per recon):
+ * C1 data shape:
  *   - school name (truncated to 32 chars; full text in title attribute)
- *   - MOU id (mono, small)
+ *   - MOU id (mono small)
  *   - programme + sub-type (small; sub-type only when non-null)
  *   - drift badge if mou.studentsVariancePct exceeds +/- 10%
- *   - status badge if status !== 'Active' (e.g., Pending Signature)
+ *   - status badge if status !== 'Active'
  *
- * Deferred to C2/C3:
- *   - days-on-card (needs stage-entry timestamps)
- *   - overdue badge (needs lifecycle rules from W3-D)
- *   - drag handle / drag listeners (C2)
+ * Two render paths:
+ *   - <MouCard mou={...} />          : non-draggable; pure Link.
+ *   - <DraggableMouCard mou={...} /> : C2 client variant; useDraggable
+ *                                      wraps the same content. Used
+ *                                      inside KanbanBoard.
  */
 
 import Link from 'next/link'
@@ -36,7 +38,12 @@ function truncate(value: string, max: number): string {
   return value.slice(0, max - 1).trimEnd() + '…'
 }
 
-export function MouCard({ mou }: MouCardProps) {
+interface MouCardBodyProps {
+  mou: MOU
+}
+
+/** Visual content shared between Link variant and Draggable variant. */
+export function MouCardBody({ mou }: MouCardBodyProps) {
   const fullName = mou.schoolName
   const displayName = truncate(fullName, SCHOOL_NAME_MAX)
   const programmeLabel = mou.programmeSubType
@@ -46,13 +53,7 @@ export function MouCard({ mou }: MouCardProps) {
   const showStatusBadge = mou.status !== 'Active'
 
   return (
-    <Link
-      href={`/mous/${mou.id}`}
-      className="block rounded-md border border-border bg-card p-3 text-left text-sm hover:bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy min-h-[88px]"
-      title={fullName}
-      data-testid="mou-card"
-      data-mou-id={mou.id}
-    >
+    <>
       <div className="font-medium text-foreground">{displayName}</div>
       <div className="mt-0.5 font-mono text-[11px] text-muted-foreground">{mou.id}</div>
       <div className="mt-1 text-xs text-muted-foreground">{programmeLabel}</div>
@@ -74,6 +75,20 @@ export function MouCard({ mou }: MouCardProps) {
           ) : null}
         </div>
       ) : null}
+    </>
+  )
+}
+
+export function MouCard({ mou }: MouCardProps) {
+  return (
+    <Link
+      href={`/mous/${mou.id}`}
+      className="block rounded-md border border-border bg-card p-3 text-left text-sm hover:bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy min-h-[88px]"
+      title={mou.schoolName}
+      data-testid="mou-card"
+      data-mou-id={mou.id}
+    >
+      <MouCardBody mou={mou} />
     </Link>
   )
 }

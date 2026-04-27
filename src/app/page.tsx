@@ -33,8 +33,7 @@ import { getCurrentUser } from '@/lib/auth/session'
 import { deriveStage, KANBAN_COLUMNS, type KanbanStageKey } from '@/lib/kanban/deriveStage'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
-import { MouCard } from '@/components/ops/MouCard'
-import { StageColumn } from '@/components/ops/StageColumn'
+import { KanbanBoard } from '@/components/ops/KanbanBoard'
 
 const allMous = mousJson as unknown as MOU[]
 const allDispatches = dispatchesJson as unknown as Dispatch[]
@@ -53,11 +52,20 @@ export default async function HomePage() {
     feedback: allFeedback,
   }
 
-  const byStage = new Map<KanbanStageKey, MOU[]>()
-  for (const col of KANBAN_COLUMNS) byStage.set(col.key, [])
+  const initialBuckets: Record<KanbanStageKey, MOU[]> = {
+    'pre-ops': [],
+    'mou-signed': [],
+    'actuals-confirmed': [],
+    'cross-verification': [],
+    'invoice-raised': [],
+    'payment-received': [],
+    'kit-dispatched': [],
+    'delivery-acknowledged': [],
+    'feedback-submitted': [],
+  }
   for (const mou of allMous) {
     const stage = deriveStage(mou, deps)
-    byStage.get(stage)?.push(mou)
+    initialBuckets[stage].push(mou)
   }
 
   return (
@@ -69,33 +77,7 @@ export default async function HomePage() {
           subtitle={`${allMous.length} MOUs across ${KANBAN_COLUMNS.length} stages`}
         />
         <div className="mx-auto max-w-screen-2xl px-4 py-6">
-          <div
-            className="flex gap-3 overflow-x-auto pb-2"
-            role="region"
-            aria-label="MOU lifecycle kanban board"
-            data-testid="kanban-board"
-          >
-            {KANBAN_COLUMNS.map((col) => {
-              const cards = byStage.get(col.key) ?? []
-              return (
-                <StageColumn
-                  key={col.key}
-                  columnKey={col.key}
-                  label={col.label}
-                  variant={col.variant}
-                  count={cards.length}
-                >
-                  {cards.length === 0 ? (
-                    <p className="rounded-md border border-dashed border-border bg-card/50 p-3 text-xs text-muted-foreground">
-                      Empty.
-                    </p>
-                  ) : (
-                    cards.map((mou) => <MouCard key={mou.id} mou={mou} />)
-                  )}
-                </StageColumn>
-              )
-            })}
-          </div>
+          <KanbanBoard initialBuckets={initialBuckets} />
         </div>
       </main>
     </>

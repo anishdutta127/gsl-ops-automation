@@ -9,6 +9,7 @@ vi.mock('@/lib/auth/session', () => ({
 }))
 vi.mock('next/navigation', () => ({
   redirect: vi.fn((url: string) => { throw new Error(`REDIRECT:${url}`) }),
+  useRouter: () => ({ push: vi.fn(), refresh: vi.fn(), replace: vi.fn() }),
 }))
 vi.mock('@/components/ops/TopNav', () => ({ TopNav: () => null }))
 
