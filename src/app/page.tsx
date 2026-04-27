@@ -96,6 +96,13 @@ export default async function HomePage() {
         />
         <KanbanOverviewTabs activeTab="kanban" />
         <div className="mx-auto max-w-screen-2xl space-y-4 px-4 py-6">
+          <p
+            className="text-sm text-muted-foreground"
+            data-testid="kanban-interaction-hint"
+          >
+            Click a card to open its details. Drag the grip icon at the top-right
+            of a card to move it between stages.
+          </p>
           <SchoolsNeedingDataTile count={incompleteSchoolCount} total={allSchools.length} />
           <KanbanBoard initialBuckets={initialBuckets} cardMeta={cardMeta} />
         </div>

@@ -104,4 +104,13 @@ describe('/ kanban homepage', () => {
       /data-testid="tab-kanban"[^>]*aria-current="page"|aria-current="page"[^>]*data-testid="tab-kanban"/,
     )
   })
+
+  it('renders the click-vs-drag interaction hint above the kanban (W3-F.5)', async () => {
+    getCurrentUserMock.mockResolvedValue(admin())
+    const { default: HomePage } = await import('./page')
+    const html = renderToStaticMarkup(await HomePage())
+    expect(html).toContain('data-testid="kanban-interaction-hint"')
+    expect(html).toContain('Click a card to open its details')
+    expect(html).toContain('Drag the grip icon')
+  })
 })

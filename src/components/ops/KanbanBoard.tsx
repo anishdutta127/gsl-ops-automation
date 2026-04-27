@@ -1,15 +1,21 @@
 'use client'
 
 /*
- * KanbanBoard (W3-C C2; client wrapper for drag mechanics).
+ * KanbanBoard (W3-C C2 + W3-F.5; client wrapper for drag mechanics).
  *
  * Wraps the static StageColumn / MouCard layout from C1 in a
- * @dnd-kit/core DndContext. PointerSensor (8px activation distance)
- * disambiguates click-vs-drag so MouCard's Link still navigates on
- * tap. KeyboardSensor + sortableKeyboardCoordinates provide arrow-
- * key navigation between columns and within a column. Drag overlay
- * renders a visual clone that follows the cursor; the original card
- * stays in place at opacity-40 until drop or cancel.
+ * @dnd-kit/core DndContext. W3-F.5 separates the click-vs-drag
+ * affordance spatially: each card body is a plain <a href> (cursor
+ * inherits pointer; click navigates to /mous/[id]) and a small
+ * GripVertical handle at the card's top-right carries the dnd-kit
+ * listeners (cursor-grab; drag from handle only). MouseSensor
+ * (8px activation) and TouchSensor (15px activation, finger
+ * imprecision) replace the old combined PointerSensor so each input
+ * device gets the right click-vs-drag threshold; KeyboardSensor +
+ * sortableKeyboardCoordinates still provide arrow-key navigation
+ * once a card is lifted via Space / Enter on the focused handle.
+ * Drag overlay renders a visual clone that follows the cursor; the
+ * original card stays in place at opacity-40 until drop or cancel.
  *
  * onDragEnd path:
  *   - same column         -> no-op
@@ -33,12 +39,13 @@
  */
 
 import { useMemo, useState } from 'react'
-import { X } from 'lucide-react'
+import { GripVertical, X } from 'lucide-react'
 import {
   DndContext,
   DragOverlay,
   KeyboardSensor,
-  PointerSensor,
+  MouseSensor,
+  TouchSensor,
   useDraggable,
   useDroppable,
   useSensor,
@@ -103,8 +110,17 @@ const ANNOUNCEMENTS = {
 }
 
 export function KanbanBoard({ initialBuckets, cardMeta = {} }: KanbanBoardProps) {
+  // Activation distances per pointer type:
+  //   - mouse: 8px (industry standard for click-vs-drag disambiguation;
+  //     small enough that intentional drags feel responsive, large
+  //     enough that a stray click + jitter does not register).
+  //   - touch: 15px (finger imprecision; reduces accidental drag on
+  //     phone / tablet taps even though Phase 1 mobile is read-mostly
+  //     per the W3-C C3 mobile-vertical-stack decision).
+  // KeyboardSensor activates via Space / Enter on the focused handle.
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(MouseSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(TouchSensor, { activationConstraint: { distance: 15 } }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
   )
 
@@ -327,19 +343,37 @@ interface DraggableMouCardProps {
 
 function DraggableMouCard({ mou, active, meta }: DraggableMouCardProps) {
   const { attributes, listeners, setNodeRef } = useDraggable({ id: mou.id })
+  // W3-F.5 split: setNodeRef on the wrapping div so dnd-kit measures
+  // the whole card; <a> is the click-to-navigate body (no listeners,
+  // cursor-pointer via anchor default); <button> is the drag handle
+  // and carries listeners + attributes (cursor-grab; Space / Enter
+  // lifts via KeyboardSensor). pr-12 reserves space for the handle so
+  // long school names do not collide with the icon.
   return (
-    <a
+    <div
       ref={setNodeRef}
-      href={`/mous/${mou.id}`}
-      {...listeners}
-      {...attributes}
-      className={`block rounded-md border border-border bg-card p-3 text-left text-sm hover:bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy min-h-[88px] ${active ? 'opacity-40' : ''}`}
-      title={mou.schoolName}
+      className={`relative rounded-md border border-border bg-card hover:bg-muted ${active ? 'opacity-40' : ''}`}
       data-testid="mou-card"
       data-mou-id={mou.id}
       data-overdue={meta?.overdue ? 'true' : undefined}
     >
-      <MouCardBody mou={mou} daysInStage={meta?.daysInStage} overdue={meta?.overdue} />
-    </a>
+      <a
+        href={`/mous/${mou.id}`}
+        className="block min-h-[88px] rounded-md p-3 pr-12 text-left text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
+        title={mou.schoolName}
+      >
+        <MouCardBody mou={mou} daysInStage={meta?.daysInStage} overdue={meta?.overdue} />
+      </a>
+      <button
+        type="button"
+        {...listeners}
+        {...attributes}
+        aria-label={`Drag ${mou.schoolName} card to move it between stages`}
+        className="absolute right-1 top-1 flex size-11 cursor-grab items-center justify-center rounded-md text-muted-foreground hover:text-foreground active:cursor-grabbing focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
+        data-testid="mou-card-drag-handle"
+      >
+        <GripVertical aria-hidden className="size-4" />
+      </button>
+    </div>
   )
 }

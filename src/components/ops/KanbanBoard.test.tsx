@@ -86,4 +86,52 @@ describe('KanbanBoard', () => {
     const html = renderToStaticMarkup(<KanbanBoard initialBuckets={buckets} />)
     expect(html).toContain('min-h-[88px]')
   })
+
+  // W3-F.5: drag handle on every card; click-vs-drag spatially distinct.
+  it('renders a drag handle on every card with an aria-label naming the school', () => {
+    const buckets = {
+      ...emptyBuckets,
+      'invoice-raised': [
+        mou({ id: 'M-A', schoolName: 'Alpha School' }),
+        mou({ id: 'M-B', schoolName: 'Beta School' }),
+      ],
+    }
+    const html = renderToStaticMarkup(<KanbanBoard initialBuckets={buckets} />)
+    const handleMatches = html.match(/data-testid="mou-card-drag-handle"/g) ?? []
+    expect(handleMatches.length).toBe(2)
+    expect(html).toContain('aria-label="Drag Alpha School card to move it between stages"')
+    expect(html).toContain('aria-label="Drag Beta School card to move it between stages"')
+  })
+
+  it('drag handle uses GripVertical icon and cursor-grab; active state cursor-grabbing', () => {
+    const buckets = { ...emptyBuckets, 'invoice-raised': [mou({ id: 'M-A' })] }
+    const html = renderToStaticMarkup(<KanbanBoard initialBuckets={buckets} />)
+    expect(html).toContain('cursor-grab')
+    expect(html).toContain('active:cursor-grabbing')
+    // GripVertical lucide icon renders as an inline svg with the
+    // `lucide-grip-vertical` class. Asserting the class proves the
+    // icon is the intended one, not just any SVG.
+    expect(html).toMatch(/class="[^"]*lucide-grip-vertical[^"]*"/)
+  })
+
+  it('drag handle wrapper hits the 44px touch target spec (size-11)', () => {
+    const buckets = { ...emptyBuckets, 'invoice-raised': [mou({ id: 'M-A' })] }
+    const html = renderToStaticMarkup(<KanbanBoard initialBuckets={buckets} />)
+    // Tailwind size-11 = 44px on both axes. The handle button is the
+    // pointer / keyboard target; the icon inside is smaller (size-4)
+    // for visual restraint.
+    expect(html).toContain('size-11')
+  })
+
+  it('card body anchor (not handle) is the click-to-navigate target', () => {
+    const buckets = { ...emptyBuckets, 'invoice-raised': [mou({ id: 'M-A' })] }
+    const html = renderToStaticMarkup(<KanbanBoard initialBuckets={buckets} />)
+    // The href lives on the body <a>, not on the handle <button>; a
+    // click anywhere on the card body therefore navigates.
+    expect(html).toContain('href="/mous/M-A"')
+    expect(html).toMatch(/<a[^>]+href="\/mous\/M-A"/)
+    // Handle button has no href attribute (it's a <button type="button">).
+    expect(html).toMatch(/<button[^>]+data-testid="mou-card-drag-handle"[^>]*>/)
+    expect(html).not.toMatch(/<button[^>]+href=/)
+  })
 })
