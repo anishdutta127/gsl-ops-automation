@@ -4,7 +4,7 @@ import { computeLifecycle } from '@/lib/portal/lifecycleProgress'
 import { StatusBlock } from './StatusBlock'
 
 const empty = {
-  mouSignedDate: null,
+  mouSignedDate: null, postSigningIntakeDate: null,
   actualsConfirmedDate: null,
   crossVerifiedDate: null,
   invoiceRaisedDate: null,
@@ -37,7 +37,7 @@ describe('StatusBlock', () => {
   it('completed stages render with check char and signal-ok green hex', () => {
     const stages = computeLifecycle({
       ...empty,
-      mouSignedDate: '2026-04-01',
+      mouSignedDate: '2026-04-01', postSigningIntakeDate: null,
       actualsConfirmedDate: '2026-04-12',
     })
     const html = renderToStaticMarkup(<StatusBlock stages={stages} />)
@@ -50,7 +50,7 @@ describe('StatusBlock', () => {
   it('current stage renders bullet char with signal-attention amber hex', () => {
     const stages = computeLifecycle({
       ...empty,
-      mouSignedDate: '2026-04-01',
+      mouSignedDate: '2026-04-01', postSigningIntakeDate: null,
       expectedNextActionDate: '2026-05-01',
     })
     const html = renderToStaticMarkup(<StatusBlock stages={stages} />)
@@ -70,7 +70,7 @@ describe('StatusBlock', () => {
   it('invoice detail (PI number) renders as a parenthesised suffix on the completed row', () => {
     const stages = computeLifecycle({
       ...empty,
-      mouSignedDate: '2026-04-01',
+      mouSignedDate: '2026-04-01', postSigningIntakeDate: null,
       actualsConfirmedDate: '2026-04-12',
       crossVerifiedDate: '2026-04-13',
       invoiceRaisedDate: '2026-04-14',

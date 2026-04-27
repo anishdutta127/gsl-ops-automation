@@ -39,8 +39,18 @@ describe('stageEnteredDate', () => {
     expect(stageEnteredDate(m, emptyDeps, 'mou-signed')).toBe('2026-04-15')
   })
 
-  it('actuals-confirmed: returns mou-signed completion date (signedDate)', () => {
+  it('post-signing-intake: returns mou-signed completion date (signedDate)', () => {
+    // W4-C.1: card enters post-signing-intake when MOU is signed; entered-date
+    // = signedDate (= mou-signed.completion).
     const m = mou({ id: 'M4', startDate: '2026-04-15' })
+    expect(stageEnteredDate(m, emptyDeps, 'post-signing-intake')).toBe('2026-04-15')
+  })
+
+  it('actuals-confirmed: returns post-signing-intake completion date when an IntakeRecord exists', () => {
+    // W4-C.1: previousStage of actuals-confirmed is post-signing-intake;
+    // entered-date = intakeRecord.completedAt for active cohort, signedDate
+    // for archived cohort (auto-skip via inheritance).
+    const m = mou({ id: 'M4b', cohortStatus: 'archived', startDate: '2026-04-15' })
     expect(stageEnteredDate(m, emptyDeps, 'actuals-confirmed')).toBe('2026-04-15')
   })
 

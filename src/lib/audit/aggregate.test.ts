@@ -73,6 +73,9 @@ describe('collectAuditRows', () => {
       'mou-cohort-status-changed',
       // W4-B.3 introduces delay-notes auto-save audit entries.
       'mou-delay-notes-updated',
+      // W4-C.2/W4-C.4: post-signing intake form + backfill mirror an
+      // 'intake-captured' entry on the parent MOU's auditLog.
+      'intake-captured',
     ])
     for (const row of mouRows) {
       expect(recognizedActions.has(row.entry.action)).toBe(true)

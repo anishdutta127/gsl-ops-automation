@@ -24,6 +24,7 @@ function mou(overrides: Partial<MOU> & Pick<MOU, 'id'>): MOU {
 const emptyBuckets: Record<KanbanStageKey, MOU[]> = {
   'pre-ops': [],
   'mou-signed': [],
+  'post-signing-intake': [],
   'actuals-confirmed': [],
   'cross-verification': [],
   'invoice-raised': [],
@@ -171,7 +172,7 @@ describe('KanbanBoard', () => {
     const snapMatches = html.match(
       /<div[^>]*class="[^"]*\bmd:snap-start\b[^"]*"[^>]*data-testid="droppable-[^"]+"/g,
     ) ?? []
-    expect(snapMatches.length).toBe(9)
+    expect(snapMatches.length).toBe(10)
   })
 
   it('contains no raw hex codes in the scroll-control markup (token discipline)', () => {

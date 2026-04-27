@@ -109,7 +109,7 @@ export default async function StatusPortalPage({
   const mouDispatches = dispatches.filter((d) => d.mouId === token.mouId)
 
   const lifecycle = computeLifecycle({
-    mouSignedDate: mou.startDate,
+    mouSignedDate: mou.startDate, postSigningIntakeDate: null,
     actualsConfirmedDate: mou.studentsActual !== null ? mou.startDate : null,
     crossVerifiedDate: null,
     invoiceRaisedDate: pickFirstDate(mouComms, 'pi-sent'),

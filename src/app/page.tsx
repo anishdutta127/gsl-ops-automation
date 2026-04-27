@@ -27,6 +27,7 @@ import type {
   Communication,
   Dispatch,
   Feedback,
+  IntakeRecord,
   MOU,
   Payment,
 } from '@/lib/types'
@@ -35,6 +36,7 @@ import dispatchesJson from '@/data/dispatches.json'
 import paymentsJson from '@/data/payments.json'
 import communicationsJson from '@/data/communications.json'
 import feedbackJson from '@/data/feedback.json'
+import intakeRecordsJson from '@/data/intake_records.json'
 import { getCurrentUser } from '@/lib/auth/session'
 import { deriveStage, KANBAN_COLUMNS, type KanbanStageKey } from '@/lib/kanban/deriveStage'
 import { stageEnteredDate, daysSince } from '@/lib/kanban/stageEnteredDate'
@@ -49,6 +51,7 @@ const allDispatches = dispatchesJson as unknown as Dispatch[]
 const allPayments = paymentsJson as unknown as Payment[]
 const allCommunications = communicationsJson as unknown as Communication[]
 const allFeedback = feedbackJson as unknown as Feedback[]
+const allIntakeRecords = intakeRecordsJson as unknown as IntakeRecord[]
 
 export default async function HomePage() {
   const user = await getCurrentUser()
@@ -59,6 +62,7 @@ export default async function HomePage() {
     payments: allPayments,
     communications: allCommunications,
     feedback: allFeedback,
+    intakeRecords: allIntakeRecords,
   }
 
   const activeMous = allMous.filter((m) => m.cohortStatus === 'active')
@@ -66,6 +70,7 @@ export default async function HomePage() {
   const initialBuckets: Record<KanbanStageKey, MOU[]> = {
     'pre-ops': [],
     'mou-signed': [],
+    'post-signing-intake': [],
     'actuals-confirmed': [],
     'cross-verification': [],
     'invoice-raised': [],

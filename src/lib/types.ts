@@ -89,6 +89,20 @@ export type AuditAction =
   // an already-paid Payment is allowed and generates a fresh entry
   // so operators can correct wrong reference numbers).
   | 'payment-recorded'
+  // W4-C.2: emitted when /mous/[id]/intake records an IntakeRecord
+  // against a MOU. The audit entry lands on the MOU's auditLog (so
+  // the MOU detail page surfaces it without joining IntakeRecord) and
+  // a parallel entry lands on the IntakeRecord's own auditLog.
+  // Captures studentsAtIntake / productConfirmed / gslTrainingMode
+  // variances against the MOU's baseline values in the entry's
+  // before / after fields when those values diverge.
+  | 'intake-captured'
+  // W4-C.3: emitted when the operator clicks "I sent it" on the
+  // thank-you compose-and-copy panel. Sets
+  // intakeRecord.thankYouEmailSentAt and writes a Communication
+  // row of type='welcome-note' status='sent'. The audit entry lands
+  // on both the IntakeRecord and the Communication.
+  | 'intake-thank-you-sent'
 
 export interface AuditEntry {
   timestamp: string                // ISO
@@ -639,6 +653,67 @@ export interface PaymentLog {
 }
 
 // ============================================================================
+// IntakeRecord (W4-C; post-signing intake form data)
+//
+// A new lifecycle stage `post-signing-intake` sits between `mou-signed` and
+// `actuals-confirmed`. Card enters when MOU.status flips to Active; exits
+// when an IntakeRecord with completedAt !== null exists for the MOU. The
+// 22-field form replaces the legacy Google Form (`MOU_Signing_Details_
+// 2026-2027__Responses_.xlsx`); 24 historical responses are backfilled
+// via `scripts/w4c-backfill-intake.mjs`.
+// ============================================================================
+
+export type SubmissionStatus =
+  | 'Submitted'
+  | 'Pending'
+  | 'In Transit'
+  | 'Not Applicable'
+
+/**
+ * Form-facing training-mode enum. Maps to MOU.trainerModel:
+ *   'GSL Trainer'             -> 'GSL-T'
+ *   'Train The Trainer (TTT)' -> 'TT'
+ * The intake captures the school-confirmed value verbatim; mou.trainerModel
+ * stays as the historical baseline. W4-D dispatch consumes the intake value.
+ */
+export type GslTrainingMode = 'GSL Trainer' | 'Train The Trainer (TTT)'
+
+export interface IntakeRecord {
+  id: string                       // UUID; generated on first save
+  mouId: string                    // FK to mous.json (1-to-1 in Phase 1)
+  completedAt: string              // ISO datetime; the moment intake was submitted
+  completedBy: string              // FK to users.json
+  // Account ownership (W4-C.1: Account Owner field split per recon)
+  salesOwnerId: string             // FK to sales_team.json; required
+  // Location + grades
+  location: string                 // free text e.g. 'Krishnanagar, Nadia, West Bengal'
+  grades: string                   // free text e.g. '1-8' or '4-8'
+  // Recipient details for the thank-you note (W4-C.3)
+  recipientName: string
+  recipientDesignation: string
+  recipientEmail: string           // RFC-5322; validated at submit time
+  // Student count + duration (variance vs MOU baseline surfaces a warning)
+  studentsAtIntake: number         // variance vs mou.studentsMou warns; both saved
+  durationYears: number            // 1..10
+  startDate: string                // ISO yyyy-mm-dd; defaults to AY-start; override allowed
+  endDate: string                  // ISO yyyy-mm-dd; > startDate; defaults to start + durationYears
+  // Submission tracking
+  physicalSubmissionStatus: SubmissionStatus
+  softCopySubmissionStatus: SubmissionStatus
+  // Product + training mode (variance vs MOU surfaces a warning)
+  productConfirmed: Programme      // variance vs mou.programme warns
+  gslTrainingMode: GslTrainingMode // variance vs mou.trainerModel warns
+  // School POC (W4-C.1: split from the Google Form's combined POC + phone field)
+  schoolPointOfContactName: string
+  schoolPointOfContactPhone: string  // E.164 normalised where possible; raw text preserved when not
+  // Signed copy URL (operator-pasted Drive / SharePoint / Dropbox link)
+  signedMouUrl: string
+  // Thank-you email tracking (compose-and-copy via W3-E pattern; mark-sent action)
+  thankYouEmailSentAt: string | null
+  auditLog: AuditEntry[]
+}
+
+// ============================================================================
 // Queue + counter primitives (inherited from MOU pattern)
 // ============================================================================
 
@@ -659,6 +734,7 @@ export type PendingUpdateEntity =
   | 'paymentLog'
   | 'user'
   | 'lifecycleRule'
+  | 'intakeRecord'
 
 export interface PendingUpdate {
   id: string                       // UUID

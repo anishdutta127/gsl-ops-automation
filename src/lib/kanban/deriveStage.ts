@@ -37,6 +37,7 @@ import type {
   Communication,
   Dispatch,
   Feedback,
+  IntakeRecord,
   MOU,
   Payment,
 } from '@/lib/types'
@@ -54,6 +55,10 @@ export interface KanbanColumn {
 export const KANBAN_COLUMNS: ReadonlyArray<KanbanColumn> = [
   { key: 'pre-ops', label: 'Needs triage', variant: 'muted' },
   { key: 'mou-signed', label: 'MOU signed', variant: 'lifecycle' },
+  // W4-C.1: post-signing-intake sits between mou-signed and actuals-confirmed.
+  // Card enters when MOU.status flips to Active; exits when an IntakeRecord
+  // with completedAt !== null exists for the MOU.
+  { key: 'post-signing-intake', label: 'Post-signing intake', variant: 'lifecycle' },
   { key: 'actuals-confirmed', label: 'Actuals confirmed', variant: 'lifecycle' },
   { key: 'cross-verification', label: 'Cross-verification', variant: 'lifecycle' },
   { key: 'invoice-raised', label: 'Invoice raised', variant: 'lifecycle' },
@@ -93,7 +98,10 @@ export const KANBAN_COLUMNS: ReadonlyArray<KanbanColumn> = [
  */
 export const STAGE_NEXT_STEP: Record<KanbanStageKey, string> = {
   'pre-ops': 'Triage: confirm next stage',
-  'mou-signed': 'Confirm actuals',
+  // W4-C.1 reframe: post-signing-intake is the new immediate-next stage
+  // out of mou-signed; the W4-B.1 'Confirm actuals' label retires.
+  'mou-signed': 'Capture intake details',
+  'post-signing-intake': 'Confirm actuals',
   'actuals-confirmed': 'Generate PI',
   'cross-verification': 'Auto-skipped; no card should land here',
   'invoice-raised': 'Record payment received',
@@ -108,6 +116,11 @@ export interface DeriveStageDeps {
   payments: Payment[]
   communications: Communication[]
   feedback: Feedback[]
+  /**
+   * W4-C: optional. Existing call sites that pre-date W4-C compile by
+   * defaulting to []; new call sites pass intake_records.json.
+   */
+  intakeRecords?: IntakeRecord[]
 }
 
 /**
@@ -131,6 +144,16 @@ export function deriveStage(mou: MOU, deps: DeriveStageDeps): KanbanStageKey {
   const dispatches = deps.dispatches.filter((d) => d.mouId === mou.id)
   const payments = deps.payments.filter((p) => p.mouId === mou.id)
   const feedbacks = deps.feedback.filter((f) => f.mouId === mou.id)
+  // W4-C: filter intake records for this MOU (1-to-1 in Phase 1, but the
+  // .find pattern is robust if multiple ever land via the importer queue).
+  const intakeRecords = (deps.intakeRecords ?? []).filter((r) => r.mouId === mou.id)
+  const intakeRecordedAt = intakeRecords.find((r) => r.completedAt !== null)?.completedAt ?? null
+  // Archived cohort MOUs auto-skip the post-signing-intake gate via the
+  // same inheritance pattern as cross-verification: their lifecycle
+  // visualisation is historical and predates W4-C, so the intake gate
+  // would falsely claim they are blocked at intake when they have already
+  // moved well past it. Active cohort MOUs gate on the real
+  // intakeRecord.completedAt.
 
   const piPayment = payments.find((p) => p.piNumber !== null)
   const receivedPayment = payments.find((p) => p.status === 'Received')
@@ -140,9 +163,16 @@ export function deriveStage(mou: MOU, deps: DeriveStageDeps): KanbanStageKey {
 
   const signedDate = mou.startDate ?? academicYearStart(mou.academicYear)
   const actualsDate = mou.studentsActual !== null ? signedDate : null
+  const intakeCompletedAt = mou.cohortStatus === 'archived'
+    ? signedDate
+    : intakeRecordedAt
 
   const stages: Array<[StageKey, string | null]> = [
     ['mou-signed', signedDate],
+    // W4-C.1: post-signing-intake's enteredDate IS the intake.completedAt
+    // timestamp; null until intake captured. Card sits at this stage when
+    // MOU is signed but intake form has not yet been submitted.
+    ['post-signing-intake', intakeCompletedAt],
     ['actuals-confirmed', actualsDate],
     ['cross-verification', actualsDate], // auto-skip via inheritance
     ['invoice-raised',

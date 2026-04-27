@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { computeLifecycle, type LifecycleInput } from './lifecycleProgress'
 
 const empty: LifecycleInput = {
-  mouSignedDate: null,
+  mouSignedDate: null, postSigningIntakeDate: null,
   actualsConfirmedDate: null,
   crossVerifiedDate: null,
   invoiceRaisedDate: null,
@@ -15,10 +15,11 @@ const empty: LifecycleInput = {
 }
 
 describe('computeLifecycle', () => {
-  it('produces 8 stages in fixed order', () => {
+  it('produces 9 stages in fixed order (W4-C.1 added post-signing-intake)', () => {
     const stages = computeLifecycle(empty)
     expect(stages.map((s) => s.key)).toEqual([
       'mou-signed',
+      'post-signing-intake',
       'actuals-confirmed',
       'cross-verification',
       'invoice-raised',
@@ -41,32 +42,37 @@ describe('computeLifecycle', () => {
     const stages = computeLifecycle({
       ...empty,
       mouSignedDate: '2026-04-01',
+      postSigningIntakeDate: '2026-04-08',
       actualsConfirmedDate: '2026-04-12',
     })
     expect(stages[0]?.status).toBe('completed')
     expect(stages[0]?.date).toBe('2026-04-01')
     expect(stages[1]?.status).toBe('completed')
-    expect(stages[1]?.date).toBe('2026-04-12')
-    expect(stages[2]?.status).toBe('current')
+    expect(stages[1]?.date).toBe('2026-04-08')
+    expect(stages[2]?.status).toBe('completed')
+    expect(stages[2]?.date).toBe('2026-04-12')
+    expect(stages[3]?.status).toBe('current')
   })
 
   it('first not-completed stage becomes current; later stages future', () => {
     const stages = computeLifecycle({
       ...empty,
       mouSignedDate: '2026-04-01',
+      postSigningIntakeDate: '2026-04-08',
       actualsConfirmedDate: '2026-04-12',
       crossVerifiedDate: '2026-04-13',
     })
-    expect(stages[3]?.status).toBe('current')
-    expect(stages[3]?.key).toBe('invoice-raised')
-    expect(stages[4]?.status).toBe('future')
-    expect(stages[7]?.status).toBe('future')
+    // Index 4 is invoice-raised post-W4-C.1 (was index 3 pre-W4-C).
+    expect(stages[4]?.status).toBe('current')
+    expect(stages[4]?.key).toBe('invoice-raised')
+    expect(stages[5]?.status).toBe('future')
+    expect(stages[8]?.status).toBe('future')
   })
 
   it('expectedNextActionDate attaches to the current stage', () => {
     const stages = computeLifecycle({
       ...empty,
-      mouSignedDate: '2026-04-01',
+      mouSignedDate: '2026-04-01', postSigningIntakeDate: null,
       expectedNextActionDate: '2026-05-01',
     })
     const current = stages.find((s) => s.status === 'current')
@@ -76,7 +82,7 @@ describe('computeLifecycle', () => {
   it('invoice-raised stage carries invoice number as detail when set', () => {
     const stages = computeLifecycle({
       ...empty,
-      mouSignedDate: '2026-04-01',
+      mouSignedDate: '2026-04-01', postSigningIntakeDate: null,
       actualsConfirmedDate: '2026-04-12',
       crossVerifiedDate: '2026-04-13',
       invoiceRaisedDate: '2026-04-14',
@@ -91,6 +97,7 @@ describe('computeLifecycle', () => {
   it('all-completed input: every stage is completed; no current', () => {
     const stages = computeLifecycle({
       mouSignedDate: '2026-04-01',
+      postSigningIntakeDate: '2026-04-08',
       actualsConfirmedDate: '2026-04-12',
       crossVerifiedDate: '2026-04-13',
       invoiceRaisedDate: '2026-04-14',
@@ -107,7 +114,7 @@ describe('computeLifecycle', () => {
   it('future stages have null dates', () => {
     const stages = computeLifecycle({
       ...empty,
-      mouSignedDate: '2026-04-01',
+      mouSignedDate: '2026-04-01', postSigningIntakeDate: null,
     })
     const future = stages.filter((s) => s.status === 'future')
     for (const s of future) {

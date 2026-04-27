@@ -87,7 +87,9 @@ describe('MouCard', () => {
   it('renders the next-step label for each non-skipped stage', () => {
     const cases: Array<[string, string]> = [
       ['pre-ops', 'Triage: confirm next stage'],
-      ['mou-signed', 'Confirm actuals'],
+      // W4-C.1 reframe: mou-signed's next-step is now Capture intake details.
+      ['mou-signed', 'Capture intake details'],
+      ['post-signing-intake', 'Confirm actuals'],
       ['actuals-confirmed', 'Generate PI'],
       ['invoice-raised', 'Record payment received'],
       ['payment-received', 'Raise dispatch'],

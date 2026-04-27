@@ -1,11 +1,20 @@
 [
   {
     "stageFromKey": "mou-signed",
+    "stageToKey": "post-signing-intake",
+    "defaultDays": 14,
+    "customNotes": "W4-C.1: stageToKey changed from actuals-confirmed to the new post-signing-intake stage. Default 14-day budget unchanged.",
+    "updatedAt": "2026-04-27T22:00:00Z",
+    "updatedBy": "system-w4-c-1",
+    "auditLog": []
+  },
+  {
+    "stageFromKey": "post-signing-intake",
     "stageToKey": "actuals-confirmed",
     "defaultDays": 14,
-    "customNotes": "",
-    "updatedAt": "2026-04-27T00:00:00Z",
-    "updatedBy": "system",
+    "customNotes": "W4-C.1: 2-week SLA between MOU signing and intake form completion. Card sits at post-signing-intake until /mous/[id]/intake is submitted.",
+    "updatedAt": "2026-04-27T22:00:00Z",
+    "updatedBy": "system-w4-c-1",
     "auditLog": []
   },
   {

@@ -4,7 +4,7 @@ import { computeLifecycle } from '@/lib/portal/lifecycleProgress'
 import { LifecycleProgress } from './LifecycleProgress'
 
 const empty = {
-  mouSignedDate: null,
+  mouSignedDate: null, postSigningIntakeDate: null,
   actualsConfirmedDate: null,
   crossVerifiedDate: null,
   invoiceRaisedDate: null,
@@ -39,7 +39,7 @@ describe('LifecycleProgress', () => {
   it('completed stages render with brand-teal circle and date', () => {
     const stages = computeLifecycle({
       ...empty,
-      mouSignedDate: '2026-04-01',
+      mouSignedDate: '2026-04-01', postSigningIntakeDate: null,
       actualsConfirmedDate: '2026-04-12',
     })
     const html = renderToStaticMarkup(<LifecycleProgress stages={stages} />)
@@ -51,7 +51,7 @@ describe('LifecycleProgress', () => {
   it('current stage renders amber circle, "In progress" label, and amber-700 text', () => {
     const stages = computeLifecycle({
       ...empty,
-      mouSignedDate: '2026-04-01',
+      mouSignedDate: '2026-04-01', postSigningIntakeDate: null,
       expectedNextActionDate: '2026-05-01',
     })
     const html = renderToStaticMarkup(<LifecycleProgress stages={stages} />)
@@ -70,7 +70,7 @@ describe('LifecycleProgress', () => {
   it('uses CSS variables, no raw hex', () => {
     const stages = computeLifecycle({
       ...empty,
-      mouSignedDate: '2026-04-01',
+      mouSignedDate: '2026-04-01', postSigningIntakeDate: null,
       expectedNextActionDate: '2026-05-01',
     })
     const html = renderToStaticMarkup(<LifecycleProgress stages={stages} />)
@@ -81,6 +81,8 @@ describe('LifecycleProgress', () => {
     const stages = computeLifecycle({ ...empty, mouSignedDate: '2026-04-01' })
     const html = renderToStaticMarkup(<LifecycleProgress stages={stages} />)
     expect(html).toMatch(/aria-label="MOU signed: Completed[^"]*"/)
-    expect(html).toMatch(/aria-label="Actuals confirmed: In progress[^"]*"/)
+    // W4-C.1: post-signing-intake is now the in-progress stage when only
+    // mouSignedDate is set; actuals-confirmed shifts to "future".
+    expect(html).toMatch(/aria-label="Post-signing intake: In progress[^"]*"/)
   })
 })

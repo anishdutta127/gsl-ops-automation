@@ -75,10 +75,11 @@ describe('deriveStage', () => {
     expect(deriveStage(m, emptyDeps)).toBe('pre-ops')
   })
 
-  it('Active MOU with null startDate uses AY-start synthetic; lands at actuals-confirmed when studentsActual is null', () => {
-    // mou-signed completes via AY-fallback; studentsActual=null halts at actuals-confirmed.
+  it('Active MOU with null startDate uses AY-start synthetic; lands at post-signing-intake when no IntakeRecord exists', () => {
+    // W4-C.1: mou-signed completes via AY-fallback; without an IntakeRecord
+    // the card sits at the new post-signing-intake stage (was actuals-confirmed pre-W4-C).
     const m = mou({ id: 'M3', startDate: null, studentsActual: null })
-    expect(deriveStage(m, emptyDeps)).toBe('actuals-confirmed')
+    expect(deriveStage(m, emptyDeps)).toBe('post-signing-intake')
   })
 
   it('Active MOU with malformed academicYear AND null startDate lands at mou-signed', () => {
@@ -86,13 +87,40 @@ describe('deriveStage', () => {
     expect(deriveStage(m, emptyDeps)).toBe('mou-signed')
   })
 
-  it('Active MOU with studentsActual!=null skips actuals-confirmed and cross-verification (auto-skip)', () => {
+  it('Active MOU with IntakeRecord but null studentsActual lands at actuals-confirmed (W4-C.1)', () => {
+    const m = mou({ id: 'M5b', studentsActual: null })
+    const intakeRecord = {
+      id: 'IR-1', mouId: 'M5b', completedAt: '2026-04-15T10:00:00Z',
+      completedBy: 'misba.m', salesOwnerId: 'sp-vikram',
+      location: 'Test', grades: '1-8', recipientName: 'P', recipientDesignation: 'Principal',
+      recipientEmail: 'p@example.test', studentsAtIntake: 200, durationYears: 2,
+      startDate: '2026-04-01', endDate: '2028-03-31',
+      physicalSubmissionStatus: 'Pending' as const, softCopySubmissionStatus: 'Pending' as const,
+      productConfirmed: 'STEAM' as const, gslTrainingMode: 'GSL Trainer' as const,
+      schoolPointOfContactName: 'P', schoolPointOfContactPhone: '+919999999999',
+      signedMouUrl: 'https://drive.google.com/test', thankYouEmailSentAt: null, auditLog: [],
+    }
+    expect(deriveStage(m, { ...emptyDeps, intakeRecords: [intakeRecord] })).toBe('actuals-confirmed')
+  })
+
+  it('Active MOU with studentsActual!=null but no IntakeRecord halts at post-signing-intake (W4-C.1 gate)', () => {
+    // W4-C.1: even with studentsActual set, the intake gate is mandatory
+    // for active-cohort MOUs. Card sits at post-signing-intake until the
+    // intake form is submitted.
     const m = mou({ id: 'M5', studentsActual: 200 })
+    expect(deriveStage(m, emptyDeps)).toBe('post-signing-intake')
+  })
+
+  it('Archived MOU with studentsActual!=null auto-skips post-signing-intake (W4-C.1 inheritance)', () => {
+    // Archived cohort MOUs predate W4-C; the intake gate inherits from
+    // signedDate so the lifecycle visualisation continues to reflect the
+    // post-actuals state.
+    const m = mou({ id: 'M5a', cohortStatus: 'archived', studentsActual: 200 })
     expect(deriveStage(m, emptyDeps)).toBe('invoice-raised')
   })
 
   it('payment with piNumber advances past invoice-raised', () => {
-    const m = mou({ id: 'M6', studentsActual: 200 })
+    const m = mou({ id: 'M6', cohortStatus: 'archived', studentsActual: 200 })
     const payment: Payment = {
       id: 'P1', mouId: 'M6', schoolName: 'X', programme: 'STEAM',
       instalmentLabel: '1', instalmentSeq: 1, totalInstalments: 1, description: '',
@@ -107,7 +135,7 @@ describe('deriveStage', () => {
   })
 
   it('received payment advances past payment-received', () => {
-    const m = mou({ id: 'M7', studentsActual: 200 })
+    const m = mou({ id: 'M7', cohortStatus: 'archived', studentsActual: 200 })
     const piPayment: Payment = {
       id: 'P1', mouId: 'M7', schoolName: 'X', programme: 'STEAM',
       instalmentLabel: '1', instalmentSeq: 1, totalInstalments: 1, description: '',
@@ -123,7 +151,7 @@ describe('deriveStage', () => {
   })
 
   it('dispatched but not delivered lands at delivery-acknowledged', () => {
-    const m = mou({ id: 'M8', studentsActual: 200 })
+    const m = mou({ id: 'M8', cohortStatus: 'archived', studentsActual: 200 })
     const piPayment: Payment = {
       id: 'P1', mouId: 'M8', schoolName: 'X', programme: 'STEAM',
       instalmentLabel: '1', instalmentSeq: 1, totalInstalments: 1, description: '',
@@ -145,7 +173,7 @@ describe('deriveStage', () => {
   })
 
   it('feedback submitted is the terminal stage', () => {
-    const m = mou({ id: 'M9', studentsActual: 200 })
+    const m = mou({ id: 'M9', cohortStatus: 'archived', studentsActual: 200 })
     const recvPayment: Payment = {
       id: 'P1', mouId: 'M9', schoolName: 'X', programme: 'STEAM',
       instalmentLabel: '1', instalmentSeq: 1, totalInstalments: 1, description: '',
@@ -172,7 +200,7 @@ describe('deriveStage', () => {
   })
 
   it('records linked to a different mouId are ignored', () => {
-    const m = mou({ id: 'M10', studentsActual: 200 })
+    const m = mou({ id: 'M10', cohortStatus: 'archived', studentsActual: 200 })
     const otherPayment: Payment = {
       id: 'P-OTHER', mouId: 'OTHER-MOU', schoolName: 'X', programme: 'STEAM',
       instalmentLabel: '1', instalmentSeq: 1, totalInstalments: 1, description: '',
@@ -216,7 +244,14 @@ describe('KANBAN_COLUMNS', () => {
     expect(muted).toHaveLength(1)
   })
 
-  it('exactly 9 columns: Pre-Ops + 8 lifecycle stages', () => {
-    expect(KANBAN_COLUMNS).toHaveLength(9)
+  it('exactly 10 columns: Pre-Ops + 9 lifecycle stages (W4-C.1 added post-signing-intake)', () => {
+    expect(KANBAN_COLUMNS).toHaveLength(10)
+    expect(KANBAN_COLUMNS.find((c) => c.key === 'post-signing-intake')).toBeDefined()
+  })
+
+  it('post-signing-intake sits between mou-signed and actuals-confirmed', () => {
+    const idx = KANBAN_COLUMNS.findIndex((c) => c.key === 'post-signing-intake')
+    expect(KANBAN_COLUMNS[idx - 1]?.key).toBe('mou-signed')
+    expect(KANBAN_COLUMNS[idx + 1]?.key).toBe('actuals-confirmed')
   })
 })

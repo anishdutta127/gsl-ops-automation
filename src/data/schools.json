@@ -703,7 +703,7 @@
   },
   {
     "id": "SCH-DON_BONSCO_KRISHNANA",
-    "name": "Don Bonsco Krishnanagar",
+    "name": "Don Bosco Krishnanagar",
     "legalEntity": null,
     "city": "Krishnanagar",
     "state": "West Bengal",
@@ -2627,7 +2627,7 @@
   },
   {
     "id": "SCH-ST_JOHN_S_SCHOOL",
-    "name": "St. John’s School",
+    "name": "St. John\u2019s School",
     "legalEntity": null,
     "city": "Kolkata",
     "state": "West Bengal",
@@ -2757,7 +2757,7 @@
   },
   {
     "id": "SCH-ST_PAUL_S_MISSION_SC",
-    "name": "St. Paul’s Mission School",
+    "name": "St. Paul\u2019s Mission School",
     "legalEntity": null,
     "city": "Kolkata",
     "state": "West Bengal",

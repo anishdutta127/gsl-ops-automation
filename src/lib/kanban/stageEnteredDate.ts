@@ -71,6 +71,14 @@ export function stageEnteredDate(
   // date (per the first-null-wins contract).
   const payments = deps.payments.filter((p) => p.mouId === mou.id)
   const dispatches = deps.dispatches.filter((d) => d.mouId === mou.id)
+  const intakeRecords = (deps.intakeRecords ?? []).filter((r) => r.mouId === mou.id)
+  const intakeRecordedAt = intakeRecords.find((r) => r.completedAt !== null)?.completedAt ?? null
+  // W4-C.1 inheritance: archived-cohort MOUs predate the intake gate; their
+  // post-signing-intake completion date inherits from signedDate so the
+  // historical lifecycle visualisation continues to flow past actuals.
+  const intakeCompletedAt = mou.cohortStatus === 'archived'
+    ? signedDate
+    : intakeRecordedAt
 
   const piPayment = payments.find((p) => p.piNumber !== null)
   const receivedPayment = payments.find((p) => p.status === 'Received')
@@ -83,6 +91,7 @@ export function stageEnteredDate(
   const stageCompletion: Record<KanbanStageKey, string | null> = {
     'pre-ops': null,
     'mou-signed': signedDate,
+    'post-signing-intake': intakeCompletedAt,  // W4-C.1
     'actuals-confirmed': actualsDate,
     'cross-verification': actualsDate,
     'invoice-raised': piPayment
@@ -103,7 +112,8 @@ export function stageEnteredDate(
   const previousStage: Record<KanbanStageKey, KanbanStageKey | null> = {
     'pre-ops': null,
     'mou-signed': null,
-    'actuals-confirmed': 'mou-signed',
+    'post-signing-intake': 'mou-signed',  // W4-C.1
+    'actuals-confirmed': 'post-signing-intake',
     'cross-verification': 'actuals-confirmed',
     'invoice-raised': 'cross-verification',
     'payment-received': 'invoice-raised',

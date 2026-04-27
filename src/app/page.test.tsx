@@ -88,9 +88,10 @@ describe('/ kanban homepage', () => {
     getCurrentUserMock.mockResolvedValue(admin())
     const { default: HomePage } = await import('./page')
     const html = renderToStaticMarkup(await HomePage())
-    // Title shows "<n> active MOUs across 9 stages" post-W4-A.3; the count
-    // is the active-cohort filter result (51 in the W4-A.2 fixture).
-    expect(html).toMatch(/\d+ active MOUs across 9 stages/)
+    // Title shows "<n> active MOUs across 10 stages" post-W4-C.1
+    // (post-signing-intake added at column position 3); the count is the
+    // active-cohort filter result (51 in the W4-A.2 fixture).
+    expect(html).toMatch(/\d+ active MOUs across 10 stages/)
   })
 
   it('renders the kanban / overview tab strip with Kanban active (W3-F)', async () => {
@@ -137,16 +138,16 @@ describe('/ kanban homepage', () => {
     }
   })
 
-  it('cards render the per-stage next-step label (W4-B.1)', async () => {
+  it('cards render the per-stage next-step label (W4-B.1 + W4-C.1)', async () => {
     getCurrentUserMock.mockResolvedValue(admin())
     const { default: HomePage } = await import('./page')
     const html = renderToStaticMarkup(await HomePage())
-    // Sample assertion: the active fixture has MOUs in invoice-raised
-    // (the largest active column post-W4-A.2), so at least one card
-    // should carry the corresponding label.
-    expect(html).toContain('Next: Record payment received')
-    // And actuals-confirmed has cards too.
-    expect(html).toContain('Next: Generate PI')
+    // W4-C.1: pre-backfill, the active 51 MOUs without IntakeRecords sit
+    // at post-signing-intake. Their next-step label is "Confirm actuals".
+    // Post-backfill (W4-C.4) ~17 cards will gain intake records and
+    // advance; this assertion stays valid because plenty of active MOUs
+    // remain in post-signing-intake.
+    expect(html).toContain('Next: Confirm actuals')
     // Defensive: the cross-verification placeholder text never reaches
     // the rendered HTML.
     expect(html).not.toContain('Auto-skipped')

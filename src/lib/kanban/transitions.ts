@@ -71,6 +71,7 @@ const STAGE_INDEX: Record<KanbanStageKey, number> = (() => {
 const STAGE_FORM_PATH: Record<KanbanStageKey, string | null> = {
   'pre-ops': null,
   'mou-signed': null,                         // no form; status flip happens on /mous/[id]
+  'post-signing-intake': '/mous/{id}/intake', // W4-C.2
   'actuals-confirmed': '/mous/{id}/actuals',
   'cross-verification': null,                  // auto-skipped; no form
   'invoice-raised': '/mous/{id}/pi',

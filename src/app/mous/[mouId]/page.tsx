@@ -16,6 +16,7 @@ import { notFound } from 'next/navigation'
 import type {
   Dispatch,
   Feedback,
+  IntakeRecord,
   MOU,
   Payment,
   School,
@@ -26,6 +27,7 @@ import schoolsJson from '@/data/schools.json'
 import dispatchesJson from '@/data/dispatches.json'
 import paymentsJson from '@/data/payments.json'
 import feedbackJson from '@/data/feedback.json'
+import intakeRecordsJson from '@/data/intake_records.json'
 import { getCurrentUser } from '@/lib/auth/session'
 import { computeLifecycle } from '@/lib/portal/lifecycleProgress'
 import { formatRs, formatDate } from '@/lib/format'
@@ -43,6 +45,7 @@ const allDispatches = dispatchesJson as unknown as Dispatch[]
 const allPayments = paymentsJson as unknown as Payment[]
 const allFeedback = feedbackJson as unknown as Feedback[]
 const allUsers = usersJson as unknown as User[]
+const allIntakeRecords = intakeRecordsJson as unknown as IntakeRecord[]
 
 function lastDelayNotesUpdate(mou: MOU): string | null {
   const usersById = new Map(allUsers.map((u) => [u.id, u.name]))
@@ -81,9 +84,11 @@ export default async function MouDetailPage({ params }: PageProps) {
   const i1 = installments.find((p) => p.instalmentSeq === 1)
   const i1Dispatch = installmentDispatches.find((d) => d.installmentSeq === 1)
   const i1Feedback = mouFeedback.find((f) => f.installmentSeq === 1)
+  const intakeRecord = allIntakeRecords.find((r) => r.mouId === mou.id)
 
   const lifecycle = computeLifecycle({
     mouSignedDate: mou.startDate,
+    postSigningIntakeDate: intakeRecord?.completedAt ?? null,
     actualsConfirmedDate: mou.studentsActual !== null ? mou.startDate : null,
     crossVerifiedDate: mou.studentsActual !== null && mou.studentsVariance !== null ? mou.startDate : null,
     invoiceRaisedDate: i1?.piSentDate ?? null,

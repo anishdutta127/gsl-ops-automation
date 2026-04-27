@@ -23,6 +23,7 @@
 
 export type StageKey =
   | 'mou-signed'
+  | 'post-signing-intake'
   | 'actuals-confirmed'
   | 'cross-verification'
   | 'invoice-raised'
@@ -43,6 +44,8 @@ export interface LifecycleStage {
 
 export interface LifecycleInput {
   mouSignedDate: string | null
+  /** W4-C: timestamp on the matching IntakeRecord.completedAt; null until intake captured. */
+  postSigningIntakeDate: string | null
   actualsConfirmedDate: string | null
   crossVerifiedDate: string | null
   invoiceRaisedDate: string | null
@@ -56,6 +59,7 @@ export interface LifecycleInput {
 
 const STAGE_LABELS: Record<StageKey, string> = {
   'mou-signed': 'MOU signed',
+  'post-signing-intake': 'Post-signing intake',
   'actuals-confirmed': 'Actuals confirmed',
   'cross-verification': 'Cross-verification',
   'invoice-raised': 'Invoice raised',
@@ -68,6 +72,7 @@ const STAGE_LABELS: Record<StageKey, string> = {
 export function computeLifecycle(input: LifecycleInput): LifecycleStage[] {
   const stageDates: Array<[StageKey, string | null, string | null]> = [
     ['mou-signed', input.mouSignedDate, null],
+    ['post-signing-intake', input.postSigningIntakeDate, null],
     ['actuals-confirmed', input.actualsConfirmedDate, null],
     ['cross-verification', input.crossVerifiedDate, null],
     ['invoice-raised', input.invoiceRaisedDate, input.invoiceNumber],
