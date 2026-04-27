@@ -69,6 +69,13 @@ export type AuditAction =
   // optional changeNotes field on the audit entry. Retroactively shifts
   // which MOUs render as overdue on next render.
   | 'lifecycle-rule-edited'
+  // W4-A.2: emitted when a MOU's cohortStatus flips between 'active' and
+  // 'archived' via /admin/mou-status, /mous/archive (reactivate), or the
+  // initial W4-A.2 fixture migration. Captures before / after cohortStatus
+  // and optional notes. The kanban + /mous default views filter on
+  // cohortStatus === 'active'; archived MOUs surface only on /mous/archive
+  // and the bulk admin page.
+  | 'mou-cohort-status-changed'
 
 export interface AuditEntry {
   timestamp: string                // ISO
@@ -186,6 +193,30 @@ export type MouStatus =
   | 'Expired'
   | 'Renewed'
 
+/**
+ * Cohort status (W4-A.2) is orthogonal to MouStatus.
+ *
+ *   - MouStatus is the lifecycle state (Draft / Pending Signature / Active /
+ *     Completed / Expired / Renewed).
+ *   - cohortStatus is whether the MOU is in the operationally-current cohort
+ *     ('active') or the historical archive of past-academic-year cohorts
+ *     ('archived').
+ *
+ * The kanban (/) and /mous default list filter cohortStatus === 'active'.
+ * Archived MOUs surface only on /mous/archive (read + reactivate) and
+ * /admin/mou-status (bulk per-MOU flip; Admin server-side gated). MOU detail
+ * pages, /escalations, and /admin/audit do NOT filter by cohort because
+ * those surfaces serve historical / cross-cohort use cases.
+ *
+ * A 'Pending Signature' MOU can be cohortStatus 'active' (in the current
+ * pursued list) or 'archived' (lapsed pursuit from a prior AY); the two
+ * dimensions are independent.
+ *
+ * W4-F (sales pipeline pre-MOU) may extend this enum to add 'pre-launch'
+ * or similar; the type is left open for additional values.
+ */
+export type CohortStatus = 'active' | 'archived'
+
 export type TrainerModel = 'Bootcamp' | 'GSL-T' | 'TT' | 'Other'
 
 export interface MOU {
@@ -197,6 +228,7 @@ export interface MOU {
   schoolScope: SchoolScope         // 'SINGLE' default; 'GROUP' for chain MOUs (Q-I)
   schoolGroupId: string | null     // FK to SchoolGroup when schoolScope is 'GROUP'
   status: MouStatus
+  cohortStatus: CohortStatus       // W4-A.2: orthogonal to status; see CohortStatus docs
   academicYear: string             // '2026-27'
   startDate: string | null         // ISO YYYY-MM-DD
   endDate: string | null

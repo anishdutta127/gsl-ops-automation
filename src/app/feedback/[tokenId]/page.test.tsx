@@ -28,7 +28,7 @@ vi.mock('@/data/mous.json', () => ({
     {
       id: 'MOU-X', schoolId: 'SCH-X', schoolName: 'Greenfield Academy',
       programme: 'STEAM', programmeSubType: null, schoolScope: 'SINGLE',
-      schoolGroupId: null, status: 'Active', academicYear: '2026-27',
+      schoolGroupId: null, status: 'Active', cohortStatus: 'active', academicYear: '2026-27',
       startDate: '2026-04-01', endDate: '2027-03-31',
       studentsMou: 200, studentsActual: null, studentsVariance: null,
       studentsVariancePct: null, spWithoutTax: 4000, spWithTax: 5000,

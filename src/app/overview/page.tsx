@@ -42,6 +42,13 @@ const escalations = escalationsJson as unknown as Escalation[]
 
 export default async function OverviewPage() {
   const user = await getCurrentUser()
+  // W4-A.3: health tiles + exception feed + trigger tiles operate on the
+  // operationally-current cohort. Archived MOUs (prior-AY) are not in the
+  // pursuit anymore, so their counts would distort the at-a-glance read.
+  // Open escalations, however, are NOT filtered here; see the escalation
+  // list section, which keeps every open escalation regardless of cohort
+  // (an unresolved 2025-26 escalation still needs closing).
+  const activeMous = mous.filter((m) => m.cohortStatus === 'active')
   return (
     <>
       <TopNav currentPath="/overview" />
@@ -50,7 +57,8 @@ export default async function OverviewPage() {
         <KanbanOverviewTabs activeTab="overview" />
         <OverviewContent
           user={user}
-          mous={mous}
+          mous={activeMous}
+          allMous={mous}
           schools={schools}
           dispatches={dispatches}
           payments={payments}

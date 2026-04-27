@@ -31,7 +31,7 @@ vi.mock('@/components/ops/TopNav', () => ({ TopNav: () => null }))
 const fixtureMou: MOU = {
   id: 'MOU-X', schoolId: 'SCH-X', schoolName: 'X', programme: 'STEAM',
   programmeSubType: null, schoolScope: 'SINGLE', schoolGroupId: null,
-  status: 'Active', academicYear: '2026-27',
+  status: 'Active', cohortStatus: 'active', academicYear: '2026-27',
   startDate: '2026-04-01', endDate: '2027-03-31',
   studentsMou: 100, studentsActual: null, studentsVariance: null,
   studentsVariancePct: null, spWithoutTax: 4000, spWithTax: 5000,

@@ -12,7 +12,7 @@ function mou(overrides: Partial<MOU> & Pick<MOU, 'id'>): MOU {
   return {
     schoolId: 'SCH-T', schoolName: 'Test', programme: 'STEAM' as Programme,
     programmeSubType: null, schoolScope: 'SINGLE', schoolGroupId: null,
-    status: 'Active', academicYear: '2026-27', startDate: '2026-04-01', endDate: '2027-03-31',
+    status: 'Active', cohortStatus: 'active', academicYear: '2026-27', startDate: '2026-04-01', endDate: '2027-03-31',
     studentsMou: 100, studentsActual: null, studentsVariance: null, studentsVariancePct: null,
     spWithoutTax: 1000, spWithTax: 1180, contractValue: 100000, received: 0, tds: 0,
     balance: 100000, receivedPct: 0, paymentSchedule: '', trainerModel: null, salesPersonId: null,
@@ -133,5 +133,50 @@ describe('KanbanBoard', () => {
     // Handle button has no href attribute (it's a <button type="button">).
     expect(html).toMatch(/<button[^>]+data-testid="mou-card-drag-handle"[^>]*>/)
     expect(html).not.toMatch(/<button[^>]+href=/)
+  })
+
+  // W4-A.8: scroll-snap + chevron buttons on the kanban grid.
+  it('renders left + right scroll-control chevron buttons (md+ only)', () => {
+    const html = renderToStaticMarkup(<KanbanBoard initialBuckets={emptyBuckets} />)
+    expect(html).toContain('data-testid="kanban-scroll-left"')
+    expect(html).toContain('data-testid="kanban-scroll-right"')
+    expect(html).toContain('aria-label="Scroll to previous columns"')
+    expect(html).toContain('aria-label="Scroll to next columns"')
+    // Hidden on mobile via `hidden md:flex` to match the vertical-stack layout.
+    // Match within the same <button> tag (class= comes before data-testid in
+    // the rendered output; we anchor on the button start tag to avoid
+    // crossing element boundaries).
+    expect(html).toMatch(
+      /<button[^>]*class="[^"]*\bhidden\b[^"]*\bmd:flex\b[^"]*"[^>]*data-testid="kanban-scroll-left"/,
+    )
+  })
+
+  it('scroll buttons hit the 44px touch-target spec (size-11)', () => {
+    const html = renderToStaticMarkup(<KanbanBoard initialBuckets={emptyBuckets} />)
+    // size-11 = 44px on both axes; appears on both chevrons. Match either
+    // attribute order on the button start tag.
+    const sizeMatches = html.match(
+      /<button[^>]*class="[^"]*\bsize-11\b[^"]*"[^>]*data-testid="kanban-scroll-(left|right)"/g,
+    ) ?? []
+    expect(sizeMatches.length).toBe(2)
+  })
+
+  it('kanban grid uses scroll-snap classes; columns carry md:snap-start', () => {
+    const buckets = { ...emptyBuckets, 'invoice-raised': [mou({ id: 'M-A' })] }
+    const html = renderToStaticMarkup(<KanbanBoard initialBuckets={buckets} />)
+    expect(html).toContain('md:snap-x')
+    expect(html).toContain('md:snap-mandatory')
+    // Every column wrapper carries md:snap-start. Class precedes data-testid
+    // in the rendered output.
+    const snapMatches = html.match(
+      /<div[^>]*class="[^"]*\bmd:snap-start\b[^"]*"[^>]*data-testid="droppable-[^"]+"/g,
+    ) ?? []
+    expect(snapMatches.length).toBe(9)
+  })
+
+  it('contains no raw hex codes in the scroll-control markup (token discipline)', () => {
+    const buckets = { ...emptyBuckets, 'invoice-raised': [mou({ id: 'M-A' })] }
+    const html = renderToStaticMarkup(<KanbanBoard initialBuckets={buckets} />)
+    expect(html).not.toMatch(/#[0-9a-fA-F]{3,6}\b/)
   })
 })

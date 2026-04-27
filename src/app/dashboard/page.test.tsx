@@ -2,7 +2,7 @@
  * /dashboard page-wiring tests (W3-F alias).
  *
  * Mocks getCurrentUser to control the role-scoping path. Asserts:
- *   - renders 5 health tiles + 10 trigger tiles + section landmarks
+ *   - renders 5 health tiles + 9 trigger tiles + section landmarks
  *     (identical content to /overview)
  *   - renders the kanban / overview tab strip with Overview active
  *   - empty escalations state copy renders gracefully
@@ -40,7 +40,7 @@ function admin(): User {
 }
 
 describe('/dashboard page', () => {
-  it('renders 5 health tiles + 10 trigger tiles + 3 section headings', async () => {
+  it('renders 5 health tiles + 9 trigger tiles + 4 section headings', async () => {
     getCurrentUserMock.mockResolvedValue(admin())
     const { default: DashboardPage } = await import('./page')
     const html = renderToStaticMarkup(await DashboardPage())
@@ -51,7 +51,9 @@ describe('/dashboard page', () => {
     expect(html).toContain('Schools needing action')
     expect(html).toContain('P2 overrides (7d)')
     expect(html).toContain('Sales drift queue')
-    expect(html).toContain('Legacy schools')
+    // W4-A.7: Legacy schools tile removed; cohortStatus filtering replaces it.
+    expect(html).not.toContain('Legacy schools')
+    expect(html).not.toContain('EXCLUDED')
     expect(html).toContain('Email bounce (7d)')
     expect(html).toContain('Assignment queue')
     // Section headings

@@ -46,6 +46,8 @@ const escalations = escalationsJson as unknown as Escalation[]
 
 export default async function DashboardPage() {
   const user = await getCurrentUser()
+  // W4-A.3: see /overview for the active vs allMous split rationale.
+  const activeMous = mous.filter((m) => m.cohortStatus === 'active')
   return (
     <>
       <TopNav currentPath="/dashboard" />
@@ -54,7 +56,8 @@ export default async function DashboardPage() {
         <KanbanOverviewTabs activeTab="overview" />
         <OverviewContent
           user={user}
-          mous={mous}
+          mous={activeMous}
+          allMous={mous}
           schools={schools}
           dispatches={dispatches}
           payments={payments}

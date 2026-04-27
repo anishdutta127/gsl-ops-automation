@@ -69,6 +69,8 @@ describe('collectAuditRows', () => {
       'create', 'update', 'status_change', 'reassignment', 'file_upload',
       'actuals-confirmed', 'pi-issued', 'dispatch-raised',
       'delivery-acknowledged', 'feedback-submitted', 'legacy-include-import',
+      // W4-A.2 added cohort tagging on every MOU; rows here are 'system-w4-a-2'
+      'mou-cohort-status-changed',
     ])
     for (const row of mouRows) {
       expect(recognizedActions.has(row.entry.action)).toBe(true)

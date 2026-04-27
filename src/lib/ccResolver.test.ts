@@ -76,6 +76,7 @@ function mou(overrides: Partial<MOU> & Pick<MOU, 'id' | 'schoolId'>): MOU {
     schoolScope: 'SINGLE',
     schoolGroupId: null,
     status: 'Active',
+    cohortStatus: 'active',
     academicYear: '2026-27',
     startDate: '2026-04-01',
     endDate: '2027-03-31',

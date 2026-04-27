@@ -88,9 +88,9 @@ describe('/ kanban homepage', () => {
     getCurrentUserMock.mockResolvedValue(admin())
     const { default: HomePage } = await import('./page')
     const html = renderToStaticMarkup(await HomePage())
-    // Title shows "<n> MOUs across 9 stages"; this test asserts the title
-    // is present and the count is non-zero (real fixture has 140 MOUs).
-    expect(html).toMatch(/\d+ MOUs across 9 stages/)
+    // Title shows "<n> active MOUs across 9 stages" post-W4-A.3; the count
+    // is the active-cohort filter result (51 in the W4-A.2 fixture).
+    expect(html).toMatch(/\d+ active MOUs across 9 stages/)
   })
 
   it('renders the kanban / overview tab strip with Kanban active (W3-F)', async () => {

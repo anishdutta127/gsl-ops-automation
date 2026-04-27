@@ -12,6 +12,14 @@
  * Active / Completed / Expired / Renewed / Pending Signature). A
  * later phase may compute a derived "lifecycle stage" combining
  * status + dispatch + payment state, but that is out of scope here.
+ *
+ * W4-A.3 cohort filter: defaults to cohortStatus === 'active'.
+ * The MouStatus filter (Active / Pending Signature / Completed / etc.)
+ * is orthogonal to cohort and stays as-is. Operators reach archived
+ * MOUs via the dedicated /mous/archive surface (W4-A.4); the
+ * existing kanban-stage deep-link (?stage=...) keeps the active-only
+ * default so the kanban-to-list jump stays consistent with the
+ * kanban's own filter.
  */
 
 import type {
@@ -45,6 +53,8 @@ import {
   KANBAN_COLUMNS,
   type KanbanStageKey,
 } from '@/lib/kanban/deriveStage'
+import Link from 'next/link'
+import { Archive } from 'lucide-react'
 
 const allMous = mousJson as unknown as MOU[]
 const allSchools = schoolsJson as unknown as School[]
@@ -77,7 +87,10 @@ export default async function MousListPage({ searchParams }: PageProps) {
   const sp = await searchParams
   const user = await getCurrentUser()
   const schoolById = new Map(allSchools.map((s) => [s.id, s]))
-  const scoped = scopeMousForUser(allMous, user)
+  // W4-A.3: cohort default is 'active'. Operators visit /mous/archive for
+  // archived rows; the main /mous list never shows them, even via filter.
+  const cohortFiltered = allMous.filter((m) => m.cohortStatus === 'active')
+  const scoped = scopeMousForUser(cohortFiltered, user)
 
   const active = parseDimensions(sp, DIMENSION_KEYS as unknown as string[])
   const search = typeof sp.q === 'string' ? sp.q : ''
@@ -177,6 +190,16 @@ export default async function MousListPage({ searchParams }: PageProps) {
               : `${filtered.length} of ${scoped.length} matching`
           }
         />
+        <div className="mx-auto flex max-w-screen-xl items-center justify-end px-4 pt-2">
+          <Link
+            href="/mous/archive"
+            className="inline-flex min-h-11 items-center gap-1.5 rounded-md border border-border bg-card px-3 py-1.5 text-sm font-medium text-foreground hover:bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
+            data-testid="archive-link"
+          >
+            <Archive aria-hidden className="size-4" />
+            View archived
+          </Link>
+        </div>
         <div className="mx-auto flex max-w-screen-xl flex-col gap-4 px-4 py-6 sm:flex-row">
           <FilterRail
             basePath="/mous"

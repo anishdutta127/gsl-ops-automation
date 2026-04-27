@@ -1,5 +1,5 @@
 /*
- * OverviewContent (W3-F).
+ * OverviewContent (W3-F + W4-A.3).
  *
  * Shared body for /overview and /dashboard (the latter aliases the
  * former for bookmark compatibility). Both routes pass identical
@@ -10,12 +10,19 @@
  *   - 5 health tiles (top row)
  *   - exception feed (max 5 visible; "View all" links to
  *     /dashboard/exceptions)
- *   - open escalations list (max 5)
- *   - 10 trigger tiles (2 rows of 5 desktop)
+ *   - open escalations list (max 5; pass-through across cohorts)
+ *   - trigger tiles (W4-A.7 dropped Legacy schools tile; grid is now
+ *     up to 9 tiles depending on which factories return non-null)
  *
- * Identical to the pre-W3-F /dashboard layout. The kanban-first
- * navigation moves this surface from the homepage to the Overview
- * tab; content is unchanged.
+ * W4-A.3 cohort filtering:
+ *   - `mous` is the active-only slice (kanban-first; tiles + exception
+ *     feed measure the operationally-current cohort).
+ *   - `allMous` is the full cohort union (active + archived). Used
+ *     ONLY by the open-escalation list to look up school names for
+ *     archived MOUs and surface the [archived] hint chip; an
+ *     unresolved escalation on a 2025-26 MOU still needs closing.
+ *   - `schools` is unfiltered; school records have no cohort
+ *     concept (the same school can carry MOUs from multiple AYs).
  */
 
 import Link from 'next/link'
@@ -40,7 +47,15 @@ import { EscalationRow } from '@/components/ops/EscalationRow'
 
 interface OverviewContentProps {
   user: User | null
+  /** Active-cohort slice; backs health tiles, exception feed, trigger tiles. */
   mous: MOU[]
+  /**
+   * Full cohort union (active + archived). Used only by the open-escalation
+   * list so an escalation on an archived MOU still resolves to a school name
+   * and surfaces an [archived] tag. Defaults to `mous` for callers that have
+   * not adopted the W4-A.3 split yet.
+   */
+  allMous?: MOU[]
   schools: School[]
   dispatches: Dispatch[]
   payments: Payment[]
@@ -55,6 +70,7 @@ const ESCALATION_PREVIEW = 5
 export function OverviewContent({
   user,
   mous,
+  allMous,
   schools,
   dispatches,
   payments,
@@ -62,6 +78,12 @@ export function OverviewContent({
   feedback,
   escalations,
 }: OverviewContentProps) {
+  const cohortUnion = allMous ?? mous
+  const archivedIds = new Set(
+    cohortUnion.filter((m) => m.cohortStatus === 'archived').map((m) => m.id),
+  )
+  const mouById = new Map(cohortUnion.map((m) => [m.id, m]))
+
   const healthTiles = buildHealthTiles({ mous, schools, dispatches, payments, user })
   const triggerTiles = buildTriggerTiles({
     mous, schools, dispatches, escalations, communications,
@@ -138,19 +160,30 @@ export function OverviewContent({
             <p className="px-4 py-6 text-sm text-muted-foreground">No open escalations.</p>
           ) : (
             <ul className="divide-y divide-border" data-testid="escalation-list">
-              {escalationPreview.map((e) => (
-                <li key={e.id}>
-                  <EscalationRow
-                    schoolName={schools.find((s) => s.id === e.schoolId)?.name ?? e.schoolId}
-                    description={e.description}
-                    daysSince={Math.max(0, Math.floor((Date.now() - new Date(e.createdAt).getTime()) / 86400000))}
-                    lane={e.lane}
-                    level={e.level}
-                    notifiedNames={e.notifiedEmails}
-                    href={`/escalations/${e.id}`}
-                  />
-                </li>
-              ))}
+              {escalationPreview.map((e) => {
+                const baseName = schools.find((s) => s.id === e.schoolId)?.name ?? e.schoolId
+                const isArchivedCohort =
+                  e.mouId !== null
+                  && e.mouId !== undefined
+                  && archivedIds.has(e.mouId)
+                  && mouById.get(e.mouId)?.cohortStatus === 'archived'
+                const schoolName = isArchivedCohort
+                  ? `${baseName} [archived]`
+                  : baseName
+                return (
+                  <li key={e.id}>
+                    <EscalationRow
+                      schoolName={schoolName}
+                      description={e.description}
+                      daysSince={Math.max(0, Math.floor((Date.now() - new Date(e.createdAt).getTime()) / 86400000))}
+                      lane={e.lane}
+                      level={e.level}
+                      notifiedNames={e.notifiedEmails}
+                      href={`/escalations/${e.id}`}
+                    />
+                  </li>
+                )
+              })}
             </ul>
           )}
         </div>

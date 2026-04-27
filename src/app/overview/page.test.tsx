@@ -2,7 +2,7 @@
  * /overview page-wiring tests (W3-F canonical Leadership Console).
  *
  * /overview is the canonical home of the Leadership Console (5
- * health tiles, exception feed, open-escalation list, 10 trigger
+ * health tiles, exception feed, open-escalation list, 9 trigger
  * tiles). Pre-W3-F this content was at /dashboard. /dashboard now
  * aliases /overview; both routes render the same OverviewContent
  * with the Overview tab active. These tests cover the canonical
@@ -36,7 +36,7 @@ function admin(): User {
 }
 
 describe('/overview page', () => {
-  it('renders 5 health tiles + 10 trigger tiles + 4 section headings', async () => {
+  it('renders 5 health tiles + 9 trigger tiles + 4 section headings', async () => {
     getCurrentUserMock.mockResolvedValue(admin())
     const { default: OverviewPage } = await import('./page')
     const html = renderToStaticMarkup(await OverviewPage())
@@ -47,7 +47,9 @@ describe('/overview page', () => {
     expect(html).toContain('Schools needing action')
     expect(html).toContain('P2 overrides (7d)')
     expect(html).toContain('Sales drift queue')
-    expect(html).toContain('Legacy schools')
+    // W4-A.7: Legacy schools tile removed.
+    expect(html).not.toContain('Legacy schools')
+    expect(html).not.toContain('EXCLUDED')
     expect(html).toContain('Email bounce (7d)')
     expect(html).toContain('Assignment queue')
     expect(html).toMatch(/id="health-heading"/)

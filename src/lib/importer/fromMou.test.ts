@@ -397,6 +397,7 @@ describe('Q-G Test 6: importOnce', () => {
         schoolScope: 'SINGLE',
         schoolGroupId: null,
         status: 'Active',
+        cohortStatus: 'active',
         academicYear: '2026-27',
         startDate: null,
         endDate: null,

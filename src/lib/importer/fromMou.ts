@@ -447,6 +447,10 @@ function buildOpsMou(
     schoolScope: 'SINGLE',
     schoolGroupId: null,
     status: (raw.status as MOU['status']) ?? 'Active',
+    // W4-A.2: newly-imported MOUs are always part of the operationally-current
+    // cohort; archived flips happen via /admin/mou-status (or future cohort
+    // rollover scripts), never on first import.
+    cohortStatus: 'active',
     academicYear: raw.academicYear,
     startDate: raw.startDate ?? null,
     endDate: raw.endDate ?? null,

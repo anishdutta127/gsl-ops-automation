@@ -86,7 +86,7 @@ function mou(overrides: Partial<MOU> = {}): MOU {
   return {
     id: 'MOU-X', schoolId: 'SCH-X', schoolName: 'Test School',
     programme: 'STEAM', programmeSubType: null, schoolScope: 'SINGLE',
-    schoolGroupId: null, status: 'Active', academicYear: '2026-27',
+    schoolGroupId: null, status: 'Active', cohortStatus: 'active', academicYear: '2026-27',
     startDate: '2026-04-01', endDate: '2027-03-31',
     studentsMou: 200, studentsActual: 200, studentsVariance: 0,
     studentsVariancePct: 0, spWithoutTax: 4000, spWithTax: 5000,
@@ -253,7 +253,10 @@ describe('generatePi', () => {
     expect(result).toEqual({ ok: false, reason: 'school-not-found' })
   })
 
-  it('rejects gstin-required when school.gstNumber is null (Item F gate)', async () => {
+  // W4-A.6: GSTIN-missing no longer blocks PI generation. The counter
+  // advances; the docx renders a "To be added" placeholder for SCHOOL_GSTIN.
+  // Finance backfills via /schools/[id]/edit and re-issues if needed.
+  it('PI generation succeeds when school.gstNumber is null (W4-A.6 unblock)', async () => {
     const u = user('Finance', 'shubhangi.g')
     const s = school({ gstNumber: null })
     const { deps, counterCalls } = makeDeps({ mous: [mou()], schools: [s], users: [u] })
@@ -261,11 +264,12 @@ describe('generatePi', () => {
       { mouId: 'MOU-X', instalmentSeq: 1, generatedBy: 'shubhangi.g' },
       deps,
     )
-    expect(result).toEqual({ ok: false, reason: 'gstin-required' })
-    expect(counterCalls.count).toBe(0)  // Counter must NOT advance on GSTIN block
+    expect(result.ok).toBe(true)
+    // Counter advances on success.
+    expect(counterCalls.count).toBe(1)
   })
 
-  it('rejects gstin-required when gstNumber is whitespace-only', async () => {
+  it('PI generation succeeds when gstNumber is whitespace-only (still treated as missing)', async () => {
     const u = user('Finance', 'shubhangi.g')
     const s = school({ gstNumber: '   ' })
     const { deps } = makeDeps({ mous: [mou()], schools: [s], users: [u] })
@@ -273,7 +277,7 @@ describe('generatePi', () => {
       { mouId: 'MOU-X', instalmentSeq: 1, generatedBy: 'shubhangi.g' },
       deps,
     )
-    expect(result).toEqual({ ok: false, reason: 'gstin-required' })
+    expect(result.ok).toBe(true)
   })
 
   it('returns template-missing when production .docx is absent', async () => {

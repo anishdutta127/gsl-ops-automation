@@ -1,5 +1,5 @@
 /*
- * Homepage (Week 3 W3-C C1 + W3-F): kanban board with tabbed nav.
+ * Homepage (Week 3 W3-C C1 + W3-F + W4-A.3): kanban with tabbed nav.
  *
  * 9 columns: 8 lifecycle stages + Pre-Ops Legacy holding bay. Every
  * Active MOU lands in exactly one column; Pre-Ops cards render
@@ -7,6 +7,12 @@
  * Pre-Ops). W3-F moves the Leadership Console to /overview and
  * renders a Kanban / Overview tab strip at the top of both routes
  * so testers can switch view without losing context.
+ *
+ * W4-A.3: filter cohortStatus === 'active' before bucketing. The
+ * kanban is operationally driven; archived MOUs (prior-AY cohorts)
+ * would distract from the current pursuit. Operators reach the
+ * archive via /mous/archive (read + reactivate) or
+ * /admin/mou-status (Admin bulk-edit).
  *
  * Server Component. Reads src/data/*.json at request time. Per-MOU
  * stage derivation is pure (deriveStage). The page itself is
@@ -33,21 +39,16 @@ import { getCurrentUser } from '@/lib/auth/session'
 import { deriveStage, KANBAN_COLUMNS, type KanbanStageKey } from '@/lib/kanban/deriveStage'
 import { stageEnteredDate, daysSince } from '@/lib/kanban/stageEnteredDate'
 import { isOverdue } from '@/lib/kanban/stageDurations'
-import { getIncompleteSchools } from '@/lib/schools/dataCompleteness'
-import schoolsJson from '@/data/schools.json'
-import type { School } from '@/lib/types'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { KanbanOverviewTabs } from '@/components/ops/KanbanOverviewTabs'
 import { KanbanBoard, type KanbanCardMeta } from '@/components/ops/KanbanBoard'
-import { SchoolsNeedingDataTile } from '@/components/ops/SchoolsNeedingDataTile'
 
 const allMous = mousJson as unknown as MOU[]
 const allDispatches = dispatchesJson as unknown as Dispatch[]
 const allPayments = paymentsJson as unknown as Payment[]
 const allCommunications = communicationsJson as unknown as Communication[]
 const allFeedback = feedbackJson as unknown as Feedback[]
-const allSchools = schoolsJson as unknown as School[]
 
 export default async function HomePage() {
   const user = await getCurrentUser()
@@ -59,6 +60,8 @@ export default async function HomePage() {
     communications: allCommunications,
     feedback: allFeedback,
   }
+
+  const activeMous = allMous.filter((m) => m.cohortStatus === 'active')
 
   const initialBuckets: Record<KanbanStageKey, MOU[]> = {
     'pre-ops': [],
@@ -73,7 +76,7 @@ export default async function HomePage() {
   }
   const cardMeta: Record<string, KanbanCardMeta> = {}
   const now = new Date()
-  for (const mou of allMous) {
+  for (const mou of activeMous) {
     const stage = deriveStage(mou, deps)
     initialBuckets[stage].push(mou)
     const entered = stageEnteredDate(mou, deps, stage)
@@ -84,15 +87,13 @@ export default async function HomePage() {
     }
   }
 
-  const incompleteSchoolCount = getIncompleteSchools(allSchools, 1).length
-
   return (
     <>
       <TopNav currentPath="/" />
       <main id="main-content">
         <PageHeader
           title="Kanban"
-          subtitle={`${allMous.length} MOUs across ${KANBAN_COLUMNS.length} stages`}
+          subtitle={`${activeMous.length} active MOUs across ${KANBAN_COLUMNS.length} stages`}
         />
         <KanbanOverviewTabs activeTab="kanban" />
         <div className="mx-auto max-w-screen-2xl space-y-4 px-4 py-6">
@@ -103,7 +104,6 @@ export default async function HomePage() {
             Click a card to open its details. Drag the grip icon at the top-right
             of a card to move it between stages.
           </p>
-          <SchoolsNeedingDataTile count={incompleteSchoolCount} total={allSchools.length} />
           <KanbanBoard initialBuckets={initialBuckets} cardMeta={cardMeta} />
         </div>
       </main>

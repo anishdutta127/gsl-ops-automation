@@ -14,7 +14,7 @@ function mou(overrides: Partial<MOU> & Pick<MOU, 'id'>): MOU {
   return {
     schoolId: 'SCH-T', schoolName: 'Test', programme: 'STEAM' as Programme,
     programmeSubType: null, schoolScope: 'SINGLE', schoolGroupId: null,
-    status: 'Active', academicYear: '2026-27', startDate: '2026-04-01', endDate: '2027-03-31',
+    status: 'Active', cohortStatus: 'active', academicYear: '2026-27', startDate: '2026-04-01', endDate: '2027-03-31',
     studentsMou: 100, studentsActual: null, studentsVariance: null, studentsVariancePct: null,
     spWithoutTax: 1000, spWithTax: 1180, contractValue: 100000, received: 0, tds: 0,
     balance: 100000, receivedPct: 0, paymentSchedule: '', trainerModel: null, salesPersonId: null,
