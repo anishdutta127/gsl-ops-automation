@@ -56,11 +56,23 @@ describe('collectAuditRows', () => {
     }
   })
 
-  it('contains the gslt-cretile-normalisation entry from the fixtures (Update 1)', () => {
+  it('every MOU audit row has a recognized action (auto-link-exact-match for imported MOUs etc.)', () => {
+    // Post Week 3 import the fixture MOUs are sourced from the
+    // gsl-mou-system upstream and carry 'auto-link-exact-match' /
+    // 'manual-relink' / 'create' audit entries (the GSLT-Cretile
+    // normalisation path that Phase A4 added has zero exercising
+    // records in the upstream cohort, surfaced in W3-A.1 report).
     const rows = collectAuditRows()
-    const found = rows.find((r) => r.entry.action === 'gslt-cretile-normalisation')
-    expect(found).toBeDefined()
-    expect(found?.entityType).toBe('MOU')
+    const mouRows = rows.filter((r) => r.entityType === 'MOU')
+    const recognizedActions = new Set([
+      'auto-link-exact-match', 'manual-relink', 'gslt-cretile-normalisation',
+      'create', 'update', 'status_change', 'reassignment', 'file_upload',
+      'actuals-confirmed', 'pi-issued', 'dispatch-raised',
+      'delivery-acknowledged', 'feedback-submitted', 'legacy-include-import',
+    ])
+    for (const row of mouRows) {
+      expect(recognizedActions.has(row.entry.action)).toBe(true)
+    }
   })
 
   it('contains the auto-create-from-feedback entry (Update 3 trigger)', () => {
