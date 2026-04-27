@@ -240,7 +240,7 @@ export const HELP_GLOSSARY: GlossaryItem[] = [
   },
   {
     term: 'Idempotent',
-    definition: 'An action that is safe to repeat. Re-clicking Raise dispatch on an already-raised dispatch downloads the same document again without changing state. Re-clicking Generate PI creates a new PI number, so do not double-click that one.',
+    definition: 'An action that is safe to repeat. Re-clicking Raise dispatch on an already-raised dispatch downloads the same document again without changing state. Re-clicking Generate PI creates a new PI number, so don’t double-click it.',
   },
   {
     term: 'Instalment',
