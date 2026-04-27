@@ -1,287 +1,3226 @@
 [
   {
-    "id": "SCH-GREENFIELD-PUNE",
-    "name": "Greenfield Academy",
-    "legalEntity": "Greenfield Educational Trust",
-    "city": "Pune",
-    "state": "Maharashtra",
-    "region": "South-West",
-    "pinCode": "411001",
-    "contactPerson": "Priya R.",
-    "email": "spoc.greenfield@example.test",
-    "phone": "+91-98000-00001",
-    "billingName": "Greenfield Educational Trust",
-    "pan": "AAAPL1234C",
-    "gstNumber": "27AAAPL1234C1ZX",
-    "notes": null,
-    "active": true,
-    "createdAt": "2026-04-15T00:00:00Z",
-    "auditLog": []
-  },
-  {
-    "id": "SCH-SPRINGWOOD-KOL",
-    "name": "Springwood International School",
-    "legalEntity": "Springwood Education Society",
-    "city": "Kolkata",
-    "state": "West Bengal",
-    "region": "East",
-    "pinCode": "700017",
-    "contactPerson": "Karan S.",
-    "email": "spoc.springwood@example.test",
-    "phone": "+91-98000-00002",
-    "billingName": "Springwood Education Society",
-    "pan": "AAAPS5678D",
-    "gstNumber": "19AAAPS5678D1ZA",
-    "notes": null,
-    "active": true,
-    "createdAt": "2026-04-15T00:00:00Z",
-    "auditLog": []
-  },
-  {
-    "id": "SCH-MAPLELEAF-BLR",
-    "name": "Maple Leaf Public School",
-    "legalEntity": "Maple Leaf Edu Foundation",
-    "city": "Bengaluru",
-    "state": "Karnataka",
-    "region": "South-West",
-    "pinCode": "560001",
-    "contactPerson": "Ananya D.",
-    "email": "spoc.mapleleaf@example.test",
-    "phone": "+91-98000-00003",
-    "billingName": "Maple Leaf Edu Foundation",
-    "pan": "AAAPM9012E",
-    "gstNumber": null,
-    "notes": "GSTIN pending capture from school administrator.",
-    "active": true,
-    "createdAt": "2026-04-15T00:00:00Z",
-    "auditLog": []
-  },
-  {
-    "id": "SCH-RIVERDALE-MUM",
-    "name": "Riverdale Boarding School",
-    "legalEntity": "Riverdale Trust",
-    "city": "Mumbai",
-    "state": "Maharashtra",
-    "region": "South-West",
-    "pinCode": "400050",
-    "contactPerson": "Rohan B.",
-    "email": "spoc.riverdale@example.test",
-    "phone": "+91-98000-00004",
-    "billingName": "Riverdale Trust",
-    "pan": "AAAPR3456F",
-    "gstNumber": "27AAAPR3456F1ZY",
-    "notes": null,
-    "active": true,
-    "createdAt": "2026-04-15T00:00:00Z",
-    "auditLog": []
-  },
-  {
-    "id": "SCH-OAKWOOD-DEL",
-    "name": "Oakwood Senior Secondary",
-    "legalEntity": "Oakwood Education Society",
-    "city": "New Delhi",
-    "state": "Delhi",
-    "region": "North",
-    "pinCode": "110001",
-    "contactPerson": "Sneha M.",
-    "email": "spoc.oakwood@example.test",
-    "phone": "+91-98000-00005",
-    "billingName": "Oakwood Education Society",
-    "pan": "AAAPO7890G",
-    "gstNumber": "07AAAPO7890G1ZB",
-    "notes": null,
-    "active": true,
-    "createdAt": "2026-04-15T00:00:00Z",
-    "auditLog": []
-  },
-  {
-    "id": "SCH-SUNRISE-HYD",
-    "name": "Sunrise Vidya Mandir",
-    "legalEntity": "Sunrise Trust",
-    "city": "Hyderabad",
-    "state": "Telangana",
-    "region": "South-West",
-    "pinCode": "500032",
-    "contactPerson": "Arjun K.",
-    "email": "spoc.sunrise@example.test",
-    "phone": "+91-98000-00006",
-    "billingName": "Sunrise Trust",
-    "pan": "AAAPS1357H",
-    "gstNumber": "36AAAPS1357H1ZC",
-    "notes": null,
-    "active": true,
-    "createdAt": "2026-04-15T00:00:00Z",
-    "auditLog": []
-  },
-  {
-    "id": "SCH-CEDARHEIGHTS-CHN",
-    "name": "Cedar Heights Academy",
-    "legalEntity": "Cedar Heights Foundation",
+    "id": "SCH-SAGAYA_MATHA_MATRICU",
+    "name": "*Sagaya Matha Matriculation Higher Secondary School",
+    "legalEntity": null,
     "city": "Chennai",
     "state": "Tamil Nadu",
     "region": "South-West",
-    "pinCode": "600001",
-    "contactPerson": "Ishaan V.",
-    "email": "spoc.cedarheights@example.test",
-    "phone": "+91-98000-00007",
-    "billingName": "Cedar Heights Foundation",
-    "pan": "AAAPC2468I",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
     "gstNumber": null,
     "notes": null,
     "active": true,
-    "createdAt": "2026-04-15T00:00:00Z",
-    "auditLog": []
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
   },
   {
-    "id": "SCH-NORTHWOOD-CHD",
-    "name": "Northwood Public School",
-    "legalEntity": "Northwood Education Trust",
-    "city": "Chandigarh",
-    "state": "Chandigarh",
-    "region": "North",
-    "pinCode": "160017",
-    "contactPerson": "Meera J.",
-    "email": "spoc.northwood@example.test",
-    "phone": "+91-98000-00008",
-    "billingName": "Northwood Education Trust",
-    "pan": "AAAPN1357J",
-    "gstNumber": "04AAAPN1357J1ZD",
-    "notes": null,
-    "active": true,
-    "createdAt": "2026-04-15T00:00:00Z",
-    "auditLog": []
-  },
-  {
-    "id": "SCH-HERITAGE-IND",
-    "name": "Heritage High School",
-    "legalEntity": "Heritage Education Society",
-    "city": "Indore",
-    "state": "Madhya Pradesh",
-    "region": "North",
-    "pinCode": "452001",
-    "contactPerson": "Tanvi P.",
-    "email": "spoc.heritage@example.test",
-    "phone": "+91-98000-00009",
-    "billingName": "Heritage Education Society",
-    "pan": "AAAPH9753K",
-    "gstNumber": "23AAAPH9753K1ZE",
-    "notes": null,
-    "active": true,
-    "createdAt": "2026-04-15T00:00:00Z",
-    "auditLog": []
-  },
-  {
-    "id": "SCH-BRIGHTSIDE-LKO",
-    "name": "Brightside International",
-    "legalEntity": "Brightside Trust",
-    "city": "Lucknow",
-    "state": "Uttar Pradesh",
-    "region": "North",
-    "pinCode": "226001",
-    "contactPerson": "Vivaan A.",
-    "email": "spoc.brightside@example.test",
-    "phone": "+91-98000-00010",
-    "billingName": "Brightside Trust",
-    "pan": "AAAPB2468L",
-    "gstNumber": "09AAAPB2468L1ZF",
-    "notes": null,
-    "active": true,
-    "createdAt": "2026-04-15T00:00:00Z",
-    "auditLog": []
-  },
-  {
-    "id": "SCH-LINDEN-CBE",
-    "name": "Linden Public School",
-    "legalEntity": "Linden Edu Foundation",
-    "city": "Coimbatore",
-    "state": "Tamil Nadu",
-    "region": "South-West",
-    "pinCode": "641001",
-    "contactPerson": "Diya R.",
-    "email": "spoc.linden@example.test",
-    "phone": "+91-98000-00011",
-    "billingName": "Linden Edu Foundation",
-    "pan": "AAAPL3692M",
-    "gstNumber": "33AAAPL3692M1ZG",
-    "notes": null,
-    "active": true,
-    "createdAt": "2026-04-15T00:00:00Z",
-    "auditLog": []
-  },
-  {
-    "id": "SCH-PEARL-JAI",
-    "name": "Pearl Academy",
-    "legalEntity": "Pearl Education Society",
-    "city": "Jaipur",
+    "id": "SCH-ALMA_MATER_SCHOOL",
+    "name": "Alma Mater School",
+    "legalEntity": null,
+    "city": "Jodhpur",
     "state": "Rajasthan",
     "region": "North",
-    "pinCode": "302001",
-    "contactPerson": "Aarav T.",
-    "email": "spoc.pearl@example.test",
-    "phone": "+91-98000-00012",
-    "billingName": "Pearl Education Society",
-    "pan": "AAAPP4815N",
-    "gstNumber": "08AAAPP4815N1ZH",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
     "notes": null,
     "active": true,
-    "createdAt": "2026-04-15T00:00:00Z",
-    "auditLog": []
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
   },
   {
-    "id": "SCH-NARAYANA-ASN",
-    "name": "Narayana Group Branch (Asansol)",
-    "legalEntity": "Narayana Educational Society",
-    "city": "Asansol",
-    "state": "West Bengal",
-    "region": "East",
-    "pinCode": "713301",
-    "contactPerson": "Soham B.",
-    "email": "spoc.narayana.asn@example.test",
-    "phone": "+91-98000-00013",
-    "billingName": "Narayana Educational Society",
-    "pan": "AAAPN5926O",
-    "gstNumber": "19AAAPN5926O1ZI",
-    "notes": "Member of Narayana WB chain (SG-NARAYANA_WB).",
+    "id": "SCH-APPLE_GLOBAL_SCHOOL",
+    "name": "Apple Global School",
+    "legalEntity": null,
+    "city": "Ahmedabad",
+    "state": "Gujarat",
+    "region": "South-West",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
     "active": true,
-    "createdAt": "2026-04-15T00:00:00Z",
-    "auditLog": []
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
   },
   {
-    "id": "SCH-NARAYANA-DUR",
-    "name": "Narayana Group Branch (Durgapur)",
-    "legalEntity": "Narayana Educational Society",
-    "city": "Durgapur",
-    "state": "West Bengal",
-    "region": "East",
-    "pinCode": "713201",
-    "contactPerson": "Riya S.",
-    "email": "spoc.narayana.dur@example.test",
-    "phone": "+91-98000-00014",
-    "billingName": "Narayana Educational Society",
-    "pan": "AAAPN5926O",
-    "gstNumber": "19AAAPN5926O1ZI",
-    "notes": "Member of Narayana WB chain (SG-NARAYANA_WB).",
+    "id": "SCH-AYESHA_ALI_ACADEMY",
+    "name": "Ayesha Ali Academy",
+    "legalEntity": null,
+    "city": "Srinagar",
+    "state": "Jammu & Kashmir",
+    "region": "North",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
     "active": true,
-    "createdAt": "2026-04-15T00:00:00Z",
-    "auditLog": []
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
   },
   {
-    "id": "SCH-NARAYANA-BRD",
-    "name": "Narayana Group Branch (Burdwan)",
-    "legalEntity": "Narayana Educational Society",
-    "city": "Burdwan",
+    "id": "SCH-B_I_T_GLOBAL_SCHOOL",
+    "name": "B I T Global School",
+    "legalEntity": null,
+    "city": "Meerut",
+    "state": "Uttar Pradesh",
+    "region": "North",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-B_D_MEMORIAL_JR_SCHO",
+    "name": "B.D Memorial Jr. School",
+    "legalEntity": null,
+    "city": "Kolkata",
     "state": "West Bengal",
     "region": "East",
-    "pinCode": "713101",
-    "contactPerson": "Ayush M.",
-    "email": "spoc.narayana.brd@example.test",
-    "phone": "+91-98000-00015",
-    "billingName": "Narayana Educational Society",
-    "pan": "AAAPN5926O",
-    "gstNumber": "19AAAPN5926O1ZI",
-    "notes": "Member of Narayana WB chain (SG-NARAYANA_WB).",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
     "active": true,
-    "createdAt": "2026-04-15T00:00:00Z",
-    "auditLog": []
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-BAPUJI_EDUCATIONAL_A_2",
+    "name": "BAPUJI EDUCATIONAL ASSOCIATION _PSSEMR School - CAIE",
+    "legalEntity": null,
+    "city": "Davangere",
+    "state": "Karnataka",
+    "region": "South-West",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-BAPUJI_EDUCATIONAL_A",
+    "name": "BAPUJI EDUCATIONAL ASSOCIATION _PSSEMR School - CBSE",
+    "legalEntity": null,
+    "city": "Davangere",
+    "state": "Karnataka",
+    "region": "South-West",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-BGS_SCHOOL",
+    "name": "BGS School",
+    "legalEntity": null,
+    "city": "Kolkata",
+    "state": "West Bengal",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-BERHAMPORE_CITY_PUBL",
+    "name": "Berhampore City Public School",
+    "legalEntity": null,
+    "city": "Berhampore",
+    "state": "West Bengal",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-BHARATI_VIDYAPEETH_R",
+    "name": "Bharati Vidyapeeth Rabindranath Tagore School of Excellence",
+    "legalEntity": null,
+    "city": "Mumbai",
+    "state": "Maharashtra",
+    "region": "South-West",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-BILLABONG_HIGH_INTER",
+    "name": "Billabong High International School / light house _MH",
+    "legalEntity": null,
+    "city": "Pune",
+    "state": "Maharashtra",
+    "region": "South-West",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-BLUE_ANGELS_GLOBAL_S",
+    "name": "Blue Angels Global School",
+    "legalEntity": null,
+    "city": "Faridabad",
+    "state": "Haryana",
+    "region": "North",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-BOLTON_SCHOOL",
+    "name": "Bolton School",
+    "legalEntity": null,
+    "city": "Secunderabad",
+    "state": "Telangana",
+    "region": "South-West",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-BRIGHT_FUTURE_HIGH_S",
+    "name": "Bright Future High School",
+    "legalEntity": null,
+    "city": "Navi Mumbai",
+    "state": "Maharashtra",
+    "region": "South-West",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-CHIREC_INTERNATIONAL",
+    "name": "CHIREC International Academy",
+    "legalEntity": null,
+    "city": "Hyderabad",
+    "state": "Telangana",
+    "region": "South-West",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-CARMEL_CONVENT_HIGH_",
+    "name": "Carmel Convent High School, Durgapur",
+    "legalEntity": null,
+    "city": "Durgapur, West bengal",
+    "state": "West Bengal",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-CARMEL_SCHOOL_DURGAP",
+    "name": "Carmel School, Durgapur",
+    "legalEntity": null,
+    "city": "Durgapur, West bengal",
+    "state": "West Bengal",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-CHRIST_MISSION_SCHOO",
+    "name": "Christ Mission School",
+    "legalEntity": null,
+    "city": "Patna",
+    "state": "Bihar",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-CLEVER_MINDS_SCHOOL",
+    "name": "Clever Minds School",
+    "legalEntity": null,
+    "city": "Secuderabad",
+    "state": "Telangana",
+    "region": "South-West",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-CONTAI_PUBLIC_SCHOOL",
+    "name": "Contai Public School",
+    "legalEntity": null,
+    "city": "Kolkata",
+    "state": "West Bengal",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-DPS_BANGALORE_EAST_C",
+    "name": "DPS Bangalore East (Cambridge Section) /K.K. EDUCATIONAL AND CHARITABLE TRUST",
+    "legalEntity": null,
+    "city": "Banglore",
+    "state": "Karnataka",
+    "region": "South-West",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-DPS_BANGALORE_NORTH_",
+    "name": "DPS Bangalore North (Cambridge Section)",
+    "legalEntity": null,
+    "city": "Banglore",
+    "state": "Karnataka",
+    "region": "South-West",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-DARSHAN_ACADEMY_DEVL",
+    "name": "Darshan Academy, Devlali",
+    "legalEntity": null,
+    "city": "Nashik",
+    "state": "Maharashtra",
+    "region": "South-West",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-DARSHAN_ACADEMY_PUNE",
+    "name": "Darshan Academy, Pune",
+    "legalEntity": null,
+    "city": "Pune",
+    "state": "Maharashtra",
+    "region": "South-West",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-DELHI_WORLD_PUBLIC_S",
+    "name": "Delhi World Public School, Barasat",
+    "legalEntity": null,
+    "city": "Parganas",
+    "state": "West Bengal",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-DISCOVERI_OKAS_SCHOO",
+    "name": "Discoveri Okas School",
+    "legalEntity": null,
+    "city": "Hyderabad",
+    "state": "Telangana",
+    "region": "South-West",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-DON_BONSCO_KRISHNANA",
+    "name": "Don Bonsco Krishnanagar",
+    "legalEntity": null,
+    "city": "Krishnanagar",
+    "state": "West Bengal",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-DON_BOSCO_BANDEL",
+    "name": "Don Bosco Bandel",
+    "legalEntity": null,
+    "city": "Bandel, West Bengal",
+    "state": "West Bengal",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-DON_BOSCO_MATRIC_HIG",
+    "name": "Don Bosco Matric Higher Secondary School",
+    "legalEntity": null,
+    "city": "",
+    "state": "",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-DOON_SCHOLARS_SCHOOL",
+    "name": "Doon Scholars School",
+    "legalEntity": null,
+    "city": "Dehradun",
+    "state": "Uttarakhand",
+    "region": "North",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-EBENEZER_JAGANATH_MA",
+    "name": "Ebenezer Jaganath Matriculation",
+    "legalEntity": null,
+    "city": "Chennai",
+    "state": "Tamil Nadu",
+    "region": "South-West",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-EBENEZER_MODERN_MATR",
+    "name": "Ebenezer Modern Matriculation",
+    "legalEntity": null,
+    "city": "Chennai",
+    "state": "Tamil Nadu",
+    "region": "South-West",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-EMBEE_ROSEBUD_HR_SEC",
+    "name": "Embee Rosebud Hr. Sec. School",
+    "legalEntity": null,
+    "city": "Tura",
+    "state": "Meghalaya",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-FOUNDATION_WORLD_SCH",
+    "name": "Foundation World School",
+    "legalEntity": null,
+    "city": "Budgam",
+    "state": "Jammu & Kashmir",
+    "region": "North",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-FRANK_PUBLIC_SCHOOL",
+    "name": "Frank Public School",
+    "legalEntity": null,
+    "city": "Bengaluru",
+    "state": "Karnataka",
+    "region": "South-West",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-GD_INTERNATIONAL_SCH",
+    "name": "GD International School",
+    "legalEntity": null,
+    "city": "Gurgaon",
+    "state": "Haryana",
+    "region": "North",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-GNIMS_BUSINESS_SCHOO",
+    "name": "GNIMS Business School",
+    "legalEntity": null,
+    "city": "Mumbai",
+    "state": "Maharashtra",
+    "region": "South-West",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-GR_INTERNATIONAL_SCH",
+    "name": "GR International School",
+    "legalEntity": null,
+    "city": "Mhendragadh",
+    "state": "Haryana",
+    "region": "North",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-GLOBAL_CITY_INTERNAT",
+    "name": "Global City International School (CBSE)",
+    "legalEntity": null,
+    "city": "Banglore",
+    "state": "Karnataka",
+    "region": "South-West",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-GLOBAL_CITY_INTERNAT_2",
+    "name": "Global City International School (Cambridge Board)",
+    "legalEntity": null,
+    "city": "Banglore",
+    "state": "Karnataka",
+    "region": "South-West",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-GURU_NANAK_INSTITUTE",
+    "name": "Guru Nanak Institute of Management Studies",
+    "legalEntity": null,
+    "city": "Mumbai",
+    "state": "Maharashtra",
+    "region": "South-West",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-HVB_GLOBAL_ACADEMY",
+    "name": "HVB Global Academy",
+    "legalEntity": null,
+    "city": "Mumbai",
+    "state": "Maharashtra",
+    "region": "South-West",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-HARIYANA_INTERNATION_2",
+    "name": "Hariyana International Academy - Class 2 - 7",
+    "legalEntity": null,
+    "city": "Kalaberia",
+    "state": "West Bengal",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-HARIYANA_INTERNATION",
+    "name": "Hariyana International Academy - Class 3 & 4",
+    "legalEntity": null,
+    "city": "Kalaberia",
+    "state": "West Bengal",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-HINDUSTAN_INTERNATIO_2",
+    "name": "Hindustan International CBSE",
+    "legalEntity": null,
+    "city": "",
+    "state": "",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-HINDUSTAN_INTERNATIO",
+    "name": "Hindustan International CIE",
+    "legalEntity": null,
+    "city": "",
+    "state": "",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-HOLY_CHILD_ENGLISH_A",
+    "name": "Holy Child English Academy, Malda",
+    "legalEntity": null,
+    "city": "Malda",
+    "state": "West Bengal",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-ITIKI_SCHOOL",
+    "name": "ITIKI School",
+    "legalEntity": null,
+    "city": "Nagaland",
+    "state": "Nagaland",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-JAFFARIA_ACADEMY_OF_",
+    "name": "Jaffaria Academy of Modern Education - Kargil",
+    "legalEntity": null,
+    "city": "Kargil",
+    "state": "Kashmir",
+    "region": "North",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-JNANA_BHARATHI_ENGLI",
+    "name": "Jnana Bharathi English School",
+    "legalEntity": null,
+    "city": "Bengaluru",
+    "state": "Karanataka",
+    "region": "South-West",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-JULIEN_EDUCATIONAL_T",
+    "name": "Julien Educational Trust, Eglin Road",
+    "legalEntity": null,
+    "city": "Kolkata",
+    "state": "West Bengal",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-JULIEN_EDUCATIONAL_T_3",
+    "name": "Julien Educational Trust, Ganganagar",
+    "legalEntity": null,
+    "city": "Ganganagar",
+    "state": "West Bengal",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-JULIEN_EDUCATIONAL_T_4",
+    "name": "Julien Educational Trust, Howrah",
+    "legalEntity": null,
+    "city": "Howrah",
+    "state": "West Bengal",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-JULIEN_EDUCATIONAL_T_2",
+    "name": "Julien Educational Trust, Kalyani",
+    "legalEntity": null,
+    "city": "Kalyani",
+    "state": "West Bengal",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-K_E_CARMEL_SCHOOL_AM",
+    "name": "K.E Carmel School - Amtala",
+    "legalEntity": null,
+    "city": "Amtala",
+    "state": "West Bengal",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-K_E_CARMEL_SCHOOL_SU",
+    "name": "K.E Carmel School - Suri",
+    "legalEntity": null,
+    "city": "Suri",
+    "state": "West Bengal",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-KAZIMAN_RAI_MEMORIAL",
+    "name": "KAZIMAN RAI MEMORIAL TRUST",
+    "legalEntity": null,
+    "city": "Kolkata",
+    "state": "West Bengal",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-KALYANI_SCHOOL",
+    "name": "Kalyani School",
+    "legalEntity": null,
+    "city": "",
+    "state": "",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-KAVYAPTA_GLOBAL_SCHO",
+    "name": "Kavyapta Global School",
+    "legalEntity": null,
+    "city": "Jamshedpur",
+    "state": "Jharkhand",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-KIRTI_BOOK_AGENCY_EM",
+    "name": "Kirti Book Agency (Empros International School _Chinchwad, Pune)",
+    "legalEntity": null,
+    "city": "Chinchwad",
+    "state": "Maharashtra",
+    "region": "South-West",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-KIRTI_BOOK_AGENCY_EM_2",
+    "name": "Kirti Book Agency (Empros International School _Talegaon)",
+    "legalEntity": null,
+    "city": "Talegaon",
+    "state": "Maharashtra",
+    "region": "South-West",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-KULACHI_HANSRAJ_MODE",
+    "name": "Kulachi Hansraj Model School",
+    "legalEntity": null,
+    "city": "Ashok Vihar",
+    "state": "Delhi",
+    "region": "North",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-LAXMI_GLOBAL_SCHOOL",
+    "name": "Laxmi Global School",
+    "legalEntity": null,
+    "city": "Valsad",
+    "state": "Gujarat",
+    "region": "South-West",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-LAXMIPAT_SINGHANIA_A",
+    "name": "Laxmipat Singhania Academy",
+    "legalEntity": null,
+    "city": "Kolkata",
+    "state": "West Bengal",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-LIONS_CALCUTTA_GREAT",
+    "name": "Lions Calcutta Greater Vidya Mandir",
+    "legalEntity": null,
+    "city": "Sonarpur",
+    "state": "West Bengal",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-LORETO_DAY_SCHOOL_BB",
+    "name": "Loreto Day School BB",
+    "legalEntity": null,
+    "city": "Kolkata",
+    "state": "West Bengal",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-LORETO_DAY_SCHOOL_KO",
+    "name": "Loreto Day School Kolkata",
+    "legalEntity": null,
+    "city": "Kolkata",
+    "state": "West Bengal",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-LORETO_HOUSE_KOLKATA",
+    "name": "Loreto House - Kolkata",
+    "legalEntity": null,
+    "city": "Kolkata",
+    "state": "West Bengal",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-MAHRISHI_DAYANAND_SC",
+    "name": "Mahrishi Dayanand School",
+    "legalEntity": null,
+    "city": "Haryana",
+    "state": "Haryana",
+    "region": "North",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-MODERN_HIGH_SCHOOL_I",
+    "name": "Modern High School International",
+    "legalEntity": null,
+    "city": "Kolkata",
+    "state": "West Bengal",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-MUSTAFA_MATRIC_SCHOO",
+    "name": "Mustafa Matric School",
+    "legalEntity": null,
+    "city": "Chidambaram",
+    "state": "Tamil Nadu",
+    "region": "South-West",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-MUTAHHARY_PUBLIC_SCH",
+    "name": "Mutahhary Public School Baroo",
+    "legalEntity": null,
+    "city": "Kargil",
+    "state": "Union Territory of Ladakh",
+    "region": "North",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-NARAYANA_SCHOOL",
+    "name": "NARAYANA SCHOOL",
+    "legalEntity": null,
+    "city": "9 Different Locations",
+    "state": "West Bengal",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-NABI_CRESCENT_SCHOOL",
+    "name": "Nabi Crescent School",
+    "legalEntity": null,
+    "city": "Avadi",
+    "state": "Tamil Nadu",
+    "region": "South-West",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-NATIONAL_GEMS_HIGHER",
+    "name": "National Gems Higher Secondary School",
+    "legalEntity": null,
+    "city": "Kolkata",
+    "state": "West Bengal",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-PGIS_CHENNAI",
+    "name": "PGIS Chennai",
+    "legalEntity": null,
+    "city": "Chennai",
+    "state": "Tamil Nadu",
+    "region": "South-West",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-PODAR_INTERNATIONAL_",
+    "name": "Podar International School Howrah",
+    "legalEntity": null,
+    "city": "Howrah",
+    "state": "West Bengal",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-RBSM_PUBLIC_SCHOOL",
+    "name": "RBSM PUBLIC SCHOOL",
+    "legalEntity": null,
+    "city": "Gurugram",
+    "state": "Haryana",
+    "region": "North",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-RN_SHAH_INTERNATIONA",
+    "name": "RN Shah International School",
+    "legalEntity": null,
+    "city": "Mumbai",
+    "state": "Maharashtra",
+    "region": "South-West",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-RAMANARAYANA_EDUCATI",
+    "name": "Ramanarayana Education Trust",
+    "legalEntity": null,
+    "city": "Kolkata",
+    "state": "West Bengal",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-RISHI_AUROBINDO_MEMO",
+    "name": "Rishi Aurobindo Memorial Academy",
+    "legalEntity": null,
+    "city": "Kolkata",
+    "state": "West Bengal",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-ROOTLAND_SEC_SCHOOL",
+    "name": "Rootland Sec. School",
+    "legalEntity": null,
+    "city": "Tura",
+    "state": "Meghalaya",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-SD_SENIOR_SECONDARY_",
+    "name": "SD Senior Secondary School",
+    "legalEntity": null,
+    "city": "Mahendragarh",
+    "state": "Haryana",
+    "region": "North",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-SSNP_SCHOOL",
+    "name": "SSNP School",
+    "legalEntity": null,
+    "city": "Devangere",
+    "state": "Karnataka",
+    "region": "South-West",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-SANJAY_GHODAWAT_INTE",
+    "name": "Sanjay Ghodawat International School",
+    "legalEntity": null,
+    "city": "Kolhapur",
+    "state": "Maharashtra",
+    "region": "South-West",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-SECUNDERABAD_PUBLIC_",
+    "name": "Secunderabad Public School/St.Ann's Grammar School",
+    "legalEntity": null,
+    "city": "Hyderabad",
+    "state": "Telangana",
+    "region": "South-West",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-SHAW_PUBLIC_SCHOOL",
+    "name": "Shaw Public School",
+    "legalEntity": null,
+    "city": "Kolkata",
+    "state": "West Bengal",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-SHEMROCK_SCHOOL",
+    "name": "Shemrock School",
+    "legalEntity": null,
+    "city": "Nagaland",
+    "state": "Nagaland",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-SHIVAM_EDUACTIONAL_A_2",
+    "name": "Shivam Eduactional Academy_Bhatagaon",
+    "legalEntity": null,
+    "city": "Raipur",
+    "state": "Chhatisgarh",
+    "region": "South-West",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-SHIVAM_EDUACTIONAL_A",
+    "name": "Shivam Eduactional Academy_Indraprastha",
+    "legalEntity": null,
+    "city": "Raipur",
+    "state": "Chhatisgarh",
+    "region": "South-West",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-SHREE_PRALHADRAO_KAS",
+    "name": "Shree Pralhadrao Kashid Foundation (Matoshree National School)",
+    "legalEntity": null,
+    "city": "Pune",
+    "state": "Maharashtra",
+    "region": "South-West",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-SRI_R_N_SINGH_MEMORI_4",
+    "name": "Sri R. N. Singh Memorial High School",
+    "legalEntity": null,
+    "city": "Kolkata",
+    "state": "West Bengal",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-SRI_R_N_SINGH_MEMORI_3",
+    "name": "Sri R. N. Singh Memorial High School (For Class 8)",
+    "legalEntity": null,
+    "city": "Kolkata",
+    "state": "West Bengal",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-SRI_R_N_SINGH_MEMORI",
+    "name": "Sri R. N. Singh Memorial High School (For Class 8) - MTPL 14 RD",
+    "legalEntity": null,
+    "city": "Kolkata",
+    "state": "West Bengal",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-SRI_R_N_SINGH_MEMORI_2",
+    "name": "Sri R. N. Singh Memorial High School - MTPL13/15",
+    "legalEntity": null,
+    "city": "Kolkata",
+    "state": "West Bengal",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-SRI_RAJASREE_EDUCATI",
+    "name": "Sri Rajasree Educational Society (laurel High)",
+    "legalEntity": null,
+    "city": "Rajahmundry",
+    "state": "Andhra Pradesh",
+    "region": "South-West",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-SRI_RAM_NARAYAN_SING",
+    "name": "Sri Ram Narayan Singh Memorial High School",
+    "legalEntity": null,
+    "city": "Kolkata",
+    "state": "West Bengal",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-SRI_VAISHNAVI_SCHOOL",
+    "name": "Sri Vaishnavi School",
+    "legalEntity": null,
+    "city": "Hyderabad",
+    "state": "Telangana",
+    "region": "South-West",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-SRI_VIDHYA_NIKETHAN_",
+    "name": "Sri Vidhya Nikethan Matriculation School",
+    "legalEntity": null,
+    "city": "Chennai",
+    "state": "Tamil Nadu",
+    "region": "South-West",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-ST_JOHNS_HIGH_SCHOOL",
+    "name": "St. Johns High School",
+    "legalEntity": null,
+    "city": "Kolkata",
+    "state": "West Bengal",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-ST_JOHN_S_SCHOOL",
+    "name": "St. John’s School",
+    "legalEntity": null,
+    "city": "Kolkata",
+    "state": "West Bengal",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-ST_MARY_CONVENT_SCHO",
+    "name": "St. Mary Convent School",
+    "legalEntity": null,
+    "city": "Kolkata",
+    "state": "West Bengal",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-ST_MONTFORT_S_SR_SEC",
+    "name": "St. Montfort's Sr. Secondary School, Baruipur",
+    "legalEntity": null,
+    "city": "Kolkata",
+    "state": "West Bengal",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-ST_PAUL_BOARDING_AND",
+    "name": "St. Paul Boarding and Day School",
+    "legalEntity": null,
+    "city": "Kolkata",
+    "state": "West Bengal",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-ST_PAUL_S_BOARDING_A",
+    "name": "St. Paul's Boarding And Day School",
+    "legalEntity": null,
+    "city": "Kolkata",
+    "state": "West Bengal",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-ST_PAUL_S_MISSION_SC",
+    "name": "St. Paul’s Mission School",
+    "legalEntity": null,
+    "city": "Kolkata",
+    "state": "West Bengal",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-ST_XAVIER_S_SR_SEC_S",
+    "name": "St. Xavier's Sr. Sec. School",
+    "legalEntity": null,
+    "city": "",
+    "state": "",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-STEPPING_STONE_MODEL",
+    "name": "Stepping Stone Model School",
+    "legalEntity": null,
+    "city": "Alipurduar",
+    "state": "West Bengal",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-SUMANA_DUTTA_MEMORIA",
+    "name": "Sumana Dutta Memorial Vivekananda International School",
+    "legalEntity": null,
+    "city": "Singhbhum",
+    "state": "Jharkhand",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-SWARNIM_INTERNATIONA",
+    "name": "Swarnim International School",
+    "legalEntity": null,
+    "city": "Kolkata",
+    "state": "West Bengal",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-TINKRSPHERE_ACADEMY",
+    "name": "TINKRSPHERE ACADEMY,",
+    "legalEntity": null,
+    "city": "Howrah",
+    "state": "West Bengal",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-TATHASTU_INNOVATIONS",
+    "name": "Tathastu Innovations (LAB ) Meerut",
+    "legalEntity": null,
+    "city": "Meerut",
+    "state": "Uttar Pradesh",
+    "region": "North",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-TECHNO_INDIA_GROUP_P_2",
+    "name": "Techno India Group Public School Asansol",
+    "legalEntity": null,
+    "city": "Kolkata",
+    "state": "West Bengal",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-TECHNO_INDIA_GROUP_P",
+    "name": "Techno India Group Public School Kalyani",
+    "legalEntity": null,
+    "city": "Kolkata",
+    "state": "West Bengal",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-TECHNO_INDIA_GROUP_P_3",
+    "name": "Techno India Group Public School Panagarh",
+    "legalEntity": null,
+    "city": "Kolkata",
+    "state": "West Bengal",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-THE_CAMBRIA_INTERNAT",
+    "name": "The Cambria International School & Jr College",
+    "legalEntity": null,
+    "city": "Kalyan",
+    "state": "Maharashtra",
+    "region": "South-West",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-THE_LEARNING_SANCTUA",
+    "name": "The Learning Sanctuary",
+    "legalEntity": null,
+    "city": "Tura",
+    "state": "Meghalaya",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-THE_SCOTTISH_CHURCH_",
+    "name": "The Scottish Church Collegiate School",
+    "legalEntity": null,
+    "city": "Kolkata",
+    "state": "West Bengal",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-THE_SHREE_JI_SCHOOL",
+    "name": "The Shree ji school",
+    "legalEntity": null,
+    "city": "Faridabad",
+    "state": "Haryana",
+    "region": "North",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-TIP_TOP_CONVENT_SCHO",
+    "name": "Tip Top Convent School",
+    "legalEntity": null,
+    "city": "Nagpur",
+    "state": "Maharashtra",
+    "region": "South-West",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-VAELS_INTERNATIONAL_",
+    "name": "Vaels International School",
+    "legalEntity": null,
+    "city": "Chennai",
+    "state": "Tamilnadu",
+    "region": "South-West",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-WISDOM_HIGH_INTERNAT",
+    "name": "Wisdom High International School, Nashik",
+    "legalEntity": null,
+    "city": "Nashik",
+    "state": "Maharashtra",
+    "region": "South-West",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
+  },
+  {
+    "id": "SCH-YOUNG_HORIZONS_SCHOO",
+    "name": "Young Horizons School",
+    "legalEntity": null,
+    "city": "Medinpur",
+    "state": "West Bengal",
+    "region": "East",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-04-27T12:00:00.000Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T12:00:00.000Z",
+        "user": "system",
+        "action": "create",
+        "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      }
+    ]
   }
 ]
