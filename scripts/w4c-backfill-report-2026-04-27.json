@@ -1,0 +1,154 @@
+{
+  "generatedAt": "2026-04-27T17:45:29.253Z",
+  "rowCount": 24,
+  "autoImported": [
+    {
+      "rowNumber": 1,
+      "mouId": "MOU-STEAM-2627-027",
+      "tier": 2,
+      "recordId": "IR-W4C-001"
+    },
+    {
+      "rowNumber": 2,
+      "mouId": "MOU-STEAM-2627-002",
+      "tier": 1,
+      "recordId": "IR-W4C-002"
+    },
+    {
+      "rowNumber": 3,
+      "mouId": "MOU-STEAM-2627-013",
+      "tier": 1,
+      "recordId": "IR-W4C-003"
+    },
+    {
+      "rowNumber": 4,
+      "mouId": "MOU-STEAM-2627-007",
+      "tier": 2,
+      "recordId": "IR-W4C-004"
+    },
+    {
+      "rowNumber": 5,
+      "mouId": "MOU-STEAM-2627-008",
+      "tier": 1,
+      "recordId": "IR-W4C-005"
+    },
+    {
+      "rowNumber": 6,
+      "mouId": "MOU-STEAM-2627-009",
+      "tier": 1,
+      "recordId": "IR-W4C-006"
+    },
+    {
+      "rowNumber": 7,
+      "mouId": "MOU-STEAM-2627-010",
+      "tier": 1,
+      "recordId": "IR-W4C-007"
+    },
+    {
+      "rowNumber": 8,
+      "mouId": "MOU-STEAM-2627-011",
+      "tier": 1,
+      "recordId": "IR-W4C-008"
+    },
+    {
+      "rowNumber": 9,
+      "mouId": "MOU-STEAM-2627-016",
+      "tier": 2,
+      "recordId": "IR-W4C-009"
+    },
+    {
+      "rowNumber": 10,
+      "mouId": "MOU-STEAM-2627-019",
+      "tier": 1,
+      "recordId": "IR-W4C-010"
+    },
+    {
+      "rowNumber": 11,
+      "mouId": "MOU-STEAM-2627-020",
+      "tier": 1,
+      "recordId": "IR-W4C-011"
+    },
+    {
+      "rowNumber": 12,
+      "mouId": "MOU-STEAM-2627-018",
+      "tier": 2,
+      "recordId": "IR-W4C-012"
+    },
+    {
+      "rowNumber": 13,
+      "mouId": "MOU-STEAM-2627-049",
+      "tier": 2,
+      "recordId": "IR-W4C-013"
+    },
+    {
+      "rowNumber": 14,
+      "mouId": "MOU-STEAM-2627-014",
+      "tier": 2,
+      "recordId": "IR-W4C-014"
+    },
+    {
+      "rowNumber": 15,
+      "mouId": "MOU-STEAM-2627-003",
+      "tier": 2,
+      "recordId": "IR-W4C-015"
+    },
+    {
+      "rowNumber": 16,
+      "mouId": "MOU-STEAM-2627-001",
+      "tier": 2,
+      "recordId": "IR-W4C-016"
+    },
+    {
+      "rowNumber": 17,
+      "mouId": "MOU-STEAM-2627-021",
+      "tier": 2,
+      "recordId": "IR-W4C-017"
+    },
+    {
+      "rowNumber": 18,
+      "mouId": "MOU-STEAM-2627-015",
+      "tier": 1,
+      "recordId": "IR-W4C-018"
+    },
+    {
+      "rowNumber": 19,
+      "mouId": "MOU-STEAM-2627-022",
+      "tier": 1,
+      "recordId": "IR-W4C-019"
+    },
+    {
+      "rowNumber": 20,
+      "mouId": "MOU-STEAM-2627-023",
+      "tier": 1,
+      "recordId": "IR-W4C-020"
+    },
+    {
+      "rowNumber": 21,
+      "mouId": "MOU-STEAM-2627-051",
+      "tier": 2,
+      "recordId": "IR-W4C-021"
+    },
+    {
+      "rowNumber": 22,
+      "mouId": "MOU-STEAM-2627-024",
+      "tier": 1,
+      "recordId": "IR-W4C-022"
+    },
+    {
+      "rowNumber": 23,
+      "mouId": "MOU-STEAM-2627-025",
+      "tier": 1,
+      "recordId": "IR-W4C-023"
+    }
+  ],
+  "quarantined": [
+    {
+      "rowNumber": 24,
+      "schoolName": "GMR International School",
+      "reason": "No matching MOU in active 51-list (defer per Anish)"
+    }
+  ],
+  "skippedAlreadyExists": [],
+  "thankYouSentCount": 11,
+  "thankYouPendingCount": 12
+}
