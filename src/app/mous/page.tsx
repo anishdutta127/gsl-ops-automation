@@ -14,9 +14,21 @@
  * status + dispatch + payment state, but that is out of scope here.
  */
 
-import type { MOU, School, User } from '@/lib/types'
+import type {
+  Communication,
+  Dispatch,
+  Feedback,
+  MOU,
+  Payment,
+  School,
+  User,
+} from '@/lib/types'
 import mousJson from '@/data/mous.json'
 import schoolsJson from '@/data/schools.json'
+import dispatchesJson from '@/data/dispatches.json'
+import paymentsJson from '@/data/payments.json'
+import communicationsJson from '@/data/communications.json'
+import feedbackJson from '@/data/feedback.json'
 import { getCurrentUser } from '@/lib/auth/session'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
@@ -28,9 +40,19 @@ import {
   applyDimensionFilters,
   applyTextSearch,
 } from '@/lib/filterParsing'
+import {
+  deriveStage,
+  KANBAN_COLUMNS,
+  type KanbanStageKey,
+} from '@/lib/kanban/deriveStage'
 
 const allMous = mousJson as unknown as MOU[]
 const allSchools = schoolsJson as unknown as School[]
+const allDispatches = dispatchesJson as unknown as Dispatch[]
+const allPayments = paymentsJson as unknown as Payment[]
+const allCommunications = communicationsJson as unknown as Communication[]
+const allFeedback = feedbackJson as unknown as Feedback[]
+const KANBAN_STAGE_KEYS = new Set<string>(KANBAN_COLUMNS.map((c) => c.key))
 
 const DIMENSION_KEYS = ['status', 'programme', 'region'] as const
 
@@ -60,8 +82,24 @@ export default async function MousListPage({ searchParams }: PageProps) {
   const active = parseDimensions(sp, DIMENSION_KEYS as unknown as string[])
   const search = typeof sp.q === 'string' ? sp.q : ''
 
+  // W3-C C3: kanban column-header navigation lands here with ?stage=<key>.
+  // Filter scoped MOUs to those whose deriveStage matches the requested key.
+  const stageParam = typeof sp.stage === 'string' && KANBAN_STAGE_KEYS.has(sp.stage)
+    ? (sp.stage as KanbanStageKey)
+    : null
+  const stageFiltered = stageParam !== null
+    ? scoped.filter((m) =>
+        deriveStage(m, {
+          dispatches: allDispatches,
+          payments: allPayments,
+          communications: allCommunications,
+          feedback: allFeedback,
+        }) === stageParam,
+      )
+    : scoped
+
   const filtered = applyTextSearch(
-    applyDimensionFilters(scoped, active, {
+    applyDimensionFilters(stageFiltered, active, {
       status: (m) => m.status,
       programme: (m) => m.programme,
       region: (m) => regionFor(m, schoolById),
@@ -69,6 +107,10 @@ export default async function MousListPage({ searchParams }: PageProps) {
     search,
     (m) => [m.id, m.schoolName, m.programmeSubType ?? '', m.notes ?? ''],
   )
+
+  const stageLabel = stageParam !== null
+    ? KANBAN_COLUMNS.find((c) => c.key === stageParam)?.label ?? stageParam
+    : null
 
   const dimensions: FilterDimension[] = [
     {
@@ -128,8 +170,12 @@ export default async function MousListPage({ searchParams }: PageProps) {
       <TopNav currentPath="/mous" />
       <main id="main-content">
         <PageHeader
-          title="MOUs"
-          subtitle={`${filtered.length} of ${scoped.length} matching`}
+          title={stageLabel !== null ? `MOUs at ${stageLabel}` : 'MOUs'}
+          subtitle={
+            stageLabel !== null
+              ? `${filtered.length} MOUs at the ${stageLabel} stage. Filtered from the kanban.`
+              : `${filtered.length} of ${scoped.length} matching`
+          }
         />
         <div className="mx-auto flex max-w-screen-xl flex-col gap-4 px-4 py-6 sm:flex-row">
           <FilterRail

@@ -75,4 +75,33 @@ describe('/mous list page', () => {
     const html = renderToStaticMarkup(await MousPage({ searchParams: Promise.resolve({}) }))
     expect(html).not.toMatch(/#[0-9a-fA-F]{3,6}/)
   })
+
+  it('?stage=invoice-raised filter narrows list to MOUs at that kanban stage (W3-C C3)', async () => {
+    getCurrentUserMock.mockResolvedValue(admin())
+    const { default: MousPage } = await import('./page')
+    const html = renderToStaticMarkup(
+      await MousPage({ searchParams: Promise.resolve({ stage: 'invoice-raised' }) }),
+    )
+    expect(html).toContain('MOUs at Invoice raised')
+    expect(html).toContain('Filtered from the kanban')
+  })
+
+  it('?stage=pre-ops filter resolves to the Pre-Ops Legacy holding bay', async () => {
+    getCurrentUserMock.mockResolvedValue(admin())
+    const { default: MousPage } = await import('./page')
+    const html = renderToStaticMarkup(
+      await MousPage({ searchParams: Promise.resolve({ stage: 'pre-ops' }) }),
+    )
+    expect(html).toContain('MOUs at Needs triage')
+  })
+
+  it('unknown ?stage= value is ignored (treated as no filter)', async () => {
+    getCurrentUserMock.mockResolvedValue(admin())
+    const { default: MousPage } = await import('./page')
+    const html = renderToStaticMarkup(
+      await MousPage({ searchParams: Promise.resolve({ stage: 'not-a-stage' }) }),
+    )
+    expect(html).not.toContain('MOUs at')
+    expect(html).toContain('Mutahhary Public School Baroo')
+  })
 })

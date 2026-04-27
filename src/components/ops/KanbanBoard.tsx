@@ -33,6 +33,7 @@
  */
 
 import { useMemo, useState } from 'react'
+import { X } from 'lucide-react'
 import {
   DndContext,
   DragOverlay,
@@ -59,9 +60,16 @@ import { MouCardBody } from './MouCard'
 import { StageColumn } from './StageColumn'
 import { TransitionDialog } from './TransitionDialog'
 
+export interface KanbanCardMeta {
+  daysInStage: number | null
+  overdue: boolean
+}
+
 interface KanbanBoardProps {
   /** Server-rendered: { stageKey -> MOUs in that column }. */
   initialBuckets: Record<KanbanStageKey, MOU[]>
+  /** Server-rendered per-MOU display metadata (days-in-stage, overdue flag). */
+  cardMeta?: Record<string, KanbanCardMeta>
 }
 
 interface DialogState {
@@ -94,7 +102,7 @@ const ANNOUNCEMENTS = {
   },
 }
 
-export function KanbanBoard({ initialBuckets }: KanbanBoardProps) {
+export function KanbanBoard({ initialBuckets, cardMeta = {} }: KanbanBoardProps) {
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
@@ -139,7 +147,7 @@ export function KanbanBoard({ initialBuckets }: KanbanBoardProps) {
     if (classification.kind === 'no-op') return
     if (classification.kind === 'rejected') {
       setToast('Pre-Ops Legacy is a one-way exit; cards cannot move into it.')
-      window.setTimeout(() => setToast(null), 4000)
+      window.setTimeout(() => setToast(null), 6000)
       return
     }
     const mou = (initialBuckets[fromStage] ?? []).find((m) => m.id === mouId) ?? null
@@ -179,7 +187,11 @@ export function KanbanBoard({ initialBuckets }: KanbanBoardProps) {
     if (c.kind === 'backward') {
       const m = dialog.mou
       setToast(`Backward move recorded in audit log. To revert lifecycle data, edit the MOU at /mous/${m.id}.`)
-      window.setTimeout(() => setToast(null), 6000)
+      // 8 seconds: toast carries a 16-word message + URL; the prior 4s
+      // default would not give a typical reader enough time to read AND
+      // act on the next-step pointer. Manual dismiss button is also
+      // available for early-acknowledge.
+      window.setTimeout(() => setToast(null), 8000)
     }
     return null
   }
@@ -198,7 +210,7 @@ export function KanbanBoard({ initialBuckets }: KanbanBoardProps) {
         onDragCancel={() => setActiveMou(null)}
       >
         <div
-          className="flex gap-3 overflow-x-auto pb-2"
+          className="flex flex-col gap-3 pb-2 md:flex-row md:overflow-x-auto"
           role="region"
           aria-label="MOU lifecycle kanban board"
           data-testid="kanban-board"
@@ -218,7 +230,14 @@ export function KanbanBoard({ initialBuckets }: KanbanBoardProps) {
                     Empty.
                   </p>
                 ) : (
-                  cards.map((mou) => <DraggableMouCard key={mou.id} mou={mou} active={activeMou?.id === mou.id} />)
+                  cards.map((mou) => (
+                    <DraggableMouCard
+                      key={mou.id}
+                      mou={mou}
+                      active={activeMou?.id === mou.id}
+                      meta={cardMeta[mou.id]}
+                    />
+                  ))
                 )}
               </DroppableStageColumn>
             )
@@ -247,10 +266,19 @@ export function KanbanBoard({ initialBuckets }: KanbanBoardProps) {
         <div
           role="status"
           aria-live="polite"
-          className="fixed bottom-4 right-4 z-40 max-w-sm rounded-md border border-border bg-card p-3 text-sm shadow-lg"
+          className="fixed bottom-4 right-4 z-40 flex max-w-sm items-start gap-2 rounded-md border border-border bg-card p-3 text-sm shadow-lg"
           data-testid="kanban-toast"
         >
-          {toast}
+          <span className="min-w-0 flex-1">{toast}</span>
+          <button
+            type="button"
+            onClick={() => setToast(null)}
+            className="-m-1 shrink-0 rounded-md p-1 text-muted-foreground hover:bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
+            aria-label="Dismiss notification"
+            data-testid="kanban-toast-dismiss"
+          >
+            <X aria-hidden className="size-4" />
+          </button>
         </div>
       ) : null}
     </>
@@ -273,9 +301,18 @@ function DroppableStageColumn({ columnKey, label, variant, count, children }: Dr
       ? 'ring-2 ring-signal-alert ring-inset cursor-not-allowed'
       : 'ring-2 ring-brand-navy ring-inset bg-muted/60'
     : ''
+  // W3-C C3: column-header link to /mous?stage=<key> for the
+  // all-schools-at-this-stage detail view.
+  const headerHref = `/mous?stage=${encodeURIComponent(columnKey)}`
   return (
     <div ref={setNodeRef} className={overClass} data-testid={`droppable-${columnKey}`}>
-      <StageColumn columnKey={columnKey} label={label} variant={variant} count={count}>
+      <StageColumn
+        columnKey={columnKey}
+        label={label}
+        variant={variant}
+        count={count}
+        headerHref={headerHref}
+      >
         {children}
       </StageColumn>
     </div>
@@ -285,9 +322,10 @@ function DroppableStageColumn({ columnKey, label, variant, count, children }: Dr
 interface DraggableMouCardProps {
   mou: MOU
   active: boolean
+  meta?: KanbanCardMeta
 }
 
-function DraggableMouCard({ mou, active }: DraggableMouCardProps) {
+function DraggableMouCard({ mou, active, meta }: DraggableMouCardProps) {
   const { attributes, listeners, setNodeRef } = useDraggable({ id: mou.id })
   return (
     <a
@@ -299,8 +337,9 @@ function DraggableMouCard({ mou, active }: DraggableMouCardProps) {
       title={mou.schoolName}
       data-testid="mou-card"
       data-mou-id={mou.id}
+      data-overdue={meta?.overdue ? 'true' : undefined}
     >
-      <MouCardBody mou={mou} />
+      <MouCardBody mou={mou} daysInStage={meta?.daysInStage} overdue={meta?.overdue} />
     </a>
   )
 }

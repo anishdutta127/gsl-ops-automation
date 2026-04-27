@@ -23,7 +23,7 @@
  */
 
 import Link from 'next/link'
-import { AlertTriangle } from 'lucide-react'
+import { AlertTriangle, Clock } from 'lucide-react'
 import type { MOU } from '@/lib/types'
 import { hasDrift } from '@/lib/kanban/deriveStage'
 
@@ -31,6 +31,8 @@ const SCHOOL_NAME_MAX = 32
 
 interface MouCardProps {
   mou: MOU
+  daysInStage?: number | null
+  overdue?: boolean
 }
 
 function truncate(value: string, max: number): string {
@@ -40,10 +42,12 @@ function truncate(value: string, max: number): string {
 
 interface MouCardBodyProps {
   mou: MOU
+  daysInStage?: number | null
+  overdue?: boolean
 }
 
 /** Visual content shared between Link variant and Draggable variant. */
-export function MouCardBody({ mou }: MouCardBodyProps) {
+export function MouCardBody({ mou, daysInStage, overdue }: MouCardBodyProps) {
   const fullName = mou.schoolName
   const displayName = truncate(fullName, SCHOOL_NAME_MAX)
   const programmeLabel = mou.programmeSubType
@@ -51,14 +55,26 @@ export function MouCardBody({ mou }: MouCardBodyProps) {
     : mou.programme
   const drift = hasDrift(mou)
   const showStatusBadge = mou.status !== 'Active'
+  const showOverdue = overdue === true && typeof daysInStage === 'number'
+
+  const anyBadge = drift || showStatusBadge || showOverdue
 
   return (
     <>
       <div className="font-medium text-foreground">{displayName}</div>
       <div className="mt-0.5 font-mono text-[11px] text-muted-foreground">{mou.id}</div>
       <div className="mt-1 text-xs text-muted-foreground">{programmeLabel}</div>
-      {(drift || showStatusBadge) ? (
+      {anyBadge ? (
         <div className="mt-2 flex flex-wrap gap-1">
+          {showOverdue ? (
+            <span
+              className="inline-flex items-center gap-1 rounded-full border border-signal-attention bg-card px-2 py-0.5 text-[11px] font-medium text-signal-attention"
+              data-testid="overdue-badge"
+            >
+              <Clock aria-hidden className="size-3" />
+              Overdue {daysInStage}d
+            </span>
+          ) : null}
           {drift ? (
             <span
               className="inline-flex items-center gap-1 rounded-full border border-signal-attention bg-card px-2 py-0.5 text-[11px] font-medium text-signal-attention"
@@ -79,7 +95,7 @@ export function MouCardBody({ mou }: MouCardBodyProps) {
   )
 }
 
-export function MouCard({ mou }: MouCardProps) {
+export function MouCard({ mou, daysInStage, overdue }: MouCardProps) {
   return (
     <Link
       href={`/mous/${mou.id}`}
@@ -87,8 +103,9 @@ export function MouCard({ mou }: MouCardProps) {
       title={mou.schoolName}
       data-testid="mou-card"
       data-mou-id={mou.id}
+      data-overdue={overdue ? 'true' : undefined}
     >
-      <MouCardBody mou={mou} />
+      <MouCardBody mou={mou} daysInStage={daysInStage} overdue={overdue} />
     </Link>
   )
 }

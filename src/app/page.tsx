@@ -31,15 +31,22 @@ import communicationsJson from '@/data/communications.json'
 import feedbackJson from '@/data/feedback.json'
 import { getCurrentUser } from '@/lib/auth/session'
 import { deriveStage, KANBAN_COLUMNS, type KanbanStageKey } from '@/lib/kanban/deriveStage'
+import { stageEnteredDate, daysSince } from '@/lib/kanban/stageEnteredDate'
+import { isOverdue } from '@/lib/kanban/stageDurations'
+import { getIncompleteSchools } from '@/lib/schools/dataCompleteness'
+import schoolsJson from '@/data/schools.json'
+import type { School } from '@/lib/types'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
-import { KanbanBoard } from '@/components/ops/KanbanBoard'
+import { KanbanBoard, type KanbanCardMeta } from '@/components/ops/KanbanBoard'
+import { SchoolsNeedingDataTile } from '@/components/ops/SchoolsNeedingDataTile'
 
 const allMous = mousJson as unknown as MOU[]
 const allDispatches = dispatchesJson as unknown as Dispatch[]
 const allPayments = paymentsJson as unknown as Payment[]
 const allCommunications = communicationsJson as unknown as Communication[]
 const allFeedback = feedbackJson as unknown as Feedback[]
+const allSchools = schoolsJson as unknown as School[]
 
 export default async function HomePage() {
   const user = await getCurrentUser()
@@ -63,10 +70,20 @@ export default async function HomePage() {
     'delivery-acknowledged': [],
     'feedback-submitted': [],
   }
+  const cardMeta: Record<string, KanbanCardMeta> = {}
+  const now = new Date()
   for (const mou of allMous) {
     const stage = deriveStage(mou, deps)
     initialBuckets[stage].push(mou)
+    const entered = stageEnteredDate(mou, deps, stage)
+    const days = daysSince(entered, now)
+    cardMeta[mou.id] = {
+      daysInStage: days,
+      overdue: isOverdue(stage, days),
+    }
   }
+
+  const incompleteSchoolCount = getIncompleteSchools(allSchools, 1).length
 
   return (
     <>
@@ -76,8 +93,9 @@ export default async function HomePage() {
           title="Kanban"
           subtitle={`${allMous.length} MOUs across ${KANBAN_COLUMNS.length} stages`}
         />
-        <div className="mx-auto max-w-screen-2xl px-4 py-6">
-          <KanbanBoard initialBuckets={initialBuckets} />
+        <div className="mx-auto max-w-screen-2xl space-y-4 px-4 py-6">
+          <SchoolsNeedingDataTile count={incompleteSchoolCount} total={allSchools.length} />
+          <KanbanBoard initialBuckets={initialBuckets} cardMeta={cardMeta} />
         </div>
       </main>
     </>

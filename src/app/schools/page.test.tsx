@@ -46,4 +46,16 @@ describe('/schools list page', () => {
     const html = renderToStaticMarkup(await SchoolsPage({ searchParams: Promise.resolve({}) }))
     expect(html).not.toMatch(/#[0-9a-fA-F]{3,6}/)
   })
+
+  it('?incomplete=yes mode renders the triage view (W3-C C3)', async () => {
+    const { default: SchoolsPage } = await import('./page')
+    const html = renderToStaticMarkup(
+      await SchoolsPage({ searchParams: Promise.resolve({ incomplete: 'yes' }) }),
+    )
+    expect(html).toContain('Schools needing data')
+    expect(html).toContain('sorted most-missing first')
+    expect(html).toContain('Missing')
+    // FilterRail is hidden in incomplete mode
+    expect(html).not.toContain('Chain membership')
+  })
 })
