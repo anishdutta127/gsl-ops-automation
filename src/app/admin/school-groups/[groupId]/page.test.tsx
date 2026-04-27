@@ -87,15 +87,16 @@ describe('/admin/school-groups/[groupId] edit-members', () => {
     expect(html).toContain('Initial seed')
   })
 
-  it('SalesRep is redirected to /dashboard', async () => {
+  it('SalesRep also sees the page (Phase 1 W3-B: UI gates disabled)', async () => {
     verifyMock.mockResolvedValue({ sub: 'sp-vikram', email: 'v@example.test', name: 'Vikram', role: 'SalesRep' })
     const Page = await loadPage()
-    await expect(
-      Page({
+    const html = renderToStaticMarkup(
+      await Page({
         params: Promise.resolve({ groupId: 'SG-CHAIN' }),
         searchParams: Promise.resolve({}),
       }),
-    ).rejects.toThrow('REDIRECT:/dashboard')
+    )
+    expect(html).toContain('SG-CHAIN')
   })
 
   it('unknown groupId triggers notFound', async () => {

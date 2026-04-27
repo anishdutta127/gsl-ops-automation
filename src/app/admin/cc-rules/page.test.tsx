@@ -81,18 +81,19 @@ describe('/admin/cc-rules list', () => {
     expect(html).toContain('New rule')
   })
 
-  it('OpsHead sees rule rows but NO "New rule" CTA (Admin-only)', async () => {
+  it('OpsHead also sees the "New rule" CTA (Phase 1 W3-B: UI gates disabled)', async () => {
     verifyMock.mockResolvedValue({ sub: 'pradeep.r', email: 'p@example.test', name: 'Pradeep', role: 'OpsHead' })
     const Page = await loadPage()
     const html = renderToStaticMarkup(await Page())
     expect(html).toContain('CCR-NORTH-DELHI')
-    expect(html).not.toContain('New rule')
+    expect(html).toContain('New rule')
   })
 
-  it('SalesRep is redirected to /dashboard', async () => {
+  it('SalesRep also sees the page (Phase 1 W3-B: UI gates disabled)', async () => {
     verifyMock.mockResolvedValue({ sub: 'sp-vikram', email: 'v@example.test', name: 'Vikram', role: 'SalesRep' })
     const Page = await loadPage()
-    await expect(Page()).rejects.toThrow('REDIRECT:/dashboard')
+    const html = renderToStaticMarkup(await Page())
+    expect(html).toContain('CCR-NORTH-DELHI')
   })
 
   it('renders an interactive toggle (no C5a-2 deferral note; toggle is wired)', async () => {

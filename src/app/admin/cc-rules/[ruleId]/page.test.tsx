@@ -105,15 +105,16 @@ describe('/admin/cc-rules/[ruleId] detail/edit', () => {
     expect(html).toContain('Initial seed')
   })
 
-  it('SalesRep is redirected to /dashboard', async () => {
+  it('SalesRep also sees the page (Phase 1 W3-B: UI gates disabled)', async () => {
     verifyMock.mockResolvedValue({ sub: 'sp-vikram', email: 'v@example.test', name: 'Vikram', role: 'SalesRep' })
     const Page = await loadPage()
-    await expect(
-      Page({
+    const html = renderToStaticMarkup(
+      await Page({
         params: Promise.resolve({ ruleId: 'CCR-NORTH-DELHI' }),
         searchParams: Promise.resolve({}),
       }),
-    ).rejects.toThrow('REDIRECT:/dashboard')
+    )
+    expect(html).toContain('CCR-NORTH-DELHI')
   })
 
   it('unknown ruleId triggers notFound', async () => {

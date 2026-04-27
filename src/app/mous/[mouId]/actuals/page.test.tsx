@@ -84,14 +84,13 @@ describe('/mous/[mouId]/actuals page', () => {
     expect(html).toContain('<form')
   })
 
-  it('hides form for non-permitted role (OpsHead) with inline message', async () => {
+  it('OpsHead also sees the form (Phase 1 W3-B: UI gates disabled)', async () => {
     getCurrentUserMock.mockResolvedValue(user('OpsHead', 'pradeep.r'))
     const { default: Page } = await import('./page')
     const html = renderToStaticMarkup(
       await Page({ params: Promise.resolve({ mouId: 'MOU-X' }), searchParams: Promise.resolve({}) }),
     )
-    expect(html).not.toContain('<form')
-    expect(html).toContain('requires the SalesRep, SalesHead, or Admin role')
+    expect(html).toContain('<form')
   })
 
   it('SalesRep accessing unassigned MOU triggers notFound (no leak)', async () => {

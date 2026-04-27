@@ -67,20 +67,22 @@ describe('/schools/[schoolId]/edit page', () => {
     expect(html).toContain('<form')
   })
 
-  it('SalesRep redirects to /schools/[id] (read-only fall-through, NOT /dashboard)', async () => {
+  it('SalesRep also sees the form (Phase 1 W3-B: UI gates disabled)', async () => {
     getCurrentUserMock.mockResolvedValue(makeUser('SalesRep'))
     const { default: Page } = await import('./page')
-    await expect(
-      Page({ params: Promise.resolve({ schoolId: 'SCH-MUTAHHARY_PUBLIC_SCH' }) }),
-    ).rejects.toThrow('REDIRECT:/schools/SCH-MUTAHHARY_PUBLIC_SCH')
+    const html = renderToStaticMarkup(
+      await Page({ params: Promise.resolve({ schoolId: 'SCH-MUTAHHARY_PUBLIC_SCH' }) }),
+    )
+    expect(html).toContain('<form')
   })
 
-  it('Finance role redirects to read-only detail too', async () => {
+  it('Finance also sees the form (Phase 1 W3-B: UI gates disabled)', async () => {
     getCurrentUserMock.mockResolvedValue(makeUser('Finance'))
     const { default: Page } = await import('./page')
-    await expect(
-      Page({ params: Promise.resolve({ schoolId: 'SCH-MUTAHHARY_PUBLIC_SCH' }) }),
-    ).rejects.toThrow('REDIRECT:/schools/SCH-MUTAHHARY_PUBLIC_SCH')
+    const html = renderToStaticMarkup(
+      await Page({ params: Promise.resolve({ schoolId: 'SCH-MUTAHHARY_PUBLIC_SCH' }) }),
+    )
+    expect(html).toContain('<form')
   })
 
   it('contains no raw hex codes (token discipline)', async () => {

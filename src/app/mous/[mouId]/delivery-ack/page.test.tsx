@@ -36,8 +36,10 @@ describe('/mous/[mouId]/delivery-ack page (D4 manual-upload)', () => {
     expect(html).toContain('Signed form URL')
   })
 
-  it('SalesRep on own MOU sees role-locked message (no forms)', async () => {
-    // sp-roveena owns MOU-STEAM-2627-001 post Week 3 import
+  it('SalesRep on own MOU also sees both forms (Phase 1 W3-B: UI gates disabled)', async () => {
+    // sp-roveena owns MOU-STEAM-2627-001 post Week 3 import. Pre-W3-B
+    // SalesRep got an inline role-locked message; post-W3-B both forms
+    // render. Server-side enforcement at submit time stays.
     getCurrentUserMock.mockResolvedValue(user('SalesRep', 'sp-roveena'))
     const { default: Page } = await import('./page')
     const html = renderToStaticMarkup(
@@ -46,9 +48,8 @@ describe('/mous/[mouId]/delivery-ack page (D4 manual-upload)', () => {
         searchParams: Promise.resolve({}),
       }),
     )
-    expect(html).not.toContain('action="/api/delivery-ack/template"')
-    expect(html).not.toContain('action="/api/delivery-ack/acknowledge"')
-    expect(html).toContain('requires the OpsHead or Admin role')
+    expect(html).toContain('action="/api/delivery-ack/template"')
+    expect(html).toContain('action="/api/delivery-ack/acknowledge"')
   })
 
   it('error=invalid-url surfaces a friendly message', async () => {

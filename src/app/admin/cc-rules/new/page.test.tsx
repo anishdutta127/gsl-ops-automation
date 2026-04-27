@@ -66,12 +66,11 @@ describe('/admin/cc-rules/new', () => {
     expect(html).toContain('name="sourceRuleText"')
   })
 
-  it('OpsHead is redirected to /admin/cc-rules (Admin-only window)', async () => {
+  it('OpsHead also sees the form (Phase 1 W3-B: UI gates disabled)', async () => {
     verifyMock.mockResolvedValue({ sub: 'misba.m', email: 'm@example.test', name: 'Misba', role: 'OpsHead' })
     const Page = await loadPage()
-    await expect(
-      Page({ searchParams: Promise.resolve({}) }),
-    ).rejects.toThrow('REDIRECT:/admin/cc-rules')
+    const html = renderToStaticMarkup(await Page({ searchParams: Promise.resolve({}) }))
+    expect(html).toContain('<form')
   })
 
   it('error=duplicate-id surfaces a friendly message', async () => {

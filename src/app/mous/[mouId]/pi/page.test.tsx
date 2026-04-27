@@ -30,15 +30,18 @@ describe('/mous/[mouId]/pi page', () => {
     expect(html).toContain('Generate PI')
   })
 
-  it('SalesRep on own MOU sees inline message instead of form', async () => {
-    // sp-roveena owns MOU-STEAM-2627-001 post Week 3 import
+  it('SalesRep on own MOU also sees the form (Phase 1 W3-B: UI gates disabled)', async () => {
+    // sp-roveena owns MOU-STEAM-2627-001 post Week 3 import. Pre-W3-B
+    // SalesRep got an inline role-locked message; post-W3-B the form
+    // renders for any authenticated user. Server-side canPerform() in
+    // lib/pi/generatePi.ts still enforces at submit time.
     getCurrentUserMock.mockResolvedValue(user('SalesRep', 'sp-roveena'))
     const { default: Page } = await import('./page')
     const html = renderToStaticMarkup(
       await Page({ params: Promise.resolve({ mouId: 'MOU-STEAM-2627-001' }) }),
     )
-    expect(html).not.toContain('<form')
-    expect(html).toContain('requires the Finance or Admin role')
+    expect(html).toContain('<form')
+    expect(html).toContain('Generate PI')
   })
 
   it('renders Phase 1 stub note', async () => {

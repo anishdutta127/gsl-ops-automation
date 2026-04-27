@@ -72,10 +72,10 @@ describe('/mous/[mouId]/feedback-request page (compose state)', () => {
     expect(html).not.toContain('Phase 1 note: this submit endpoint is wired')
   })
 
-  it('SalesRep on own MOU sees role-locked message', async () => {
-    // sp-roveena owns MOU-STEAM-2627-001 post Week 3 import. Page logic
-    // surfaces SPOC-email-missing before role-lock; inject a school override
-    // with email set so the role-lock branch is the one under test.
+  it('SalesRep on own MOU also sees the form (Phase 1 W3-B: UI gates disabled)', async () => {
+    // sp-roveena owns MOU-STEAM-2627-001. Inject a school with email set so
+    // the page reaches the form branch (default upstream school has email=null
+    // which would surface the SPOC alert instead).
     mockSchools.value = [{
       id: 'SCH-MUTAHHARY_PUBLIC_SCH', name: 'Mutahhary Public School Baroo',
       legalEntity: null, city: 'Kargil', state: 'Union Territory of Ladakh',
@@ -92,8 +92,7 @@ describe('/mous/[mouId]/feedback-request page (compose state)', () => {
         searchParams: Promise.resolve({}),
       }),
     )
-    expect(html).not.toContain('action="/api/communications/compose"')
-    expect(html).toContain('requires the OpsHead or Admin role')
+    expect(html).toContain('action="/api/communications/compose"')
   })
 
   it('error=school-email-missing surfaces a friendly message', async () => {

@@ -30,14 +30,14 @@ describe('/mous/[mouId]/dispatch page', () => {
     expect(html).toContain('Raise dispatch')
   })
 
-  it('Finance sees inline message instead of form', async () => {
+  it('Finance also sees the form (Phase 1 W3-B: UI gates disabled)', async () => {
     getCurrentUserMock.mockResolvedValue(user('Finance', 'shubhangi.g'))
     const { default: Page } = await import('./page')
     const html = renderToStaticMarkup(
       await Page({ params: Promise.resolve({ mouId: 'MOU-STEAM-2627-001' }) }),
     )
-    expect(html).not.toContain('<form')
-    expect(html).toContain('requires the OpsHead or Admin role')
+    expect(html).toContain('<form')
+    expect(html).toContain('Raise dispatch')
   })
 
   it('renders Phase 1 stub note', async () => {

@@ -67,9 +67,10 @@ describe('/admin/schools list', () => {
     expect(html).toContain('href="/schools/SCH-A/edit"')
   })
 
-  it('SalesRep is redirected to /dashboard', async () => {
+  it('SalesRep also sees the page (Phase 1 W3-B: UI gates disabled)', async () => {
     verifyMock.mockResolvedValue({ sub: 'sp-vikram', email: 'v@example.test', name: 'Vikram', role: 'SalesRep' })
     const Page = await loadPage()
-    await expect(Page()).rejects.toThrow('REDIRECT:/dashboard')
+    const html = renderToStaticMarkup(await Page())
+    expect(html).toContain('Alpha School')
   })
 })

@@ -50,12 +50,11 @@ describe('/admin/school-groups/new', () => {
     expect(html).toContain('Beta')
   })
 
-  it('SalesRep is redirected to /admin/school-groups', async () => {
+  it('SalesRep also sees the form (Phase 1 W3-B: UI gates disabled)', async () => {
     verifyMock.mockResolvedValue({ sub: 'sp-vikram', email: 'v@example.test', name: 'Vikram', role: 'SalesRep' })
     const Page = await loadPage()
-    await expect(
-      Page({ searchParams: Promise.resolve({}) }),
-    ).rejects.toThrow('REDIRECT:/admin/school-groups')
+    const html = renderToStaticMarkup(await Page({ searchParams: Promise.resolve({}) }))
+    expect(html).toContain('<form')
   })
 
   it('error=invalid-member-school-ids surfaces a friendly message', async () => {

@@ -1,10 +1,9 @@
 /*
- * Page-wiring tests for /admin (Phase C5a-1).
+ * Page-wiring tests for /admin.
  *
- * Concern: the role gate on the admin landing must redirect anyone
- * who is not Admin or OpsHead to /dashboard. testingOverride is
- * resolved via effectiveRoles() so OpsEmployee + override:OpsHead
- * lets Misba in.
+ * Phase 1 W3-B: UI gates removed; every authenticated user sees the
+ * directory of admin areas. Tests assert positive rendering for each
+ * representative role plus the unauthenticated -> /login redirect.
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest'
@@ -66,16 +65,18 @@ describe('/admin landing', () => {
     expect(html).toContain('Welcome, Misba.')
   })
 
-  it('SalesHead is redirected to /dashboard', async () => {
+  it('SalesHead also sees the page (Phase 1 W3-B: UI gates disabled)', async () => {
     verifyMock.mockResolvedValue({ sub: 'pratik.d', email: 'p@example.test', name: 'Pratik', role: 'SalesHead' })
     const Page = await loadPage()
-    await expect(Page({ searchParams: Promise.resolve({}) })).rejects.toThrow('REDIRECT:/dashboard')
+    const html = renderToStaticMarkup(await Page({ searchParams: Promise.resolve({}) }))
+    expect(html).toContain('Welcome, Pratik.')
   })
 
-  it('SalesRep is redirected to /dashboard', async () => {
+  it('SalesRep also sees the page (Phase 1 W3-B: UI gates disabled)', async () => {
     verifyMock.mockResolvedValue({ sub: 'sp-vikram', email: 'v@example.test', name: 'Vikram', role: 'SalesRep' })
     const Page = await loadPage()
-    await expect(Page({ searchParams: Promise.resolve({}) })).rejects.toThrow('REDIRECT:/dashboard')
+    const html = renderToStaticMarkup(await Page({ searchParams: Promise.resolve({}) }))
+    expect(html).toContain('Welcome, Vikram.')
   })
 
   it('unauthenticated viewer redirected to /login with next=/admin', async () => {

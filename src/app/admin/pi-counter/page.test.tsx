@@ -157,10 +157,11 @@ describe('/admin/pi-counter', () => {
     expect(html).toContain('Queued 2026-04-20')
   })
 
-  it('SalesRep is redirected to /dashboard', async () => {
+  it('SalesRep also sees the page (Phase 1 W3-B: UI gates disabled)', async () => {
     mockComms.value = []
     verifyMock.mockResolvedValue({ sub: 'sp-vikram', email: 'v@example.test', name: 'Vikram', role: 'SalesRep' })
     const Page = await loadPage()
-    await expect(Page()).rejects.toThrow('REDIRECT:/dashboard')
+    const html = renderToStaticMarkup(await Page())
+    expect(html).toContain('GSL/OPS/26-27/0006')
   })
 })
