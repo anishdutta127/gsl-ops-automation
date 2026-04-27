@@ -1,12 +1,12 @@
 /*
- * Homepage (Week 3 W3-C C1): kanban board.
+ * Homepage (Week 3 W3-C C1 + W3-F): kanban board with tabbed nav.
  *
  * 9 columns: 8 lifecycle stages + Pre-Ops Legacy holding bay. Every
  * Active MOU lands in exactly one column; Pre-Ops cards render
  * one-way exit per the W3-C design (drag in C2 will block drop into
- * Pre-Ops). Pre-W3-B / pre-W3-A this route was a redirect to
- * /dashboard; W3-F will move /dashboard to /overview as a sibling
- * tab. Tabbed nav lands in W3-F.
+ * Pre-Ops). W3-F moves the Leadership Console to /overview and
+ * renders a Kanban / Overview tab strip at the top of both routes
+ * so testers can switch view without losing context.
  *
  * Server Component. Reads src/data/*.json at request time. Per-MOU
  * stage derivation is pure (deriveStage). The page itself is
@@ -38,6 +38,7 @@ import schoolsJson from '@/data/schools.json'
 import type { School } from '@/lib/types'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
+import { KanbanOverviewTabs } from '@/components/ops/KanbanOverviewTabs'
 import { KanbanBoard, type KanbanCardMeta } from '@/components/ops/KanbanBoard'
 import { SchoolsNeedingDataTile } from '@/components/ops/SchoolsNeedingDataTile'
 
@@ -93,6 +94,7 @@ export default async function HomePage() {
           title="Kanban"
           subtitle={`${allMous.length} MOUs across ${KANBAN_COLUMNS.length} stages`}
         />
+        <KanbanOverviewTabs activeTab="kanban" />
         <div className="mx-auto max-w-screen-2xl space-y-4 px-4 py-6">
           <SchoolsNeedingDataTile count={incompleteSchoolCount} total={allSchools.length} />
           <KanbanBoard initialBuckets={initialBuckets} cardMeta={cardMeta} />

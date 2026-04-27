@@ -1,17 +1,13 @@
 /*
- * /dashboard (W3-F alias).
+ * /overview (W3-F).
  *
- * Bookmark-compatibility alias for /overview. Pre-W3-F /dashboard
- * was the Leadership Console homepage; W3-F moves the kanban to /
- * and the Leadership Console to /overview as a sibling tab. This
- * route stays addressable so existing bookmarks, audit-log links,
- * and external references continue to work; it renders the same
- * OverviewContent body and the same tab strip with Overview active.
+ * The Leadership Console content (5 health tiles + exception feed +
+ * open-escalation list + 10 trigger tiles) lives here post W3-F.
+ * Pre-W3-F this content was the homepage at /dashboard; W3-F moves
+ * it to /overview as a sibling tab to the new kanban homepage at /.
  *
- * The currentPath="/dashboard" prop on TopNav keeps any future
- * /dashboard-rooted nav highlight working; activeTab="overview"
- * makes the in-content tab indicator agree with the canonical
- * /overview tab. Identical data slice, identical aggregation libs.
+ * /dashboard aliases this route for bookmark compatibility (same
+ * content, same tab-active state).
  */
 
 import type {
@@ -44,11 +40,11 @@ const communications = communicationsJson as unknown as Communication[]
 const feedback = feedbackJson as unknown as Feedback[]
 const escalations = escalationsJson as unknown as Escalation[]
 
-export default async function DashboardPage() {
+export default async function OverviewPage() {
   const user = await getCurrentUser()
   return (
     <>
-      <TopNav currentPath="/dashboard" />
+      <TopNav currentPath="/overview" />
       <main id="main-content">
         <PageHeader title="Ops at a glance" subtitle={user ? `Signed in as ${user.name}` : undefined} />
         <KanbanOverviewTabs activeTab="overview" />

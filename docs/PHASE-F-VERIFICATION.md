@@ -73,6 +73,8 @@ Each section below is what a tester should walk through after first login. Forma
 4. **What to report:** anything that doesn't match the checklist, anything that feels confusing, anything that throws an error message you don't understand. Reply to the launch email with the section header and the unexpected behaviour.
 5. **What NOT to report (yet):** items already on the Phase 1.1 backlog (section 1 above). Anish will surface those into a future iteration; we want to hear about new issues, not re-confirm known ones.
 
+**Navigation note (W3-F):** The TopNav `Home` link points at the kanban board (`/`). Below the page title on `/` and `/overview`, a `Kanban` / `Overview` tab strip lets you switch between the kanban view and the Leadership Console (5 health tiles + exception feed + escalation list + 10 trigger tiles). The `/dashboard` URL still resolves and lands on the `Overview` tab; existing bookmarks keep working.
+
 ---
 
 ### 2.1 Anish Dutta (Admin) - `anish.d@getsetlearn.info`
@@ -82,7 +84,7 @@ Each section below is what a tester should walk through after first login. Forma
 **Expected landing:** `/dashboard` (Leadership Console).
 
 **Visible chrome:**
-- TopNav with Dashboard, MOUs, Schools, Escalations, Admin, and Help links.
+- TopNav with Home, MOUs, Schools, Escalations, Admin, and Help links.
 - Five health tiles in the top row: Active MOUs, Accuracy Health, Collection %, Dispatches in Flight, Schools Needing Action. Sync state is surfaced on `/admin` (System sync panel), not the dashboard.
 
 **Walkthrough:**
@@ -107,7 +109,7 @@ Each section below is what a tester should walk through after first login. Forma
 **Expected landing:** `/dashboard`.
 
 **Visible chrome:**
-- TopNav: Dashboard, MOUs, Schools, Escalations, Help.
+- TopNav: Home, MOUs, Schools, Escalations, Help.
 - No Admin link (Leadership is not an admin role; admin areas redirect to /dashboard).
 
 **Walkthrough:**
@@ -130,7 +132,7 @@ Each section below is what a tester should walk through after first login. Forma
 **Expected landing:** `/dashboard`.
 
 **Visible chrome:**
-- TopNav: Dashboard, MOUs, Schools, Escalations, Help.
+- TopNav: Home, MOUs, Schools, Escalations, Help.
 - No Admin link.
 
 **Walkthrough:**
@@ -153,7 +155,7 @@ Each section below is what a tester should walk through after first login. Forma
 **Expected landing:** `/dashboard`.
 
 **Visible chrome:**
-- TopNav: Dashboard, MOUs, Schools, Escalations, Help.
+- TopNav: Home, MOUs, Schools, Escalations, Help.
 - No Admin link.
 
 **Walkthrough:**
@@ -176,7 +178,7 @@ Each section below is what a tester should walk through after first login. Forma
 **Expected landing:** `/dashboard`.
 
 **Visible chrome:**
-- TopNav with Dashboard, MOUs, Schools, Escalations, Admin, and Help links.
+- TopNav with Home, MOUs, Schools, Escalations, Admin, and Help links.
 - Five health tiles in the top row.
 
 **Walkthrough:**
@@ -225,7 +227,7 @@ Each section below is what a tester should walk through after first login. Forma
 **Expected landing:** `/dashboard`.
 
 **Visible chrome:**
-- TopNav: Dashboard, MOUs, Schools, Escalations, Help.
+- TopNav: Home, MOUs, Schools, Escalations, Help.
 - No Admin link.
 
 **Walkthrough:**
@@ -259,7 +261,7 @@ Each section below is what a tester should walk through after first login. Forma
 **Expected landing:** `/dashboard`.
 
 **Visible chrome:**
-- TopNav with Dashboard, MOUs, Schools, Escalations, Admin, and Help links.
+- TopNav with Home, MOUs, Schools, Escalations, Admin, and Help links.
 - Five health tiles in the top row.
 
 **Walkthrough:**

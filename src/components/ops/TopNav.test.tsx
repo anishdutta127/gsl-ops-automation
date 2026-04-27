@@ -21,41 +21,57 @@ function makeUser(overrides: Partial<User> = {}): User {
 }
 
 describe('TopNav', () => {
-  it('renders Dashboard / MOUs / Schools / Escalations links for any user', async () => {
+  it('renders Home / MOUs / Schools / Escalations links for any user', async () => {
     getCurrentUserMock.mockResolvedValue(makeUser({ role: 'SalesRep' }))
     const { TopNav } = await import('./TopNav')
-    const html = renderToStaticMarkup(await TopNav({ currentPath: '/dashboard' }))
-    expect(html).toContain('href="/dashboard"')
+    const html = renderToStaticMarkup(await TopNav({ currentPath: '/' }))
+    expect(html).toContain('>Home<')
     expect(html).toContain('href="/mous"')
     expect(html).toContain('href="/schools"')
     expect(html).toContain('href="/escalations"')
   })
 
+  it('Home link points at / (kanban homepage), not /dashboard (W3-F)', async () => {
+    getCurrentUserMock.mockResolvedValue(makeUser())
+    const { TopNav } = await import('./TopNav')
+    const html = renderToStaticMarkup(await TopNav({ currentPath: '/' }))
+    // The Home label is on a link whose href is "/", not "/dashboard".
+    expect(html).toMatch(/href="\/"[^>]*>Home<|>Home<[^>]*href="\/"/)
+    expect(html).not.toContain('>Dashboard<')
+  })
+
+  it('GSL Ops logo links to / (kanban homepage)', async () => {
+    getCurrentUserMock.mockResolvedValue(makeUser())
+    const { TopNav } = await import('./TopNav')
+    const html = renderToStaticMarkup(await TopNav({ currentPath: '/' }))
+    expect(html).toMatch(/href="\/"[^>]*>GSL Ops<|>GSL Ops<[^>]*href="\/"/)
+  })
+
   it('hides Admin link for SalesRep', async () => {
     getCurrentUserMock.mockResolvedValue(makeUser({ role: 'SalesRep' }))
     const { TopNav } = await import('./TopNav')
-    const html = renderToStaticMarkup(await TopNav({ currentPath: '/dashboard' }))
+    const html = renderToStaticMarkup(await TopNav({ currentPath: '/' }))
     expect(html).not.toContain('href="/admin"')
   })
 
   it('shows Admin link for Admin role', async () => {
     getCurrentUserMock.mockResolvedValue(makeUser({ role: 'Admin' }))
     const { TopNav } = await import('./TopNav')
-    const html = renderToStaticMarkup(await TopNav({ currentPath: '/dashboard' }))
+    const html = renderToStaticMarkup(await TopNav({ currentPath: '/' }))
     expect(html).toContain('href="/admin"')
   })
 
   it('shows Admin link for OpsHead', async () => {
     getCurrentUserMock.mockResolvedValue(makeUser({ role: 'OpsHead' }))
     const { TopNav } = await import('./TopNav')
-    const html = renderToStaticMarkup(await TopNav({ currentPath: '/dashboard' }))
+    const html = renderToStaticMarkup(await TopNav({ currentPath: '/' }))
     expect(html).toContain('href="/admin"')
   })
 
   it('shows Help link for any authenticated user (SalesRep included)', async () => {
     getCurrentUserMock.mockResolvedValue(makeUser({ role: 'SalesRep' }))
     const { TopNav } = await import('./TopNav')
-    const html = renderToStaticMarkup(await TopNav({ currentPath: '/dashboard' }))
+    const html = renderToStaticMarkup(await TopNav({ currentPath: '/' }))
     expect(html).toContain('href="/help"')
   })
 
@@ -67,6 +83,15 @@ describe('TopNav', () => {
     expect(html).toMatch(
       /href="\/mous"[^>]*aria-current="page"|aria-current="page"[^>]*href="\/mous"/,
     )
+  })
+
+  it('Home link is aria-current="page" when currentPath is exactly /', async () => {
+    getCurrentUserMock.mockResolvedValue(makeUser())
+    const { TopNav } = await import('./TopNav')
+    const html = renderToStaticMarkup(await TopNav({ currentPath: '/' }))
+    // The Home nav-link list item carries aria-current; we look for the
+    // pattern within the label element vicinity.
+    expect(html).toMatch(/aria-current="page"[^>]*>[^<]*Home/)
   })
 
   it('renders Sign out button posting to /api/logout', async () => {

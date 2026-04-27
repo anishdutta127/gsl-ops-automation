@@ -29,7 +29,8 @@ describe('/dashboard/exceptions page', () => {
     const { default: ExceptionsPage } = await import('./page')
     const html = renderToStaticMarkup(await ExceptionsPage())
     expect(html).toContain('All exceptions')
-    expect(html).toContain('href="/dashboard"')
+    // W3-F: breadcrumb back-link points at /overview (canonical) now
+    expect(html).toContain('href="/overview"')
     expect(html).toContain('aria-current="page"')
   })
 

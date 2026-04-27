@@ -1,15 +1,13 @@
 /*
- * /dashboard page-wiring tests (W3-F alias).
+ * /overview page-wiring tests (W3-F canonical Leadership Console).
  *
- * Mocks getCurrentUser to control the role-scoping path. Asserts:
- *   - renders 5 health tiles + 10 trigger tiles + section landmarks
- *     (identical content to /overview)
- *   - renders the kanban / overview tab strip with Overview active
- *   - empty escalations state copy renders gracefully
- *
- * /dashboard is an alias of /overview; the canonical route is
- * /overview. Both render OverviewContent. These tests guarantee the
- * alias keeps working for bookmark compatibility.
+ * /overview is the canonical home of the Leadership Console (5
+ * health tiles, exception feed, open-escalation list, 10 trigger
+ * tiles). Pre-W3-F this content was at /dashboard. /dashboard now
+ * aliases /overview; both routes render the same OverviewContent
+ * with the Overview tab active. These tests cover the canonical
+ * route; the alias has its own parallel suite at
+ * src/app/dashboard/page.test.tsx.
  */
 
 import { describe, expect, it, vi, beforeEach } from 'vitest'
@@ -22,8 +20,6 @@ vi.mock('@/lib/auth/session', () => ({
   getCurrentUser: () => getCurrentUserMock(),
 }))
 
-// TopNav is async; mock to a sync stub so renderToStaticMarkup can render
-// the page tree without re-implementing async-component support.
 vi.mock('@/components/ops/TopNav', () => ({
   TopNav: () => null,
 }))
@@ -39,11 +35,11 @@ function admin(): User {
   }
 }
 
-describe('/dashboard page', () => {
-  it('renders 5 health tiles + 10 trigger tiles + 3 section headings', async () => {
+describe('/overview page', () => {
+  it('renders 5 health tiles + 10 trigger tiles + 4 section headings', async () => {
     getCurrentUserMock.mockResolvedValue(admin())
-    const { default: DashboardPage } = await import('./page')
-    const html = renderToStaticMarkup(await DashboardPage())
+    const { default: OverviewPage } = await import('./page')
+    const html = renderToStaticMarkup(await OverviewPage())
     expect(html).toContain('Active MOUs')
     expect(html).toContain('Accuracy health')
     expect(html).toContain('Collection')
@@ -54,7 +50,6 @@ describe('/dashboard page', () => {
     expect(html).toContain('Legacy schools')
     expect(html).toContain('Email bounce (7d)')
     expect(html).toContain('Assignment queue')
-    // Section headings
     expect(html).toMatch(/id="health-heading"/)
     expect(html).toMatch(/id="exceptions-heading"/)
     expect(html).toMatch(/id="escalations-heading"/)
@@ -63,15 +58,15 @@ describe('/dashboard page', () => {
 
   it('renders Ops at a glance title via PageHeader', async () => {
     getCurrentUserMock.mockResolvedValue(admin())
-    const { default: DashboardPage } = await import('./page')
-    const html = renderToStaticMarkup(await DashboardPage())
+    const { default: OverviewPage } = await import('./page')
+    const html = renderToStaticMarkup(await OverviewPage())
     expect(html).toContain('Ops at a glance')
   })
 
   it('renders the kanban / overview tab strip with Overview active', async () => {
     getCurrentUserMock.mockResolvedValue(admin())
-    const { default: DashboardPage } = await import('./page')
-    const html = renderToStaticMarkup(await DashboardPage())
+    const { default: OverviewPage } = await import('./page')
+    const html = renderToStaticMarkup(await OverviewPage())
     expect(html).toContain('data-testid="kanban-overview-tabs"')
     expect(html).toContain('data-testid="tab-kanban"')
     expect(html).toContain('data-testid="tab-overview"')
@@ -82,16 +77,15 @@ describe('/dashboard page', () => {
 
   it('contains no raw hex codes (token discipline)', async () => {
     getCurrentUserMock.mockResolvedValue(admin())
-    const { default: DashboardPage } = await import('./page')
-    const html = renderToStaticMarkup(await DashboardPage())
+    const { default: OverviewPage } = await import('./page')
+    const html = renderToStaticMarkup(await OverviewPage())
     expect(html).not.toMatch(/#[0-9a-fA-F]{3,6}/)
   })
 
   it('renders even when getCurrentUser returns null (logged-out edge)', async () => {
     getCurrentUserMock.mockResolvedValue(null)
-    const { default: DashboardPage } = await import('./page')
-    const result = await DashboardPage()
-    const html = renderToStaticMarkup(result)
+    const { default: OverviewPage } = await import('./page')
+    const html = renderToStaticMarkup(await OverviewPage())
     expect(html).toContain('Ops at a glance')
   })
 })

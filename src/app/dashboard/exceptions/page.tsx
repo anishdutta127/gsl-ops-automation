@@ -48,7 +48,7 @@ export default async function ExceptionsPage() {
           title="All exceptions"
           subtitle={`${exceptions.length} item${exceptions.length === 1 ? '' : 's'} needing attention`}
           breadcrumb={[
-            { label: 'Dashboard', href: '/dashboard' },
+            { label: 'Overview', href: '/overview' },
             { label: 'Exceptions' },
           ]}
         />

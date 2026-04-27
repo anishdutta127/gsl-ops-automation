@@ -92,4 +92,16 @@ describe('/ kanban homepage', () => {
     // is present and the count is non-zero (real fixture has 140 MOUs).
     expect(html).toMatch(/\d+ MOUs across 9 stages/)
   })
+
+  it('renders the kanban / overview tab strip with Kanban active (W3-F)', async () => {
+    getCurrentUserMock.mockResolvedValue(admin())
+    const { default: HomePage } = await import('./page')
+    const html = renderToStaticMarkup(await HomePage())
+    expect(html).toContain('data-testid="kanban-overview-tabs"')
+    expect(html).toContain('data-testid="tab-kanban"')
+    expect(html).toContain('data-testid="tab-overview"')
+    expect(html).toMatch(
+      /data-testid="tab-kanban"[^>]*aria-current="page"|aria-current="page"[^>]*data-testid="tab-kanban"/,
+    )
+  })
 })

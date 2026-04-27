@@ -10,6 +10,13 @@
  * Visual: horizontal flex bar, navy bg, teal underline on active
  * link via aria-current. Touch targets 44px minimum on mobile;
  * 48px tall desktop.
+ *
+ * W3-F: the first nav slot is "Home" (pointing at /, the kanban).
+ * The Leadership Console moved to /overview as a sibling tab; the
+ * Home / Overview switch lives inside the page via
+ * KanbanOverviewTabs. /dashboard still resolves (alias of /overview)
+ * for bookmark compatibility, so a link there is no longer needed
+ * in the global nav.
  */
 
 import Link from 'next/link'
@@ -24,7 +31,7 @@ interface NavLink {
 }
 
 const NAV_LINKS: NavLink[] = [
-  { href: '/dashboard', label: 'Dashboard', visibleTo: 'all' },
+  { href: '/', label: 'Home', visibleTo: 'all' },
   { href: '/mous', label: 'MOUs', visibleTo: 'all' },
   { href: '/schools', label: 'Schools', visibleTo: 'all' },
   { href: '/escalations', label: 'Escalations', visibleTo: 'all' },
@@ -59,7 +66,7 @@ export async function TopNav({ currentPath }: TopNavProps = {}) {
       <div className="mx-auto flex min-h-12 max-w-screen-xl items-stretch justify-between px-4">
         <div className="flex items-center gap-1">
           <Link
-            href="/dashboard"
+            href="/"
             className="flex items-center px-3 font-heading text-base font-semibold text-white focus:outline-none focus:ring-2 focus:ring-brand-teal"
           >
             GSL Ops
