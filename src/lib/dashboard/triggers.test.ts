@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest'
 import {
   p2OverridesTile,
   salesDriftQueueTile,
-  legacyWorkloadTile,
   piBlocksTile,
   emailBounceRateTile,
   assignmentQueueTile,
@@ -16,7 +15,7 @@ function mou(overrides: Partial<MOU> = {}): MOU {
   return {
     id: 'MOU-X', schoolId: 'SCH-X', schoolName: 'X', programme: 'STEAM',
     programmeSubType: null, schoolScope: 'SINGLE', schoolGroupId: null,
-    status: 'Active', academicYear: '2026-27', startDate: null, endDate: null,
+    status: 'Active', cohortStatus: 'active', academicYear: '2026-27', startDate: null, endDate: null,
     studentsMou: 100, studentsActual: 100, studentsVariance: 0, studentsVariancePct: 0,
     spWithoutTax: 4000, spWithTax: 5000, contractValue: 500000, received: 0, tds: 0,
     balance: 500000, receivedPct: 0, paymentSchedule: '', trainerModel: 'GSL-T',
@@ -91,13 +90,9 @@ describe('salesDriftQueueTile', () => {
   })
 })
 
-describe('legacyWorkloadTile', () => {
-  it('returns informational EXCLUDED state', () => {
-    const result = legacyWorkloadTile(empty)
-    expect(result.primary).toBe('EXCLUDED')
-    expect(result.status).toBe('neutral')
-  })
-})
+// W4-A.7: legacyWorkloadTile removed; the trigger grid is now 9 tiles.
+// The "Legacy schools EXCLUDED" signal is replaced by cohortStatus
+// first-class filtering on the kanban / overview surfaces.
 
 describe('piBlocksTile', () => {
   it('alert when >30% of active MOUs have null GSTIN school', () => {
@@ -143,7 +138,7 @@ describe('assignmentQueueTile', () => {
 })
 
 describe('buildTriggerTiles', () => {
-  it('returns 10 tiles', () => {
-    expect(buildTriggerTiles(empty)).toHaveLength(10)
+  it('returns 9 tiles (W4-A.7 dropped Legacy schools EXCLUDED tile)', () => {
+    expect(buildTriggerTiles(empty)).toHaveLength(9)
   })
 })

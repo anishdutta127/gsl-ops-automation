@@ -99,15 +99,11 @@ export function salesDriftQueueTile({ mous }: BaseDeps): TriggerTileValue {
   }
 }
 
-// C. Legacy-school workload (informational; Item C is a scope flag)
-export function legacyWorkloadTile(_: BaseDeps): TriggerTileValue {
-  return {
-    label: 'Legacy schools',
-    primary: 'EXCLUDED',
-    threshold: 'Phase 1.1 trigger: > 20% workload',
-    status: 'neutral',
-  }
-}
+// W4-A.7 removed legacyWorkloadTile. The "Legacy schools EXCLUDED"
+// signal was a leftover from the pre-W4 active/archive separation; with
+// cohortStatus now first-class and archived MOUs invisible to the active
+// kanban / overview by default, the tile no longer earned its grid slot.
+// The trigger grid reflows from 10 tiles to 9 (one tile shorter).
 
 // D. CC scope mismatches (informational; populated by post-send audit in Phase 1.1)
 export function ccScopeMismatchesTile(_: BaseDeps): TriggerTileValue {
@@ -226,7 +222,6 @@ export function buildTriggerTiles(deps: BaseDeps): TriggerTileValue[] {
   return [
     p2OverridesTile(deps),
     salesDriftQueueTile(deps),
-    legacyWorkloadTile(deps),
     ccScopeMismatchesTile(deps),
     commitmentsTile(deps),
     piBlocksTile(deps),
