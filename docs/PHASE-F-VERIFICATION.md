@@ -51,7 +51,7 @@ A consolidated list of Phase 1 deferrals captured across Week 2. Each carries a 
 - **D4 delivery-ack URL is operator-pasted (Drive / SharePoint / Dropbox link).** No file upload + storage infrastructure. Phase 1.1 trigger: GSL wants centralised storage.
 - **D4 collapses delivered + acknowledged into a single transition.** Schema supports both; Phase 1 simplified flow sets all three timestamps + URL at once. Phase 1.1 trigger: courier integration that confirms physical delivery before paperwork lands.
 - **Phase 1: import-tick + sync/tick are admin-triggered manually via /admin.** Phase 1.1 trigger: sister-project MOU volume grows beyond manual-trigger comfort. Implementation: port MOU's GitHub Actions workflow yml + add shared-secret bearer auth alongside session auth.
-- **Cc-rule create flow allows Admin-only for first 30 days post-launch.** Documented in `permissions.ts:89-91`. Phase 1.1 trigger: day 31 (Misba flips to OpsHead-allowed via 1-line PR).
+- **Cc-rule create flow allows Admin-only for first 30 days post-launch.** Documented in `permissions.ts:89-91`. Partially obsolete on the test roster after the 2026-04-27 role-decisions change (`docs/role-decisions.md`): Pradeep, Misba, Swati are now Admin and can create CC rules immediately via the Admin wildcard. The flip-to-OpsHead-allowed semantic still applies to any FUTURE OpsHead user who is not on the Ops team. Phase 1.1 trigger: day 31 + a non-Ops-team OpsHead user actually exists (1-line PR to add `cc-rule:create` to the OpsHead grant set).
 - **Cc-rule disable confirmation uses `window.prompt` for the reason.** Functional + accessible-enough. Phase 1.1 trigger: tester aesthetics feedback. Upgrade path documented in `CcRuleToggleRow.tsx`: replace with shadcn Dialog.
 - **Reverse-Excel-sync not built.** Per CLAUDE.md, the app is the single source of truth; the legacy `Mastersheet-Implementation_-_AnishD.xlsx` is what we migrated AWAY from, not a sync target. Reverse-sync is net-new work (not deferral) if GSL wants a spreadsheet view restored.
 - **`SyncFreshnessTile` component built but not mounted on `/dashboard`.** Manual-trigger pattern means a "last sync N hours ago" tile does not add at-a-glance value (operators click Sync now on `/admin` when they want fresh state; the timestamp + status surface there is sufficient). Phase 1.1 trigger: when/if cron auto-sync lands, re-mount the tile on `/dashboard`.
@@ -61,12 +61,14 @@ A consolidated list of Phase 1 deferrals captured across Week 2. Each carries a 
 
 ## 2. Per-tester walkthrough checklist
 
-Each section below is what a tester should walk through after first login. Format is identical for all 9 so the launch email can copy directly.
+Each section below is what a tester should walk through after first login. Format is identical for all 10 so the launch email can copy directly.
+
+**Role decision (2026-04-27):** Five of ten testers are granted Admin per `docs/role-decisions.md`. Specifically: Anish (Admin originally), Pradeep (OpsHead → Admin), Misba (OpsEmployee with OpsHead testingOverride → Admin), Swati (Admin from creation), Shashank (TrainerHead → Admin). Trade-off accepted: separation of duties is largely collapsed for the trusted core team. The remaining 5 non-admin testers (Ameet Leadership, Pratik SalesHead, Vishwanath SalesRep, Shubhangi Finance, Pranav Finance) preserve role-scoping verification. Future role-design conversations may revisit; for the 10-tester pilot, this matches operational reality. Walkthroughs in sections 2.5, 2.6, 2.7, and 2.10 reflect Admin capabilities; those four testers see and do everything Anish does.
 
 **Universal launch-day instructions (apply to every tester):**
 
 1. Go to `https://ops.getsetlearn.info` (or whichever production URL Anish provides).
-2. Log in with the credentials below. Initial password is the same for all 9 testers and is in the launch email; rotate within 7 days of first login.
+2. Log in with the credentials below. Initial password is the same for all 10 testers and is in the launch email; rotate within 7 days of first login.
 3. Walk through your role's checklist. Tick what works; report anything that surprises you.
 4. **What to report:** anything that doesn't match the checklist, anything that feels confusing, anything that throws an error message you don't understand. Reply to the launch email with the section header and the unexpected behaviour.
 5. **What NOT to report (yet):** items already on the Phase 1.1 backlog (section 1 above). Anish will surface those into a future iteration; we want to hear about new issues, not re-confirm known ones.
@@ -167,43 +169,56 @@ Each section below is what a tester should walk through after first login. Forma
 
 ---
 
-### 2.5 Misba M. (OpsEmployee + testingOverride: ['OpsHead']) - `misba.m@getsetlearn.info`
+### 2.5 Misba M. (Admin) - `misba.m@getsetlearn.info`
 
-**Role:** OpsEmployee at base, with testing override granting OpsHead permissions on top. This is your daily driver during the pilot. The OpsEmployee base role keeps audit-log attribution accurate (entries record your real user id, not the elevated role).
+**Role:** Admin (per the 2026-04-27 role-decisions change; see `docs/role-decisions.md`). Wildcard permissions across the entire system. This is your daily driver during the pilot.
 
 **Expected landing:** `/dashboard`.
 
 **Visible chrome:**
-- TopNav: Dashboard, MOUs, Schools, Escalations, Admin, Help (the override grants admin-area access).
+- TopNav with Dashboard, MOUs, Schools, Escalations, Admin, and Help links.
+- Five health tiles in the top row.
 
 **Walkthrough:**
 
-1. Dashboard tiles render with full operational view (you are not scope-restricted like SalesRep).
+1. Dashboard tiles render with full operational view.
 2. Visit `/admin`. System sync panel + admin areas grid both visible. Try "Run import sync now"; verify it completes with a green flash.
-3. Visit `/admin/cc-rules`. List + toggles work. The "New rule" button is NOT visible (cc-rule:create is Admin-only for the first 30 days post-launch; Phase 1.1 day 31 flip).
-4. Visit `/admin/cc-rules/<existing-id>`. Edit form works; submit a small change; verify it persists.
-5. Visit `/admin/mou-import-review`. Quarantined MOU records are shown with a Reject form. Pick one; reject with reason `data-quality-issue`; verify the queue shrinks.
-6. Visit `/admin/pi-counter`. Health view shows current `next` value, monotonicity OK, last-issued PI summary.
-7. Visit `/admin/sales-team` + `/admin/schools` + `/admin/school-groups`. Each list works; "New rep" / "New school" / "New group" forms work.
-8. Visit `/admin/spocs`. Placeholder page redirects you to /schools/[id]/edit per the deferral.
-9. Visit a MOU detail page. Click "Raise dispatch"; verify the PO Raised state advance + downloaded dispatch note. Click "Compose feedback request"; copy the email, simulate sending via Outlook, click "Mark as sent". Click "Record signed handover"; paste any Drive URL.
+3. Visit `/admin/cc-rules`. List + toggles work. The "New rule" button IS visible (Admin wildcard). Toggle one off, then back on; verify the audit entries.
+4. Visit `/admin/cc-rules/new`. Create a test rule; submit; verify it appears on the list.
+5. Visit `/admin/cc-rules/<existing-id>`. Edit form works; submit a small change; verify it persists.
+6. Visit `/admin/mou-import-review`. Quarantined MOU records are shown with a Reject form. Pick one; reject with reason `data-quality-issue`; verify the queue shrinks.
+7. Visit `/admin/pi-counter`. Health view shows current `next` value, monotonicity OK, last-issued PI summary.
+8. Visit `/admin/audit`. Full visibility (Admin wildcard). Filter by entity, by action, by user. Confirm CSV export downloads.
+9. Visit `/admin/sales-team` + `/admin/schools` + `/admin/school-groups`. Each list works; "New rep" / "New school" / "New group" forms work.
+10. Visit `/admin/spocs`. Placeholder page redirects you to /schools/[id]/edit per the deferral.
+11. Visit a MOU detail page. Click "Confirm actuals", "Generate PI", "Raise dispatch", "Compose feedback request", "Record delivery ack". Each should work end-to-end.
 
 **Negative tests:**
-- Try generating a PI from a MOU detail page (button visible? No - `mou:generate-pi` is Finance + Admin only, not OpsHead).
+- (none; Admin sees and does everything by design)
 
 ---
 
-### 2.6 Pradeep R. (OpsHead) - `pradeep.r@getsetlearn.info`
+### 2.6 Pradeep R. (Admin) - `pradeep.r@getsetlearn.info`
 
-**Role:** OpsHead (no testing override). Identical capabilities to Misba in section 2.5 above; different human, same daily-driver flows. The duplication is intentional: Phase 1 covers two ops-team operators so vacation / handover days don't block the pilot.
+**Role:** Admin (per the 2026-04-27 role-decisions change). Identical capabilities to Misba in section 2.5; different human, same daily-driver flows. The duplication is intentional: Phase 1 covers three Ops-team operators so vacation / handover days don't block the pilot.
 
-**Walkthrough:** Same as section 2.5. The dispatch + feedback-request + delivery-ack flows you exercise should be on different MOUs from Misba's so the audit log captures real attribution differences.
+**Walkthrough:** Same as section 2.5. The dispatch + PI + feedback-request + delivery-ack flows you exercise should be on different MOUs from Misba's and Swati's so the audit log captures real attribution differences.
 
 **Negative tests:** Same as section 2.5.
 
 ---
 
-### 2.7 Shubhangi G. (Finance) - `shubhangi.g@getsetlearn.info`
+### 2.7 Swati P. (Admin) - `swati.p@getsetlearn.info`
+
+**Role:** Admin (per the 2026-04-27 role-decisions change). Identical capabilities to Misba and Pradeep above; the third Ops-team operator added on 2026-04-27 to round out coverage during the pilot.
+
+**Walkthrough:** Same as section 2.5. Pick MOUs that Misba and Pradeep have not yet exercised so the audit log captures real attribution differences across all three Ops-team operators.
+
+**Negative tests:** Same as section 2.5.
+
+---
+
+### 2.8 Shubhangi G. (Finance) - `shubhangi.g@getsetlearn.info`
 
 **Role:** Finance. Generates PIs, reconciles payments, acknowledges P2 overrides.
 
@@ -227,41 +242,42 @@ Each section below is what a tester should walk through after first login. Forma
 
 ---
 
-### 2.8 Pranav B. (Finance) - `pranav.b@getsetlearn.info`
+### 2.9 Pranav B. (Finance) - `pranav.b@getsetlearn.info`
 
 **Role:** Finance. Identical capabilities to Shubhangi; different human, same flows. Phase 1 covers two Finance users for the same vacation/handover reason as the OpsHead pair.
 
-**Walkthrough:** Same as section 2.7. Generate at least one PI on a MOU Shubhangi has not generated PIs for; the audit log captures real attribution differences.
+**Walkthrough:** Same as section 2.8. Generate at least one PI on a MOU Shubhangi has not generated PIs for; the audit log captures real attribution differences.
 
-**Negative tests:** Same as section 2.7.
+**Negative tests:** Same as section 2.8.
 
 ---
 
-### 2.9 Shashank S. (TrainerHead) - `shashank.s@getsetlearn.info`
+### 2.10 Shashank S. (Admin) - `shashank.s@getsetlearn.info`
 
-**Role:** TrainerHead. Resolves ACADEMICS-lane escalations (training-quality, trainer-rapport feedback that auto-escalated).
+**Role:** Admin (per the 2026-04-27 role-decisions change; see `docs/role-decisions.md`). Wildcard permissions across the entire system. Originally TrainerHead with ACADEMICS-lane scope; promoted to Admin alongside the Ops team so the trusted core team can drive every flow end-to-end during the pilot.
 
 **Expected landing:** `/dashboard`.
 
 **Visible chrome:**
-- TopNav: Dashboard, MOUs, Schools, Escalations, Help.
-- No Admin link.
+- TopNav with Dashboard, MOUs, Schools, Escalations, Admin, and Help links.
+- Five health tiles in the top row.
 
 **Walkthrough:**
 
-1. Dashboard tiles render. Escalation list filters to ACADEMICS-lane items.
-2. Visit any escalation detail page in the ACADEMICS lane (e.g., one auto-created from a feedback record with rating <= 2 on training-quality or trainer-rapport). Click "Resolve"; submit resolution notes.
-3. Visit `/admin/audit`. Page loads; only ACADEMICS-lane entries + auto-create-from-feedback + feedback-submitted are visible.
+1. Dashboard tiles render with full operational view.
+2. Visit any escalation detail page in the ACADEMICS lane (e.g., one auto-created from a feedback record with rating <= 2 on training-quality or trainer-rapport). Click "Resolve"; submit resolution notes; your historical TrainerHead workflow remains unchanged in shape, only the role label has changed.
+3. Visit `/admin/audit`. Full visibility (Admin wildcard); filter by lane, by entity, by user. Confirm CSV export downloads.
+4. Visit `/admin`. System sync panel + admin areas grid both visible.
+5. Spot-check a non-academics flow (e.g., open a MOU detail page; the Generate PI / Raise dispatch / Confirm actuals buttons are now visible to you because Admin grants every action).
 
 **Negative tests:**
-- Visit `/admin`. Redirect to `/dashboard`.
-- Try generating a PI or raising a dispatch (no permission).
+- (none; Admin sees and does everything by design)
 
 ---
 
 ## 3. Public-facing surfaces (SPOC walkthrough; not a tester role)
 
-These surfaces are reached via magic-link emails sent to school SPOCs. During the pilot, ops-team testers can simulate by composing a feedback-request email (section 2.5 step 9) and clicking the magic link from the resulting Outlook draft.
+These surfaces are reached via magic-link emails sent to school SPOCs. During the pilot, ops-team testers can simulate by composing a feedback-request email (section 2.5 step 11) and clicking the magic link from the resulting Outlook draft.
 
 ### 3.1 /feedback/[tokenId] (SPOC feedback form)
 
@@ -296,13 +312,13 @@ These surfaces are reached via magic-link emails sent to school SPOCs. During th
 Before sending the launch email:
 
 - [ ] Production deploy is live at the public URL.
-- [ ] All 9 tester accounts exist in `users.json` with bcrypt hashes verified against the launch password.
+- [ ] All 10 tester accounts exist in `users.json` with bcrypt hashes verified against the launch password.
 - [ ] `config/company.json` swapped to production values (legal entity, GSTIN, address, bank).
 - [ ] PI counter at expected starting value (`next: 1`, fiscalYear: `26-27`, prefix: `GSL/OPS`).
 - [ ] PI / dispatch / delivery-ack templates exist at `public/ops-templates/` (committed).
 - [ ] Sync runner... no, manually triggered (per Phase 1).
 - [ ] Smoke test green on the production URL (curl `/api/health` returns `{ status: 'ok' }`).
-- [ ] Launch email drafted using sections 2.1 through 2.9 above.
+- [ ] Launch email drafted using sections 2.1 through 2.10 above.
 
 After sending:
 

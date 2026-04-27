@@ -29,9 +29,9 @@ Tick each item before launch day. Anish owns each unless noted.
 
 ### 1.2 Credentials distribution
 
-- [ ] User accounts created for the locked 9-tester roster: anish.d, ameet.z, pratik.d, vishwanath.g, misba.m (testingOverride=true), pradeep.r, shubhangi.g, pranav.b, shashank.s.
+- [ ] User accounts created for the locked 10-tester roster: anish.d, ameet.z, pratik.d, vishwanath.g, misba.m (Admin), pradeep.r (Admin), swati.p (Admin), shubhangi.g, pranav.b, shashank.s.
 - [ ] Each user's bcrypt hash verifies against the launch password (rotate from `GSL#123` to a per-user value if needed before first prod login).
-- [ ] Login URL communicated to all 9 testers via the launch email.
+- [ ] Login URL communicated to all 10 testers via the launch email.
 - [ ] Password rotation policy documented: users rotate within 7 days of first login.
 
 ### 1.3 GSTIN backfill status
@@ -87,13 +87,13 @@ D-day. All times IST. Anish is on call throughout.
 
 ### 2.3 T+02h: Credential email
 
-- Send credential email to all 9 testers with: login URL, username, initial password, link to `/dashboard` and `/admin/audit`.
+- Send credential email to all 10 testers with: login URL, username, initial password, link to `/dashboard` and `/admin/audit`.
 - The email is direct voice, no AI slop, British English, em-dash-free.
 
-### 2.4 T+03h: Misba briefing
+### 2.4 T+03h: Core team briefing
 
-- 30-minute walkthrough with Misba: dashboard tour, exception feed, escalation list, CcRule toggles, audit route filter rail.
-- Hand over the testingOverride context: her base role is OpsEmployee; the flag grants OpsHead permissions during testing.
+- 30-minute walkthrough with the trusted core team (Misba, Pradeep, Swati, Shashank): dashboard tour, exception feed, escalation list, CcRule toggles, audit route filter rail, admin-area surfaces.
+- All four are Admin per `docs/role-decisions.md` (2026-04-27 decision); they see and do everything Anish does. Brief them on the wildcard scope so they know what to test and what NOT to test casually (irreversible writes touch real launch state). Shashank's primary day-to-day responsibility remains ACADEMICS-lane escalation resolution; the Admin grant is a permission upgrade, not a workload change.
 
 ### 2.5 T+04h to end-of-day: Active monitoring
 
@@ -121,26 +121,39 @@ Each tester has a specific entry path. The launch email links them to the right 
 - Verify SPOC list per school is populated.
 - Flag any school with missing GSTIN (`gstNumber: null`) and capture via `/admin/schools/[schoolId]/edit`.
 
-### 3.3 Pradeep (OpsHead)
+### 3.3 Pradeep (Admin)
 
 - Log in.
 - Review escalation list at `/escalations`.
 - Walk through dispatch flow on a non-real test MOU to verify the override-gate behaviour without committing real state.
+- Spot-check `/admin` surfaces are accessible (Pradeep is Admin per `docs/role-decisions.md`).
 
-### 3.4 Misba (OpsEmployee + testingOverride: ['OpsHead'])
+### 3.4 Misba (Admin)
 
 - Log in.
 - Review CcRule toggle state at `/admin/cc-rules` (10 rules, all enabled by default).
 - Spot-check dashboard tile values match the imported cohort.
-- Audit route accessibility verified at `/admin/audit`.
+- Audit route accessibility verified at `/admin/audit` (full visibility per Admin wildcard).
 
-### 3.5 Ameet (Leadership)
+### 3.5 Swati (Admin)
+
+- Log in.
+- Familiarise with the dashboard, MOU list, and `/admin` directory of areas.
+- Walk one MOU end-to-end (confirm actuals → generate PI → raise dispatch → record delivery ack) on a non-real test MOU to internalise the lifecycle.
+
+### 3.6 Shashank (Admin)
+
+- Log in.
+- Review escalation list at `/escalations`; ACADEMICS-lane items remain the day-to-day focus.
+- Spot-check `/admin` surfaces are accessible (Shashank is Admin per `docs/role-decisions.md`); the wildcard does not change the primary academics workflow but unlocks audit and admin areas during the pilot.
+
+### 3.7 Ameet (Leadership)
 
 - Log in.
 - Verify Leadership Console at `/dashboard` renders with all 5 health tiles + 10 trigger tiles.
 - Walk through P2 override UI on a test Dispatch (do NOT click through on real data).
 
-### 3.6 Sales reps (Vishwanath, plus any others added pre-launch)
+### 3.8 Sales reps (Vishwanath, plus any others added pre-launch)
 
 - Log in.
 - Verify their own assigned MOU list scoping at `/mous` shows only MOUs where `salesPersonId` matches their user id.
@@ -279,8 +292,8 @@ Cross-references:
 
 These are deliberate Phase 1 scope cuts, not bugs. Each names the trigger that flips it back into scope.
 
-- **No rate limiting on `/api/login`.** Phase 1 testers are 9 known internal staff; Vercel's platform-level rate limit handles trivially-mal traffic. Phase 1.1 trigger: SPOC portal goes public-internet (any unauthenticated route exposed beyond staff IPs). Implementation will require an external counter store (Vercel KV or similar) since serverless invocations have no shared in-memory state.
-- **Login response timing is not equalized across reject reasons.** Known-user-with-wrong-password takes longer than unknown-user (the bcrypt compare runs only after the user lookup succeeds). An attacker measuring response time can distinguish "user exists" from "user does not exist." Phase 1 acceptable (9 known internal testers). Phase 1.1 trigger: any public-facing login surface; mitigation is to run bcrypt against a placeholder hash on every code path so timing is constant.
+- **No rate limiting on `/api/login`.** Phase 1 testers are 10 known internal staff; Vercel's platform-level rate limit handles trivially-mal traffic. Phase 1.1 trigger: SPOC portal goes public-internet (any unauthenticated route exposed beyond staff IPs). Implementation will require an external counter store (Vercel KV or similar) since serverless invocations have no shared in-memory state.
+- **Login response timing is not equalized across reject reasons.** Known-user-with-wrong-password takes longer than unknown-user (the bcrypt compare runs only after the user lookup succeeds). An attacker measuring response time can distinguish "user exists" from "user does not exist." Phase 1 acceptable (10 known internal testers). Phase 1.1 trigger: any public-facing login surface; mitigation is to run bcrypt against a placeholder hash on every code path so timing is constant.
 - **Multi-device sessions accepted.** The session cookie is JWT-based with no server-side session list, so Anish on desktop + Anish on phone are two simultaneously-valid sessions. Reconsideration trigger: the audit-log shows a single user-id session being used from geographically-distant IPs simultaneously, suggesting credential leak. Implementation would add `sessions.json` with per-user concurrency limit and a queue write per login.
 - **No `/forgot-password` or `/account/password` route.** Password recovery is a manual edit to `src/data/_fixtures/users.json` + `npm run seed:dev` per `docs/DEVELOPER.md` §"Password recovery (testers)". Phase 1.1 trigger: testers actually ask for self-service.
 - **`/api/health` is binary status only.** Returns `{ status: 'ok', timestamp, version }` for uptime monitors. The graded data-integrity view (queue depth, JSON validity, sync-runner pulse) lives on the dashboard tile instead, where a human can read it usefully.
@@ -290,6 +303,7 @@ These are deliberate Phase 1 scope cuts, not bugs. Each names the trigger that f
 - **PI vs Dispatch idempotency divergence.** `generatePi` advances the PI counter on every successful call (no per-call idempotency). `raiseDispatch` idempotently re-renders for already-raised dispatches and returns `wasAlreadyRaised: true`. Rationale: PI numbers have external GST-filing significance, so accidental duplicates are tracked as counter gaps (recoverable) rather than silent re-render of the same number; dispatch state has internal significance only, so re-download is the right default. Phase 1.1 trigger: tester reports of accidental duplicate-click PIs would push us toward per-(mouId, instalmentSeq) lookup pre-counter-advance.
 - **Email template centring uses modern CSS, not legacy HTML attribute.** D3's `feedbackRequest` template uses `style="text-align:center;"` instead of the legacy `align="center"` HTML attribute. Modern Outlook (365 / 2016+) and all webmail clients render this correctly; older Outlook desktop (2007 / 2010) had patchier CSS support and may render the wrapper layout differently. Phase 1 testers run Outlook 365, so this is fine. Phase 1.1 trigger: if an older Outlook install surfaces in the broader pilot and reports broken layout, swap to the legacy attribute or include both for redundancy. Same caveat applies to any future email templates we author.
 - **`SyncFreshnessTile` component is built but not mounted on `/dashboard`.** Manual-trigger pattern means a "last sync N hours ago" tile does not add at-a-glance value; operators click Sync now on `/admin` when they want fresh state, and the timestamp + status surface there is sufficient. Phase 1.1 trigger: when/if cron auto-sync lands, re-mount the tile on `/dashboard`.
+- **`cc-rule:create` 30-day Admin-only flip is partially obsolete.** The original design (per `permissions.ts` comments) gated `cc-rule:create` to Admin-only for the first 30 days post-launch, with Misba (OpsHead) flipping to allowed on day 31. The 2026-04-27 role-decisions change (see `docs/role-decisions.md`) promoted Pradeep, Misba, and Swati to Admin, so they can create CC rules immediately via the Admin wildcard. The flip-to-OpsHead-allowed semantic still applies to any FUTURE OpsHead user who is not on the Ops team; if such a user is added before day 31, they hit the same Admin-only restriction. The 1-line PR to add `cc-rule:create` to the OpsHead role's grant set is still the day-31 action for that hypothetical future user.
 
 ### 10.1 Operational notes (developer environment)
 

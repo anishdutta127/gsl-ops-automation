@@ -61,7 +61,7 @@ npm run docs-lint
 
 ## Test users
 
-All 9 fixture users authenticate with `GSL#123` (development password only; never used in production). Real user records are created at launch via the seed-and-credentials flow per `docs/RUNBOOK.md` section 1.2.
+All 10 fixture users authenticate with `GSL#123` (development password only; never used in production). Real user records are created at launch via the seed-and-credentials flow per `docs/RUNBOOK.md` section 1.2.
 
 | User id | Role | Notes |
 |---|---|---|
@@ -69,13 +69,14 @@ All 9 fixture users authenticate with `GSL#123` (development password only; neve
 | `ameet.z` | Leadership | P2 override + L3 fallback for OPS / SALES / ACADEMICS |
 | `pratik.d` | SalesHead | Drift-approval queue ownership |
 | `vishwanath.g` | SalesRep | Scoped MOU view (own assignments only) |
-| `misba.m` | OpsEmployee + testingOverride: ['OpsHead'] | Base role stays OpsEmployee for audit accuracy; flag grants OpsHead permissions during testing |
-| `pradeep.r` | OpsHead | CcRule toggle, audit-route Ops-lane visibility |
+| `misba.m` | Admin | Ops team: wildcard permissions per role-decisions note |
+| `pradeep.r` | Admin | Ops team: wildcard permissions per role-decisions note |
+| `swati.p` | Admin | Ops team: wildcard permissions per role-decisions note |
 | `shubhangi.g` | Finance | PI generation, payment reconciliation |
 | `pranav.b` | Finance | Symmetric to Shubhangi (single role, two users sharing workload) |
-| `shashank.s` | TrainerHead | Academics-lane escalation visibility |
+| `shashank.s` | Admin | Trusted core team: wildcard permissions per role-decisions note |
 
-The `testingOverride` flag pattern is documented in `src/lib/auth/permissions.ts`. Every audit-log entry on Misba's actions records `user: 'misba.m'` (her base id), so post-launch you can grep for what she did under elevated permissions.
+The trusted core team (Pradeep, Misba, Swati, Shashank) was promoted to Admin on 2026-04-27 per Anish's directive; see `docs/role-decisions.md`. Five of ten testers are now Admin (including Anish); the remaining five (Ameet Leadership, Pratik SalesHead, Vishwanath SalesRep, Shubhangi Finance, Pranav Finance) preserve role-scoping verification. The `testingOverride` flag pattern (still documented in `src/lib/auth/permissions.ts`) is no longer in use on the test roster, but the code path remains for any future user that needs scoped temporary elevation.
 
 ### Password recovery (testers)
 
