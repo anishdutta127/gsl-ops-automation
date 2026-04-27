@@ -64,6 +64,11 @@ export type AuditAction =
   // that deriveStage uses as a fallback when upstream startDate is null.
   // Phase 1.1 audit query: count MOUs that still carry the synthetic.
   | 'startdate-synthesis-replaced'
+  // W3-D: emitted when an Admin edits a lifecycle rule's defaultDays via
+  // /admin/lifecycle-rules. Captures before / after defaultDays and an
+  // optional changeNotes field on the audit entry. Retroactively shifts
+  // which MOUs render as overdue on next render.
+  | 'lifecycle-rule-edited'
 
 export interface AuditEntry {
   timestamp: string                // ISO
@@ -599,6 +604,7 @@ export type PendingUpdateEntity =
   | 'payment'
   | 'paymentLog'
   | 'user'
+  | 'lifecycleRule'
 
 export interface PendingUpdate {
   id: string                       // UUID
@@ -615,4 +621,33 @@ export interface PiCounter {
   fiscalYear: string               // '26-27'
   next: number                     // next number to issue
   prefix: string                   // 'GSL/OPS' (Phase 1 default per Q-B)
+}
+
+// ============================================================================
+// Lifecycle rules (W3-D editable kanban-stage durations)
+//
+// Each rule names a forward transition between two kanban stages and the
+// default days a MOU may sit in the source stage before the kanban renders
+// an Overdue badge. Editable via /admin/lifecycle-rules; per-rule auditLog
+// captures every defaultDays change with before / after / notes.
+//
+// stageToKey is informational (the lookup used by the kanban indexes by
+// stageFromKey). The 'mou-closed' literal models the post-feedback closure
+// window which is not a real kanban column.
+//
+// Pre-Ops triage budget (30 days) is NOT in this collection: it is a
+// while-in-stage budget for the holding bay rather than a transition
+// between two stages, and the user W3-D scope explicitly listed only the
+// 7 transition durations. The Pre-Ops budget stays hardcoded in
+// stageDurations.ts; revisit if pilot operators need to tune it.
+// ============================================================================
+
+export interface LifecycleRule {
+  stageFromKey: string             // KanbanStageKey
+  stageToKey: string               // KanbanStageKey | 'mou-closed'
+  defaultDays: number              // 1..365 inclusive
+  customNotes: string
+  updatedAt: string                // ISO
+  updatedBy: string                // User.id; 'system' on initial seed
+  auditLog: AuditEntry[]
 }

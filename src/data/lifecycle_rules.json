@@ -1,0 +1,65 @@
+[
+  {
+    "stageFromKey": "mou-signed",
+    "stageToKey": "actuals-confirmed",
+    "defaultDays": 14,
+    "customNotes": "",
+    "updatedAt": "2026-04-27T00:00:00Z",
+    "updatedBy": "system",
+    "auditLog": []
+  },
+  {
+    "stageFromKey": "actuals-confirmed",
+    "stageToKey": "invoice-raised",
+    "defaultDays": 14,
+    "customNotes": "Cross-verification is auto-skipped per W3-C C1; this duration spans the gap from confirming actuals to issuing the PI.",
+    "updatedAt": "2026-04-27T00:00:00Z",
+    "updatedBy": "system",
+    "auditLog": []
+  },
+  {
+    "stageFromKey": "invoice-raised",
+    "stageToKey": "payment-received",
+    "defaultDays": 30,
+    "customNotes": "Indian B2B Net-30 baseline; school administrations may extend. Adjust per school cohort if needed.",
+    "updatedAt": "2026-04-27T00:00:00Z",
+    "updatedBy": "system",
+    "auditLog": []
+  },
+  {
+    "stageFromKey": "payment-received",
+    "stageToKey": "kit-dispatched",
+    "defaultDays": 7,
+    "customNotes": "",
+    "updatedAt": "2026-04-27T00:00:00Z",
+    "updatedBy": "system",
+    "auditLog": []
+  },
+  {
+    "stageFromKey": "kit-dispatched",
+    "stageToKey": "delivery-acknowledged",
+    "defaultDays": 5,
+    "customNotes": "Transit + SPOC sign-off; allow +1-2 days over pure-transit estimate.",
+    "updatedAt": "2026-04-27T00:00:00Z",
+    "updatedBy": "system",
+    "auditLog": []
+  },
+  {
+    "stageFromKey": "delivery-acknowledged",
+    "stageToKey": "feedback-submitted",
+    "defaultDays": 7,
+    "customNotes": "Typical T+7 post-session feedback cadence.",
+    "updatedAt": "2026-04-27T00:00:00Z",
+    "updatedBy": "system",
+    "auditLog": []
+  },
+  {
+    "stageFromKey": "feedback-submitted",
+    "stageToKey": "mou-closed",
+    "defaultDays": 30,
+    "customNotes": "Closure window: time allowed to follow up after feedback before the MOU is considered closed.",
+    "updatedAt": "2026-04-27T00:00:00Z",
+    "updatedBy": "system",
+    "auditLog": []
+  }
+]

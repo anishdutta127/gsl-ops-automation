@@ -75,6 +75,9 @@ export type Action =
   // from /admin. Phase 1.1 may add cron-based auto-trigger requiring
   // a separate 'system:cron-trigger' action with shared-secret auth.
   | 'system:trigger-sync'
+  // W3-D: lifecycle rule durations are editable via /admin/lifecycle-rules.
+  // Admin-only at first; Phase 2 trigger to expand if testers ask.
+  | 'lifecycle-rule:edit'
 
 // Sentinel: Admin role grants all actions. Represented as wildcard in the
 // role map so we never have to enumerate the full action list for Admin.

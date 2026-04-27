@@ -40,6 +40,12 @@ const ADMIN_LINKS: AdminLink[] = [
     status: 'real',
   },
   {
+    href: '/admin/lifecycle-rules',
+    label: 'Lifecycle rules',
+    description: 'Editable per-stage default durations; drives kanban overdue badges.',
+    status: 'real',
+  },
+  {
     href: '/admin/mou-import-review',
     label: 'MOU import review',
     description: 'Quarantined MOUs awaiting human resolution.',

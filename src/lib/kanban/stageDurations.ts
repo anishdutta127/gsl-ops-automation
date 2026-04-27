@@ -1,44 +1,45 @@
 /*
- * Stage duration defaults (W3-C C3; overdue badge support).
+ * Stage duration defaults (W3-C C3 + W3-D editable rules).
  *
  * Each stage carries an "expected days until next stage" budget. The
  * kanban renders an Overdue badge on a card when (today - stage-
  * entered-date) exceeds this budget.
  *
- * Defaults sourced from the W3-D plan + Anish's pre-W3 refinements:
+ * Defaults sourced from src/data/lifecycle_rules.json post W3-D;
+ * editable via /admin/lifecycle-rules. Was hardcoded in C3 pending
+ * the W3-D refactor; values migrate unchanged so existing C3 tests
+ * pass without modification.
  *
- *   mou-signed              -> actuals-confirmed   : 14 days
- *   actuals-confirmed       -> invoice-raised      : 14 days
- *   cross-verification      (auto-skipped; n/a)
- *   invoice-raised          -> payment-received    : 30 days (B2B Net 30)
- *   payment-received        -> kit-dispatched      : 7 days
- *   kit-dispatched          -> delivery-acknowledged: 5 days
- *   delivery-acknowledged   -> feedback-submitted  : 7 days post-session
- *   feedback-submitted      (closure window)        : 30 days
- *   pre-ops                 (triage budget)         : 30 days
+ * Pre-Ops triage budget (30 days) stays hardcoded here as a special
+ * case: it is a while-in-stage budget for the holding bay rather
+ * than a transition between two stages, and the W3-D editable-rules
+ * collection lists only the 7 forward transitions.
  *
- * W3-D refactor: this constant becomes a runtime read from
- * src/data/lifecycle_rules.json so Ops can tune per-stage durations
- * without a code change. Tests written against the hardcoded values
- * pass after the refactor (same values).
+ * cross-verification has no budget (auto-skipped by deriveStage per
+ * the W3-C C1 design). Returns null in lookups to suppress the
+ * Overdue badge on the rare card that lands there.
  */
 
+import type { LifecycleRule } from '@/lib/types'
+import lifecycleRulesJson from '@/data/lifecycle_rules.json'
 import type { KanbanStageKey } from './deriveStage'
 
-export const STAGE_DURATION_DAYS: Record<KanbanStageKey, number | null> = {
-  'pre-ops': 30,
-  'mou-signed': 14,
-  'actuals-confirmed': 14,
-  'cross-verification': null, // auto-skipped; never current
-  'invoice-raised': 30,
-  'payment-received': 7,
-  'kit-dispatched': 5,
-  'delivery-acknowledged': 7,
-  'feedback-submitted': 30,
+const PRE_OPS_TRIAGE_DAYS = 30
+
+const allRules = lifecycleRulesJson as unknown as LifecycleRule[]
+
+function buildLookup(rules: LifecycleRule[]): Record<string, number> {
+  const lookup: Record<string, number> = {}
+  for (const r of rules) lookup[r.stageFromKey] = r.defaultDays
+  return lookup
 }
 
+const RULE_LOOKUP = buildLookup(allRules)
+
 export function getStageDurationDays(stage: KanbanStageKey): number | null {
-  return STAGE_DURATION_DAYS[stage]
+  if (stage === 'pre-ops') return PRE_OPS_TRIAGE_DAYS
+  if (stage === 'cross-verification') return null
+  return RULE_LOOKUP[stage] ?? null
 }
 
 /**
@@ -49,7 +50,7 @@ export function getStageDurationDays(stage: KanbanStageKey): number | null {
  */
 export function isOverdue(stage: KanbanStageKey, daysInStage: number | null): boolean {
   if (daysInStage === null) return false
-  const limit = STAGE_DURATION_DAYS[stage]
+  const limit = getStageDurationDays(stage)
   if (limit === null) return false
   return daysInStage > limit
 }

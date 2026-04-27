@@ -2,32 +2,24 @@ import { describe, expect, it } from 'vitest'
 import {
   getStageDurationDays,
   isOverdue,
-  STAGE_DURATION_DAYS,
 } from './stageDurations'
 
-describe('STAGE_DURATION_DAYS', () => {
-  it('matches the W3-D plan + Anish refinements', () => {
-    expect(STAGE_DURATION_DAYS['mou-signed']).toBe(14)
-    expect(STAGE_DURATION_DAYS['actuals-confirmed']).toBe(14)
-    expect(STAGE_DURATION_DAYS['invoice-raised']).toBe(30)
-    expect(STAGE_DURATION_DAYS['payment-received']).toBe(7)
-    expect(STAGE_DURATION_DAYS['kit-dispatched']).toBe(5)
-    expect(STAGE_DURATION_DAYS['delivery-acknowledged']).toBe(7)
-    expect(STAGE_DURATION_DAYS['feedback-submitted']).toBe(30)
-    expect(STAGE_DURATION_DAYS['pre-ops']).toBe(30)
+describe('getStageDurationDays', () => {
+  it('reads transitions from lifecycle_rules.json (W3-D)', () => {
+    expect(getStageDurationDays('mou-signed')).toBe(14)
+    expect(getStageDurationDays('actuals-confirmed')).toBe(14)
+    expect(getStageDurationDays('invoice-raised')).toBe(30)
+    expect(getStageDurationDays('payment-received')).toBe(7)
+    expect(getStageDurationDays('kit-dispatched')).toBe(5)
+    expect(getStageDurationDays('delivery-acknowledged')).toBe(7)
+    expect(getStageDurationDays('feedback-submitted')).toBe(30)
+  })
+
+  it('Pre-Ops triage budget stays hardcoded at 30 days (special case)', () => {
+    expect(getStageDurationDays('pre-ops')).toBe(30)
   })
 
   it('cross-verification has no defined duration (auto-skipped stage)', () => {
-    expect(STAGE_DURATION_DAYS['cross-verification']).toBeNull()
-  })
-})
-
-describe('getStageDurationDays', () => {
-  it('returns the limit for known stages', () => {
-    expect(getStageDurationDays('invoice-raised')).toBe(30)
-  })
-
-  it('returns null for cross-verification', () => {
     expect(getStageDurationDays('cross-verification')).toBeNull()
   })
 })
