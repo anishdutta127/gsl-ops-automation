@@ -131,7 +131,7 @@
     "id": "CCR-NARAYANA-CHAIN",
     "sheet": "derived",
     "scope": "school",
-    "scopeValue": "SCH-NARAYANA-ASN",
+    "scopeValue": "SCH-NARAYANA_SCHOOL",
     "contexts": ["all-communications"],
     "ccUserIds": ["sp-rohan"],
     "enabled": true,

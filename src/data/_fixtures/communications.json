@@ -212,7 +212,7 @@
   {
     "id": "COM-ESN-001",
     "type": "escalation-notification",
-    "schoolId": "SCH-NARAYANA-ASN",
+    "schoolId": "SCH-TECHNO_INDIA_GROUP_P",
     "mouId": "MOU-STEAM-2627-004",
     "installmentSeq": 1,
     "channel": "email",
@@ -296,7 +296,7 @@
   {
     "id": "COM-WAD-003",
     "type": "dispatch-raised",
-    "schoolId": "SCH-NARAYANA-DUR",
+    "schoolId": "SCH-TECHNO_INDIA_GROUP_P",
     "mouId": "MOU-STEAM-2627-004",
     "installmentSeq": 1,
     "channel": "whatsapp-draft-copied",
