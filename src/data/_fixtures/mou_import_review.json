@@ -299,11 +299,11 @@
         ]
       }
     ],
-    "resolvedAt": null,
-    "resolvedBy": null,
-    "resolution": null,
+    "resolvedAt": "2026-04-27T18:00:00.000Z",
+    "resolvedBy": "system-w4-a-1",
+    "resolution": "approved-as-single",
     "rejectionReason": null,
-    "rejectionNotes": null
+    "rejectionNotes": "W4-A.1: approved as legitimate large SINGLE school (studentsMou=2000); imported into mous.json with auto-link to SCH-TATHASTU_INNOVATIONS."
   },
   {
     "queuedAt": "2026-04-27T12:00:00.000Z",
@@ -368,11 +368,11 @@
         ]
       }
     ],
-    "resolvedAt": null,
-    "resolvedBy": null,
-    "resolution": null,
+    "resolvedAt": "2026-04-27T18:00:00.000Z",
+    "resolvedBy": "system-w4-a-1",
+    "resolution": "approved-as-single",
     "rejectionReason": null,
-    "rejectionNotes": null
+    "rejectionNotes": "W4-A.1: approved as legitimate large SINGLE school (studentsMou=1700); imported into mous.json with auto-link to SCH-SD_SENIOR_SECONDARY_."
   },
   {
     "queuedAt": "2026-04-27T12:00:00.000Z",
@@ -437,10 +437,10 @@
         ]
       }
     ],
-    "resolvedAt": null,
-    "resolvedBy": null,
-    "resolution": null,
+    "resolvedAt": "2026-04-27T18:00:00.000Z",
+    "resolvedBy": "system-w4-a-1",
+    "resolution": "approved-as-single",
     "rejectionReason": null,
-    "rejectionNotes": null
+    "rejectionNotes": "W4-A.1: approved as legitimate large SINGLE school (studentsMou=7950); imported into mous.json with auto-link to SCH-RAMANARAYANA_EDUCATI."
   }
 ]

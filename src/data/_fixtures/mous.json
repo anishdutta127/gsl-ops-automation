@@ -35,8 +35,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-DON_BOSCO_BANDEL."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-003",
@@ -74,8 +87,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-LORETO_DAY_SCHOOL_BB."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-004",
@@ -113,8 +139,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-LORETO_HOUSE_KOLKATA."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-005",
@@ -152,8 +191,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-CARMEL_CONVENT_HIGH_."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-006",
@@ -191,8 +243,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-CARMEL_SCHOOL_DURGAP."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-007",
@@ -230,8 +295,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-JULIEN_EDUCATIONAL_T."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-008",
@@ -269,8 +347,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-JULIEN_EDUCATIONAL_T_2."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-009",
@@ -308,8 +399,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-JULIEN_EDUCATIONAL_T_3."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-010",
@@ -347,8 +451,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-JULIEN_EDUCATIONAL_T_4."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-011",
@@ -386,8 +503,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-CONTAI_PUBLIC_SCHOOL."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-012",
@@ -425,8 +555,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-YOUNG_HORIZONS_SCHOO."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-013",
@@ -464,13 +607,26 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-SWARNIM_INTERNATIONA."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-014",
     "schoolId": "SCH-ST_PAUL_S_MISSION_SC",
-    "schoolName": "St. Paul’s Mission School",
+    "schoolName": "St. Paul\u2019s Mission School",
     "programme": "STEAM",
     "programmeSubType": null,
     "schoolScope": "SINGLE",
@@ -503,8 +659,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-ST_PAUL_S_MISSION_SC."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-015",
@@ -542,8 +711,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-ST_PAUL_BOARDING_AND."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-016",
@@ -581,13 +763,26 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-LIONS_CALCUTTA_GREAT."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-017",
     "schoolId": "SCH-ST_JOHN_S_SCHOOL",
-    "schoolName": "St. John’s School",
+    "schoolName": "St. John\u2019s School",
     "programme": "STEAM",
     "programmeSubType": null,
     "schoolScope": "SINGLE",
@@ -620,8 +815,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-ST_JOHN_S_SCHOOL."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-018",
@@ -659,8 +867,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-ST_MONTFORT_S_SR_SEC."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-019",
@@ -698,8 +919,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-BERHAMPORE_CITY_PUBL."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-020",
@@ -737,8 +971,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-SHAW_PUBLIC_SCHOOL."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-021",
@@ -776,8 +1023,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-SRI_R_N_SINGH_MEMORI."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-022",
@@ -815,8 +1075,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-SRI_R_N_SINGH_MEMORI_2."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-023",
@@ -854,8 +1127,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-SRI_RAM_NARAYAN_SING."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-024",
@@ -893,8 +1179,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-BGS_SCHOOL."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-025",
@@ -932,8 +1231,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-DOON_SCHOLARS_SCHOOL."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-026",
@@ -971,8 +1283,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-RBSM_PUBLIC_SCHOOL."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-028",
@@ -1010,8 +1335,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-KAZIMAN_RAI_MEMORIAL."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-029",
@@ -1049,8 +1387,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-SHEMROCK_SCHOOL."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-030",
@@ -1088,8 +1439,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-ITIKI_SCHOOL."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-031",
@@ -1127,8 +1491,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-THE_SHREE_JI_SCHOOL."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-032",
@@ -1166,8 +1543,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-SUMANA_DUTTA_MEMORIA."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-033",
@@ -1205,8 +1595,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-HARIYANA_INTERNATION."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-034",
@@ -1244,8 +1647,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-NATIONAL_GEMS_HIGHER."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-035",
@@ -1283,8 +1699,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-B_I_T_GLOBAL_SCHOOL."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-036",
@@ -1322,8 +1751,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-TINKRSPHERE_ACADEMY."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-037",
@@ -1361,8 +1803,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-MODERN_HIGH_SCHOOL_I."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-038",
@@ -1400,8 +1855,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-MODERN_HIGH_SCHOOL_I."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-039",
@@ -1439,8 +1907,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-GR_INTERNATIONAL_SCH."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-040",
@@ -1478,8 +1959,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-THE_SCOTTISH_CHURCH_."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-041",
@@ -1517,8 +2011,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-RISHI_AUROBINDO_MEMO."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-042",
@@ -1556,8 +2063,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-RISHI_AUROBINDO_MEMO."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-043",
@@ -1595,8 +2115,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-STEPPING_STONE_MODEL."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-044",
@@ -1634,8 +2167,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-PODAR_INTERNATIONAL_."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-045",
@@ -1673,8 +2219,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-SHREE_PRALHADRAO_KAS."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-046",
@@ -1712,8 +2271,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-NABI_CRESCENT_SCHOOL."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-047",
@@ -1751,8 +2323,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-MUSTAFA_MATRIC_SCHOO."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-048",
@@ -1790,8 +2375,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-PGIS_CHENNAI."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-049",
@@ -1829,8 +2427,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-SAGAYA_MATHA_MATRICU."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-050",
@@ -1868,8 +2479,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-SRI_VIDHYA_NIKETHAN_."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-051",
@@ -1907,8 +2531,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-EBENEZER_JAGANATH_MA."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-052",
@@ -1946,8 +2583,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-EBENEZER_MODERN_MATR."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-053",
@@ -1985,8 +2635,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-KIRTI_BOOK_AGENCY_EM."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-054",
@@ -2024,8 +2687,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-KIRTI_BOOK_AGENCY_EM_2."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-055",
@@ -2063,8 +2739,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-TIP_TOP_CONVENT_SCHO."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-056",
@@ -2102,8 +2791,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-DISCOVERI_OKAS_SCHOO."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-057",
@@ -2141,8 +2843,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-SRI_VAISHNAVI_SCHOOL."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-058",
@@ -2180,8 +2895,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-BOLTON_SCHOOL."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-059",
@@ -2219,8 +2947,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-CLEVER_MINDS_SCHOOL."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-060",
@@ -2258,8 +2999,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-CLEVER_MINDS_SCHOOL."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-061",
@@ -2297,8 +3051,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-SECUNDERABAD_PUBLIC_."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-062",
@@ -2336,8 +3103,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-BRIGHT_FUTURE_HIGH_S."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-063",
@@ -2375,8 +3155,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-DARSHAN_ACADEMY_DEVL."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-064",
@@ -2414,8 +3207,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-DARSHAN_ACADEMY_PUNE."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-065",
@@ -2453,8 +3259,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-SHIVAM_EDUACTIONAL_A."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-066",
@@ -2492,8 +3311,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-SHIVAM_EDUACTIONAL_A_2."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-067",
@@ -2531,8 +3363,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-ST_XAVIER_S_SR_SEC_S."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-068",
@@ -2570,8 +3415,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-DON_BOSCO_MATRIC_HIG."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2526-069",
@@ -2609,8 +3467,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-FRANK_PUBLIC_SCHOOL."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-YP-2526-004",
@@ -2648,8 +3519,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-RN_SHAH_INTERNATIONA."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-YP-2526-005",
@@ -2687,8 +3571,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-GLOBAL_CITY_INTERNAT."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-YP-2526-006",
@@ -2726,8 +3623,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-GLOBAL_CITY_INTERNAT_2."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-YP-2526-007",
@@ -2765,8 +3675,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-GD_INTERNATIONAL_SCH."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-YP-2526-008",
@@ -2804,8 +3727,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-SANJAY_GHODAWAT_INTE."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-YP-2526-009",
@@ -2843,8 +3779,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-HVB_GLOBAL_ACADEMY."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-YP-2526-010",
@@ -2882,8 +3831,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-BHARATI_VIDYAPEETH_R."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-YP-2526-011",
@@ -2921,8 +3883,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-ALMA_MATER_SCHOOL."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-YP-2526-012",
@@ -2960,8 +3935,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-SRI_RAJASREE_EDUCATI."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-YP-2526-013",
@@ -2999,8 +3987,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-CHIREC_INTERNATIONAL."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-YP-2526-014",
@@ -3038,8 +4039,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-THE_CAMBRIA_INTERNAT."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-YP-2526-015",
@@ -3077,8 +4091,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-KULACHI_HANSRAJ_MODE."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-YP-2526-016",
@@ -3116,8 +4143,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-SSNP_SCHOOL."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-YP-2526-017",
@@ -3155,8 +4195,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-KALYANI_SCHOOL."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-YP-2526-018",
@@ -3194,8 +4247,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-FOUNDATION_WORLD_SCH."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-YP-2526-019",
@@ -3233,8 +4299,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-AYESHA_ALI_ACADEMY."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-YP-2526-020",
@@ -3272,8 +4351,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-WISDOM_HIGH_INTERNAT."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-YP-2526-021",
@@ -3311,8 +4403,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-LAXMI_GLOBAL_SCHOOL."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-YP-2526-022",
@@ -3350,8 +4455,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-BAPUJI_EDUCATIONAL_A."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-YP-2526-023",
@@ -3389,8 +4507,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-BAPUJI_EDUCATIONAL_A_2."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-YP-2526-024",
@@ -3428,8 +4559,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-APPLE_GLOBAL_SCHOOL."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-YP-2526-025",
@@ -3467,8 +4611,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-BILLABONG_HIGH_INTER."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-YP-2526-026",
@@ -3506,8 +4663,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-HINDUSTAN_INTERNATIO."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-YP-2526-027",
@@ -3545,8 +4715,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-HINDUSTAN_INTERNATIO_2."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-YP-2526-028",
@@ -3584,8 +4767,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-HINDUSTAN_INTERNATIO_2."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
       }
-    ]
+    ],
+    "cohortStatus": "archived"
   },
   {
     "id": "MOU-STEAM-2627-001",
@@ -3623,8 +4819,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-MUTAHHARY_PUBLIC_SCH."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "active"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
       }
-    ]
+    ],
+    "cohortStatus": "active"
   },
   {
     "id": "MOU-STEAM-2627-002",
@@ -3662,8 +4871,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-JNANA_BHARATHI_ENGLI."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "active"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
       }
-    ]
+    ],
+    "cohortStatus": "active"
   },
   {
     "id": "MOU-STEAM-2627-003",
@@ -3701,8 +4923,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-MAHRISHI_DAYANAND_SC."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "active"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
       }
-    ]
+    ],
+    "cohortStatus": "active"
   },
   {
     "id": "MOU-STEAM-2627-004",
@@ -3740,8 +4975,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-TECHNO_INDIA_GROUP_P."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "active"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
       }
-    ]
+    ],
+    "cohortStatus": "active"
   },
   {
     "id": "MOU-STEAM-2627-005",
@@ -3779,8 +5027,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-TECHNO_INDIA_GROUP_P_2."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "active"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
       }
-    ]
+    ],
+    "cohortStatus": "active"
   },
   {
     "id": "MOU-STEAM-2627-006",
@@ -3818,8 +5079,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-TECHNO_INDIA_GROUP_P_3."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "active"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
       }
-    ]
+    ],
+    "cohortStatus": "active"
   },
   {
     "id": "MOU-STEAM-2627-007",
@@ -3857,8 +5131,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-ST_MARY_CONVENT_SCHO."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "active"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
       }
-    ]
+    ],
+    "cohortStatus": "active"
   },
   {
     "id": "MOU-STEAM-2627-008",
@@ -3896,8 +5183,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-LORETO_DAY_SCHOOL_BB."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "active"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
       }
-    ]
+    ],
+    "cohortStatus": "active"
   },
   {
     "id": "MOU-STEAM-2627-009",
@@ -3935,8 +5235,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-KAVYAPTA_GLOBAL_SCHO."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "active"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
       }
-    ]
+    ],
+    "cohortStatus": "active"
   },
   {
     "id": "MOU-STEAM-2627-010",
@@ -3974,8 +5287,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-EMBEE_ROSEBUD_HR_SEC."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "active"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
       }
-    ]
+    ],
+    "cohortStatus": "active"
   },
   {
     "id": "MOU-STEAM-2627-011",
@@ -4013,8 +5339,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-THE_LEARNING_SANCTUA."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "active"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
       }
-    ]
+    ],
+    "cohortStatus": "active"
   },
   {
     "id": "MOU-STEAM-2627-012",
@@ -4052,8 +5391,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-ROOTLAND_SEC_SCHOOL."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "active"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
       }
-    ]
+    ],
+    "cohortStatus": "active"
   },
   {
     "id": "MOU-STEAM-2627-013",
@@ -4091,8 +5443,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-K_E_CARMEL_SCHOOL_AM."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "active"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
       }
-    ]
+    ],
+    "cohortStatus": "active"
   },
   {
     "id": "MOU-STEAM-2627-014",
@@ -4130,8 +5495,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-K_E_CARMEL_SCHOOL_SU."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "active"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
       }
-    ]
+    ],
+    "cohortStatus": "active"
   },
   {
     "id": "MOU-STEAM-2627-015",
@@ -4169,8 +5547,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-BLUE_ANGELS_GLOBAL_S."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "active"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
       }
-    ]
+    ],
+    "cohortStatus": "active"
   },
   {
     "id": "MOU-STEAM-2627-017",
@@ -4208,8 +5599,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-HOLY_CHILD_ENGLISH_A."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "active"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
       }
-    ]
+    ],
+    "cohortStatus": "active"
   },
   {
     "id": "MOU-STEAM-2627-019",
@@ -4247,8 +5651,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-CHRIST_MISSION_SCHOO."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "active"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
       }
-    ]
+    ],
+    "cohortStatus": "active"
   },
   {
     "id": "MOU-STEAM-2627-020",
@@ -4286,8 +5703,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-DELHI_WORLD_PUBLIC_S."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "active"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
       }
-    ]
+    ],
+    "cohortStatus": "active"
   },
   {
     "id": "MOU-STEAM-2627-021",
@@ -4325,8 +5755,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-JAFFARIA_ACADEMY_OF_."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "active"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
       }
-    ]
+    ],
+    "cohortStatus": "active"
   },
   {
     "id": "MOU-STEAM-2627-022",
@@ -4364,8 +5807,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-B_D_MEMORIAL_JR_SCHO."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "active"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
       }
-    ]
+    ],
+    "cohortStatus": "active"
   },
   {
     "id": "MOU-STEAM-2627-023",
@@ -4403,8 +5859,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-GNIMS_BUSINESS_SCHOO."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "active"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
       }
-    ]
+    ],
+    "cohortStatus": "active"
   },
   {
     "id": "MOU-STEAM-2627-024",
@@ -4442,8 +5911,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-GURU_NANAK_INSTITUTE."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "active"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
       }
-    ]
+    ],
+    "cohortStatus": "active"
   },
   {
     "id": "MOU-STEAM-2627-025",
@@ -4481,8 +5963,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-LIONS_CALCUTTA_GREAT."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "active"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
       }
-    ]
+    ],
+    "cohortStatus": "active"
   },
   {
     "id": "MOU-STEAM-2627-026",
@@ -4520,8 +6015,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-B_I_T_GLOBAL_SCHOOL."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "active"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
       }
-    ]
+    ],
+    "cohortStatus": "active"
   },
   {
     "id": "MOU-STEAM-2627-027",
@@ -4559,8 +6067,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-DON_BONSCO_KRISHNANA."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "active"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
       }
-    ]
+    ],
+    "cohortStatus": "active"
   },
   {
     "id": "MOU-STEAM-2627-028",
@@ -4598,8 +6119,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-LORETO_DAY_SCHOOL_KO."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "active"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
       }
-    ]
+    ],
+    "cohortStatus": "active"
   },
   {
     "id": "MOU-STEAM-2627-029",
@@ -4637,8 +6171,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-CARMEL_CONVENT_HIGH_."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "active"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
       }
-    ]
+    ],
+    "cohortStatus": "active"
   },
   {
     "id": "MOU-STEAM-2627-030",
@@ -4676,8 +6223,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-CARMEL_SCHOOL_DURGAP."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "active"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
       }
-    ]
+    ],
+    "cohortStatus": "active"
   },
   {
     "id": "MOU-STEAM-2627-031",
@@ -4715,8 +6275,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-ST_MONTFORT_S_SR_SEC."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "active"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
       }
-    ]
+    ],
+    "cohortStatus": "active"
   },
   {
     "id": "MOU-STEAM-2627-032",
@@ -4754,8 +6327,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-LAXMIPAT_SINGHANIA_A."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "active"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
       }
-    ]
+    ],
+    "cohortStatus": "active"
   },
   {
     "id": "MOU-STEAM-2627-033",
@@ -4793,8 +6379,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-JULIEN_EDUCATIONAL_T."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "active"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
       }
-    ]
+    ],
+    "cohortStatus": "active"
   },
   {
     "id": "MOU-STEAM-2627-034",
@@ -4832,8 +6431,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-JULIEN_EDUCATIONAL_T_2."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "active"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
       }
-    ]
+    ],
+    "cohortStatus": "active"
   },
   {
     "id": "MOU-STEAM-2627-035",
@@ -4871,8 +6483,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-JULIEN_EDUCATIONAL_T_3."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "active"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
       }
-    ]
+    ],
+    "cohortStatus": "active"
   },
   {
     "id": "MOU-STEAM-2627-036",
@@ -4910,8 +6535,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-JULIEN_EDUCATIONAL_T_4."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "active"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
       }
-    ]
+    ],
+    "cohortStatus": "active"
   },
   {
     "id": "MOU-STEAM-2627-037",
@@ -4949,13 +6587,26 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-SWARNIM_INTERNATIONA."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "active"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
       }
-    ]
+    ],
+    "cohortStatus": "active"
   },
   {
     "id": "MOU-STEAM-2627-038",
     "schoolId": "SCH-ST_PAUL_S_MISSION_SC",
-    "schoolName": "St. Paul’s Mission School",
+    "schoolName": "St. Paul\u2019s Mission School",
     "programme": "STEAM",
     "programmeSubType": null,
     "schoolScope": "SINGLE",
@@ -4988,8 +6639,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-ST_PAUL_S_MISSION_SC."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "active"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
       }
-    ]
+    ],
+    "cohortStatus": "active"
   },
   {
     "id": "MOU-STEAM-2627-039",
@@ -5027,8 +6691,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-ST_PAUL_S_BOARDING_A."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "active"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
       }
-    ]
+    ],
+    "cohortStatus": "active"
   },
   {
     "id": "MOU-STEAM-2627-040",
@@ -5066,8 +6743,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-BERHAMPORE_CITY_PUBL."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "active"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
       }
-    ]
+    ],
+    "cohortStatus": "active"
   },
   {
     "id": "MOU-STEAM-2627-041",
@@ -5105,8 +6795,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-SHAW_PUBLIC_SCHOOL."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "active"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
       }
-    ]
+    ],
+    "cohortStatus": "active"
   },
   {
     "id": "MOU-STEAM-2627-042",
@@ -5144,8 +6847,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-SRI_R_N_SINGH_MEMORI_3."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "active"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
       }
-    ]
+    ],
+    "cohortStatus": "active"
   },
   {
     "id": "MOU-STEAM-2627-043",
@@ -5183,8 +6899,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-SRI_R_N_SINGH_MEMORI_4."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "active"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
       }
-    ]
+    ],
+    "cohortStatus": "active"
   },
   {
     "id": "MOU-STEAM-2627-044",
@@ -5222,8 +6951,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-SUMANA_DUTTA_MEMORIA."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "active"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
       }
-    ]
+    ],
+    "cohortStatus": "active"
   },
   {
     "id": "MOU-STEAM-2627-045",
@@ -5261,8 +7003,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-HARIYANA_INTERNATION_2."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "active"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
       }
-    ]
+    ],
+    "cohortStatus": "active"
   },
   {
     "id": "MOU-STEAM-2627-046",
@@ -5300,8 +7055,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-THE_SCOTTISH_CHURCH_."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "active"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
       }
-    ]
+    ],
+    "cohortStatus": "active"
   },
   {
     "id": "MOU-STEAM-2627-047",
@@ -5339,8 +7107,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-ST_JOHNS_HIGH_SCHOOL."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "active"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
       }
-    ]
+    ],
+    "cohortStatus": "active"
   },
   {
     "id": "MOU-STEAM-2627-048",
@@ -5378,8 +7159,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-RISHI_AUROBINDO_MEMO."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "active"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
       }
-    ]
+    ],
+    "cohortStatus": "active"
   },
   {
     "id": "MOU-STEAM-2627-049",
@@ -5417,8 +7211,21 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-DARSHAN_ACADEMY_DEVL."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "active"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
       }
-    ]
+    ],
+    "cohortStatus": "active"
   },
   {
     "id": "MOU-STEAM-2627-050",
@@ -5456,7 +7263,176 @@
         "user": "system",
         "action": "auto-link-exact-match",
         "notes": "Imported from gsl-mou-system; auto-linked to school SCH-YOUNG_HORIZONS_SCHOO."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "active"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
       }
-    ]
+    ],
+    "cohortStatus": "active"
+  },
+  {
+    "id": "MOU-STEAM-2627-016",
+    "schoolId": "SCH-TATHASTU_INNOVATIONS",
+    "schoolName": "Tathastu Innovations (LAB ) Meerut",
+    "programme": "STEAM",
+    "programmeSubType": null,
+    "schoolScope": "SINGLE",
+    "schoolGroupId": null,
+    "status": "Active",
+    "academicYear": "2026-27",
+    "startDate": "2026-04-01",
+    "endDate": "2028-03-31",
+    "studentsMou": 2000,
+    "studentsActual": 0,
+    "studentsVariance": null,
+    "studentsVariancePct": null,
+    "spWithoutTax": 1050,
+    "spWithTax": 1239,
+    "contractValue": 2478000,
+    "received": 0,
+    "tds": 0,
+    "balance": 2478000,
+    "receivedPct": 0,
+    "paymentSchedule": "50-50 half-yearly",
+    "trainerModel": "TT",
+    "salesPersonId": "sp-tanuj",
+    "templateVersion": null,
+    "generatedAt": null,
+    "notes": "Status: New",
+    "daysToExpiry": 710,
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T18:00:00.000Z",
+        "user": "system-w4-a-1",
+        "action": "auto-link-exact-match",
+        "notes": "Approved-as-SINGLE during W4-A.1 manual review: schoolName=\"Tathastu Innovations (LAB ) Meerut\" with studentsMou=2000 matched the chain-MOU heuristic but the school is a legitimate large single-school site, not a multi-school chain. Linked to SCH-TATHASTU_INNOVATIONS."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "active"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
+      }
+    ],
+    "cohortStatus": "active"
+  },
+  {
+    "id": "MOU-STEAM-2627-018",
+    "schoolId": "SCH-SD_SENIOR_SECONDARY_",
+    "schoolName": "SD Senior Secondary School",
+    "programme": "STEAM",
+    "programmeSubType": null,
+    "schoolScope": "SINGLE",
+    "schoolGroupId": null,
+    "status": "Active",
+    "academicYear": "2026-27",
+    "startDate": "2026-04-01",
+    "endDate": "2028-03-31",
+    "studentsMou": 1700,
+    "studentsActual": 0,
+    "studentsVariance": null,
+    "studentsVariancePct": null,
+    "spWithoutTax": 1694.91525423729,
+    "spWithTax": 2000,
+    "contractValue": 3400000,
+    "received": 7000,
+    "tds": 0,
+    "balance": 3393000,
+    "receivedPct": 0.2,
+    "paymentSchedule": "50-50 half-yearly",
+    "trainerModel": "TT",
+    "salesPersonId": "sp-sahil",
+    "templateVersion": null,
+    "generatedAt": null,
+    "notes": "Status: New",
+    "daysToExpiry": 710,
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T18:00:00.000Z",
+        "user": "system-w4-a-1",
+        "action": "auto-link-exact-match",
+        "notes": "Approved-as-SINGLE during W4-A.1 manual review: schoolName=\"SD Senior Secondary School\" with studentsMou=1700 matched the chain-MOU heuristic but the school is a legitimate large single-school site, not a multi-school chain. Linked to SCH-SD_SENIOR_SECONDARY_."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "active"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
+      }
+    ],
+    "cohortStatus": "active"
+  },
+  {
+    "id": "MOU-STEAM-2627-051",
+    "schoolId": "SCH-RAMANARAYANA_EDUCATI",
+    "schoolName": "Ramanarayana Education Trust",
+    "programme": "STEAM",
+    "programmeSubType": null,
+    "schoolScope": "SINGLE",
+    "schoolGroupId": null,
+    "status": "Active",
+    "academicYear": "2026-27",
+    "startDate": "2026-04-01",
+    "endDate": "2027-03-31",
+    "studentsMou": 7950,
+    "studentsActual": 0,
+    "studentsVariance": null,
+    "studentsVariancePct": null,
+    "spWithoutTax": 686.440677966102,
+    "spWithTax": 810,
+    "contractValue": 6439500,
+    "received": 0,
+    "tds": 0,
+    "balance": 6439500,
+    "receivedPct": 0,
+    "paymentSchedule": "50-50 half-yearly",
+    "trainerModel": null,
+    "salesPersonId": "sp-prodipto",
+    "templateVersion": null,
+    "generatedAt": null,
+    "notes": "Status: Retained",
+    "daysToExpiry": 344,
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T18:00:00.000Z",
+        "user": "system-w4-a-1",
+        "action": "auto-link-exact-match",
+        "notes": "Approved-as-SINGLE during W4-A.1 manual review: schoolName=\"Ramanarayana Education Trust\" with studentsMou=7950 matched the chain-MOU heuristic but the school is a legitimate large single-school site, not a multi-school chain. Linked to SCH-RAMANARAYANA_EDUCATI."
+      },
+      {
+        "timestamp": "2026-04-27T18:01:00.000Z",
+        "user": "system-w4-a-2",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": null
+        },
+        "after": {
+          "cohortStatus": "active"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
+      }
+    ],
+    "cohortStatus": "active"
   }
 ]
