@@ -100,6 +100,20 @@
           "cohortStatus": "archived"
         },
         "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
+      },
+      {
+        "timestamp": "2026-04-28T15:30:00.000Z",
+        "user": "system-pre-w4d",
+        "action": "dispatch-backfilled-from-mastersheet",
+        "after": {
+          "dispatchId": "DIS-BF-TWs-r4",
+          "sheet": "TWs",
+          "rowNumber": 4,
+          "lineItemCount": 6,
+          "totalQuantity": 76,
+          "confidence": "medium"
+        },
+        "notes": "Mastersheet backfill landed historical delivery (TWs row 4)."
       }
     ],
     "cohortStatus": "archived",
@@ -153,6 +167,20 @@
           "cohortStatus": "archived"
         },
         "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
+      },
+      {
+        "timestamp": "2026-04-28T15:30:00.000Z",
+        "user": "system-pre-w4d",
+        "action": "dispatch-backfilled-from-mastersheet",
+        "after": {
+          "dispatchId": "DIS-BF-TWs-r5",
+          "sheet": "TWs",
+          "rowNumber": 5,
+          "lineItemCount": 7,
+          "totalQuantity": 81,
+          "confidence": "high"
+        },
+        "notes": "Mastersheet backfill landed historical delivery (TWs row 5)."
       }
     ],
     "cohortStatus": "archived",
@@ -206,6 +234,20 @@
           "cohortStatus": "archived"
         },
         "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
+      },
+      {
+        "timestamp": "2026-04-28T15:30:00.000Z",
+        "user": "system-pre-w4d",
+        "action": "dispatch-backfilled-from-mastersheet",
+        "after": {
+          "dispatchId": "DIS-BF-TWs-r13",
+          "sheet": "TWs",
+          "rowNumber": 13,
+          "lineItemCount": 5,
+          "totalQuantity": 94,
+          "confidence": "high"
+        },
+        "notes": "Mastersheet backfill landed historical delivery (TWs row 13)."
       }
     ],
     "cohortStatus": "archived",
@@ -259,6 +301,20 @@
           "cohortStatus": "archived"
         },
         "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
+      },
+      {
+        "timestamp": "2026-04-28T15:30:00.000Z",
+        "user": "system-pre-w4d",
+        "action": "dispatch-backfilled-from-mastersheet",
+        "after": {
+          "dispatchId": "DIS-BF-TWs-r14",
+          "sheet": "TWs",
+          "rowNumber": 14,
+          "lineItemCount": 5,
+          "totalQuantity": 94,
+          "confidence": "high"
+        },
+        "notes": "Mastersheet backfill landed historical delivery (TWs row 14)."
       }
     ],
     "cohortStatus": "archived",
@@ -312,6 +368,20 @@
           "cohortStatus": "archived"
         },
         "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
+      },
+      {
+        "timestamp": "2026-04-28T15:30:00.000Z",
+        "user": "system-pre-w4d",
+        "action": "dispatch-backfilled-from-mastersheet",
+        "after": {
+          "dispatchId": "DIS-BF-TWs-r6",
+          "sheet": "TWs",
+          "rowNumber": 6,
+          "lineItemCount": 4,
+          "totalQuantity": 47,
+          "confidence": "Anish-resolved archived (manual-review reso)"
+        },
+        "notes": "Mastersheet backfill landed historical delivery (TWs row 6)."
       }
     ],
     "cohortStatus": "archived",
@@ -365,6 +435,20 @@
           "cohortStatus": "archived"
         },
         "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
+      },
+      {
+        "timestamp": "2026-04-28T15:30:00.000Z",
+        "user": "system-pre-w4d",
+        "action": "dispatch-backfilled-from-mastersheet",
+        "after": {
+          "dispatchId": "DIS-BF-TWs-r7",
+          "sheet": "TWs",
+          "rowNumber": 7,
+          "lineItemCount": 4,
+          "totalQuantity": 44,
+          "confidence": "Anish-resolved archived (manual-review reso)"
+        },
+        "notes": "Mastersheet backfill landed historical delivery (TWs row 7)."
       }
     ],
     "cohortStatus": "archived",
@@ -418,6 +502,20 @@
           "cohortStatus": "archived"
         },
         "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
+      },
+      {
+        "timestamp": "2026-04-28T15:30:00.000Z",
+        "user": "system-pre-w4d",
+        "action": "dispatch-backfilled-from-mastersheet",
+        "after": {
+          "dispatchId": "DIS-BF-TWs-r8",
+          "sheet": "TWs",
+          "rowNumber": 8,
+          "lineItemCount": 4,
+          "totalQuantity": 42,
+          "confidence": "Anish-resolved archived (manual-review reso)"
+        },
+        "notes": "Mastersheet backfill landed historical delivery (TWs row 8)."
       }
     ],
     "cohortStatus": "archived",
@@ -471,6 +569,20 @@
           "cohortStatus": "archived"
         },
         "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
+      },
+      {
+        "timestamp": "2026-04-28T15:30:00.000Z",
+        "user": "system-pre-w4d",
+        "action": "dispatch-backfilled-from-mastersheet",
+        "after": {
+          "dispatchId": "DIS-BF-TWs-r9",
+          "sheet": "TWs",
+          "rowNumber": 9,
+          "lineItemCount": 4,
+          "totalQuantity": 37,
+          "confidence": "Anish-resolved archived (manual-review reso)"
+        },
+        "notes": "Mastersheet backfill landed historical delivery (TWs row 9)."
       }
     ],
     "cohortStatus": "archived",
@@ -630,6 +742,20 @@
           "cohortStatus": "archived"
         },
         "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
+      },
+      {
+        "timestamp": "2026-04-28T15:30:00.000Z",
+        "user": "system-pre-w4d",
+        "action": "dispatch-backfilled-from-mastersheet",
+        "after": {
+          "dispatchId": "DIS-BF-TWs-r10",
+          "sheet": "TWs",
+          "rowNumber": 10,
+          "lineItemCount": 4,
+          "totalQuantity": 15,
+          "confidence": "high"
+        },
+        "notes": "Mastersheet backfill landed historical delivery (TWs row 10)."
       }
     ],
     "cohortStatus": "archived",
@@ -683,6 +809,20 @@
           "cohortStatus": "archived"
         },
         "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
+      },
+      {
+        "timestamp": "2026-04-28T15:30:00.000Z",
+        "user": "system-pre-w4d",
+        "action": "dispatch-backfilled-from-mastersheet",
+        "after": {
+          "dispatchId": "DIS-BF-TWs-r11",
+          "sheet": "TWs",
+          "rowNumber": 11,
+          "lineItemCount": 3,
+          "totalQuantity": 19,
+          "confidence": "high"
+        },
+        "notes": "Mastersheet backfill landed historical delivery (TWs row 11)."
       }
     ],
     "cohortStatus": "archived",
@@ -736,6 +876,20 @@
           "cohortStatus": "archived"
         },
         "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
+      },
+      {
+        "timestamp": "2026-04-28T15:30:00.000Z",
+        "user": "system-pre-w4d",
+        "action": "dispatch-backfilled-from-mastersheet",
+        "after": {
+          "dispatchId": "DIS-BF-TWs-r12",
+          "sheet": "TWs",
+          "rowNumber": 12,
+          "lineItemCount": 5,
+          "totalQuantity": 75,
+          "confidence": "high"
+        },
+        "notes": "Mastersheet backfill landed historical delivery (TWs row 12)."
       }
     ],
     "cohortStatus": "archived",
@@ -895,6 +1049,20 @@
           "cohortStatus": "archived"
         },
         "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
+      },
+      {
+        "timestamp": "2026-04-28T15:30:00.000Z",
+        "user": "system-pre-w4d",
+        "action": "dispatch-backfilled-from-mastersheet",
+        "after": {
+          "dispatchId": "DIS-BF-TWs-r15",
+          "sheet": "TWs",
+          "rowNumber": 15,
+          "lineItemCount": 3,
+          "totalQuantity": 20,
+          "confidence": "medium"
+        },
+        "notes": "Mastersheet backfill landed historical delivery (TWs row 15)."
       }
     ],
     "cohortStatus": "archived",
@@ -2008,6 +2176,20 @@
           "cohortStatus": "archived"
         },
         "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
+      },
+      {
+        "timestamp": "2026-04-28T15:30:00.000Z",
+        "user": "system-pre-w4d",
+        "action": "dispatch-backfilled-from-mastersheet",
+        "after": {
+          "dispatchId": "DIS-BF-TWs-r16",
+          "sheet": "TWs",
+          "rowNumber": 16,
+          "lineItemCount": 2,
+          "totalQuantity": 12,
+          "confidence": "high"
+        },
+        "notes": "Mastersheet backfill landed historical delivery (TWs row 16)."
       }
     ],
     "cohortStatus": "archived",
@@ -5333,6 +5515,20 @@
         "user": "system-w4c-backfill",
         "action": "intake-captured",
         "notes": "W4-C.4 backfill from Google Form row 4 timestamped 2026-02-24T14:51:18.010Z. Form name has apostrophe-s; MOU has 'St. Mary Convent School' (no apostrophe-s)."
+      },
+      {
+        "timestamp": "2026-04-28T15:30:00.000Z",
+        "user": "system-pre-w4d",
+        "action": "dispatch-backfilled-from-mastersheet",
+        "after": {
+          "dispatchId": "DIS-BF-Cretile-r6",
+          "sheet": "Cretile",
+          "rowNumber": 6,
+          "lineItemCount": 1,
+          "totalQuantity": 33,
+          "confidence": "high (intake-confirmed)"
+        },
+        "notes": "Mastersheet backfill landed historical delivery (Cretile row 6)."
       }
     ],
     "cohortStatus": "active",
@@ -5487,6 +5683,20 @@
           "mappedSchoolName": "Kavyapta Global School"
         },
         "notes": "Kavyapta Global -> -009 not -024 (Guru Nanak Institute). Form school: Kavyapta Global School. Moved IN to this MOU."
+      },
+      {
+        "timestamp": "2026-04-28T15:30:00.000Z",
+        "user": "system-pre-w4d",
+        "action": "dispatch-backfilled-from-mastersheet",
+        "after": {
+          "dispatchId": "DIS-BF-Cretile-r4",
+          "sheet": "Cretile",
+          "rowNumber": 4,
+          "lineItemCount": 1,
+          "totalQuantity": 50,
+          "confidence": "high (intake-confirmed)"
+        },
+        "notes": "Mastersheet backfill landed historical delivery (Cretile row 4)."
       }
     ],
     "cohortStatus": "active",
@@ -5733,6 +5943,20 @@
         "user": "system-w4c-backfill",
         "action": "intake-captured",
         "notes": "W4-C.4 backfill from Google Form row 3 timestamped 2026-02-24T14:47:10.176Z."
+      },
+      {
+        "timestamp": "2026-04-28T15:30:00.000Z",
+        "user": "system-pre-w4d",
+        "action": "dispatch-backfilled-from-mastersheet",
+        "after": {
+          "dispatchId": "DIS-BF-Cretile-r5",
+          "sheet": "Cretile",
+          "rowNumber": 5,
+          "lineItemCount": 1,
+          "totalQuantity": 50,
+          "confidence": "high (intake-confirmed)"
+        },
+        "notes": "Mastersheet backfill landed historical delivery (Cretile row 5)."
       }
     ],
     "cohortStatus": "active",
@@ -5792,6 +6016,20 @@
         "user": "system-w4c-backfill",
         "action": "intake-captured",
         "notes": "W4-C.4 backfill from Google Form row 14 timestamped 2026-04-07T14:45:08.725Z. Anish-confirmed: Suri (not Amtala -013); form schoolName ambiguous."
+      },
+      {
+        "timestamp": "2026-04-28T15:30:00.000Z",
+        "user": "system-pre-w4d",
+        "action": "dispatch-backfilled-from-mastersheet",
+        "after": {
+          "dispatchId": "DIS-BF-Cretile-r10",
+          "sheet": "Cretile",
+          "rowNumber": 10,
+          "lineItemCount": 1,
+          "totalQuantity": 80,
+          "confidence": "high (intake-confirmed)"
+        },
+        "notes": "Mastersheet backfill landed historical delivery (Cretile row 10)."
       }
     ],
     "cohortStatus": "active",
@@ -5851,6 +6089,20 @@
         "user": "system-w4c-backfill",
         "action": "intake-captured",
         "notes": "W4-C.4 backfill from Google Form row 18 timestamped 2026-04-17T06:35:37.795Z. Co-owner case: form owner \"Dr. Sumit Majumdar/Roveena Verma\"; MOU has salesPersonId=sp-roveena. Primary = sp-roveena; co-owner sp-sumit captured in audit notes. Co-owner case: form lists \"Dr. Sumit Majumdar/Roveena Verma\"; primary salesOwner=sp-roveena."
+      },
+      {
+        "timestamp": "2026-04-28T15:30:00.000Z",
+        "user": "system-pre-w4d",
+        "action": "dispatch-backfilled-from-mastersheet",
+        "after": {
+          "dispatchId": "DIS-BF-Cretile-r9",
+          "sheet": "Cretile",
+          "rowNumber": 9,
+          "lineItemCount": 1,
+          "totalQuantity": 96,
+          "confidence": "high (intake-confirmed)"
+        },
+        "notes": "Mastersheet backfill landed historical delivery (Cretile row 9)."
       }
     ],
     "cohortStatus": "active",
@@ -6058,6 +6310,20 @@
           "mappedSchoolName": "Lions Calcutta Greater Vidya Mandir"
         },
         "notes": "Lions Calcutta Greater Vidya Mandir -> -025 not -020 (Delhi World Public). Form school: Lions Calcutta (Greater) Vidya Mandir. Moved OUT of this MOU."
+      },
+      {
+        "timestamp": "2026-04-28T15:30:00.000Z",
+        "user": "system-pre-w4d",
+        "action": "dispatch-backfilled-from-mastersheet",
+        "after": {
+          "dispatchId": "DIS-BF-Cretile-r8",
+          "sheet": "Cretile",
+          "rowNumber": 8,
+          "lineItemCount": 1,
+          "totalQuantity": 56,
+          "confidence": "medium"
+        },
+        "notes": "Mastersheet backfill landed historical delivery (Cretile row 8)."
       }
     ],
     "cohortStatus": "active",
@@ -6537,6 +6803,20 @@
         "user": "system-w4c-backfill",
         "action": "intake-captured",
         "notes": "W4-C.4 backfill from Google Form row 1 timestamped 2026-02-23T10:21:12.740Z. Auto-import per W4-C recon: school-name typo (Bonsco -> Bosco) corrected during W4-C.1."
+      },
+      {
+        "timestamp": "2026-04-28T15:30:00.000Z",
+        "user": "system-pre-w4d",
+        "action": "dispatch-backfilled-from-mastersheet",
+        "after": {
+          "dispatchId": "DIS-BF-Cretile-r7",
+          "sheet": "Cretile",
+          "rowNumber": 7,
+          "lineItemCount": 1,
+          "totalQuantity": 75,
+          "confidence": "high (intake-confirmed)"
+        },
+        "notes": "Mastersheet backfill landed historical delivery (Cretile row 7)."
       }
     ],
     "cohortStatus": "active",
@@ -7657,6 +7937,20 @@
           "mappedSchoolName": "St. Johns High School"
         },
         "notes": "St Johns High -> -047 not -019 (Christ Mission). Form school: St Johns High School. Moved IN to this MOU."
+      },
+      {
+        "timestamp": "2026-04-28T15:30:00.000Z",
+        "user": "system-pre-w4d",
+        "action": "dispatch-backfilled-from-mastersheet",
+        "after": {
+          "dispatchId": "DIS-BF-Cretile-r17",
+          "sheet": "Cretile",
+          "rowNumber": 17,
+          "lineItemCount": 1,
+          "totalQuantity": 44,
+          "confidence": "high (intake-confirmed)"
+        },
+        "notes": "Mastersheet backfill landed historical delivery (Cretile row 17)."
       }
     ],
     "cohortStatus": "active",
@@ -7842,6 +8136,20 @@
           "mappedSchoolName": "Young Horizons School"
         },
         "notes": "Young Horizons School -> -050 not -022 (B.D Memorial Jr.). Form school: Young Horizons School. Moved IN to this MOU."
+      },
+      {
+        "timestamp": "2026-04-28T15:30:00.000Z",
+        "user": "system-pre-w4d",
+        "action": "dispatch-backfilled-from-mastersheet",
+        "after": {
+          "dispatchId": "DIS-BF-Cretile-r16",
+          "sheet": "Cretile",
+          "rowNumber": 16,
+          "lineItemCount": 1,
+          "totalQuantity": 73,
+          "confidence": "high (intake-confirmed)"
+        },
+        "notes": "Mastersheet backfill landed historical delivery (Cretile row 16)."
       }
     ],
     "cohortStatus": "active",

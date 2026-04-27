@@ -81,6 +81,10 @@ describe('collectAuditRows', () => {
       // mirrors a 'intake-record-corrected-w4c7' entry on both the old
       // and new parent MOU.
       'intake-record-corrected-w4c7',
+      // W4-D.8: Mastersheet backfill mutation mirrors the
+      // 'dispatch-backfilled-from-mastersheet' action on the parent MOU's
+      // auditLog so /mous/[id] surfaces the historical record.
+      'dispatch-backfilled-from-mastersheet',
     ])
     for (const row of mouRows) {
       expect(recognizedActions.has(row.entry.action)).toBe(true)

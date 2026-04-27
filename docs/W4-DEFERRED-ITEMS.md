@@ -85,6 +85,48 @@ Each entry: a stable id, status, surface where it was found, the question, what 
 - **Question:** What should happen to a Mastersheet row whose school is unknown to both lists? Add the school + a new MOU as a one-shot upstream import, or accept the row as orphaned historical data with no MOU FK?
 - **Needed to close:** Anish reviews any row that triggers this. The W4-D.8 verification table shipped with 0 D-009 hits (all 4 quarantines are BD Memorial branches per D-002); future re-runs against a new Mastersheet may surface real hits.
 
+## D-010 Dehi vs Delhi spelling on MOU-STEAM-2627-020
+
+- **Status:** open
+- **Surfaced by:** W4-D.8 Mastersheet backfill (Cretile sheet row 8)
+- **Context:** Mastersheet Cretile row 8 says `Dehi World Public School, Barasat`; canonical name on `MOU-STEAM-2627-020` is `Delhi World Public School, Barasat`. Auto-imported on the medium-confidence path (active 2627 wins because no archived counterpart). The Mastersheet spelling is a probable typo.
+- **Question:** Confirm the canonical school name. If the MOU's `Delhi` spelling is correct, no action; if the school's preferred name is actually `Dehi`, update `mous.json` to match (single-line `schoolName` change, audit captures).
+- **Needed to close:** Anish confirms with the school SPOC.
+
+## D-011 Julien chain: brand identity + AY confirmation
+
+- **Status:** open
+- **Surfaced by:** W4-D.8 Mastersheet backfill (TWs sheet rows 6, 7, 8, 9)
+- **Context:** The 4 TWs rows say `Julien Day School, <Elgin Road | Kalyani | Ganganagar | Howrah>`; the MOU canonical names say `Julien Educational Trust, <location>`. Anish-resolved during W4-D.8 to default ARCHIVED 2526 (the AY heuristic suggested historical pre-system delivery because the active 2627 candidates had no Dispatch on file). The 4 backfilled records landed on `MOU-STEAM-2526-007/008/009/010`.
+- **Question:** Confirm "Julien Day School" (Mastersheet brand) = "Julien Educational Trust" (upstream brand). Confirm the AY of these 4 deliveries (we defaulted to archived 2025-26).
+- **Needed to close:** Anish confirms with the Julien chain SPOC. If the deliveries are actually 2026-27, we move the backfilled Dispatches from the 2526 MOUs to the 2627 MOUs (`-2627-033/034/035/036`).
+
+## D-012 Elgin vs Eglin canonical spelling (Julien Educational Trust)
+
+- **Status:** open
+- **Surfaced by:** W4-D.8 verification table for TWs row 6
+- **Context:** Mastersheet says `Julien Day School, Elgin Road`; both `MOU-STEAM-2526-007` and `MOU-STEAM-2627-033` carry `Julien Educational Trust, Eglin Road`. The MOU spelling is a probable upstream typo.
+- **Question:** Is the canonical road-name `Elgin` or `Eglin`? If `Elgin`, update both `mous.json` records + the hardcoded `CANONICAL_51_LIST` snapshot in `scripts/w4d-mastersheet-verification.mjs` and `scripts/w4c7-independent-verification.mjs`.
+- **Needed to close:** Anish confirms; coupled with D-011 (same SPOC reach-out).
+
+## D-013 St. Johns TWs row 17 duplicate verification
+
+- **Status:** open
+- **Surfaced by:** W4-D.8 Mastersheet backfill (TWs sheet row 17)
+- **Context:** TWs row 17 lists Tinkrsynth + Pampered Plant + Tinkrpython + Tinkrexplorer for `St. Johns High School`. Cretile row 17 ALSO lists `St. Johns High School` with per-grade allocations. Anish-resolved during W4-D.8 to SKIP the TWs row as a suspected duplicate (operator may have conflated shipments; the TWs row's inline note "1 to 4 grade Cretile" supports this read). No Dispatch record was created from the TWs row; the Cretile delivery is the canonical record on `MOU-STEAM-2627-047`.
+- **Question:** Was this one combined shipment (Cretile-only with the TWs SKUs noted incidentally), or did GSL separately deliver both TWs SKUs AND a Cretile per-grade kit set? If separate, we need to add the TWs Dispatch record on the same MOU.
+- **Needed to close:** Anish confirms with Misba/Pradeep. If a separate TWs shipment happened, we backfill `DIS-BF-TWs-r17` on `MOU-STEAM-2627-047` (collision with the Cretile dispatch handled by using a different `installmentSeq` or a mixed-shape Dispatch).
+
+## D-014 Contai Public School renewal status
+
+- **Status:** open
+- **Surfaced by:** W4-D.8 Mastersheet backfill (Cretile sheet row 15)
+- **Context:** Cretile row 15 records a Cretile delivery to `Contai Public School` on 2026-04-15. The active 51-list has NO Contai entry; archived 2526 has `MOU-STEAM-2526-011 Contai Public School` (jaccard 1.00). Anish-resolved during W4-D.8 to QUARANTINE because the renewal status is uncertain (April 2026 is the start of the 2026-27 AY but no 2627 MOU exists for Contai).
+- **Question:** Did Contai renew for 2026-27?
+  - If yes: import the new 2627 MOU upstream + re-attach this Cretile delivery as `DIS-BF-Cretile-r15` on the new active MOU.
+  - If no: the April 2026 delivery was a final fulfilment of the 2025-26 MOU; backfill `DIS-BF-Cretile-r15` onto `MOU-STEAM-2526-011`.
+- **Needed to close:** Anish confirms with Contai SPOC. The Mastersheet Cretile data + Anish's resolutions JSON in `scripts/w4d-mastersheet-mutation.mjs` together show the full history; round 2 triage just needs the renewal answer to pick which path.
+
 ---
 
 ## How items leave this registry

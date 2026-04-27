@@ -129,6 +129,13 @@ export type AuditAction =
   // capture the lineItems array. UI exposed via the Ops conversion
   // surface at /mous/[id]/dispatch.
   | 'dispatch-line-item-edited'
+  // W4-D.8: emitted when the Mastersheet backfill mutation script
+  // creates a Dispatch record from a Mastersheet TWs or Cretile row.
+  // Mirrored on both the new Dispatch and the parent MOU's auditLog
+  // so /mous/[id] surfaces the historical entry. The notes carry the
+  // verification-table row reference + confidence label so the audit
+  // remains tied to Anish's W4-D.8 Phase 1 sign-off.
+  | 'dispatch-backfilled-from-mastersheet'
 
 export interface AuditEntry {
   timestamp: string                // ISO

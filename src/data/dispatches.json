@@ -14,7 +14,11 @@
     "acknowledgementUrl": null,
     "notes": null,
     "lineItems": [
-      { "kind": "flat", "skuName": "Legacy single-line item (pre-W4-D)", "quantity": 1 }
+      {
+        "kind": "flat",
+        "skuName": "Legacy single-line item (pre-W4-D)",
+        "quantity": 1
+      }
     ],
     "requestId": null,
     "raisedBy": "system-pre-w4d",
@@ -42,7 +46,11 @@
     "acknowledgementUrl": null,
     "notes": "P2 override exercised; ESC-001 raised in parallel.",
     "lineItems": [
-      { "kind": "flat", "skuName": "Legacy single-line item (pre-W4-D)", "quantity": 1 }
+      {
+        "kind": "flat",
+        "skuName": "Legacy single-line item (pre-W4-D)",
+        "quantity": 1
+      }
     ],
     "requestId": null,
     "raisedBy": "ameet.z",
@@ -78,7 +86,11 @@
     "acknowledgementUrl": null,
     "notes": "Chain MOU dispatch: split across 3 campuses (Asansol, Durgapur, Burdwan).",
     "lineItems": [
-      { "kind": "flat", "skuName": "Legacy single-line item (pre-W4-D)", "quantity": 1 }
+      {
+        "kind": "flat",
+        "skuName": "Legacy single-line item (pre-W4-D)",
+        "quantity": 1
+      }
     ],
     "requestId": null,
     "raisedBy": "system-pre-w4d",
@@ -100,7 +112,11 @@
     "acknowledgementUrl": "https://example.test/handover/MOU-STEAM-2627-003-i1.pdf",
     "notes": null,
     "lineItems": [
-      { "kind": "flat", "skuName": "Legacy single-line item (pre-W4-D)", "quantity": 1 }
+      {
+        "kind": "flat",
+        "skuName": "Legacy single-line item (pre-W4-D)",
+        "quantity": 1
+      }
     ],
     "requestId": null,
     "raisedBy": "system-pre-w4d",
@@ -122,11 +138,1381 @@
     "acknowledgementUrl": null,
     "notes": "Awaiting Installment-1 payment before PO can be raised.",
     "lineItems": [
-      { "kind": "flat", "skuName": "Legacy single-line item (pre-W4-D)", "quantity": 1 }
+      {
+        "kind": "flat",
+        "skuName": "Legacy single-line item (pre-W4-D)",
+        "quantity": 1
+      }
     ],
     "requestId": null,
     "raisedBy": "system-pre-w4d",
     "raisedFrom": "pre-w4d",
     "auditLog": []
+  },
+  {
+    "id": "DIS-BF-TWs-r4",
+    "mouId": "MOU-STEAM-2526-003",
+    "schoolId": "SCH-LORETO_DAY_SCHOOL_BB",
+    "installmentSeq": 1,
+    "stage": "delivered",
+    "installment1Paid": true,
+    "overrideEvent": null,
+    "poRaisedAt": null,
+    "dispatchedAt": null,
+    "deliveredAt": null,
+    "acknowledgedAt": null,
+    "acknowledgementUrl": null,
+    "notes": "W4-D.8 backfill from Mastersheet TWs sheet row 4. Historical pre-system delivery on archived MOU.",
+    "lineItems": [
+      {
+        "kind": "flat",
+        "skuName": "Pampered Plant",
+        "quantity": 5
+      },
+      {
+        "kind": "flat",
+        "skuName": "Launchpad",
+        "quantity": 7
+      },
+      {
+        "kind": "flat",
+        "skuName": "Push Pull Pin",
+        "quantity": 5
+      },
+      {
+        "kind": "flat",
+        "skuName": "Tinkrpython",
+        "quantity": 5
+      },
+      {
+        "kind": "flat",
+        "skuName": "TinkrBotScout",
+        "quantity": 27
+      },
+      {
+        "kind": "flat",
+        "skuName": "Tinkrexplorer",
+        "quantity": 27
+      }
+    ],
+    "requestId": null,
+    "raisedBy": "system-pre-w4d",
+    "raisedFrom": "pre-w4d",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T15:30:00.000Z",
+        "user": "system-pre-w4d",
+        "action": "dispatch-backfilled-from-mastersheet",
+        "after": {
+          "sheet": "TWs",
+          "rowNumber": 4,
+          "mouTarget": "MOU-STEAM-2526-003",
+          "mouCanonicalName": "Loreto Day School BB",
+          "lineItemCount": 6,
+          "totalQuantity": 76,
+          "confidence": "medium",
+          "source": "W4-D.8 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Backfilled historical delivery from Mastersheet TWs sheet row 4. Confidence: medium. Pre-system delivery; precise dates not captured."
+      }
+    ]
+  },
+  {
+    "id": "DIS-BF-TWs-r5",
+    "mouId": "MOU-STEAM-2526-004",
+    "schoolId": "SCH-LORETO_HOUSE_KOLKATA",
+    "installmentSeq": 1,
+    "stage": "delivered",
+    "installment1Paid": true,
+    "overrideEvent": null,
+    "poRaisedAt": null,
+    "dispatchedAt": null,
+    "deliveredAt": null,
+    "acknowledgedAt": null,
+    "acknowledgementUrl": null,
+    "notes": "W4-D.8 backfill from Mastersheet TWs sheet row 5. Historical pre-system delivery on archived MOU.",
+    "lineItems": [
+      {
+        "kind": "flat",
+        "skuName": "Steam Academy",
+        "quantity": 5
+      },
+      {
+        "kind": "flat",
+        "skuName": "Pampered Plant",
+        "quantity": 5
+      },
+      {
+        "kind": "flat",
+        "skuName": "Launchpad",
+        "quantity": 7
+      },
+      {
+        "kind": "flat",
+        "skuName": "Push Pull Pin",
+        "quantity": 5
+      },
+      {
+        "kind": "flat",
+        "skuName": "Tinkrpython",
+        "quantity": 5
+      },
+      {
+        "kind": "flat",
+        "skuName": "TinkrBotScout",
+        "quantity": 27
+      },
+      {
+        "kind": "flat",
+        "skuName": "Tinkrexplorer",
+        "quantity": 27
+      }
+    ],
+    "requestId": null,
+    "raisedBy": "system-pre-w4d",
+    "raisedFrom": "pre-w4d",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T15:30:00.000Z",
+        "user": "system-pre-w4d",
+        "action": "dispatch-backfilled-from-mastersheet",
+        "after": {
+          "sheet": "TWs",
+          "rowNumber": 5,
+          "mouTarget": "MOU-STEAM-2526-004",
+          "mouCanonicalName": "Loreto House - Kolkata",
+          "lineItemCount": 7,
+          "totalQuantity": 81,
+          "confidence": "high",
+          "source": "W4-D.8 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Backfilled historical delivery from Mastersheet TWs sheet row 5. Confidence: high. Pre-system delivery; precise dates not captured."
+      }
+    ]
+  },
+  {
+    "id": "DIS-BF-TWs-r6",
+    "mouId": "MOU-STEAM-2526-007",
+    "schoolId": "SCH-JULIEN_EDUCATIONAL_T",
+    "installmentSeq": 1,
+    "stage": "delivered",
+    "installment1Paid": true,
+    "overrideEvent": null,
+    "poRaisedAt": null,
+    "dispatchedAt": null,
+    "deliveredAt": null,
+    "acknowledgedAt": null,
+    "acknowledgementUrl": null,
+    "notes": "W4-D.8 backfill from Mastersheet TWs sheet row 6. Historical pre-system delivery on archived MOU.",
+    "lineItems": [
+      {
+        "kind": "flat",
+        "skuName": "Launchpad",
+        "quantity": 7
+      },
+      {
+        "kind": "flat",
+        "skuName": "Tinkrpython",
+        "quantity": 5
+      },
+      {
+        "kind": "flat",
+        "skuName": "TinkrBotScout",
+        "quantity": 30
+      },
+      {
+        "kind": "flat",
+        "skuName": "Tinkrexplorer",
+        "quantity": 5
+      }
+    ],
+    "requestId": null,
+    "raisedBy": "system-pre-w4d",
+    "raisedFrom": "pre-w4d",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T15:30:00.000Z",
+        "user": "system-pre-w4d",
+        "action": "dispatch-backfilled-from-mastersheet",
+        "after": {
+          "sheet": "TWs",
+          "rowNumber": 6,
+          "mouTarget": "MOU-STEAM-2526-007",
+          "mouCanonicalName": "Julien Educational Trust, Eglin Road",
+          "lineItemCount": 4,
+          "totalQuantity": 47,
+          "confidence": "Anish-resolved archived (manual-review reso)",
+          "source": "W4-D.8 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Backfilled historical delivery from Mastersheet TWs sheet row 6. Confidence: Anish-resolved archived (manual-review reso). Pre-system delivery; precise dates not captured."
+      }
+    ]
+  },
+  {
+    "id": "DIS-BF-TWs-r7",
+    "mouId": "MOU-STEAM-2526-008",
+    "schoolId": "SCH-JULIEN_EDUCATIONAL_T_2",
+    "installmentSeq": 1,
+    "stage": "delivered",
+    "installment1Paid": true,
+    "overrideEvent": null,
+    "poRaisedAt": null,
+    "dispatchedAt": null,
+    "deliveredAt": null,
+    "acknowledgedAt": null,
+    "acknowledgementUrl": null,
+    "notes": "W4-D.8 backfill from Mastersheet TWs sheet row 7. Historical pre-system delivery on archived MOU.",
+    "lineItems": [
+      {
+        "kind": "flat",
+        "skuName": "Launchpad",
+        "quantity": 7
+      },
+      {
+        "kind": "flat",
+        "skuName": "Tinkrpython",
+        "quantity": 5
+      },
+      {
+        "kind": "flat",
+        "skuName": "TinkrBotScout",
+        "quantity": 25
+      },
+      {
+        "kind": "flat",
+        "skuName": "Tinkrexplorer",
+        "quantity": 7
+      }
+    ],
+    "requestId": null,
+    "raisedBy": "system-pre-w4d",
+    "raisedFrom": "pre-w4d",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T15:30:00.000Z",
+        "user": "system-pre-w4d",
+        "action": "dispatch-backfilled-from-mastersheet",
+        "after": {
+          "sheet": "TWs",
+          "rowNumber": 7,
+          "mouTarget": "MOU-STEAM-2526-008",
+          "mouCanonicalName": "Julien Educational Trust, Kalyani",
+          "lineItemCount": 4,
+          "totalQuantity": 44,
+          "confidence": "Anish-resolved archived (manual-review reso)",
+          "source": "W4-D.8 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Backfilled historical delivery from Mastersheet TWs sheet row 7. Confidence: Anish-resolved archived (manual-review reso). Pre-system delivery; precise dates not captured."
+      }
+    ]
+  },
+  {
+    "id": "DIS-BF-TWs-r8",
+    "mouId": "MOU-STEAM-2526-009",
+    "schoolId": "SCH-JULIEN_EDUCATIONAL_T_3",
+    "installmentSeq": 1,
+    "stage": "delivered",
+    "installment1Paid": true,
+    "overrideEvent": null,
+    "poRaisedAt": null,
+    "dispatchedAt": null,
+    "deliveredAt": null,
+    "acknowledgedAt": null,
+    "acknowledgementUrl": null,
+    "notes": "W4-D.8 backfill from Mastersheet TWs sheet row 8. Historical pre-system delivery on archived MOU.",
+    "lineItems": [
+      {
+        "kind": "flat",
+        "skuName": "Launchpad",
+        "quantity": 7
+      },
+      {
+        "kind": "flat",
+        "skuName": "Tinkrpython",
+        "quantity": 5
+      },
+      {
+        "kind": "flat",
+        "skuName": "TinkrBotScout",
+        "quantity": 20
+      },
+      {
+        "kind": "flat",
+        "skuName": "Tinkrexplorer",
+        "quantity": 10
+      }
+    ],
+    "requestId": null,
+    "raisedBy": "system-pre-w4d",
+    "raisedFrom": "pre-w4d",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T15:30:00.000Z",
+        "user": "system-pre-w4d",
+        "action": "dispatch-backfilled-from-mastersheet",
+        "after": {
+          "sheet": "TWs",
+          "rowNumber": 8,
+          "mouTarget": "MOU-STEAM-2526-009",
+          "mouCanonicalName": "Julien Educational Trust, Ganganagar",
+          "lineItemCount": 4,
+          "totalQuantity": 42,
+          "confidence": "Anish-resolved archived (manual-review reso)",
+          "source": "W4-D.8 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Backfilled historical delivery from Mastersheet TWs sheet row 8. Confidence: Anish-resolved archived (manual-review reso). Pre-system delivery; precise dates not captured."
+      }
+    ]
+  },
+  {
+    "id": "DIS-BF-TWs-r9",
+    "mouId": "MOU-STEAM-2526-010",
+    "schoolId": "SCH-JULIEN_EDUCATIONAL_T_4",
+    "installmentSeq": 1,
+    "stage": "delivered",
+    "installment1Paid": true,
+    "overrideEvent": null,
+    "poRaisedAt": null,
+    "dispatchedAt": null,
+    "deliveredAt": null,
+    "acknowledgedAt": null,
+    "acknowledgementUrl": null,
+    "notes": "W4-D.8 backfill from Mastersheet TWs sheet row 9. Historical pre-system delivery on archived MOU.",
+    "lineItems": [
+      {
+        "kind": "flat",
+        "skuName": "Launchpad",
+        "quantity": 7
+      },
+      {
+        "kind": "flat",
+        "skuName": "Tinkrpython",
+        "quantity": 5
+      },
+      {
+        "kind": "flat",
+        "skuName": "TinkrBotScout",
+        "quantity": 20
+      },
+      {
+        "kind": "flat",
+        "skuName": "Tinkrexplorer",
+        "quantity": 5
+      }
+    ],
+    "requestId": null,
+    "raisedBy": "system-pre-w4d",
+    "raisedFrom": "pre-w4d",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T15:30:00.000Z",
+        "user": "system-pre-w4d",
+        "action": "dispatch-backfilled-from-mastersheet",
+        "after": {
+          "sheet": "TWs",
+          "rowNumber": 9,
+          "mouTarget": "MOU-STEAM-2526-010",
+          "mouCanonicalName": "Julien Educational Trust, Howrah",
+          "lineItemCount": 4,
+          "totalQuantity": 37,
+          "confidence": "Anish-resolved archived (manual-review reso)",
+          "source": "W4-D.8 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Backfilled historical delivery from Mastersheet TWs sheet row 9. Confidence: Anish-resolved archived (manual-review reso). Pre-system delivery; precise dates not captured."
+      }
+    ]
+  },
+  {
+    "id": "DIS-BF-TWs-r10",
+    "mouId": "MOU-STEAM-2526-013",
+    "schoolId": "SCH-SWARNIM_INTERNATIONA",
+    "installmentSeq": 1,
+    "stage": "delivered",
+    "installment1Paid": true,
+    "overrideEvent": null,
+    "poRaisedAt": null,
+    "dispatchedAt": null,
+    "deliveredAt": null,
+    "acknowledgedAt": null,
+    "acknowledgementUrl": null,
+    "notes": "W4-D.8 backfill from Mastersheet TWs sheet row 10. Historical pre-system delivery on archived MOU.",
+    "lineItems": [
+      {
+        "kind": "flat",
+        "skuName": "Pampered Plant",
+        "quantity": 1
+      },
+      {
+        "kind": "flat",
+        "skuName": "Launchpad",
+        "quantity": 3
+      },
+      {
+        "kind": "flat",
+        "skuName": "Push Pull Pin",
+        "quantity": 6
+      },
+      {
+        "kind": "flat",
+        "skuName": "Tinkrexplorer",
+        "quantity": 5
+      }
+    ],
+    "requestId": null,
+    "raisedBy": "system-pre-w4d",
+    "raisedFrom": "pre-w4d",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T15:30:00.000Z",
+        "user": "system-pre-w4d",
+        "action": "dispatch-backfilled-from-mastersheet",
+        "after": {
+          "sheet": "TWs",
+          "rowNumber": 10,
+          "mouTarget": "MOU-STEAM-2526-013",
+          "mouCanonicalName": "Swarnim International School",
+          "lineItemCount": 4,
+          "totalQuantity": 15,
+          "confidence": "high",
+          "source": "W4-D.8 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Backfilled historical delivery from Mastersheet TWs sheet row 10. Confidence: high. Pre-system delivery; precise dates not captured."
+      }
+    ]
+  },
+  {
+    "id": "DIS-BF-TWs-r11",
+    "mouId": "MOU-STEAM-2526-014",
+    "schoolId": "SCH-ST_PAUL_S_MISSION_SC",
+    "installmentSeq": 1,
+    "stage": "delivered",
+    "installment1Paid": true,
+    "overrideEvent": null,
+    "poRaisedAt": null,
+    "dispatchedAt": null,
+    "deliveredAt": null,
+    "acknowledgedAt": null,
+    "acknowledgementUrl": null,
+    "notes": "W4-D.8 backfill from Mastersheet TWs sheet row 11. Historical pre-system delivery on archived MOU.",
+    "lineItems": [
+      {
+        "kind": "flat",
+        "skuName": "Push Pull Pin",
+        "quantity": 1
+      },
+      {
+        "kind": "flat",
+        "skuName": "TinkrBotScout",
+        "quantity": 17
+      },
+      {
+        "kind": "flat",
+        "skuName": "Tinkrexplorer",
+        "quantity": 1
+      }
+    ],
+    "requestId": null,
+    "raisedBy": "system-pre-w4d",
+    "raisedFrom": "pre-w4d",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T15:30:00.000Z",
+        "user": "system-pre-w4d",
+        "action": "dispatch-backfilled-from-mastersheet",
+        "after": {
+          "sheet": "TWs",
+          "rowNumber": 11,
+          "mouTarget": "MOU-STEAM-2526-014",
+          "mouCanonicalName": "St. Paul’s Mission School",
+          "lineItemCount": 3,
+          "totalQuantity": 19,
+          "confidence": "high",
+          "source": "W4-D.8 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Backfilled historical delivery from Mastersheet TWs sheet row 11. Confidence: high. Pre-system delivery; precise dates not captured."
+      }
+    ]
+  },
+  {
+    "id": "DIS-BF-TWs-r12",
+    "mouId": "MOU-STEAM-2526-015",
+    "schoolId": "SCH-ST_PAUL_BOARDING_AND",
+    "installmentSeq": 1,
+    "stage": "delivered",
+    "installment1Paid": true,
+    "overrideEvent": null,
+    "poRaisedAt": null,
+    "dispatchedAt": null,
+    "deliveredAt": null,
+    "acknowledgedAt": null,
+    "acknowledgementUrl": null,
+    "notes": "W4-D.8 backfill from Mastersheet TWs sheet row 12. Historical pre-system delivery on archived MOU.",
+    "lineItems": [
+      {
+        "kind": "flat",
+        "skuName": "Smart Lamp",
+        "quantity": 15
+      },
+      {
+        "kind": "flat",
+        "skuName": "Pampered Plant",
+        "quantity": 15
+      },
+      {
+        "kind": "flat",
+        "skuName": "Launchpad",
+        "quantity": 15
+      },
+      {
+        "kind": "flat",
+        "skuName": "Push Pull Pin",
+        "quantity": 15
+      },
+      {
+        "kind": "flat",
+        "skuName": "TinkrBotScout",
+        "quantity": 15
+      }
+    ],
+    "requestId": null,
+    "raisedBy": "system-pre-w4d",
+    "raisedFrom": "pre-w4d",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T15:30:00.000Z",
+        "user": "system-pre-w4d",
+        "action": "dispatch-backfilled-from-mastersheet",
+        "after": {
+          "sheet": "TWs",
+          "rowNumber": 12,
+          "mouTarget": "MOU-STEAM-2526-015",
+          "mouCanonicalName": "St. Paul Boarding and Day School",
+          "lineItemCount": 5,
+          "totalQuantity": 75,
+          "confidence": "high",
+          "source": "W4-D.8 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Backfilled historical delivery from Mastersheet TWs sheet row 12. Confidence: high. Pre-system delivery; precise dates not captured."
+      }
+    ]
+  },
+  {
+    "id": "DIS-BF-TWs-r13",
+    "mouId": "MOU-STEAM-2526-005",
+    "schoolId": "SCH-CARMEL_CONVENT_HIGH_",
+    "installmentSeq": 1,
+    "stage": "delivered",
+    "installment1Paid": true,
+    "overrideEvent": null,
+    "poRaisedAt": null,
+    "dispatchedAt": null,
+    "deliveredAt": null,
+    "acknowledgedAt": null,
+    "acknowledgementUrl": null,
+    "notes": "W4-D.8 backfill from Mastersheet TWs sheet row 13. Historical pre-system delivery on archived MOU.",
+    "lineItems": [
+      {
+        "kind": "flat",
+        "skuName": "Tech A Sketch",
+        "quantity": 17
+      },
+      {
+        "kind": "flat",
+        "skuName": "Smart Lamp",
+        "quantity": 17
+      },
+      {
+        "kind": "flat",
+        "skuName": "Tinkrpython",
+        "quantity": 20
+      },
+      {
+        "kind": "flat",
+        "skuName": "TinkrBotScout",
+        "quantity": 20
+      },
+      {
+        "kind": "flat",
+        "skuName": "Tinkrexplorer",
+        "quantity": 20
+      }
+    ],
+    "requestId": null,
+    "raisedBy": "system-pre-w4d",
+    "raisedFrom": "pre-w4d",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T15:30:00.000Z",
+        "user": "system-pre-w4d",
+        "action": "dispatch-backfilled-from-mastersheet",
+        "after": {
+          "sheet": "TWs",
+          "rowNumber": 13,
+          "mouTarget": "MOU-STEAM-2526-005",
+          "mouCanonicalName": "Carmel Convent High School, Durgapur",
+          "lineItemCount": 5,
+          "totalQuantity": 94,
+          "confidence": "high",
+          "source": "W4-D.8 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Backfilled historical delivery from Mastersheet TWs sheet row 13. Confidence: high. Pre-system delivery; precise dates not captured."
+      }
+    ]
+  },
+  {
+    "id": "DIS-BF-TWs-r14",
+    "mouId": "MOU-STEAM-2526-006",
+    "schoolId": "SCH-CARMEL_SCHOOL_DURGAP",
+    "installmentSeq": 1,
+    "stage": "delivered",
+    "installment1Paid": true,
+    "overrideEvent": null,
+    "poRaisedAt": null,
+    "dispatchedAt": null,
+    "deliveredAt": null,
+    "acknowledgedAt": null,
+    "acknowledgementUrl": null,
+    "notes": "W4-D.8 backfill from Mastersheet TWs sheet row 14. Historical pre-system delivery on archived MOU.",
+    "lineItems": [
+      {
+        "kind": "flat",
+        "skuName": "Tech A Sketch",
+        "quantity": 17
+      },
+      {
+        "kind": "flat",
+        "skuName": "Smart Lamp",
+        "quantity": 17
+      },
+      {
+        "kind": "flat",
+        "skuName": "Tinkrpython",
+        "quantity": 20
+      },
+      {
+        "kind": "flat",
+        "skuName": "TinkrBotScout",
+        "quantity": 20
+      },
+      {
+        "kind": "flat",
+        "skuName": "Tinkrexplorer",
+        "quantity": 20
+      }
+    ],
+    "requestId": null,
+    "raisedBy": "system-pre-w4d",
+    "raisedFrom": "pre-w4d",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T15:30:00.000Z",
+        "user": "system-pre-w4d",
+        "action": "dispatch-backfilled-from-mastersheet",
+        "after": {
+          "sheet": "TWs",
+          "rowNumber": 14,
+          "mouTarget": "MOU-STEAM-2526-006",
+          "mouCanonicalName": "Carmel School, Durgapur",
+          "lineItemCount": 5,
+          "totalQuantity": 94,
+          "confidence": "high",
+          "source": "W4-D.8 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Backfilled historical delivery from Mastersheet TWs sheet row 14. Confidence: high. Pre-system delivery; precise dates not captured."
+      }
+    ]
+  },
+  {
+    "id": "DIS-BF-TWs-r15",
+    "mouId": "MOU-STEAM-2526-018",
+    "schoolId": "SCH-ST_MONTFORT_S_SR_SEC",
+    "installmentSeq": 1,
+    "stage": "delivered",
+    "installment1Paid": true,
+    "overrideEvent": null,
+    "poRaisedAt": null,
+    "dispatchedAt": null,
+    "deliveredAt": null,
+    "acknowledgedAt": null,
+    "acknowledgementUrl": null,
+    "notes": "W4-D.8 backfill from Mastersheet TWs sheet row 15. Historical pre-system delivery on archived MOU.",
+    "lineItems": [
+      {
+        "kind": "flat",
+        "skuName": "Launchpad",
+        "quantity": 5
+      },
+      {
+        "kind": "flat",
+        "skuName": "Tinkrpython",
+        "quantity": 5
+      },
+      {
+        "kind": "flat",
+        "skuName": "Tinkrexplorer",
+        "quantity": 10
+      }
+    ],
+    "requestId": null,
+    "raisedBy": "system-pre-w4d",
+    "raisedFrom": "pre-w4d",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T15:30:00.000Z",
+        "user": "system-pre-w4d",
+        "action": "dispatch-backfilled-from-mastersheet",
+        "after": {
+          "sheet": "TWs",
+          "rowNumber": 15,
+          "mouTarget": "MOU-STEAM-2526-018",
+          "mouCanonicalName": "St. Montfort's Sr. Secondary School, Baruipur",
+          "lineItemCount": 3,
+          "totalQuantity": 20,
+          "confidence": "medium",
+          "source": "W4-D.8 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Backfilled historical delivery from Mastersheet TWs sheet row 15. Confidence: medium. Pre-system delivery; precise dates not captured."
+      }
+    ]
+  },
+  {
+    "id": "DIS-BF-TWs-r16",
+    "mouId": "MOU-STEAM-2526-040",
+    "schoolId": "SCH-THE_SCOTTISH_CHURCH_",
+    "installmentSeq": 1,
+    "stage": "delivered",
+    "installment1Paid": true,
+    "overrideEvent": null,
+    "poRaisedAt": null,
+    "dispatchedAt": null,
+    "deliveredAt": null,
+    "acknowledgedAt": null,
+    "acknowledgementUrl": null,
+    "notes": "W4-D.8 backfill from Mastersheet TWs sheet row 16. Historical pre-system delivery on archived MOU.",
+    "lineItems": [
+      {
+        "kind": "flat",
+        "skuName": "Pampered Plant",
+        "quantity": 10
+      },
+      {
+        "kind": "flat",
+        "skuName": "Push Pull Pin",
+        "quantity": 2
+      }
+    ],
+    "requestId": null,
+    "raisedBy": "system-pre-w4d",
+    "raisedFrom": "pre-w4d",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T15:30:00.000Z",
+        "user": "system-pre-w4d",
+        "action": "dispatch-backfilled-from-mastersheet",
+        "after": {
+          "sheet": "TWs",
+          "rowNumber": 16,
+          "mouTarget": "MOU-STEAM-2526-040",
+          "mouCanonicalName": "The Scottish Church Collegiate School",
+          "lineItemCount": 2,
+          "totalQuantity": 12,
+          "confidence": "high",
+          "source": "W4-D.8 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Backfilled historical delivery from Mastersheet TWs sheet row 16. Confidence: high. Pre-system delivery; precise dates not captured."
+      }
+    ]
+  },
+  {
+    "id": "DIS-BF-Cretile-r4",
+    "mouId": "MOU-STEAM-2627-009",
+    "schoolId": "SCH-KAVYAPTA_GLOBAL_SCHO",
+    "installmentSeq": 1,
+    "stage": "delivered",
+    "installment1Paid": true,
+    "overrideEvent": null,
+    "poRaisedAt": "2026-04-06T00:00:00",
+    "dispatchedAt": null,
+    "deliveredAt": null,
+    "acknowledgedAt": null,
+    "acknowledgementUrl": null,
+    "notes": "W4-D.8 backfill from Mastersheet Cretile sheet row 4. Active 2627 cohort delivery.",
+    "lineItems": [
+      {
+        "kind": "per-grade",
+        "skuName": "Cretile Grade-band kit",
+        "gradeAllocations": [
+          {
+            "grade": 3,
+            "quantity": 10
+          },
+          {
+            "grade": 4,
+            "quantity": 20
+          },
+          {
+            "grade": 5,
+            "quantity": 20
+          }
+        ]
+      }
+    ],
+    "requestId": null,
+    "raisedBy": "system-pre-w4d",
+    "raisedFrom": "pre-w4d",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T15:30:00.000Z",
+        "user": "system-pre-w4d",
+        "action": "dispatch-backfilled-from-mastersheet",
+        "after": {
+          "sheet": "Cretile",
+          "rowNumber": 4,
+          "mouTarget": "MOU-STEAM-2627-009",
+          "mouCanonicalName": "Kavyapta Global School",
+          "lineItemCount": 1,
+          "totalQuantity": 50,
+          "confidence": "high (intake-confirmed)",
+          "source": "W4-D.8 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Backfilled historical delivery from Mastersheet Cretile sheet row 4. Confidence: high (intake-confirmed). Pre-system delivery; precise dates not captured."
+      }
+    ]
+  },
+  {
+    "id": "DIS-BF-Cretile-r5",
+    "mouId": "MOU-STEAM-2627-013",
+    "schoolId": "SCH-K_E_CARMEL_SCHOOL_AM",
+    "installmentSeq": 1,
+    "stage": "delivered",
+    "installment1Paid": true,
+    "overrideEvent": null,
+    "poRaisedAt": "2026-04-06T00:00:00",
+    "dispatchedAt": null,
+    "deliveredAt": null,
+    "acknowledgedAt": null,
+    "acknowledgementUrl": null,
+    "notes": "W4-D.8 backfill from Mastersheet Cretile sheet row 5. Active 2627 cohort delivery.",
+    "lineItems": [
+      {
+        "kind": "per-grade",
+        "skuName": "Cretile Grade-band kit",
+        "gradeAllocations": [
+          {
+            "grade": 4,
+            "quantity": 13
+          },
+          {
+            "grade": 5,
+            "quantity": 13
+          },
+          {
+            "grade": 9,
+            "quantity": 12
+          },
+          {
+            "grade": 10,
+            "quantity": 12
+          }
+        ]
+      }
+    ],
+    "requestId": null,
+    "raisedBy": "system-pre-w4d",
+    "raisedFrom": "pre-w4d",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T15:30:00.000Z",
+        "user": "system-pre-w4d",
+        "action": "dispatch-backfilled-from-mastersheet",
+        "after": {
+          "sheet": "Cretile",
+          "rowNumber": 5,
+          "mouTarget": "MOU-STEAM-2627-013",
+          "mouCanonicalName": "K.E Carmel School - Amtala",
+          "lineItemCount": 1,
+          "totalQuantity": 50,
+          "confidence": "high (intake-confirmed)",
+          "source": "W4-D.8 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Backfilled historical delivery from Mastersheet Cretile sheet row 5. Confidence: high (intake-confirmed). Pre-system delivery; precise dates not captured."
+      }
+    ]
+  },
+  {
+    "id": "DIS-BF-Cretile-r6",
+    "mouId": "MOU-STEAM-2627-007",
+    "schoolId": "SCH-ST_MARY_CONVENT_SCHO",
+    "installmentSeq": 1,
+    "stage": "delivered",
+    "installment1Paid": true,
+    "overrideEvent": null,
+    "poRaisedAt": "2026-04-06T00:00:00",
+    "dispatchedAt": null,
+    "deliveredAt": null,
+    "acknowledgedAt": null,
+    "acknowledgementUrl": null,
+    "notes": "W4-D.8 backfill from Mastersheet Cretile sheet row 6. Active 2627 cohort delivery.",
+    "lineItems": [
+      {
+        "kind": "per-grade",
+        "skuName": "Cretile Grade-band kit",
+        "gradeAllocations": [
+          {
+            "grade": 6,
+            "quantity": 11
+          },
+          {
+            "grade": 7,
+            "quantity": 11
+          },
+          {
+            "grade": 8,
+            "quantity": 11
+          }
+        ]
+      }
+    ],
+    "requestId": null,
+    "raisedBy": "system-pre-w4d",
+    "raisedFrom": "pre-w4d",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T15:30:00.000Z",
+        "user": "system-pre-w4d",
+        "action": "dispatch-backfilled-from-mastersheet",
+        "after": {
+          "sheet": "Cretile",
+          "rowNumber": 6,
+          "mouTarget": "MOU-STEAM-2627-007",
+          "mouCanonicalName": "St. Mary Convent School",
+          "lineItemCount": 1,
+          "totalQuantity": 33,
+          "confidence": "high (intake-confirmed)",
+          "source": "W4-D.8 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Backfilled historical delivery from Mastersheet Cretile sheet row 6. Confidence: high (intake-confirmed). Pre-system delivery; precise dates not captured."
+      }
+    ]
+  },
+  {
+    "id": "DIS-BF-Cretile-r7",
+    "mouId": "MOU-STEAM-2627-027",
+    "schoolId": "SCH-DON_BONSCO_KRISHNANA",
+    "installmentSeq": 1,
+    "stage": "delivered",
+    "installment1Paid": true,
+    "overrideEvent": null,
+    "poRaisedAt": "2026-04-06T00:00:00",
+    "dispatchedAt": null,
+    "deliveredAt": null,
+    "acknowledgedAt": null,
+    "acknowledgementUrl": null,
+    "notes": "W4-D.8 backfill from Mastersheet Cretile sheet row 7. Active 2627 cohort delivery.",
+    "lineItems": [
+      {
+        "kind": "per-grade",
+        "skuName": "Cretile Grade-band kit",
+        "gradeAllocations": [
+          {
+            "grade": 4,
+            "quantity": 15
+          },
+          {
+            "grade": 5,
+            "quantity": 15
+          },
+          {
+            "grade": 6,
+            "quantity": 15
+          },
+          {
+            "grade": 7,
+            "quantity": 15
+          },
+          {
+            "grade": 8,
+            "quantity": 15
+          }
+        ]
+      }
+    ],
+    "requestId": null,
+    "raisedBy": "system-pre-w4d",
+    "raisedFrom": "pre-w4d",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T15:30:00.000Z",
+        "user": "system-pre-w4d",
+        "action": "dispatch-backfilled-from-mastersheet",
+        "after": {
+          "sheet": "Cretile",
+          "rowNumber": 7,
+          "mouTarget": "MOU-STEAM-2627-027",
+          "mouCanonicalName": "Don Bosco Krishnanagar",
+          "lineItemCount": 1,
+          "totalQuantity": 75,
+          "confidence": "high (intake-confirmed)",
+          "source": "W4-D.8 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Backfilled historical delivery from Mastersheet Cretile sheet row 7. Confidence: high (intake-confirmed). Pre-system delivery; precise dates not captured."
+      }
+    ]
+  },
+  {
+    "id": "DIS-BF-Cretile-r8",
+    "mouId": "MOU-STEAM-2627-020",
+    "schoolId": "SCH-DELHI_WORLD_PUBLIC_S",
+    "installmentSeq": 1,
+    "stage": "delivered",
+    "installment1Paid": true,
+    "overrideEvent": null,
+    "poRaisedAt": "2026-04-06T00:00:00",
+    "dispatchedAt": null,
+    "deliveredAt": null,
+    "acknowledgedAt": null,
+    "acknowledgementUrl": null,
+    "notes": "W4-D.8 backfill from Mastersheet Cretile sheet row 8. Active 2627 cohort delivery.",
+    "lineItems": [
+      {
+        "kind": "per-grade",
+        "skuName": "Cretile Grade-band kit",
+        "gradeAllocations": [
+          {
+            "grade": 1,
+            "quantity": 11
+          },
+          {
+            "grade": 2,
+            "quantity": 9
+          },
+          {
+            "grade": 3,
+            "quantity": 6
+          },
+          {
+            "grade": 4,
+            "quantity": 5
+          },
+          {
+            "grade": 5,
+            "quantity": 6
+          },
+          {
+            "grade": 6,
+            "quantity": 7
+          },
+          {
+            "grade": 7,
+            "quantity": 5
+          },
+          {
+            "grade": 8,
+            "quantity": 4
+          },
+          {
+            "grade": 9,
+            "quantity": 3
+          }
+        ]
+      }
+    ],
+    "requestId": null,
+    "raisedBy": "system-pre-w4d",
+    "raisedFrom": "pre-w4d",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T15:30:00.000Z",
+        "user": "system-pre-w4d",
+        "action": "dispatch-backfilled-from-mastersheet",
+        "after": {
+          "sheet": "Cretile",
+          "rowNumber": 8,
+          "mouTarget": "MOU-STEAM-2627-020",
+          "mouCanonicalName": "Delhi World Public School, Barasat",
+          "lineItemCount": 1,
+          "totalQuantity": 56,
+          "confidence": "medium",
+          "source": "W4-D.8 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Backfilled historical delivery from Mastersheet Cretile sheet row 8. Confidence: medium. Pre-system delivery; precise dates not captured."
+      }
+    ]
+  },
+  {
+    "id": "DIS-BF-Cretile-r9",
+    "mouId": "MOU-STEAM-2627-015",
+    "schoolId": "SCH-BLUE_ANGELS_GLOBAL_S",
+    "installmentSeq": 1,
+    "stage": "delivered",
+    "installment1Paid": true,
+    "overrideEvent": null,
+    "poRaisedAt": "2026-04-06T00:00:00",
+    "dispatchedAt": null,
+    "deliveredAt": null,
+    "acknowledgedAt": null,
+    "acknowledgementUrl": null,
+    "notes": "W4-D.8 backfill from Mastersheet Cretile sheet row 9. Active 2627 cohort delivery.",
+    "lineItems": [
+      {
+        "kind": "per-grade",
+        "skuName": "Cretile Grade-band kit",
+        "gradeAllocations": [
+          {
+            "grade": 1,
+            "quantity": 9
+          },
+          {
+            "grade": 2,
+            "quantity": 9
+          },
+          {
+            "grade": 3,
+            "quantity": 11
+          },
+          {
+            "grade": 4,
+            "quantity": 11
+          },
+          {
+            "grade": 5,
+            "quantity": 9
+          },
+          {
+            "grade": 6,
+            "quantity": 9
+          },
+          {
+            "grade": 7,
+            "quantity": 11
+          },
+          {
+            "grade": 8,
+            "quantity": 9
+          },
+          {
+            "grade": 9,
+            "quantity": 9
+          },
+          {
+            "grade": 10,
+            "quantity": 9
+          }
+        ]
+      }
+    ],
+    "requestId": null,
+    "raisedBy": "system-pre-w4d",
+    "raisedFrom": "pre-w4d",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T15:30:00.000Z",
+        "user": "system-pre-w4d",
+        "action": "dispatch-backfilled-from-mastersheet",
+        "after": {
+          "sheet": "Cretile",
+          "rowNumber": 9,
+          "mouTarget": "MOU-STEAM-2627-015",
+          "mouCanonicalName": "Blue Angels Global School",
+          "lineItemCount": 1,
+          "totalQuantity": 96,
+          "confidence": "high (intake-confirmed)",
+          "source": "W4-D.8 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Backfilled historical delivery from Mastersheet Cretile sheet row 9. Confidence: high (intake-confirmed). Pre-system delivery; precise dates not captured."
+      }
+    ]
+  },
+  {
+    "id": "DIS-BF-Cretile-r10",
+    "mouId": "MOU-STEAM-2627-014",
+    "schoolId": "SCH-K_E_CARMEL_SCHOOL_SU",
+    "installmentSeq": 1,
+    "stage": "delivered",
+    "installment1Paid": true,
+    "overrideEvent": null,
+    "poRaisedAt": "2026-04-15T00:00:00",
+    "dispatchedAt": null,
+    "deliveredAt": null,
+    "acknowledgedAt": null,
+    "acknowledgementUrl": null,
+    "notes": "W4-D.8 backfill from Mastersheet Cretile sheet row 10. Active 2627 cohort delivery.",
+    "lineItems": [
+      {
+        "kind": "per-grade",
+        "skuName": "Cretile Grade-band kit",
+        "gradeAllocations": [
+          {
+            "grade": 1,
+            "quantity": 16
+          },
+          {
+            "grade": 2,
+            "quantity": 16
+          },
+          {
+            "grade": 3,
+            "quantity": 16
+          },
+          {
+            "grade": 4,
+            "quantity": 16
+          },
+          {
+            "grade": 5,
+            "quantity": 16
+          }
+        ]
+      }
+    ],
+    "requestId": null,
+    "raisedBy": "system-pre-w4d",
+    "raisedFrom": "pre-w4d",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T15:30:00.000Z",
+        "user": "system-pre-w4d",
+        "action": "dispatch-backfilled-from-mastersheet",
+        "after": {
+          "sheet": "Cretile",
+          "rowNumber": 10,
+          "mouTarget": "MOU-STEAM-2627-014",
+          "mouCanonicalName": "K.E Carmel School - Suri",
+          "lineItemCount": 1,
+          "totalQuantity": 80,
+          "confidence": "high (intake-confirmed)",
+          "source": "W4-D.8 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Backfilled historical delivery from Mastersheet Cretile sheet row 10. Confidence: high (intake-confirmed). Pre-system delivery; precise dates not captured."
+      }
+    ]
+  },
+  {
+    "id": "DIS-BF-Cretile-r16",
+    "mouId": "MOU-STEAM-2627-050",
+    "schoolId": "SCH-YOUNG_HORIZONS_SCHOO",
+    "installmentSeq": 1,
+    "stage": "delivered",
+    "installment1Paid": true,
+    "overrideEvent": null,
+    "poRaisedAt": "2026-04-15T00:00:00",
+    "dispatchedAt": null,
+    "deliveredAt": null,
+    "acknowledgedAt": null,
+    "acknowledgementUrl": null,
+    "notes": "W4-D.8 backfill from Mastersheet Cretile sheet row 16. Active 2627 cohort delivery.",
+    "lineItems": [
+      {
+        "kind": "per-grade",
+        "skuName": "Cretile Grade-band kit",
+        "gradeAllocations": [
+          {
+            "grade": 4,
+            "quantity": 15
+          },
+          {
+            "grade": 5,
+            "quantity": 15
+          },
+          {
+            "grade": 6,
+            "quantity": 12
+          },
+          {
+            "grade": 7,
+            "quantity": 10
+          },
+          {
+            "grade": 8,
+            "quantity": 11
+          },
+          {
+            "grade": 9,
+            "quantity": 10
+          }
+        ]
+      }
+    ],
+    "requestId": null,
+    "raisedBy": "system-pre-w4d",
+    "raisedFrom": "pre-w4d",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T15:30:00.000Z",
+        "user": "system-pre-w4d",
+        "action": "dispatch-backfilled-from-mastersheet",
+        "after": {
+          "sheet": "Cretile",
+          "rowNumber": 16,
+          "mouTarget": "MOU-STEAM-2627-050",
+          "mouCanonicalName": "Young Horizons School",
+          "lineItemCount": 1,
+          "totalQuantity": 73,
+          "confidence": "high (intake-confirmed)",
+          "source": "W4-D.8 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Backfilled historical delivery from Mastersheet Cretile sheet row 16. Confidence: high (intake-confirmed). Pre-system delivery; precise dates not captured."
+      }
+    ]
+  },
+  {
+    "id": "DIS-BF-Cretile-r17",
+    "mouId": "MOU-STEAM-2627-047",
+    "schoolId": "SCH-ST_JOHNS_HIGH_SCHOOL",
+    "installmentSeq": 1,
+    "stage": "delivered",
+    "installment1Paid": true,
+    "overrideEvent": null,
+    "poRaisedAt": "2026-04-15T00:00:00",
+    "dispatchedAt": null,
+    "deliveredAt": null,
+    "acknowledgedAt": null,
+    "acknowledgementUrl": null,
+    "notes": "W4-D.8 backfill from Mastersheet Cretile sheet row 17. Active 2627 cohort delivery.",
+    "lineItems": [
+      {
+        "kind": "per-grade",
+        "skuName": "Cretile Grade-band kit",
+        "gradeAllocations": [
+          {
+            "grade": 1,
+            "quantity": 12
+          },
+          {
+            "grade": 2,
+            "quantity": 10
+          },
+          {
+            "grade": 3,
+            "quantity": 12
+          },
+          {
+            "grade": 4,
+            "quantity": 10
+          }
+        ]
+      }
+    ],
+    "requestId": null,
+    "raisedBy": "system-pre-w4d",
+    "raisedFrom": "pre-w4d",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T15:30:00.000Z",
+        "user": "system-pre-w4d",
+        "action": "dispatch-backfilled-from-mastersheet",
+        "after": {
+          "sheet": "Cretile",
+          "rowNumber": 17,
+          "mouTarget": "MOU-STEAM-2627-047",
+          "mouCanonicalName": "St. Johns High School",
+          "lineItemCount": 1,
+          "totalQuantity": 44,
+          "confidence": "high (intake-confirmed)",
+          "source": "W4-D.8 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Backfilled historical delivery from Mastersheet Cretile sheet row 17. Confidence: high (intake-confirmed). Pre-system delivery; precise dates not captured."
+      }
+    ]
   }
 ]

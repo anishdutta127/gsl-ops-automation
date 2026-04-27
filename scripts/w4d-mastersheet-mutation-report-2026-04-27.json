@@ -1,0 +1,288 @@
+{
+  "generatedAt": "2026-04-28T15:30:00.000Z",
+  "purpose": "W4-D.8 Phase 2 mutation report. Anish-signed Phase 1 verification table drives every decision; ANISH_RESOLUTIONS hardcodes the 6 MANUAL-REVIEW + 4 QUARANTINE row-level decisions.",
+  "created": [
+    {
+      "dispatchId": "DIS-BF-TWs-r4",
+      "sheet": "TWs",
+      "rowNumber": 4,
+      "schoolRaw": "Loreto Day School, Bow Bazar-Kolkata",
+      "mouId": "MOU-STEAM-2526-003",
+      "mouCanonicalName": "Loreto Day School BB",
+      "lineItemCount": 6,
+      "totalQuantity": 76,
+      "confidence": "medium"
+    },
+    {
+      "dispatchId": "DIS-BF-TWs-r5",
+      "sheet": "TWs",
+      "rowNumber": 5,
+      "schoolRaw": "Loreto House - Kolkata",
+      "mouId": "MOU-STEAM-2526-004",
+      "mouCanonicalName": "Loreto House - Kolkata",
+      "lineItemCount": 7,
+      "totalQuantity": 81,
+      "confidence": "high"
+    },
+    {
+      "dispatchId": "DIS-BF-TWs-r6",
+      "sheet": "TWs",
+      "rowNumber": 6,
+      "schoolRaw": "Julien Day  School, Elgin Road",
+      "mouId": "MOU-STEAM-2526-007",
+      "mouCanonicalName": "Julien Educational Trust, Eglin Road",
+      "lineItemCount": 4,
+      "totalQuantity": 47,
+      "confidence": "Anish-resolved archived (manual-review reso)"
+    },
+    {
+      "dispatchId": "DIS-BF-TWs-r7",
+      "sheet": "TWs",
+      "rowNumber": 7,
+      "schoolRaw": "Julien Day  School, Kalyani�",
+      "mouId": "MOU-STEAM-2526-008",
+      "mouCanonicalName": "Julien Educational Trust, Kalyani",
+      "lineItemCount": 4,
+      "totalQuantity": 44,
+      "confidence": "Anish-resolved archived (manual-review reso)"
+    },
+    {
+      "dispatchId": "DIS-BF-TWs-r8",
+      "sheet": "TWs",
+      "rowNumber": 8,
+      "schoolRaw": "Julien Day  School, Ganganagar�",
+      "mouId": "MOU-STEAM-2526-009",
+      "mouCanonicalName": "Julien Educational Trust, Ganganagar",
+      "lineItemCount": 4,
+      "totalQuantity": 42,
+      "confidence": "Anish-resolved archived (manual-review reso)"
+    },
+    {
+      "dispatchId": "DIS-BF-TWs-r9",
+      "sheet": "TWs",
+      "rowNumber": 9,
+      "schoolRaw": "Julien Day  School, Howrah�",
+      "mouId": "MOU-STEAM-2526-010",
+      "mouCanonicalName": "Julien Educational Trust, Howrah",
+      "lineItemCount": 4,
+      "totalQuantity": 37,
+      "confidence": "Anish-resolved archived (manual-review reso)"
+    },
+    {
+      "dispatchId": "DIS-BF-TWs-r10",
+      "sheet": "TWs",
+      "rowNumber": 10,
+      "schoolRaw": "SWARNIM INTERNATIONAL SCHOOL",
+      "mouId": "MOU-STEAM-2526-013",
+      "mouCanonicalName": "Swarnim International School",
+      "lineItemCount": 4,
+      "totalQuantity": 15,
+      "confidence": "high"
+    },
+    {
+      "dispatchId": "DIS-BF-TWs-r11",
+      "sheet": "TWs",
+      "rowNumber": 11,
+      "schoolRaw": "St. Paul�s Mission School ,Kolkata",
+      "mouId": "MOU-STEAM-2526-014",
+      "mouCanonicalName": "St. Paul’s Mission School",
+      "lineItemCount": 3,
+      "totalQuantity": 19,
+      "confidence": "high"
+    },
+    {
+      "dispatchId": "DIS-BF-TWs-r12",
+      "sheet": "TWs",
+      "rowNumber": 12,
+      "schoolRaw": "St. Paul's Boarding And Day School",
+      "mouId": "MOU-STEAM-2526-015",
+      "mouCanonicalName": "St. Paul Boarding and Day School",
+      "lineItemCount": 5,
+      "totalQuantity": 75,
+      "confidence": "high"
+    },
+    {
+      "dispatchId": "DIS-BF-TWs-r13",
+      "sheet": "TWs",
+      "rowNumber": 13,
+      "schoolRaw": "Carmel Convent High School, Durgapur",
+      "mouId": "MOU-STEAM-2526-005",
+      "mouCanonicalName": "Carmel Convent High School, Durgapur",
+      "lineItemCount": 5,
+      "totalQuantity": 94,
+      "confidence": "high"
+    },
+    {
+      "dispatchId": "DIS-BF-TWs-r14",
+      "sheet": "TWs",
+      "rowNumber": 14,
+      "schoolRaw": "Carmel School, Durgapur",
+      "mouId": "MOU-STEAM-2526-006",
+      "mouCanonicalName": "Carmel School, Durgapur",
+      "lineItemCount": 5,
+      "totalQuantity": 94,
+      "confidence": "high"
+    },
+    {
+      "dispatchId": "DIS-BF-TWs-r15",
+      "sheet": "TWs",
+      "rowNumber": 15,
+      "schoolRaw": "St. Montfort's Senior Secondary School",
+      "mouId": "MOU-STEAM-2526-018",
+      "mouCanonicalName": "St. Montfort's Sr. Secondary School, Baruipur",
+      "lineItemCount": 3,
+      "totalQuantity": 20,
+      "confidence": "medium"
+    },
+    {
+      "dispatchId": "DIS-BF-TWs-r16",
+      "sheet": "TWs",
+      "rowNumber": 16,
+      "schoolRaw": "The Scottish Church Collegiate School",
+      "mouId": "MOU-STEAM-2526-040",
+      "mouCanonicalName": "The Scottish Church Collegiate School",
+      "lineItemCount": 2,
+      "totalQuantity": 12,
+      "confidence": "high"
+    },
+    {
+      "dispatchId": "DIS-BF-Cretile-r4",
+      "sheet": "Cretile",
+      "rowNumber": 4,
+      "schoolRaw": "Kavyapta Global School",
+      "mouId": "MOU-STEAM-2627-009",
+      "mouCanonicalName": "Kavyapta Global School",
+      "lineItemCount": 1,
+      "totalQuantity": 50,
+      "confidence": "high (intake-confirmed)"
+    },
+    {
+      "dispatchId": "DIS-BF-Cretile-r5",
+      "sheet": "Cretile",
+      "rowNumber": 5,
+      "schoolRaw": "K.E. Carmel-Amtala",
+      "mouId": "MOU-STEAM-2627-013",
+      "mouCanonicalName": "K.E Carmel School - Amtala",
+      "lineItemCount": 1,
+      "totalQuantity": 50,
+      "confidence": "high (intake-confirmed)"
+    },
+    {
+      "dispatchId": "DIS-BF-Cretile-r6",
+      "sheet": "Cretile",
+      "rowNumber": 6,
+      "schoolRaw": "St. Mary's Convent High School",
+      "mouId": "MOU-STEAM-2627-007",
+      "mouCanonicalName": "St. Mary Convent School",
+      "lineItemCount": 1,
+      "totalQuantity": 33,
+      "confidence": "high (intake-confirmed)"
+    },
+    {
+      "dispatchId": "DIS-BF-Cretile-r7",
+      "sheet": "Cretile",
+      "rowNumber": 7,
+      "schoolRaw": "Don Bosco School Krishnanagar",
+      "mouId": "MOU-STEAM-2627-027",
+      "mouCanonicalName": "Don Bosco Krishnanagar",
+      "lineItemCount": 1,
+      "totalQuantity": 75,
+      "confidence": "high (intake-confirmed)"
+    },
+    {
+      "dispatchId": "DIS-BF-Cretile-r8",
+      "sheet": "Cretile",
+      "rowNumber": 8,
+      "schoolRaw": "Dehi World Public School, Barasat",
+      "mouId": "MOU-STEAM-2627-020",
+      "mouCanonicalName": "Delhi World Public School, Barasat",
+      "lineItemCount": 1,
+      "totalQuantity": 56,
+      "confidence": "medium"
+    },
+    {
+      "dispatchId": "DIS-BF-Cretile-r9",
+      "sheet": "Cretile",
+      "rowNumber": 9,
+      "schoolRaw": "Blue Angels Global School",
+      "mouId": "MOU-STEAM-2627-015",
+      "mouCanonicalName": "Blue Angels Global School",
+      "lineItemCount": 1,
+      "totalQuantity": 96,
+      "confidence": "high (intake-confirmed)"
+    },
+    {
+      "dispatchId": "DIS-BF-Cretile-r10",
+      "sheet": "Cretile",
+      "rowNumber": 10,
+      "schoolRaw": "K E Carmel School, Suri",
+      "mouId": "MOU-STEAM-2627-014",
+      "mouCanonicalName": "K.E Carmel School - Suri",
+      "lineItemCount": 1,
+      "totalQuantity": 80,
+      "confidence": "high (intake-confirmed)"
+    },
+    {
+      "dispatchId": "DIS-BF-Cretile-r16",
+      "sheet": "Cretile",
+      "rowNumber": 16,
+      "schoolRaw": "Young Horizons School",
+      "mouId": "MOU-STEAM-2627-050",
+      "mouCanonicalName": "Young Horizons School",
+      "lineItemCount": 1,
+      "totalQuantity": 73,
+      "confidence": "high (intake-confirmed)"
+    },
+    {
+      "dispatchId": "DIS-BF-Cretile-r17",
+      "sheet": "Cretile",
+      "rowNumber": 17,
+      "schoolRaw": "St. Johns High School",
+      "mouId": "MOU-STEAM-2627-047",
+      "mouCanonicalName": "St. Johns High School",
+      "lineItemCount": 1,
+      "totalQuantity": 44,
+      "confidence": "high (intake-confirmed)"
+    }
+  ],
+  "skipped": [
+    {
+      "sheet": "TWs",
+      "rowNumber": 17,
+      "schoolRaw": "St. Johns High School",
+      "reason": "suspected duplicate of Cretile row 17 (St. Johns High School). D-013 flags for round 2 confirmation."
+    }
+  ],
+  "quarantined": [
+    {
+      "sheet": "Cretile",
+      "rowNumber": 11,
+      "schoolRaw": "B.D. Memorial Jr. School Bansdroni",
+      "reason": "B.D. Memorial branch (Bansdroni / Golf Garden / Garia / Vijaygarh). Defer to D-002 in W4-DEFERRED-ITEMS.md; Anish resolves the chain question separately before this row can land."
+    },
+    {
+      "sheet": "Cretile",
+      "rowNumber": 12,
+      "schoolRaw": "B.D. Memorial Jr. School Golf Garden",
+      "reason": "B.D. Memorial branch (Bansdroni / Golf Garden / Garia / Vijaygarh). Defer to D-002 in W4-DEFERRED-ITEMS.md; Anish resolves the chain question separately before this row can land."
+    },
+    {
+      "sheet": "Cretile",
+      "rowNumber": 13,
+      "schoolRaw": "B.D. Memorial Jr. School Garia",
+      "reason": "B.D. Memorial branch (Bansdroni / Golf Garden / Garia / Vijaygarh). Defer to D-002 in W4-DEFERRED-ITEMS.md; Anish resolves the chain question separately before this row can land."
+    },
+    {
+      "sheet": "Cretile",
+      "rowNumber": 14,
+      "schoolRaw": "B.D. Memorial Jr. School Vijaygarh",
+      "reason": "B.D. Memorial branch (Bansdroni / Golf Garden / Garia / Vijaygarh). Defer to D-002 in W4-DEFERRED-ITEMS.md; Anish resolves the chain question separately before this row can land."
+    },
+    {
+      "sheet": "Cretile",
+      "rowNumber": 15,
+      "schoolRaw": "Contai Public School",
+      "reason": "Contai Public School renewal status uncertain; D-014 flags for round 2 confirmation."
+    }
+  ]
+}

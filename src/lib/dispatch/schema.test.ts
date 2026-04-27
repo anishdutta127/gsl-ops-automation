@@ -41,7 +41,9 @@ function assertLineItem(item: DispatchLineItem): void {
 
 describe('W4-D.1 Dispatch fixture migration', () => {
   it('every dispatch carries the W4-D.1 required fields', () => {
-    expect(dispatches.length).toBe(5)
+    // 5 original W4-D.1 fixture migrations + 22 W4-D.8 Mastersheet
+    // backfill records = 27 (or more if W4-E onward adds further).
+    expect(dispatches.length).toBeGreaterThanOrEqual(5)
     for (const d of dispatches) {
       expect(Array.isArray(d.lineItems)).toBe(true)
       expect(d.lineItems.length).toBeGreaterThanOrEqual(1)
@@ -56,9 +58,24 @@ describe('W4-D.1 Dispatch fixture migration', () => {
     }
   })
 
-  it('all 5 pre-W4-D fixtures carry raisedFrom=pre-w4d (migration sentinel)', () => {
-    for (const d of dispatches) {
+  it('the 5 original W4-D.1 fixtures (DIS-001 to DIS-005) carry raisedFrom=pre-w4d', () => {
+    const originalFixtures = dispatches.filter((d) => /^DIS-00[1-5]$/.test(d.id))
+    expect(originalFixtures.length).toBe(5)
+    for (const d of originalFixtures) {
       expect(d.raisedFrom).toBe('pre-w4d')
+    }
+  })
+
+  it('W4-D.8 Mastersheet backfill records use the DIS-BF-<sheet>-r<row> id scheme', () => {
+    const backfilled = dispatches.filter((d) => d.id.startsWith('DIS-BF-'))
+    expect(backfilled.length).toBe(22)
+    for (const d of backfilled) {
+      expect(d.raisedFrom).toBe('pre-w4d')
+      expect(d.raisedBy).toBe('system-pre-w4d')
+      expect(d.id).toMatch(/^DIS-BF-(TWs|Cretile)-r\d+$/)
+      // Backfill dispatches carry the new audit action on entry 0
+      expect(d.auditLog.length).toBeGreaterThanOrEqual(1)
+      expect(d.auditLog[0]!.action).toBe('dispatch-backfilled-from-mastersheet')
     }
   })
 
