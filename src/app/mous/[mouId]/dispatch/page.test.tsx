@@ -19,52 +19,93 @@ function user(role: User['role'], id = 'u'): User {
   }
 }
 
-describe('/mous/[mouId]/dispatch page', () => {
-  it('OpsHead sees the form', async () => {
+const noSp = Promise.resolve({})
+
+describe('/mous/[mouId]/dispatch page (W4-D.4)', () => {
+  it('OpsHead sees the direct-raise form', async () => {
     getCurrentUserMock.mockResolvedValue(user('OpsHead', 'pradeep.r'))
     const { default: Page } = await import('./page')
     const html = renderToStaticMarkup(
-      await Page({ params: Promise.resolve({ mouId: 'MOU-STEAM-2627-001' }) }),
+      await Page({ params: Promise.resolve({ mouId: 'MOU-STEAM-2627-001' }), searchParams: noSp }),
     )
-    expect(html).toContain('<form')
-    expect(html).toContain('Raise dispatch')
+    expect(html).toContain('Raise direct dispatch')
+    expect(html).toContain('data-testid="direct-raise-section"')
+    expect(html).toContain('data-testid="direct-raise-submit"')
   })
 
-  it('Finance also sees the form (Phase 1 W3-B: UI gates disabled)', async () => {
-    getCurrentUserMock.mockResolvedValue(user('Finance', 'shubhangi.g'))
-    const { default: Page } = await import('./page')
-    const html = renderToStaticMarkup(
-      await Page({ params: Promise.resolve({ mouId: 'MOU-STEAM-2627-001' }) }),
-    )
-    expect(html).toContain('<form')
-    expect(html).toContain('Raise dispatch')
-  })
-
-  it('no longer renders the Phase 1 stub note (W4-B.4: stale; API is wired)', async () => {
+  it('direct-raise form has installmentSeq dropdown (W3 form bug fix)', async () => {
     getCurrentUserMock.mockResolvedValue(user('Admin', 'anish.d'))
     const { default: Page } = await import('./page')
     const html = renderToStaticMarkup(
-      await Page({ params: Promise.resolve({ mouId: 'MOU-STEAM-2627-001' }) }),
+      await Page({ params: Promise.resolve({ mouId: 'MOU-STEAM-2627-001' }), searchParams: noSp }),
     )
-    expect(html).not.toContain('Phase 1 note')
+    // Wired: select element + named installmentSeq.
+    expect(html).toMatch(/<select[^>]*name="installmentSeq"/)
+    expect(html).toMatch(/<option[^>]*value="1"/)
   })
 
   it('shows existing dispatches list with gate status', async () => {
     getCurrentUserMock.mockResolvedValue(user('Admin', 'anish.d'))
     const { default: Page } = await import('./page')
-    // MOU-STEAM-2627-001 has DIS-001 (delivered, paid)
+    // MOU-STEAM-2627-001 has DIS-001 (delivered, paid).
     const html = renderToStaticMarkup(
-      await Page({ params: Promise.resolve({ mouId: 'MOU-STEAM-2627-001' }) }),
+      await Page({ params: Promise.resolve({ mouId: 'MOU-STEAM-2627-001' }), searchParams: noSp }),
     )
     expect(html).toContain('Existing dispatches')
     expect(html).toContain('gate open')
+    expect(html).toContain('data-testid="dispatch-row-DIS-001"')
+  })
+
+  it('hides Pending requests section when no DRs are on file for the MOU', async () => {
+    getCurrentUserMock.mockResolvedValue(user('Admin', 'anish.d'))
+    const { default: Page } = await import('./page')
+    // MOU-STEAM-2627-002 has no fixture DR.
+    const html = renderToStaticMarkup(
+      await Page({ params: Promise.resolve({ mouId: 'MOU-STEAM-2627-002' }), searchParams: noSp }),
+    )
+    expect(html).not.toContain('data-testid="pending-requests-section"')
+  })
+
+  it('shows Pending requests section when a DR is pending for the MOU', async () => {
+    getCurrentUserMock.mockResolvedValue(user('Admin', 'anish.d'))
+    const { default: Page } = await import('./page')
+    // MOU-STEAM-2627-001 has a fixture pending DR (workflow-state-aware Specific C).
+    const html = renderToStaticMarkup(
+      await Page({ params: Promise.resolve({ mouId: 'MOU-STEAM-2627-001' }), searchParams: noSp }),
+    )
+    expect(html).toContain('data-testid="pending-requests-section"')
+    expect(html).toContain('Pending dispatch requests for this MOU')
+    expect(html).toContain('/admin/dispatch-requests/DR-MOU-STEAM-2627-001-i1-20260427100000')
+  })
+
+  it('shows raisedFrom badge on the existing dispatches list', async () => {
+    getCurrentUserMock.mockResolvedValue(user('Admin', 'anish.d'))
+    const { default: Page } = await import('./page')
+    const html = renderToStaticMarkup(
+      await Page({ params: Promise.resolve({ mouId: 'MOU-STEAM-2627-001' }), searchParams: noSp }),
+    )
+    // DIS-001 is raisedFrom=pre-w4d.
+    expect(html).toContain('pre-w4d')
+  })
+
+  it('?error=gate-locked renders the error banner', async () => {
+    getCurrentUserMock.mockResolvedValue(user('Admin', 'anish.d'))
+    const { default: Page } = await import('./page')
+    const html = renderToStaticMarkup(
+      await Page({
+        params: Promise.resolve({ mouId: 'MOU-STEAM-2627-001' }),
+        searchParams: Promise.resolve({ error: 'gate-locked' }),
+      }),
+    )
+    expect(html).toMatch(/role="alert"/)
+    expect(html).toContain('Gate is blocked')
   })
 
   it('contains no raw hex codes (token discipline)', async () => {
     getCurrentUserMock.mockResolvedValue(user('Admin', 'anish.d'))
     const { default: Page } = await import('./page')
     const html = renderToStaticMarkup(
-      await Page({ params: Promise.resolve({ mouId: 'MOU-STEAM-2627-001' }) }),
+      await Page({ params: Promise.resolve({ mouId: 'MOU-STEAM-2627-001' }), searchParams: noSp }),
     )
     expect(html).not.toMatch(/#[0-9a-fA-F]{3,6}/)
   })
