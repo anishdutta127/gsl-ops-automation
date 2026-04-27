@@ -78,6 +78,16 @@ export default async function HomePage() {
   const now = new Date()
   for (const mou of activeMous) {
     const stage = deriveStage(mou, deps)
+    // W4-B.1 defensive check: cross-verification is auto-skipped by
+    // deriveStage's first-non-null-wins logic (cross-verification's
+    // enteredDate inherits from actuals-confirmed). If a card lands
+    // here, the auto-skip regressed and operators see the placeholder
+    // next-step text. Surface a non-prod-only warn so the failing
+    // record can be investigated without polluting production logs.
+    if (stage === 'cross-verification' && process.env.NODE_ENV !== 'production') {
+      // eslint-disable-next-line no-console
+      console.warn(`[kanban] MOU ${mou.id} derived to 'cross-verification'; expected auto-skip via inheritance. Investigate stageEnteredDate for this record.`)
+    }
     initialBuckets[stage].push(mou)
     const entered = stageEnteredDate(mou, deps, stage)
     const days = daysSince(entered, now)
@@ -101,8 +111,7 @@ export default async function HomePage() {
             className="text-sm text-muted-foreground"
             data-testid="kanban-interaction-hint"
           >
-            Click a card to open its details. Drag the grip icon at the top-right
-            of a card to move it between stages.
+            Click to open. Drag the grip to move.
           </p>
           <KanbanBoard initialBuckets={initialBuckets} cardMeta={cardMeta} />
         </div>

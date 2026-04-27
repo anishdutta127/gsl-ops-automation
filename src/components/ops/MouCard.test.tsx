@@ -26,7 +26,7 @@ function mou(overrides: Partial<MOU> & Pick<MOU, 'id'>): MOU {
     received: 0, tds: 0, balance: 1_000_000, receivedPct: 0,
     paymentSchedule: '', trainerModel: null, salesPersonId: null,
     templateVersion: null, generatedAt: null, notes: null,
-    daysToExpiry: null, auditLog: [],
+    daysToExpiry: null, delayNotes: null, auditLog: [],
     ...overrides,
   }
 }
@@ -81,5 +81,42 @@ describe('MouCard', () => {
   it('has min-h ≥ 44px (touch target spec)', () => {
     const html = renderToStaticMarkup(<MouCard mou={mou({ id: 'X' })} />)
     expect(html).toContain('min-h-[88px]')
+  })
+
+  // W4-B.1: per-stage next-step indicator on the card.
+  it('renders the next-step label for each non-skipped stage', () => {
+    const cases: Array<[string, string]> = [
+      ['pre-ops', 'Triage: confirm next stage'],
+      ['mou-signed', 'Confirm actuals'],
+      ['actuals-confirmed', 'Generate PI'],
+      ['invoice-raised', 'Record payment received'],
+      ['payment-received', 'Raise dispatch'],
+      ['kit-dispatched', 'Record signed form'],
+      ['delivery-acknowledged', 'Compose feedback request'],
+      ['feedback-submitted', 'MOU complete'],
+    ]
+    for (const [stage, label] of cases) {
+      const html = renderToStaticMarkup(
+        <MouCard mou={mou({ id: 'M' })} stage={stage as Parameters<typeof MouCard>[0]['stage']} />,
+      )
+      expect(html).toContain('data-testid="next-step"')
+      expect(html).toContain(`Next: ${label}`)
+    }
+  })
+
+  it('omits the next-step label for cross-verification (auto-skipped stage)', () => {
+    const html = renderToStaticMarkup(
+      <MouCard mou={mou({ id: 'M' })} stage="cross-verification" />,
+    )
+    // Defensive: even if a card lands here, do not show the placeholder
+    // label because it would confuse operators. The page-level dev warn
+    // surfaces the regression separately.
+    expect(html).not.toContain('Auto-skipped')
+    expect(html).not.toContain('data-testid="next-step"')
+  })
+
+  it('omits the next-step label when no stage prop is provided (static MouCard usage)', () => {
+    const html = renderToStaticMarkup(<MouCard mou={mou({ id: 'M' })} />)
+    expect(html).not.toContain('data-testid="next-step"')
   })
 })

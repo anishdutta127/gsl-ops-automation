@@ -318,6 +318,7 @@ export function KanbanBoard({ initialBuckets, cardMeta = {} }: KanbanBoardProps)
                     <DraggableMouCard
                       key={mou.id}
                       mou={mou}
+                      stage={col.key}
                       active={activeMou?.id === mou.id}
                       meta={cardMeta[mou.id]}
                     />
@@ -410,11 +411,12 @@ function DroppableStageColumn({ columnKey, label, variant, count, children }: Dr
 
 interface DraggableMouCardProps {
   mou: MOU
+  stage: KanbanStageKey
   active: boolean
   meta?: KanbanCardMeta
 }
 
-function DraggableMouCard({ mou, active, meta }: DraggableMouCardProps) {
+function DraggableMouCard({ mou, stage, active, meta }: DraggableMouCardProps) {
   const { attributes, listeners, setNodeRef } = useDraggable({ id: mou.id })
   // W3-F.5 split: setNodeRef on the wrapping div so dnd-kit measures
   // the whole card; <a> is the click-to-navigate body (no listeners,
@@ -435,7 +437,7 @@ function DraggableMouCard({ mou, active, meta }: DraggableMouCardProps) {
         className="block min-h-[88px] rounded-md p-3 pr-12 text-left text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
         title={mou.schoolName}
       >
-        <MouCardBody mou={mou} daysInStage={meta?.daysInStage} overdue={meta?.overdue} />
+        <MouCardBody mou={mou} daysInStage={meta?.daysInStage} overdue={meta?.overdue} stage={stage} />
       </a>
       <button
         type="button"

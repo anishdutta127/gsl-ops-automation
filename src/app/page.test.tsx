@@ -105,12 +105,50 @@ describe('/ kanban homepage', () => {
     )
   })
 
-  it('renders the click-vs-drag interaction hint above the kanban (W3-F.5)', async () => {
+  it('renders the click-vs-drag interaction hint above the kanban', async () => {
     getCurrentUserMock.mockResolvedValue(admin())
     const { default: HomePage } = await import('./page')
     const html = renderToStaticMarkup(await HomePage())
     expect(html).toContain('data-testid="kanban-interaction-hint"')
-    expect(html).toContain('Click a card to open its details')
-    expect(html).toContain('Drag the grip icon')
+    // W4-B.4 tightened the hint to a single short sentence.
+    expect(html).toContain('Click to open. Drag the grip to move.')
+  })
+
+  // W4-B.1 defensive check: cross-verification is auto-skipped by
+  // deriveStage's first-non-null-wins logic, so no card in the active
+  // cohort should land in that column. If this test fails, deriveStage
+  // (or stageEnteredDate) regressed.
+  it('no card lands in the cross-verification column (auto-skip preserved)', async () => {
+    getCurrentUserMock.mockResolvedValue(admin())
+    const { default: HomePage } = await import('./page')
+    const html = renderToStaticMarkup(await HomePage())
+    // The column header itself still renders (KANBAN_COLUMNS lists 9
+    // columns including cross-verification); we assert the column is
+    // empty by checking the count chip and the empty-state copy.
+    const sectionMatch = html.match(
+      /data-testid="droppable-cross-verification"[\s\S]*?data-testid="droppable-/,
+    ) ?? html.match(/data-testid="droppable-cross-verification"[\s\S]*$/)
+    expect(sectionMatch).not.toBeNull()
+    if (sectionMatch !== null) {
+      const section = sectionMatch[0]
+      expect(section).toContain('Empty.')
+      // No mou-card should be inside this column.
+      expect(section.match(/data-testid="mou-card"/g) ?? []).toHaveLength(0)
+    }
+  })
+
+  it('cards render the per-stage next-step label (W4-B.1)', async () => {
+    getCurrentUserMock.mockResolvedValue(admin())
+    const { default: HomePage } = await import('./page')
+    const html = renderToStaticMarkup(await HomePage())
+    // Sample assertion: the active fixture has MOUs in invoice-raised
+    // (the largest active column post-W4-A.2), so at least one card
+    // should carry the corresponding label.
+    expect(html).toContain('Next: Record payment received')
+    // And actuals-confirmed has cards too.
+    expect(html).toContain('Next: Generate PI')
+    // Defensive: the cross-verification placeholder text never reaches
+    // the rendered HTML.
+    expect(html).not.toContain('Auto-skipped')
   })
 })

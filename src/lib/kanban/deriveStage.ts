@@ -63,6 +63,46 @@ export const KANBAN_COLUMNS: ReadonlyArray<KanbanColumn> = [
   { key: 'feedback-submitted', label: 'Feedback submitted', variant: 'lifecycle' },
 ]
 
+/**
+ * Per-stage next-step labels rendered on each MouCard (W4-B.1). The
+ * label describes the action that LEAVES that stage forward; verbs
+ * match the existing button copy on the per-stage forms exactly so
+ * the operator's mental model stays consistent across the kanban,
+ * the transition dialog, and the form.
+ *
+ * Verb sources:
+ *   - mou-signed              -> /mous/[id]/actuals "Confirm actuals"
+ *   - actuals-confirmed       -> /mous/[id]/pi "Generate PI"
+ *   - invoice-raised          -> /mous/[id]/payment-receipt
+ *                                "Record payment received" (W4-B.5)
+ *   - payment-received        -> /mous/[id]/dispatch "Raise dispatch"
+ *   - kit-dispatched          -> /mous/[id]/delivery-ack
+ *                                "Record signed form" (W4-D revisits;
+ *                                see RUNBOOK §11 for the rename note)
+ *   - delivery-acknowledged   -> /mous/[id]/feedback-request
+ *                                "Compose feedback request"
+ *   - feedback-submitted      -> terminal; no further action
+ *   - pre-ops                 -> triage exit; reason-required drag
+ *   - cross-verification      -> auto-skipped by deriveStage; should
+ *                                never carry a card. Defensive: a
+ *                                page-level dev-mode warn fires if
+ *                                a card derives this stage in
+ *                                production. Label is provided for
+ *                                completeness; rendering it would be
+ *                                a regression.
+ */
+export const STAGE_NEXT_STEP: Record<KanbanStageKey, string> = {
+  'pre-ops': 'Triage: confirm next stage',
+  'mou-signed': 'Confirm actuals',
+  'actuals-confirmed': 'Generate PI',
+  'cross-verification': 'Auto-skipped; no card should land here',
+  'invoice-raised': 'Record payment received',
+  'payment-received': 'Raise dispatch',
+  'kit-dispatched': 'Record signed form',
+  'delivery-acknowledged': 'Compose feedback request',
+  'feedback-submitted': 'MOU complete',
+}
+
 export interface DeriveStageDeps {
   dispatches: Dispatch[]
   payments: Payment[]

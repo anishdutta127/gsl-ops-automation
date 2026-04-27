@@ -1,19 +1,20 @@
 /*
- * MouCard (W3-C C1 + C2; kanban card).
+ * MouCard (W3-C C1 + C2 + W4-B.1; kanban card).
  *
- * Click navigates to /mous/[id]. Drag (when wrapped in a kanban
- * DndContext with PointerSensor's 8px activation distance) initiates
- * a stage transition. Below 8px movement the click registers and
- * navigation fires; above 8px the drag activates and click is
- * suppressed by dnd-kit until drop. This is how dnd-kit
- * disambiguates click-vs-drag without a separate drag handle.
+ * Click navigates to /mous/[id]. Drag from the W3-F.5 grip handle
+ * initiates a stage transition; the body itself is a plain anchor
+ * (cursor-pointer; click-to-navigate).
  *
- * C1 data shape:
+ * C1 / W4-B.1 data shape:
  *   - school name (truncated to 32 chars; full text in title attribute)
  *   - MOU id (mono small)
  *   - programme + sub-type (small; sub-type only when non-null)
  *   - drift badge if mou.studentsVariancePct exceeds +/- 10%
  *   - status badge if status !== 'Active'
+ *   - W4-B.1: "Next: <action>" line per stage. Verbs match the
+ *     existing button copy on the corresponding per-stage form so
+ *     the operator's mental model stays consistent across the
+ *     kanban, the transition dialog, and the form.
  *
  * Two render paths:
  *   - <MouCard mou={...} />          : non-draggable; pure Link.
@@ -23,9 +24,13 @@
  */
 
 import Link from 'next/link'
-import { AlertTriangle, Clock } from 'lucide-react'
+import { AlertTriangle, ArrowRight, Clock } from 'lucide-react'
 import type { MOU } from '@/lib/types'
-import { hasDrift } from '@/lib/kanban/deriveStage'
+import {
+  hasDrift,
+  STAGE_NEXT_STEP,
+  type KanbanStageKey,
+} from '@/lib/kanban/deriveStage'
 
 const SCHOOL_NAME_MAX = 32
 
@@ -33,6 +38,8 @@ interface MouCardProps {
   mou: MOU
   daysInStage?: number | null
   overdue?: boolean
+  /** W4-B.1: drives the "Next: <action>" hint at the foot of the card. */
+  stage?: KanbanStageKey
 }
 
 function truncate(value: string, max: number): string {
@@ -44,10 +51,11 @@ interface MouCardBodyProps {
   mou: MOU
   daysInStage?: number | null
   overdue?: boolean
+  stage?: KanbanStageKey
 }
 
 /** Visual content shared between Link variant and Draggable variant. */
-export function MouCardBody({ mou, daysInStage, overdue }: MouCardBodyProps) {
+export function MouCardBody({ mou, daysInStage, overdue, stage }: MouCardBodyProps) {
   const fullName = mou.schoolName
   const displayName = truncate(fullName, SCHOOL_NAME_MAX)
   const programmeLabel = mou.programmeSubType
@@ -58,6 +66,13 @@ export function MouCardBody({ mou, daysInStage, overdue }: MouCardBodyProps) {
   const showOverdue = overdue === true && typeof daysInStage === 'number'
 
   const anyBadge = drift || showStatusBadge || showOverdue
+  // W4-B.1: cross-verification stage is auto-skipped by deriveStage; if
+  // a card lands here in production it is a bug. Suppress the next-step
+  // hint to avoid confusing operators with the placeholder text;
+  // src/app/page.tsx fires a dev-mode console.warn alongside.
+  const nextStep = stage !== undefined && stage !== 'cross-verification'
+    ? STAGE_NEXT_STEP[stage]
+    : null
 
   return (
     <>
@@ -91,11 +106,20 @@ export function MouCardBody({ mou, daysInStage, overdue }: MouCardBodyProps) {
           ) : null}
         </div>
       ) : null}
+      {nextStep !== null ? (
+        <p
+          className="mt-2 flex items-center gap-1 text-[11px] text-muted-foreground"
+          data-testid="next-step"
+        >
+          <ArrowRight aria-hidden className="size-3" />
+          <span>Next: {nextStep}</span>
+        </p>
+      ) : null}
     </>
   )
 }
 
-export function MouCard({ mou, daysInStage, overdue }: MouCardProps) {
+export function MouCard({ mou, daysInStage, overdue, stage }: MouCardProps) {
   return (
     <Link
       href={`/mous/${mou.id}`}
@@ -105,7 +129,7 @@ export function MouCard({ mou, daysInStage, overdue }: MouCardProps) {
       data-mou-id={mou.id}
       data-overdue={overdue ? 'true' : undefined}
     >
-      <MouCardBody mou={mou} daysInStage={daysInStage} overdue={overdue} />
+      <MouCardBody mou={mou} daysInStage={daysInStage} overdue={overdue} stage={stage} />
     </Link>
   )
 }
