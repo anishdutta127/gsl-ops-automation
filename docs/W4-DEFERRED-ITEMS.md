@@ -77,6 +77,14 @@ Each entry: a stable id, status, surface where it was found, the question, what 
 - **Context:** GMR International School lives at form xlsx row 25 (1-indexed; row 1 is header). The W4-C.4 backfill numbers IRs as `IR-W4C-NNN` where NNN = (form row - 1). GMR was skipped (no MOU match), so IR-W4C-024 was never created. The 23 IRs cover form rows 2..24 contiguously, and GMR sits at row 25.
 - **Resolution:** Verified during W4-C.7 independent verification (`scripts/w4c7-independent-verification.mjs` reads form col 4 for rows 2..max_row; the 23 mapped rows match IR-W4C-001..023 cleanly).
 
+## D-009 Mastersheet row with no MOU match in either active or archived list
+
+- **Status:** open (currently no rows trigger this; sentinel entry for the W4-D.8 verification script)
+- **Surfaced by:** `scripts/w4d-mastersheet-verification.mjs` quarantine path
+- **Context:** When a Mastersheet TWs or Cretile row's school name has zero distinctive token overlap with any of the active 51 MOUs OR any of the archived 92 MOUs, the verification script quarantines the row and references this entry.
+- **Question:** What should happen to a Mastersheet row whose school is unknown to both lists? Add the school + a new MOU as a one-shot upstream import, or accept the row as orphaned historical data with no MOU FK?
+- **Needed to close:** Anish reviews any row that triggers this. The W4-D.8 verification table shipped with 0 D-009 hits (all 4 quarantines are BD Memorial branches per D-002); future re-runs against a new Mastersheet may surface real hits.
+
 ---
 
 ## How items leave this registry

@@ -1,0 +1,1505 @@
+{
+  "generatedAt": "2026-04-28T15:00:00.000Z",
+  "purpose": "W4-D.8 Phase 1 Mastersheet backfill verification table. Read-only; no data mutation. Anish reviews before mutation script (Phase 2) runs.",
+  "canonicalActiveSource": "Hardcoded CANONICAL_51_LIST (W4-C.7 source-of-truth snapshot from mous.json on 2026-04-28).",
+  "canonicalArchivedSource": "mous.json filtered cohortStatus=archived (raw upstream; not subject to operational curation).",
+  "matchingMetric": "Jaccard token overlap with stop-word filtering. Independent code path from W4-C.4 positional indexing.",
+  "rowCount": 28,
+  "summary": {
+    "autoImport": 18,
+    "manualReview": 6,
+    "quarantine": 4
+  },
+  "rows": [
+    {
+      "sheet": "TWs",
+      "rowNumber": 4,
+      "sr": 1,
+      "schoolRaw": "Loreto Day School, Bow Bazar-Kolkata",
+      "spocName": "Arinkit Das",
+      "spocPhone": "9735154774",
+      "totalStudents": 559,
+      "trainingModel": "TTT",
+      "lineItems": [
+        {
+          "kind": "flat",
+          "skuName": "Pampered Plant",
+          "quantity": 5
+        },
+        {
+          "kind": "flat",
+          "skuName": "Launchpad",
+          "quantity": 7
+        },
+        {
+          "kind": "flat",
+          "skuName": "Push Pull Pin",
+          "quantity": 5
+        },
+        {
+          "kind": "flat",
+          "skuName": "Tinkrpython",
+          "quantity": 5
+        },
+        {
+          "kind": "flat",
+          "skuName": "TinkrBotScout",
+          "quantity": 27
+        },
+        {
+          "kind": "flat",
+          "skuName": "Tinkrexplorer",
+          "quantity": 27
+        }
+      ],
+      "dateRaised": null,
+      "deliveryStatus": "Delivered",
+      "recommendation": "AUTO-IMPORT",
+      "target": "archived",
+      "targetMouId": "MOU-STEAM-2526-003",
+      "targetCanonicalName": "Loreto Day School BB",
+      "confidence": "medium",
+      "activeCandidate": {
+        "id": "MOU-STEAM-2627-028",
+        "schoolName": "Loreto Day School Kolkata",
+        "score": 0.6
+      },
+      "archivedCandidate": {
+        "id": "MOU-STEAM-2526-003",
+        "schoolName": "Loreto Day School BB",
+        "score": 0.3333333333333333
+      },
+      "hasIntake": false,
+      "hasDispatch": false,
+      "ayHeuristic": "TWs row + active candidate MOU-STEAM-2627-028 is pre-dispatch (no Dispatch on file). Archived 2526 candidate exists; TWs delivery is likely the historical pre-system record.",
+      "reasoning": "Match archived 2526 MOU-STEAM-2526-003 (\"Loreto Day School BB\") jaccard 0.33. TWs row + active candidate MOU-STEAM-2627-028 is pre-dispatch (no Dispatch on file). Archived 2526 candidate exists; TWs delivery is likely the historical pre-system record."
+    },
+    {
+      "sheet": "TWs",
+      "rowNumber": 5,
+      "sr": 2,
+      "schoolRaw": "Loreto House - Kolkata",
+      "spocName": "Biswajit Das ",
+      "spocPhone": "8777376573",
+      "totalStudents": 608,
+      "trainingModel": "TTT",
+      "lineItems": [
+        {
+          "kind": "flat",
+          "skuName": "Steam Academy",
+          "quantity": 5
+        },
+        {
+          "kind": "flat",
+          "skuName": "Pampered Plant",
+          "quantity": 5
+        },
+        {
+          "kind": "flat",
+          "skuName": "Launchpad",
+          "quantity": 7
+        },
+        {
+          "kind": "flat",
+          "skuName": "Push Pull Pin",
+          "quantity": 5
+        },
+        {
+          "kind": "flat",
+          "skuName": "Tinkrpython",
+          "quantity": 5
+        },
+        {
+          "kind": "flat",
+          "skuName": "TinkrBotScout",
+          "quantity": 27
+        },
+        {
+          "kind": "flat",
+          "skuName": "Tinkrexplorer",
+          "quantity": 27
+        }
+      ],
+      "dateRaised": null,
+      "deliveryStatus": "Delivered",
+      "recommendation": "AUTO-IMPORT",
+      "target": "archived",
+      "targetMouId": "MOU-STEAM-2526-004",
+      "targetCanonicalName": "Loreto House - Kolkata",
+      "confidence": "high",
+      "activeCandidate": {
+        "id": "MOU-STEAM-2627-028",
+        "schoolName": "Loreto Day School Kolkata",
+        "score": 0.5
+      },
+      "archivedCandidate": {
+        "id": "MOU-STEAM-2526-004",
+        "schoolName": "Loreto House - Kolkata",
+        "score": 1
+      },
+      "hasIntake": false,
+      "hasDispatch": false,
+      "ayHeuristic": "TWs row + active candidate MOU-STEAM-2627-028 is pre-dispatch (no Dispatch on file). Archived 2526 candidate exists; TWs delivery is likely the historical pre-system record.",
+      "reasoning": "Match archived 2526 MOU-STEAM-2526-004 (\"Loreto House - Kolkata\") jaccard 1.00. TWs row + active candidate MOU-STEAM-2627-028 is pre-dispatch (no Dispatch on file). Archived 2526 candidate exists; TWs delivery is likely the historical pre-system record."
+    },
+    {
+      "sheet": "TWs",
+      "rowNumber": 6,
+      "sr": 3,
+      "schoolRaw": "Julien Day  School, Elgin Road",
+      "spocName": "Debasish Bhattacharya",
+      "spocPhone": "9874793199",
+      "totalStudents": 270,
+      "trainingModel": "TTT",
+      "lineItems": [
+        {
+          "kind": "flat",
+          "skuName": "Launchpad",
+          "quantity": 7
+        },
+        {
+          "kind": "flat",
+          "skuName": "Tinkrpython",
+          "quantity": 5
+        },
+        {
+          "kind": "flat",
+          "skuName": "TinkrBotScout",
+          "quantity": 30
+        },
+        {
+          "kind": "flat",
+          "skuName": "Tinkrexplorer",
+          "quantity": 5
+        }
+      ],
+      "dateRaised": null,
+      "deliveryStatus": "Delivered",
+      "recommendation": "MANUAL-REVIEW",
+      "confidence": "medium",
+      "activeCandidate": {
+        "id": "MOU-STEAM-2627-033",
+        "schoolName": "Julien Educational Trust, Eglin Road",
+        "score": 0.2857142857142857
+      },
+      "archivedCandidate": {
+        "id": "MOU-STEAM-2526-007",
+        "schoolName": "Julien Educational Trust, Eglin Road",
+        "score": 0.2857142857142857
+      },
+      "hasIntake": false,
+      "hasDispatch": false,
+      "ayHeuristic": "TWs row matches both active and archived candidates weakly; AY heuristic inconclusive.",
+      "reasoning": "TWs row matches both active and archived candidates weakly; AY heuristic inconclusive. Surface to Anish to pick between active MOU-STEAM-2627-033 (jaccard 0.29) and archived MOU-STEAM-2526-007 (jaccard 0.29)."
+    },
+    {
+      "sheet": "TWs",
+      "rowNumber": 7,
+      "sr": 4,
+      "schoolRaw": "Julien Day  School, Kalyani�",
+      "spocName": "Pinaki Shankar Pal",
+      "spocPhone": "9477321211",
+      "totalStudents": 474,
+      "trainingModel": "TTT",
+      "lineItems": [
+        {
+          "kind": "flat",
+          "skuName": "Launchpad",
+          "quantity": 7
+        },
+        {
+          "kind": "flat",
+          "skuName": "Tinkrpython",
+          "quantity": 5
+        },
+        {
+          "kind": "flat",
+          "skuName": "TinkrBotScout",
+          "quantity": 25
+        },
+        {
+          "kind": "flat",
+          "skuName": "Tinkrexplorer",
+          "quantity": 7
+        }
+      ],
+      "dateRaised": null,
+      "deliveryStatus": "Delivered",
+      "recommendation": "MANUAL-REVIEW",
+      "confidence": "medium",
+      "activeCandidate": {
+        "id": "MOU-STEAM-2627-034",
+        "schoolName": "Julien Educational Trust, Kalyani",
+        "score": 0.4
+      },
+      "archivedCandidate": {
+        "id": "MOU-STEAM-2526-008",
+        "schoolName": "Julien Educational Trust, Kalyani",
+        "score": 0.4
+      },
+      "hasIntake": false,
+      "hasDispatch": false,
+      "ayHeuristic": "TWs row matches both active and archived candidates weakly; AY heuristic inconclusive.",
+      "reasoning": "TWs row matches both active and archived candidates weakly; AY heuristic inconclusive. Surface to Anish to pick between active MOU-STEAM-2627-034 (jaccard 0.40) and archived MOU-STEAM-2526-008 (jaccard 0.40)."
+    },
+    {
+      "sheet": "TWs",
+      "rowNumber": 8,
+      "sr": 5,
+      "schoolRaw": "Julien Day  School, Ganganagar�",
+      "spocName": "Mrinmoy Chatterjee",
+      "spocPhone": "8145291001",
+      "totalStudents": 589,
+      "trainingModel": "TTT",
+      "lineItems": [
+        {
+          "kind": "flat",
+          "skuName": "Launchpad",
+          "quantity": 7
+        },
+        {
+          "kind": "flat",
+          "skuName": "Tinkrpython",
+          "quantity": 5
+        },
+        {
+          "kind": "flat",
+          "skuName": "TinkrBotScout",
+          "quantity": 20
+        },
+        {
+          "kind": "flat",
+          "skuName": "Tinkrexplorer",
+          "quantity": 10
+        }
+      ],
+      "dateRaised": null,
+      "deliveryStatus": "Delivered",
+      "recommendation": "MANUAL-REVIEW",
+      "confidence": "medium",
+      "activeCandidate": {
+        "id": "MOU-STEAM-2627-035",
+        "schoolName": "Julien Educational Trust, Ganganagar",
+        "score": 0.4
+      },
+      "archivedCandidate": {
+        "id": "MOU-STEAM-2526-009",
+        "schoolName": "Julien Educational Trust, Ganganagar",
+        "score": 0.4
+      },
+      "hasIntake": false,
+      "hasDispatch": false,
+      "ayHeuristic": "TWs row matches both active and archived candidates weakly; AY heuristic inconclusive.",
+      "reasoning": "TWs row matches both active and archived candidates weakly; AY heuristic inconclusive. Surface to Anish to pick between active MOU-STEAM-2627-035 (jaccard 0.40) and archived MOU-STEAM-2526-009 (jaccard 0.40)."
+    },
+    {
+      "sheet": "TWs",
+      "rowNumber": 9,
+      "sr": 6,
+      "schoolRaw": "Julien Day  School, Howrah�",
+      "spocName": "Sudeb Banerjee",
+      "spocPhone": "7001906699",
+      "totalStudents": 239,
+      "trainingModel": "TTT",
+      "lineItems": [
+        {
+          "kind": "flat",
+          "skuName": "Launchpad",
+          "quantity": 7
+        },
+        {
+          "kind": "flat",
+          "skuName": "Tinkrpython",
+          "quantity": 5
+        },
+        {
+          "kind": "flat",
+          "skuName": "TinkrBotScout",
+          "quantity": 20
+        },
+        {
+          "kind": "flat",
+          "skuName": "Tinkrexplorer",
+          "quantity": 5
+        }
+      ],
+      "dateRaised": null,
+      "deliveryStatus": "Delivered",
+      "recommendation": "MANUAL-REVIEW",
+      "confidence": "medium",
+      "activeCandidate": {
+        "id": "MOU-STEAM-2627-036",
+        "schoolName": "Julien Educational Trust, Howrah",
+        "score": 0.4
+      },
+      "archivedCandidate": {
+        "id": "MOU-STEAM-2526-010",
+        "schoolName": "Julien Educational Trust, Howrah",
+        "score": 0.4
+      },
+      "hasIntake": false,
+      "hasDispatch": false,
+      "ayHeuristic": "TWs row matches both active and archived candidates weakly; AY heuristic inconclusive.",
+      "reasoning": "TWs row matches both active and archived candidates weakly; AY heuristic inconclusive. Surface to Anish to pick between active MOU-STEAM-2627-036 (jaccard 0.40) and archived MOU-STEAM-2526-010 (jaccard 0.40)."
+    },
+    {
+      "sheet": "TWs",
+      "rowNumber": 10,
+      "sr": 7,
+      "schoolRaw": "SWARNIM INTERNATIONAL SCHOOL",
+      "spocName": "Jenefar ma'am",
+      "spocPhone": "03324774052/03324774001",
+      "totalStudents": 250,
+      "trainingModel": "GSL T",
+      "lineItems": [
+        {
+          "kind": "flat",
+          "skuName": "Pampered Plant",
+          "quantity": 1
+        },
+        {
+          "kind": "flat",
+          "skuName": "Launchpad",
+          "quantity": 3
+        },
+        {
+          "kind": "flat",
+          "skuName": "Push Pull Pin",
+          "quantity": 6
+        },
+        {
+          "kind": "flat",
+          "skuName": "Tinkrexplorer",
+          "quantity": 5
+        }
+      ],
+      "dateRaised": null,
+      "deliveryStatus": "Delivered",
+      "recommendation": "AUTO-IMPORT",
+      "target": "archived",
+      "targetMouId": "MOU-STEAM-2526-013",
+      "targetCanonicalName": "Swarnim International School",
+      "confidence": "high",
+      "activeCandidate": {
+        "id": "MOU-STEAM-2627-037",
+        "schoolName": "Swarnim International School",
+        "score": 1
+      },
+      "archivedCandidate": {
+        "id": "MOU-STEAM-2526-013",
+        "schoolName": "Swarnim International School",
+        "score": 1
+      },
+      "hasIntake": true,
+      "hasDispatch": false,
+      "ayHeuristic": "TWs row + active candidate MOU-STEAM-2627-037 is pre-dispatch (no Dispatch on file). Archived 2526 candidate exists; TWs delivery is likely the historical pre-system record.",
+      "reasoning": "Match archived 2526 MOU-STEAM-2526-013 (\"Swarnim International School\") jaccard 1.00. TWs row + active candidate MOU-STEAM-2627-037 is pre-dispatch (no Dispatch on file). Archived 2526 candidate exists; TWs delivery is likely the historical pre-system record."
+    },
+    {
+      "sheet": "TWs",
+      "rowNumber": 11,
+      "sr": 8,
+      "schoolRaw": "St. Paul�s Mission School ,Kolkata",
+      "spocName": "Mr. Sudeb Bose",
+      "spocPhone": "8334892807",
+      "totalStudents": 400,
+      "trainingModel": "GSL T",
+      "lineItems": [
+        {
+          "kind": "flat",
+          "skuName": "Push Pull Pin",
+          "quantity": 1
+        },
+        {
+          "kind": "flat",
+          "skuName": "TinkrBotScout",
+          "quantity": 17
+        },
+        {
+          "kind": "flat",
+          "skuName": "Tinkrexplorer",
+          "quantity": 1
+        }
+      ],
+      "dateRaised": null,
+      "deliveryStatus": "Delivered",
+      "recommendation": "AUTO-IMPORT",
+      "target": "archived",
+      "targetMouId": "MOU-STEAM-2526-014",
+      "targetCanonicalName": "St. Paul’s Mission School",
+      "confidence": "high",
+      "activeCandidate": {
+        "id": "MOU-STEAM-2627-038",
+        "schoolName": "St. Paul’s Mission School",
+        "score": 0.6666666666666666
+      },
+      "archivedCandidate": {
+        "id": "MOU-STEAM-2526-014",
+        "schoolName": "St. Paul’s Mission School",
+        "score": 0.6666666666666666
+      },
+      "hasIntake": false,
+      "hasDispatch": false,
+      "ayHeuristic": "TWs row + active candidate MOU-STEAM-2627-038 is pre-dispatch (no Dispatch on file). Archived 2526 candidate exists; TWs delivery is likely the historical pre-system record.",
+      "reasoning": "Match archived 2526 MOU-STEAM-2526-014 (\"St. Paul’s Mission School\") jaccard 0.67. TWs row + active candidate MOU-STEAM-2627-038 is pre-dispatch (no Dispatch on file). Archived 2526 candidate exists; TWs delivery is likely the historical pre-system record."
+    },
+    {
+      "sheet": "TWs",
+      "rowNumber": 12,
+      "sr": 9,
+      "schoolRaw": "St. Paul's Boarding And Day School",
+      "spocName": "Rosamma Shaji",
+      "spocPhone": "8910509564",
+      "totalStudents": 860,
+      "trainingModel": "GSL T",
+      "lineItems": [
+        {
+          "kind": "flat",
+          "skuName": "Smart Lamp",
+          "quantity": 15
+        },
+        {
+          "kind": "flat",
+          "skuName": "Pampered Plant",
+          "quantity": 15
+        },
+        {
+          "kind": "flat",
+          "skuName": "Launchpad",
+          "quantity": 15
+        },
+        {
+          "kind": "flat",
+          "skuName": "Push Pull Pin",
+          "quantity": 15
+        },
+        {
+          "kind": "flat",
+          "skuName": "TinkrBotScout",
+          "quantity": 15
+        }
+      ],
+      "dateRaised": null,
+      "deliveryStatus": "Delivered",
+      "recommendation": "AUTO-IMPORT",
+      "target": "archived",
+      "targetMouId": "MOU-STEAM-2526-015",
+      "targetCanonicalName": "St. Paul Boarding and Day School",
+      "confidence": "high",
+      "activeCandidate": {
+        "id": "MOU-STEAM-2627-039",
+        "schoolName": "St. Paul's Boarding And Day School",
+        "score": 1
+      },
+      "archivedCandidate": {
+        "id": "MOU-STEAM-2526-015",
+        "schoolName": "St. Paul Boarding and Day School",
+        "score": 1
+      },
+      "hasIntake": true,
+      "hasDispatch": false,
+      "ayHeuristic": "TWs row + active candidate MOU-STEAM-2627-039 is pre-dispatch (no Dispatch on file). Archived 2526 candidate exists; TWs delivery is likely the historical pre-system record.",
+      "reasoning": "Match archived 2526 MOU-STEAM-2526-015 (\"St. Paul Boarding and Day School\") jaccard 1.00. TWs row + active candidate MOU-STEAM-2627-039 is pre-dispatch (no Dispatch on file). Archived 2526 candidate exists; TWs delivery is likely the historical pre-system record."
+    },
+    {
+      "sheet": "TWs",
+      "rowNumber": 13,
+      "sr": 10,
+      "schoolRaw": "Carmel Convent High School, Durgapur",
+      "spocName": "Ms. Sandra Sneha Nath",
+      "spocPhone": "9679349905",
+      "totalStudents": 1000,
+      "trainingModel": "GSL T",
+      "lineItems": [
+        {
+          "kind": "flat",
+          "skuName": "Tech A Sketch",
+          "quantity": 17
+        },
+        {
+          "kind": "flat",
+          "skuName": "Smart Lamp",
+          "quantity": 17
+        },
+        {
+          "kind": "flat",
+          "skuName": "Tinkrpython",
+          "quantity": 20
+        },
+        {
+          "kind": "flat",
+          "skuName": "TinkrBotScout",
+          "quantity": 20
+        },
+        {
+          "kind": "flat",
+          "skuName": "Tinkrexplorer",
+          "quantity": 20
+        }
+      ],
+      "dateRaised": null,
+      "deliveryStatus": "Delivered",
+      "recommendation": "AUTO-IMPORT",
+      "target": "archived",
+      "targetMouId": "MOU-STEAM-2526-005",
+      "targetCanonicalName": "Carmel Convent High School, Durgapur",
+      "confidence": "high",
+      "activeCandidate": {
+        "id": "MOU-STEAM-2627-029",
+        "schoolName": "Carmel Convent High School, Durgapur",
+        "score": 1
+      },
+      "archivedCandidate": {
+        "id": "MOU-STEAM-2526-005",
+        "schoolName": "Carmel Convent High School, Durgapur",
+        "score": 1
+      },
+      "hasIntake": false,
+      "hasDispatch": false,
+      "ayHeuristic": "TWs row + active candidate MOU-STEAM-2627-029 is pre-dispatch (no Dispatch on file). Archived 2526 candidate exists; TWs delivery is likely the historical pre-system record.",
+      "reasoning": "Match archived 2526 MOU-STEAM-2526-005 (\"Carmel Convent High School, Durgapur\") jaccard 1.00. TWs row + active candidate MOU-STEAM-2627-029 is pre-dispatch (no Dispatch on file). Archived 2526 candidate exists; TWs delivery is likely the historical pre-system record."
+    },
+    {
+      "sheet": "TWs",
+      "rowNumber": 14,
+      "sr": 11,
+      "schoolRaw": "Carmel School, Durgapur",
+      "spocName": "Biswajit Das",
+      "spocPhone": "9330503644",
+      "totalStudents": 900,
+      "trainingModel": "GSL T",
+      "lineItems": [
+        {
+          "kind": "flat",
+          "skuName": "Tech A Sketch",
+          "quantity": 17
+        },
+        {
+          "kind": "flat",
+          "skuName": "Smart Lamp",
+          "quantity": 17
+        },
+        {
+          "kind": "flat",
+          "skuName": "Tinkrpython",
+          "quantity": 20
+        },
+        {
+          "kind": "flat",
+          "skuName": "TinkrBotScout",
+          "quantity": 20
+        },
+        {
+          "kind": "flat",
+          "skuName": "Tinkrexplorer",
+          "quantity": 20
+        }
+      ],
+      "dateRaised": null,
+      "deliveryStatus": "Delivered",
+      "recommendation": "AUTO-IMPORT",
+      "target": "archived",
+      "targetMouId": "MOU-STEAM-2526-006",
+      "targetCanonicalName": "Carmel School, Durgapur",
+      "confidence": "high",
+      "activeCandidate": {
+        "id": "MOU-STEAM-2627-030",
+        "schoolName": "Carmel School, Durgapur",
+        "score": 1
+      },
+      "archivedCandidate": {
+        "id": "MOU-STEAM-2526-006",
+        "schoolName": "Carmel School, Durgapur",
+        "score": 1
+      },
+      "hasIntake": false,
+      "hasDispatch": false,
+      "ayHeuristic": "TWs row + active candidate MOU-STEAM-2627-030 is pre-dispatch (no Dispatch on file). Archived 2526 candidate exists; TWs delivery is likely the historical pre-system record.",
+      "reasoning": "Match archived 2526 MOU-STEAM-2526-006 (\"Carmel School, Durgapur\") jaccard 1.00. TWs row + active candidate MOU-STEAM-2627-030 is pre-dispatch (no Dispatch on file). Archived 2526 candidate exists; TWs delivery is likely the historical pre-system record."
+    },
+    {
+      "sheet": "TWs",
+      "rowNumber": 15,
+      "sr": 12,
+      "schoolRaw": "St. Montfort's Senior Secondary School",
+      "spocName": "Shantanu Sir",
+      "spocPhone": "9874949692",
+      "totalStudents": 500,
+      "trainingModel": "GSL T",
+      "lineItems": [
+        {
+          "kind": "flat",
+          "skuName": "Launchpad",
+          "quantity": 5
+        },
+        {
+          "kind": "flat",
+          "skuName": "Tinkrpython",
+          "quantity": 5
+        },
+        {
+          "kind": "flat",
+          "skuName": "Tinkrexplorer",
+          "quantity": 10
+        }
+      ],
+      "dateRaised": null,
+      "deliveryStatus": "Delivered",
+      "recommendation": "AUTO-IMPORT",
+      "target": "archived",
+      "targetMouId": "MOU-STEAM-2526-018",
+      "targetCanonicalName": "St. Montfort's Sr. Secondary School, Baruipur",
+      "confidence": "medium",
+      "activeCandidate": {
+        "id": "MOU-STEAM-2627-031",
+        "schoolName": "St. Montfort's Sr. Secondary School, Baruipur",
+        "score": 0.5
+      },
+      "archivedCandidate": {
+        "id": "MOU-STEAM-2526-018",
+        "schoolName": "St. Montfort's Sr. Secondary School, Baruipur",
+        "score": 0.5
+      },
+      "hasIntake": false,
+      "hasDispatch": false,
+      "ayHeuristic": "TWs row + active candidate MOU-STEAM-2627-031 is pre-dispatch (no Dispatch on file). Archived 2526 candidate exists; TWs delivery is likely the historical pre-system record.",
+      "reasoning": "Match archived 2526 MOU-STEAM-2526-018 (\"St. Montfort's Sr. Secondary School, Baruipur\") jaccard 0.50. TWs row + active candidate MOU-STEAM-2627-031 is pre-dispatch (no Dispatch on file). Archived 2526 candidate exists; TWs delivery is likely the historical pre-system record."
+    },
+    {
+      "sheet": "TWs",
+      "rowNumber": 16,
+      "sr": 13,
+      "schoolRaw": "The Scottish Church Collegiate School",
+      "spocName": "Mr Soumik Sir/ Mr Anirban Sir",
+      "spocPhone": "8583823222/ 9830229651",
+      "totalStudents": 100,
+      "trainingModel": "GSL T",
+      "lineItems": [
+        {
+          "kind": "flat",
+          "skuName": "Pampered Plant",
+          "quantity": 10
+        },
+        {
+          "kind": "flat",
+          "skuName": "Push Pull Pin",
+          "quantity": 2
+        }
+      ],
+      "dateRaised": null,
+      "deliveryStatus": "Delivered",
+      "recommendation": "AUTO-IMPORT",
+      "target": "archived",
+      "targetMouId": "MOU-STEAM-2526-040",
+      "targetCanonicalName": "The Scottish Church Collegiate School",
+      "confidence": "high",
+      "activeCandidate": {
+        "id": "MOU-STEAM-2627-046",
+        "schoolName": "The Scottish Church Collegiate School",
+        "score": 1
+      },
+      "archivedCandidate": {
+        "id": "MOU-STEAM-2526-040",
+        "schoolName": "The Scottish Church Collegiate School",
+        "score": 1
+      },
+      "hasIntake": false,
+      "hasDispatch": false,
+      "ayHeuristic": "TWs row + active candidate MOU-STEAM-2627-046 is pre-dispatch (no Dispatch on file). Archived 2526 candidate exists; TWs delivery is likely the historical pre-system record.",
+      "reasoning": "Match archived 2526 MOU-STEAM-2526-040 (\"The Scottish Church Collegiate School\") jaccard 1.00. TWs row + active candidate MOU-STEAM-2627-046 is pre-dispatch (no Dispatch on file). Archived 2526 candidate exists; TWs delivery is likely the historical pre-system record."
+    },
+    {
+      "sheet": "TWs",
+      "rowNumber": 17,
+      "sr": 14,
+      "schoolRaw": "St. Johns High School",
+      "spocName": "Moni Da",
+      "spocPhone": "7595924428",
+      "totalStudents": 600,
+      "trainingModel": "GSL T",
+      "lineItems": [
+        {
+          "kind": "flat",
+          "skuName": "Tinkrsynth",
+          "quantity": 5
+        },
+        {
+          "kind": "flat",
+          "skuName": "Launchpad",
+          "quantity": 2
+        },
+        {
+          "kind": "flat",
+          "skuName": "Tinkrpython",
+          "quantity": 18
+        },
+        {
+          "kind": "flat",
+          "skuName": "Tinkrexplorer",
+          "quantity": 18
+        }
+      ],
+      "dateRaised": null,
+      "deliveryStatus": "Delivered",
+      "recommendation": "MANUAL-REVIEW",
+      "confidence": "medium",
+      "activeCandidate": {
+        "id": "MOU-STEAM-2627-047",
+        "schoolName": "St. Johns High School",
+        "score": 1
+      },
+      "archivedCandidate": {
+        "id": "MOU-STEAM-2526-002",
+        "schoolName": "Don Bosco Bandel",
+        "score": 0
+      },
+      "hasIntake": true,
+      "hasDispatch": false,
+      "ayHeuristic": "TWs row + active candidate MOU-STEAM-2627-047 is pre-dispatch and no archived 2526 counterpart. Either the TWs delivery is a current 2627 dispatch yet to be recorded (-> active) or a historical with no MOU record (-> quarantine D-009).",
+      "reasoning": "TWs row + active candidate MOU-STEAM-2627-047 is pre-dispatch and no archived 2526 counterpart. Either the TWs delivery is a current 2627 dispatch yet to be recorded (-> active) or a historical with no MOU record (-> quarantine D-009). Surface to Anish to pick between active MOU-STEAM-2627-047 (jaccard 1.00) and archived MOU-STEAM-2526-002 (jaccard 0.00)."
+    },
+    {
+      "sheet": "Cretile",
+      "rowNumber": 4,
+      "sr": 1,
+      "schoolRaw": "Kavyapta Global School",
+      "spocName": "Mr. Sudhir",
+      "spocPhone": "9934615123",
+      "totalStudents": 50,
+      "trainingModel": "TTT",
+      "lineItems": [
+        {
+          "kind": "per-grade",
+          "skuName": "Cretile Grade-band kit",
+          "gradeAllocations": [
+            {
+              "grade": 3,
+              "quantity": 10
+            },
+            {
+              "grade": 4,
+              "quantity": 20
+            },
+            {
+              "grade": 5,
+              "quantity": 20
+            }
+          ]
+        }
+      ],
+      "dateRaised": "2026-04-06T00:00:00",
+      "deliveryStatus": "Delivered",
+      "recommendation": "AUTO-IMPORT",
+      "target": "active",
+      "targetMouId": "MOU-STEAM-2627-009",
+      "targetCanonicalName": "Kavyapta Global School",
+      "confidence": "high (intake-confirmed)",
+      "activeCandidate": {
+        "id": "MOU-STEAM-2627-009",
+        "schoolName": "Kavyapta Global School",
+        "score": 1
+      },
+      "archivedCandidate": {
+        "id": "MOU-STEAM-2526-035",
+        "schoolName": "B I T Global School",
+        "score": 0.5
+      },
+      "hasIntake": true,
+      "hasDispatch": false,
+      "ayHeuristic": "Date Of Request Raised 2026-04-06 >= 2026-04 -> active 2627 cohort.",
+      "reasoning": "Match active 2627 MOU-STEAM-2627-009 (\"Kavyapta Global School\") jaccard 1.00. INTAKE-CONFIRMED on this MOU. Date Of Request Raised 2026-04-06 >= 2026-04 -> active 2627 cohort."
+    },
+    {
+      "sheet": "Cretile",
+      "rowNumber": 5,
+      "sr": 2,
+      "schoolRaw": "K.E. Carmel-Amtala",
+      "spocName": "Fr. Paul Thamarachery (Principal)",
+      "spocPhone": "8547673106",
+      "totalStudents": 50,
+      "trainingModel": "TTT",
+      "lineItems": [
+        {
+          "kind": "per-grade",
+          "skuName": "Cretile Grade-band kit",
+          "gradeAllocations": [
+            {
+              "grade": 4,
+              "quantity": 13
+            },
+            {
+              "grade": 5,
+              "quantity": 13
+            },
+            {
+              "grade": 9,
+              "quantity": 12
+            },
+            {
+              "grade": 10,
+              "quantity": 12
+            }
+          ]
+        }
+      ],
+      "dateRaised": "2026-04-06T00:00:00",
+      "deliveryStatus": "Delivered",
+      "recommendation": "AUTO-IMPORT",
+      "target": "active",
+      "targetMouId": "MOU-STEAM-2627-013",
+      "targetCanonicalName": "K.E Carmel School - Amtala",
+      "confidence": "high (intake-confirmed)",
+      "activeCandidate": {
+        "id": "MOU-STEAM-2627-013",
+        "schoolName": "K.E Carmel School - Amtala",
+        "score": 1
+      },
+      "archivedCandidate": {
+        "id": "MOU-STEAM-2526-006",
+        "schoolName": "Carmel School, Durgapur",
+        "score": 0.3333333333333333
+      },
+      "hasIntake": true,
+      "hasDispatch": false,
+      "ayHeuristic": "Date Of Request Raised 2026-04-06 >= 2026-04 -> active 2627 cohort.",
+      "reasoning": "Match active 2627 MOU-STEAM-2627-013 (\"K.E Carmel School - Amtala\") jaccard 1.00. INTAKE-CONFIRMED on this MOU. Date Of Request Raised 2026-04-06 >= 2026-04 -> active 2627 cohort."
+    },
+    {
+      "sheet": "Cretile",
+      "rowNumber": 6,
+      "sr": 3,
+      "schoolRaw": "St. Mary's Convent High School",
+      "spocName": "Sr. Gracelin(Mary P.J) Principal",
+      "spocPhone": "7217877323",
+      "totalStudents": 33,
+      "trainingModel": "TTT",
+      "lineItems": [
+        {
+          "kind": "per-grade",
+          "skuName": "Cretile Grade-band kit",
+          "gradeAllocations": [
+            {
+              "grade": 6,
+              "quantity": 11
+            },
+            {
+              "grade": 7,
+              "quantity": 11
+            },
+            {
+              "grade": 8,
+              "quantity": 11
+            }
+          ]
+        }
+      ],
+      "dateRaised": "2026-04-06T00:00:00",
+      "deliveryStatus": "Delivered",
+      "recommendation": "AUTO-IMPORT",
+      "target": "active",
+      "targetMouId": "MOU-STEAM-2627-007",
+      "targetCanonicalName": "St. Mary Convent School",
+      "confidence": "high (intake-confirmed)",
+      "activeCandidate": {
+        "id": "MOU-STEAM-2627-007",
+        "schoolName": "St. Mary Convent School",
+        "score": 1
+      },
+      "archivedCandidate": {
+        "id": "MOU-STEAM-2526-005",
+        "schoolName": "Carmel Convent High School, Durgapur",
+        "score": 0.25
+      },
+      "hasIntake": true,
+      "hasDispatch": false,
+      "ayHeuristic": "Date Of Request Raised 2026-04-06 >= 2026-04 -> active 2627 cohort.",
+      "reasoning": "Match active 2627 MOU-STEAM-2627-007 (\"St. Mary Convent School\") jaccard 1.00. INTAKE-CONFIRMED on this MOU. Date Of Request Raised 2026-04-06 >= 2026-04 -> active 2627 cohort."
+    },
+    {
+      "sheet": "Cretile",
+      "rowNumber": 7,
+      "sr": 4,
+      "schoolRaw": "Don Bosco School Krishnanagar",
+      "spocName": "Dominic Nicholas sir",
+      "spocPhone": "9932033447",
+      "totalStudents": 75,
+      "trainingModel": "TTT",
+      "lineItems": [
+        {
+          "kind": "per-grade",
+          "skuName": "Cretile Grade-band kit",
+          "gradeAllocations": [
+            {
+              "grade": 4,
+              "quantity": 15
+            },
+            {
+              "grade": 5,
+              "quantity": 15
+            },
+            {
+              "grade": 6,
+              "quantity": 15
+            },
+            {
+              "grade": 7,
+              "quantity": 15
+            },
+            {
+              "grade": 8,
+              "quantity": 15
+            }
+          ]
+        }
+      ],
+      "dateRaised": "2026-04-06T00:00:00",
+      "deliveryStatus": "Delivered",
+      "recommendation": "AUTO-IMPORT",
+      "target": "active",
+      "targetMouId": "MOU-STEAM-2627-027",
+      "targetCanonicalName": "Don Bosco Krishnanagar",
+      "confidence": "high (intake-confirmed)",
+      "activeCandidate": {
+        "id": "MOU-STEAM-2627-027",
+        "schoolName": "Don Bosco Krishnanagar",
+        "score": 1
+      },
+      "archivedCandidate": {
+        "id": "MOU-STEAM-2526-002",
+        "schoolName": "Don Bosco Bandel",
+        "score": 0.5
+      },
+      "hasIntake": true,
+      "hasDispatch": false,
+      "ayHeuristic": "Date Of Request Raised 2026-04-06 >= 2026-04 -> active 2627 cohort.",
+      "reasoning": "Match active 2627 MOU-STEAM-2627-027 (\"Don Bosco Krishnanagar\") jaccard 1.00. INTAKE-CONFIRMED on this MOU. Date Of Request Raised 2026-04-06 >= 2026-04 -> active 2627 cohort."
+    },
+    {
+      "sheet": "Cretile",
+      "rowNumber": 8,
+      "sr": 5,
+      "schoolRaw": "Dehi World Public School, Barasat",
+      "spocName": "Amitabha Sir",
+      "spocPhone": "9331084864",
+      "totalStudents": 56,
+      "trainingModel": "GSL-T",
+      "lineItems": [
+        {
+          "kind": "per-grade",
+          "skuName": "Cretile Grade-band kit",
+          "gradeAllocations": [
+            {
+              "grade": 1,
+              "quantity": 11
+            },
+            {
+              "grade": 2,
+              "quantity": 9
+            },
+            {
+              "grade": 3,
+              "quantity": 6
+            },
+            {
+              "grade": 4,
+              "quantity": 5
+            },
+            {
+              "grade": 5,
+              "quantity": 6
+            },
+            {
+              "grade": 6,
+              "quantity": 7
+            },
+            {
+              "grade": 7,
+              "quantity": 5
+            },
+            {
+              "grade": 8,
+              "quantity": 4
+            },
+            {
+              "grade": 9,
+              "quantity": 3
+            }
+          ]
+        }
+      ],
+      "dateRaised": "2026-04-06T00:00:00",
+      "deliveryStatus": "Delivered",
+      "recommendation": "AUTO-IMPORT",
+      "target": "active",
+      "targetMouId": "MOU-STEAM-2627-020",
+      "targetCanonicalName": "Delhi World Public School, Barasat",
+      "confidence": "medium",
+      "activeCandidate": {
+        "id": "MOU-STEAM-2627-020",
+        "schoolName": "Delhi World Public School, Barasat",
+        "score": 0.5
+      },
+      "archivedCandidate": {
+        "id": "MOU-YP-2526-018",
+        "schoolName": "Foundation World School",
+        "score": 0.25
+      },
+      "hasIntake": false,
+      "hasDispatch": false,
+      "ayHeuristic": "Date Of Request Raised 2026-04-06 >= 2026-04 -> active 2627 cohort.",
+      "reasoning": "Match active 2627 MOU-STEAM-2627-020 (\"Delhi World Public School, Barasat\") jaccard 0.50. Date Of Request Raised 2026-04-06 >= 2026-04 -> active 2627 cohort."
+    },
+    {
+      "sheet": "Cretile",
+      "rowNumber": 9,
+      "sr": 6,
+      "schoolRaw": "Blue Angels Global School",
+      "spocName": "Priyanka Maurya",
+      "spocPhone": "9953871747",
+      "totalStudents": 96,
+      "trainingModel": "TTT",
+      "lineItems": [
+        {
+          "kind": "per-grade",
+          "skuName": "Cretile Grade-band kit",
+          "gradeAllocations": [
+            {
+              "grade": 1,
+              "quantity": 9
+            },
+            {
+              "grade": 2,
+              "quantity": 9
+            },
+            {
+              "grade": 3,
+              "quantity": 11
+            },
+            {
+              "grade": 4,
+              "quantity": 11
+            },
+            {
+              "grade": 5,
+              "quantity": 9
+            },
+            {
+              "grade": 6,
+              "quantity": 9
+            },
+            {
+              "grade": 7,
+              "quantity": 11
+            },
+            {
+              "grade": 8,
+              "quantity": 9
+            },
+            {
+              "grade": 9,
+              "quantity": 9
+            },
+            {
+              "grade": 10,
+              "quantity": 9
+            }
+          ]
+        }
+      ],
+      "dateRaised": "2026-04-06T00:00:00",
+      "deliveryStatus": "Delivered",
+      "recommendation": "AUTO-IMPORT",
+      "target": "active",
+      "targetMouId": "MOU-STEAM-2627-015",
+      "targetCanonicalName": "Blue Angels Global School",
+      "confidence": "high (intake-confirmed)",
+      "activeCandidate": {
+        "id": "MOU-STEAM-2627-015",
+        "schoolName": "Blue Angels Global School",
+        "score": 1
+      },
+      "archivedCandidate": {
+        "id": "MOU-STEAM-2526-035",
+        "schoolName": "B I T Global School",
+        "score": 0.3333333333333333
+      },
+      "hasIntake": true,
+      "hasDispatch": false,
+      "ayHeuristic": "Date Of Request Raised 2026-04-06 >= 2026-04 -> active 2627 cohort.",
+      "reasoning": "Match active 2627 MOU-STEAM-2627-015 (\"Blue Angels Global School\") jaccard 1.00. INTAKE-CONFIRMED on this MOU. Date Of Request Raised 2026-04-06 >= 2026-04 -> active 2627 cohort."
+    },
+    {
+      "sheet": "Cretile",
+      "rowNumber": 10,
+      "sr": 7,
+      "schoolRaw": "K E Carmel School, Suri",
+      "spocName": "Fr. Varghese Thomas CMI",
+      "spocPhone": "7679820957",
+      "totalStudents": 80,
+      "trainingModel": "TTT",
+      "lineItems": [
+        {
+          "kind": "per-grade",
+          "skuName": "Cretile Grade-band kit",
+          "gradeAllocations": [
+            {
+              "grade": 1,
+              "quantity": 16
+            },
+            {
+              "grade": 2,
+              "quantity": 16
+            },
+            {
+              "grade": 3,
+              "quantity": 16
+            },
+            {
+              "grade": 4,
+              "quantity": 16
+            },
+            {
+              "grade": 5,
+              "quantity": 16
+            }
+          ]
+        }
+      ],
+      "dateRaised": "2026-04-15T00:00:00",
+      "deliveryStatus": "Delivery by 21st April",
+      "recommendation": "AUTO-IMPORT",
+      "target": "active",
+      "targetMouId": "MOU-STEAM-2627-014",
+      "targetCanonicalName": "K.E Carmel School - Suri",
+      "confidence": "high (intake-confirmed)",
+      "activeCandidate": {
+        "id": "MOU-STEAM-2627-014",
+        "schoolName": "K.E Carmel School - Suri",
+        "score": 1
+      },
+      "archivedCandidate": {
+        "id": "MOU-STEAM-2526-006",
+        "schoolName": "Carmel School, Durgapur",
+        "score": 0.3333333333333333
+      },
+      "hasIntake": true,
+      "hasDispatch": false,
+      "ayHeuristic": "Date Of Request Raised 2026-04-15 >= 2026-04 -> active 2627 cohort.",
+      "reasoning": "Match active 2627 MOU-STEAM-2627-014 (\"K.E Carmel School - Suri\") jaccard 1.00. INTAKE-CONFIRMED on this MOU. Date Of Request Raised 2026-04-15 >= 2026-04 -> active 2627 cohort."
+    },
+    {
+      "sheet": "Cretile",
+      "rowNumber": 11,
+      "sr": 8,
+      "schoolRaw": "B.D. Memorial Jr. School Bansdroni",
+      "spocName": "�Sheela Mehra",
+      "spocPhone": "�9831855335",
+      "totalStudents": 24,
+      "trainingModel": "GSL-T",
+      "lineItems": [
+        {
+          "kind": "per-grade",
+          "skuName": "Cretile Grade-band kit",
+          "gradeAllocations": [
+            {
+              "grade": 3,
+              "quantity": 8
+            },
+            {
+              "grade": 4,
+              "quantity": 8
+            },
+            {
+              "grade": 5,
+              "quantity": 8
+            }
+          ]
+        }
+      ],
+      "dateRaised": "2026-04-15T00:00:00",
+      "deliveryStatus": "Delivered",
+      "recommendation": "QUARANTINE",
+      "confidence": "high",
+      "activeCandidate": null,
+      "archivedCandidate": null,
+      "hasIntake": false,
+      "hasDispatch": false,
+      "ayHeuristic": "b.d. memorial branch",
+      "reasoning": "B.D. Memorial branch (Bansdroni / Golf Garden / Garia / Vijaygarh). Defer to D-002 in W4-DEFERRED-ITEMS.md; Anish resolves the chain question separately before this row can land."
+    },
+    {
+      "sheet": "Cretile",
+      "rowNumber": 12,
+      "sr": 9,
+      "schoolRaw": "B.D. Memorial Jr. School Golf Garden",
+      "spocName": "Sheela Mehra",
+      "spocPhone": "�9831855335",
+      "totalStudents": 18,
+      "trainingModel": "GSL-T",
+      "lineItems": [
+        {
+          "kind": "per-grade",
+          "skuName": "Cretile Grade-band kit",
+          "gradeAllocations": [
+            {
+              "grade": 3,
+              "quantity": 5
+            },
+            {
+              "grade": 4,
+              "quantity": 6
+            },
+            {
+              "grade": 5,
+              "quantity": 7
+            }
+          ]
+        }
+      ],
+      "dateRaised": "2026-04-15T00:00:00",
+      "deliveryStatus": "Delivered",
+      "recommendation": "QUARANTINE",
+      "confidence": "high",
+      "activeCandidate": null,
+      "archivedCandidate": null,
+      "hasIntake": false,
+      "hasDispatch": false,
+      "ayHeuristic": "b.d. memorial branch",
+      "reasoning": "B.D. Memorial branch (Bansdroni / Golf Garden / Garia / Vijaygarh). Defer to D-002 in W4-DEFERRED-ITEMS.md; Anish resolves the chain question separately before this row can land."
+    },
+    {
+      "sheet": "Cretile",
+      "rowNumber": 13,
+      "sr": 10,
+      "schoolRaw": "B.D. Memorial Jr. School Garia",
+      "spocName": "�Sheela Mehra",
+      "spocPhone": "�9831855335",
+      "totalStudents": 11,
+      "trainingModel": "GSL-T",
+      "lineItems": [
+        {
+          "kind": "per-grade",
+          "skuName": "Cretile Grade-band kit",
+          "gradeAllocations": [
+            {
+              "grade": 3,
+              "quantity": 5
+            },
+            {
+              "grade": 4,
+              "quantity": 6
+            }
+          ]
+        }
+      ],
+      "dateRaised": "2026-04-15T00:00:00",
+      "deliveryStatus": "IN transit",
+      "recommendation": "QUARANTINE",
+      "confidence": "high",
+      "activeCandidate": null,
+      "archivedCandidate": null,
+      "hasIntake": false,
+      "hasDispatch": false,
+      "ayHeuristic": "b.d. memorial branch",
+      "reasoning": "B.D. Memorial branch (Bansdroni / Golf Garden / Garia / Vijaygarh). Defer to D-002 in W4-DEFERRED-ITEMS.md; Anish resolves the chain question separately before this row can land."
+    },
+    {
+      "sheet": "Cretile",
+      "rowNumber": 14,
+      "sr": 11,
+      "schoolRaw": "B.D. Memorial Jr. School Vijaygarh",
+      "spocName": "Sheela Mehra",
+      "spocPhone": "�9831855335",
+      "totalStudents": 14,
+      "trainingModel": "GSL-T",
+      "lineItems": [
+        {
+          "kind": "per-grade",
+          "skuName": "Cretile Grade-band kit",
+          "gradeAllocations": [
+            {
+              "grade": 3,
+              "quantity": 6
+            },
+            {
+              "grade": 4,
+              "quantity": 4
+            },
+            {
+              "grade": 5,
+              "quantity": 4
+            }
+          ]
+        }
+      ],
+      "dateRaised": "2026-04-15T00:00:00",
+      "deliveryStatus": "IN transit",
+      "recommendation": "QUARANTINE",
+      "confidence": "high",
+      "activeCandidate": null,
+      "archivedCandidate": null,
+      "hasIntake": false,
+      "hasDispatch": false,
+      "ayHeuristic": "b.d. memorial branch",
+      "reasoning": "B.D. Memorial branch (Bansdroni / Golf Garden / Garia / Vijaygarh). Defer to D-002 in W4-DEFERRED-ITEMS.md; Anish resolves the chain question separately before this row can land."
+    },
+    {
+      "sheet": "Cretile",
+      "rowNumber": 15,
+      "sr": 12,
+      "schoolRaw": "Contai Public School",
+      "spocName": "D Das",
+      "spocPhone": "9932260028",
+      "totalStudents": 30,
+      "trainingModel": "GSL-T",
+      "lineItems": [
+        {
+          "kind": "per-grade",
+          "skuName": "Cretile Grade-band kit",
+          "gradeAllocations": [
+            {
+              "grade": 9,
+              "quantity": 30
+            }
+          ]
+        }
+      ],
+      "dateRaised": "2026-04-15T00:00:00",
+      "deliveryStatus": "Delivery by 25th April",
+      "recommendation": "MANUAL-REVIEW",
+      "confidence": "medium",
+      "activeCandidate": {
+        "id": "MOU-STEAM-2627-001",
+        "schoolName": "Mutahhary Public School Baroo",
+        "score": 0
+      },
+      "archivedCandidate": {
+        "id": "MOU-STEAM-2526-011",
+        "schoolName": "Contai Public School",
+        "score": 1
+      },
+      "hasIntake": true,
+      "hasDispatch": true,
+      "ayHeuristic": "Date Of Request Raised 2026-04-15 >= 2026-04 -> active 2627 cohort.",
+      "reasoning": "Date Of Request Raised 2026-04-15 >= 2026-04 -> active 2627 cohort. Surface to Anish to pick between active MOU-STEAM-2627-001 (jaccard 0.00) and archived MOU-STEAM-2526-011 (jaccard 1.00)."
+    },
+    {
+      "sheet": "Cretile",
+      "rowNumber": 16,
+      "sr": 13,
+      "schoolRaw": "Young Horizons School",
+      "spocName": "Arijita Biswas",
+      "spocPhone": "9330546452",
+      "totalStudents": 73,
+      "trainingModel": "GSL-T",
+      "lineItems": [
+        {
+          "kind": "per-grade",
+          "skuName": "Cretile Grade-band kit",
+          "gradeAllocations": [
+            {
+              "grade": 4,
+              "quantity": 15
+            },
+            {
+              "grade": 5,
+              "quantity": 15
+            },
+            {
+              "grade": 6,
+              "quantity": 12
+            },
+            {
+              "grade": 7,
+              "quantity": 10
+            },
+            {
+              "grade": 8,
+              "quantity": 11
+            },
+            {
+              "grade": 9,
+              "quantity": 10
+            }
+          ]
+        }
+      ],
+      "dateRaised": "2026-04-15T00:00:00",
+      "deliveryStatus": "Delivered",
+      "recommendation": "AUTO-IMPORT",
+      "target": "active",
+      "targetMouId": "MOU-STEAM-2627-050",
+      "targetCanonicalName": "Young Horizons School",
+      "confidence": "high (intake-confirmed)",
+      "activeCandidate": {
+        "id": "MOU-STEAM-2627-050",
+        "schoolName": "Young Horizons School",
+        "score": 1
+      },
+      "archivedCandidate": {
+        "id": "MOU-STEAM-2526-012",
+        "schoolName": "Young Horizons School",
+        "score": 1
+      },
+      "hasIntake": true,
+      "hasDispatch": false,
+      "ayHeuristic": "Date Of Request Raised 2026-04-15 >= 2026-04 -> active 2627 cohort.",
+      "reasoning": "Match active 2627 MOU-STEAM-2627-050 (\"Young Horizons School\") jaccard 1.00. INTAKE-CONFIRMED on this MOU. Date Of Request Raised 2026-04-15 >= 2026-04 -> active 2627 cohort."
+    },
+    {
+      "sheet": "Cretile",
+      "rowNumber": 17,
+      "sr": 14,
+      "schoolRaw": "St. Johns High School",
+      "spocName": "Moni Da",
+      "spocPhone": "7595924428",
+      "totalStudents": 44,
+      "trainingModel": "GSL-T",
+      "lineItems": [
+        {
+          "kind": "per-grade",
+          "skuName": "Cretile Grade-band kit",
+          "gradeAllocations": [
+            {
+              "grade": 1,
+              "quantity": 12
+            },
+            {
+              "grade": 2,
+              "quantity": 10
+            },
+            {
+              "grade": 3,
+              "quantity": 12
+            },
+            {
+              "grade": 4,
+              "quantity": 10
+            }
+          ]
+        }
+      ],
+      "dateRaised": "2026-04-15T00:00:00",
+      "deliveryStatus": "Delivered",
+      "recommendation": "AUTO-IMPORT",
+      "target": "active",
+      "targetMouId": "MOU-STEAM-2627-047",
+      "targetCanonicalName": "St. Johns High School",
+      "confidence": "high (intake-confirmed)",
+      "activeCandidate": {
+        "id": "MOU-STEAM-2627-047",
+        "schoolName": "St. Johns High School",
+        "score": 1
+      },
+      "archivedCandidate": {
+        "id": "MOU-STEAM-2526-002",
+        "schoolName": "Don Bosco Bandel",
+        "score": 0
+      },
+      "hasIntake": true,
+      "hasDispatch": false,
+      "ayHeuristic": "Date Of Request Raised 2026-04-15 >= 2026-04 -> active 2627 cohort.",
+      "reasoning": "Match active 2627 MOU-STEAM-2627-047 (\"St. Johns High School\") jaccard 1.00. INTAKE-CONFIRMED on this MOU. Date Of Request Raised 2026-04-15 >= 2026-04 -> active 2627 cohort."
+    }
+  ]
+}
