@@ -111,6 +111,24 @@ export type AuditAction =
   // + new MOU id; mirrored on both the departing and arriving
   // parent MOU's auditLog so the audit trail follows the record.
   | 'intake-record-corrected-w4c7'
+  // W4-D.1: DispatchRequest (Sales-initiated) lifecycle. The Sales
+  // submitter creates a request via /dispatch/request; Ops reviews
+  // via /admin/dispatch-requests and either approves (creating a
+  // Dispatch via the conversion action), rejects (with rejection
+  // reason), or the requester cancels before review. The
+  // 'dispatch-request-converted' entry mirrors on both the
+  // DispatchRequest auditLog and the resulting Dispatch's auditLog
+  // so the trail crosses the entity boundary cleanly.
+  | 'dispatch-request-created'
+  | 'dispatch-request-approved'
+  | 'dispatch-request-rejected'
+  | 'dispatch-request-cancelled'
+  | 'dispatch-request-converted'
+  // W4-D.1: emitted when an Ops user edits the lineItems on a
+  // Dispatch (or a DispatchRequest pre-conversion). before / after
+  // capture the lineItems array. UI exposed via the Ops conversion
+  // surface at /mous/[id]/dispatch.
+  | 'dispatch-line-item-edited'
 
 export interface AuditEntry {
   timestamp: string                // ISO
@@ -490,6 +508,7 @@ export interface MagicLinkToken {
 
 // ============================================================================
 // Dispatch (Q-J; P2 exception via overrideEvent)
+// W4-D.1: multi-SKU lineItems + DispatchRequest origin (Sales-initiated flow)
 // ============================================================================
 
 export type DispatchStage =
@@ -508,9 +527,41 @@ export interface DispatchOverrideEvent {
   acknowledgedAt: string | null
 }
 
+/**
+ * W4-D.1 line item discriminated union. TinkRworks-style flat dispatches
+ * (single quantity per SKU) vs Cretile-style per-grade allocations
+ * (quantity broken down by grade band). The discriminator `kind` lets
+ * TypeScript narrow correctly at every consumer; the Mastersheet
+ * Delivery-Tracker TWs sheet seeds 'flat' rows and the Cretile sheet
+ * seeds 'per-grade' rows.
+ */
+export type DispatchLineItem =
+  | { kind: 'flat'; skuName: string; quantity: number }
+  | {
+      kind: 'per-grade'
+      skuName: string
+      gradeAllocations: { grade: number; quantity: number }[]
+    }
+
+/**
+ * W4-D.1 Dispatch origin discriminator.
+ *
+ * - 'sales-request': Dispatch was created via /admin/dispatch-requests
+ *    approve+convert from a Sales-submitted DispatchRequest. requestId
+ *    is set.
+ * - 'ops-direct': Dispatch was created directly by Ops via
+ *    /mous/[id]/dispatch (the historical raiseDispatch lib path).
+ *    requestId is null.
+ * - 'pre-w4d': Pre-W4-D synthetic seed records migrated by the W4-D.1
+ *    schema change. lineItems carries a single placeholder line; do
+ *    not treat as authoritative product detail.
+ */
+export type DispatchOrigin = 'sales-request' | 'ops-direct' | 'pre-w4d'
+
 export interface Dispatch {
   id: string
-  mouId: string
+  mouId: string | null             // null permitted for P2 override pilots
+                                   // before MOU is formally signed (DIS-002 pattern)
   schoolId: string
   installmentSeq: number
   stage: DispatchStage
@@ -521,6 +572,51 @@ export interface Dispatch {
   deliveredAt: string | null
   acknowledgedAt: string | null
   acknowledgementUrl: string | null  // signed handover form link
+  notes: string | null
+  // W4-D.1 multi-SKU + origin tracking
+  lineItems: DispatchLineItem[]
+  requestId: string | null         // FK to DispatchRequest when raisedFrom='sales-request'
+  raisedBy: string                 // User.id; 'system-pre-w4d' for migrated seeds
+  raisedFrom: DispatchOrigin
+  auditLog: AuditEntry[]
+}
+
+/**
+ * W4-D.1 DispatchRequest (Sales-initiated; Ops-approved).
+ *
+ * Workflow: Sales submits via /dispatch/request; the request lands in
+ * status='pending-approval'. Ops reviews on /admin/dispatch-requests
+ * and either approves (transitions to 'approved' and creates a Dispatch
+ * with requestId set + raisedFrom='sales-request'), rejects (transitions
+ * to 'rejected' with rejectionReason), or the requester cancels prior
+ * to review (status='cancelled'). conversionDispatchId points at the
+ * resulting Dispatch when status='approved'.
+ *
+ * Permission gate at write-time: Sales (SalesHead, SalesRep) can
+ * create + cancel their own requests; Ops (Admin, OpsHead) approve
+ * or reject any request. Cross-validation rules (active-cohort MOU,
+ * intake completion, etc.) live in the lib mutator added in W4-D.2.
+ */
+export type DispatchRequestStatus =
+  | 'pending-approval'
+  | 'approved'
+  | 'rejected'
+  | 'cancelled'
+
+export interface DispatchRequest {
+  id: string                       // 'DR-...'
+  mouId: string                    // active cohort only; validated at write
+  schoolId: string                 // denormalised for fast list rendering
+  requestedBy: string              // User.id (Sales)
+  requestedAt: string              // ISO
+  requestReason: string            // free-text intent (pilot kickoff, post-payment, etc.)
+  installmentSeq: number           // which instalment this dispatch covers
+  lineItems: DispatchLineItem[]
+  status: DispatchRequestStatus
+  conversionDispatchId: string | null  // FK to Dispatch when status='approved'
+  rejectionReason: string | null       // populated when status='rejected'
+  reviewedBy: string | null            // Ops User.id (approve / reject) or requester (cancel)
+  reviewedAt: string | null
   notes: string | null
   auditLog: AuditEntry[]
 }
@@ -736,6 +832,7 @@ export type PendingUpdateEntity =
   | 'feedback'
   | 'magicLinkToken'
   | 'dispatch'
+  | 'dispatchRequest'              // W4-D.1
   | 'mouImportReview'
   | 'piCounter'
   | 'payment'

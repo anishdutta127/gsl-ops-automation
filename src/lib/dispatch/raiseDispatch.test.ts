@@ -111,7 +111,10 @@ function dispatch(overrides: Partial<Dispatch> = {}): Dispatch {
     installmentSeq: 1, stage: 'pending', installment1Paid: false,
     overrideEvent: null, poRaisedAt: null, dispatchedAt: null,
     deliveredAt: null, acknowledgedAt: null, acknowledgementUrl: null,
-    notes: null, auditLog: [],
+    notes: null,
+    lineItems: [{ kind: 'flat', skuName: 'Test SKU', quantity: 1 }],
+    requestId: null, raisedBy: 'system-test', raisedFrom: 'ops-direct',
+    auditLog: [],
     ...overrides,
   }
 }

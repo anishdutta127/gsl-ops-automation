@@ -167,7 +167,10 @@ describe('deriveStage', () => {
       stage: 'dispatched', installment1Paid: true, overrideEvent: null,
       poRaisedAt: '2026-05-15', dispatchedAt: '2026-05-16',
       deliveredAt: null, acknowledgedAt: null,
-      acknowledgementUrl: null, notes: null, auditLog: [],
+      acknowledgementUrl: null, notes: null,
+      lineItems: [{ kind: 'flat', skuName: 'Test SKU', quantity: 1 }],
+      requestId: null, raisedBy: 'system-test', raisedFrom: 'ops-direct',
+      auditLog: [],
     }
     expect(deriveStage(m, { ...emptyDeps, payments: [piPayment], dispatches: [dispatch] })).toBe('delivery-acknowledged')
   })
@@ -189,7 +192,10 @@ describe('deriveStage', () => {
       stage: 'acknowledged', installment1Paid: true, overrideEvent: null,
       poRaisedAt: '2026-05-15', dispatchedAt: '2026-05-16',
       deliveredAt: '2026-05-20', acknowledgedAt: '2026-05-22',
-      acknowledgementUrl: 'https://x', notes: null, auditLog: [],
+      acknowledgementUrl: 'https://x', notes: null,
+      lineItems: [{ kind: 'flat', skuName: 'Test SKU', quantity: 1 }],
+      requestId: null, raisedBy: 'system-test', raisedFrom: 'ops-direct',
+      auditLog: [],
     }
     const fb: Feedback = {
       id: 'F1', schoolId: 'SCH-T', mouId: 'M9', installmentSeq: 1,

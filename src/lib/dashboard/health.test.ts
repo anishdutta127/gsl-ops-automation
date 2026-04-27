@@ -61,6 +61,10 @@ function dispatch(overrides: Partial<Dispatch> = {}): Dispatch {
     acknowledgedAt: null,
     acknowledgementUrl: null,
     notes: null,
+    lineItems: [{ kind: 'flat', skuName: 'Test SKU', quantity: 1 }],
+    requestId: null,
+    raisedBy: 'system-test',
+    raisedFrom: 'ops-direct',
     auditLog: [],
     ...overrides,
   }

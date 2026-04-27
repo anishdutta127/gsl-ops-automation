@@ -13,6 +13,12 @@
     "acknowledgedAt": null,
     "acknowledgementUrl": null,
     "notes": null,
+    "lineItems": [
+      { "kind": "flat", "skuName": "Legacy single-line item (pre-W4-D)", "quantity": 1 }
+    ],
+    "requestId": null,
+    "raisedBy": "system-pre-w4d",
+    "raisedFrom": "pre-w4d",
     "auditLog": []
   },
   {
@@ -35,12 +41,20 @@
     "acknowledgedAt": null,
     "acknowledgementUrl": null,
     "notes": "P2 override exercised; ESC-001 raised in parallel.",
+    "lineItems": [
+      { "kind": "flat", "skuName": "Legacy single-line item (pre-W4-D)", "quantity": 1 }
+    ],
+    "requestId": null,
+    "raisedBy": "ameet.z",
+    "raisedFrom": "pre-w4d",
     "auditLog": [
       {
         "timestamp": "2026-04-23T16:25:00Z",
         "user": "ameet.z",
         "action": "p2-override",
-        "before": { "overrideEvent": null },
+        "before": {
+          "overrideEvent": null
+        },
         "after": {
           "overriddenBy": "ameet.z",
           "overriddenAt": "2026-04-23T16:25:00Z"
@@ -63,6 +77,12 @@
     "acknowledgedAt": null,
     "acknowledgementUrl": null,
     "notes": "Chain MOU dispatch: split across 3 campuses (Asansol, Durgapur, Burdwan).",
+    "lineItems": [
+      { "kind": "flat", "skuName": "Legacy single-line item (pre-W4-D)", "quantity": 1 }
+    ],
+    "requestId": null,
+    "raisedBy": "system-pre-w4d",
+    "raisedFrom": "pre-w4d",
     "auditLog": []
   },
   {
@@ -79,6 +99,12 @@
     "acknowledgedAt": "2026-04-09T14:00:00Z",
     "acknowledgementUrl": "https://example.test/handover/MOU-STEAM-2627-003-i1.pdf",
     "notes": null,
+    "lineItems": [
+      { "kind": "flat", "skuName": "Legacy single-line item (pre-W4-D)", "quantity": 1 }
+    ],
+    "requestId": null,
+    "raisedBy": "system-pre-w4d",
+    "raisedFrom": "pre-w4d",
     "auditLog": []
   },
   {
@@ -95,6 +121,12 @@
     "acknowledgedAt": null,
     "acknowledgementUrl": null,
     "notes": "Awaiting Installment-1 payment before PO can be raised.",
+    "lineItems": [
+      { "kind": "flat", "skuName": "Legacy single-line item (pre-W4-D)", "quantity": 1 }
+    ],
+    "requestId": null,
+    "raisedBy": "system-pre-w4d",
+    "raisedFrom": "pre-w4d",
     "auditLog": []
   }
 ]

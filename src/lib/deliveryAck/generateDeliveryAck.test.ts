@@ -79,7 +79,10 @@ function dispatch(stage: Dispatch['stage'] = 'po-raised'): Dispatch {
     installmentSeq: 1, stage, installment1Paid: true,
     overrideEvent: null, poRaisedAt: FIXED_TS, dispatchedAt: null,
     deliveredAt: null, acknowledgedAt: null, acknowledgementUrl: null,
-    notes: null, auditLog: [],
+    notes: null,
+    lineItems: [{ kind: 'flat', skuName: 'Test SKU', quantity: 1 }],
+    requestId: null, raisedBy: 'system-test', raisedFrom: 'ops-direct',
+    auditLog: [],
   }
 }
 

@@ -45,6 +45,7 @@ import PizZip from 'pizzip'
 import type {
   AuditEntry,
   Dispatch,
+  DispatchLineItem,
   DispatchStage,
   MOU,
   Payment,
@@ -252,6 +253,11 @@ export async function raiseDispatch(
   const payment = deps.payments.find((p) => p.id === paymentId)
   const installment1Paid = payment ? PAID_STATUSES.has(payment.status) : false
 
+  const lineItemsForFreshDispatch: DispatchLineItem[] = (() => {
+    const { items } = buildKitItems(mou)
+    return items.map((k) => ({ kind: 'flat', skuName: k.description, quantity: k.quantity }))
+  })()
+
   const baseDispatch: Dispatch = existing ?? {
     id: dispatchId,
     mouId: args.mouId,
@@ -266,6 +272,10 @@ export async function raiseDispatch(
     acknowledgedAt: null,
     acknowledgementUrl: null,
     notes: null,
+    lineItems: lineItemsForFreshDispatch,
+    requestId: null,
+    raisedBy: args.raisedBy,
+    raisedFrom: 'ops-direct',
     auditLog: [],
   }
 

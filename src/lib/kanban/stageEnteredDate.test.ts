@@ -101,7 +101,10 @@ describe('stageEnteredDate', () => {
       stage: 'dispatched', installment1Paid: true, overrideEvent: null,
       poRaisedAt: '2026-06-20', dispatchedAt: '2026-06-22',
       deliveredAt: null, acknowledgedAt: null,
-      acknowledgementUrl: null, notes: null, auditLog: [],
+      acknowledgementUrl: null, notes: null,
+      lineItems: [{ kind: 'flat', skuName: 'Test SKU', quantity: 1 }],
+      requestId: null, raisedBy: 'system-test', raisedFrom: 'ops-direct',
+      auditLog: [],
     }
     expect(stageEnteredDate(m, { ...emptyDeps, dispatches: [dispatch] }, 'delivery-acknowledged')).toBe('2026-06-22')
   })
@@ -113,7 +116,10 @@ describe('stageEnteredDate', () => {
       stage: 'acknowledged', installment1Paid: true, overrideEvent: null,
       poRaisedAt: '2026-06-20', dispatchedAt: '2026-06-22',
       deliveredAt: '2026-06-25', acknowledgedAt: '2026-06-28',
-      acknowledgementUrl: 'https://x', notes: null, auditLog: [],
+      acknowledgementUrl: 'https://x', notes: null,
+      lineItems: [{ kind: 'flat', skuName: 'Test SKU', quantity: 1 }],
+      requestId: null, raisedBy: 'system-test', raisedFrom: 'ops-direct',
+      auditLog: [],
     }
     expect(stageEnteredDate(m, { ...emptyDeps, dispatches: [ack] }, 'feedback-submitted')).toBe('2026-06-28')
   })
