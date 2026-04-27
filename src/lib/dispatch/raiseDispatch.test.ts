@@ -44,7 +44,11 @@ function buildFixtureDocx(): Uint8Array {
 <w:body>
 <w:p><w:r><w:t>Dispatch {DISPATCH_NUMBER} dated {DISPATCH_DATE}</w:t></w:r></w:p>
 <w:p><w:r><w:t>Ship to: {SCHOOL_NAME}</w:t></w:r></w:p>
-<w:p><w:r><w:t>Total kits: {TOTAL_KITS}</w:t></w:r></w:p>
+<w:p><w:r><w:t>{#hasFlatItems}FLAT-SECTION{/hasFlatItems}</w:t></w:r></w:p>
+<w:p><w:r><w:t>{#flatItems}{skuName}=={quantity};{/flatItems}</w:t></w:r></w:p>
+<w:p><w:r><w:t>{#hasPerGradeItems}PER-GRADE-SECTION{/hasPerGradeItems}</w:t></w:r></w:p>
+<w:p><w:r><w:t>{#perGradeRows}{skuName}/G{grade}={quantity};{/perGradeRows}</w:t></w:r></w:p>
+<w:p><w:r><w:t>Total quantity: {TOTAL_QUANTITY}</w:t></w:r></w:p>
 </w:body>
 </w:document>`)
   return zip.generate({ type: 'uint8array' })
@@ -411,5 +415,155 @@ describe('raiseDispatch', () => {
     const entry = updatedMou.auditLog.at(-1)!
     expect(entry.action).toBe('dispatch-raised')
     expect(entry.after).toMatchObject({ dispatchId: 'DSP-MOU-X-i1' })
+  })
+})
+
+// ----------------------------------------------------------------------------
+// W4-D.5: docx-bag conditional sections (flat / per-grade / mixed)
+// ----------------------------------------------------------------------------
+//
+// These tests verify the .docx output rendered by docxtemplater with our
+// fixture template. The fixture's word/document.xml carries marker strings
+// (FLAT-SECTION, PER-GRADE-SECTION) inside the {#hasFlatItems} /
+// {#hasPerGradeItems} blocks so we can grep them out of the generated zip.
+
+import Docxtemplater from 'docxtemplater'
+import PizZipImpl from 'pizzip'
+
+function renderXmlFromBytes(bytes: Uint8Array): string {
+  const z = new PizZipImpl(bytes)
+  return z.file('word/document.xml')!.asText()
+}
+
+function dispatchWithLineItems(
+  lineItems: Dispatch['lineItems'],
+): Dispatch {
+  return {
+    id: 'DSP-MOU-X-i1', mouId: 'MOU-X', schoolId: 'SCH-X',
+    installmentSeq: 1, stage: 'po-raised', installment1Paid: true,
+    overrideEvent: null, poRaisedAt: FIXED_TS, dispatchedAt: null,
+    deliveredAt: null, acknowledgedAt: null, acknowledgementUrl: null,
+    notes: null,
+    lineItems,
+    requestId: null, raisedBy: 'system-test', raisedFrom: 'ops-direct',
+    auditLog: [],
+  }
+}
+
+describe('raiseDispatch W4-D.5 docx shapes', () => {
+  // We exercise the bag via the idempotent re-render path: an existing
+  // Dispatch with stage past 'pending' renders the docx without any state
+  // mutation, so the test isolates the bag -> template rendering surface.
+  it('shape (i): flat-only renders the flat section + skuName/quantity rows', async () => {
+    const u = user('OpsHead', 'misba.m')
+    const existing = dispatchWithLineItems([
+      { kind: 'flat', skuName: 'TWs Pampered Plant', quantity: 30 },
+      { kind: 'flat', skuName: 'TWs Smart Lamp', quantity: 30 },
+    ])
+    const { deps } = makeDeps({
+      mous: [mou()], schools: [school()], users: [u],
+      dispatches: [existing], payments: [payment('Paid')],
+    })
+    const result = await raiseDispatch(
+      { mouId: 'MOU-X', installmentSeq: 1, raisedBy: 'misba.m' },
+      deps,
+    )
+    expect(result.ok).toBe(true)
+    if (!result.ok) return
+    const xml = renderXmlFromBytes(result.docxBytes)
+    expect(xml).toContain('FLAT-SECTION')
+    expect(xml).toContain('TWs Pampered Plant==30;')
+    expect(xml).toContain('TWs Smart Lamp==30;')
+    expect(xml).not.toContain('PER-GRADE-SECTION')
+    expect(xml).toContain('Total quantity: 60')
+  })
+
+  it('shape (ii): per-grade-only renders the per-grade section + (sku, grade) rows', async () => {
+    const u = user('OpsHead', 'misba.m')
+    const existing = dispatchWithLineItems([
+      {
+        kind: 'per-grade',
+        skuName: 'Cretile Grade-band kit',
+        gradeAllocations: [
+          { grade: 1, quantity: 25 },
+          { grade: 2, quantity: 25 },
+        ],
+      },
+    ])
+    const { deps } = makeDeps({
+      mous: [mou()], schools: [school()], users: [u],
+      dispatches: [existing], payments: [payment('Paid')],
+    })
+    const result = await raiseDispatch(
+      { mouId: 'MOU-X', installmentSeq: 1, raisedBy: 'misba.m' },
+      deps,
+    )
+    expect(result.ok).toBe(true)
+    if (!result.ok) return
+    const xml = renderXmlFromBytes(result.docxBytes)
+    expect(xml).not.toContain('FLAT-SECTION')
+    expect(xml).toContain('PER-GRADE-SECTION')
+    expect(xml).toContain('Cretile Grade-band kit/G1=25;')
+    expect(xml).toContain('Cretile Grade-band kit/G2=25;')
+    expect(xml).toContain('Total quantity: 50')
+  })
+
+  it('shape (iii): mixed renders BOTH sections + correct row sets in each', async () => {
+    const u = user('OpsHead', 'misba.m')
+    const existing = dispatchWithLineItems([
+      { kind: 'flat', skuName: 'TWs Pampered Plant', quantity: 50 },
+      {
+        kind: 'per-grade',
+        skuName: 'Cretile Grade-band kit',
+        gradeAllocations: [
+          { grade: 3, quantity: 20 },
+          { grade: 4, quantity: 30 },
+        ],
+      },
+    ])
+    const { deps } = makeDeps({
+      mous: [mou()], schools: [school()], users: [u],
+      dispatches: [existing], payments: [payment('Paid')],
+    })
+    const result = await raiseDispatch(
+      { mouId: 'MOU-X', installmentSeq: 1, raisedBy: 'misba.m' },
+      deps,
+    )
+    expect(result.ok).toBe(true)
+    if (!result.ok) return
+    const xml = renderXmlFromBytes(result.docxBytes)
+    expect(xml).toContain('FLAT-SECTION')
+    expect(xml).toContain('PER-GRADE-SECTION')
+    expect(xml).toContain('TWs Pampered Plant==50;')
+    expect(xml).toContain('Cretile Grade-band kit/G3=20;')
+    expect(xml).toContain('Cretile Grade-band kit/G4=30;')
+    // Total = 50 + 20 + 30 = 100
+    expect(xml).toContain('Total quantity: 100')
+  })
+
+  it('zero line items: neither section renders, total quantity is 0', async () => {
+    const u = user('OpsHead', 'misba.m')
+    const existing = dispatchWithLineItems([])
+    const { deps } = makeDeps({
+      mous: [mou()], schools: [school()], users: [u],
+      dispatches: [existing], payments: [payment('Paid')],
+    })
+    const result = await raiseDispatch(
+      { mouId: 'MOU-X', installmentSeq: 1, raisedBy: 'misba.m' },
+      deps,
+    )
+    expect(result.ok).toBe(true)
+    if (!result.ok) return
+    const xml = renderXmlFromBytes(result.docxBytes)
+    expect(xml).not.toContain('FLAT-SECTION')
+    expect(xml).not.toContain('PER-GRADE-SECTION')
+    expect(xml).toContain('Total quantity: 0')
+  })
+
+  // Defensive guard: ensures Docxtemplater is consistent with our pizzip
+  // version so the import shape stays valid over time.
+  it('Docxtemplater + PizZip are importable here', () => {
+    expect(typeof Docxtemplater).toBe('function')
+    expect(typeof PizZipImpl).toBe('function')
   })
 })

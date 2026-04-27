@@ -357,10 +357,39 @@ interface PlaceholderBagInput {
   ts: string
 }
 
+/**
+ * W4-D.5 docx bag builder: derives the conditional-section data from
+ * dispatch.lineItems. Three rendering shapes:
+ *   (i)   flat-only      hasFlatItems true,  hasPerGradeItems false
+ *   (ii)  per-grade-only hasFlatItems false, hasPerGradeItems true
+ *   (iii) mixed          both true; both sections render
+ *
+ * perGradeRows flattens the discriminated union so the .docx template
+ * can render one table row per (sku, grade) pair via a single loop.
+ */
 function buildPlaceholderBag(input: PlaceholderBagInput): Record<string, unknown> {
   const { dispatch, mou, school, company, raisedByName, ts } = input
   const totalInsts = totalInstallments(mou.paymentSchedule)
-  const { items, total } = buildKitItems(mou)
+
+  const flatItems: Array<{ skuName: string; quantity: string }> = []
+  const perGradeRows: Array<{ skuName: string; grade: string; quantity: string }> = []
+  let totalQuantity = 0
+  for (const item of dispatch.lineItems) {
+    if (item.kind === 'flat') {
+      flatItems.push({ skuName: item.skuName, quantity: String(item.quantity) })
+      totalQuantity += item.quantity
+    } else {
+      for (const a of item.gradeAllocations) {
+        perGradeRows.push({
+          skuName: item.skuName,
+          grade: String(a.grade),
+          quantity: String(a.quantity),
+        })
+        totalQuantity += a.quantity
+      }
+    }
+  }
+
   return {
     DISPATCH_NUMBER: dispatch.id,
     DISPATCH_DATE: formatDate(ts),
@@ -377,12 +406,11 @@ function buildPlaceholderBag(input: PlaceholderBagInput): Record<string, unknown
     PROGRAMME: mou.programme,
     PROGRAMME_SUB_TYPE: mou.programmeSubType ?? '',
     INSTALLMENT_LABEL: `Instalment ${dispatch.installmentSeq} of ${totalInsts}`,
-    KIT_ITEMS: items.map((k) => ({
-      description: k.description,
-      quantity: String(k.quantity),
-      grades: k.grades,
-    })),
-    TOTAL_KITS: String(total),
+    flatItems,
+    perGradeRows,
+    hasFlatItems: flatItems.length > 0,
+    hasPerGradeItems: perGradeRows.length > 0,
+    TOTAL_QUANTITY: String(totalQuantity),
     NOTES: buildDispatchNotes(dispatch),
     AUTHORISED_BY: raisedByName,
   }

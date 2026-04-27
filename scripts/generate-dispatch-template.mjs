@@ -5,20 +5,27 @@
  * docxtemplater {TOKEN} placeholders declared in
  * src/lib/dispatch/templates.ts.
  *
+ * W4-D.5 redesign: single template renders three shapes via
+ * conditional sections.
+ *
+ *   (i)   Flat-only           hasFlatItems=true,  hasPerGradeItems=false
+ *   (ii)  Per-grade-only      hasFlatItems=false, hasPerGradeItems=true
+ *   (iii) Mixed (flat + per-grade)  both true; both sections render
+ *
+ * Conditional sections use docxtemplater's {#flag}...{/flag} block
+ * markers placed on standalone paragraphs. Inside each section:
+ *   - a section header paragraph
+ *   - a kit-items table whose data row loops via
+ *     {#flatItems}...{/flatItems} (or {#perGradeRows}...{/perGradeRows})
+ *
  * Run: `node scripts/generate-dispatch-template.mjs`
  *
- * Layout follows standard Indian dispatch / consignment note
- * conventions: header (consignor / GSL), dispatch metadata, ship-to
- * (consignee / school), kit items table with docxtemplater loop,
- * notes block (pulls in P2 override reason when applicable),
- * authorisation block.
+ * Iterate by editing this file and re-running. The .docx is committed
+ * to source control alongside this script so the binary state and the
+ * generator are always in sync.
  *
- * Iterate by editing this file and re-running. The .docx is
- * committed to source control alongside this script so the binary
- * state and the generator are always in sync.
- *
- * Delimiter: docxtemplater default (single curly braces). Loop
- * syntax: {#KIT_ITEMS}...{/KIT_ITEMS}.
+ * Delimiter: docxtemplater default (single curly braces). Loop and
+ * section syntax: {#X}...{/X}.
  */
 
 import { writeFile, mkdir } from 'node:fs/promises'
@@ -114,7 +121,10 @@ const shipTo = [
   para([text('')]),
 ]
 
-const kitItemsTable = new Table({
+// Conditional flat-items section: opens with {#hasFlatItems}, closes
+// with {/hasFlatItems}. Inside: section header + kit-items table whose
+// data row loops via {#flatItems}...{/flatItems}.
+const flatItemsTable = new Table({
   width: { size: 100, type: WidthType.PERCENTAGE },
   borders: {
     top: { style: BorderStyle.SINGLE, size: 6, color: '475569' },
@@ -128,30 +138,73 @@ const kitItemsTable = new Table({
     new TableRow({
       tableHeader: true,
       children: [
-        cell(para([text('Description', { bold: true })]), { width: 60, shaded: true }),
-        cell(para([text('Quantity', { bold: true })], { alignment: AlignmentType.RIGHT }), { width: 15, shaded: true }),
-        cell(para([text('Grade Bands', { bold: true })]), { width: 25, shaded: true }),
+        cell(para([text('SKU', { bold: true })]), { width: 75, shaded: true }),
+        cell(para([text('Quantity', { bold: true })], { alignment: AlignmentType.RIGHT }), { width: 25, shaded: true }),
       ],
     }),
     new TableRow({
       children: [
-        cell(para([text('{#KIT_ITEMS}{description}')])),
-        cell(para([text('{quantity}{/KIT_ITEMS}')], { alignment: AlignmentType.RIGHT })),
-        cell(para([text('{grades}')])),
-      ],
-    }),
-    new TableRow({
-      children: [
-        cell(para([text('Total Kits', { bold: true })], { alignment: AlignmentType.RIGHT }), { width: 60, shaded: true }),
-        cell(para([text('{TOTAL_KITS}', { bold: true })], { alignment: AlignmentType.RIGHT }), { shaded: true }),
-        cell(para([text('')]), { shaded: true }),
+        cell(para([text('{#flatItems}{skuName}')])),
+        cell(para([text('{quantity}{/flatItems}')], { alignment: AlignmentType.RIGHT })),
       ],
     }),
   ],
 })
 
-const footer = [
+const flatSection = [
+  para([text('{#hasFlatItems}')]),
+  para([text('Flat-quantity items', { bold: true, size: 22 })]),
+  flatItemsTable,
   para([text('')]),
+  para([text('{/hasFlatItems}')]),
+]
+
+const perGradeItemsTable = new Table({
+  width: { size: 100, type: WidthType.PERCENTAGE },
+  borders: {
+    top: { style: BorderStyle.SINGLE, size: 6, color: '475569' },
+    bottom: { style: BorderStyle.SINGLE, size: 6, color: '475569' },
+    left: { style: BorderStyle.SINGLE, size: 4, color: 'CBD5E1' },
+    right: { style: BorderStyle.SINGLE, size: 4, color: 'CBD5E1' },
+    insideHorizontal: { style: BorderStyle.SINGLE, size: 4, color: 'CBD5E1' },
+    insideVertical: { style: BorderStyle.SINGLE, size: 4, color: 'CBD5E1' },
+  },
+  rows: [
+    new TableRow({
+      tableHeader: true,
+      children: [
+        cell(para([text('SKU', { bold: true })]), { width: 60, shaded: true }),
+        cell(para([text('Grade', { bold: true })], { alignment: AlignmentType.CENTER }), { width: 15, shaded: true }),
+        cell(para([text('Quantity', { bold: true })], { alignment: AlignmentType.RIGHT }), { width: 25, shaded: true }),
+      ],
+    }),
+    new TableRow({
+      children: [
+        cell(para([text('{#perGradeRows}{skuName}')])),
+        cell(para([text('{grade}')], { alignment: AlignmentType.CENTER })),
+        cell(para([text('{quantity}{/perGradeRows}')], { alignment: AlignmentType.RIGHT })),
+      ],
+    }),
+  ],
+})
+
+const perGradeSection = [
+  para([text('{#hasPerGradeItems}')]),
+  para([text('Per-grade allocations', { bold: true, size: 22 })]),
+  perGradeItemsTable,
+  para([text('')]),
+  para([text('{/hasPerGradeItems}')]),
+]
+
+const totalsBlock = [
+  para([
+    text('Total kits: ', { bold: true }),
+    text('{TOTAL_QUANTITY}', { bold: true }),
+  ]),
+  para([text('')]),
+]
+
+const footer = [
   para([text('Notes', { bold: true, size: 22 })]),
   para([text('{NOTES}')]),
   para([text('')]),
@@ -166,7 +219,7 @@ const footer = [
   para([text('')]),
   para([
     text(
-      'Note (Phase 1): Intermediate states (Dispatched, In Transit) are deferred to Phase 1.1 when courier integration lands. Acknowledgement of receipt is captured via the delivery-ack flow.',
+      'Note: intermediate states (Dispatched, In Transit) are deferred to Phase 1.1 when courier integration lands. Acknowledgement of receipt is captured via the delivery-ack flow.',
       { size: 16, color: '64748B' },
     ),
   ]),
@@ -175,7 +228,7 @@ const footer = [
 const doc = new Document({
   creator: 'GSL Ops Automation',
   title: 'Dispatch Note Template',
-  description: 'docxtemplater template for dispatch generation. Tokens use {TOKEN} delimiters.',
+  description: 'docxtemplater template for dispatch generation. Tokens use {TOKEN} delimiters; conditional sections use {#flag}...{/flag} for flat / per-grade rendering.',
   sections: [
     {
       properties: {},
@@ -183,7 +236,9 @@ const doc = new Document({
         ...header,
         metaTable,
         ...shipTo,
-        kitItemsTable,
+        ...flatSection,
+        ...perGradeSection,
+        ...totalsBlock,
         ...footer,
       ],
     },

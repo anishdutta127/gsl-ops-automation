@@ -17,6 +17,7 @@ export type DispatchPlaceholderType =
   | 'text'
   | 'address'
   | 'loop'
+  | 'flag'
   | 'number'
 
 export type DispatchPlaceholderSource =
@@ -33,8 +34,11 @@ export type DispatchPlaceholderSource =
   | 'company.gstin'
   | 'company.address'
   | 'computed.installmentLabel'
-  | 'computed.kitItems'
-  | 'computed.totalKits'
+  | 'computed.flatItems'
+  | 'computed.perGradeRows'
+  | 'computed.hasFlatItems'
+  | 'computed.hasPerGradeItems'
+  | 'computed.totalQuantity'
   | 'computed.dispatchNotes'
   | 'arg.raisedByName'
 
@@ -138,18 +142,39 @@ export const DISPATCH_TEMPLATE: DispatchTemplateSpec = {
       required: true,
       source: 'computed.installmentLabel',
     },
-    KIT_ITEMS: {
-      label: 'Kit items table (loop)',
+    flatItems: {
+      label: 'Flat-quantity items (loop)',
       type: 'loop',
-      required: true,
-      source: 'computed.kitItems',
-      description: 'docxtemplater loop over rows: { description, quantity, grades }. Use {#KIT_ITEMS}...{/KIT_ITEMS} syntax in the .docx.',
+      required: false,
+      source: 'computed.flatItems',
+      description: 'docxtemplater loop over rows: { skuName, quantity }. Use {#flatItems}...{/flatItems} on the table data row. Empty array when this dispatch has no flat-shape items.',
     },
-    TOTAL_KITS: {
-      label: 'Total kits',
+    perGradeRows: {
+      label: 'Per-grade allocation rows (loop)',
+      type: 'loop',
+      required: false,
+      source: 'computed.perGradeRows',
+      description: 'docxtemplater loop over rows: { skuName, grade, quantity }. Per-grade allocations are flattened so the .docx renders one row per (sku, grade) pair via a single {#perGradeRows}...{/perGradeRows} loop.',
+    },
+    hasFlatItems: {
+      label: 'Has flat-quantity items (boolean)',
+      type: 'flag',
+      required: true,
+      source: 'computed.hasFlatItems',
+      description: 'Section toggle. Use {#hasFlatItems}...{/hasFlatItems} to gate the flat-quantity section header + table.',
+    },
+    hasPerGradeItems: {
+      label: 'Has per-grade items (boolean)',
+      type: 'flag',
+      required: true,
+      source: 'computed.hasPerGradeItems',
+      description: 'Section toggle. Use {#hasPerGradeItems}...{/hasPerGradeItems} to gate the per-grade allocations section header + table.',
+    },
+    TOTAL_QUANTITY: {
+      label: 'Total quantity (across all line items)',
       type: 'number',
       required: true,
-      source: 'computed.totalKits',
+      source: 'computed.totalQuantity',
     },
     NOTES: {
       label: 'Dispatch notes',
