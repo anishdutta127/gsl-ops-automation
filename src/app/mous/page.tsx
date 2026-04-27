@@ -129,7 +129,11 @@ export default async function MousListPage({ searchParams }: PageProps) {
     {
       key: 'status',
       label: 'Status',
-      options: ['Active', 'Pending Signature', 'Completed', 'Expired', 'Renewed', 'Draft'].map((v) => ({
+      // 'Draft' is dropped as a chip option in W4-B.4: zero MOUs in the
+      // imported cohort carry that status. The MouStatus type still
+      // includes 'Draft' for forward compatibility (a future intake
+      // form may produce drafts pre-signature).
+      options: ['Active', 'Pending Signature', 'Completed', 'Expired', 'Renewed'].map((v) => ({
         value: v,
         label: v,
       })),

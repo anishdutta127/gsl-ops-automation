@@ -40,13 +40,13 @@ describe('/mous/[mouId]/dispatch page', () => {
     expect(html).toContain('Raise dispatch')
   })
 
-  it('renders Phase 1 stub note', async () => {
+  it('no longer renders the Phase 1 stub note (W4-B.4: stale; API is wired)', async () => {
     getCurrentUserMock.mockResolvedValue(user('Admin', 'anish.d'))
     const { default: Page } = await import('./page')
     const html = renderToStaticMarkup(
       await Page({ params: Promise.resolve({ mouId: 'MOU-STEAM-2627-001' }) }),
     )
-    expect(html).toContain('Phase 1 note')
+    expect(html).not.toContain('Phase 1 note')
   })
 
   it('shows existing dispatches list with gate status', async () => {

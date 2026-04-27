@@ -15,7 +15,6 @@
 
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { Info } from 'lucide-react'
 import type { Dispatch, MOU, User } from '@/lib/types'
 import mousJson from '@/data/mous.json'
 import dispatchesJson from '@/data/dispatches.json'
@@ -69,13 +68,6 @@ export default async function DispatchPage({ params }: PageProps) {
               { label: 'Dispatches on file', value: String(mouDispatches.length) },
             ]}
           />
-
-          <p className="flex items-start gap-2 rounded-md border border-signal-attention bg-card p-3 text-xs text-foreground">
-            <Info aria-hidden className="size-4 shrink-0 text-signal-attention" />
-            <span>
-              Phase 1 note: this submit endpoint is wired in Phase D. The P2 gate predicate (isGateUnblocked) is already live from Phase A2; the docx-render and state-transition land alongside the API.
-            </span>
-          </p>
 
           <section aria-labelledby="dispatches-heading" className="rounded-lg border border-border bg-card p-4 sm:p-6">
             <h3 id="dispatches-heading" className="mb-3 font-heading text-base font-semibold text-brand-navy">

@@ -87,13 +87,6 @@ export default async function PiPage({ params }: PageProps) {
             ]}
           />
 
-          <p className="flex items-start gap-2 rounded-md border border-signal-attention bg-card p-3 text-xs text-foreground">
-            <Info aria-hidden className="size-4 shrink-0 text-signal-attention" />
-            <span>
-              Phase 1 note: this submit endpoint is wired in Phase D. Form renders for layout review; submitting returns a 501 stub until the docx template + counter atomic increment land.
-            </span>
-          </p>
-
           {gstinMissing ? (
             <p
               role="status"
