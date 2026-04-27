@@ -34,12 +34,26 @@ import { PageHeader } from '@/components/ops/PageHeader'
 import { DetailHeaderCard } from '@/components/ops/DetailHeaderCard'
 import { LifecycleProgress } from '@/components/ops/LifecycleProgress'
 import { AuditLogPanel } from '@/components/ops/AuditLogPanel'
+import { StatusNotesSection } from '@/components/ops/StatusNotesSection'
+import usersJson from '@/data/users.json'
 
 const allMous = mousJson as unknown as MOU[]
 const allSchools = schoolsJson as unknown as School[]
 const allDispatches = dispatchesJson as unknown as Dispatch[]
 const allPayments = paymentsJson as unknown as Payment[]
 const allFeedback = feedbackJson as unknown as Feedback[]
+const allUsers = usersJson as unknown as User[]
+
+function lastDelayNotesUpdate(mou: MOU): string | null {
+  const usersById = new Map(allUsers.map((u) => [u.id, u.name]))
+  for (let i = mou.auditLog.length - 1; i >= 0; i -= 1) {
+    const entry = mou.auditLog[i]
+    if (entry?.action !== 'mou-delay-notes-updated') continue
+    const name = usersById.get(entry.user) ?? entry.user
+    return `Last updated by ${name} on ${entry.timestamp.slice(0, 10)}`
+  }
+  return null
+}
 
 interface PageProps {
   params: Promise<{ mouId: string }>
@@ -143,6 +157,12 @@ export default async function MouDetailPage({ params }: PageProps) {
             </h3>
             <LifecycleProgress stages={lifecycle} />
           </section>
+
+          <StatusNotesSection
+            mouId={mou.id}
+            initialNotes={mou.delayNotes}
+            initialMetaLine={lastDelayNotesUpdate(mou)}
+          />
 
           <section aria-labelledby="installments-heading" className="rounded-lg border border-border bg-card p-4 sm:p-6">
             <h3 id="installments-heading" className="mb-3 font-heading text-base font-semibold text-brand-navy">

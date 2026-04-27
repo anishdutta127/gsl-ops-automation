@@ -100,7 +100,7 @@ const validMou = {
   contractValue: 1000000, received: 0, tds: 0, balance: 1000000,
   receivedPct: 0, paymentSchedule: '', trainerModel: 'GSL-T',
   salesPersonId: null, templateVersion: null, generatedAt: null,
-  notes: null, daysToExpiry: null, auditLog: [],
+  notes: null, daysToExpiry: null, delayNotes: null, auditLog: [],
 }
 
 beforeEach(() => {

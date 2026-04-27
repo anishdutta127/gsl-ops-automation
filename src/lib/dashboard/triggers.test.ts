@@ -20,7 +20,7 @@ function mou(overrides: Partial<MOU> = {}): MOU {
     spWithoutTax: 4000, spWithTax: 5000, contractValue: 500000, received: 0, tds: 0,
     balance: 500000, receivedPct: 0, paymentSchedule: '', trainerModel: 'GSL-T',
     salesPersonId: 'sp-vikram', templateVersion: null, generatedAt: null, notes: null,
-    daysToExpiry: null, auditLog: [], ...overrides,
+    daysToExpiry: null, delayNotes: null, auditLog: [], ...overrides,
   }
 }
 

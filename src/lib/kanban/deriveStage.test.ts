@@ -51,7 +51,7 @@ function mou(overrides: Partial<MOU> & Pick<MOU, 'id'>): MOU {
     templateVersion: null,
     generatedAt: null,
     notes: null,
-    daysToExpiry: null,
+    daysToExpiry: null, delayNotes: null,
     auditLog: [],
     ...overrides,
   }

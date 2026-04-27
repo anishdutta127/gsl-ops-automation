@@ -40,7 +40,7 @@ function mou(overrides: Partial<MOU> = {}): MOU {
     templateVersion: null,
     generatedAt: null,
     notes: null,
-    daysToExpiry: null,
+    daysToExpiry: null, delayNotes: null,
     auditLog: [],
     ...overrides,
   }

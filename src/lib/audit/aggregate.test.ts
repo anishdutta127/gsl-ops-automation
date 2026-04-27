@@ -71,6 +71,8 @@ describe('collectAuditRows', () => {
       'delivery-acknowledged', 'feedback-submitted', 'legacy-include-import',
       // W4-A.2 added cohort tagging on every MOU; rows here are 'system-w4-a-2'
       'mou-cohort-status-changed',
+      // W4-B.3 introduces delay-notes auto-save audit entries.
+      'mou-delay-notes-updated',
     ])
     for (const row of mouRows) {
       expect(recognizedActions.has(row.entry.action)).toBe(true)

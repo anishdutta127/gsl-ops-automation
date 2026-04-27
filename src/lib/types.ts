@@ -76,6 +76,19 @@ export type AuditAction =
   // cohortStatus === 'active'; archived MOUs surface only on /mous/archive
   // and the bulk admin page.
   | 'mou-cohort-status-changed'
+  // W4-B.3: emitted when a MOU's delayNotes textarea is auto-saved on
+  // blur. before / after capture the old and new notes, truncated to
+  // ~200 chars with the suffix " ... [truncated; full notes on MOU]"
+  // so the audit reader knows full text exists on the MOU record.
+  // Empty / whitespace-only saves normalise to null.
+  | 'mou-delay-notes-updated'
+  // W4-B.5: emitted when /mous/[id]/payment-receipt records a
+  // payment receipt against a Payment row. before / after capture
+  // the receivedAmount + receivedDate + bankReference + paymentMode
+  // + notes; the lib treats the action as edit-mode (re-recording on
+  // an already-paid Payment is allowed and generates a fresh entry
+  // so operators can correct wrong reference numbers).
+  | 'payment-recorded'
 
 export interface AuditEntry {
   timestamp: string                // ISO
@@ -249,6 +262,15 @@ export interface MOU {
   templateVersion: string | null
   generatedAt: string | null
   notes: string | null
+  /**
+   * W4-B.3: free-text "Status notes" / reason-for-delay captured on the
+   * MOU detail page. Persistent textarea with 600ms auto-save on blur;
+   * every save lands a 'mou-delay-notes-updated' audit entry with
+   * before / after truncated to ~200 chars. Empty or whitespace-only
+   * saves normalise to null. Editable by every authenticated user
+   * (W3-B principle); attribution captured on the audit entry.
+   */
+  delayNotes: string | null
   daysToExpiry: number | null
   auditLog: AuditEntry[]
 }

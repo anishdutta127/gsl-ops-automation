@@ -38,7 +38,7 @@ const fixtureMou: MOU = {
   contractValue: 500000, received: 0, tds: 0, balance: 500000,
   receivedPct: 0, paymentSchedule: '', trainerModel: 'GSL-T',
   salesPersonId: 'sp-vikram', templateVersion: null, generatedAt: null,
-  notes: null, daysToExpiry: null, auditLog: [],
+  notes: null, daysToExpiry: null, delayNotes: null, auditLog: [],
 }
 
 vi.mock('@/data/mous.json', () => ({

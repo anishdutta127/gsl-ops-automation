@@ -12,7 +12,7 @@ function mou(overrides: Partial<MOU> & Pick<MOU, 'id'>): MOU {
     studentsMou: 100, studentsActual: null, studentsVariance: null, studentsVariancePct: null,
     spWithoutTax: 1000, spWithTax: 1180, contractValue: 100000, received: 0, tds: 0,
     balance: 100000, receivedPct: 0, paymentSchedule: '', trainerModel: null, salesPersonId: null,
-    templateVersion: null, generatedAt: null, notes: null, daysToExpiry: null, auditLog: [],
+    templateVersion: null, generatedAt: null, notes: null, daysToExpiry: null, delayNotes: null, auditLog: [],
     ...overrides,
   }
 }

@@ -418,7 +418,7 @@ describe('Q-G Test 6: importOnce', () => {
         templateVersion: null,
         generatedAt: null,
         notes: null,
-        daysToExpiry: null,
+        daysToExpiry: null, delayNotes: null,
         auditLog: [],
       }
       const { deps } = makeDeps({ rawMous: [raw], opsMous: [existing] })

@@ -451,6 +451,9 @@ function buildOpsMou(
     // cohort; archived flips happen via /admin/mou-status (or future cohort
     // rollover scripts), never on first import.
     cohortStatus: 'active',
+    // W4-B.3: delayNotes default null on first import; operators populate via
+    // the /mous/[id] Status notes textarea later.
+    delayNotes: null,
     academicYear: raw.academicYear,
     startDate: raw.startDate ?? null,
     endDate: raw.endDate ?? null,

@@ -69,7 +69,7 @@ function mou(): MOU {
     contractValue: 800000, received: 0, tds: 0, balance: 800000,
     receivedPct: 0, paymentSchedule: '25-25-25-25 quarterly',
     trainerModel: 'GSL-T', salesPersonId: null, templateVersion: null,
-    generatedAt: null, notes: null, daysToExpiry: null, auditLog: [],
+    generatedAt: null, notes: null, daysToExpiry: null, delayNotes: null, auditLog: [],
   }
 }
 
