@@ -76,6 +76,11 @@ describe('collectAuditRows', () => {
       // W4-C.2/W4-C.4: post-signing intake form + backfill mirror an
       // 'intake-captured' entry on the parent MOU's auditLog.
       'intake-captured',
+      // W4-C.7: the correction audit moves IntakeRecords to the correct
+      // active MOU when the W4-C.4 backfill mismapped them; the move
+      // mirrors a 'intake-record-corrected-w4c7' entry on both the old
+      // and new parent MOU.
+      'intake-record-corrected-w4c7',
     ])
     for (const row of mouRows) {
       expect(recognizedActions.has(row.entry.action)).toBe(true)

@@ -1,0 +1,182 @@
+{
+  "generatedAt": "2026-04-28T10:00:00.000Z",
+  "rowCount": 23,
+  "clean": [
+    {
+      "irId": "IR-W4C-018",
+      "formSchool": "Blue Angels Global School",
+      "mouId": "MOU-STEAM-2627-015",
+      "mouName": "Blue Angels Global School"
+    }
+  ],
+  "variation": [
+    {
+      "irId": "IR-W4C-001",
+      "formSchool": "Don Bosco School Krishnanagar",
+      "mouId": "MOU-STEAM-2627-027",
+      "mouName": "Don Bosco Krishnanagar"
+    },
+    {
+      "irId": "IR-W4C-003",
+      "formSchool": "K.E. Carmel School,Amtala",
+      "mouId": "MOU-STEAM-2627-013",
+      "mouName": "K.E Carmel School - Amtala"
+    },
+    {
+      "irId": "IR-W4C-004",
+      "formSchool": "St. Mary's Convent School",
+      "mouId": "MOU-STEAM-2627-007",
+      "mouName": "St. Mary Convent School"
+    },
+    {
+      "irId": "IR-W4C-009",
+      "formSchool": "TATHASTU INOVATION ",
+      "mouId": "MOU-STEAM-2627-016",
+      "mouName": "Tathastu Innovations (LAB ) Meerut"
+    },
+    {
+      "irId": "IR-W4C-012",
+      "formSchool": "SD Sr Sec School",
+      "mouId": "MOU-STEAM-2627-018",
+      "mouName": "SD Senior Secondary School"
+    },
+    {
+      "irId": "IR-W4C-013",
+      "formSchool": "Darshan Academy,  Devlali-Nashik ",
+      "mouId": "MOU-STEAM-2627-049",
+      "mouName": "Darshan Academy, Devlali"
+    },
+    {
+      "irId": "IR-W4C-014",
+      "formSchool": "K.E Carmel",
+      "mouId": "MOU-STEAM-2627-014",
+      "mouName": "K.E Carmel School - Suri"
+    },
+    {
+      "irId": "IR-W4C-015",
+      "formSchool": "Mahrishi Dayanand Sr Sec School ",
+      "mouId": "MOU-STEAM-2627-003",
+      "mouName": "Mahrishi Dayanand School"
+    },
+    {
+      "irId": "IR-W4C-016",
+      "formSchool": "MUTAHHARY PUBLIC SCHOOL",
+      "mouId": "MOU-STEAM-2627-001",
+      "mouName": "Mutahhary Public School Baroo"
+    },
+    {
+      "irId": "IR-W4C-017",
+      "formSchool": "JAFFARIA ACADEMY OF MODERN EDUCATION ",
+      "mouId": "MOU-STEAM-2627-021",
+      "mouName": "Jaffaria Academy of Modern Education - Kargil"
+    },
+    {
+      "irId": "IR-W4C-021",
+      "formSchool": "Narayana Group of Schools West Bengal",
+      "mouId": "MOU-STEAM-2627-051",
+      "mouName": "Ramanarayana Education Trust"
+    }
+  ],
+  "selfCorrected": [
+    {
+      "irId": "IR-W4C-002",
+      "formSchool": "St. Paul's Boarding and Day School ",
+      "from": "MOU-STEAM-2627-002",
+      "fromName": "Jnana Bharathi English School",
+      "to": "MOU-STEAM-2627-039",
+      "toName": "St. Paul's Boarding And Day School",
+      "reason": "St. Paul's Boarding maps to -039 not -002 (Jnana Bharathi)"
+    },
+    {
+      "irId": "IR-W4C-005",
+      "formSchool": "Techno India Group Public School- Kalyani",
+      "from": "MOU-STEAM-2627-008",
+      "fromName": "Loreto Day School BB",
+      "to": "MOU-STEAM-2627-004",
+      "toName": "Techno India Group Public School Kalyani",
+      "reason": "Techno India Kalyani -> -004 not -008 (Loreto Day BB)"
+    },
+    {
+      "irId": "IR-W4C-006",
+      "formSchool": "Techno India Group Public School- Panagarh",
+      "from": "MOU-STEAM-2627-009",
+      "fromName": "Kavyapta Global School",
+      "to": "MOU-STEAM-2627-006",
+      "toName": "Techno India Group Public School Panagarh",
+      "reason": "Techno India Panagarh -> -006 not -009 (Kavyapta Global)"
+    },
+    {
+      "irId": "IR-W4C-007",
+      "formSchool": "Techno India Group Public School- Asansol",
+      "from": "MOU-STEAM-2627-010",
+      "fromName": "Embee Rosebud Hr. Sec. School",
+      "to": "MOU-STEAM-2627-005",
+      "toName": "Techno India Group Public School Asansol",
+      "reason": "Techno India Asansol -> -005 not -010 (Embee Rosebud)"
+    },
+    {
+      "irId": "IR-W4C-008",
+      "formSchool": "BIT GLOBAL SCHOOL",
+      "from": "MOU-STEAM-2627-011",
+      "fromName": "The Learning Sanctuary",
+      "to": "MOU-STEAM-2627-026",
+      "toName": "B I T Global School",
+      "reason": "BIT Global School -> -026 (B I T Global School) not -011 (The Learning Sanctuary)"
+    },
+    {
+      "irId": "IR-W4C-010",
+      "formSchool": "St Johns High School",
+      "from": "MOU-STEAM-2627-019",
+      "fromName": "Christ Mission School",
+      "to": "MOU-STEAM-2627-047",
+      "toName": "St. Johns High School",
+      "reason": "St Johns High -> -047 not -019 (Christ Mission)"
+    },
+    {
+      "irId": "IR-W4C-011",
+      "formSchool": "Lions Calcutta (Greater) Vidya Mandir",
+      "from": "MOU-STEAM-2627-020",
+      "fromName": "Delhi World Public School, Barasat",
+      "to": "MOU-STEAM-2627-025",
+      "toName": "Lions Calcutta Greater Vidya Mandir",
+      "reason": "Lions Calcutta Greater Vidya Mandir -> -025 not -020 (Delhi World Public)"
+    },
+    {
+      "irId": "IR-W4C-019",
+      "formSchool": "Young Horizons School",
+      "from": "MOU-STEAM-2627-022",
+      "fromName": "B.D Memorial Jr. School",
+      "to": "MOU-STEAM-2627-050",
+      "toName": "Young Horizons School",
+      "reason": "Young Horizons School -> -050 not -022 (B.D Memorial Jr.)"
+    },
+    {
+      "irId": "IR-W4C-020",
+      "formSchool": "Swarnim International School",
+      "from": "MOU-STEAM-2627-023",
+      "fromName": "GNIMS Business School",
+      "to": "MOU-STEAM-2627-037",
+      "toName": "Swarnim International School",
+      "reason": "Swarnim International -> -037 not -023 (GNIMS Business)"
+    },
+    {
+      "irId": "IR-W4C-022",
+      "formSchool": "Kavyapta Global School",
+      "from": "MOU-STEAM-2627-024",
+      "fromName": "Guru Nanak Institute of Management Studies",
+      "to": "MOU-STEAM-2627-009",
+      "toName": "Kavyapta Global School",
+      "reason": "Kavyapta Global -> -009 not -024 (Guru Nanak Institute)"
+    },
+    {
+      "irId": "IR-W4C-023",
+      "formSchool": "Christ Mission School",
+      "from": "MOU-STEAM-2627-025",
+      "fromName": "Lions Calcutta Greater Vidya Mandir",
+      "to": "MOU-STEAM-2627-019",
+      "toName": "Christ Mission School",
+      "reason": "Christ Mission -> -019 not -025 (Lions Calcutta)"
+    }
+  ],
+  "deferred": []
+}

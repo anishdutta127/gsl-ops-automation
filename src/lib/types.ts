@@ -103,6 +103,14 @@ export type AuditAction =
   // row of type='welcome-note' status='sent'. The audit entry lands
   // on both the IntakeRecord and the Communication.
   | 'intake-thank-you-sent'
+  // W4-C.7: emitted when the W4-C.7 correction audit moves an
+  // IntakeRecord to the correct active MOU. The W4-C.4 backfill
+  // mismapped 11 of 23 records (the script's ROW_MAPPING assumed
+  // sequential MOU-id numbering matched form-row order, which the
+  // active 51-list does not follow). before / after capture the old
+  // + new MOU id; mirrored on both the departing and arriving
+  // parent MOU's auditLog so the audit trail follows the record.
+  | 'intake-record-corrected-w4c7'
 
 export interface AuditEntry {
   timestamp: string                // ISO
