@@ -7,8 +7,8 @@ describe('/schools list page', () => {
   it('renders school rows from fixture data', async () => {
     const { default: SchoolsPage } = await import('./page')
     const html = renderToStaticMarkup(await SchoolsPage({ searchParams: Promise.resolve({}) }))
-    expect(html).toContain('Greenfield Academy')
-    expect(html).toContain('Maple Leaf Public School')
+    expect(html).toContain('Mutahhary Public School Baroo')
+    expect(html).toContain('Don Bosco Bandel')
   })
 
   it('region filter narrows the list', async () => {
@@ -16,18 +16,19 @@ describe('/schools list page', () => {
     const html = renderToStaticMarkup(
       await SchoolsPage({ searchParams: Promise.resolve({ region: 'East' }) }),
     )
-    expect(html).toContain('Springwood')
-    expect(html).toContain('Narayana')
-    expect(html).not.toContain('Greenfield Academy')
+    expect(html).toContain('Don Bosco Bandel')
+    expect(html).toContain('NARAYANA')
+    expect(html).not.toContain('Mutahhary Public School Baroo')
   })
 
-  it('GSTIN missing filter surfaces only schools with null gstNumber', async () => {
+  it('GSTIN missing filter surfaces schools with null gstNumber', async () => {
+    // Post Week 3 import every school has gstNumber=null pending pilot backfill,
+    // so any imported school name surfaces.
     const { default: SchoolsPage } = await import('./page')
     const html = renderToStaticMarkup(
       await SchoolsPage({ searchParams: Promise.resolve({ gstin: 'missing' }) }),
     )
-    // Maple Leaf has gstNumber: null per fixtures
-    expect(html).toContain('Maple Leaf')
+    expect(html).toContain('Mutahhary Public School Baroo')
   })
 
   it('chain membership filter (yes) only surfaces SchoolGroup members', async () => {
@@ -35,9 +36,9 @@ describe('/schools list page', () => {
     const html = renderToStaticMarkup(
       await SchoolsPage({ searchParams: Promise.resolve({ group: 'yes' }) }),
     )
-    // Narayana branches are members of SG-NARAYANA_WB
-    expect(html).toContain('Narayana')
-    expect(html).not.toContain('Greenfield Academy')
+    // SG-CARMEL members include Carmel Convent High School Durgapur etc.
+    expect(html).toContain('Carmel')
+    expect(html).not.toContain('Mutahhary Public School Baroo')
   })
 
   it('contains no raw hex codes (token discipline)', async () => {

@@ -46,7 +46,7 @@ describe('/mous/[mouId] detail page', () => {
     const html = renderToStaticMarkup(
       await Page({ params: Promise.resolve({ mouId: 'MOU-STEAM-2627-001' }) }),
     )
-    expect(html).toContain('Greenfield Academy')
+    expect(html).toContain('Mutahhary Public School Baroo')
     expect(html).toContain('MOU-STEAM-2627-001')
     expect(html).toContain('Lifecycle')
     expect(html).toContain('Instalments')
@@ -54,13 +54,13 @@ describe('/mous/[mouId] detail page', () => {
   })
 
   it('SalesRep sees own-assigned MOU detail', async () => {
-    // sp-vikram is the salesPersonId on MOU-STEAM-2627-001
-    getCurrentUserMock.mockResolvedValue(salesRep('sp-vikram'))
+    // sp-roveena is the salesPersonId on MOU-STEAM-2627-001 post Week 3 import
+    getCurrentUserMock.mockResolvedValue(salesRep('sp-roveena'))
     const { default: Page } = await import('./page')
     const html = renderToStaticMarkup(
       await Page({ params: Promise.resolve({ mouId: 'MOU-STEAM-2627-001' }) }),
     )
-    expect(html).toContain('Greenfield Academy')
+    expect(html).toContain('Mutahhary Public School Baroo')
   })
 
   it('SalesRep accessing unassigned MOU triggers notFound (no leak)', async () => {

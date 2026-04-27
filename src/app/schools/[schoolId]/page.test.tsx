@@ -32,28 +32,31 @@ describe('/schools/[schoolId] detail page', () => {
     getCurrentUserMock.mockResolvedValue(makeUser('Admin'))
     const { default: Page } = await import('./page')
     const html = renderToStaticMarkup(
-      await Page({ params: Promise.resolve({ schoolId: 'SCH-GREENFIELD-PUNE' }) }),
+      await Page({ params: Promise.resolve({ schoolId: 'SCH-MUTAHHARY_PUBLIC_SCH' }) }),
     )
-    expect(html).toContain('Greenfield Academy')
-    expect(html).toContain('Pune')
-    expect(html).toContain('href="/schools/SCH-GREENFIELD-PUNE/edit"')
+    expect(html).toContain('Mutahhary Public School Baroo')
+    expect(html).toContain('Kargil')
+    expect(html).toContain('href="/schools/SCH-MUTAHHARY_PUBLIC_SCH/edit"')
   })
 
   it('hides Edit action for SalesRep (read-only)', async () => {
     getCurrentUserMock.mockResolvedValue(makeUser('SalesRep'))
     const { default: Page } = await import('./page')
     const html = renderToStaticMarkup(
-      await Page({ params: Promise.resolve({ schoolId: 'SCH-GREENFIELD-PUNE' }) }),
+      await Page({ params: Promise.resolve({ schoolId: 'SCH-MUTAHHARY_PUBLIC_SCH' }) }),
     )
-    expect(html).not.toContain('href="/schools/SCH-GREENFIELD-PUNE/edit"')
-    expect(html).toContain('Greenfield Academy')
+    expect(html).not.toContain('href="/schools/SCH-MUTAHHARY_PUBLIC_SCH/edit"')
+    expect(html).toContain('Mutahhary Public School Baroo')
   })
 
   it('shows GSTIN missing alert when school.gstNumber is null', async () => {
+    // All 124 upstream-imported schools have gstNumber=null per the
+    // Week 3 backfill (W3-A.1 anomaly: GSTIN backfill is a pilot-time
+    // operational task), so any imported school surfaces the alert.
     getCurrentUserMock.mockResolvedValue(makeUser('Admin'))
     const { default: Page } = await import('./page')
     const html = renderToStaticMarkup(
-      await Page({ params: Promise.resolve({ schoolId: 'SCH-MAPLELEAF-BLR' }) }),
+      await Page({ params: Promise.resolve({ schoolId: 'SCH-MUTAHHARY_PUBLIC_SCH' }) }),
     )
     expect(html).toContain('PI generation blocked')
   })
@@ -70,7 +73,7 @@ describe('/schools/[schoolId] detail page', () => {
     getCurrentUserMock.mockResolvedValue(makeUser('Admin'))
     const { default: Page } = await import('./page')
     const html = renderToStaticMarkup(
-      await Page({ params: Promise.resolve({ schoolId: 'SCH-GREENFIELD-PUNE' }) }),
+      await Page({ params: Promise.resolve({ schoolId: 'SCH-MUTAHHARY_PUBLIC_SCH' }) }),
     )
     expect(html).not.toMatch(/#[0-9a-fA-F]{3,6}/)
   })

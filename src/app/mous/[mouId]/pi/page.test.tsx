@@ -31,7 +31,8 @@ describe('/mous/[mouId]/pi page', () => {
   })
 
   it('SalesRep on own MOU sees inline message instead of form', async () => {
-    getCurrentUserMock.mockResolvedValue(user('SalesRep', 'sp-vikram'))
+    // sp-roveena owns MOU-STEAM-2627-001 post Week 3 import
+    getCurrentUserMock.mockResolvedValue(user('SalesRep', 'sp-roveena'))
     const { default: Page } = await import('./page')
     const html = renderToStaticMarkup(
       await Page({ params: Promise.resolve({ mouId: 'MOU-STEAM-2627-001' }) }),

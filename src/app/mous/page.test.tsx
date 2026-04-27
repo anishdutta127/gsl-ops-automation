@@ -35,19 +35,17 @@ describe('/mous list page', () => {
     getCurrentUserMock.mockResolvedValue(admin())
     const { default: MousPage } = await import('./page')
     const html = renderToStaticMarkup(await MousPage({ searchParams: Promise.resolve({}) }))
-    expect(html).toContain('Greenfield Academy')
-    expect(html).toContain('Springwood')
+    expect(html).toContain('Mutahhary Public School Baroo')
     expect(html).toContain('MOU-STEAM-2627-001')
   })
 
   it('SalesRep scoping reduces visible MOUs to own-assigned only', async () => {
-    // sp-vikram is the salesPersonId on MOU-STEAM-2627-001 (Greenfield) only
-    getCurrentUserMock.mockResolvedValue(salesRep('sp-vikram'))
+    // sp-roveena owns 8 MOUs in the new fixture; sp-prodipto owns 20.
+    // A rep with zero MOUs should see an empty list.
+    getCurrentUserMock.mockResolvedValue(salesRep('sp-arjun'))
     const { default: MousPage } = await import('./page')
     const html = renderToStaticMarkup(await MousPage({ searchParams: Promise.resolve({}) }))
-    expect(html).toContain('Greenfield Academy')
-    expect(html).not.toContain('Springwood International')
-    expect(html).not.toContain('Narayana Group')
+    expect(html).toContain('No MOUs match the current filters.')
   })
 
   it('status filter narrows the list', async () => {
@@ -60,13 +58,15 @@ describe('/mous list page', () => {
   })
 
   it('search filters by school name substring', async () => {
+    // Carmel is a chain present in the post-import fixture (6 MOUs); Mutahhary
+    // is a single school. The substring filter narrows to one but not the other.
     getCurrentUserMock.mockResolvedValue(admin())
     const { default: MousPage } = await import('./page')
     const html = renderToStaticMarkup(
-      await MousPage({ searchParams: Promise.resolve({ q: 'narayana' }) }),
+      await MousPage({ searchParams: Promise.resolve({ q: 'carmel' }) }),
     )
-    expect(html).toContain('Narayana')
-    expect(html).not.toContain('Greenfield Academy')
+    expect(html).toContain('Carmel')
+    expect(html).not.toContain('Mutahhary')
   })
 
   it('contains no raw hex codes (token discipline)', async () => {

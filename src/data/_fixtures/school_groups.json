@@ -6,12 +6,10 @@
     "createdAt": "2026-04-15T00:00:00Z",
     "createdBy": "anish.d",
     "memberSchoolIds": [
-      "SCH-NARAYANA-ASN",
-      "SCH-NARAYANA-DUR",
-      "SCH-NARAYANA-BRD"
+      "SCH-NARAYANA_SCHOOL"
     ],
-    "groupMouId": "MOU-STEAM-2627-004",
-    "notes": "Pre-seeded chain MOU per step 8 Q-I SchoolGroup spec. 3 member campuses (Asansol, Durgapur, Burdwan).",
+    "groupMouId": null,
+    "notes": "Members re-anchored to upstream school IDs post Week 3 import.",
     "auditLog": []
   },
   {
@@ -20,20 +18,29 @@
     "region": "East",
     "createdAt": "2026-04-15T00:00:00Z",
     "createdBy": "anish.d",
-    "memberSchoolIds": [],
+    "memberSchoolIds": [
+      "SCH-TECHNO_INDIA_GROUP_P",
+      "SCH-TECHNO_INDIA_GROUP_P_2",
+      "SCH-TECHNO_INDIA_GROUP_P_3"
+    ],
     "groupMouId": null,
-    "notes": "Pre-seeded; member campuses to be added when first chain MOU is signed.",
+    "notes": "Members re-anchored to upstream school IDs post Week 3 import.",
     "auditLog": []
   },
   {
     "id": "SG-CARMEL",
     "name": "Carmel Group of Schools",
-    "region": "South-West",
+    "region": "East",
     "createdAt": "2026-04-15T00:00:00Z",
     "createdBy": "anish.d",
-    "memberSchoolIds": [],
+    "memberSchoolIds": [
+      "SCH-CARMEL_CONVENT_HIGH_",
+      "SCH-CARMEL_SCHOOL_DURGAP",
+      "SCH-K_E_CARMEL_SCHOOL_AM",
+      "SCH-K_E_CARMEL_SCHOOL_SU"
+    ],
     "groupMouId": null,
-    "notes": "Pre-seeded; member campuses to be added when first chain MOU is signed.",
+    "notes": "Members re-anchored to upstream school IDs post Week 3 import.",
     "auditLog": []
   }
 ]

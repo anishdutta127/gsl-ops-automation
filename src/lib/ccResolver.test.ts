@@ -27,7 +27,6 @@ import type {
   CcRuleContext,
   CcRuleScope,
   MOU,
-  Programme,
   SalesPerson,
   School,
   User,
@@ -49,12 +48,11 @@ const ALL_CONTEXTS: CcRuleContext[] = [
 
 function school(overrides: Partial<School> & Pick<School, 'id'>): School {
   return {
-    id: overrides.id,
-    name: overrides.name ?? overrides.id,
+    name: overrides.id,
     legalEntity: null,
-    city: overrides.city ?? 'Pune',
-    state: overrides.state ?? 'Maharashtra',
-    region: overrides.region ?? 'South-West',
+    city: 'Pune',
+    state: 'Maharashtra',
+    region: 'South-West',
     pinCode: null,
     contactPerson: null,
     email: null,
@@ -72,10 +70,8 @@ function school(overrides: Partial<School> & Pick<School, 'id'>): School {
 
 function mou(overrides: Partial<MOU> & Pick<MOU, 'id' | 'schoolId'>): MOU {
   return {
-    id: overrides.id,
-    schoolId: overrides.schoolId,
-    schoolName: overrides.schoolName ?? overrides.schoolId,
-    programme: (overrides.programme ?? 'STEAM') as Programme,
+    schoolName: overrides.schoolId,
+    programme: 'STEAM',
     programmeSubType: null,
     schoolScope: 'SINGLE',
     schoolGroupId: null,
@@ -95,7 +91,7 @@ function mou(overrides: Partial<MOU> & Pick<MOU, 'id' | 'schoolId'>): MOU {
     balance: 1000000,
     receivedPct: 0,
     paymentSchedule: '',
-    trainerModel: overrides.trainerModel ?? null,
+    trainerModel: null,
     salesPersonId: null,
     templateVersion: null,
     generatedAt: null,
@@ -108,10 +104,9 @@ function mou(overrides: Partial<MOU> & Pick<MOU, 'id' | 'schoolId'>): MOU {
 
 function user(overrides: Partial<User> & Pick<User, 'id'>): User {
   return {
-    id: overrides.id,
-    name: overrides.name ?? overrides.id,
-    email: overrides.email ?? `${overrides.id}@getsetlearn.info`,
-    role: overrides.role ?? 'Admin',
+    name: overrides.id,
+    email: `${overrides.id}@getsetlearn.info`,
+    role: 'Admin',
     testingOverride: false,
     active: true,
     passwordHash: 'X',
@@ -123,9 +118,8 @@ function user(overrides: Partial<User> & Pick<User, 'id'>): User {
 
 function salesPerson(overrides: Partial<SalesPerson> & Pick<SalesPerson, 'id'>): SalesPerson {
   return {
-    id: overrides.id,
-    name: overrides.name ?? overrides.id,
-    email: overrides.email ?? `${overrides.id}@getsetlearn.info`,
+    name: overrides.id,
+    email: `${overrides.id}@getsetlearn.info`,
     phone: null,
     territories: [],
     programmes: ['STEAM'],

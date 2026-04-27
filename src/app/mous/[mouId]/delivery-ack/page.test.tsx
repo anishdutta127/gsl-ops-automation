@@ -37,7 +37,8 @@ describe('/mous/[mouId]/delivery-ack page (D4 manual-upload)', () => {
   })
 
   it('SalesRep on own MOU sees role-locked message (no forms)', async () => {
-    getCurrentUserMock.mockResolvedValue(user('SalesRep', 'sp-vikram'))
+    // sp-roveena owns MOU-STEAM-2627-001 post Week 3 import
+    getCurrentUserMock.mockResolvedValue(user('SalesRep', 'sp-roveena'))
     const { default: Page } = await import('./page')
     const html = renderToStaticMarkup(
       await Page({

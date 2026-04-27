@@ -33,9 +33,7 @@ import type { Payment, PaymentLog } from './types'
 
 function payment(overrides: Partial<Payment> & Pick<Payment, 'id' | 'mouId'>): Payment {
   return {
-    id: overrides.id,
-    mouId: overrides.mouId,
-    schoolName: overrides.schoolName ?? 'Test School',
+    schoolName: 'Test School',
     programme: 'STEAM',
     instalmentLabel: '1 of 4',
     instalmentSeq: 1,
@@ -43,7 +41,7 @@ function payment(overrides: Partial<Payment> & Pick<Payment, 'id' | 'mouId'>): P
     description: 'Instalment',
     dueDateRaw: null,
     dueDateIso: null,
-    expectedAmount: overrides.expectedAmount ?? 100000,
+    expectedAmount: 100000,
     receivedAmount: null,
     receivedDate: null,
     paymentMode: null,
@@ -64,12 +62,10 @@ function payment(overrides: Partial<Payment> & Pick<Payment, 'id' | 'mouId'>): P
 
 function paymentLog(overrides: Partial<PaymentLog> & Pick<PaymentLog, 'id' | 'amount'>): PaymentLog {
   return {
-    id: overrides.id,
-    date: overrides.date ?? '2026-04-25',
-    amount: overrides.amount,
+    date: '2026-04-25',
     mode: 'Bank Transfer',
-    reference: overrides.reference ?? null,
-    narration: overrides.narration ?? null,
+    reference: null,
+    narration: null,
     salesPersonId: null,
     matchedInstallmentIds: [],
     unmatched: true,

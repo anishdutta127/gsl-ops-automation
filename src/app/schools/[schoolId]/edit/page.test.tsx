@@ -34,7 +34,7 @@ describe('/schools/[schoolId]/edit page', () => {
     getCurrentUserMock.mockResolvedValue(makeUser('Admin'))
     const { default: Page } = await import('./page')
     const html = renderToStaticMarkup(
-      await Page({ params: Promise.resolve({ schoolId: 'SCH-GREENFIELD-PUNE' }) }),
+      await Page({ params: Promise.resolve({ schoolId: 'SCH-MUTAHHARY_PUBLIC_SCH' }) }),
     )
     expect(html).toContain('<form')
     expect(html).toContain('name="name"')
@@ -48,7 +48,7 @@ describe('/schools/[schoolId]/edit page', () => {
     getCurrentUserMock.mockResolvedValue(makeUser('OpsHead'))
     const { default: Page } = await import('./page')
     const html = renderToStaticMarkup(
-      await Page({ params: Promise.resolve({ schoolId: 'SCH-GREENFIELD-PUNE' }) }),
+      await Page({ params: Promise.resolve({ schoolId: 'SCH-MUTAHHARY_PUBLIC_SCH' }) }),
     )
     expect(html).toContain('<form')
   })
@@ -62,7 +62,7 @@ describe('/schools/[schoolId]/edit page', () => {
     getCurrentUserMock.mockResolvedValue(misba)
     const { default: Page } = await import('./page')
     const html = renderToStaticMarkup(
-      await Page({ params: Promise.resolve({ schoolId: 'SCH-GREENFIELD-PUNE' }) }),
+      await Page({ params: Promise.resolve({ schoolId: 'SCH-MUTAHHARY_PUBLIC_SCH' }) }),
     )
     expect(html).toContain('<form')
   })
@@ -71,23 +71,23 @@ describe('/schools/[schoolId]/edit page', () => {
     getCurrentUserMock.mockResolvedValue(makeUser('SalesRep'))
     const { default: Page } = await import('./page')
     await expect(
-      Page({ params: Promise.resolve({ schoolId: 'SCH-GREENFIELD-PUNE' }) }),
-    ).rejects.toThrow('REDIRECT:/schools/SCH-GREENFIELD-PUNE')
+      Page({ params: Promise.resolve({ schoolId: 'SCH-MUTAHHARY_PUBLIC_SCH' }) }),
+    ).rejects.toThrow('REDIRECT:/schools/SCH-MUTAHHARY_PUBLIC_SCH')
   })
 
   it('Finance role redirects to read-only detail too', async () => {
     getCurrentUserMock.mockResolvedValue(makeUser('Finance'))
     const { default: Page } = await import('./page')
     await expect(
-      Page({ params: Promise.resolve({ schoolId: 'SCH-GREENFIELD-PUNE' }) }),
-    ).rejects.toThrow('REDIRECT:/schools/SCH-GREENFIELD-PUNE')
+      Page({ params: Promise.resolve({ schoolId: 'SCH-MUTAHHARY_PUBLIC_SCH' }) }),
+    ).rejects.toThrow('REDIRECT:/schools/SCH-MUTAHHARY_PUBLIC_SCH')
   })
 
   it('contains no raw hex codes (token discipline)', async () => {
     getCurrentUserMock.mockResolvedValue(makeUser('Admin'))
     const { default: Page } = await import('./page')
     const html = renderToStaticMarkup(
-      await Page({ params: Promise.resolve({ schoolId: 'SCH-GREENFIELD-PUNE' }) }),
+      await Page({ params: Promise.resolve({ schoolId: 'SCH-MUTAHHARY_PUBLIC_SCH' }) }),
     )
     expect(html).not.toMatch(/#[0-9a-fA-F]{3,6}/)
   })

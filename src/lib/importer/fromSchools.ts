@@ -93,7 +93,7 @@ export function importSchool(
   // State + region resolution
   const rawState = typeof raw.state === 'string' ? raw.state.trim() : ''
   let region: Region = FALLBACK_REGION
-  let normalisedState = rawState
+  const normalisedState = rawState
   if (rawState === '') {
     anomalies.push({
       schoolId: raw.id,

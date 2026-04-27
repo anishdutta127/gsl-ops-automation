@@ -17,10 +17,22 @@ vi.mock('@/data/communications.json', () => ({
   get default() { return mockComms.value },
 }))
 
+// W3-A.2: post-import every school carries email=null, so the SPOC-email-missing
+// branch in feedback-request/page.tsx supersedes the role-lock branch. Tests
+// that exercise the role-lock branch inject a school override with email set.
+const mockSchools = vi.hoisted(() => ({ value: null as unknown[] | null }))
+vi.mock('@/data/schools.json', async () => {
+  const actual = (await vi.importActual<{ default: unknown[] }>('@/data/schools.json')).default
+  return {
+    get default() { return mockSchools.value ?? actual },
+  }
+})
+
 beforeEach(() => {
   vi.clearAllMocks()
   vi.resetModules()
   mockComms.value = []
+  mockSchools.value = null
 })
 
 function user(role: User['role'], id = 'u'): User {
@@ -37,6 +49,16 @@ async function loadPage() {
 
 describe('/mous/[mouId]/feedback-request page (compose state)', () => {
   it('OpsHead sees the compose form posting to /api/communications/compose', async () => {
+    // Inject school with email set so the page reaches the compose-form branch
+    // (default upstream school has email=null which would surface the SPOC alert).
+    mockSchools.value = [{
+      id: 'SCH-MUTAHHARY_PUBLIC_SCH', name: 'Mutahhary Public School Baroo',
+      legalEntity: null, city: 'Kargil', state: 'Union Territory of Ladakh',
+      region: 'North', pinCode: null, contactPerson: 'SPOC Test',
+      email: 'spoc@example.test', phone: null, billingName: null,
+      pan: null, gstNumber: null, notes: null,
+      active: true, createdAt: '2026-04-27T12:00:00Z', auditLog: [],
+    }]
     getCurrentUserMock.mockResolvedValue(user('OpsHead', 'pradeep.r'))
     const Page = await loadPage()
     const html = renderToStaticMarkup(
@@ -51,7 +73,18 @@ describe('/mous/[mouId]/feedback-request page (compose state)', () => {
   })
 
   it('SalesRep on own MOU sees role-locked message', async () => {
-    getCurrentUserMock.mockResolvedValue(user('SalesRep', 'sp-vikram'))
+    // sp-roveena owns MOU-STEAM-2627-001 post Week 3 import. Page logic
+    // surfaces SPOC-email-missing before role-lock; inject a school override
+    // with email set so the role-lock branch is the one under test.
+    mockSchools.value = [{
+      id: 'SCH-MUTAHHARY_PUBLIC_SCH', name: 'Mutahhary Public School Baroo',
+      legalEntity: null, city: 'Kargil', state: 'Union Territory of Ladakh',
+      region: 'North', pinCode: null, contactPerson: 'SPOC Test',
+      email: 'spoc@example.test', phone: null, billingName: null,
+      pan: null, gstNumber: null, notes: null,
+      active: true, createdAt: '2026-04-27T12:00:00Z', auditLog: [],
+    }]
+    getCurrentUserMock.mockResolvedValue(user('SalesRep', 'sp-roveena'))
     const Page = await loadPage()
     const html = renderToStaticMarkup(
       await Page({
@@ -93,7 +126,7 @@ describe('/mous/[mouId]/feedback-request page (composed-content state)', () => {
     mockComms.value = [
       {
         id: 'COM-FBR-test', type: 'feedback-request',
-        schoolId: 'SCH-GREENFIELD-PUNE', mouId: 'MOU-STEAM-2627-001',
+        schoolId: 'SCH-MUTAHHARY_PUBLIC_SCH', mouId: 'MOU-STEAM-2627-001',
         installmentSeq: 1, channel: 'email',
         subject: 'Your feedback on the STEAM sessions at Greenfield Academy',
         bodyEmail: '<html><body>Dear Priya...</body></html>',
@@ -124,7 +157,7 @@ describe('/mous/[mouId]/feedback-request page (composed-content state)', () => {
     mockComms.value = [
       {
         id: 'COM-FBR-test', type: 'feedback-request',
-        schoolId: 'SCH-GREENFIELD-PUNE', mouId: 'MOU-STEAM-2627-001',
+        schoolId: 'SCH-MUTAHHARY_PUBLIC_SCH', mouId: 'MOU-STEAM-2627-001',
         installmentSeq: 1, channel: 'email',
         subject: 'X', bodyEmail: '<p>X</p>', bodyWhatsApp: 'X',
         toEmail: 'x@example.test', toPhone: null,
@@ -148,7 +181,7 @@ describe('/mous/[mouId]/feedback-request page (composed-content state)', () => {
     mockComms.value = [
       {
         id: 'COM-FBR-test', type: 'feedback-request',
-        schoolId: 'SCH-GREENFIELD-PUNE', mouId: 'MOU-STEAM-2627-001',
+        schoolId: 'SCH-MUTAHHARY_PUBLIC_SCH', mouId: 'MOU-STEAM-2627-001',
         installmentSeq: 1, channel: 'email',
         subject: 'X', bodyEmail: '<p>X</p>', bodyWhatsApp: 'X',
         toEmail: 'x@example.test', toPhone: null,
