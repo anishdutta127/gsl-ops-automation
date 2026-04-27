@@ -34,6 +34,12 @@ const ADMIN_LINKS: AdminLink[] = [
     status: 'real',
   },
   {
+    href: '/admin/dispatch-requests',
+    label: 'Dispatch requests',
+    description: 'Sales-submitted requests pending Ops approval; approve / reject / cancel.',
+    status: 'real',
+  },
+  {
     href: '/admin/cc-rules',
     label: 'CC rules',
     description: 'Per-context cc fan-out rules; toggle, edit, create.',

@@ -20,11 +20,6 @@ import { Trash2, Plus } from 'lucide-react'
 const FIELD_INPUT_CLASS =
   'block w-full rounded-md border border-input bg-card px-3 py-2 text-sm text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy'
 const FIELD_LABEL_CLASS = 'block text-sm font-medium text-brand-navy mb-1'
-const PRIMARY_BUTTON_CLASS =
-  'inline-flex min-h-11 items-center rounded-md bg-brand-teal px-4 py-2 text-sm font-medium text-brand-navy hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-brand-navy disabled:opacity-50 disabled:cursor-not-allowed'
-const SECONDARY_BUTTON_CLASS =
-  'inline-flex min-h-11 items-center gap-1 rounded-md border border-border bg-card px-3 py-2 text-sm font-medium text-foreground hover:bg-muted focus:outline-none focus:ring-2 focus:ring-brand-navy'
-
 interface MouOption {
   id: string
   schoolName: string
@@ -320,7 +315,7 @@ export function DispatchRequestForm({ mouOptions, defaultMouId }: DispatchReques
                 <button
                   type="button"
                   onClick={() => flipItemKind(idx)}
-                  className={SECONDARY_BUTTON_CLASS + ' w-full justify-center'}
+                  className="inline-flex min-h-11 w-full items-center justify-center gap-1 rounded-md border border-border bg-card px-3 py-2 text-sm font-medium text-foreground hover:bg-muted focus:outline-none focus:ring-2 focus:ring-brand-navy"
                 >
                   {it.kind}
                 </button>
@@ -403,7 +398,7 @@ export function DispatchRequestForm({ mouOptions, defaultMouId }: DispatchReques
                       gradeAllocations: [...it.gradeAllocations, { grade: '', quantity: '' }],
                     })
                   }
-                  className={SECONDARY_BUTTON_CLASS}
+                  className="inline-flex min-h-11 items-center gap-1 rounded-md border border-border bg-card px-3 py-2 text-sm font-medium text-foreground hover:bg-muted focus:outline-none focus:ring-2 focus:ring-brand-navy"
                 >
                   <Plus size={14} /> Add grade allocation
                 </button>
@@ -412,10 +407,18 @@ export function DispatchRequestForm({ mouOptions, defaultMouId }: DispatchReques
           </div>
         ))}
         <div className="flex flex-wrap gap-2 pt-1">
-          <button type="button" onClick={addFlatItem} className={SECONDARY_BUTTON_CLASS}>
+          <button
+            type="button"
+            onClick={addFlatItem}
+            className="inline-flex min-h-11 items-center gap-1 rounded-md border border-border bg-card px-3 py-2 text-sm font-medium text-foreground hover:bg-muted focus:outline-none focus:ring-2 focus:ring-brand-navy"
+          >
             <Plus size={14} /> Add flat line
           </button>
-          <button type="button" onClick={addPerGradeItem} className={SECONDARY_BUTTON_CLASS}>
+          <button
+            type="button"
+            onClick={addPerGradeItem}
+            className="inline-flex min-h-11 items-center gap-1 rounded-md border border-border bg-card px-3 py-2 text-sm font-medium text-foreground hover:bg-muted focus:outline-none focus:ring-2 focus:ring-brand-navy"
+          >
             <Plus size={14} /> Add per-grade line
           </button>
         </div>
@@ -455,7 +458,11 @@ export function DispatchRequestForm({ mouOptions, defaultMouId }: DispatchReques
       ) : null}
 
       <div className="flex gap-2 border-t border-border pt-4">
-        <button type="submit" disabled={isSubmitting} className={PRIMARY_BUTTON_CLASS}>
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          className="inline-flex min-h-11 items-center rounded-md bg-brand-teal px-4 py-2 text-sm font-medium text-brand-navy hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-brand-navy disabled:cursor-not-allowed disabled:opacity-50"
+        >
           {isSubmitting ? 'Submitting...' : 'Submit dispatch request'}
         </button>
       </div>

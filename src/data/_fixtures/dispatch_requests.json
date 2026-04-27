@@ -1,1 +1,69 @@
-[]
+[
+  {
+    "id": "DR-MOU-STEAM-2627-001-i1-20260427100000",
+    "mouId": "MOU-STEAM-2627-001",
+    "schoolId": "SCH-MUTAHHARY_PUBLIC_SC",
+    "requestedBy": "vish.g",
+    "requestedAt": "2026-04-27T10:00:00Z",
+    "requestReason": "Q2 dispatch readiness check; school confirmed payment will land Tuesday.",
+    "installmentSeq": 1,
+    "lineItems": [
+      { "kind": "flat", "skuName": "STEAM kit set", "quantity": 50 }
+    ],
+    "status": "pending-approval",
+    "conversionDispatchId": null,
+    "rejectionReason": null,
+    "reviewedBy": null,
+    "reviewedAt": null,
+    "notes": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-04-27T10:00:00Z",
+        "user": "vish.g",
+        "action": "dispatch-request-created",
+        "after": {
+          "lineItemCount": 1,
+          "totalQuantity": 50,
+          "installmentSeq": 1
+        }
+      }
+    ]
+  },
+  {
+    "id": "DR-MOU-STEAM-2627-009-i1-20260426093000",
+    "mouId": "MOU-STEAM-2627-009",
+    "schoolId": "SCH-KAVYAPTA_GLOBAL_SCH",
+    "requestedBy": "pratik.d",
+    "requestedAt": "2026-04-26T09:30:00Z",
+    "requestReason": "Cretile pilot kickoff Wednesday; per-grade allocations confirmed with school.",
+    "installmentSeq": 1,
+    "lineItems": [
+      {
+        "kind": "per-grade",
+        "skuName": "Cretile Grade-band kit",
+        "gradeAllocations": [
+          { "grade": 1, "quantity": 25 },
+          { "grade": 2, "quantity": 25 }
+        ]
+      }
+    ],
+    "status": "pending-approval",
+    "conversionDispatchId": null,
+    "rejectionReason": null,
+    "reviewedBy": null,
+    "reviewedAt": null,
+    "notes": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-04-26T09:30:00Z",
+        "user": "pratik.d",
+        "action": "dispatch-request-created",
+        "after": {
+          "lineItemCount": 1,
+          "totalQuantity": 50,
+          "installmentSeq": 1
+        }
+      }
+    ]
+  }
+]

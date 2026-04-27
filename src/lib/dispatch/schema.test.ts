@@ -70,10 +70,14 @@ describe('W4-D.1 Dispatch fixture migration', () => {
   })
 })
 
-describe('W4-D.1 DispatchRequest fixture', () => {
-  it('starts empty (no requests until W4-D.2 wires the Sales-side flow)', () => {
+describe('W4-D.1 / W4-D.3 DispatchRequest fixtures', () => {
+  it('seeds 2 pending-approval requests for round-2 testing + queue UAT', () => {
     expect(Array.isArray(requests)).toBe(true)
-    expect(requests.length).toBe(0)
+    expect(requests.length).toBe(2)
+    for (const r of requests) {
+      expect(r.status).toBe('pending-approval')
+      expect(r.lineItems.length).toBeGreaterThanOrEqual(1)
+    }
   })
 })
 
