@@ -93,7 +93,7 @@ describe('MouCard', () => {
       ['actuals-confirmed', 'Generate PI'],
       ['invoice-raised', 'Record payment received'],
       ['payment-received', 'Raise dispatch'],
-      ['kit-dispatched', 'Record signed form'],
+      ['kit-dispatched', 'Confirm delivery'],
       ['delivery-acknowledged', 'Compose feedback request'],
       ['feedback-submitted', 'MOU complete'],
     ]

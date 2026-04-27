@@ -5,9 +5,10 @@
  *   Step 1: "Print blank handover form" - POSTs to
  *           /api/delivery-ack/template, returns blank docx for
  *           printing.
- *   Step 2: "Record signed form URL" - text input + button POSTing
- *           to /api/delivery-ack/acknowledge. Records URL on the
- *           Dispatch + advances stage to 'acknowledged'.
+ *   Step 2: "Confirm delivery" - text input (signed-form URL) + button
+ *           POSTing to /api/delivery-ack/acknowledge. Records URL on
+ *           the Dispatch + advances stage to 'acknowledged'. (W4-D.6
+ *           rename from "Record signed form".)
  *
  * State-aware: dispatches in 'pending' state are not eligible (must
  * raise dispatch first via D2). Dispatches in 'acknowledged' state
@@ -133,7 +134,7 @@ export default async function DeliveryAckPage({ params, searchParams }: PageProp
         <p className="flex items-start gap-2 rounded-md border border-border bg-card p-3 text-xs text-foreground">
           <Info aria-hidden className="size-4 shrink-0" />
           <span>
-            Phase 1: print the blank form, take it to the school, get it stamped + signed by the responsible person, scan or photograph it, upload to GSL Drive (or equivalent), then paste the resulting URL into the Record signed form field below.
+            Phase 1: print the blank form, take it to the school, get it stamped + signed by the responsible person, scan or photograph it, upload to GSL Drive (or equivalent), then paste the resulting URL into the Confirm delivery field below.
           </span>
         </p>
 
@@ -193,7 +194,7 @@ export default async function DeliveryAckPage({ params, searchParams }: PageProp
                   type="submit"
                   className="inline-flex min-h-11 w-full items-center justify-center rounded-md bg-brand-teal px-4 py-2 text-sm font-medium text-brand-navy hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-brand-navy"
                 >
-                  Record signed form
+                  Confirm delivery
                 </button>
               </form>
             </div>

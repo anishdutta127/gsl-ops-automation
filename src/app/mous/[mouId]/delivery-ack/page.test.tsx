@@ -20,7 +20,7 @@ function user(role: User['role'], id = 'u'): User {
 }
 
 describe('/mous/[mouId]/delivery-ack page (D4 manual-upload)', () => {
-  it('OpsHead sees Print blank handover form + Record signed form for eligible dispatches', async () => {
+  it('OpsHead sees Print blank handover form + Confirm delivery for eligible dispatches', async () => {
     getCurrentUserMock.mockResolvedValue(user('OpsHead', 'pradeep.r'))
     const { default: Page } = await import('./page')
     const html = renderToStaticMarkup(
@@ -32,8 +32,12 @@ describe('/mous/[mouId]/delivery-ack page (D4 manual-upload)', () => {
     expect(html).toContain('action="/api/delivery-ack/template"')
     expect(html).toContain('action="/api/delivery-ack/acknowledge"')
     expect(html).toContain('Print blank handover form')
-    expect(html).toContain('Record signed form')
+    expect(html).toContain('Confirm delivery')
     expect(html).toContain('Signed form URL')
+    // W4-D.6: legacy label retired in current renders. Historical audit
+    // entries that used "Record signed form" wording stay verbatim per
+    // audit fidelity over consistency.
+    expect(html).not.toContain('Record signed form')
   })
 
   it('SalesRep on own MOU also sees both forms (Phase 1 W3-B: UI gates disabled)', async () => {

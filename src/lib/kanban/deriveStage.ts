@@ -82,8 +82,9 @@ export const KANBAN_COLUMNS: ReadonlyArray<KanbanColumn> = [
  *                                "Record payment received" (W4-B.5)
  *   - payment-received        -> /mous/[id]/dispatch "Raise dispatch"
  *   - kit-dispatched          -> /mous/[id]/delivery-ack
- *                                "Record signed form" (W4-D revisits;
- *                                see RUNBOOK §11 for the rename note)
+ *                                "Confirm delivery" (W4-D.6 rename;
+ *                                historical audit entries keep their
+ *                                original wording for audit fidelity)
  *   - delivery-acknowledged   -> /mous/[id]/feedback-request
  *                                "Compose feedback request"
  *   - feedback-submitted      -> terminal; no further action
@@ -106,7 +107,7 @@ export const STAGE_NEXT_STEP: Record<KanbanStageKey, string> = {
   'cross-verification': 'Auto-skipped; no card should land here',
   'invoice-raised': 'Record payment received',
   'payment-received': 'Raise dispatch',
-  'kit-dispatched': 'Record signed form',
+  'kit-dispatched': 'Confirm delivery',
   'delivery-acknowledged': 'Compose feedback request',
   'feedback-submitted': 'MOU complete',
 }
