@@ -47,15 +47,18 @@ describe('/schools list page', () => {
     expect(html).not.toMatch(/#[0-9a-fA-F]{3,6}/)
   })
 
-  it('?incomplete=yes mode renders the triage view (W3-C C3)', async () => {
+  it('?incomplete=yes is no longer a special mode; W4-A.6 deleted that surface', async () => {
     const { default: SchoolsPage } = await import('./page')
     const html = renderToStaticMarkup(
       await SchoolsPage({ searchParams: Promise.resolve({ incomplete: 'yes' }) }),
     )
-    expect(html).toContain('Schools needing data')
-    expect(html).toContain('sorted most-missing first')
-    expect(html).toContain('Missing')
-    // FilterRail is hidden in incomplete mode
-    expect(html).not.toContain('Chain membership')
+    // The pre-W4-A "Schools needing data" title is gone; the page renders
+    // the regular "Schools" list with the unknown query param ignored.
+    expect(html).not.toContain('Schools needing data')
+    expect(html).not.toContain('sorted most-missing first')
+    expect(html).toContain('Schools')
+    // The FilterRail is now always present; the incomplete-mode hide path
+    // is gone.
+    expect(html).toContain('Chain membership')
   })
 })

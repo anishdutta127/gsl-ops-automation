@@ -14,8 +14,15 @@
  *  - `mou-not-found`
  *  - `school-not-found`
  *  - `wrong-status`           MOU not Active
- *  - `gstin-required`         school.gstNumber === null (Item F default)
  *  - `template-missing`       caller surfaces TemplateMissingError to operator
+ *
+ * W4-A.6: GSTIN no longer blocks PI generation. The DOCX renders the
+ * literal "GSTIN: To be added" placeholder when school.gstNumber is
+ * null or empty; Finance backfills the GSTIN later via
+ * /schools/[id]/edit and the PI document gets re-issued (or
+ * annotated) before GST filing. The pre-W4-A.6 'gstin-required'
+ * failure branch is removed; tests previously covering it now assert
+ * the placeholder path.
  *
  * Counter monotonicity is preserved: issuePiNumberAtomic is called
  * BEFORE any other write, and the API route reads the returned
@@ -75,7 +82,6 @@ export type GeneratePiFailureReason =
   | 'mou-not-found'
   | 'school-not-found'
   | 'wrong-status'
-  | 'gstin-required'
   | 'template-missing'
 
 export type GeneratePiResult =
@@ -150,9 +156,12 @@ export async function generatePi(
 
   const school = deps.schools.find((s) => s.id === mou.schoolId)
   if (!school) return { ok: false, reason: 'school-not-found' }
-  if (school.gstNumber === null || school.gstNumber.trim() === '') {
-    return { ok: false, reason: 'gstin-required' }
-  }
+  // W4-A.6: GSTIN-missing no longer blocks. Finance backfills via the
+  // school edit form; the DOCX renders a "To be added" placeholder
+  // until then.
+  const renderedGstin = (school.gstNumber !== null && school.gstNumber.trim() !== '')
+    ? school.gstNumber
+    : 'To be added'
 
   // Atomic counter advance is the FIRST write. If anything below fails
   // the counter has still moved, but PI numbers gap; never duplicate.
@@ -182,7 +191,7 @@ export async function generatePi(
     PI_NUMBER: piNumber,
     PI_DATE: formatDate(ts),
     SCHOOL_NAME: school.legalEntity ?? school.name,
-    SCHOOL_GSTIN: school.gstNumber,
+    SCHOOL_GSTIN: renderedGstin,
     SCHOOL_ADDRESS: [
       school.name,
       `${school.city}, ${school.state}`,

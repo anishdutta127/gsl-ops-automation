@@ -54,13 +54,17 @@ describe('/mous/[mouId]/pi page', () => {
     expect(html).toContain('wired in Phase D')
   })
 
-  it('GSTIN missing surfaces alert (school SCH-MAPLELEAF-BLR has null gstNumber)', async () => {
+  it('GSTIN missing surfaces an inline note (W4-A.6: no longer a hard block)', async () => {
     getCurrentUserMock.mockResolvedValue(user('Admin', 'anish.d'))
     const { default: Page } = await import('./page')
     const html = renderToStaticMarkup(
       await Page({ params: Promise.resolve({ mouId: 'MOU-STEAM-2627-005' }) }),
     )
-    expect(html).toContain('GSTIN required')
+    expect(html).toContain('data-testid="gstin-missing-note"')
+    expect(html).toContain('To be added')
+    // Old hard-block alert copy must be gone.
+    expect(html).not.toContain('GSTIN required')
+    expect(html).not.toContain('Missing; PI blocked')
   })
 
   it('contains no raw hex codes (token discipline)', async () => {

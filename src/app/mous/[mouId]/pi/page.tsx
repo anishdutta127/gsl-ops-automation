@@ -10,15 +10,17 @@
  * authenticated user. Server-side canPerform() in lib/pi/generatePi.ts
  * still enforces at submit time.
  *
- * GSTIN gate: per Item F, PI generation is blocked when the school's
- * gstNumber is null. We surface that block on the page even before
- * the API exists, so testers see the right "GSTIN required" UX
- * pre-D.
+ * W4-A.6: GSTIN-missing no longer blocks PI generation. The DOCX
+ * renders the literal "To be added" placeholder for SCHOOL_GSTIN
+ * when school.gstNumber is null or whitespace; an inline note on the
+ * form tells operators that Finance can backfill via
+ * /schools/[id]/edit. Pre-W4-A.6 the page rendered a hard-block alert
+ * with "GSTIN required" copy; that alert is gone.
  */
 
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { AlertTriangle, Info } from 'lucide-react'
+import { Info } from 'lucide-react'
 import type { MOU, Payment, School, User } from '@/lib/types'
 import mousJson from '@/data/mous.json'
 import schoolsJson from '@/data/schools.json'
@@ -57,7 +59,8 @@ export default async function PiPage({ params }: PageProps) {
   const pendingInstallments = allPayments.filter(
     (p) => p.mouId === mou.id && (p.status === 'Pending' || p.status === 'PI Sent' || p.status === 'Due Soon' || p.status === 'Overdue'),
   )
-  const gstinBlocked = !school || school.gstNumber === null
+  // W4-A.6: GSTIN-missing surfaces an inline note (not a block).
+  const gstinMissing = !school || school.gstNumber === null || (school.gstNumber ?? '').trim() === ''
 
   return (
     <>
@@ -78,7 +81,7 @@ export default async function PiPage({ params }: PageProps) {
             subtitle="Generate proforma invoice for the next pending instalment"
             metadata={[
               { label: 'School', value: school?.name ?? mou.schoolName },
-              { label: 'GSTIN', value: gstinBlocked ? <span className="text-signal-alert">Missing; PI blocked</span> : <span className="font-mono text-xs">{school?.gstNumber}</span> },
+              { label: 'GSTIN', value: gstinMissing ? <span className="text-muted-foreground">To be added</span> : <span className="font-mono text-xs">{school?.gstNumber}</span> },
               { label: 'Programme', value: `${mou.programme}${mou.programmeSubType ? ' / ' + mou.programmeSubType : ''}` },
               { label: 'Pending instalments', value: String(pendingInstallments.length) },
             ]}
@@ -91,16 +94,21 @@ export default async function PiPage({ params }: PageProps) {
             </span>
           </p>
 
-          {gstinBlocked ? (
-            <div role="alert" className="flex items-start gap-2 rounded-md border border-signal-alert bg-card p-3 text-sm text-foreground">
-              <AlertTriangle aria-hidden className="size-4 shrink-0 text-signal-alert" />
-              <div>
-                <p className="font-medium text-brand-navy">GSTIN required</p>
-                <p className="text-xs text-muted-foreground">
-                  PI generation is blocked until the school&apos;s GSTIN is captured. Update at <Link href={`/schools/${mou.schoolId}/edit`} className="text-brand-navy underline">/schools/{mou.schoolId}/edit</Link>.
-                </p>
-              </div>
-            </div>
+          {gstinMissing ? (
+            <p
+              role="status"
+              data-testid="gstin-missing-note"
+              className="flex items-start gap-2 rounded-md border border-border bg-card p-3 text-xs text-muted-foreground"
+            >
+              <Info aria-hidden className="size-4 shrink-0 text-muted-foreground" />
+              <span>
+                School GSTIN is not on file. The PI document will render &quot;To be added&quot; for the GSTIN field; Finance can backfill via{' '}
+                <Link href={`/schools/${mou.schoolId}/edit`} className="text-brand-navy hover:underline">
+                  /schools/{mou.schoolId}/edit
+                </Link>
+                {' '}before GST filing if needed.
+              </span>
+            </p>
           ) : null}
 
           <form
@@ -126,7 +134,7 @@ export default async function PiPage({ params }: PageProps) {
             <div className="flex flex-wrap gap-2 border-t border-border pt-4">
               <button
                 type="submit"
-                disabled={gstinBlocked || pendingInstallments.length === 0}
+                disabled={pendingInstallments.length === 0}
                 className="inline-flex min-h-11 items-center rounded-md bg-brand-teal px-4 py-2 text-sm font-medium text-brand-navy hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-brand-navy disabled:opacity-50"
               >
                 Generate PI

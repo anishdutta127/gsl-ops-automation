@@ -6,6 +6,12 @@
  *
  * No per-role scoping: school directory is reference data; all
  * roles see all schools.
+ *
+ * W4-A.6 removed the ?incomplete=yes triage mode + the
+ * dataCompleteness lib. PI generation no longer blocks on missing
+ * GSTIN, so the "Schools needing data" surface no longer earns its
+ * keep. Operators who want to find a missing-GSTIN school can apply
+ * the GSTIN=Missing filter chip on this page.
  */
 
 import type { School, SchoolGroup } from '@/lib/types'
@@ -21,7 +27,6 @@ import {
   applyDimensionFilters,
   applyTextSearch,
 } from '@/lib/filterParsing'
-import { getIncompleteSchools, missingFieldCount } from '@/lib/schools/dataCompleteness'
 
 const allSchools = schoolsJson as unknown as School[]
 const allSchoolGroups = schoolGroupsJson as unknown as SchoolGroup[]
@@ -36,22 +41,16 @@ export default async function SchoolsListPage({ searchParams }: PageProps) {
   const sp = await searchParams
   const active = parseDimensions(sp, DIMENSION_KEYS as unknown as string[])
   const search = typeof sp.q === 'string' ? sp.q : ''
-  const incompleteMode = sp.incomplete === 'yes'
 
   const memberSchoolIds = new Set(
     allSchoolGroups.flatMap((g) => g.memberSchoolIds),
   )
 
-  // ?incomplete=yes overrides the dimension filters with the
-  // dataCompleteness "most-missing first" sort. Text search still
-  // applies on top so the operator can narrow within the triage list.
-  const baseFiltered = incompleteMode
-    ? getIncompleteSchools(allSchools, 1)
-    : applyDimensionFilters(allSchools, active, {
-        region: (s) => s.region,
-        group: (s) => (memberSchoolIds.has(s.id) ? 'yes' : 'no'),
-        gstin: (s) => (s.gstNumber === null ? 'missing' : 'captured'),
-      })
+  const baseFiltered = applyDimensionFilters(allSchools, active, {
+    region: (s) => s.region,
+    group: (s) => (memberSchoolIds.has(s.id) ? 'yes' : 'no'),
+    gstin: (s) => (s.gstNumber === null ? 'missing' : 'captured'),
+  })
 
   const filtered = applyTextSearch(
     baseFiltered,
@@ -78,12 +77,12 @@ export default async function SchoolsListPage({ searchParams }: PageProps) {
       label: 'GSTIN',
       options: [
         { value: 'captured', label: 'Captured' },
-        { value: 'missing', label: 'Missing (PI blocked)' },
+        { value: 'missing', label: 'Missing' },
       ],
     },
   ]
 
-  const baseColumns: ColumnDef<School>[] = [
+  const columns: ColumnDef<School>[] = [
     {
       key: 'id',
       header: 'School id',
@@ -97,45 +96,28 @@ export default async function SchoolsListPage({ searchParams }: PageProps) {
       header: 'GSTIN',
       render: (s) =>
         s.gstNumber === null ? (
-          <span className="text-signal-alert">Missing</span>
+          <span className="text-muted-foreground">Missing</span>
         ) : (
           <span className="font-mono text-xs">{s.gstNumber}</span>
         ),
     },
   ]
-  const incompleteColumn: ColumnDef<School> = {
-    key: 'missing',
-    header: 'Missing',
-    render: (s) => {
-      const count = missingFieldCount(s)
-      return count === 0
-        ? <span className="text-signal-ok">Complete</span>
-        : <span className="text-signal-attention">{count} of 4</span>
-    },
-  }
-  const columns = incompleteMode ? [...baseColumns, incompleteColumn] : baseColumns
 
   return (
     <>
       <TopNav currentPath="/schools" />
       <main id="main-content">
         <PageHeader
-          title={incompleteMode ? 'Schools needing data' : 'Schools'}
-          subtitle={
-            incompleteMode
-              ? `${filtered.length} schools missing one or more critical fields, sorted most-missing first.`
-              : `${filtered.length} of ${allSchools.length} matching`
-          }
+          title="Schools"
+          subtitle={`${filtered.length} of ${allSchools.length} matching`}
         />
         <div className="mx-auto flex max-w-screen-xl flex-col gap-4 px-4 py-6 sm:flex-row">
-          {incompleteMode ? null : (
-            <FilterRail
-              basePath="/schools"
-              dimensions={dimensions}
-              active={active}
-              search={{ value: search, placeholder: 'Search name / city / id' }}
-            />
-          )}
+          <FilterRail
+            basePath="/schools"
+            dimensions={dimensions}
+            active={active}
+            search={{ value: search, placeholder: 'Search name / city / id' }}
+          />
           <div className="min-w-0 flex-1">
             <EntityListTable
               rows={filtered}

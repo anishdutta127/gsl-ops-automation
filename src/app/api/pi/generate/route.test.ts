@@ -59,13 +59,15 @@ describe('POST /api/pi/generate', () => {
     expect(disposition).toContain('GSL_OPS_26-27_0001.docx')
   })
 
-  it('lib failure (gstin-required) -> 303 to /mous/<id>/pi with error param', async () => {
-    generateMock.mockResolvedValue({ ok: false, reason: 'gstin-required' })
+  it('lib failure (wrong-status) -> 303 to /mous/<id>/pi with error param', async () => {
+    // W4-A.6: gstin-required no longer exists as a failure reason; use
+    // wrong-status as the representative non-template failure path.
+    generateMock.mockResolvedValue({ ok: false, reason: 'wrong-status' })
     const res = await POST(buildRequest({ mouId: 'MOU-X', instalmentSeq: '1' }))
     expect(res.status).toBe(303)
     const loc = res.headers.get('location') ?? ''
     expect(loc).toContain('/mous/MOU-X/pi')
-    expect(loc).toContain('error=gstin-required')
+    expect(loc).toContain('error=wrong-status')
   })
 
   it('permission denied -> 303 with error=permission', async () => {
