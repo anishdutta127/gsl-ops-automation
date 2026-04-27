@@ -1,0 +1,267 @@
+{
+  "generatedAt": "2026-04-28T11:00:00.000Z",
+  "purpose": "Independent verification of W4-C.7 corrections. Read-only; no data mutations.",
+  "canonicalSource": "Hardcoded CANONICAL_51_LIST in this script (snapshot from mous.json on 2026-04-28).",
+  "matchingMetric": "Jaccard token overlap (>=0.8 matches; [0.4, 0.8) or token-subset = minor variation; <0.4 does not match).",
+  "recordCount": 23,
+  "summary": {
+    "matches": 17,
+    "matchesWithMinorVariation": 6,
+    "doesNotMatch": 0
+  },
+  "rows": [
+    {
+      "irId": "IR-W4C-001",
+      "formSchool": "Don Bosco School Krishnanagar",
+      "mappedMouId": "MOU-STEAM-2627-027",
+      "canonicalNameFrom51List": "Don Bosco Krishnanagar",
+      "mappedMouInActive51List": true,
+      "verdict": "matches",
+      "jaccardScore": 1,
+      "reason": "jaccard 1.00 >= 0.80",
+      "w4c7Corrected": false
+    },
+    {
+      "irId": "IR-W4C-002",
+      "formSchool": "St. Paul's Boarding and Day School ",
+      "mappedMouId": "MOU-STEAM-2627-039",
+      "canonicalNameFrom51List": "St. Paul's Boarding And Day School",
+      "mappedMouInActive51List": true,
+      "verdict": "matches",
+      "jaccardScore": 1,
+      "reason": "normalised exact match",
+      "w4c7Corrected": true
+    },
+    {
+      "irId": "IR-W4C-003",
+      "formSchool": "K.E. Carmel School,Amtala",
+      "mappedMouId": "MOU-STEAM-2627-013",
+      "canonicalNameFrom51List": "K.E Carmel School - Amtala",
+      "mappedMouInActive51List": true,
+      "verdict": "matches",
+      "jaccardScore": 1,
+      "reason": "normalised exact match",
+      "w4c7Corrected": false
+    },
+    {
+      "irId": "IR-W4C-004",
+      "formSchool": "St. Mary's Convent School",
+      "mappedMouId": "MOU-STEAM-2627-007",
+      "canonicalNameFrom51List": "St. Mary Convent School",
+      "mappedMouInActive51List": true,
+      "verdict": "matches",
+      "jaccardScore": 1,
+      "reason": "jaccard 1.00 >= 0.80",
+      "w4c7Corrected": false
+    },
+    {
+      "irId": "IR-W4C-005",
+      "formSchool": "Techno India Group Public School- Kalyani",
+      "mappedMouId": "MOU-STEAM-2627-004",
+      "canonicalNameFrom51List": "Techno India Group Public School Kalyani",
+      "mappedMouInActive51List": true,
+      "verdict": "matches",
+      "jaccardScore": 1,
+      "reason": "normalised exact match",
+      "w4c7Corrected": true
+    },
+    {
+      "irId": "IR-W4C-006",
+      "formSchool": "Techno India Group Public School- Panagarh",
+      "mappedMouId": "MOU-STEAM-2627-006",
+      "canonicalNameFrom51List": "Techno India Group Public School Panagarh",
+      "mappedMouInActive51List": true,
+      "verdict": "matches",
+      "jaccardScore": 1,
+      "reason": "normalised exact match",
+      "w4c7Corrected": true
+    },
+    {
+      "irId": "IR-W4C-007",
+      "formSchool": "Techno India Group Public School- Asansol",
+      "mappedMouId": "MOU-STEAM-2627-005",
+      "canonicalNameFrom51List": "Techno India Group Public School Asansol",
+      "mappedMouInActive51List": true,
+      "verdict": "matches",
+      "jaccardScore": 1,
+      "reason": "normalised exact match",
+      "w4c7Corrected": true
+    },
+    {
+      "irId": "IR-W4C-008",
+      "formSchool": "BIT GLOBAL SCHOOL",
+      "mappedMouId": "MOU-STEAM-2627-026",
+      "canonicalNameFrom51List": "B I T Global School",
+      "mappedMouInActive51List": true,
+      "verdict": "matches with minor variation",
+      "jaccardScore": 0.5,
+      "reason": "token subset (jaccard 0.50)",
+      "w4c7Corrected": true
+    },
+    {
+      "irId": "IR-W4C-009",
+      "formSchool": "TATHASTU INOVATION ",
+      "mappedMouId": "MOU-STEAM-2627-016",
+      "canonicalNameFrom51List": "Tathastu Innovations (LAB ) Meerut",
+      "mappedMouInActive51List": true,
+      "verdict": "matches with minor variation",
+      "jaccardScore": null,
+      "reason": "Anish-confirmed alias: Anish W4-C recon: form typo (Inovation vs Innovations) + omitted city qualifier (Meerut)",
+      "w4c7Corrected": false
+    },
+    {
+      "irId": "IR-W4C-010",
+      "formSchool": "St Johns High School",
+      "mappedMouId": "MOU-STEAM-2627-047",
+      "canonicalNameFrom51List": "St. Johns High School",
+      "mappedMouInActive51List": true,
+      "verdict": "matches",
+      "jaccardScore": 1,
+      "reason": "normalised exact match",
+      "w4c7Corrected": true
+    },
+    {
+      "irId": "IR-W4C-011",
+      "formSchool": "Lions Calcutta (Greater) Vidya Mandir",
+      "mappedMouId": "MOU-STEAM-2627-025",
+      "canonicalNameFrom51List": "Lions Calcutta Greater Vidya Mandir",
+      "mappedMouInActive51List": true,
+      "verdict": "matches",
+      "jaccardScore": 1,
+      "reason": "normalised exact match",
+      "w4c7Corrected": true
+    },
+    {
+      "irId": "IR-W4C-012",
+      "formSchool": "SD Sr Sec School",
+      "mappedMouId": "MOU-STEAM-2627-018",
+      "canonicalNameFrom51List": "SD Senior Secondary School",
+      "mappedMouInActive51List": true,
+      "verdict": "matches",
+      "jaccardScore": 1,
+      "reason": "jaccard 1.00 >= 0.80",
+      "w4c7Corrected": false
+    },
+    {
+      "irId": "IR-W4C-013",
+      "formSchool": "Darshan Academy,  Devlali-Nashik ",
+      "mappedMouId": "MOU-STEAM-2627-049",
+      "canonicalNameFrom51List": "Darshan Academy, Devlali",
+      "mappedMouInActive51List": true,
+      "verdict": "matches with minor variation",
+      "jaccardScore": 0.75,
+      "reason": "token subset (jaccard 0.75)",
+      "w4c7Corrected": false
+    },
+    {
+      "irId": "IR-W4C-014",
+      "formSchool": "K.E Carmel",
+      "mappedMouId": "MOU-STEAM-2627-014",
+      "canonicalNameFrom51List": "K.E Carmel School - Suri",
+      "mappedMouInActive51List": true,
+      "verdict": "matches with minor variation",
+      "jaccardScore": 0.5,
+      "reason": "token subset (jaccard 0.50)",
+      "w4c7Corrected": false
+    },
+    {
+      "irId": "IR-W4C-015",
+      "formSchool": "Mahrishi Dayanand Sr Sec School ",
+      "mappedMouId": "MOU-STEAM-2627-003",
+      "canonicalNameFrom51List": "Mahrishi Dayanand School",
+      "mappedMouInActive51List": true,
+      "verdict": "matches",
+      "jaccardScore": 1,
+      "reason": "jaccard 1.00 >= 0.80",
+      "w4c7Corrected": false
+    },
+    {
+      "irId": "IR-W4C-016",
+      "formSchool": "MUTAHHARY PUBLIC SCHOOL",
+      "mappedMouId": "MOU-STEAM-2627-001",
+      "canonicalNameFrom51List": "Mutahhary Public School Baroo",
+      "mappedMouInActive51List": true,
+      "verdict": "matches with minor variation",
+      "jaccardScore": 0.5,
+      "reason": "token subset (jaccard 0.50)",
+      "w4c7Corrected": false
+    },
+    {
+      "irId": "IR-W4C-017",
+      "formSchool": "JAFFARIA ACADEMY OF MODERN EDUCATION ",
+      "mappedMouId": "MOU-STEAM-2627-021",
+      "canonicalNameFrom51List": "Jaffaria Academy of Modern Education - Kargil",
+      "mappedMouInActive51List": true,
+      "verdict": "matches",
+      "jaccardScore": 0.8,
+      "reason": "jaccard 0.80 >= 0.80",
+      "w4c7Corrected": false
+    },
+    {
+      "irId": "IR-W4C-018",
+      "formSchool": "Blue Angels Global School",
+      "mappedMouId": "MOU-STEAM-2627-015",
+      "canonicalNameFrom51List": "Blue Angels Global School",
+      "mappedMouInActive51List": true,
+      "verdict": "matches",
+      "jaccardScore": 1,
+      "reason": "normalised exact match",
+      "w4c7Corrected": false
+    },
+    {
+      "irId": "IR-W4C-019",
+      "formSchool": "Young Horizons School",
+      "mappedMouId": "MOU-STEAM-2627-050",
+      "canonicalNameFrom51List": "Young Horizons School",
+      "mappedMouInActive51List": true,
+      "verdict": "matches",
+      "jaccardScore": 1,
+      "reason": "normalised exact match",
+      "w4c7Corrected": true
+    },
+    {
+      "irId": "IR-W4C-020",
+      "formSchool": "Swarnim�International School",
+      "mappedMouId": "MOU-STEAM-2627-037",
+      "canonicalNameFrom51List": "Swarnim International School",
+      "mappedMouInActive51List": true,
+      "verdict": "matches",
+      "jaccardScore": 1,
+      "reason": "normalised exact match",
+      "w4c7Corrected": true
+    },
+    {
+      "irId": "IR-W4C-021",
+      "formSchool": "Narayana Group of Schools West Bengal",
+      "mappedMouId": "MOU-STEAM-2627-051",
+      "canonicalNameFrom51List": "Ramanarayana Education Trust",
+      "mappedMouInActive51List": true,
+      "verdict": "matches with minor variation",
+      "jaccardScore": null,
+      "reason": "Anish-confirmed alias: Anish W4-C recon: same entity as Ramanarayana Education Trust",
+      "w4c7Corrected": false
+    },
+    {
+      "irId": "IR-W4C-022",
+      "formSchool": "Kavyapta Global School",
+      "mappedMouId": "MOU-STEAM-2627-009",
+      "canonicalNameFrom51List": "Kavyapta Global School",
+      "mappedMouInActive51List": true,
+      "verdict": "matches",
+      "jaccardScore": 1,
+      "reason": "normalised exact match",
+      "w4c7Corrected": true
+    },
+    {
+      "irId": "IR-W4C-023",
+      "formSchool": "Christ Mission School",
+      "mappedMouId": "MOU-STEAM-2627-019",
+      "canonicalNameFrom51List": "Christ Mission School",
+      "mappedMouInActive51List": true,
+      "verdict": "matches",
+      "jaccardScore": 1,
+      "reason": "normalised exact match",
+      "w4c7Corrected": true
+    }
+  ]
+}
