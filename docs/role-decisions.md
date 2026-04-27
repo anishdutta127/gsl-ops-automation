@@ -33,3 +33,14 @@ The remaining five testers preserve role-scoping verification: `ameet.z` (Leader
 - `docs/DEVELOPER.md` §"Test users": roster table.
 - `docs/RUNBOOK.md` §10: partial obsolescence note on the cc-rule:create 30-day flip.
 - `src/data/users.json` and `src/data/_fixtures/users.json`: source of truth.
+
+---
+
+## 2026-04-27: mou:edit-cohort-status Admin-only (W4-A.5)
+
+W4-A added a per-MOU `cohortStatus: active | archived` flag and two surfaces (`/mous/archive` Reactivate + `/admin/mou-status` per-row + bulk). The `mou:edit-cohort-status` Action gates writes through both. **Admin-only via the Admin wildcard; OpsHead is intentionally not granted.**
+
+**Why Admin-only:** cohort decisions are leadership-level (which academic year counts as the operationally-current pursuit). OpsHead can manage day-to-day operations on the active cohort without needing to flip MOUs in or out of the cohort itself; the AY rollover that produces the "92 archive candidates" pattern is a once-per-AY event that benefits from a deliberate Admin touch.
+
+**Phase 2 trigger:** if pilot operators report friction on this gate (e.g., Misba routinely needs to reactivate a wrongly-archived MOU and Anish is unavailable), revisit by adding `mou:edit-cohort-status` to the OpsHead grant set in `src/lib/auth/permissions.ts`. The 1-line change matches the cc-rule:create flip pattern.
+
