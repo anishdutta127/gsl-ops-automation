@@ -46,6 +46,12 @@ const ADMIN_LINKS: AdminLink[] = [
     status: 'real',
   },
   {
+    href: '/admin/mou-status',
+    label: 'MOU cohort status',
+    description: 'Per-row + bulk active / archived flips; Admin-gated; full audit trail.',
+    status: 'real',
+  },
+  {
     href: '/admin/mou-import-review',
     label: 'MOU import review',
     description: 'Quarantined MOUs awaiting human resolution.',

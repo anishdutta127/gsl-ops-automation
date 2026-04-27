@@ -78,6 +78,12 @@ export type Action =
   // W3-D: lifecycle rule durations are editable via /admin/lifecycle-rules.
   // Admin-only at first; Phase 2 trigger to expand if testers ask.
   | 'lifecycle-rule:edit'
+  // W4-A.4 / .5: cohortStatus flips between 'active' and 'archived'.
+  // Reactivate from /mous/archive and bulk-edit on /admin/mou-status both
+  // gate on this. Admin-only via wildcard; OpsHead is intentionally NOT
+  // granted because cohort decisions are leadership-level (which AY's
+  // cohort counts as the operationally-current pursuit).
+  | 'mou:edit-cohort-status'
 
 // Sentinel: Admin role grants all actions. Represented as wildcard in the
 // role map so we never have to enumerate the full action list for Admin.
