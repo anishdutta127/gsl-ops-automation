@@ -63,10 +63,12 @@ import type {
   MOU,
   MouImportReviewItem,
   Programme,
+  SalesPerson,
   School,
 } from '@/lib/types'
 import schoolsJson from '@/data/schools.json'
 import mousJson from '@/data/mous.json'
+import salesTeamJson from '@/data/sales_team.json'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
 import { fetchMouMous, fetchMouSchools } from './mouContentsApi'
 import { findCandidates } from './schoolMatcher'
@@ -107,6 +109,14 @@ export interface RawMou {
   paymentSchedule?: string
   trainerModel?: string | null
   salesPersonId?: string | null
+  /**
+   * Free-text sales rep name carried by upstream gsl-mou-system records
+   * (e.g., "Anshuman", "Balu R"). Resolved to SalesPerson.id via
+   * salesPersonResolver during the import pipeline; the resolved id
+   * lands on MOU.salesPersonId, the original free-text is preserved
+   * in the audit log when resolution is non-trivial.
+   */
+  salesRep?: string | null
   templateVersion?: string | null
   generatedAt?: string | null
   notes?: string | null
@@ -128,21 +138,67 @@ export interface ImporterDeps {
   fetchMouSchools: () => Promise<RawMouSchool[]>
   opsSchools: School[]
   opsMous: MOU[]
+  opsSalesTeam: SalesPerson[]
   enqueue: typeof enqueueUpdate
   now: () => Date
   legacyIncludeFlag: boolean
   minAcademicYear: string
+  /**
+   * When true, the seven structural validators relax the
+   * studentsMou-zero and contractValue-zero rules: legacy upstream
+   * records often carry zero placeholders for fields not yet filled.
+   * Tax + date inversions stay strict. Default: false (Phase 1
+   * import-tick gets the strict path; Week 3 one-shot script gets
+   * the relaxed path with `true`).
+   */
+  legacyValidationRelaxed: boolean
+  /**
+   * Resolves an upstream free-text sales rep name to a
+   * SalesPerson.id. Returns null when the name does not match any
+   * Ops sales-team entry (the import then sets MOU.salesPersonId
+   * to null and preserves the original name in the auditLog notes).
+   * Default implementation: case-insensitive name match against
+   * opsSalesTeam.
+   */
+  salesPersonResolver: (rawSalesRep: string | null | undefined) => string | null
 }
+
+/**
+ * Builds a name-matching resolver that case-insensitively looks up
+ * an upstream salesRep name against an Ops sales team. Tries full
+ * name match first, then first-name match for "Firstname X."-style
+ * Ops records (e.g., upstream "Vikram" matches Ops "Vikram T.").
+ */
+export function buildSalesPersonResolver(
+  salesTeam: SalesPerson[],
+): (rawSalesRep: string | null | undefined) => string | null {
+  return (rawSalesRep: string | null | undefined): string | null => {
+    if (typeof rawSalesRep !== 'string') return null
+    const needle = rawSalesRep.trim().toLowerCase()
+    if (needle === '') return null
+    for (const sp of salesTeam) {
+      if (sp.name.trim().toLowerCase() === needle) return sp.id
+      const firstName = sp.name.trim().split(/\s+/)[0]?.toLowerCase()
+      if (firstName && firstName === needle) return sp.id
+    }
+    return null
+  }
+}
+
+const defaultSalesTeam = salesTeamJson as unknown as SalesPerson[]
 
 const defaultDeps: ImporterDeps = {
   fetchMouMous,
   fetchMouSchools,
   opsSchools: schoolsJson as unknown as School[],
   opsMous: mousJson as unknown as MOU[],
+  opsSalesTeam: defaultSalesTeam,
   enqueue: enqueueUpdate,
   now: () => new Date(),
   legacyIncludeFlag: false,
   minAcademicYear: '2026-27',
+  legacyValidationRelaxed: false,
+  salesPersonResolver: buildSalesPersonResolver(defaultSalesTeam),
 }
 
 export interface ImportOnceResult {
@@ -233,8 +289,10 @@ export async function importOnce(
       })
     }
 
-    // Step 3: validators
-    const failure = validate(working)
+    // Step 3: validators (legacy-relaxed mode demotes zero-value
+    // studentsMou + contractValue to passable; still rejects negatives
+    // and tax / date inversions)
+    const failure = validate(working, { legacyRelaxed: deps.legacyValidationRelaxed })
     if (failure) {
       result.quarantined.push({
         queuedAt: ts,
@@ -313,7 +371,30 @@ export async function importOnce(
       continue
     }
 
-    // Step 6: auto-link write
+    // Step 6: salesRep -> salesPersonId resolution (Week 3 adapter)
+    // Upstream gsl-mou-system records carry a free-text salesRep
+    // name; Ops's MOU schema uses a salesPersonId FK. Resolve via the
+    // injected resolver. Outcomes:
+    //   - resolver returns a non-null id: use it; no audit entry needed
+    //     (the link is canonical, no surprises)
+    //   - working.salesRep is set but resolver returns null: no Ops
+    //     SalesPerson matches; preserve the upstream name in the
+    //     auditLog notes so it isn't lost
+    //   - working.salesRep is unset / empty: pass through whatever
+    //     working.salesPersonId was (typically null for upstream)
+    const resolvedSalesPersonId = deps.salesPersonResolver(working.salesRep)
+    if (resolvedSalesPersonId !== null) {
+      working = { ...working, salesPersonId: resolvedSalesPersonId }
+    } else if (typeof working.salesRep === 'string' && working.salesRep.trim() !== '') {
+      auditLog.push({
+        timestamp: ts,
+        user: 'system',
+        action: 'manual-relink',
+        notes: `Upstream salesRep "${working.salesRep.trim()}" did not match any Ops sales-team entry; salesPersonId left null. Manual reassignment required.`,
+      })
+    }
+
+    // Step 7: auto-link write
     auditLog.push({
       timestamp: ts,
       user: 'system',

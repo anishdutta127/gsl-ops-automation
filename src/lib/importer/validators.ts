@@ -49,7 +49,25 @@ export interface ValidatableRecord {
   endDate?: unknown
 }
 
-export function validate(record: ValidatableRecord): ValidatorFailure | null {
+export interface ValidateOptions {
+  /**
+   * When true, demotes the studentsMou-zero and contractValue-zero
+   * checks to passable: a zero is treated as a placeholder rather
+   * than a rejection. Used for the Week 3 legacy backfill where
+   * upstream MOU records carry zeros for in-progress / unfilled
+   * fields. Negative values still reject in both modes (data
+   * corruption signal). Tax + date inversions stay strict; those
+   * are structural integrity checks not data-completeness checks.
+   */
+  legacyRelaxed?: boolean
+}
+
+export function validate(
+  record: ValidatableRecord,
+  options: ValidateOptions = {},
+): ValidatorFailure | null {
+  const relaxed = options.legacyRelaxed === true
+
   // 1. Tax inversion: spWithTax >= spWithoutTax
   const swt = record.spWithTax
   const swot = record.spWithoutTax
@@ -66,21 +84,39 @@ export function validate(record: ValidatableRecord): ValidatorFailure | null {
     }
   }
 
-  // 2. Student count: 0 < studentsMou <= 20000
+  // 2. Student count: 0 < studentsMou <= 20000 (relaxed: 0 allowed)
   const sm = record.studentsMou
-  if (typeof sm !== 'number' || sm <= 0 || sm > STUDENTS_MAX) {
+  if (typeof sm !== 'number') {
     return {
       category: 'student_count_implausible',
-      message: `studentsMou must be in (0, ${STUDENTS_MAX}]; got ${String(sm)}`,
+      message: `studentsMou must be a number; got ${String(sm)}`,
+    }
+  }
+  const studentsLowerOk = relaxed ? sm >= 0 : sm > 0
+  if (!studentsLowerOk || sm > STUDENTS_MAX) {
+    return {
+      category: 'student_count_implausible',
+      message: relaxed
+        ? `studentsMou must be in [0, ${STUDENTS_MAX}]; got ${String(sm)}`
+        : `studentsMou must be in (0, ${STUDENTS_MAX}]; got ${String(sm)}`,
     }
   }
 
-  // 3. Contract value: 0 < contractValue < 10 cr
+  // 3. Contract value: 0 < contractValue < 10 cr (relaxed: 0 allowed)
   const cv = record.contractValue
-  if (typeof cv !== 'number' || cv <= 0 || cv >= CONTRACT_VALUE_MAX) {
+  if (typeof cv !== 'number') {
     return {
       category: 'contract_value_implausible',
-      message: `contractValue must be in (0, ${CONTRACT_VALUE_MAX}); got ${String(cv)}`,
+      message: `contractValue must be a number; got ${String(cv)}`,
+    }
+  }
+  const contractLowerOk = relaxed ? cv >= 0 : cv > 0
+  if (!contractLowerOk || cv >= CONTRACT_VALUE_MAX) {
+    return {
+      category: 'contract_value_implausible',
+      message: relaxed
+        ? `contractValue must be in [0, ${CONTRACT_VALUE_MAX}); got ${String(cv)}`
+        : `contractValue must be in (0, ${CONTRACT_VALUE_MAX}); got ${String(cv)}`,
     }
   }
 

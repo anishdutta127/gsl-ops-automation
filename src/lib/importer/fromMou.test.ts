@@ -19,13 +19,14 @@
 
 import { describe, expect, it, vi } from 'vitest'
 import {
+  buildSalesPersonResolver,
   importOnce,
   ImporterError,
   type ImporterDeps,
   type RawMou,
   type RawMouSchool,
 } from './fromMou'
-import type { MOU, PendingUpdate, School } from '@/lib/types'
+import type { MOU, PendingUpdate, SalesPerson, School } from '@/lib/types'
 
 const FIXED_TS = '2026-04-26T10:00:00.000Z'
 const FIXED_DATE = new Date(FIXED_TS)
@@ -475,6 +476,125 @@ describe('Q-G Test 6: importOnce', () => {
       expect(result.filtered).toBe(1)
       expect(result.errors).toHaveLength(0)
       expect(result.autoLinkedSchoolIds).toHaveLength(2)
+    })
+  })
+
+  describe('Week 3: legacy-relaxed validators', () => {
+    it('default (strict) mode rejects studentsMou=0', async () => {
+      const raw = rawMou({ id: 'MOU-STEAM-2627-301', studentsMou: 0 })
+      const { deps } = makeDeps({ rawMous: [raw] })
+      const result = await importOnce(deps)
+      expect(result.written).toHaveLength(0)
+      expect(result.quarantined).toHaveLength(1)
+      expect(result.quarantined[0]?.validationFailed).toBe('student_count_implausible')
+    })
+
+    it('legacy-relaxed mode accepts studentsMou=0 (placeholder for in-progress upstream record)', async () => {
+      const raw = rawMou({ id: 'MOU-STEAM-2627-302', studentsMou: 0 })
+      const { deps } = makeDeps({ rawMous: [raw] })
+      const result = await importOnce({ ...deps, legacyValidationRelaxed: true })
+      expect(result.written).toHaveLength(1)
+      expect(result.quarantined).toHaveLength(0)
+      expect(result.written[0]?.studentsMou).toBe(0)
+    })
+
+    it('legacy-relaxed mode accepts contractValue=0', async () => {
+      const raw = rawMou({ id: 'MOU-STEAM-2627-303', contractValue: 0 })
+      const { deps } = makeDeps({ rawMous: [raw] })
+      const result = await importOnce({ ...deps, legacyValidationRelaxed: true })
+      expect(result.written).toHaveLength(1)
+      expect(result.written[0]?.contractValue).toBe(0)
+    })
+
+    it('legacy-relaxed mode still rejects negative studentsMou (data corruption signal)', async () => {
+      const raw = rawMou({ id: 'MOU-STEAM-2627-304', studentsMou: -5 })
+      const { deps } = makeDeps({ rawMous: [raw] })
+      const result = await importOnce({ ...deps, legacyValidationRelaxed: true })
+      expect(result.written).toHaveLength(0)
+      expect(result.quarantined[0]?.validationFailed).toBe('student_count_implausible')
+    })
+
+    it('legacy-relaxed mode still rejects tax inversions (structural integrity)', async () => {
+      const raw = rawMou({ id: 'MOU-STEAM-2627-305', spWithoutTax: 5000, spWithTax: 4000 })
+      const { deps } = makeDeps({ rawMous: [raw] })
+      const result = await importOnce({ ...deps, legacyValidationRelaxed: true })
+      expect(result.written).toHaveLength(0)
+      expect(result.quarantined[0]?.validationFailed).toBe('tax_inversion')
+    })
+
+    it('legacy-relaxed mode still rejects date inversions', async () => {
+      const raw = rawMou({
+        id: 'MOU-STEAM-2627-306',
+        startDate: '2027-01-01',
+        endDate: '2026-01-01',
+      })
+      const { deps } = makeDeps({ rawMous: [raw] })
+      const result = await importOnce({ ...deps, legacyValidationRelaxed: true })
+      expect(result.written).toHaveLength(0)
+      expect(result.quarantined[0]?.validationFailed).toBe('date_inversion')
+    })
+  })
+
+  describe('Week 3: salesRep -> salesPersonId resolution', () => {
+    it('resolves a matching upstream salesRep name to the Ops sales-team id (full match)', async () => {
+      const raw = rawMou({ id: 'MOU-STEAM-2627-401', salesRep: 'Vikram T.' })
+      const team: SalesPerson[] = [
+        { id: 'sp-vikram', name: 'Vikram T.', email: 'v@t', phone: null, territories: [], programmes: ['STEAM'], active: true, joinedDate: '2025-06-01' },
+      ]
+      const { deps } = makeDeps({ rawMous: [raw] })
+      const result = await importOnce({ ...deps, opsSalesTeam: team, salesPersonResolver: buildSalesPersonResolver(team) })
+      expect(result.written[0]?.salesPersonId).toBe('sp-vikram')
+    })
+
+    it('resolves first-name match for "Firstname X."-style Ops records (upstream "Vikram" -> Ops "Vikram T.")', async () => {
+      const raw = rawMou({ id: 'MOU-STEAM-2627-402', salesRep: 'Vikram' })
+      const team: SalesPerson[] = [
+        { id: 'sp-vikram', name: 'Vikram T.', email: 'v@t', phone: null, territories: [], programmes: ['STEAM'], active: true, joinedDate: '2025-06-01' },
+      ]
+      const { deps } = makeDeps({ rawMous: [raw] })
+      const result = await importOnce({ ...deps, opsSalesTeam: team, salesPersonResolver: buildSalesPersonResolver(team) })
+      expect(result.written[0]?.salesPersonId).toBe('sp-vikram')
+    })
+
+    it('case-insensitive match (upstream "sahil" -> Ops "Sahil M.")', async () => {
+      const raw = rawMou({ id: 'MOU-STEAM-2627-403', salesRep: 'sahil' })
+      const team: SalesPerson[] = [
+        { id: 'sp-sahil', name: 'Sahil M.', email: 's@m', phone: null, territories: [], programmes: ['STEAM'], active: true, joinedDate: '2025-06-01' },
+      ]
+      const { deps } = makeDeps({ rawMous: [raw] })
+      const result = await importOnce({ ...deps, opsSalesTeam: team, salesPersonResolver: buildSalesPersonResolver(team) })
+      expect(result.written[0]?.salesPersonId).toBe('sp-sahil')
+    })
+
+    it('unmatched salesRep leaves salesPersonId=null and adds audit entry preserving the upstream name', async () => {
+      const raw = rawMou({ id: 'MOU-STEAM-2627-404', salesRep: 'Anshuman' })
+      const team: SalesPerson[] = [
+        { id: 'sp-vikram', name: 'Vikram T.', email: 'v@t', phone: null, territories: [], programmes: ['STEAM'], active: true, joinedDate: '2025-06-01' },
+      ]
+      const { deps } = makeDeps({ rawMous: [raw] })
+      const result = await importOnce({ ...deps, opsSalesTeam: team, salesPersonResolver: buildSalesPersonResolver(team) })
+      expect(result.written[0]?.salesPersonId).toBeNull()
+      const relinkEntry = result.written[0]?.auditLog.find(e => e.action === 'manual-relink')
+      expect(relinkEntry).toBeDefined()
+      expect(relinkEntry?.notes).toContain('Anshuman')
+    })
+
+    it('absent salesRep is a no-op (no resolution attempt, no audit entry)', async () => {
+      const raw = rawMou({ id: 'MOU-STEAM-2627-405' }) // no salesRep field
+      const { deps } = makeDeps({ rawMous: [raw] })
+      const result = await importOnce(deps)
+      expect(result.written[0]?.salesPersonId).toBeNull()
+      const relinkEntry = result.written[0]?.auditLog.find(e => e.action === 'manual-relink')
+      expect(relinkEntry).toBeUndefined()
+    })
+
+    it('empty-string salesRep is treated as absent', async () => {
+      const raw = rawMou({ id: 'MOU-STEAM-2627-406', salesRep: '   ' })
+      const { deps } = makeDeps({ rawMous: [raw] })
+      const result = await importOnce(deps)
+      expect(result.written[0]?.salesPersonId).toBeNull()
+      const relinkEntry = result.written[0]?.auditLog.find(e => e.action === 'manual-relink')
+      expect(relinkEntry).toBeUndefined()
     })
   })
 })
