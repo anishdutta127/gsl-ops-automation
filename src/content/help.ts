@@ -69,20 +69,20 @@ export const HELP_ROLES: RoleOrientation[] = [
   {
     role: 'Sales (Pratik, Vishwanath)',
     framing: 'You are closest to the schools. Your work moves MOUs from signed to actuals confirmed and starts the kit-dispatch flow with multi-SKU requests.',
-    workstream: 'Confirm the actual student count once a programme starts. Submit DispatchRequests at /dispatch/request when the school needs kits (Ops reviews and approves). Resolve sales-lane escalations. Spot-check school records when you visit.',
-    whereTime: 'The kanban’s actuals-confirmed column (the queue waiting for you), /dispatch/request to start a kit shipment, and the SALES-lane filter on /escalations.',
+    workstream: 'Confirm the actual student count once a programme starts. Submit DispatchRequests at /dispatch/request when the school needs kits (Ops reviews and approves). Resolve sales-lane escalations. Spot-check school records when you visit. Compose reminders for your own MOUs at /admin/reminders when intake / payment / delivery / feedback chases are needed.',
+    whereTime: 'The kanban’s actuals-confirmed column (the queue waiting for you), /dispatch/request to start a kit shipment, the SALES-lane filter on /escalations, and the bell in the top-right showing notifications about your DR submissions and reminder chases on your MOUs.',
   },
   {
     role: 'Ops core team (Pradeep, Misba, Swati, Shashank)',
     framing: 'You are the operational backbone. The kanban is your command centre; drive every transition forward.',
-    workstream: 'Review and convert Sales DispatchRequests at /admin/dispatch-requests, raise direct dispatches when Sales has not requested, send feedback requests, record delivery acknowledgements (renamed Confirm delivery in W4-D.6), manage CC rules and lifecycle rules, resolve OPS-lane escalations, triage MOU import review queue. You can do everything an Admin can do.',
-    whereTime: 'The full kanban (every column, every drag), /admin surfaces, /admin/dispatch-requests for the Sales-side review queue, /admin/audit for the system view of who-did-what.',
+    workstream: 'Review and convert Sales DispatchRequests at /admin/dispatch-requests, raise direct dispatches when Sales has not requested, send feedback requests, record delivery acknowledgements (renamed Confirm delivery in W4-D.6), compose reminders for stalled entities at /admin/reminders, manage CC rules and lifecycle rules, resolve OPS-lane escalations, triage MOU import review queue. You can do everything an Admin can do.',
+    whereTime: 'The full kanban (every column, every drag), /admin surfaces, /admin/dispatch-requests for the Sales-side review queue, /admin/reminders for the chase queue, /admin/audit for the system view of who-did-what. The bell broadcasts new DRs, intake completions, payment receipts, and assignment-queue events.',
   },
   {
     role: 'Finance (Shubhangi, Pranav)',
     framing: 'You unblock the kanban at one specific point: turning Actuals confirmed into Invoice raised.',
     workstream: 'Generate Proforma Invoices once actuals are confirmed and the school has a GSTIN. Reconcile incoming payments. Acknowledge any pre-payment dispatch overrides Leadership authorised.',
-    whereTime: 'MOU detail pages with a Generate PI button (cards in the actuals-confirmed column on the kanban) and the invoice-raised column waiting on payment.',
+    whereTime: 'MOU detail pages with a Generate PI button (cards in the actuals-confirmed column on the kanban) and the invoice-raised column waiting on payment. The bell broadcasts every payment-recorded event so you see the queue update in real time on next page navigation.',
   },
   {
     role: 'Leadership (Ameet)',
@@ -300,6 +300,10 @@ export const HELP_GLOSSARY: GlossaryItem[] = [
     definition: 'When Leadership authorises a dispatch before the school has paid. Captured as an overrideEvent on the dispatch with a mandatory reason; pairs with an OPS-lane escalation so Finance can ack post-hoc.',
   },
   {
+    term: 'Notification',
+    definition: 'An in-app event message in your inbox. The bell in the top-right of every page shows the unread count (numeric 1..9, "9+" cap at 10 or more, hidden at 0). Click the bell to see your last 10; click any row to open the related entity (the system marks the notification read in the same step). The full feed is at /notifications. Notification kinds: dispatch-request created/approved/rejected/cancelled, intake-completed, payment-recorded, escalation-assigned, reminder-due. Phase 1 is refresh-on-page-navigation; no real-time polling.',
+  },
+  {
     term: 'Pending updates queue',
     definition: 'Writes to entity files (mous.json, schools.json, etc.) land here first; the sync runner applies them to the canonical files. If your change is not visible right away, click Run health check on /admin to confirm the queue is processing.',
   },
@@ -324,6 +328,14 @@ export const HELP_GLOSSARY: GlossaryItem[] = [
     definition: 'Matching an incoming bank payment to one or more PIs. A bank entry of 250000 may match Greenfield instalment 2 (PI GSL/OPS/26-27/0002). Phase 1 has the matcher logic but the UI for hitting Reconcile is a Phase 1.1 deliverable.',
   },
   {
+    term: 'Reminder',
+    definition: 'A chase email composed via /admin/reminders when an entity has stalled past its threshold. Four kinds (with default thresholds): intake (14 days since MOU went active, no IntakeRecord), payment (30 days since PI was sent, status not Paid), delivery-ack (7 days since delivery, no acknowledgement URL), feedback-chase (7 days since feedback request was sent, no Feedback record). The list at /admin/reminders shows due reminders sorted by daysOverdue desc; click Compose, copy the rendered email into Outlook, send, then click "I sent it" to mark sent.',
+  },
+  {
+    term: 'Reminder thresholds',
+    definition: 'Configurable in src/data/reminder_thresholds.json without code change. Misba can adjust intake / payment / delivery-ack / feedback-chase day-counts; the lib re-reads on the next request. Same pattern as lifecycle_rules.json.',
+  },
+  {
     term: 'Reject reason',
     definition: 'When rejecting an MOU import-review item, you pick from: data-quality-issue, duplicate-of-existing, out-of-scope, awaiting-source-correction, or other (notes required for "other"). The reason lands in the audit trail.',
   },
@@ -336,8 +348,12 @@ export const HELP_GLOSSARY: GlossaryItem[] = [
     definition: 'Even with the button visible, some actions check your role before saving. If a button does nothing, you may not have permission. Anish can grant you wider access; ask on Teams.',
   },
   {
+    term: 'SchoolSPOC',
+    definition: 'Per-school point-of-contact directory entry imported from ops-data/SCHOOL_SPOC_DATABASE.xlsx via the W4-E.2 backfill. Carries name, designation, phone, email, source sheet (South-West / East / North), and a role (primary / secondary). Multi-POC schools have one primary entry plus N secondary entries; the operator views the directory at /schools/[id] (Phase 1 read-only; editing UI is Phase 2). 44 records imported; 15 schools.json gaps captured in D-019.',
+  },
+  {
     term: 'SPOC',
-    definition: 'Single Point of Contact at a school. The person GSL emails about delivery, feedback, and escalations. Stored on the school record (contactPerson, email, phone fields).',
+    definition: 'Single Point of Contact at a school. The person GSL emails about delivery, feedback, and escalations. Stored on the school record (contactPerson, email, phone fields) AND, post-W4-E.2, on the SchoolSPOC directory (one row per POC; primary + secondary roles for multi-POC schools).',
   },
   {
     term: 'Stage transition',
@@ -560,6 +576,40 @@ export const HELP_WORKFLOWS: WorkflowItem[] = [
       'Take a screenshot of the surface where the issue happens.',
       'Open Teams. Send the screenshot to Anish with a one-line description of what you were trying to do.',
       'Anish triages and replies within a working day. Most fixes ship the same day.',
+    ],
+  },
+  {
+    task: 'Sending reminders to schools (W4-E.4)',
+    precondition: 'You have SalesHead, SalesRep, OpsHead, or Admin role.',
+    steps: [
+      'Go to /admin/reminders. The list shows every reminder currently due, sorted by daysOverdue descending.',
+      'Filter by kind (Intake / Payment / Delivery ack / Feedback chase) using the chips at top, or by sales owner using the dropdown.',
+      'Click Compose on the row you want to chase. The next page shows a preview (subject + body + recipient + CC list) rendered against the live entity (no Communication is written until you confirm).',
+      'Click Compose & copy. The Communication is written with status queued-for-manual; the page refreshes with copy targets (To, CC, Subject, Body) ready for clipboard.',
+      'Paste into Outlook. Send the email manually from your familiar address.',
+      'Return to the page and click I sent it. The Communication flips to status sent; the audit log records who sent it and when.',
+      'The reminder disappears from the /admin/reminders list once the underlying entity moves forward (intake submitted / payment recorded / acknowledgement uploaded / feedback received).',
+    ],
+  },
+  {
+    task: 'Notifications inbox and bell (W4-E.5/E.6)',
+    steps: [
+      'Look at the bell icon in the top-right of every page. The rose badge shows the count of unread notifications you have (numeric 1..9, "9+" if 10 or more, hidden when zero).',
+      'Click the bell to see your last 10. Each row shows the kind, a one-line summary, and the relative timestamp ("2h ago", "yesterday").',
+      'Click any row to open the related entity. The system marks the notification read in the same step; the bell badge updates on the next page navigation.',
+      'For the full feed, click See all notifications at the bottom of the bell dropdown, or visit /notifications directly. The page filters by kind (8 NotificationKind values) or by All / Unread.',
+      'Mark all read at once: click Mark all read (N) at the top right of /notifications when unread count is greater than zero. A flash banner confirms how many were updated.',
+      'Notification kinds you might see: dispatch-request created (broadcast to Admin + OpsHead when Sales submits a DR), dispatch-request approved/rejected (single notification to the requester), dispatch-request cancelled (broadcast to Admin + OpsHead), intake-completed (broadcast to Admin + OpsHead when Sales finishes intake), payment-recorded (broadcast to Finance plus the sales-owner of the MOU), escalation-assigned (single notification to the lane head when feedback auto-escalates), reminder-due (single notification to the sales-owner when the operator composes a chase reminder). Phase 1 is refresh-on-page-navigation; no real-time polling.',
+    ],
+  },
+  {
+    task: 'Using the SPOC database (W4-E.2)',
+    steps: [
+      'The SPOC DB is the per-school point-of-contact directory imported from ops-data/SCHOOL_SPOC_DATABASE.xlsx during W4-E.2. 44 SchoolSPOC records currently land across 3 source sheets (South-West, East, North).',
+      'View the SPOCs for a school: open the school detail page (/schools/[id]). Each SchoolSPOC entry shows name, designation, phone (E.164 normalised where parseable), email, and role (primary / secondary).',
+      'CC fan-out uses the SPOC DB top-of-sheet rules via cc_rules.json. New CC contexts in W4-E.4: intake-reminder, payment-reminder, delivery-ack-reminder, feedback-chase. Existing rules with all-communications context still match; per-context rules can be added at /admin/cc-rules.',
+      'Editing a SchoolSPOC entry is a Phase 2 deliverable; Phase 1 ships read-only. Round 2 testers flag any per-school correction needed (wrong primary / missing POC / typo in phone) and Anish edits the source data.',
+      '15 schools have SPOCs in the SPOC DB but no schools.json entry (D-019 in W4-DEFERRED-ITEMS.md). Round 2 picks whether to add those schools to schools.json or accept as orphaned data.',
     ],
   },
 ]

@@ -62,3 +62,46 @@ W4-D introduced the Sales-initiated dispatch flow. Two new Action gates landed i
 - `src/lib/dispatch/createRequest.ts`: Sales submission lib.
 - `src/lib/dispatch/reviewRequest.ts`: approve / reject / cancel lib.
 - `docs/RUNBOOK.md` §11.6: W4-D dispatch redesign overview.
+
+---
+
+## 2026-04-28: W4-E permission grants + notification fan-out routing
+
+W4-E introduced 5 permission Actions plus 7 trigger-wired notification fan-out sites. Permission grants are minimal-surprise extensions of the existing role matrix.
+
+**5 new Action grants in `src/lib/auth/permissions.ts`:**
+
+- **`spoc:import`**: Admin only (via wildcard). Used by the `scripts/w4e-spoc-import-mutation.mjs` write path. SPOC DB import is a one-shot operational migration, not a runtime user action; OpsHead is intentionally not granted because the import touches schools.json + school_spocs.json + audit logs and the current pilot has Admin-level operators (Pradeep, Misba, Swati, Shashank) covering the Ops core team.
+- **`reminder:create`**: Admin + OpsHead + SalesHead + SalesRep. Sales composes reminders for their own MOUs; Ops composes for any. The action gates both `composeReminder` and `markReminderSent`.
+- **`reminder:view-all`**: Admin only. Today the `/admin/reminders` list page renders the full list to every authenticated user (W3-B UI gating is off); the gate exists for the future Phase 2 surface where SalesRep would see only own-MOU reminders.
+- **`notification:read`**: baseline-granted to every active role (Admin / Leadership / OpsHead / OpsEmployee / SalesHead / SalesRep / Finance / TrainerHead). The lib filters by `recipientUserId` regardless; this gate is defense in depth for the bell + `/notifications` page.
+- **`notification:mark-read`**: baseline-granted to every active role. The lib enforces `notification.recipientUserId === markedBy.id` so a user cannot mark another user's notification read; the gate is the second-layer check.
+
+**Notification fan-out routing (W4-E.5 trigger wiring; declared per site):**
+
+| Site | Kind | Recipients |
+|---|---|---|
+| `createRequest.ts` | `dispatch-request-created` | broadcast: active Admin + OpsHead |
+| `reviewRequest.ts` approve | `dispatch-request-approved` | single: requester |
+| `reviewRequest.ts` reject | `dispatch-request-rejected` | single: requester |
+| `reviewRequest.ts` cancel | `dispatch-request-cancelled` | broadcast: active Admin + OpsHead |
+| `recordIntake.ts` | `intake-completed` | broadcast: active Admin + OpsHead |
+| `recordReceipt.ts` | `payment-recorded` | broadcast: active Finance + sales-owner of MOU (mapped via `SalesPerson.email` → `User.email`) |
+| `autoEscalation.ts` | `escalation-assigned` | single: lane head (`escalationLevelDefault(lane, 'L2')`); sender='system' bypasses self-exclusion |
+| `composeReminder.ts` | `reminder-due` | single: MOU's sales-owner (mapped via `SalesPerson.email` → `User.email`) |
+
+Self-exclusion when `senderUserId === recipientUserId` (real user sender). System sender bypasses. Idempotency dedup on `(kind, recipientUserId, relatedEntityId)` within a 60-second window. **Notification fan-out is best-effort:** failures `console.error` but do NOT roll back the parent entity write; the entity is source of truth, a missed notification is recoverable from the queue surface.
+
+**`/notifications/[id]/visit` GET handler** (W4-E.6): markRead-then-redirect pattern. `markRead` runs first, errors are caught + logged but do NOT block the redirect to `notification.actionUrl`. The user clicked with intent to navigate; the notification system is secondary. Missing notification (deleted, etc.) bounces to `/notifications`.
+
+**Phase 2 trigger awareness:**
+- D-022: 3 deferred cc-rules (`CCR-SW-HYDERABAD`, `CCR-SW-MAHARASHTRA`, `CCR-TTT-ALL`) need Shushankita / Kranthi / Pooja Sharma / Rajesh / Sahil-Sharma confirmation before they can land.
+- D-024: most current sales reps are SalesPerson records without User rows; the `payment-recorded` and `reminder-due` sales-owner fan-out silently skips when no User row matches. As Phase 2 expands the tester pool to the actual sales team, each rep needs a User row.
+- D-025: Phase 1 is refresh-on-page-navigation. If round-2 testers report friction with bell-badge staleness, Phase 2 adds a 30s setInterval poll on the bell client component (cheap; reuses the same notifications.json read).
+
+**References:**
+- `src/lib/notifications/createNotification.ts`: lib + payload validation + recipient resolvers.
+- `src/lib/notifications/markRead.ts`: idempotent flip + markAllRead helper.
+- `src/lib/notifications/payload_contracts.ts`: per-kind payload type contracts.
+- `src/app/notifications/[notificationId]/visit/route.ts`: visit GET handler.
+- `docs/RUNBOOK.md` §11.7: W4-E redesign overview.

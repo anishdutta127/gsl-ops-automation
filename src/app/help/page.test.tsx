@@ -138,6 +138,25 @@ describe('/help page (W3-E orientation doc)', () => {
     expect(html).not.toMatch(/#[0-9a-fA-F]{3,6}\b/)
   })
 
+  it('W4-E.7 glossary additions render (Notification, Reminder, SchoolSPOC, Reminder thresholds)', async () => {
+    getCurrentUserMock.mockResolvedValue(user('Admin', 'anish.d'))
+    const { default: Page } = await import('./page')
+    const html = renderToStaticMarkup(await Page())
+    expect(html).toContain('Notification')
+    expect(html).toContain('Reminder thresholds')
+    expect(html).toContain('SchoolSPOC')
+    expect(html).toContain('reminder_thresholds.json')
+  })
+
+  it('W4-E.7 workflow additions render (Sending reminders, Notifications inbox, SPOC database)', async () => {
+    getCurrentUserMock.mockResolvedValue(user('Admin', 'anish.d'))
+    const { default: Page } = await import('./page')
+    const html = renderToStaticMarkup(await Page())
+    expect(html).toContain('Sending reminders to schools (W4-E.4)')
+    expect(html).toContain('Notifications inbox and bell (W4-E.5/E.6)')
+    expect(html).toContain('Using the SPOC database (W4-E.2)')
+  })
+
   it('user-facing strings use British "Instalment" not American "Installment" (W3-E sweep)', async () => {
     getCurrentUserMock.mockResolvedValue(user('Admin', 'anish.d'))
     const { default: Page } = await import('./page')
