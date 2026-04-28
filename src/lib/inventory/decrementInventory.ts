@@ -38,7 +38,6 @@
 import type {
   AuditEntry,
   Dispatch,
-  DispatchLineItem,
   InventoryItem,
 } from '@/lib/types'
 

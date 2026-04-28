@@ -15,10 +15,7 @@
 
 import { describe, expect, it, vi } from 'vitest'
 import type {
-  CcRule,
   Communication,
-  Dispatch,
-  IntakeRecord,
   MOU,
   PendingUpdate,
   SalesPerson,

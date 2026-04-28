@@ -209,7 +209,7 @@ async function renderPreviewPanel(reminderId: string, userId: string) {
             role="alert"
             className="rounded-md border border-rose-300 bg-rose-50 p-3 text-xs text-rose-900"
           >
-            Preview failed: {previewError}. Check the reminder's recipient on the list page.
+            Preview failed: {previewError}. Check the reminder&apos;s recipient on the list page.
           </p>
         ) : null}
 
