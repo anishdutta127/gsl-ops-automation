@@ -19,8 +19,9 @@ Each entry: a stable id, status, surface where it was found, the question, what 
 | W4-E | D-015 to D-025 | 11 | SPOC DB import + reminders + notifications (15-row schools.json gap, multi-POC parser, deferred cc-rules) |
 | W4-F | D-026 to D-027 | 2 | SalesOpportunity workflow definition + Phase 1.1 AY rollover verification |
 | W4-G | D-028 to D-037 | 10 | Inventory thresholds, sunset SKUs, UI deferrals, Phase 2 stock features |
+| W4-H | D-038 | 1 | Per-MOU trainer roster lib (handover worksheet pre-fill) |
 
-Total: 37 entries (D-001 through D-037).
+Total: 38 entries (D-001 through D-038).
 
 The round-2 testing email at end of W4-I composes from this summary plus the per-entry detail. Audience-segmented routing is in `docs/RUNBOOK.md` §11.9.
 
@@ -380,6 +381,20 @@ The round-2 testing email at end of W4-I composes from this summary plus the per
 - **Context:** Phase 1 ships /admin/inventory accessible via the Admin index tile and via the inline link from the InventoryStatusPanel on /mous/[mouId]/dispatch. The topnav remains: Home / MOUs / Schools / Sales pipeline / Escalations / Admin / Help. Adding an "Inventory" link to the topnav would dilute the cross-cutting focus; the /admin tile is sufficient for OpsHead+Admin discovery.
 - **Question:** Do round-2 testers (specifically Misba and Pradeep, who own the inventory edit surface) report the extra hop (Admin → Inventory) as friction? If yes, add a topnav link.
 - **Needed to close:** Round-2 feedback. If yes, the change is one entry in `NAV_LINKS` in `src/components/ops/TopNav.tsx` with `visibleTo: ['Admin', 'OpsHead']`, mirroring the existing Admin link gate.
+
+## W4-H: Kits handover worksheet (D-038)
+
+## D-038 Per-MOU trainer roster lib for handover worksheet pre-fill
+
+- **Status:** open
+- **Surfaced by:** W4-H.2 generateHandoverWorksheet design decision (TRAINER_NAMES ships blank in Phase 1)
+- **Context:** The handover worksheet (`public/ops-templates/handover-template.docx`) carries a TRAINERS ALLOCATED - NAMES header field. Phase 1 ships `TRAINER_NAMES` blank; trainers handwrite their names on the printed form. The MOU schema has `trainerModel: 'Bootcamp' | 'GSL-T' | 'TT' | 'Other'`, which is the model type (delivery pattern), not a person name; using it for the field would be a semantic mismatch. Building a per-MOU trainer roster (which trainers are allocated to which MOU) is its own scope and is deferred to Phase 1.1.
+- **Question:** What is the data shape for the per-MOU trainer roster? Options: (a) free-text array on the MOU (e.g. `MOU.allocatedTrainers: string[]`); (b) FK array to a Trainer entity (new entity; mirrors SalesPerson pattern); (c) FK array to existing User rows tagged with TrainerHead role; (d) hybrid (FK when known, free-text fallback). Also: who edits the roster (Ops? TrainerHead? Sales rep?), and how often does it change during a programme rollout?
+- **Needed to close:** Phase 1.1 scoping conversation with Shashank (TrainerHead). Once the roster lib lands:
+  - The W4-H.2 unit test asserting `TRAINER_NAMES` blank (`'TRAINER_NAMES is blank in Phase 1 (D-038 Phase 1.1 trigger)'`) will fail and surface the work needed.
+  - Update the test to assert pre-fill against the new lib.
+  - Update `generateHandoverWorksheet.ts` to populate `TRAINER_NAMES` from the roster.
+  - Update `handoverTemplates.ts` placeholder spec to reflect the new source.
 
 ---
 

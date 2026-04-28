@@ -176,6 +176,24 @@ describe('/help page (W3-E orientation doc)', () => {
     expect(html).toContain('Receiving low-stock notifications (W4-G)')
   })
 
+  it('W4-H.5 glossary additions render (Handover worksheet, Dispatch note)', async () => {
+    getCurrentUserMock.mockResolvedValue(user('Admin', 'anish.d'))
+    const { default: Page } = await import('./page')
+    const html = renderToStaticMarkup(await Page())
+    expect(html).toContain('Handover worksheet')
+    expect(html).toContain('Dispatch note')
+    expect(html).toContain('bilateral signature')
+  })
+
+  it('W4-H.5 workflow additions render (printing handover, re-downloading dispatch note)', async () => {
+    getCurrentUserMock.mockResolvedValue(user('Admin', 'anish.d'))
+    const { default: Page } = await import('./page')
+    const html = renderToStaticMarkup(await Page())
+    expect(html).toContain('Printing a kits handover worksheet (W4-H)')
+    expect(html).toContain('Re-downloading a dispatch note (W4-H)')
+    expect(html).toContain('AUTHORISED_BY')
+  })
+
   it('user-facing strings use British "Instalment" not American "Installment" (W3-E sweep)', async () => {
     getCurrentUserMock.mockResolvedValue(user('Admin', 'anish.d'))
     const { default: Page } = await import('./page')

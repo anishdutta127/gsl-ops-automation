@@ -69,13 +69,13 @@ export const HELP_ROLES: RoleOrientation[] = [
   {
     role: 'Sales (Pratik, Vishwanath)',
     framing: 'You are closest to the schools. Your work moves MOUs from signed to actuals confirmed and starts the kit-dispatch flow with multi-SKU requests.',
-    workstream: 'Track pre-MOU pursuits at /sales-pipeline (W4-F minimal container; status / recce / approval are free-text pending the round-2 interview that formalises the workflow). Confirm the actual student count once a programme starts. Submit DispatchRequests at /dispatch/request when the school needs kits (Ops reviews and approves). When stock is short for any SKU on a request you submit, the form surfaces a yellow V9 warning ("stock-availability-warning"); the request is non-blocking, Ops confirms at conversion. Resolve sales-lane escalations. Spot-check school records when you visit. Compose reminders for your own MOUs at /admin/reminders when intake / payment / delivery / feedback chases are needed.',
+    workstream: 'Track pre-MOU pursuits at /sales-pipeline (W4-F minimal container; status / recce / approval are free-text pending the round-2 interview that formalises the workflow). Confirm the actual student count once a programme starts. Submit DispatchRequests at /dispatch/request when the school needs kits (Ops reviews and approves). When stock is short for any SKU on a request you submit, the form surfaces a yellow V9 warning ("stock-availability-warning"); the request is non-blocking, Ops confirms at conversion. Resolve sales-lane escalations. Spot-check school records when you visit. Compose reminders for your own MOUs at /admin/reminders when intake / payment / delivery / feedback chases are needed. On the per-MOU dispatch page you can download the handover worksheet (school-side printable) and the dispatch note (GSL-internal) for any raised dispatch on your MOUs.',
     whereTime: 'The kanban’s actuals-confirmed column (the queue waiting for you), /sales-pipeline for pre-MOU schools, /dispatch/request to start a kit shipment, the SALES-lane filter on /escalations, and the bell in the top-right showing notifications about your DR submissions and reminder chases on your MOUs.',
   },
   {
     role: 'Ops core team (Pradeep, Misba, Swati, Shashank)',
     framing: 'You are the operational backbone. The kanban is your command centre; drive every transition forward.',
-    workstream: 'Review and convert Sales DispatchRequests at /admin/dispatch-requests, raise direct dispatches when Sales has not requested, send feedback requests, record delivery acknowledgements (renamed Confirm delivery in W4-D.6), compose reminders for stalled entities at /admin/reminders, manage CC rules and lifecycle rules, resolve OPS-lane escalations, triage MOU import review queue. Manage per-SKU stock and reorder thresholds at /admin/inventory; the system auto-decrements stock at every dispatch raise / approval, and broadcasts an inventory-low-stock notification to Admin + OpsHead the moment a SKU crosses its threshold downward. You can do everything an Admin can do.',
+    workstream: 'Review and convert Sales DispatchRequests at /admin/dispatch-requests, raise direct dispatches when Sales has not requested, send feedback requests, record delivery acknowledgements (renamed Confirm delivery in W4-D.6), compose reminders for stalled entities at /admin/reminders, manage CC rules and lifecycle rules, resolve OPS-lane escalations, triage MOU import review queue. Manage per-SKU stock and reorder thresholds at /admin/inventory; the system auto-decrements stock at every dispatch raise / approval, and broadcasts an inventory-low-stock notification to Admin + OpsHead the moment a SKU crosses its threshold downward. Print the kits handover worksheet from /mous/[id]/dispatch before any on-site visit; re-download the dispatch note from the same per-row affordance when a paper copy is lost. You can do everything an Admin can do.',
     whereTime: 'The full kanban (every column, every drag), /admin surfaces, /admin/dispatch-requests for the Sales-side review queue, /admin/reminders for the chase queue, /admin/audit for the system view of who-did-what. The bell broadcasts new DRs, intake completions, payment receipts, and assignment-queue events.',
   },
   {
@@ -224,6 +224,10 @@ export const HELP_GLOSSARY: GlossaryItem[] = [
     definition: 'The shipment of programme materials (the "kit") to a school. Each instalment of an MOU has its own dispatch record. Stage progresses pending → po-raised → dispatched → in-transit → delivered → acknowledged. Each Dispatch carries lineItems (multi-SKU + per-grade), a raisedFrom origin (sales-request | ops-direct | pre-w4d), and optionally a requestId pointing back to the DispatchRequest it converted from.',
   },
   {
+    term: 'Dispatch note',
+    definition: 'GSL-internal record of a raised dispatch. Auto-generated when raiseDispatch fires (W4-D.5); re-downloadable any time from /mous/[id]/dispatch via the per-row Note link (W4-H.4). The re-download preserves the original AUTHORISED_BY (the user who raised) and the original poRaisedAt date so the printed copy reflects historical reality. Contrast with the handover worksheet, which is school-facing.',
+  },
+  {
     term: 'DispatchRequest',
     definition: 'A Sales-submitted request for a kit dispatch (W4-D). Sales fills /dispatch/request with line items + reason + installment; Ops reviews on /admin/dispatch-requests and either approves (creates a Dispatch with raisedFrom=sales-request), rejects with a reason, or the requester cancels before review. The conversion path lets Ops edit line items during approval; the audit captures any Ops-side edits.',
   },
@@ -262,6 +266,10 @@ export const HELP_GLOSSARY: GlossaryItem[] = [
   {
     term: 'GSTIN',
     definition: 'The 15-character GST identification number for a school. Edit on the school record at /schools/[id]/edit. PI generation no longer blocks on a missing GSTIN (W4-A.6); the PI document renders "GSTIN: To be added" and Finance backfills before GST filing if needed. Filter the /schools list by GSTIN=Missing to find the schools still pending one.',
+  },
+  {
+    term: 'Handover worksheet',
+    definition: 'School-facing printable form for a kit handover (W4-H). Carries 11 columns: SR, DATE, TIME, GRADES, projects + kits, total, plus bilateral signature blocks (TRAINER NAME / TRAINER SIGN on the GSL side, PERSON NAME / DESIGNATION / PERSON SIGNATURE on the school side). Downloaded on demand from /mous/[id]/dispatch via the per-row Worksheet link. Trainer fills TIME and signatures by hand on-site; the system pre-fills the rest from the Dispatch + MOU + School data.',
   },
   {
     term: 'Idempotent',
@@ -679,6 +687,30 @@ export const HELP_WORKFLOWS: WorkflowItem[] = [
       'Click the row to open /admin/inventory/[id] for that SKU. The detail page shows the recent decrement history so you can see the dispatch that caused the drop.',
       'Decide what to do off-system: raise a PO with the supplier (Phase 1 has no PO automation; D-030 captures the Phase 2 trigger), or update the threshold if the alert was premature.',
       'No notification fires when reorderThreshold is null. Set thresholds at /admin/inventory/[id] before you expect alerts to start landing.',
+    ],
+  },
+  {
+    task: 'Printing a kits handover worksheet (W4-H)',
+    precondition: 'Dispatch is raised (stage past pending). Any user with read access to the MOU can download.',
+    steps: [
+      'Open the per-MOU dispatch page at /mous/[id]/dispatch. Each existing dispatch row carries a Worksheet link with a download icon next to a Note link.',
+      'Click Worksheet. The browser downloads HandoverWorksheet-<dispatchId>.docx. Open it in Word or Google Docs to confirm the layout rendered cleanly.',
+      'The worksheet has 11 columns: SR, DATE, TIME, GRADES, projects + kits, total, then two signature zones. The TIME column and all four signature columns (TRAINER NAME, TRAINER SIGN, PERSON NAME, DESIGNATION, PERSON SIGNATURE) ship blank for the trainer to handwrite on-site.',
+      'The system pre-fills SR, DATE (the dispatch poRaisedAt), GRADES (All grades for flat dispatches; Grade N for per-grade rows), projects (the SKU name), and total (the quantity). Mixed dispatches interleave flat and per-grade rows with a continuous SR counter.',
+      'Take the printed worksheet to the school for the in-person handover. Both signatures (TRAINER SIGN + PERSON SIGNATURE) are required for the handover to be considered complete.',
+      'The download itself is audited as handover-worksheet-downloaded on the dispatch (60s dedup per user; re-clicking within a minute does not pollute the log). Audit answers "did the trainer print the form before the on-site visit?" when round 2 surfaces a delivery dispute.',
+    ],
+  },
+  {
+    task: 'Re-downloading a dispatch note (W4-H)',
+    precondition: 'Dispatch is raised. Any user with read access to the MOU can download.',
+    steps: [
+      'Open /mous/[id]/dispatch. Each existing dispatch row carries a Note link beside the Worksheet link.',
+      'Click Note. The browser downloads DispatchNote-<dispatchId>.docx, identical in shape to the document produced when the dispatch was originally raised.',
+      'AUTHORISED_BY in the re-downloaded note preserves the user who originally raised the dispatch (looked up from dispatch.raisedBy), not the person clicking the link. Reflects historical reality of who authorised the shipment.',
+      'The DISPATCH_DATE in the re-downloaded note stays at the original poRaisedAt timestamp; it does not update to the current date. The printed copy is byte-equivalent to the one produced at raise time, modulo any line-item edits that landed since (rare).',
+      'When to use: lost paper copy, school requests an internal copy, finance reconciliation, audit response. Anything where regenerating from current state would mislead.',
+      'The download is audited as dispatch-note-downloaded on the dispatch (60s dedup, same as the handover worksheet).',
     ],
   },
 ]

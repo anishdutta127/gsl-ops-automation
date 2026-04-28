@@ -191,3 +191,45 @@ The safeguard is the first check in `decrementInventory.ts`: `if (args.dispatch.
 - `src/components/ops/InventoryStatusPanel.tsx`: pre-emptive stock visibility on /mous/[mouId]/dispatch.
 - `docs/RUNBOOK.md` §11.10: W4-G inventory tracking overview.
 - `docs/W4-DEFERRED-ITEMS.md` D-028 / D-029 / D-030 / D-031 / D-032 / D-033 / D-034 / D-035 / D-036 / D-037: 10 W4-G deferred items.
+
+---
+
+## 2026-04-29: W4-H handover worksheet + dispatch-note re-download (no new permission Actions)
+
+W4-H ships the school-facing kits handover worksheet plus a per-row download surface for the GSL-internal dispatch note. No new permission Actions are introduced; both routes use existing MOU read access. 3 architectural decisions worth recording.
+
+**Decision: implicit-permission gate for both download routes.**
+
+`GET /api/dispatch/[id]/handover-worksheet` and `GET /api/dispatch/[id]/dispatch-note` reuse the existing MOU read gate: a user who can see the dispatch listed on /mous/[id]/dispatch can download. No `dispatch:download-handover-worksheet` or `dispatch:download-dispatch-note` Action defined.
+
+Reasoning: the worksheet and dispatch-note contents are fully visible on /mous/[id]/dispatch already (line items, school name, SR list, totals). Adding a permission Action for the download specifically would gate the .docx packaging without gating the data. Permission Action sprawl is real (we already have ~20 Actions across roles); each new one is a small but compounding maintenance cost. The implicit gate is the simpler answer that matches the operational reality.
+
+Phase 2 trigger: if a future need surfaces to gate downloads more narrowly than read (e.g., trainers can read but not print), revisit by adding `dispatch:download-handover-worksheet` and updating the route to call `canPerform`. The 1-line change matches the existing canPerform call pattern.
+
+**Decision: raiseDispatch.ts helpers exported (not duplicated) for the dispatch-note re-render path.**
+
+`buildPlaceholderBag`, `renderDispatchDocx`, and `CompanyConfig` go from file-private to exported in W4-H.3. The dispatch-note re-download route imports them directly. Zero behaviour shift; the existing 20 raiseDispatch tests still pass unchanged.
+
+Reasoning: when shared logic is needed across multiple call sites, exporting from the lib is preferred over duplication. The bag builder has subtle correctness requirements (TOTAL_QUANTITY computation across loops, hasFlatItems / hasPerGradeItems flags, NOTES composition with override-event metadata). Drift between two implementations would be a bug magnet. The minimal export change is also the minimal blast radius: no refactor of raiseDispatch's internal logic.
+
+Pattern: when shared logic surfaces a second consumer, export it. When it surfaces a third or more, consider extracting to a dedicated module (e.g. `src/lib/dispatch/dispatchDocxRenderer.ts`). Two consumers is the threshold for the lightweight export pattern; three+ is the threshold for the heavyweight module extraction.
+
+**Decision: dispatch-note re-download preserves AUTHORISED_BY from dispatch.raisedBy (not the downloader).**
+
+The re-render route looks up `dispatch.raisedBy` against `users.json` and uses that user's name as `raisedByName` in the placeholder bag (falls back to `dispatch.raisedBy` literal string when the user record is missing, e.g. deactivated user). `ts` for the bag is `dispatch.poRaisedAt`, not `now()`, so DISPATCH_DATE stays stable across re-downloads.
+
+Reasoning: a downloaded copy of the dispatch note must reflect historical reality (who authorised the shipment, on what date), not who happens to be clicking the link weeks later. If Misba raised a dispatch on 2026-04-26 and Pradeep re-downloads it on 2026-05-15 to send to a school for reconciliation, the document must say "Authorised by Misba on 26-Apr-2026", not "Authorised by Pradeep on 15-May-2026". The downloader's identity is captured in the audit log entry (`dispatch-note-downloaded` with the downloader's userId), not in the document.
+
+This is the same principle behind the `pre-w4d` raisedFrom safeguard in inventory decrement (W4-G.4): historical operations stay historical. Future docx-generation libs (Phase 2 reorder POs, Phase 1.1 trainer roster pre-fills) should adopt the same convention.
+
+**Phase 2 trigger awareness:**
+- D-038: Phase 1.1 per-MOU trainer roster lib. When that lands, `TRAINER_NAMES` in the handover-worksheet bag stops being blank; the W4-H.2 unit test asserting blank `TRAINER_NAMES` will fail and surface the work needed.
+
+**References:**
+- `src/lib/dispatch/handoverTemplates.ts`: HANDOVER_TEMPLATE spec; 9 placeholders with type / source / required flags.
+- `src/lib/dispatch/generateHandoverWorksheet.ts`: pure render lib with `flattenLineItems` discriminated-union walker + `branchOf` helper.
+- `src/lib/dispatch/auditDownloadDedup.ts`: pure 60s-window dedup keyed on (user, action).
+- `src/app/api/dispatch/[id]/handover-worksheet/route.ts` and `dispatch-note/route.ts`: GET handlers with fire-and-forget audit append.
+- `public/ops-templates/handover-template.docx` + `scripts/w4h-author-handover-template.mjs`: authored template + reproducibility script.
+- `docs/RUNBOOK.md` §11.11: W4-H overview + smoke-test discipline note.
+- `docs/W4-DEFERRED-ITEMS.md` D-038: Phase 1.1 trainer roster lib trigger.
