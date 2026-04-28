@@ -109,4 +109,18 @@ describe('/mous/[mouId]/dispatch page (W4-D.4)', () => {
     )
     expect(html).not.toMatch(/#[0-9a-fA-F]{3,6}/)
   })
+
+  it('W4-H.4: each existing dispatch row shows Worksheet + Note download links', async () => {
+    getCurrentUserMock.mockResolvedValue(user('Admin', 'anish.d'))
+    const { default: Page } = await import('./page')
+    const html = renderToStaticMarkup(
+      await Page({ params: Promise.resolve({ mouId: 'MOU-STEAM-2627-001' }), searchParams: noSp }),
+    )
+    expect(html).toContain('data-testid="handover-link-DIS-001"')
+    expect(html).toContain('href="/api/dispatch/DIS-001/handover-worksheet"')
+    expect(html).toContain('aria-label="Download handover worksheet for DIS-001"')
+    expect(html).toContain('data-testid="dispatch-note-link-DIS-001"')
+    expect(html).toContain('href="/api/dispatch/DIS-001/dispatch-note"')
+    expect(html).toContain('aria-label="Download dispatch note for DIS-001"')
+  })
 })

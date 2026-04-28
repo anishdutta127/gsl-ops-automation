@@ -168,6 +168,12 @@ export type AuditAction =
   | 'inventory-stock-edited'
   | 'inventory-threshold-edited'
   | 'inventory-decremented-by-dispatch'
+  // W4-H.3: school-facing handover worksheet + internal dispatch note
+  // download events. Both append a dedup'd entry (60s window per
+  // userId+dispatchId+action) on Dispatch.auditLog so we can answer
+  // "did the trainer print the form before the on-site visit?"
+  | 'handover-worksheet-downloaded'
+  | 'dispatch-note-downloaded'
   // W4-F.1: SalesOpportunity lifecycle. Minimal-container scope per
   // Anish's option C decision. Free-text status / recce / gslModel
   // fields with no state-machine; the workflow vocabulary is deferred

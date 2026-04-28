@@ -74,7 +74,7 @@ import {
   recipientsByRole,
 } from '@/lib/notifications/createNotification'
 
-interface CompanyConfig {
+export interface CompanyConfig {
   legalEntity: string
   gstin: string
   address: string[]
@@ -208,7 +208,12 @@ function buildDispatchNotes(dispatch: Dispatch): string {
   return parts.join(' ')
 }
 
-async function renderDispatchDocx(
+/**
+ * Render the dispatch-note .docx from a fully-built placeholder bag.
+ * Exported so re-render flows (W4-H.3 GET /api/dispatch/[id]/dispatch-note)
+ * can reuse the same template + render path that the raise flow uses.
+ */
+export async function renderDispatchDocx(
   bag: Record<string, unknown>,
   loadTemplate: RaiseDispatchDeps['loadTemplate'],
 ): Promise<Uint8Array> {
@@ -444,7 +449,7 @@ export async function raiseDispatch(
   return { ok: true, dispatch: updatedDispatch, docxBytes, wasAlreadyRaised: false }
 }
 
-interface PlaceholderBagInput {
+export interface PlaceholderBagInput {
   dispatch: Dispatch
   mou: MOU
   school: School
@@ -462,8 +467,12 @@ interface PlaceholderBagInput {
  *
  * perGradeRows flattens the discriminated union so the .docx template
  * can render one table row per (sku, grade) pair via a single loop.
+ *
+ * Exported (W4-H.3) so the dispatch-note re-download route can build
+ * the same bag the raise flow uses, ensuring the printed document is
+ * byte-identical when state has not changed.
  */
-function buildPlaceholderBag(input: PlaceholderBagInput): Record<string, unknown> {
+export function buildPlaceholderBag(input: PlaceholderBagInput): Record<string, unknown> {
   const { dispatch, mou, school, company, raisedByName, ts } = input
   const totalInsts = totalInstallments(mou.paymentSchedule)
 

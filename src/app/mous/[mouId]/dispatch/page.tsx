@@ -186,6 +186,28 @@ export default async function DispatchPage({ params, searchParams }: PageProps) 
                         (P2 override by {d.overrideEvent.overriddenBy})
                       </span>
                     ) : null}
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      <a
+                        href={`/api/dispatch/${encodeURIComponent(d.id)}/handover-worksheet`}
+                        data-testid={`handover-link-${d.id}`}
+                        download
+                        className="inline-flex min-h-11 items-center gap-1.5 rounded-md border border-border bg-card px-3 py-1.5 text-xs font-medium text-brand-navy hover:bg-muted focus:outline-none focus:ring-2 focus:ring-brand-navy"
+                        aria-label={`Download handover worksheet for ${d.id}`}
+                      >
+                        <svg aria-hidden className="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        Worksheet
+                      </a>
+                      <a
+                        href={`/api/dispatch/${encodeURIComponent(d.id)}/dispatch-note`}
+                        data-testid={`dispatch-note-link-${d.id}`}
+                        download
+                        className="inline-flex min-h-11 items-center gap-1.5 rounded-md border border-border bg-card px-3 py-1.5 text-xs font-medium text-brand-navy hover:bg-muted focus:outline-none focus:ring-2 focus:ring-brand-navy"
+                        aria-label={`Download dispatch note for ${d.id}`}
+                      >
+                        <svg aria-hidden className="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        Note
+                      </a>
+                    </div>
                   </li>
                 )
               })}
