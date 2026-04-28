@@ -1,0 +1,62 @@
+{
+  "generatedAt": "2026-04-28T15:14:24.698Z",
+  "scope": "W4-I.1 final verification pass",
+  "tally": {
+    "PASS": 9,
+    "SMALL-FIX": 0,
+    "LARGER-FIX": 0,
+    "DEFERRED": 1
+  },
+  "findings": [
+    {
+      "category": "PASS",
+      "area": "em-dash discipline",
+      "detail": "Zero em-dashes across user-facing content (src/, docs/)"
+    },
+    {
+      "category": "PASS",
+      "area": "TODO sweep",
+      "detail": "Zero TODO / FIXME / XXX markers in src/ + scripts/."
+    },
+    {
+      "category": "PASS",
+      "area": "deferred-items count",
+      "detail": "39 entries (D-001 through D-039); per-batch summary table reconciles to total."
+    },
+    {
+      "category": "PASS",
+      "area": "per-batch deferred reconciliation",
+      "detail": "[{\"batch\":\"W4-A/B/C\",\"expected\":8,\"found\":8,\"ok\":true},{\"batch\":\"W4-D\",\"expected\":6,\"found\":6,\"ok\":true},{\"batch\":\"W4-E\",\"expected\":11,\"found\":11,\"ok\":true},{\"batch\":\"W4-F\",\"expected\":2,\"found\":2,\"ok\":true},{\"batch\":\"W4-G\",\"expected\":10,\"found\":10,\"ok\":true},{\"batch\":\"W4-H\",\"expected\":1,\"found\":1,\"ok\":true},{\"batch\":\"W4-I\",\"expected\":1,\"found\":1,\"ok\":true}]"
+    },
+    {
+      "category": "PASS",
+      "area": "route inventory",
+      "detail": "{\"apiRouteCount\":36,\"pageRouteCount\":58,\"apiRoutes\":[\"src/app/api/admin/lifecycle-rules/[stageFromKey]/edit/route.ts\",\"src/app/api/admin/mou-status/bulk/route.ts\",\"src/app/api/admin/sales-team/create/route.ts\",\"src/app/api/admin/school-groups/create/route.ts\",\"src/app/api/admin/school-groups/[groupId]/edit-members/route.ts\",\"src/app/api/admin/schools/create/route.ts\",\"src/app/api/cc-rules/create/route.ts\",\"src/app/api/cc-rules/[ruleId]/edit/route.ts\",\"src/app/api/cc-rules/[ruleId]/toggle/route.ts\",\"src/app/api/communications/compose/route.ts\",\"src/app/api/communications/log-copy/route.ts\",\"src/app/api/communications/[communicationId]/mark-sent/route.ts\",\"src/app/api/delivery-ack/acknowledge/route.ts\",\"src/app/api/delivery-ack/template/route.ts\",\"src/app/api/dispatch/generate/route.ts\",\"src/app/api/dispatch/[id]/dispatch-note/route.ts\",\"src/app/api/dispatch/[id]/handover-worksheet/route.ts\",\"src/app/api/dispatch-requests/create/route.ts\",\"src/app/api/dispatch-requests/[requestId]/approve/route.ts\",\"src/app/api/dispatch-requests/[requestId]/cancel/route.ts\",\"src/app/api/dispatch-requests/[requestId]/reject/route.ts\",\"src/app/api/feedback/submit/route.ts\",\"src/app/api/health/route.ts\",\"src/app/api/inventory/[id]/edit/route.ts\",\"src/app/api/kanban/transition/route.ts\",\"src/app/api/login/route.ts\",\"src/app/api/logout/route.ts\",\"src/app/api/mou/actuals/confirm/route.ts\",\"src/app/api/mou/cohort-status/route.ts\",\"src/app/api/mou/delay-notes/route.ts\",\"src/app/api/mou/import-review/reject/route.ts\",\"src/app/api/mou/import-tick/route.ts\",\"src/app/api/mou/[mouId]/intake/route.ts\",\"src/app/api/payment/record/route.ts\",\"src/app/api/pi/generate/route.ts\",\"src/app/api/sync/tick/route.ts\"]}"
+    },
+    {
+      "category": "DEFERRED",
+      "area": "orphan AuditAction values (non-blocking)",
+      "detail": "{\"orphans\":[\"startdate-synthesis-replaced\",\"intake-thank-you-sent\",\"dispatch-line-item-edited\"],\"note\":\"Each value is defined in types.ts but not used in src/lib or src/app. See W4-DEFERRED-ITEMS.md D-039 for the cleanup audit.\"}"
+    },
+    {
+      "category": "PASS",
+      "area": "permission Action inventory",
+      "detail": "{\"count\":38,\"actions\":[\"cc-rule:toggle\",\"cc-rule:create\",\"cc-rule:edit\",\"dispatch:override-gate\",\"dispatch:acknowledge-override\",\"drift:approve\",\"mou:confirm-actuals\",\"mou:generate-pi\",\"mou:raise-dispatch\",\"mou:send-feedback-request\",\"mou:upload-delivery-ack\",\"payment:reconcile\",\"mou-import-review:resolve\",\"school:create\",\"school:edit\",\"spoc:create\",\"sales-rep:create\",\"school-group:create\",\"school-group:edit-members\",\"escalation:resolve\",\"system:cron-trigger\",\"system:trigger-sync\",\"lifecycle-rule:edit\",\"mou:edit-cohort-status\",\"dispatch-request:create\",\"dispatch-request:review\",\"spoc:import\",\"reminder:create\",\"reminder:view-all\",\"notification:read\",\"notification:mark-read\",\"sales-opportunity:edit\",\"sales-opportunity:create\",\"sales-opportunity:view\",\"sales-opportunity:mark-lost\",\"inventory:view\",\"inventory:edit\",\"admin:all\"]}"
+    },
+    {
+      "category": "PASS",
+      "area": "stale banners (only expected /admin placeholder labels)",
+      "detail": "6 occurrences of \"Phase 1 placeholder\" on admin tile descriptions; expected."
+    },
+    {
+      "category": "PASS",
+      "area": "cross-reference integrity",
+      "detail": "All §11.X references in RUNBOOK + role-decisions resolve to defined sections (11 headers)."
+    },
+    {
+      "category": "PASS",
+      "area": "docx templates intact",
+      "detail": "[{\"file\":\"dispatch-template.docx\",\"status\":\"all-placeholders-present\",\"missing\":[]},{\"file\":\"handover-template.docx\",\"status\":\"all-placeholders-present\",\"missing\":[]},{\"file\":\"pi-template.docx\",\"status\":\"unchanged-in-W4-skip\"},{\"file\":\"delivery-ack-template.docx\",\"status\":\"unchanged-in-W4-skip\"}]"
+    }
+  ]
+}

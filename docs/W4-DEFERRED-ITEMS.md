@@ -20,8 +20,9 @@ Each entry: a stable id, status, surface where it was found, the question, what 
 | W4-F | D-026 to D-027 | 2 | SalesOpportunity workflow definition + Phase 1.1 AY rollover verification |
 | W4-G | D-028 to D-037 | 10 | Inventory thresholds, sunset SKUs, UI deferrals, Phase 2 stock features |
 | W4-H | D-038 | 1 | Per-MOU trainer roster lib (handover worksheet pre-fill) |
+| W4-I | D-039 | 1 | Orphan AuditAction cleanup (3 unused enum values) |
 
-Total: 38 entries (D-001 through D-038).
+Total: 39 entries (D-001 through D-039).
 
 The round-2 testing email at end of W4-I composes from this summary plus the per-entry detail. Audience-segmented routing is in `docs/RUNBOOK.md` §11.9.
 
@@ -395,6 +396,22 @@ The round-2 testing email at end of W4-I composes from this summary plus the per
   - Update the test to assert pre-fill against the new lib.
   - Update `generateHandoverWorksheet.ts` to populate `TRAINER_NAMES` from the roster.
   - Update `handoverTemplates.ts` placeholder spec to reflect the new source.
+
+## W4-I: Final verification + closeout (D-039)
+
+## D-039 Orphan AuditAction enum values (3 unused)
+
+- **Status:** open
+- **Surfaced by:** W4-I.1 final verification pass (`scripts/w4i-verification.mjs` orphan-action check)
+- **Context:** 3 `AuditAction` enum values in `src/lib/types.ts` are defined but never referenced in `src/lib/` or `src/app/`:
+  - `startdate-synthesis-replaced`: forward-declared in W3-C C1 fold-in for "Phase 1.1 audit query: count MOUs that still carry the synthetic". Schema slot reserved for the future MOU edit form's startDate-overwrite audit; the wiring lib is not built.
+  - `intake-thank-you-sent`: defined for the auto-generated thank-you Communication after intake completion ("row of type='welcome-note' status='sent'. The audit entry lands on both the IntakeRecord and the Communication"). The Communication record does write a `welcome-note` row, but the audit entry itself was never wired into `recordIntake.ts`.
+  - `dispatch-line-item-edited`: defined for line-item edits during DispatchRequest conversion. The lib in `reviewRequest.ts` actually emits `dispatch-request-converted` with the edit details captured in the `notes` field; this enum value is a stale reservation that could be removed.
+- **Question:** For each orphan, decide one of three paths:
+  - **Wire it up**: implement the missing audit append (e.g. wire `intake-thank-you-sent` into `composeWelcomeNote.ts` if Phase 1 should track it).
+  - **Reserve it explicitly**: keep the enum value, add a comment marking it as a Phase 1.1 reservation, and document the trigger that will land the wiring.
+  - **Delete it**: remove from the enum (e.g. `dispatch-line-item-edited` is replaced by `dispatch-request-converted`; the comment can be updated).
+- **Needed to close:** Anish reviews post-round-2; each path is a small follow-up commit. None block round-2 testing: the enum values are runtime-irrelevant when no caller emits them.
 
 ---
 
