@@ -43,6 +43,10 @@ import intakeRecordsJson from '@/data/intake_records.json'
 import usersJson from '@/data/users.json'
 import salesTeamJson from '@/data/sales_team.json'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
+import {
+  broadcastNotification,
+  recipientsByRole,
+} from '@/lib/notifications/createNotification'
 
 const VALID_SUBMISSION_STATUSES: ReadonlyArray<SubmissionStatus> = [
   'Submitted',
@@ -319,6 +323,33 @@ export async function recordIntake(
     entity: 'mou',
     operation: 'update',
     payload: updatedMou as unknown as Record<string, unknown>,
+  })
+
+  // W4-E.5 notify Admin + OpsHead so they can flow the MOU into the
+  // dispatch-prep stage. Self-exclusion suppresses if the recorder
+  // already carries OpsHead/Admin (most pilot operators do).
+  const hasAnyVariance =
+    variances.studentsVariance !== 0
+    || variances.productMismatch
+    || variances.trainingModeMismatch
+  await broadcastNotification({
+    recipientUserIds: recipientsByRole(deps.users, ['Admin', 'OpsHead']),
+    senderUserId: args.recordedBy,
+    kind: 'intake-completed',
+    title: `Intake completed for ${mou.schoolName}`,
+    body: `${user.name} captured intake for ${mou.schoolName} (${args.studentsAtIntake} students${hasAnyVariance ? '; variance vs MOU' : ''}).`,
+    actionUrl: `/mous/${mou.id}`,
+    payload: {
+      intakeRecordId: record.id,
+      mouId: mou.id,
+      schoolName: mou.schoolName,
+      completedByName: user.name,
+      studentsAtIntake: args.studentsAtIntake,
+      hasVariance: hasAnyVariance,
+    },
+    relatedEntityId: record.id,
+  }).catch((err) => {
+    console.error('[recordIntake] notification fan-out failed', err)
   })
 
   return { ok: true, record, variances }

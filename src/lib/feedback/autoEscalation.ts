@@ -35,6 +35,8 @@ import type {
   FeedbackRating,
 } from '@/lib/types'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
+import { createNotification } from '@/lib/notifications/createNotification'
+import { escalationLevelDefault } from '@/lib/auth/permissions'
 
 const CATEGORY_TO_LANE: Record<FeedbackCategory, EscalationLane> = {
   'training-quality': 'ACADEMICS',
@@ -135,6 +137,35 @@ export async function feedbackAutoEscalation(
     operation: 'create',
     payload: escalation as unknown as Record<string, unknown>,
   })
+
+  // W4-E.5 notify the lane head (L2 default; L1 is dynamic and not
+  // resolved at auto-create time) so the escalation gets eyes
+  // immediately. createdBy='system' bypasses the self-exclusion;
+  // sender='system' is the literal that broadcastNotification
+  // recognises.
+  const laneHead = escalationLevelDefault(lane, 'L2')
+  if (laneHead) {
+    await createNotification({
+      recipientUserId: laneHead,
+      senderUserId: 'system',
+      kind: 'escalation-assigned',
+      title: `Escalation: ${worst.category} (rating ${worst.rating ?? 'N/A'})`,
+      body: description,
+      actionUrl: `/escalations/${escalation.id}`,
+      payload: {
+        escalationId: escalation.id,
+        mouId: feedback.mouId,
+        schoolName: null,
+        lane,
+        level: 'L1',
+        severity,
+        description,
+      },
+      relatedEntityId: escalation.id,
+    }).catch((err) => {
+      console.error('[feedbackAutoEscalation] notification failed', err)
+    })
+  }
 
   return escalation
 }

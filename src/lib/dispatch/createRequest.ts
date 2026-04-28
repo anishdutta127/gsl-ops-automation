@@ -39,6 +39,10 @@ import dispatchRequestsJson from '@/data/dispatch_requests.json'
 import salesTeamJson from '@/data/sales_team.json'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
 import { canPerform } from '@/lib/auth/permissions'
+import {
+  broadcastNotification,
+  recipientsByRole,
+} from '@/lib/notifications/createNotification'
 
 export interface CreateRequestArgs {
   mouId: string
@@ -261,6 +265,39 @@ export async function createRequest(
     entity: 'dispatchRequest',
     operation: 'create',
     payload: request as unknown as Record<string, unknown>,
+  })
+
+  // W4-E.5 notification fan-out: tell active Admin + OpsHead users that
+  // a new request needs review. Best-effort; failure does NOT roll the
+  // DispatchRequest write back. Self-exclusion in
+  // broadcastNotification suppresses the case where the requester has
+  // Admin/OpsHead role themselves (e.g., Pradeep).
+  await broadcastNotification(
+    {
+      recipientUserIds: recipientsByRole(deps.users, ['Admin', 'OpsHead']),
+      senderUserId: args.requestedBy,
+      kind: 'dispatch-request-created',
+      title: `New dispatch request for ${mou.schoolName}`,
+      body: `${user.name} submitted DR ${id} (${args.lineItems.length} line items, qty ${totalQty}, instalment ${args.installmentSeq}).`,
+      actionUrl: `/admin/dispatch-requests/${id}`,
+      payload: {
+        requestId: id,
+        requesterName: user.name,
+        mouId: mou.id,
+        schoolName: mou.schoolName,
+        installmentSeq: args.installmentSeq,
+        lineItemCount: args.lineItems.length,
+        totalQuantity: totalQty,
+      },
+      relatedEntityId: id,
+    },
+  ).catch((err) => {
+    // Notifications are best-effort; log + continue. A stricter
+    // production setup might surface this through a dead-letter
+    // queue, but Phase 1's manual-trigger pattern means a missed
+    // notification is recoverable: the operator still sees the
+    // request on /admin/dispatch-requests when they next look.
+    console.error('[createRequest] notification fan-out failed', err)
   })
 
   return { ok: true, request, warnings }

@@ -64,6 +64,8 @@ function makeDeps(opts: {
   return {
     deps: {
       payments: opts.payments, users: opts.users,
+      mous: [],
+      salesTeam: [],
       enqueue: enqueue as unknown as RecordReceiptDeps['enqueue'],
       now: () => new Date(FIXED_TS),
     },

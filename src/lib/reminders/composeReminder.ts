@@ -82,6 +82,7 @@ import thresholdsJson from '@/data/reminder_thresholds.json'
 import { canPerform } from '@/lib/auth/permissions'
 import { resolveCcList } from '@/lib/ccResolver'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
+import { createNotification } from '@/lib/notifications/createNotification'
 
 const D_MONTH_YEAR = new Intl.DateTimeFormat('en-GB', {
   day: 'numeric',
@@ -302,6 +303,41 @@ export async function composeReminder(
     operation: 'create',
     payload: communication as unknown as Record<string, unknown>,
   })
+
+  // W4-E.5 notify the sales-owner of the MOU so they're aware that a
+  // chase has been sent (school-facing reminders) or that the chase
+  // is targeted at them (intake reminder where the salesOwner IS the
+  // recipient; self-exclusion suppresses in that case).
+  if (reminder.mouId) {
+    const mou = deps.mous.find((m) => m.id === reminder.mouId)
+    if (mou?.salesPersonId) {
+      const sp = deps.salesPersons.find((s) => s.id === mou.salesPersonId)
+      if (sp) {
+        const ownerUser = deps.users.find((u) => u.email === sp.email)
+        if (ownerUser) {
+          await createNotification({
+            recipientUserId: ownerUser.id,
+            senderUserId: args.composedBy,
+            kind: 'reminder-due',
+            title: `Reminder sent for ${reminder.schoolName}`,
+            body: `${user.name} composed a ${reminder.kind} reminder (${reminder.daysOverdue} days overdue).`,
+            actionUrl: `/admin/reminders/${encodeURIComponent(reminder.id)}?communicationId=${encodeURIComponent(communication.id)}`,
+            payload: {
+              communicationId: communication.id,
+              reminderKind: reminder.kind,
+              mouId: reminder.mouId,
+              schoolName: reminder.schoolName,
+              composerName: user.name,
+              daysOverdue: reminder.daysOverdue,
+            },
+            relatedEntityId: communication.id,
+          }).catch((err) => {
+            console.error('[composeReminder] notification failed', err)
+          })
+        }
+      }
+    }
+  }
 
   return {
     ok: true,

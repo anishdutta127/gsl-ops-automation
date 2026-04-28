@@ -403,9 +403,11 @@ export type NotificationKind =
   | 'dispatch-request-created'      // Sales submits -> notify Ops
   | 'dispatch-request-approved'     // Ops approves   -> notify requester
   | 'dispatch-request-rejected'     // Ops rejects    -> notify requester
-  | 'intake-completed'              // Sales completes intake -> notify Ops
+  | 'dispatch-request-cancelled'    // Requester cancels pre-review -> notify Ops
+  | 'intake-completed'              // Sales completes intake -> notify Ops + sales owner
   | 'payment-recorded'              // Finance records receipt -> notify Ops + sales owner
   | 'escalation-assigned'           // Escalation assigned -> notify assignee
+  | 'reminder-due'                  // Reminder composed -> notify sales owner of MOU
 
 export interface Notification {
   id: string                       // 'NTF-...'

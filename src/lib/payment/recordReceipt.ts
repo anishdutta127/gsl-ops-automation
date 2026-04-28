@@ -24,11 +24,24 @@
  * reconciliation is a Finance-team responsibility.
  */
 
-import type { AuditEntry, Payment, PaymentMode, User } from '@/lib/types'
+import type {
+  AuditEntry,
+  MOU,
+  Payment,
+  PaymentMode,
+  SalesPerson,
+  User,
+} from '@/lib/types'
 import paymentsJson from '@/data/payments.json'
 import usersJson from '@/data/users.json'
+import mousJson from '@/data/mous.json'
+import salesTeamJson from '@/data/sales_team.json'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
 import { canPerform } from '@/lib/auth/permissions'
+import {
+  broadcastNotification,
+  recipientsByRole,
+} from '@/lib/notifications/createNotification'
 
 const VALID_MODES: ReadonlyArray<PaymentMode> = [
   'Bank Transfer',
@@ -74,6 +87,8 @@ export type RecordReceiptOutcome =
 export interface RecordReceiptDeps {
   payments: Payment[]
   users: User[]
+  mous: MOU[]
+  salesTeam: SalesPerson[]
   enqueue: typeof enqueueUpdate
   now: () => Date
 }
@@ -81,6 +96,8 @@ export interface RecordReceiptDeps {
 const defaultDeps: RecordReceiptDeps = {
   payments: paymentsJson as unknown as Payment[],
   users: usersJson as unknown as User[],
+  mous: mousJson as unknown as MOU[],
+  salesTeam: salesTeamJson as unknown as SalesPerson[],
   enqueue: enqueueUpdate,
   now: () => new Date(),
 }
@@ -157,6 +174,40 @@ export async function recordReceipt(
     entity: 'payment',
     operation: 'update',
     payload: updated as unknown as Record<string, unknown>,
+  })
+
+  // W4-E.5 fan-out: Finance + sales-owner of the parent MOU. Sales-
+  // owner mapping = SalesPerson → User by email match (sp-vishwanath
+  // -> vishwanath.g via shared email). Skip the per-MOU step when no
+  // mapping is found.
+  const mou = deps.mous.find((m) => m.id === payment.mouId)
+  const recipients = new Set<string>(recipientsByRole(deps.users, ['Finance']))
+  if (mou?.salesPersonId) {
+    const sp = deps.salesTeam.find((s) => s.id === mou.salesPersonId)
+    if (sp) {
+      const ownerUser = deps.users.find((u) => u.email === sp.email)
+      if (ownerUser) recipients.add(ownerUser.id)
+    }
+  }
+  await broadcastNotification({
+    recipientUserIds: Array.from(recipients),
+    senderUserId: args.recordedBy,
+    kind: 'payment-recorded',
+    title: `Payment recorded for ${payment.schoolName}`,
+    body: `${user.name} recorded Rs ${args.receivedAmount.toLocaleString('en-IN')} against ${payment.id}${hasVariance ? ' (variance)' : ''}.`,
+    actionUrl: `/mous/${payment.mouId}`,
+    payload: {
+      paymentId: payment.id,
+      mouId: payment.mouId,
+      schoolName: payment.schoolName,
+      installmentSeq: payment.instalmentSeq,
+      recorderName: user.name,
+      receivedAmount: args.receivedAmount,
+      hasVariance,
+    },
+    relatedEntityId: payment.id,
+  }).catch((err) => {
+    console.error('[recordReceipt] notification fan-out failed', err)
   })
 
   return { ok: true, payment: updated, varianceRs, hasVariance }

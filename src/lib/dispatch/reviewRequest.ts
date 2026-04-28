@@ -45,6 +45,11 @@ import dispatchesJson from '@/data/dispatches.json'
 import dispatchRequestsJson from '@/data/dispatch_requests.json'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
 import { canPerform } from '@/lib/auth/permissions'
+import {
+  broadcastNotification,
+  createNotification,
+  recipientsByRole,
+} from '@/lib/notifications/createNotification'
 
 // ----------------------------------------------------------------------------
 // Approve
@@ -260,6 +265,27 @@ export async function approveRequest(
     payload: updatedRequest as unknown as Record<string, unknown>,
   })
 
+  // W4-E.5 notify the original requester. Self-exclusion suppresses
+  // when reviewer === requester (Pradeep approves his own DR).
+  await createNotification({
+    recipientUserId: request.requestedBy,
+    senderUserId: args.reviewedBy,
+    kind: 'dispatch-request-approved',
+    title: `DR approved for ${mou.schoolName}`,
+    body: `${reviewer.name} approved your dispatch request ${request.id}.`,
+    actionUrl: `/admin/dispatch-requests/${request.id}`,
+    payload: {
+      requestId: request.id,
+      reviewerName: reviewer.name,
+      mouId: request.mouId,
+      schoolName: mou.schoolName,
+      conversionDispatchId: dispatchId,
+    },
+    relatedEntityId: request.id,
+  }).catch((err) => {
+    console.error('[approveRequest] notification failed', err)
+  })
+
   return { ok: true, request: updatedRequest, dispatch }
 }
 
@@ -312,6 +338,28 @@ export async function rejectRequest(
     payload: updatedRequest as unknown as Record<string, unknown>,
   })
 
+  // W4-E.5 notify requester of the rejection. Reviewer self-suppress
+  // applies if Pradeep rejects his own DR (he sees the audit either way).
+  const mou = deps.mous.find((m) => m.id === request.mouId)
+  await createNotification({
+    recipientUserId: request.requestedBy,
+    senderUserId: args.reviewedBy,
+    kind: 'dispatch-request-rejected',
+    title: `DR rejected for ${mou?.schoolName ?? request.mouId}`,
+    body: `${reviewer.name} rejected your dispatch request ${request.id}: ${reason}`,
+    actionUrl: `/admin/dispatch-requests/${request.id}`,
+    payload: {
+      requestId: request.id,
+      reviewerName: reviewer.name,
+      mouId: request.mouId,
+      schoolName: mou?.schoolName ?? request.mouId,
+      rejectionReason: reason,
+    },
+    relatedEntityId: request.id,
+  }).catch((err) => {
+    console.error('[rejectRequest] notification failed', err)
+  })
+
   return { ok: true, request: updatedRequest }
 }
 
@@ -362,6 +410,28 @@ export async function cancelRequest(
     entity: 'dispatchRequest',
     operation: 'update',
     payload: updatedRequest as unknown as Record<string, unknown>,
+  })
+
+  // W4-E.5 broadcast to Admin + OpsHead so the queue stays accurate.
+  // Self-exclusion drops the canceller when they themselves are
+  // Admin/OpsHead.
+  const mou = deps.mous.find((m) => m.id === request.mouId)
+  await broadcastNotification({
+    recipientUserIds: recipientsByRole(deps.users, ['Admin', 'OpsHead']),
+    senderUserId: args.cancelledBy,
+    kind: 'dispatch-request-cancelled',
+    title: `DR cancelled for ${mou?.schoolName ?? request.mouId}`,
+    body: `${user.name} cancelled DR ${request.id} before review.`,
+    actionUrl: `/admin/dispatch-requests/${request.id}`,
+    payload: {
+      requestId: request.id,
+      cancellerName: user.name,
+      mouId: request.mouId,
+      schoolName: mou?.schoolName ?? request.mouId,
+    },
+    relatedEntityId: request.id,
+  }).catch((err) => {
+    console.error('[cancelRequest] notification fan-out failed', err)
   })
 
   return { ok: true, request: updatedRequest }
