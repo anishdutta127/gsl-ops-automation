@@ -34,6 +34,7 @@ function opp(id: string, createdBy: string, salesRepId: string, schoolName: stri
     gslModel: null, commitmentsMade: null, outOfScopeRequirements: null,
     recceStatus: null, recceCompletedAt: null, status,
     approvalNotes: null, conversionMouId: null, lossReason: null,
+    schoolMatchDismissed: false,
     createdAt: '2026-04-28T09:00:00Z', createdBy,
     auditLog: [{ timestamp: '2026-04-28T09:00:00Z', user: createdBy, action: 'opportunity-created' }],
   }

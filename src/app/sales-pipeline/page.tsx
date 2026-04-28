@@ -57,8 +57,12 @@ export default async function SalesPipelinePage({ searchParams }: PageProps) {
   const owner = rawOwner
   const region = typeof sp.region === 'string' ? sp.region : 'all'
   const q = typeof sp.q === 'string' ? sp.q.toLowerCase().trim() : ''
+  const rawState = typeof sp.state === 'string' ? sp.state : 'active'
+  const stateFilter: 'active' | 'lost' | 'all' =
+    rawState === 'lost' ? 'lost' : rawState === 'all' ? 'all' : 'active'
   const errorKey = typeof sp.error === 'string' ? sp.error : null
   const createdFlash = sp.created === '1'
+  const highlightId = typeof sp.id === 'string' ? sp.id : null
 
   const filtered = allOpportunities.filter((o) => {
     if (owner === 'mine' && o.createdBy !== user.id) return false
@@ -67,6 +71,8 @@ export default async function SalesPipelinePage({ searchParams }: PageProps) {
       if (o.salesRepId !== owner) return false
     }
     if (region !== 'all' && o.region !== region) return false
+    if (stateFilter === 'active' && o.lossReason !== null) return false
+    if (stateFilter === 'lost' && o.lossReason === null) return false
     if (q !== '') {
       const hay = `${o.schoolName} ${o.city} ${o.status}`.toLowerCase()
       if (!hay.includes(q)) return false
@@ -136,8 +142,37 @@ export default async function SalesPipelinePage({ searchParams }: PageProps) {
           </p>
         ) : null}
 
+        <div className="flex flex-wrap gap-2" role="group" aria-label="State filter">
+          {(['active', 'lost', 'all'] as const).map((s) => {
+            const isActive = s === stateFilter
+            const qs = new URLSearchParams()
+            if (s !== 'active') qs.set('state', s)
+            if (owner !== (isSalesRep ? 'mine' : 'all')) qs.set('owner', owner)
+            if (region !== 'all') qs.set('region', region)
+            if (q !== '') qs.set('q', q)
+            const tail = qs.toString()
+            const href = tail === '' ? '/sales-pipeline' : `/sales-pipeline?${tail}`
+            return (
+              <Link
+                key={s}
+                href={href}
+                aria-current={isActive ? 'page' : undefined}
+                data-testid={`state-filter-${s}`}
+                className={
+                  isActive
+                    ? 'inline-flex min-h-11 items-center rounded-md bg-brand-navy px-3 py-2 text-sm font-medium text-white'
+                    : 'inline-flex min-h-11 items-center rounded-md border border-border bg-card px-3 py-2 text-sm font-medium text-foreground hover:bg-muted focus:outline-none focus:ring-2 focus:ring-brand-navy'
+                }
+              >
+                {s === 'active' ? 'Active' : s === 'lost' ? 'Lost' : 'All'}
+              </Link>
+            )
+          })}
+        </div>
+
         <div className="flex flex-wrap items-center justify-between gap-3">
           <form method="GET" className="flex flex-wrap items-center gap-2">
+            {stateFilter !== 'active' ? <input type="hidden" name="state" value={stateFilter} /> : null}
             <label htmlFor="owner-filter" className="text-xs text-slate-600">
               Sales rep
             </label>
@@ -219,27 +254,55 @@ export default async function SalesPipelinePage({ searchParams }: PageProps) {
             className="divide-y divide-border rounded-md border border-border bg-card"
             data-testid="sales-pipeline-list"
           >
-            {filtered.map((o) => (
-              <li key={o.id} data-testid={`opp-row-${o.id}`}>
-                <Link
-                  href={`/sales-pipeline/${encodeURIComponent(o.id)}`}
-                  className="block min-h-11 px-4 py-3 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-brand-navy"
+            {filtered.map((o) => {
+              const isHighlighted = highlightId === o.id
+              const isLost = o.lossReason !== null
+              return (
+                <li
+                  key={o.id}
+                  id={`opp-${o.id}`}
+                  data-testid={`opp-row-${o.id}`}
+                  data-highlighted={isHighlighted ? 'true' : undefined}
+                  className={
+                    isHighlighted
+                      ? 'bg-brand-teal/10'
+                      : isLost
+                      ? 'bg-slate-50/50'
+                      : ''
+                  }
                 >
-                  <div className="flex flex-wrap items-baseline justify-between gap-2">
-                    <span className="text-sm font-medium">{o.schoolName}</span>
-                    <span className="font-mono text-xs text-slate-500">{o.id}</span>
-                  </div>
-                  <p className="mt-1 text-xs text-slate-600">
-                    {o.city}, {o.state} ({o.region}) · {repName(o.salesRepId)}
-                    {o.programmeProposed ? ` · ${o.programmeProposed}` : ''}
-                  </p>
-                  <p className="mt-1 text-[11px] uppercase tracking-wide text-slate-500">
-                    Status: <span className="text-slate-800 normal-case">{o.status}</span>
-                    {' · '}Updated {lastUpdated(o)}
-                  </p>
-                </Link>
-              </li>
-            ))}
+                  <Link
+                    href={`/sales-pipeline/${encodeURIComponent(o.id)}`}
+                    className="block min-h-11 px-4 py-3 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-brand-navy"
+                  >
+                    <div className="flex flex-wrap items-baseline justify-between gap-2">
+                      <span className="text-sm font-medium">
+                        {o.schoolName}
+                        {isLost ? (
+                          <span className="ml-2 rounded-sm border border-slate-300 bg-slate-100 px-1.5 py-px text-[10px] font-semibold uppercase tracking-wide text-slate-600">
+                            Lost
+                          </span>
+                        ) : null}
+                      </span>
+                      <span className="font-mono text-xs text-slate-500">{o.id}</span>
+                    </div>
+                    <p className="mt-1 text-xs text-slate-600">
+                      {o.city}, {o.state} ({o.region}) · {repName(o.salesRepId)}
+                      {o.programmeProposed ? ` · ${o.programmeProposed}` : ''}
+                    </p>
+                    <p className="mt-1 text-[11px] uppercase tracking-wide text-slate-500">
+                      Status: <span className="text-slate-800 normal-case">{o.status}</span>
+                      {' · '}Updated {lastUpdated(o)}
+                    </p>
+                    {isLost ? (
+                      <p className="mt-1 text-[11px] italic text-slate-500">
+                        Loss reason: {o.lossReason}
+                      </p>
+                    ) : null}
+                  </Link>
+                </li>
+              )
+            })}
           </ul>
         )}
       </div>

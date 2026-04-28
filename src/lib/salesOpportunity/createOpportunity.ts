@@ -214,6 +214,7 @@ export async function createOpportunity(
     approvalNotes: args.approvalNotes ? args.approvalNotes.trim() || null : null,
     conversionMouId: null,
     lossReason: null,
+    schoolMatchDismissed: false,
     createdAt: tsIso,
     createdBy: args.createdBy,
     auditLog: [audit],

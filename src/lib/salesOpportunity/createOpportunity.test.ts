@@ -112,6 +112,7 @@ describe('W4-F.2 createOpportunity happy path', () => {
       gslModel: null, commitmentsMade: null, outOfScopeRequirements: null,
       recceStatus: null, recceCompletedAt: null, status: 'recce-done',
       approvalNotes: null, conversionMouId: null, lossReason: null,
+      schoolMatchDismissed: false,
       createdAt: NOW.toISOString(), createdBy: 'vishwanath.g', auditLog: [],
     }
     const { deps } = makeDeps({ opportunities: [existing] })

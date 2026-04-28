@@ -45,6 +45,7 @@ describe('W4-F.1 SalesOpportunity schema', () => {
       approvalNotes: null,
       conversionMouId: null,
       lossReason: null,
+      schoolMatchDismissed: false,
       createdAt: '2026-04-28T00:00:00Z',
       createdBy: 'sp-vikram',
       auditLog: [],

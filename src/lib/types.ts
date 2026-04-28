@@ -406,6 +406,17 @@ export interface SalesOpportunity {
   approvalNotes: string | null
   conversionMouId: string | null
   lossReason: string | null
+  /**
+   * W4-F.3 did-you-mean dismissal flag. The detail page surfaces an
+   * inline panel when `schoolId === null` and `schoolName` token-
+   * matches an existing school in `schools.json` above the 0.7
+   * threshold. Operator clicks either "Link to existing school" (sets
+   * schoolId, this flag stays false) or "Keep as new school" (sets
+   * this flag to true; suggestion is suppressed on subsequent
+   * detail-page renders). The flag is intentionally not surfaced in
+   * the list / create form; it is detail-page-only state.
+   */
+  schoolMatchDismissed: boolean
   createdAt: string
   createdBy: string                // User.id
   auditLog: AuditEntry[]
