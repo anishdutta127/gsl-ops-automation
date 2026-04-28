@@ -266,6 +266,78 @@ Each entry: a stable id, status, surface where it was found, the question, what 
 
 - **Needed to close:** A scheduled 30-60 minute interview with Pratik + Shashank during round 2. Output is captured as a follow-up batch (likely "W4.5-A" or similar) that builds the workflow against actual operational language, defines `sales-opportunity:approve-l1` / `approve-l2` / `convert-to-mou` permission Actions, lands the state machine in `editOpportunity`, and migrates existing free-text records to the new enums.
 
+## D-028 Reorder thresholds (Misba/Pradeep operational input)
+
+- **Status:** open
+- **Surfaced by:** W4-G.1 InventoryItem schema design
+- **Context:** Phase 1 ships every InventoryItem with `reorderThreshold: null`. Until set, low-stock alerts do NOT fire. The W4-G.5 lib treats null as "no threshold; never alerts." The first round of Misba/Pradeep edits sets real thresholds and the alerts go live.
+- **Question:** What reorder threshold per SKU? E.g., does Cretile Grade 5 trigger an alert below 20 units? Tinkrpython below 100? Threshold defaults are operational decisions tied to lead times and supplier responsiveness; not visible from Mastersheet data.
+- **Needed to close:** Misba/Pradeep set per-SKU reorderThreshold values during round-2 review or post-round-2 setup at /admin/inventory.
+
+## D-029 Phase 2 stock history visualisation
+
+- **Status:** open
+- **Surfaced by:** W4-G.6 UI scope decision
+- **Context:** Phase 1 InventoryItem.auditLog captures every stock edit + decrement, but /admin/inventory/[id] renders only the raw audit list. Operators wanting stock-over-time visibility (sparklines, monthly burn rate) must read the audit manually.
+- **Question:** Do round 2 testers report friction with audit-only stock history? If yes, add a sparkline component to /admin/inventory/[id] that renders the lastN stock values from the audit log.
+- **Needed to close:** Round-2 feedback. Implementation is small (audit log already has the data; component renders against it).
+
+## D-030 Phase 2 reorder PO generation + supplier directory
+
+- **Status:** open
+- **Surfaced by:** W4-G.6 UI scope decision
+- **Context:** Phase 1 W4-G.5 fires a low-stock notification but stops there; the operator manually raises a PO with the supplier off-system. No supplier directory entity, no PO entity, no auto-generated PO docx.
+- **Question:** Does GSL want to bring PO generation on-system in Phase 2? Requires Supplier entity + PO entity + docxtemplater pattern (mirror the existing W4-D.5 dispatch template).
+- **Needed to close:** Phase 2 scoping conversation. Likely lands as a separate W batch (e.g., W5-A) given the surface area.
+
+## D-031 Phase 2 multi-warehouse stock locations
+
+- **Status:** open
+- **Surfaced by:** W4-G.1 schema design
+- **Context:** Phase 1 InventoryItem represents a single source-of-truth stock per SKU. GSL operates from a single warehouse today; the schema does not track location. Phase 2 may need per-location stock if GSL expands to multiple warehouses (Bangalore vs Kolkata, etc.) or operates a forward-stocking buffer.
+- **Question:** When GSL expands beyond a single warehouse, the schema needs a Location entity + per-location stock per SKU.
+- **Needed to close:** No round-2 question; this is an architectural marker for whenever GSL's logistics footprint grows.
+
+## D-032 Negative-stock policy revisit
+
+- **Status:** open
+- **Surfaced by:** W4-G recon decision (Phase 1 hard-block at insufficient stock)
+- **Context:** Phase 1 W4-G.4 hard-blocks Dispatch creation when `requestedQty > currentStock` with reason `insufficient-stock`. Misba may prefer a softer policy (allow with warning + audit flag) for cases where Ops knows stock is en route from supplier.
+- **Question:** Should the hard-block soften to "allow with operator-typed override reason" (similar to dispatch P2 override)? Round-2 surfaces if the hard-block creates frequent friction.
+- **Needed to close:** Round-2 feedback.
+
+## D-033 Mastersheet "TinkRworks - Reusable Kits 1330" header reconciliation
+
+- **Status:** open
+- **Surfaced by:** W4-G.2 verification table generation
+- **Context:** Mastersheet Current Inventory sheet row 4 col E carries the literal string "TinkRworks - Resuable Kits" and col F carries 1330. This row is not a SKU; it is a section header / operator note. The 1330 figure does not reconcile with the column sum (~7243 across the 10 individual TinkRworks SKUs). The W4-G.2 verification skipped this row.
+- **Question:** What does the 1330 represent? Demand projection for the season? Stale aggregate? A specific buffer count? Is the figure stale and should be removed/clarified at next Mastersheet refresh?
+- **Needed to close:** Misba/Pradeep clarify 1330's meaning during round 2. If stale, update Mastersheet to remove or annotate the figure so future imports do not re-confuse.
+
+## D-034 Push Pull Pin + Steam Academy stock placeholder
+
+- **Status:** open
+- **Surfaced by:** W4-G.3 mutation (programmatic placeholder rows)
+- **Context:** Push Pull Pin appears in 6 Dispatch lineItems and Steam Academy in 1; both are absent from Mastersheet Current Inventory. W4-G.3 imported them with `currentStock: 0` and an audit note flagging "stock to be set by Misba/Pradeep at next inventory edit."
+- **Question:** What is the actual current stock of Push Pull Pin and Steam Academy? Did Mastersheet omit them deliberately (e.g., they are consumed-on-issue samples not tracked) or by oversight?
+- **Needed to close:** Misba/Pradeep set actual counts via /admin/inventory edit during round 2. If samples-not-tracked, the records may switch to `active: false`.
+
+## D-035 Cretile per-grade demand markers ("Req: Grade N-M")
+
+- **Status:** open
+- **Surfaced by:** W4-G.2 verification table; W4-G.3 mutation preserves verbatim
+- **Context:** 5 of 8 Cretile per-grade rows in Mastersheet carry "Req" annotations like "Grade 5-17", "Grade 6-11", "Grade 7-9", "Grade 8-14", "Grade 9-12". These are operator notes about pending requests / ad-hoc demand, not stock counts. W4-G.3 preserved them verbatim in `notes` field as "Mastersheet Req note: Grade 5-17" etc.
+- **Question:** Should the system track per-grade demand explicitly via a Demand entity + per-Cretile-grade demand counter, or are these one-off operator scribbles that don't need formal modelling?
+- **Needed to close:** Round-2 conversation. If formalised: extend InventoryItem with `pendingDemand: number | null` + lib that decrements demand on Dispatch creation. If not: continue treating as operator notes.
+
+## D-036 Tinkrsynth tail-end stock decision
+
+- **Status:** open
+- **Surfaced by:** W4-G.3 mutation; Anish row-by-row resolution (active: false sunset)
+- **Context:** Tinkrsynth (3 units; no Dispatch corroboration; no inline note). Anish W4-G.3 decision: AUTO-IMPORT with `active: false` (sunset) per schema-design-intent rather than QUARANTINE. The 3 tail-end units sit in inventory marked sunset until operational decision lands.
+- **Question:** Should the remaining 3 Tinkrsynth units be (a) shipped as a final dispatch to a school still expecting them, (b) written off as obsolete and audited as a stock loss, or (c) reactivated to active: true if Tinkrsynth is still in the GSL roadmap?
+- **Needed to close:** Misba/Pradeep operational decision. The schema's sunset mode preserves reactivation flexibility either way.
+
 ## D-027 Phase 1.1 AY rollover verification
 
 - **Status:** open

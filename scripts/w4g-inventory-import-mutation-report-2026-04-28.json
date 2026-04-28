@@ -1,0 +1,222 @@
+{
+  "generatedAt": "2026-04-28T18:00:00.000Z",
+  "purpose": "W4-G.3 Phase 2 mutation report. Anish-signed verification table drives every decision; ANISH_RESOLUTIONS hardcodes the 3 MANUAL-REVIEW resolutions.",
+  "created": [
+    {
+      "id": "INV-CRETILE-G3",
+      "skuName": "Cretile Grade-band kit",
+      "category": "Cretile",
+      "cretileGrade": 3,
+      "currentStock": 12,
+      "active": true,
+      "mastersheetSourceName": "Grade 3  Kit",
+      "corroboration": null
+    },
+    {
+      "id": "INV-LAUNCHPAD",
+      "skuName": "Launchpad",
+      "category": "TinkRworks",
+      "cretileGrade": null,
+      "currentStock": 136,
+      "active": true,
+      "mastersheetSourceName": "STEAM:-  Launch Pad Kit (Reusable)",
+      "corroboration": 9
+    },
+    {
+      "id": "INV-CRETILE-G4",
+      "skuName": "Cretile Grade-band kit",
+      "category": "Cretile",
+      "cretileGrade": 4,
+      "currentStock": 14,
+      "active": true,
+      "mastersheetSourceName": "Grade 4  Kit",
+      "corroboration": null
+    },
+    {
+      "id": "INV-P3-PROJECT-KIT",
+      "skuName": "P3 Project Kit",
+      "category": "TinkRworks",
+      "cretileGrade": null,
+      "currentStock": 256,
+      "active": true,
+      "mastersheetSourceName": "STEAM:- P3 Project Kit K-8 ( Reusable)",
+      "corroboration": 0
+    },
+    {
+      "id": "INV-CRETILE-G5",
+      "skuName": "Cretile Grade-band kit",
+      "category": "Cretile",
+      "cretileGrade": 5,
+      "currentStock": 14,
+      "active": true,
+      "mastersheetSourceName": "Grade 5  Kit",
+      "corroboration": null
+    },
+    {
+      "id": "INV-PAMPERED-PLANT",
+      "skuName": "Pampered Plant",
+      "category": "TinkRworks",
+      "cretileGrade": null,
+      "currentStock": 122,
+      "active": true,
+      "mastersheetSourceName": "STEAM :- Pampered Plant Project Kit (Reusable)",
+      "corroboration": 5
+    },
+    {
+      "id": "INV-CRETILE-G6",
+      "skuName": "Cretile Grade-band kit",
+      "category": "Cretile",
+      "cretileGrade": 6,
+      "currentStock": 26,
+      "active": true,
+      "mastersheetSourceName": "Grade 6  Kit",
+      "corroboration": null
+    },
+    {
+      "id": "INV-SMART-LAMP",
+      "skuName": "Smart Lamp",
+      "category": "TinkRworks",
+      "cretileGrade": null,
+      "currentStock": 344,
+      "active": true,
+      "mastersheetSourceName": "STEAM :- Smart Lamp Project Kit (Reusable)",
+      "corroboration": 3
+    },
+    {
+      "id": "INV-CRETILE-G7",
+      "skuName": "Cretile Grade-band kit",
+      "category": "Cretile",
+      "cretileGrade": 7,
+      "currentStock": 53,
+      "active": true,
+      "mastersheetSourceName": "Grade 7  Kit",
+      "corroboration": null
+    },
+    {
+      "id": "INV-TECH-A-SKETCH",
+      "skuName": "Tech A Sketch",
+      "category": "TinkRworks",
+      "cretileGrade": null,
+      "currentStock": 576,
+      "active": true,
+      "mastersheetSourceName": "STEAM :- Tech-A-Sketch Project Kit (Reusable)",
+      "corroboration": 2
+    },
+    {
+      "id": "INV-CRETILE-G8",
+      "skuName": "Cretile Grade-band kit",
+      "category": "Cretile",
+      "cretileGrade": 8,
+      "currentStock": 24,
+      "active": true,
+      "mastersheetSourceName": "Grade 8  Kit",
+      "corroboration": null
+    },
+    {
+      "id": "INV-TINKREXPLORER",
+      "skuName": "Tinkrexplorer",
+      "category": "TinkRworks",
+      "cretileGrade": null,
+      "currentStock": 598,
+      "active": true,
+      "mastersheetSourceName": "STEAM :- TinkRbot Explorer Project Kit (Reusable)",
+      "corroboration": 11
+    },
+    {
+      "id": "INV-CRETILE-G9",
+      "skuName": "Cretile Grade-band kit",
+      "category": "Cretile",
+      "cretileGrade": 9,
+      "currentStock": 12,
+      "active": true,
+      "mastersheetSourceName": "Grade 9  Kit",
+      "corroboration": null
+    },
+    {
+      "id": "INV-TINKRPYTHON",
+      "skuName": "Tinkrpython",
+      "category": "TinkRworks",
+      "cretileGrade": null,
+      "currentStock": 923,
+      "active": true,
+      "mastersheetSourceName": "STEAM:- TinkRpy Project Kit (Reusable)",
+      "corroboration": 9
+    },
+    {
+      "id": "INV-TINKRSYNTH",
+      "skuName": "Tinkrsynth",
+      "category": "TinkRworks",
+      "cretileGrade": null,
+      "currentStock": 3,
+      "active": false,
+      "mastersheetSourceName": "STEAM:- TinkRsynth Project Kit (Reusable)",
+      "corroboration": 0
+    },
+    {
+      "id": "INV-CRETILE-G10",
+      "skuName": "Cretile Grade-band kit",
+      "category": "Cretile",
+      "cretileGrade": 10,
+      "currentStock": 13,
+      "active": true,
+      "mastersheetSourceName": "Grade 10 Kit",
+      "corroboration": null
+    },
+    {
+      "id": "INV-TINKRSYNTH-MIXER-PCB",
+      "skuName": "Tinkrsynth Mixer PCB",
+      "category": "TinkRworks",
+      "cretileGrade": null,
+      "currentStock": 0,
+      "active": false,
+      "mastersheetSourceName": "STEAM:- TinkRsynth Mixer PCB ",
+      "corroboration": 0
+    },
+    {
+      "id": "INV-TINKRBOTSCOUT",
+      "skuName": "TinkrBotScout",
+      "category": "TinkRworks",
+      "cretileGrade": null,
+      "currentStock": 4285,
+      "active": true,
+      "mastersheetSourceName": "STEAM :- TinkRbot Scout Project Sample",
+      "corroboration": 10
+    },
+    {
+      "id": "INV-PUSH-PULL-PIN",
+      "skuName": "Push Pull Pin",
+      "category": "Other",
+      "cretileGrade": null,
+      "currentStock": 0,
+      "active": true,
+      "mastersheetSourceName": null,
+      "corroboration": 6
+    },
+    {
+      "id": "INV-STEAM-ACADEMY",
+      "skuName": "Steam Academy",
+      "category": "Other",
+      "cretileGrade": null,
+      "currentStock": 0,
+      "active": true,
+      "mastersheetSourceName": null,
+      "corroboration": 1
+    }
+  ],
+  "skipped": [
+    {
+      "section": "TinkRworks",
+      "rowNumber": 4,
+      "mastersheetSourceName": "TinkRworks - Resuable Kits",
+      "reason": "Section header row; not a SKU. The 1330 figure does not reconcile with the column sum (~7243); flagged as D-033 for Misba/Pradeep round-2 clarification."
+    }
+  ],
+  "breakdown": {
+    "cretile": 8,
+    "tinkrworks": 10,
+    "other": 2,
+    "active": 18,
+    "sunset": 2,
+    "withDispatchCorroboration": 9
+  }
+}

@@ -23,10 +23,26 @@ import { canPerform } from '@/lib/auth/permissions'
 import { PAYLOAD_VALIDATORS } from '@/lib/notifications/payload_contracts'
 
 describe('W4-G.1 InventoryItem schema', () => {
-  it('inventory_items.json seeds as an empty array; W4-G.3 backfill populates it', () => {
+  it('inventory_items.json carries the W4-G.3 backfill (20 records); every entry is well-shaped', () => {
     const rows = inventoryItemsJson as unknown as InventoryItem[]
     expect(Array.isArray(rows)).toBe(true)
-    expect(rows.length).toBe(0)
+    expect(rows.length).toBeGreaterThanOrEqual(20)
+    const cretileCount = rows.filter((r) => r.category === 'Cretile').length
+    const tinkrCount = rows.filter((r) => r.category === 'TinkRworks').length
+    const otherCount = rows.filter((r) => r.category === 'Other').length
+    expect(cretileCount).toBe(8)
+    expect(tinkrCount).toBe(10)
+    expect(otherCount).toBe(2)
+    const sunset = rows.filter((r) => !r.active)
+    expect(sunset.length).toBe(2)
+    for (const item of rows) {
+      expect(typeof item.id).toBe('string')
+      expect(item.id.startsWith('INV-')).toBe(true)
+      expect(typeof item.skuName).toBe('string')
+      expect(['TinkRworks', 'Cretile', 'Other']).toContain(item.category)
+      expect(item.auditLog.length).toBeGreaterThanOrEqual(1)
+      expect(item.auditLog[0]!.action).toBe('inventory-imported-from-mastersheet')
+    }
   })
 
   it('InventoryItem accepts a Cretile per-grade row shape', () => {
