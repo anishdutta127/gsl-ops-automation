@@ -1,0 +1,370 @@
+{
+  "generatedAt": "2026-04-28T08:42:30.129Z",
+  "purpose": "W4-E.3 audit pass: SPOC DB top-of-sheet rules vs cc_rules.json. Read-only output; no mutation.",
+  "inputs": {
+    "spocDbRulesCount": 10,
+    "ccRulesCount": 10,
+    "sheetRulesFromVerification": {
+      "South-West": [
+        {
+          "rowNumber": 1,
+          "col": 2,
+          "text": "Keep Suresh and Pallavi in Cc for Raipur,Pune,Nagpur Schools"
+        },
+        {
+          "rowNumber": 2,
+          "col": 2,
+          "text": "Keep Balachandran and Pallavi in Cc for Bangalore Schools"
+        },
+        {
+          "rowNumber": 3,
+          "col": 2,
+          "text": "Keep R. Balu and Rajesh in Cc for Tamil Nadu Schools"
+        },
+        {
+          "rowNumber": 4,
+          "col": 2,
+          "text": "Keep Kranthi and Pooja Sharma in Cc for Hyderabad Schools"
+        },
+        {
+          "rowNumber": 5,
+          "col": 3,
+          "text": "Keep Shushankita in Cc for Schools in Maharashtra and all TTT Schools"
+        }
+      ],
+      "East": [
+        {
+          "rowNumber": 1,
+          "col": 2,
+          "text": "Keep Prodipto, Avishek,Deepjyoti in Cc while sending the welcome note for East Schools"
+        },
+        {
+          "rowNumber": 2,
+          "col": 2,
+          "text": "Keep Shushankita in Cc for Schools in all TTT Schools"
+        }
+      ],
+      "North": [
+        {
+          "rowNumber": 1,
+          "col": 2,
+          "text": "Keep Roveena, Pooja Sharma from Sr.no 1 to 7 in Cc while sending the closing letters for East Schools"
+        },
+        {
+          "rowNumber": 2,
+          "col": 2,
+          "text": "Keep Sahil Sharma, Pooja Sharma in Cc for GR International School"
+        },
+        {
+          "rowNumber": 3,
+          "col": 2,
+          "text": "Keep Shushankita in Cc for all TTT schools"
+        }
+      ]
+    }
+  },
+  "outcomes": [
+    {
+      "spocId": "SW#1",
+      "sheet": "South-West",
+      "rowNumber": 1,
+      "sourceText": "Keep Suresh and Pallavi in Cc for Raipur,Pune,Nagpur Schools",
+      "parsedScope": "sub-region",
+      "parsedScopeValue": [
+        "Raipur",
+        "Pune",
+        "Nagpur"
+      ],
+      "parsedContexts": [
+        "all-communications"
+      ],
+      "parsedCcNames": [
+        "Suresh",
+        "Pallavi"
+      ],
+      "outcome": "clean-match",
+      "matchedCcRuleId": "CCR-SW-RAIPUR-PUNE-NAGPUR",
+      "diffDetail": null,
+      "notes": null
+    },
+    {
+      "spocId": "SW#2",
+      "sheet": "South-West",
+      "rowNumber": 2,
+      "sourceText": "Keep Balachandran and Pallavi in Cc for Bangalore Schools",
+      "parsedScope": "sub-region",
+      "parsedScopeValue": "Bangalore",
+      "parsedContexts": [
+        "all-communications"
+      ],
+      "parsedCcNames": [
+        "Balachandran",
+        "Pallavi"
+      ],
+      "outcome": "clean-match",
+      "matchedCcRuleId": "CCR-SW-BANGALORE",
+      "diffDetail": null,
+      "notes": null
+    },
+    {
+      "spocId": "SW#3",
+      "sheet": "South-West",
+      "rowNumber": 3,
+      "sourceText": "Keep R. Balu and Rajesh in Cc for Tamil Nadu Schools",
+      "parsedScope": "sub-region",
+      "parsedScopeValue": "Tamil Nadu",
+      "parsedContexts": [
+        "all-communications"
+      ],
+      "parsedCcNames": [
+        "R. Balu",
+        "Rajesh"
+      ],
+      "outcome": "unmatched-spoc-db",
+      "matchedCcRuleId": null,
+      "diffDetail": null,
+      "notes": null
+    },
+    {
+      "spocId": "SW#4",
+      "sheet": "South-West",
+      "rowNumber": 4,
+      "sourceText": "Keep Kranthi and Pooja Sharma in Cc for Hyderabad Schools",
+      "parsedScope": "sub-region",
+      "parsedScopeValue": "Hyderabad",
+      "parsedContexts": [
+        "all-communications"
+      ],
+      "parsedCcNames": [
+        "Kranthi",
+        "Pooja Sharma"
+      ],
+      "outcome": "unmatched-spoc-db",
+      "matchedCcRuleId": null,
+      "diffDetail": null,
+      "notes": null
+    },
+    {
+      "spocId": "SW#5",
+      "sheet": "South-West",
+      "rowNumber": 5,
+      "sourceText": "Keep Shushankita in Cc for Schools in Maharashtra and all TTT Schools",
+      "compound": true,
+      "alternatives": [
+        {
+          "alternative": {
+            "scope": "sub-region",
+            "scopeValue": "Maharashtra"
+          },
+          "cleanMatchId": null,
+          "driftMatchId": null,
+          "driftCcContexts": null
+        },
+        {
+          "alternative": {
+            "scope": "training-mode",
+            "scopeValue": "TTT"
+          },
+          "cleanMatchId": null,
+          "driftMatchId": "CCR-TTT-FEEDBACK",
+          "driftCcContexts": [
+            "feedback-request"
+          ]
+        }
+      ],
+      "outcome": "context-drift",
+      "notes": null
+    },
+    {
+      "spocId": "East#1",
+      "sheet": "East",
+      "rowNumber": 1,
+      "sourceText": "Keep Prodipto, Avishek,Deepjyoti in Cc while sending the welcome note for East Schools",
+      "parsedScope": "region",
+      "parsedScopeValue": "East",
+      "parsedContexts": [
+        "welcome-note"
+      ],
+      "parsedCcNames": [
+        "Prodipto",
+        "Avishek",
+        "Deepjyoti"
+      ],
+      "outcome": "clean-match",
+      "matchedCcRuleId": "CCR-EAST-WELCOME",
+      "diffDetail": null,
+      "notes": null
+    },
+    {
+      "spocId": "East#2",
+      "sheet": "East",
+      "rowNumber": 2,
+      "sourceText": "Keep Shushankita in Cc for Schools in all TTT Schools",
+      "parsedScope": "training-mode",
+      "parsedScopeValue": "TTT",
+      "parsedContexts": [
+        "all-communications"
+      ],
+      "parsedCcNames": [
+        "Shushankita"
+      ],
+      "outcome": "context-drift",
+      "matchedCcRuleId": "CCR-TTT-FEEDBACK",
+      "diffDetail": {
+        "spocContexts": [
+          "all-communications"
+        ],
+        "ccContexts": [
+          "feedback-request"
+        ]
+      },
+      "notes": null
+    },
+    {
+      "spocId": "North#1",
+      "sheet": "North",
+      "rowNumber": 1,
+      "sourceText": "Keep Roveena, Pooja Sharma from Sr.no 1 to 7 in Cc while sending the closing letters for East Schools",
+      "parsedScope": "sr-no-range",
+      "parsedScopeValue": "1..7",
+      "parsedContexts": [
+        "closing-letter"
+      ],
+      "parsedCcNames": [
+        "Roveena",
+        "Pooja Sharma"
+      ],
+      "outcome": "context-drift",
+      "matchedCcRuleId": "CCR-NORTH-1-7",
+      "diffDetail": {
+        "spocContexts": [
+          "closing-letter"
+        ],
+        "ccContexts": [
+          "all-communications"
+        ]
+      },
+      "notes": "D-016: source text says \"East Schools\" while rule lives in North sheet (Misba typo). Source-of-truth principle preserves verbatim until upstream fix."
+    },
+    {
+      "spocId": "North#2",
+      "sheet": "North",
+      "rowNumber": 2,
+      "sourceText": "Keep Sahil Sharma, Pooja Sharma in Cc for GR International School",
+      "parsedScope": "school",
+      "parsedScopeValue": "SCH-GR_INTERNATIONAL_SCH",
+      "parsedContexts": [
+        "all-communications"
+      ],
+      "parsedCcNames": [
+        "Sahil Sharma",
+        "Pooja Sharma"
+      ],
+      "outcome": "unmatched-spoc-db",
+      "matchedCcRuleId": null,
+      "diffDetail": null,
+      "notes": null
+    },
+    {
+      "spocId": "North#3",
+      "sheet": "North",
+      "rowNumber": 3,
+      "sourceText": "Keep Shushankita in Cc for all TTT schools",
+      "parsedScope": "training-mode",
+      "parsedScopeValue": "TTT",
+      "parsedContexts": [
+        "all-communications"
+      ],
+      "parsedCcNames": [
+        "Shushankita"
+      ],
+      "outcome": "context-drift",
+      "matchedCcRuleId": "CCR-TTT-FEEDBACK",
+      "diffDetail": {
+        "spocContexts": [
+          "all-communications"
+        ],
+        "ccContexts": [
+          "feedback-request"
+        ]
+      },
+      "notes": null
+    }
+  ],
+  "derivedCcRules": [
+    {
+      "id": "CCR-EAST-DISPATCH",
+      "scope": "region",
+      "scopeValue": "East",
+      "contexts": [
+        "dispatch-notification"
+      ],
+      "sourceRuleText": "Cc East zonal coordinator on dispatch notifications",
+      "ccUserIds": [
+        "sp-rohan"
+      ],
+      "rationale": "Not from SPOC DB top-of-sheet free-text rules. Intentional system extension (chain MOU, escalation visibility, training-mode-specific contexts, etc.)."
+    },
+    {
+      "id": "CCR-NORTH-WELCOME-CLOSE",
+      "scope": "region",
+      "scopeValue": "North",
+      "contexts": [
+        "welcome-note",
+        "closing-letter"
+      ],
+      "sourceRuleText": "North zonal manager on welcome and closing notes only",
+      "ccUserIds": [
+        "sp-neha"
+      ],
+      "rationale": "Not from SPOC DB top-of-sheet free-text rules. Intentional system extension (chain MOU, escalation visibility, training-mode-specific contexts, etc.)."
+    },
+    {
+      "id": "CCR-GSLT-ALL",
+      "scope": "training-mode",
+      "scopeValue": "GSL-Trainer",
+      "contexts": [
+        "all-communications"
+      ],
+      "sourceRuleText": "Cc TrainerHead on all GSL-Trainer mode communications",
+      "ccUserIds": [
+        "shashank.s"
+      ],
+      "rationale": "Not from SPOC DB top-of-sheet free-text rules. Intentional system extension (chain MOU, escalation visibility, training-mode-specific contexts, etc.)."
+    },
+    {
+      "id": "CCR-NARAYANA-CHAIN",
+      "scope": "school",
+      "scopeValue": "SCH-NARAYANA_SCHOOL",
+      "contexts": [
+        "all-communications"
+      ],
+      "sourceRuleText": "Narayana chain coordinator on all communications for the chain MOU",
+      "ccUserIds": [
+        "sp-rohan"
+      ],
+      "rationale": "Not from SPOC DB top-of-sheet free-text rules. Intentional system extension (chain MOU, escalation visibility, training-mode-specific contexts, etc.)."
+    },
+    {
+      "id": "CCR-ESCALATION-LEADERSHIP",
+      "scope": "region",
+      "scopeValue": "ALL",
+      "contexts": [
+        "escalation-notification"
+      ],
+      "sourceRuleText": "Cc Leadership on every escalation notification (visibility rule)",
+      "ccUserIds": [
+        "ameet.z"
+      ],
+      "rationale": "Not from SPOC DB top-of-sheet free-text rules. Intentional system extension (chain MOU, escalation visibility, training-mode-specific contexts, etc.)."
+    }
+  ],
+  "summary": {
+    "cleanMatch": 3,
+    "contextDrift": 4,
+    "unmatchedSpocDb": 3,
+    "partialCompound": 0,
+    "derivedCcRules": 5,
+    "auditClean": false
+  }
+}
