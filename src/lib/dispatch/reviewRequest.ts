@@ -34,6 +34,7 @@ import type {
   Dispatch,
   DispatchLineItem,
   DispatchRequest,
+  InventoryItem,
   MOU,
   School,
   User,
@@ -43,6 +44,7 @@ import schoolsJson from '@/data/schools.json'
 import usersJson from '@/data/users.json'
 import dispatchesJson from '@/data/dispatches.json'
 import dispatchRequestsJson from '@/data/dispatch_requests.json'
+import inventoryItemsJson from '@/data/inventory_items.json'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
 import { canPerform } from '@/lib/auth/permissions'
 import {
@@ -50,6 +52,10 @@ import {
   createNotification,
   recipientsByRole,
 } from '@/lib/notifications/createNotification'
+import {
+  decrementInventory,
+  type DecrementFailureReason,
+} from '@/lib/inventory/decrementInventory'
 
 // ----------------------------------------------------------------------------
 // Approve
@@ -72,10 +78,17 @@ export type ApproveFailureReason =
   | 'school-not-found'
   | 'dispatch-already-exists'
   | 'invalid-line-items'
+  | 'inventory-decrement-failed'
 
 export type ApproveRequestResult =
   | { ok: true; request: DispatchRequest; dispatch: Dispatch }
-  | { ok: false; reason: ApproveFailureReason }
+  | {
+      ok: false
+      reason: ApproveFailureReason
+      decrementFailureReason?: DecrementFailureReason
+      decrementDetail?: string
+      offendingSkuName?: string
+    }
 
 // ----------------------------------------------------------------------------
 // Reject
@@ -128,6 +141,7 @@ export interface ReviewRequestDeps {
   users: User[]
   dispatches: Dispatch[]
   dispatchRequests: DispatchRequest[]
+  inventoryItems: InventoryItem[]
   enqueue: typeof enqueueUpdate
   now: () => Date
 }
@@ -138,6 +152,7 @@ const defaultDeps: ReviewRequestDeps = {
   users: usersJson as unknown as User[],
   dispatches: dispatchesJson as unknown as Dispatch[],
   dispatchRequests: dispatchRequestsJson as unknown as DispatchRequest[],
+  inventoryItems: inventoryItemsJson as unknown as InventoryItem[],
   enqueue: enqueueUpdate,
   now: () => new Date(),
 }
@@ -252,6 +267,45 @@ export async function approveRequest(
     auditLog: [...request.auditLog, requestAuditApproved, requestAuditConverted],
   }
 
+  // W4-G.4: decrement inventory BEFORE persisting the new Dispatch.
+  // Hard-block on insufficient stock / sunset SKU / missing record;
+  // operator adjusts line items via lineItemsOverride and re-approves.
+  const decrement = decrementInventory(
+    {
+      dispatch: {
+        id: dispatch.id,
+        lineItems: dispatch.lineItems,
+        raisedFrom: dispatch.raisedFrom,
+      },
+      decrementedBy: args.reviewedBy,
+      now: deps.now(),
+    },
+    { inventoryItems: deps.inventoryItems },
+  )
+  if (!decrement.ok) {
+    return {
+      ok: false,
+      reason: 'inventory-decrement-failed',
+      decrementFailureReason: decrement.reason,
+      decrementDetail: decrement.detail,
+      offendingSkuName: decrement.offendingSkuName,
+    }
+  }
+
+  if (decrement.summary.length > 0) {
+    const dispatchInventoryAudit: AuditEntry = {
+      timestamp: ts,
+      user: args.reviewedBy,
+      action: 'inventory-decremented-by-dispatch',
+      after: {
+        skuCount: decrement.summary.length,
+        decrements: decrement.summary,
+      },
+      notes: `Decremented inventory for ${decrement.summary.length} SKU(s).`,
+    }
+    dispatch.auditLog = [...dispatch.auditLog, dispatchInventoryAudit]
+  }
+
   await deps.enqueue({
     queuedBy: args.reviewedBy,
     entity: 'dispatch',
@@ -264,6 +318,36 @@ export async function approveRequest(
     operation: 'update',
     payload: updatedRequest as unknown as Record<string, unknown>,
   })
+
+  for (const item of decrement.updatedItems) {
+    await deps.enqueue({
+      queuedBy: args.reviewedBy,
+      entity: 'inventoryItem',
+      operation: 'update',
+      payload: item as unknown as Record<string, unknown>,
+    })
+  }
+
+  for (const trigger of decrement.lowStockTriggers) {
+    await broadcastNotification({
+      recipientUserIds: recipientsByRole(deps.users, ['Admin', 'OpsHead']),
+      senderUserId: 'system',
+      kind: 'inventory-low-stock',
+      title: `Low stock: ${trigger.skuName}${trigger.cretileGrade ? ` (Grade ${trigger.cretileGrade})` : ''}`,
+      body: `Stock dropped to ${trigger.currentStock} units (threshold ${trigger.threshold}) after dispatch ${dispatch.id}.`,
+      actionUrl: `/admin/inventory/${encodeURIComponent(trigger.inventoryItemId)}`,
+      payload: {
+        inventoryItemId: trigger.inventoryItemId,
+        skuName: trigger.skuName,
+        currentStock: trigger.currentStock,
+        threshold: trigger.threshold,
+        dispatchId: dispatch.id,
+      },
+      relatedEntityId: trigger.inventoryItemId,
+    }).catch((err) => {
+      console.error('[approveRequest] inventory-low-stock fan-out failed', err)
+    })
+  }
 
   // W4-E.5 notify the original requester. Self-exclusion suppresses
   // when reviewer === requester (Pradeep approves his own DR).

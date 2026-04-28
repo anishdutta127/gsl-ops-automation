@@ -26,6 +26,7 @@ import type {
   DispatchLineItem,
   DispatchRequest,
   IntakeRecord,
+  InventoryItem,
   MOU,
   SalesPerson,
   School,
@@ -36,6 +37,7 @@ import schoolsJson from '@/data/schools.json'
 import usersJson from '@/data/users.json'
 import intakeRecordsJson from '@/data/intake_records.json'
 import dispatchRequestsJson from '@/data/dispatch_requests.json'
+import inventoryItemsJson from '@/data/inventory_items.json'
 import salesTeamJson from '@/data/sales_team.json'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
 import { canPerform } from '@/lib/auth/permissions'
@@ -70,6 +72,7 @@ export type CreateRequestWarning =
   | 'student-count-variance-high'  // V5
   | 'grade-out-of-intake-range'    // V6
   | 'duplicate-pending-request'    // V8
+  | 'stock-availability-warning'   // V9 (W4-G.4)
 
 export type CreateRequestResult =
   | { ok: true; request: DispatchRequest; warnings: CreateRequestWarning[] }
@@ -82,6 +85,7 @@ export interface CreateRequestDeps {
   intakeRecords: IntakeRecord[]
   dispatchRequests: DispatchRequest[]
   salesPersons: SalesPerson[]
+  inventoryItems: InventoryItem[]
   enqueue: typeof enqueueUpdate
   now: () => Date
 }
@@ -93,6 +97,7 @@ const defaultDeps: CreateRequestDeps = {
   intakeRecords: intakeRecordsJson as unknown as IntakeRecord[],
   dispatchRequests: dispatchRequestsJson as unknown as DispatchRequest[],
   salesPersons: salesTeamJson as unknown as SalesPerson[],
+  inventoryItems: inventoryItemsJson as unknown as InventoryItem[],
   enqueue: enqueueUpdate,
   now: () => new Date(),
 }
@@ -128,6 +133,75 @@ function lineItemMismatchesProgramme(
       if (!sku.includes('steam') && !sku.includes('cretile') && !sku.includes('kit')) return true
     }
     // Young Pioneers / HBPE / VEX: no heuristic; V4 stays silent.
+  }
+  return false
+}
+
+/**
+ * V9 stock-availability check (W4-G.4). Walks the requested
+ * lineItems, sums per-SKU demand from other pending DRs, and returns
+ * true if any SKU shows `requested + pending > currentStock`. The
+ * check is per-SKU (flat) and per-Cretile-grade (per-grade).
+ *
+ * Excludes the current request from "other pending" since the caller
+ * may be retrying after a partial failure; double-counting itself
+ * would inflate the warning. The current DR's mouId+installmentSeq
+ * is the dedup key.
+ */
+function checkStockAvailability(
+  items: DispatchLineItem[],
+  pendingRequests: DispatchRequest[],
+  inventoryItems: InventoryItem[],
+  selfMouId: string,
+  selfInstallmentSeq: number,
+): boolean {
+  // Aggregate this DR's demand per SKU/grade.
+  const requested = new Map<string, number>()  // key: skuName for flat; `cretile-${grade}` for per-grade
+  for (const li of items) {
+    if (li.kind === 'flat') {
+      requested.set(li.skuName, (requested.get(li.skuName) ?? 0) + li.quantity)
+    } else {
+      for (const a of li.gradeAllocations) {
+        const k = `cretile-${a.grade}`
+        requested.set(k, (requested.get(k) ?? 0) + a.quantity)
+      }
+    }
+  }
+
+  // Aggregate pending demand from other pending DRs, EXCLUDING self.
+  const pending = new Map<string, number>()
+  for (const dr of pendingRequests) {
+    if (dr.status !== 'pending-approval') continue
+    if (dr.mouId === selfMouId && dr.installmentSeq === selfInstallmentSeq) continue
+    for (const li of dr.lineItems) {
+      if (li.kind === 'flat') {
+        pending.set(li.skuName, (pending.get(li.skuName) ?? 0) + li.quantity)
+      } else {
+        for (const a of li.gradeAllocations) {
+          const k = `cretile-${a.grade}`
+          pending.set(k, (pending.get(k) ?? 0) + a.quantity)
+        }
+      }
+    }
+  }
+
+  // Compare against currentStock per SKU/grade.
+  for (const [key, requestedQty] of Array.from(requested.entries())) {
+    let currentStock = 0
+    if (key.startsWith('cretile-')) {
+      const grade = Number(key.slice('cretile-'.length))
+      const item = inventoryItems.find(
+        (it) => it.category === 'Cretile' && it.cretileGrade === grade,
+      )
+      if (!item) continue       // V9 only flags when the SKU exists; missing is a hard error at decrement time
+      currentStock = item.currentStock
+    } else {
+      const item = inventoryItems.find((it) => it.skuName === key)
+      if (!item) continue
+      currentStock = item.currentStock
+    }
+    const pendingQty = pending.get(key) ?? 0
+    if (requestedQty + pendingQty > currentStock) return true
   }
   return false
 }
@@ -220,6 +294,20 @@ export async function createRequest(
       && dr.status === 'pending-approval',
   )
   if (existingPending) warnings.push('duplicate-pending-request')
+
+  // V9 (W4-G.4): stock availability warning. For each line item,
+  // check whether `requested + sum(pending DRs for same SKU) >
+  // currentStock`. Warning only; allows submit. Operator + Ops
+  // resolve at conversion (the hard gate is in approveRequest +
+  // raiseDispatch via decrementInventory).
+  const stockWarningTriggered = checkStockAvailability(
+    args.lineItems,
+    deps.dispatchRequests,
+    deps.inventoryItems,
+    args.mouId,
+    args.installmentSeq,
+  )
+  if (stockWarningTriggered) warnings.push('stock-availability-warning')
 
   // Persist
   const ts = deps.now().toISOString()
@@ -317,4 +405,5 @@ export const VALIDATION_RULES = [
   { id: 'V6', code: 'grade-out-of-intake-range', severity: 'warning' as const },
   { id: 'V7', code: 'submitter-not-intake-owner', severity: 'audit-only' as const },
   { id: 'V8', code: 'duplicate-pending-request', severity: 'warning' as const },
+  { id: 'V9', code: 'stock-availability-warning', severity: 'warning' as const },
 ] as const

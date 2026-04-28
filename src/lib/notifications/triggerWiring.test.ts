@@ -190,6 +190,7 @@ describe('W4-E.5 trigger wiring', () => {
         intakeRecords: [],
         dispatchRequests: [],
         salesPersons: [SP_VIKRAM],
+        inventoryItems: [],
         enqueue: enqueue as unknown as typeof import('@/lib/pendingUpdates').enqueueUpdate,
         now: () => NOW,
       },
@@ -219,6 +220,15 @@ describe('W4-E.5 trigger wiring', () => {
       {
         mous: [m], schools: [sch], users: [requester, reviewer],
         dispatches: [], dispatchRequests: [dr],
+        inventoryItems: [
+          {
+            id: 'INV-X', skuName: 'X', category: 'Other',
+            cretileGrade: null, mastersheetSourceName: null,
+            currentStock: 1000, reorderThreshold: null, notes: null,
+            active: true, lastUpdatedAt: NOW.toISOString(),
+            lastUpdatedBy: 'system-test', auditLog: [],
+          },
+        ],
         enqueue: enqueue as unknown as typeof import('@/lib/pendingUpdates').enqueueUpdate,
         now: () => NOW,
       },
@@ -249,6 +259,7 @@ describe('W4-E.5 trigger wiring', () => {
       {
         mous: [m], schools: [sch], users: [requester, reviewer],
         dispatches: [], dispatchRequests: [dr],
+        inventoryItems: [],
         enqueue: enqueue as unknown as typeof import('@/lib/pendingUpdates').enqueueUpdate,
         now: () => NOW,
       },
@@ -278,7 +289,7 @@ describe('W4-E.5 trigger wiring', () => {
       { requestId: dr.id, cancelledBy: requester.id, notes: 'changed mind' },
       {
         mous: [m], schools: [sch], users: [requester, opsHead],
-        dispatches: [], dispatchRequests: [dr],
+        dispatches: [], dispatchRequests: [dr], inventoryItems: [],
         enqueue: enqueue as unknown as typeof import('@/lib/pendingUpdates').enqueueUpdate,
         now: () => NOW,
       },

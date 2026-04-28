@@ -129,12 +129,34 @@ const company = {
   address: ['Sample', 'Bengaluru, Karnataka 560001'],
 }
 
+function defaultInventory(): import('@/lib/types').InventoryItem[] {
+  // Covers the 'STEAM kit set' SKU that raiseDispatch synthesises from
+  // MOU.programme (see buildKitItems) and the 'Test SKU' label used by
+  // the dispatch() fixture for existing-dispatch scenarios. Stock is
+  // generous so happy-path tests don't trip insufficient-stock.
+  return [
+    {
+      id: 'INV-STEAM-KIT', skuName: 'STEAM kit set', category: 'Other',
+      cretileGrade: null, mastersheetSourceName: null, currentStock: 10000,
+      reorderThreshold: null, notes: null, active: true,
+      lastUpdatedAt: FIXED_TS, lastUpdatedBy: 'system-test', auditLog: [],
+    },
+    {
+      id: 'INV-TEST-SKU', skuName: 'Test SKU', category: 'Other',
+      cretileGrade: null, mastersheetSourceName: null, currentStock: 10000,
+      reorderThreshold: null, notes: null, active: true,
+      lastUpdatedAt: FIXED_TS, lastUpdatedBy: 'system-test', auditLog: [],
+    },
+  ]
+}
+
 function makeDeps(opts: {
   mous: MOU[]
   schools: School[]
   users: User[]
   dispatches?: Dispatch[]
   payments?: Payment[]
+  inventoryItems?: import('@/lib/types').InventoryItem[]
   loadTemplateOverride?: RaiseDispatchDeps['loadTemplate']
 }): { deps: RaiseDispatchDeps; calls: Array<Record<string, unknown>> } {
   const calls: Array<Record<string, unknown>> = []
@@ -155,6 +177,7 @@ function makeDeps(opts: {
       users: opts.users,
       dispatches: opts.dispatches ?? [],
       payments: opts.payments ?? [],
+      inventoryItems: opts.inventoryItems ?? defaultInventory(),
       company,
       enqueue: enqueue as unknown as RaiseDispatchDeps['enqueue'],
       loadTemplate: opts.loadTemplateOverride ?? (async () => fixtureBytes),
@@ -188,9 +211,11 @@ describe('raiseDispatch', () => {
     expect(result.dispatch.installment1Paid).toBe(true)
     expect(result.wasAlreadyRaised).toBe(false)
     expect(result.docxBytes.byteLength).toBeGreaterThan(100)
-    expect(calls).toHaveLength(2)
+    // dispatch + mou + 1 inventoryItem (W4-G.4 decrement)
+    expect(calls).toHaveLength(3)
     expect(calls[0]).toMatchObject({ entity: 'dispatch', operation: 'create' })
     expect(calls[1]).toMatchObject({ entity: 'mou', operation: 'update' })
+    expect(calls[2]).toMatchObject({ entity: 'inventoryItem', operation: 'update' })
   })
 
   it('Admin can raise (wildcard)', async () => {
@@ -394,11 +419,13 @@ describe('raiseDispatch', () => {
       deps,
     )
     const updatedDispatch = calls[0]!.payload as unknown as Dispatch
-    expect(updatedDispatch.auditLog).toHaveLength(1)
+    // dispatch-raised + inventory-decremented-by-dispatch (W4-G.4 mirror)
+    expect(updatedDispatch.auditLog).toHaveLength(2)
     const entry = updatedDispatch.auditLog[0]!
     expect(entry.action).toBe('dispatch-raised')
     expect(entry.before).toMatchObject({ stage: 'pending' })
     expect(entry.after).toMatchObject({ stage: 'po-raised' })
+    expect(updatedDispatch.auditLog[1]!.action).toBe('inventory-decremented-by-dispatch')
   })
 
   it('MOU audit entry has action dispatch-raised + dispatch reference', async () => {

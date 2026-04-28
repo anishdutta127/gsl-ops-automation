@@ -47,6 +47,7 @@ import type {
   Dispatch,
   DispatchLineItem,
   DispatchStage,
+  InventoryItem,
   MOU,
   Payment,
   School,
@@ -57,12 +58,21 @@ import schoolsJson from '@/data/schools.json'
 import usersJson from '@/data/users.json'
 import dispatchesJson from '@/data/dispatches.json'
 import paymentsJson from '@/data/payments.json'
+import inventoryItemsJson from '@/data/inventory_items.json'
 import companyJson from '../../../config/company.json'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
 import { canPerform } from '@/lib/auth/permissions'
 import { isGateUnblocked } from './overrideAudit'
 import { formatDate } from '@/lib/format'
 import { DISPATCH_TEMPLATE, DispatchTemplateMissingError } from './templates'
+import {
+  decrementInventory,
+  type DecrementFailureReason,
+} from '@/lib/inventory/decrementInventory'
+import {
+  broadcastNotification,
+  recipientsByRole,
+} from '@/lib/notifications/createNotification'
 
 interface CompanyConfig {
   legalEntity: string
@@ -92,6 +102,7 @@ export type RaiseDispatchFailureReason =
   | 'mou-not-found'
   | 'school-not-found'
   | 'wrong-status'
+  | 'inventory-decrement-failed'
   | 'gate-locked'
   | 'template-missing'
 
@@ -106,6 +117,12 @@ export type RaiseDispatchResult =
       ok: false
       reason: RaiseDispatchFailureReason
       templateError?: DispatchTemplateMissingError
+      /** When reason='inventory-decrement-failed': echoes the
+       * inner reason from decrementInventory plus the offending
+       * SKU name (so the caller can render an actionable message). */
+      decrementFailureReason?: DecrementFailureReason
+      decrementDetail?: string
+      offendingSkuName?: string
     }
 
 export interface RaiseDispatchDeps {
@@ -114,6 +131,7 @@ export interface RaiseDispatchDeps {
   users: User[]
   dispatches: Dispatch[]
   payments: Payment[]
+  inventoryItems: InventoryItem[]
   company: CompanyConfig
   enqueue: typeof enqueueUpdate
   loadTemplate: (templatePath: string) => Promise<Uint8Array>
@@ -138,6 +156,7 @@ const defaultDeps: RaiseDispatchDeps = {
   users: usersJson as unknown as User[],
   dispatches: dispatchesJson as unknown as Dispatch[],
   payments: paymentsJson as unknown as Payment[],
+  inventoryItems: inventoryItemsJson as unknown as InventoryItem[],
   company: companyJson as CompanyConfig,
   enqueue: enqueueUpdate,
   loadTemplate: defaultLoadTemplate,
@@ -332,6 +351,49 @@ export async function raiseDispatch(
   }
   const updatedMou: MOU = { ...mou, auditLog: [...mou.auditLog, mouAuditEntry] }
 
+  // W4-G.4: decrement inventory BEFORE enqueueing the Dispatch. If
+  // the decrement fails (insufficient stock, sunset SKU, missing
+  // record), abort the raise; the operator adjusts line items or
+  // restocks before retrying. The decrement is a hard gate.
+  const decrement = decrementInventory(
+    {
+      dispatch: {
+        id: updatedDispatch.id,
+        lineItems: updatedDispatch.lineItems,
+        raisedFrom: updatedDispatch.raisedFrom,
+      },
+      decrementedBy: args.raisedBy,
+      now: deps.now(),
+    },
+    { inventoryItems: deps.inventoryItems },
+  )
+  if (!decrement.ok) {
+    return {
+      ok: false,
+      reason: 'inventory-decrement-failed',
+      decrementFailureReason: decrement.reason,
+      decrementDetail: decrement.detail,
+      offendingSkuName: decrement.offendingSkuName,
+    }
+  }
+
+  // Mirror a single rolled-up audit entry on the Dispatch so the
+  // detail page can show "Inventory decremented: X SKUs" without
+  // joining against InventoryItem.auditLog.
+  if (decrement.summary.length > 0) {
+    const dispatchInventoryAudit: AuditEntry = {
+      timestamp: ts,
+      user: args.raisedBy,
+      action: 'inventory-decremented-by-dispatch',
+      after: {
+        skuCount: decrement.summary.length,
+        decrements: decrement.summary,
+      },
+      notes: `Decremented inventory for ${decrement.summary.length} SKU(s).`,
+    }
+    updatedDispatch.auditLog = [...updatedDispatch.auditLog, dispatchInventoryAudit]
+  }
+
   await deps.enqueue({
     queuedBy: args.raisedBy,
     entity: 'dispatch',
@@ -344,6 +406,40 @@ export async function raiseDispatch(
     operation: 'update',
     payload: updatedMou as unknown as Record<string, unknown>,
   })
+
+  // Enqueue every updated InventoryItem.
+  for (const item of decrement.updatedItems) {
+    await deps.enqueue({
+      queuedBy: args.raisedBy,
+      entity: 'inventoryItem',
+      operation: 'update',
+      payload: item as unknown as Record<string, unknown>,
+    })
+  }
+
+  // Fire low-stock notifications (best-effort; failures do NOT roll
+  // the dispatch back). The hook checks reorderThreshold !== null
+  // already inside decrementInventory.
+  for (const trigger of decrement.lowStockTriggers) {
+    await broadcastNotification({
+      recipientUserIds: recipientsByRole(deps.users, ['Admin', 'OpsHead']),
+      senderUserId: 'system',
+      kind: 'inventory-low-stock',
+      title: `Low stock: ${trigger.skuName}${trigger.cretileGrade ? ` (Grade ${trigger.cretileGrade})` : ''}`,
+      body: `Stock dropped to ${trigger.currentStock} units (threshold ${trigger.threshold}) after dispatch ${updatedDispatch.id}.`,
+      actionUrl: `/admin/inventory/${encodeURIComponent(trigger.inventoryItemId)}`,
+      payload: {
+        inventoryItemId: trigger.inventoryItemId,
+        skuName: trigger.skuName,
+        currentStock: trigger.currentStock,
+        threshold: trigger.threshold,
+        dispatchId: updatedDispatch.id,
+      },
+      relatedEntityId: trigger.inventoryItemId,
+    }).catch((err) => {
+      console.error('[raiseDispatch] inventory-low-stock fan-out failed', err)
+    })
+  }
 
   return { ok: true, dispatch: updatedDispatch, docxBytes, wasAlreadyRaised: false }
 }

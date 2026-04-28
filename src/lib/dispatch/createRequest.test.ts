@@ -113,6 +113,7 @@ function makeDeps(opts: Partial<CreateRequestDeps> = {}): {
       intakeRecords: opts.intakeRecords ?? [intake()],
       dispatchRequests: opts.dispatchRequests ?? [],
       salesPersons: opts.salesPersons ?? [salesPerson()],
+      inventoryItems: opts.inventoryItems ?? [],
       enqueue: enqueue as unknown as CreateRequestDeps['enqueue'],
       now: () => new Date(FIXED_TS),
     },

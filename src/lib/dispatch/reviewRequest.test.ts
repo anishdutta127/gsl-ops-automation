@@ -57,6 +57,16 @@ function school(): School {
 function flat(): DispatchLineItem {
   return { kind: 'flat', skuName: 'STEAM kit set', quantity: 100 }
 }
+function defaultInventory(): import('@/lib/types').InventoryItem[] {
+  return [
+    {
+      id: 'INV-STEAM-KIT', skuName: 'STEAM kit set', category: 'Other',
+      cretileGrade: null, mastersheetSourceName: null, currentStock: 10000,
+      reorderThreshold: null, notes: null, active: true,
+      lastUpdatedAt: FIXED_TS, lastUpdatedBy: 'system-test', auditLog: [],
+    },
+  ]
+}
 function dr(overrides: Partial<DispatchRequest> = {}): DispatchRequest {
   return {
     id: 'DR-1', mouId: 'MOU-X', schoolId: 'SCH-X', requestedBy: 'pratik.d',
@@ -90,6 +100,7 @@ function makeDeps(opts: Partial<ReviewRequestDeps> = {}): {
       users: opts.users ?? [pratik(), misba()],
       dispatches: opts.dispatches ?? [],
       dispatchRequests: opts.dispatchRequests ?? [dr()],
+      inventoryItems: opts.inventoryItems ?? defaultInventory(),
       enqueue: enqueue as unknown as ReviewRequestDeps['enqueue'],
       now: () => new Date(FIXED_TS),
     },
@@ -109,10 +120,11 @@ describe('approveRequest', () => {
     expect(result.request.status).toBe('approved')
     expect(result.request.conversionDispatchId).toBe(result.dispatch.id)
     expect(result.request.reviewedBy).toBe('misba.m')
-    // Two enqueue calls: dispatch create + dispatchRequest update
-    expect(calls).toHaveLength(2)
+    // Three enqueue calls: dispatch + dispatchRequest + 1 inventoryItem (W4-G.4)
+    expect(calls).toHaveLength(3)
     expect(calls[0]).toMatchObject({ entity: 'dispatch', operation: 'create' })
     expect(calls[1]).toMatchObject({ entity: 'dispatchRequest', operation: 'update' })
+    expect(calls[2]).toMatchObject({ entity: 'inventoryItem', operation: 'update' })
   })
 
   it('SalesHead is REJECTED (lacks dispatch-request:review)', async () => {
