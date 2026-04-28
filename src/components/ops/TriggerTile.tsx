@@ -21,6 +21,40 @@ import { TriggerTileInfoPopover } from './TriggerTileInfoPopover'
 
 export type TriggerStatus = 'ok' | 'attention' | 'alert' | 'neutral'
 
+/**
+ * W4-E.6.5 trigger tile category mapping. The 9 tiles cluster under
+ * 4 functional buckets so the grid scans by responsibility:
+ *   - sales (2):       Sales drift queue, Captured commitments
+ *   - ops (4):         P2 overrides (7d), CC scope deltas (7d),
+ *                      CC toggle-offs (30d), Email bounce (7d)
+ *   - finance (2):     PI blocked (GSTIN), Reconcile health
+ *   - cross (1):       Assignment queue (escalation routing)
+ *
+ * Background tints are kept very subtle (8-10% saturation) per the
+ * "subtle functional colour" brief; the status text colour stays
+ * the primary signal. Anish flags any miscategorisation in round 2.
+ */
+export type TriggerCategory = 'sales' | 'ops' | 'finance' | 'cross' | null
+
+const CATEGORY_BG: Record<NonNullable<TriggerCategory>, string> = {
+  sales: 'bg-brand-teal/[0.06]',
+  ops: 'bg-brand-navy/[0.04]',
+  finance: 'bg-emerald-500/[0.06]',
+  cross: 'bg-amber-500/[0.05]',
+}
+
+const TILE_CATEGORY: Record<string, NonNullable<TriggerCategory>> = {
+  'P2 overrides (7d)': 'ops',
+  'Sales drift queue': 'sales',
+  'CC scope deltas (7d)': 'ops',
+  'Captured commitments': 'sales',
+  'PI blocked (GSTIN)': 'finance',
+  'Reconcile health': 'finance',
+  'CC toggle-offs (30d)': 'ops',
+  'Email bounce (7d)': 'ops',
+  'Assignment queue': 'cross',
+}
+
 interface TriggerTileProps {
   label: string
   primary: string
@@ -59,9 +93,15 @@ export function TriggerTile({
   trendDirection,
 }: TriggerTileProps) {
   const info = TRIGGER_TILE_INFO[label]
+  const category = TILE_CATEGORY[label] ?? null
+  const categoryBg = category ? CATEGORY_BG[category] : 'bg-card'
   return (
     <div
-      className="relative rounded-lg border border-[var(--signal-neutral)]/20 bg-card p-3 pr-12 shadow-sm"
+      className={cn(
+        'relative rounded-lg border border-[var(--signal-neutral)]/20 p-3 pr-12 shadow-sm',
+        categoryBg,
+      )}
+      data-category={category ?? undefined}
       role="group"
       aria-label={`${label}: ${primary}, ${STATUS_LABEL[status]}. ${threshold}`}
     >

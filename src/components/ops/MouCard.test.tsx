@@ -122,3 +122,87 @@ describe('MouCard', () => {
     expect(html).not.toContain('data-testid="next-step"')
   })
 })
+
+describe('MouCard W4-E.6.5 urgency stripe', () => {
+  it('renders data-urgency=ok when daysInStage < 50% of stage limit', () => {
+    const html = renderToStaticMarkup(
+      <MouCard mou={mou({ id: 'M' })} stage="mou-signed" daysInStage={3} />,
+    )
+    expect(html).toContain('data-urgency="ok"')
+    expect(html).toContain('border-l-signal-ok')
+    expect(html).toContain('on track')
+  })
+
+  it('renders data-urgency=attention when daysInStage in the 50-100% band', () => {
+    const html = renderToStaticMarkup(
+      <MouCard mou={mou({ id: 'M' })} stage="mou-signed" daysInStage={10} />,
+    )
+    expect(html).toContain('data-urgency="attention"')
+    expect(html).toContain('border-l-signal-attention')
+  })
+
+  it('renders data-urgency=alert when overdue (daysInStage > limit)', () => {
+    const html = renderToStaticMarkup(
+      <MouCard mou={mou({ id: 'M' })} stage="mou-signed" daysInStage={20} />,
+    )
+    expect(html).toContain('data-urgency="alert"')
+    expect(html).toContain('border-l-signal-alert')
+    expect(html).toContain('Overdue by')
+  })
+
+  it('renders data-urgency=none for terminal stages (feedback-submitted)', () => {
+    const html = renderToStaticMarkup(
+      <MouCard mou={mou({ id: 'M' })} stage="feedback-submitted" daysInStage={50} />,
+    )
+    expect(html).toContain('data-urgency="none"')
+    expect(html).toContain('border-l-transparent')
+  })
+
+  it('renders data-urgency=none for pre-ops (no SLA per Anish W4-E.6.5)', () => {
+    const html = renderToStaticMarkup(
+      <MouCard mou={mou({ id: 'M' })} stage="pre-ops" daysInStage={45} />,
+    )
+    expect(html).toContain('data-urgency="none"')
+  })
+})
+
+describe('MouCard W4-E.6.5 programme accent', () => {
+  it('renders STEAM accent chip with brand-teal tokens', () => {
+    const html = renderToStaticMarkup(
+      <MouCard mou={mou({ id: 'M', programme: 'STEAM' as Programme })} />,
+    )
+    expect(html).toContain('data-testid="programme-accent"')
+    expect(html).toContain('data-programme="STEAM"')
+    expect(html).toContain('bg-brand-teal/10')
+    expect(html).toContain('>STEAM<')
+  })
+
+  it('renders TinkRworks accent chip with brand-navy tokens', () => {
+    const html = renderToStaticMarkup(
+      <MouCard mou={mou({ id: 'M', programme: 'TinkRworks' as Programme })} />,
+    )
+    expect(html).toContain('data-programme="TinkRworks"')
+    expect(html).toContain('bg-brand-navy/10')
+    expect(html).toContain('>TinkR<')
+  })
+
+  it('renders Young Pioneers accent chip with violet tokens', () => {
+    const html = renderToStaticMarkup(
+      <MouCard mou={mou({ id: 'M', programme: 'Young Pioneers' as Programme })} />,
+    )
+    expect(html).toContain('data-programme="Young Pioneers"')
+    expect(html).toContain('bg-violet-100')
+    expect(html).toContain('>YP<')
+  })
+
+  it('omits accent chip for Harvard HBPE and VEX (subtle palette)', () => {
+    const html1 = renderToStaticMarkup(
+      <MouCard mou={mou({ id: 'M', programme: 'Harvard HBPE' as Programme })} />,
+    )
+    expect(html1).not.toContain('data-testid="programme-accent"')
+    const html2 = renderToStaticMarkup(
+      <MouCard mou={mou({ id: 'M', programme: 'VEX' as Programme })} />,
+    )
+    expect(html2).not.toContain('data-testid="programme-accent"')
+  })
+})

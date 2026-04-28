@@ -25,12 +25,50 @@
 
 import Link from 'next/link'
 import { AlertTriangle, ArrowRight, Clock } from 'lucide-react'
-import type { MOU } from '@/lib/types'
+import type { MOU, Programme } from '@/lib/types'
 import {
   hasDrift,
   STAGE_NEXT_STEP,
   type KanbanStageKey,
 } from '@/lib/kanban/deriveStage'
+import {
+  getCardUrgency,
+  urgencyAriaLabel,
+  URGENCY_BORDER_CLASS,
+  type UrgencyLevel,
+} from '@/lib/kanban/cardUrgency'
+
+interface ProgrammeAccent {
+  className: string
+  label: string
+}
+
+/**
+ * W4-E.6.5 programme accent chip rendered next to the school name.
+ * STEAM keeps brand-teal (already the system primary); TinkRworks
+ * picks up brand-navy as the operational sibling. Young Pioneers
+ * gets a violet hue to stand apart from the dominant teal/navy
+ * palette without introducing a new design token (Tailwind ships
+ * violet-100/violet-900/violet-300 out of the box). Other
+ * programmes (Harvard HBPE, VEX) render with no chip; this keeps
+ * the kanban visually quiet for the rare programme cases.
+ */
+const PROGRAMME_ACCENT: Record<Programme, ProgrammeAccent | null> = {
+  STEAM: {
+    className: 'bg-brand-teal/10 text-brand-navy border-brand-teal/40',
+    label: 'STEAM',
+  },
+  TinkRworks: {
+    className: 'bg-brand-navy/10 text-brand-navy border-brand-navy/30',
+    label: 'TinkR',
+  },
+  'Young Pioneers': {
+    className: 'bg-violet-100 text-violet-900 border-violet-300',
+    label: 'YP',
+  },
+  'Harvard HBPE': null,
+  VEX: null,
+}
 
 const SCHOOL_NAME_MAX = 32
 
@@ -65,6 +103,8 @@ export function MouCardBody({ mou, daysInStage, overdue, stage }: MouCardBodyPro
   const showStatusBadge = mou.status !== 'Active'
   const showOverdue = overdue === true && typeof daysInStage === 'number'
 
+  const programmeAccent = PROGRAMME_ACCENT[mou.programme]
+
   const anyBadge = drift || showStatusBadge || showOverdue
   // W4-B.1: cross-verification stage is auto-skipped by deriveStage; if
   // a card lands here in production it is a bug. Suppress the next-step
@@ -76,7 +116,19 @@ export function MouCardBody({ mou, daysInStage, overdue, stage }: MouCardBodyPro
 
   return (
     <>
-      <div className="font-medium text-foreground">{displayName}</div>
+      <div className="flex flex-wrap items-center gap-1.5">
+        <span className="font-medium text-foreground">{displayName}</span>
+        {programmeAccent ? (
+          <span
+            data-testid="programme-accent"
+            data-programme={mou.programme}
+            className={`inline-flex items-center rounded-sm border px-1.5 py-px text-[10px] font-semibold leading-tight ${programmeAccent.className}`}
+            aria-label={`Programme: ${mou.programme}`}
+          >
+            {programmeAccent.label}
+          </span>
+        ) : null}
+      </div>
       <div className="mt-0.5 font-mono text-[11px] text-muted-foreground">{mou.id}</div>
       <div className="mt-1 text-xs text-muted-foreground">{programmeLabel}</div>
       {anyBadge ? (
@@ -120,14 +172,20 @@ export function MouCardBody({ mou, daysInStage, overdue, stage }: MouCardBodyPro
 }
 
 export function MouCard({ mou, daysInStage, overdue, stage }: MouCardProps) {
+  const urgency: UrgencyLevel = stage
+    ? getCardUrgency(stage, daysInStage ?? null)
+    : 'none'
+  const urgencyClass = URGENCY_BORDER_CLASS[urgency]
+  const urgencyLabel = stage ? urgencyAriaLabel(urgency, stage, daysInStage ?? null) : ''
   return (
     <Link
       href={`/mous/${mou.id}`}
-      className="block rounded-md border border-border bg-card p-3 text-left text-sm hover:bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy min-h-[88px]"
-      title={mou.schoolName}
+      className={`block rounded-md border border-border ${urgencyClass} bg-card p-3 text-left text-sm hover:bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy min-h-[88px]`}
+      title={urgencyLabel ? `${mou.schoolName} (${urgencyLabel})` : mou.schoolName}
       data-testid="mou-card"
       data-mou-id={mou.id}
       data-overdue={overdue ? 'true' : undefined}
+      data-urgency={urgency}
     >
       <MouCardBody mou={mou} daysInStage={daysInStage} overdue={overdue} stage={stage} />
     </Link>

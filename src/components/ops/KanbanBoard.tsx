@@ -64,6 +64,11 @@ import {
   type TransitionClassification,
 } from '@/lib/kanban/transitions'
 import { MouCardBody } from './MouCard'
+import {
+  getCardUrgency,
+  urgencyAriaLabel,
+  URGENCY_BORDER_CLASS,
+} from '@/lib/kanban/cardUrgency'
 import { StageColumn } from './StageColumn'
 import { TransitionDialog } from './TransitionDialog'
 
@@ -424,18 +429,22 @@ function DraggableMouCard({ mou, stage, active, meta }: DraggableMouCardProps) {
   // and carries listeners + attributes (cursor-grab; Space / Enter
   // lifts via KeyboardSensor). pr-12 reserves space for the handle so
   // long school names do not collide with the icon.
+  const urgency = getCardUrgency(stage, meta?.daysInStage ?? null)
+  const urgencyClass = URGENCY_BORDER_CLASS[urgency]
+  const urgencyLabel = urgencyAriaLabel(urgency, stage, meta?.daysInStage ?? null)
   return (
     <div
       ref={setNodeRef}
-      className={`relative rounded-md border border-border bg-card hover:bg-muted ${active ? 'opacity-40' : ''}`}
+      className={`relative rounded-md border border-border ${urgencyClass} bg-card hover:bg-muted ${active ? 'opacity-40' : ''}`}
       data-testid="mou-card"
       data-mou-id={mou.id}
       data-overdue={meta?.overdue ? 'true' : undefined}
+      data-urgency={urgency}
     >
       <a
         href={`/mous/${mou.id}`}
         className="block min-h-[88px] rounded-md p-3 pr-12 text-left text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
-        title={mou.schoolName}
+        title={urgencyLabel ? `${mou.schoolName} (${urgencyLabel})` : mou.schoolName}
       >
         <MouCardBody mou={mou} daysInStage={meta?.daysInStage} overdue={meta?.overdue} stage={stage} />
       </a>

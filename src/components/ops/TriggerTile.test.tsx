@@ -95,3 +95,56 @@ describe('TriggerTile', () => {
     expect(html).not.toMatch(/#[0-9a-fA-F]{3,6}\b/)
   })
 })
+
+describe('TriggerTile W4-E.6.5 category accents', () => {
+  it('Sales tiles carry data-category=sales (Sales drift queue, Captured commitments)', () => {
+    for (const label of ['Sales drift queue', 'Captured commitments']) {
+      const html = renderToStaticMarkup(
+        <TriggerTile label={label} primary="0" threshold="x" status="ok" />,
+      )
+      expect(html).toContain('data-category="sales"')
+      expect(html).toContain('bg-brand-teal/[0.06]')
+    }
+  })
+
+  it('Ops tiles carry data-category=ops (4 tiles)', () => {
+    const opsLabels = [
+      'P2 overrides (7d)',
+      'CC scope deltas (7d)',
+      'CC toggle-offs (30d)',
+      'Email bounce (7d)',
+    ]
+    for (const label of opsLabels) {
+      const html = renderToStaticMarkup(
+        <TriggerTile label={label} primary="0" threshold="x" status="ok" />,
+      )
+      expect(html).toContain('data-category="ops"')
+      expect(html).toContain('bg-brand-navy/[0.04]')
+    }
+  })
+
+  it('Finance tiles carry data-category=finance', () => {
+    for (const label of ['PI blocked (GSTIN)', 'Reconcile health']) {
+      const html = renderToStaticMarkup(
+        <TriggerTile label={label} primary="0%" threshold="x" status="ok" />,
+      )
+      expect(html).toContain('data-category="finance"')
+      expect(html).toContain('bg-emerald-500/[0.06]')
+    }
+  })
+
+  it('Cross-functional Assignment queue carries data-category=cross', () => {
+    const html = renderToStaticMarkup(
+      <TriggerTile label="Assignment queue" primary="0" threshold="x" status="ok" />,
+    )
+    expect(html).toContain('data-category="cross"')
+    expect(html).toContain('bg-amber-500/[0.05]')
+  })
+
+  it('unrecognised label has no data-category attribute (graceful fallback)', () => {
+    const html = renderToStaticMarkup(
+      <TriggerTile label="Some Future Tile" primary="0" threshold="x" status="ok" />,
+    )
+    expect(html).not.toContain('data-category=')
+  })
+})
