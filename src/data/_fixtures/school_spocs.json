@@ -1,1 +1,1322 @@
-[]
+[
+  {
+    "id": "SSP-W4E-SW-r7",
+    "schoolId": "SCH-SHIVAM_EDUACTIONAL_A",
+    "name": "Nisha Maam",
+    "designation": "Vice Principal",
+    "email": "seaindraprastha25@gmail.com",
+    "phone": "+917999376550",
+    "role": "primary",
+    "active": true,
+    "sourceSheet": "South-West",
+    "sourceRow": 7,
+    "createdAt": "2026-04-28T16:00:00.000Z",
+    "createdBy": "system-w4e-import",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "schoolId": "SCH-SHIVAM_EDUACTIONAL_A",
+          "sheet": "South-West",
+          "rowNumber": 7,
+          "subPosition": null,
+          "confidence": "high",
+          "source": "W4-E.2 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Imported from SCHOOL_SPOC_DATABASE.xlsx South-West sheet row 7. Confidence: high."
+      }
+    ]
+  },
+  {
+    "id": "SSP-W4E-SW-r8",
+    "schoolId": "SCH-SHIVAM_EDUACTIONAL_A_2",
+    "name": "Poonam Maam",
+    "designation": "Principal",
+    "email": "shivamkidsacademy@gmail.com",
+    "phone": "+919827160233",
+    "role": "primary",
+    "active": true,
+    "sourceSheet": "South-West",
+    "sourceRow": 8,
+    "createdAt": "2026-04-28T16:00:00.000Z",
+    "createdBy": "system-w4e-import",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "schoolId": "SCH-SHIVAM_EDUACTIONAL_A_2",
+          "sheet": "South-West",
+          "rowNumber": 8,
+          "subPosition": null,
+          "confidence": "high",
+          "source": "W4-E.2 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Imported from SCHOOL_SPOC_DATABASE.xlsx South-West sheet row 8. Confidence: high."
+      }
+    ]
+  },
+  {
+    "id": "SSP-W4E-SW-r10",
+    "schoolId": "SCH-DARSHAN_ACADEMY_PUNE",
+    "name": "Durga",
+    "designation": "Teacher",
+    "email": "durga.pune@darshanacademy.org",
+    "phone": "+918099313610",
+    "role": "primary",
+    "active": true,
+    "sourceSheet": "South-West",
+    "sourceRow": 10,
+    "createdAt": "2026-04-28T16:00:00.000Z",
+    "createdBy": "system-w4e-import",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "schoolId": "SCH-DARSHAN_ACADEMY_PUNE",
+          "sheet": "South-West",
+          "rowNumber": 10,
+          "subPosition": null,
+          "confidence": "high",
+          "source": "W4-E.2 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Imported from SCHOOL_SPOC_DATABASE.xlsx South-West sheet row 10. Confidence: high."
+      }
+    ]
+  },
+  {
+    "id": "SSP-W4E-SW-r11",
+    "schoolId": "SCH-DARSHAN_ACADEMY_DEVL",
+    "name": "Laxmi Pawar",
+    "designation": "Teacher",
+    "email": "pawarlaxmi4586@gmail.com",
+    "phone": "+918099313610",
+    "role": "primary",
+    "active": true,
+    "sourceSheet": "South-West",
+    "sourceRow": 11,
+    "createdAt": "2026-04-28T16:00:00.000Z",
+    "createdBy": "system-w4e-import",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "schoolId": "SCH-DARSHAN_ACADEMY_DEVL",
+          "sheet": "South-West",
+          "rowNumber": 11,
+          "subPosition": null,
+          "confidence": "high-cross-confirmed",
+          "source": "W4-E.2 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Imported from SCHOOL_SPOC_DATABASE.xlsx South-West sheet row 11. Confidence: high-cross-confirmed."
+      }
+    ]
+  },
+  {
+    "id": "SSP-W4E-SW-r12",
+    "schoolId": "SCH-TIP_TOP_CONVENT_SCHO",
+    "name": "Ketaki mam",
+    "designation": "Teacher",
+    "email": "Ketakipsiras@gmail.com",
+    "phone": "+919970195158",
+    "role": "primary",
+    "active": true,
+    "sourceSheet": "South-West",
+    "sourceRow": 12,
+    "createdAt": "2026-04-28T16:00:00.000Z",
+    "createdBy": "system-w4e-import",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "schoolId": "SCH-TIP_TOP_CONVENT_SCHO",
+          "sheet": "South-West",
+          "rowNumber": 12,
+          "subPosition": null,
+          "confidence": "high",
+          "source": "W4-E.2 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Imported from SCHOOL_SPOC_DATABASE.xlsx South-West sheet row 12. Confidence: high."
+      }
+    ]
+  },
+  {
+    "id": "SSP-W4E-SW-r13",
+    "schoolId": "SCH-DISCOVERI_OKAS_SCHOO",
+    "name": "Surya Prakash Tiwari",
+    "designation": "Co-Ordinator",
+    "email": "cambridgecoordinator@discoveroaks.org",
+    "phone": "+919038125956",
+    "role": "primary",
+    "active": true,
+    "sourceSheet": "South-West",
+    "sourceRow": 13,
+    "createdAt": "2026-04-28T16:00:00.000Z",
+    "createdBy": "system-w4e-import",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "schoolId": "SCH-DISCOVERI_OKAS_SCHOO",
+          "sheet": "South-West",
+          "rowNumber": 13,
+          "subPosition": null,
+          "confidence": "high",
+          "source": "W4-E.2 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Imported from SCHOOL_SPOC_DATABASE.xlsx South-West sheet row 13. Confidence: high."
+      }
+    ]
+  },
+  {
+    "id": "SSP-W4E-SW-r14",
+    "schoolId": "SCH-SRI_VAISHNAVI_SCHOOL",
+    "name": "Pranesheram",
+    "designation": "Teacher",
+    "email": "pranesherram17@gmail.com",
+    "phone": "+919646481778",
+    "role": "primary",
+    "active": true,
+    "sourceSheet": "South-West",
+    "sourceRow": 14,
+    "createdAt": "2026-04-28T16:00:00.000Z",
+    "createdBy": "system-w4e-import",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "schoolId": "SCH-SRI_VAISHNAVI_SCHOOL",
+          "sheet": "South-West",
+          "rowNumber": 14,
+          "subPosition": null,
+          "confidence": "high",
+          "source": "W4-E.2 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Imported from SCHOOL_SPOC_DATABASE.xlsx South-West sheet row 14. Confidence: high."
+      }
+    ]
+  },
+  {
+    "id": "SSP-W4E-SW-r15",
+    "schoolId": "SCH-BOLTON_SCHOOL",
+    "name": "Rajaratnam",
+    "designation": "IT Teacher",
+    "email": "rajaratnam.bolton@gmail.com",
+    "phone": "+919000951444",
+    "role": "primary",
+    "active": true,
+    "sourceSheet": "South-West",
+    "sourceRow": 15,
+    "createdAt": "2026-04-28T16:00:00.000Z",
+    "createdBy": "system-w4e-import",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "schoolId": "SCH-BOLTON_SCHOOL",
+          "sheet": "South-West",
+          "rowNumber": 15,
+          "subPosition": null,
+          "confidence": "high",
+          "source": "W4-E.2 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Imported from SCHOOL_SPOC_DATABASE.xlsx South-West sheet row 15. Confidence: high."
+      }
+    ]
+  },
+  {
+    "id": "SSP-W4E-SW-r17",
+    "schoolId": "SCH-SECUNDERABAD_PUBLIC_",
+    "name": "Vidya mam",
+    "designation": "Receptionist",
+    "email": "principalmailtsps@gmail.com",
+    "phone": "+917680880860",
+    "role": "primary",
+    "active": true,
+    "sourceSheet": "South-West",
+    "sourceRow": 17,
+    "createdAt": "2026-04-28T16:00:00.000Z",
+    "createdBy": "system-w4e-import",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "schoolId": "SCH-SECUNDERABAD_PUBLIC_",
+          "sheet": "South-West",
+          "rowNumber": 17,
+          "subPosition": null,
+          "confidence": "anish-resolved (low)",
+          "source": "W4-E.2 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Imported from SCHOOL_SPOC_DATABASE.xlsx South-West sheet row 17. Confidence: anish-resolved (low)."
+      }
+    ]
+  },
+  {
+    "id": "SSP-W4E-SW-r18",
+    "schoolId": "SCH-CLEVER_MINDS_SCHOOL",
+    "name": "Pavani",
+    "designation": "Incharge",
+    "email": "clevermindsglobalschool@gmail.com",
+    "phone": "+918919973780",
+    "role": "primary",
+    "active": true,
+    "sourceSheet": "South-West",
+    "sourceRow": 18,
+    "createdAt": "2026-04-28T16:00:00.000Z",
+    "createdBy": "system-w4e-import",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "schoolId": "SCH-CLEVER_MINDS_SCHOOL",
+          "sheet": "South-West",
+          "rowNumber": 18,
+          "subPosition": null,
+          "confidence": "anish-resolved (medium)",
+          "source": "W4-E.2 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Imported from SCHOOL_SPOC_DATABASE.xlsx South-West sheet row 18. Confidence: anish-resolved (medium)."
+      }
+    ]
+  },
+  {
+    "id": "SSP-W4E-SW-r19",
+    "schoolId": "SCH-KIRTI_BOOK_AGENCY_EM",
+    "name": "Vaishali Chavan",
+    "designation": "Principal",
+    "email": "vaishalichavan@asmedu.org",
+    "phone": "+918888398889",
+    "role": "primary",
+    "active": true,
+    "sourceSheet": "South-West",
+    "sourceRow": 19,
+    "createdAt": "2026-04-28T16:00:00.000Z",
+    "createdBy": "system-w4e-import",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "schoolId": "SCH-KIRTI_BOOK_AGENCY_EM",
+          "sheet": "South-West",
+          "rowNumber": 19,
+          "subPosition": null,
+          "confidence": "high",
+          "source": "W4-E.2 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Imported from SCHOOL_SPOC_DATABASE.xlsx South-West sheet row 19. Confidence: high."
+      }
+    ]
+  },
+  {
+    "id": "SSP-W4E-SW-r20",
+    "schoolId": "SCH-KIRTI_BOOK_AGENCY_EM_2",
+    "name": "Snehal Sahastrabudhhe",
+    "designation": "Vice Principal",
+    "email": "snehal.20@asmedu.org",
+    "phone": "+919960280460",
+    "role": "primary",
+    "active": true,
+    "sourceSheet": "South-West",
+    "sourceRow": 20,
+    "createdAt": "2026-04-28T16:00:00.000Z",
+    "createdBy": "system-w4e-import",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "schoolId": "SCH-KIRTI_BOOK_AGENCY_EM_2",
+          "sheet": "South-West",
+          "rowNumber": 20,
+          "subPosition": null,
+          "confidence": "high",
+          "source": "W4-E.2 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Imported from SCHOOL_SPOC_DATABASE.xlsx South-West sheet row 20. Confidence: high."
+      }
+    ]
+  },
+  {
+    "id": "SSP-W4E-SW-r21",
+    "schoolId": "SCH-BRIGHT_FUTURE_HIGH_S",
+    "name": "Shahina",
+    "designation": null,
+    "email": "brightfuture.edu2016@gmail.com",
+    "phone": "+919867638263",
+    "role": "primary",
+    "active": true,
+    "sourceSheet": "South-West",
+    "sourceRow": 21,
+    "createdAt": "2026-04-28T16:00:00.000Z",
+    "createdBy": "system-w4e-import",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "schoolId": "SCH-BRIGHT_FUTURE_HIGH_S",
+          "sheet": "South-West",
+          "rowNumber": 21,
+          "subPosition": null,
+          "confidence": "high",
+          "source": "W4-E.2 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Imported from SCHOOL_SPOC_DATABASE.xlsx South-West sheet row 21. Confidence: high."
+      }
+    ]
+  },
+  {
+    "id": "SSP-W4E-SW-r23",
+    "schoolId": "SCH-MUSTAFA_MATRIC_SCHOO",
+    "name": "Preethi",
+    "designation": "Teacher",
+    "email": "musthafamatricschool@gmail.com",
+    "phone": "+918489598266",
+    "role": "primary",
+    "active": true,
+    "sourceSheet": "South-West",
+    "sourceRow": 23,
+    "createdAt": "2026-04-28T16:00:00.000Z",
+    "createdBy": "system-w4e-import",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "schoolId": "SCH-MUSTAFA_MATRIC_SCHOO",
+          "sheet": "South-West",
+          "rowNumber": 23,
+          "subPosition": null,
+          "confidence": "high",
+          "source": "W4-E.2 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Imported from SCHOOL_SPOC_DATABASE.xlsx South-West sheet row 23. Confidence: high."
+      }
+    ]
+  },
+  {
+    "id": "SSP-W4E-SW-r27",
+    "schoolId": "SCH-EBENEZER_JAGANATH_MA",
+    "name": "Saranya",
+    "designation": "Incharge",
+    "email": "ebenezerjmmhss@gmail.com",
+    "phone": "+919952777094",
+    "role": "primary",
+    "active": true,
+    "sourceSheet": "South-West",
+    "sourceRow": 27,
+    "createdAt": "2026-04-28T16:00:00.000Z",
+    "createdBy": "system-w4e-import",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "schoolId": "SCH-EBENEZER_JAGANATH_MA",
+          "sheet": "South-West",
+          "rowNumber": 27,
+          "subPosition": null,
+          "confidence": "high",
+          "source": "W4-E.2 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Imported from SCHOOL_SPOC_DATABASE.xlsx South-West sheet row 27. Confidence: high."
+      }
+    ]
+  },
+  {
+    "id": "SSP-W4E-SW-r28",
+    "schoolId": "SCH-SRI_VIDHYA_NIKETHAN_",
+    "name": "Sathish",
+    "designation": "Vice Principal",
+    "email": "srividhyanikethan@gmail.com",
+    "phone": "+918056034341",
+    "role": "primary",
+    "active": true,
+    "sourceSheet": "South-West",
+    "sourceRow": 28,
+    "createdAt": "2026-04-28T16:00:00.000Z",
+    "createdBy": "system-w4e-import",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "schoolId": "SCH-SRI_VIDHYA_NIKETHAN_",
+          "sheet": "South-West",
+          "rowNumber": 28,
+          "subPosition": null,
+          "confidence": "high",
+          "source": "W4-E.2 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Imported from SCHOOL_SPOC_DATABASE.xlsx South-West sheet row 28. Confidence: high."
+      }
+    ]
+  },
+  {
+    "id": "SSP-W4E-SW-r29",
+    "schoolId": "SCH-FRANK_PUBLIC_SCHOOL",
+    "name": "Divya Bhat",
+    "designation": "Computer teacher",
+    "email": "frankoffice126@gmail.com",
+    "phone": "+919901692223",
+    "role": "primary",
+    "active": true,
+    "sourceSheet": "South-West",
+    "sourceRow": 29,
+    "createdAt": "2026-04-28T16:00:00.000Z",
+    "createdBy": "system-w4e-import",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "schoolId": "SCH-FRANK_PUBLIC_SCHOOL",
+          "sheet": "South-West",
+          "rowNumber": 29,
+          "subPosition": null,
+          "confidence": "anish-resolved (medium)",
+          "source": "W4-E.2 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Imported from SCHOOL_SPOC_DATABASE.xlsx South-West sheet row 29. Confidence: anish-resolved (medium)."
+      }
+    ]
+  },
+  {
+    "id": "SSP-W4E-E-r4",
+    "schoolId": "SCH-SHAW_PUBLIC_SCHOOL",
+    "name": "Soma Banerjee",
+    "designation": "Vice Principal",
+    "email": "shawpublicschool@gmail.com",
+    "phone": "+919433449734",
+    "role": "primary",
+    "active": true,
+    "sourceSheet": "East",
+    "sourceRow": 4,
+    "createdAt": "2026-04-28T16:00:00.000Z",
+    "createdBy": "system-w4e-import",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "schoolId": "SCH-SHAW_PUBLIC_SCHOOL",
+          "sheet": "East",
+          "rowNumber": 4,
+          "subPosition": null,
+          "confidence": "high",
+          "source": "W4-E.2 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Imported from SCHOOL_SPOC_DATABASE.xlsx East sheet row 4. Confidence: high."
+      }
+    ]
+  },
+  {
+    "id": "SSP-W4E-E-r5",
+    "schoolId": "SCH-NATIONAL_GEMS_HIGHER",
+    "name": "Pooja Mukherjee",
+    "designation": "Teacher",
+    "email": "poojamukherjee024@gmail.com",
+    "phone": "+919062950015",
+    "role": "primary",
+    "active": true,
+    "sourceSheet": "East",
+    "sourceRow": 5,
+    "createdAt": "2026-04-28T16:00:00.000Z",
+    "createdBy": "system-w4e-import",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "schoolId": "SCH-NATIONAL_GEMS_HIGHER",
+          "sheet": "East",
+          "rowNumber": 5,
+          "subPosition": null,
+          "confidence": "high",
+          "source": "W4-E.2 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Imported from SCHOOL_SPOC_DATABASE.xlsx East sheet row 5. Confidence: high."
+      }
+    ]
+  },
+  {
+    "id": "SSP-W4E-E-r6",
+    "schoolId": "SCH-DON_BOSCO_BANDEL",
+    "name": "Anindya Lahiri",
+    "designation": "Computer HOD",
+    "email": "lahirianindya@yahoo.co.in",
+    "phone": "+919163540768",
+    "role": "primary",
+    "active": true,
+    "sourceSheet": "East",
+    "sourceRow": 6,
+    "createdAt": "2026-04-28T16:00:00.000Z",
+    "createdBy": "system-w4e-import",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "schoolId": "SCH-DON_BOSCO_BANDEL",
+          "sheet": "East",
+          "rowNumber": 6,
+          "subPosition": null,
+          "confidence": "high",
+          "source": "W4-E.2 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Imported from SCHOOL_SPOC_DATABASE.xlsx East sheet row 6. Confidence: high."
+      }
+    ]
+  },
+  {
+    "id": "SSP-W4E-E-r7",
+    "schoolId": "SCH-LIONS_CALCUTTA_GREAT",
+    "name": "Payal Banerjee",
+    "designation": "Computer HOD",
+    "email": "lcgvm2012@gmail.com",
+    "phone": "+919804465900",
+    "role": "primary",
+    "active": true,
+    "sourceSheet": "East",
+    "sourceRow": 7,
+    "createdAt": "2026-04-28T16:00:00.000Z",
+    "createdBy": "system-w4e-import",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "schoolId": "SCH-LIONS_CALCUTTA_GREAT",
+          "sheet": "East",
+          "rowNumber": 7,
+          "subPosition": null,
+          "confidence": "high-cross-confirmed",
+          "source": "W4-E.2 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Imported from SCHOOL_SPOC_DATABASE.xlsx East sheet row 7. Confidence: high-cross-confirmed."
+      }
+    ]
+  },
+  {
+    "id": "SSP-W4E-E-r8",
+    "schoolId": "SCH-CONTAI_PUBLIC_SCHOOL",
+    "name": "Deepak",
+    "designation": "School cordinator",
+    "email": "cps953@gmail.com",
+    "phone": "+919932260028",
+    "role": "primary",
+    "active": true,
+    "sourceSheet": "East",
+    "sourceRow": 8,
+    "createdAt": "2026-04-28T16:00:00.000Z",
+    "createdBy": "system-w4e-import",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "schoolId": "SCH-CONTAI_PUBLIC_SCHOOL",
+          "sheet": "East",
+          "rowNumber": 8,
+          "subPosition": null,
+          "confidence": "high",
+          "source": "W4-E.2 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Imported from SCHOOL_SPOC_DATABASE.xlsx East sheet row 8. Confidence: high."
+      }
+    ]
+  },
+  {
+    "id": "SSP-W4E-E-r10",
+    "schoolId": "SCH-SWARNIM_INTERNATIONA",
+    "name": "Madhushnata Saha",
+    "designation": "Teacher",
+    "email": "madhushnatas@siskol.edu.in",
+    "phone": "+917278575990",
+    "role": "primary",
+    "active": true,
+    "sourceSheet": "East",
+    "sourceRow": 10,
+    "createdAt": "2026-04-28T16:00:00.000Z",
+    "createdBy": "system-w4e-import",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "schoolId": "SCH-SWARNIM_INTERNATIONA",
+          "sheet": "East",
+          "rowNumber": 10,
+          "subPosition": null,
+          "confidence": "high-cross-confirmed",
+          "source": "W4-E.2 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Imported from SCHOOL_SPOC_DATABASE.xlsx East sheet row 10. Confidence: high-cross-confirmed."
+      }
+    ]
+  },
+  {
+    "id": "SSP-W4E-E-r12",
+    "schoolId": "SCH-YOUNG_HORIZONS_SCHOO",
+    "name": "Shiladitya Nandan",
+    "designation": "Teacher",
+    "email": "Official@younghorizonsschool.com",
+    "phone": "+919051244608",
+    "role": "primary",
+    "active": true,
+    "sourceSheet": "East",
+    "sourceRow": 12,
+    "createdAt": "2026-04-28T16:00:00.000Z",
+    "createdBy": "system-w4e-import",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "schoolId": "SCH-YOUNG_HORIZONS_SCHOO",
+          "sheet": "East",
+          "rowNumber": 12,
+          "subPosition": null,
+          "confidence": "anish-resolved (medium)",
+          "source": "W4-E.2 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Imported from SCHOOL_SPOC_DATABASE.xlsx East sheet row 12. Confidence: anish-resolved (medium)."
+      }
+    ]
+  },
+  {
+    "id": "SSP-W4E-E-r14",
+    "schoolId": "SCH-ST_PAUL_BOARDING_AND",
+    "name": "Chaitrayi Ma'am",
+    "designation": "Teacher",
+    "email": "spbdscal@gmail.com",
+    "phone": "+919038350442",
+    "role": "primary",
+    "active": true,
+    "sourceSheet": "East",
+    "sourceRow": 14,
+    "createdAt": "2026-04-28T16:00:00.000Z",
+    "createdBy": "system-w4e-import",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "schoolId": "SCH-ST_PAUL_BOARDING_AND",
+          "sheet": "East",
+          "rowNumber": 14,
+          "subPosition": null,
+          "confidence": "high-cross-confirmed",
+          "source": "W4-E.2 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Imported from SCHOOL_SPOC_DATABASE.xlsx East sheet row 14. Confidence: high-cross-confirmed."
+      }
+    ]
+  },
+  {
+    "id": "SSP-W4E-E-r15",
+    "schoolId": "SCH-ST_MONTFORT_S_SR_SEC",
+    "name": "Shantanu Sir",
+    "designation": "Teacher",
+    "email": "jayareddysg@gmail.com",
+    "phone": "+919874949692",
+    "role": "primary",
+    "active": true,
+    "sourceSheet": "East",
+    "sourceRow": 15,
+    "createdAt": "2026-04-28T16:00:00.000Z",
+    "createdBy": "system-w4e-import",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "schoolId": "SCH-ST_MONTFORT_S_SR_SEC",
+          "sheet": "East",
+          "rowNumber": 15,
+          "subPosition": null,
+          "confidence": "high-rerun-match",
+          "source": "W4-E.2 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Imported from SCHOOL_SPOC_DATABASE.xlsx East sheet row 15. Confidence: high-rerun-match."
+      }
+    ]
+  },
+  {
+    "id": "SSP-W4E-E-r16",
+    "schoolId": "SCH-ST_PAUL_S_MISSION_SC",
+    "name": "Debobrata Dey",
+    "designation": "Computer Teacher",
+    "email": "desirspms@gmail.com",
+    "phone": "+919804274911",
+    "role": "primary",
+    "active": true,
+    "sourceSheet": "East",
+    "sourceRow": 16,
+    "createdAt": "2026-04-28T16:00:00.000Z",
+    "createdBy": "system-w4e-import",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "schoolId": "SCH-ST_PAUL_S_MISSION_SC",
+          "sheet": "East",
+          "rowNumber": 16,
+          "subPosition": null,
+          "confidence": "high-rerun-match",
+          "source": "W4-E.2 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Imported from SCHOOL_SPOC_DATABASE.xlsx East sheet row 16. Confidence: high-rerun-match."
+      }
+    ]
+  },
+  {
+    "id": "SSP-W4E-E-r17",
+    "schoolId": "SCH-CARMEL_CONVENT_HIGH_",
+    "name": "Koushik Mondal",
+    "designation": "IT Head",
+    "email": "steelcarmel@gmail.com",
+    "phone": "+919614508500",
+    "role": "primary",
+    "active": true,
+    "sourceSheet": "East",
+    "sourceRow": 17,
+    "createdAt": "2026-04-28T16:00:00.000Z",
+    "createdBy": "system-w4e-import",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "schoolId": "SCH-CARMEL_CONVENT_HIGH_",
+          "sheet": "East",
+          "rowNumber": 17,
+          "subPosition": null,
+          "confidence": "anish-resolved (low)",
+          "source": "W4-E.2 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Imported from SCHOOL_SPOC_DATABASE.xlsx East sheet row 17. Confidence: anish-resolved (low)."
+      }
+    ]
+  },
+  {
+    "id": "SSP-W4E-E-r18",
+    "schoolId": "SCH-CARMEL_CONVENT_HIGH_",
+    "name": "Sandra Ma'am",
+    "designation": "Teacher",
+    "email": "carmelmamcdgp@gmail.com",
+    "phone": "+919679349905",
+    "role": "primary",
+    "active": true,
+    "sourceSheet": "East",
+    "sourceRow": 18,
+    "createdAt": "2026-04-28T16:00:00.000Z",
+    "createdBy": "system-w4e-import",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "schoolId": "SCH-CARMEL_CONVENT_HIGH_",
+          "sheet": "East",
+          "rowNumber": 18,
+          "subPosition": null,
+          "confidence": "anish-resolved (low)",
+          "source": "W4-E.2 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Imported from SCHOOL_SPOC_DATABASE.xlsx East sheet row 18. Confidence: anish-resolved (low)."
+      }
+    ]
+  },
+  {
+    "id": "SSP-W4E-E-r20",
+    "schoolId": "SCH-THE_SCOTTISH_CHURCH_",
+    "name": "Soumik Mistry",
+    "designation": "Teacher",
+    "email": "sccs.kolkata@gmail.com",
+    "phone": null,
+    "role": "primary",
+    "active": true,
+    "sourceSheet": "East",
+    "sourceRow": 20,
+    "createdAt": "2026-04-28T16:00:00.000Z",
+    "createdBy": "system-w4e-import",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "schoolId": "SCH-THE_SCOTTISH_CHURCH_",
+          "sheet": "East",
+          "rowNumber": 20,
+          "subPosition": null,
+          "confidence": "high-cross-confirmed",
+          "source": "W4-E.2 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Imported from SCHOOL_SPOC_DATABASE.xlsx East sheet row 20. Confidence: high-cross-confirmed."
+      }
+    ]
+  },
+  {
+    "id": "SSP-W4E-E-r21",
+    "schoolId": "SCH-RISHI_AUROBINDO_MEMO",
+    "name": "",
+    "designation": null,
+    "email": "\"schoolofficial.rama@gmail.com\" <schoolofficial.rama@gmail.com>; \"office.rama9@gmail.com\" <office.rama9@gmail.com>",
+    "phone": null,
+    "role": "primary",
+    "active": true,
+    "sourceSheet": "East",
+    "sourceRow": 21,
+    "createdAt": "2026-04-28T16:00:00.000Z",
+    "createdBy": "system-w4e-import",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "schoolId": "SCH-RISHI_AUROBINDO_MEMO",
+          "sheet": "East",
+          "rowNumber": 21,
+          "subPosition": null,
+          "confidence": "high",
+          "source": "W4-E.2 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Imported from SCHOOL_SPOC_DATABASE.xlsx East sheet row 21. Confidence: high."
+      }
+    ]
+  },
+  {
+    "id": "SSP-W4E-E-r22",
+    "schoolId": "SCH-SRI_RAM_NARAYAN_SING",
+    "name": "Mrityunjay Singh",
+    "designation": "Teacher",
+    "email": "jaysingh.rnsmhs@gmail.com",
+    "phone": null,
+    "role": "primary",
+    "active": true,
+    "sourceSheet": "East",
+    "sourceRow": 22,
+    "createdAt": "2026-04-28T16:00:00.000Z",
+    "createdBy": "system-w4e-import",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "schoolId": "SCH-SRI_RAM_NARAYAN_SING",
+          "sheet": "East",
+          "rowNumber": 22,
+          "subPosition": null,
+          "confidence": "high",
+          "source": "W4-E.2 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Imported from SCHOOL_SPOC_DATABASE.xlsx East sheet row 22. Confidence: high."
+      }
+    ]
+  },
+  {
+    "id": "SSP-W4E-N-r5",
+    "schoolId": "SCH-RBSM_PUBLIC_SCHOOL",
+    "name": "Rishabh Bharadwaj",
+    "designation": "School Coordinator",
+    "email": "principalrbsm01@gmail.com",
+    "phone": "+917668368981",
+    "role": "primary",
+    "active": true,
+    "sourceSheet": "North",
+    "sourceRow": 5,
+    "createdAt": "2026-04-28T16:00:00.000Z",
+    "createdBy": "system-w4e-import",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "schoolId": "SCH-RBSM_PUBLIC_SCHOOL",
+          "sheet": "North",
+          "rowNumber": 5,
+          "subPosition": null,
+          "confidence": "high",
+          "source": "W4-E.2 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Imported from SCHOOL_SPOC_DATABASE.xlsx North sheet row 5. Confidence: high."
+      }
+    ]
+  },
+  {
+    "id": "SSP-W4E-N-r6",
+    "schoolId": "SCH-RBSM_PUBLIC_SCHOOL",
+    "name": "Pooja Mam",
+    "designation": "HR",
+    "email": "principalrbsm01@gmail.com",
+    "phone": "+919810289675",
+    "role": "primary",
+    "active": true,
+    "sourceSheet": "North",
+    "sourceRow": 6,
+    "createdAt": "2026-04-28T16:00:00.000Z",
+    "createdBy": "system-w4e-import",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "schoolId": "SCH-RBSM_PUBLIC_SCHOOL",
+          "sheet": "North",
+          "rowNumber": 6,
+          "subPosition": null,
+          "confidence": "high",
+          "source": "W4-E.2 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Imported from SCHOOL_SPOC_DATABASE.xlsx North sheet row 6. Confidence: high."
+      }
+    ]
+  },
+  {
+    "id": "SSP-W4E-N-r10",
+    "schoolId": "SCH-SD_SENIOR_SECONDARY_",
+    "name": "Mr Jabir Singh",
+    "designation": "Robotics Coordinator",
+    "email": null,
+    "phone": null,
+    "role": "primary",
+    "active": true,
+    "sourceSheet": "North",
+    "sourceRow": 10,
+    "createdAt": "2026-04-28T16:00:00.000Z",
+    "createdBy": "system-w4e-import",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "schoolId": "SCH-SD_SENIOR_SECONDARY_",
+          "sheet": "North",
+          "rowNumber": 10,
+          "subPosition": null,
+          "confidence": "high-cross-confirmed",
+          "source": "W4-E.2 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Imported from SCHOOL_SPOC_DATABASE.xlsx North sheet row 10. Confidence: high-cross-confirmed."
+      }
+    ]
+  },
+  {
+    "id": "SSP-W4E-N-r11",
+    "schoolId": "SCH-B_I_T_GLOBAL_SCHOOL",
+    "name": "M.K. Bansal",
+    "designation": "Sr. Physics Teacher",
+    "email": "bitglobalschool@gmail.com",
+    "phone": "+919456838281",
+    "role": "primary",
+    "active": true,
+    "sourceSheet": "North",
+    "sourceRow": 11,
+    "createdAt": "2026-04-28T16:00:00.000Z",
+    "createdBy": "system-w4e-import",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "schoolId": "SCH-B_I_T_GLOBAL_SCHOOL",
+          "sheet": "North",
+          "rowNumber": 11,
+          "subPosition": null,
+          "confidence": "high-rerun-match",
+          "source": "W4-E.2 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Imported from SCHOOL_SPOC_DATABASE.xlsx North sheet row 11. Confidence: high-rerun-match."
+      }
+    ]
+  },
+  {
+    "id": "SSP-W4E-N-r12",
+    "schoolId": "SCH-DOON_SCHOLARS_SCHOOL",
+    "name": "",
+    "designation": "School Coordinator",
+    "email": "Info@doonscholars.in",
+    "phone": null,
+    "role": "primary",
+    "active": true,
+    "sourceSheet": "North",
+    "sourceRow": 12,
+    "createdAt": "2026-04-28T16:00:00.000Z",
+    "createdBy": "system-w4e-import",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "schoolId": "SCH-DOON_SCHOLARS_SCHOOL",
+          "sheet": "North",
+          "rowNumber": 12,
+          "subPosition": null,
+          "confidence": "high",
+          "source": "W4-E.2 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Imported from SCHOOL_SPOC_DATABASE.xlsx North sheet row 12. Confidence: high."
+      }
+    ]
+  },
+  {
+    "id": "SSP-W4E-N-r13",
+    "schoolId": "SCH-GR_INTERNATIONAL_SCH",
+    "name": "",
+    "designation": null,
+    "email": "grisknn@gmail.com",
+    "phone": null,
+    "role": "primary",
+    "active": true,
+    "sourceSheet": "North",
+    "sourceRow": 13,
+    "createdAt": "2026-04-28T16:00:00.000Z",
+    "createdBy": "system-w4e-import",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "schoolId": "SCH-GR_INTERNATIONAL_SCH",
+          "sheet": "North",
+          "rowNumber": 13,
+          "subPosition": null,
+          "confidence": "anish-resolved (medium)",
+          "source": "W4-E.2 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Imported from SCHOOL_SPOC_DATABASE.xlsx North sheet row 13. Confidence: anish-resolved (medium)."
+      }
+    ]
+  },
+  {
+    "id": "SSP-W4E-N-r14",
+    "schoolId": "SCH-BLUE_ANGELS_GLOBAL_S",
+    "name": "Priyanka mam",
+    "designation": "Robotics Coordinator",
+    "email": "blueangelsschool@gmail.com",
+    "phone": "+919953871747",
+    "role": "primary",
+    "active": true,
+    "sourceSheet": "North",
+    "sourceRow": 14,
+    "createdAt": "2026-04-28T16:00:00.000Z",
+    "createdBy": "system-w4e-import",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "schoolId": "SCH-BLUE_ANGELS_GLOBAL_S",
+          "sheet": "North",
+          "rowNumber": 14,
+          "subPosition": null,
+          "confidence": "high-cross-confirmed",
+          "source": "W4-E.2 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Imported from SCHOOL_SPOC_DATABASE.xlsx North sheet row 14. Confidence: high-cross-confirmed."
+      }
+    ]
+  },
+  {
+    "id": "SSP-W4E-N-r15",
+    "schoolId": "SCH-TATHASTU_INNOVATIONS",
+    "name": "Nitin Tomar",
+    "designation": "President",
+    "email": "drnitinsinghtomar@gmail.com",
+    "phone": "+919897322740",
+    "role": "primary",
+    "active": true,
+    "sourceSheet": "North",
+    "sourceRow": 15,
+    "createdAt": "2026-04-28T16:00:00.000Z",
+    "createdBy": "system-w4e-import",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "schoolId": "SCH-TATHASTU_INNOVATIONS",
+          "sheet": "North",
+          "rowNumber": 15,
+          "subPosition": null,
+          "confidence": "anish-resolved (low)",
+          "source": "W4-E.2 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Imported from SCHOOL_SPOC_DATABASE.xlsx North sheet row 15. Confidence: anish-resolved (low)."
+      }
+    ]
+  },
+  {
+    "id": "SSP-W4E-N-r18-1",
+    "schoolId": "SCH-JAFFARIA_ACADEMY_OF_",
+    "name": "Feroz Ahmad",
+    "designation": null,
+    "email": "fizabano5@gmail.com",
+    "phone": "+917006168647",
+    "role": "primary",
+    "active": true,
+    "sourceSheet": "North",
+    "sourceRow": 18,
+    "createdAt": "2026-04-28T16:00:00.000Z",
+    "createdBy": "system-w4e-import",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "schoolId": "SCH-JAFFARIA_ACADEMY_OF_",
+          "sheet": "North",
+          "rowNumber": 18,
+          "subPosition": 1,
+          "confidence": "anish-resolved (multi-poc-school-confirmed)",
+          "source": "W4-E.2 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Imported from SCHOOL_SPOC_DATABASE.xlsx North sheet row 18.1. Confidence: anish-resolved (multi-poc-school-confirmed)."
+      }
+    ]
+  },
+  {
+    "id": "SSP-W4E-N-r18-2",
+    "schoolId": "SCH-JAFFARIA_ACADEMY_OF_",
+    "name": "Mr.Hassan (junr wing) Fiza Banoo",
+    "designation": null,
+    "email": "maminullah0012@gmail.com",
+    "phone": "Mohd Amin -Mohd Amin",
+    "role": "secondary",
+    "active": true,
+    "sourceSheet": "North",
+    "sourceRow": 18,
+    "createdAt": "2026-04-28T16:00:00.000Z",
+    "createdBy": "system-w4e-import",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "schoolId": "SCH-JAFFARIA_ACADEMY_OF_",
+          "sheet": "North",
+          "rowNumber": 18,
+          "subPosition": 2,
+          "confidence": "anish-resolved (multi-poc-school-confirmed)",
+          "source": "W4-E.2 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Imported from SCHOOL_SPOC_DATABASE.xlsx North sheet row 18.2. Confidence: anish-resolved (multi-poc-school-confirmed)."
+      }
+    ]
+  },
+  {
+    "id": "SSP-W4E-N-r18-3",
+    "schoolId": "SCH-JAFFARIA_ACADEMY_OF_",
+    "name": "Mohd Amin(higher wing)",
+    "designation": null,
+    "email": "akhonferoz@gmail.com",
+    "phone": "+916005565541",
+    "role": "secondary",
+    "active": true,
+    "sourceSheet": "North",
+    "sourceRow": 18,
+    "createdAt": "2026-04-28T16:00:00.000Z",
+    "createdBy": "system-w4e-import",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "schoolId": "SCH-JAFFARIA_ACADEMY_OF_",
+          "sheet": "North",
+          "rowNumber": 18,
+          "subPosition": 3,
+          "confidence": "anish-resolved (multi-poc-school-confirmed)",
+          "source": "W4-E.2 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Imported from SCHOOL_SPOC_DATABASE.xlsx North sheet row 18.3. Confidence: anish-resolved (multi-poc-school-confirmed)."
+      }
+    ]
+  },
+  {
+    "id": "SSP-W4E-N-r19",
+    "schoolId": "SCH-MUTAHHARY_PUBLIC_SCH",
+    "name": "Mashraf sarfi",
+    "designation": "POC",
+    "email": "mpshdkgl@gmail.com",
+    "phone": "+917889380917",
+    "role": "primary",
+    "active": true,
+    "sourceSheet": "North",
+    "sourceRow": 19,
+    "createdAt": "2026-04-28T16:00:00.000Z",
+    "createdBy": "system-w4e-import",
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "schoolId": "SCH-MUTAHHARY_PUBLIC_SCH",
+          "sheet": "North",
+          "rowNumber": 19,
+          "subPosition": null,
+          "confidence": "high-cross-confirmed",
+          "source": "W4-E.2 verification table Anish-signed 2026-04-28"
+        },
+        "notes": "Imported from SCHOOL_SPOC_DATABASE.xlsx North sheet row 19. Confidence: high-cross-confirmed."
+      }
+    ]
+  }
+]

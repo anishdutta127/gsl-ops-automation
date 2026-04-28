@@ -126,6 +126,21 @@
         "user": "system",
         "action": "create",
         "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      },
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "spocId": "SSP-W4E-N-r11",
+          "sheet": "North",
+          "rowNumber": 11,
+          "subPosition": null,
+          "pocName": "M.K. Bansal",
+          "role": "primary",
+          "confidence": "high-rerun-match"
+        },
+        "notes": "SPOC DB import landed primary SPOC (North sheet row 11)."
       }
     ]
   },
@@ -334,6 +349,21 @@
         "user": "system",
         "action": "create",
         "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      },
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "spocId": "SSP-W4E-N-r14",
+          "sheet": "North",
+          "rowNumber": 14,
+          "subPosition": null,
+          "pocName": "Priyanka mam",
+          "role": "primary",
+          "confidence": "high-cross-confirmed"
+        },
+        "notes": "SPOC DB import landed primary SPOC (North sheet row 14)."
       }
     ]
   },
@@ -360,6 +390,21 @@
         "user": "system",
         "action": "create",
         "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      },
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "spocId": "SSP-W4E-SW-r15",
+          "sheet": "South-West",
+          "rowNumber": 15,
+          "subPosition": null,
+          "pocName": "Rajaratnam",
+          "role": "primary",
+          "confidence": "high"
+        },
+        "notes": "SPOC DB import landed primary SPOC (South-West sheet row 15)."
       }
     ]
   },
@@ -386,6 +431,21 @@
         "user": "system",
         "action": "create",
         "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      },
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "spocId": "SSP-W4E-SW-r21",
+          "sheet": "South-West",
+          "rowNumber": 21,
+          "subPosition": null,
+          "pocName": "Shahina",
+          "role": "primary",
+          "confidence": "high"
+        },
+        "notes": "SPOC DB import landed primary SPOC (South-West sheet row 21)."
       }
     ]
   },
@@ -438,6 +498,36 @@
         "user": "system",
         "action": "create",
         "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      },
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "spocId": "SSP-W4E-E-r17",
+          "sheet": "East",
+          "rowNumber": 17,
+          "subPosition": null,
+          "pocName": "Koushik Mondal",
+          "role": "primary",
+          "confidence": "anish-resolved (low)"
+        },
+        "notes": "SPOC DB import landed primary SPOC (East sheet row 17)."
+      },
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "spocId": "SSP-W4E-E-r18",
+          "sheet": "East",
+          "rowNumber": 18,
+          "subPosition": null,
+          "pocName": "Sandra Ma'am",
+          "role": "primary",
+          "confidence": "anish-resolved (low)"
+        },
+        "notes": "SPOC DB import landed primary SPOC (East sheet row 18)."
       }
     ]
   },
@@ -516,6 +606,21 @@
         "user": "system",
         "action": "create",
         "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      },
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "spocId": "SSP-W4E-SW-r18",
+          "sheet": "South-West",
+          "rowNumber": 18,
+          "subPosition": null,
+          "pocName": "Pavani",
+          "role": "primary",
+          "confidence": "anish-resolved (medium)"
+        },
+        "notes": "SPOC DB import landed primary SPOC (South-West sheet row 18)."
       }
     ]
   },
@@ -542,6 +647,21 @@
         "user": "system",
         "action": "create",
         "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      },
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "spocId": "SSP-W4E-E-r8",
+          "sheet": "East",
+          "rowNumber": 8,
+          "subPosition": null,
+          "pocName": "Deepak",
+          "role": "primary",
+          "confidence": "high"
+        },
+        "notes": "SPOC DB import landed primary SPOC (East sheet row 8)."
       }
     ]
   },
@@ -620,6 +740,21 @@
         "user": "system",
         "action": "create",
         "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      },
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "spocId": "SSP-W4E-SW-r11",
+          "sheet": "South-West",
+          "rowNumber": 11,
+          "subPosition": null,
+          "pocName": "Laxmi Pawar",
+          "role": "primary",
+          "confidence": "high-cross-confirmed"
+        },
+        "notes": "SPOC DB import landed primary SPOC (South-West sheet row 11)."
       }
     ]
   },
@@ -646,6 +781,21 @@
         "user": "system",
         "action": "create",
         "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      },
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "spocId": "SSP-W4E-SW-r10",
+          "sheet": "South-West",
+          "rowNumber": 10,
+          "subPosition": null,
+          "pocName": "Durga",
+          "role": "primary",
+          "confidence": "high"
+        },
+        "notes": "SPOC DB import landed primary SPOC (South-West sheet row 10)."
       }
     ]
   },
@@ -698,6 +848,21 @@
         "user": "system",
         "action": "create",
         "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      },
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "spocId": "SSP-W4E-SW-r13",
+          "sheet": "South-West",
+          "rowNumber": 13,
+          "subPosition": null,
+          "pocName": "Surya Prakash Tiwari",
+          "role": "primary",
+          "confidence": "high"
+        },
+        "notes": "SPOC DB import landed primary SPOC (South-West sheet row 13)."
       }
     ]
   },
@@ -750,6 +915,21 @@
         "user": "system",
         "action": "create",
         "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      },
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "spocId": "SSP-W4E-E-r6",
+          "sheet": "East",
+          "rowNumber": 6,
+          "subPosition": null,
+          "pocName": "Anindya Lahiri",
+          "role": "primary",
+          "confidence": "high"
+        },
+        "notes": "SPOC DB import landed primary SPOC (East sheet row 6)."
       }
     ]
   },
@@ -802,6 +982,21 @@
         "user": "system",
         "action": "create",
         "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      },
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "spocId": "SSP-W4E-N-r12",
+          "sheet": "North",
+          "rowNumber": 12,
+          "subPosition": null,
+          "pocName": "",
+          "role": "primary",
+          "confidence": "high"
+        },
+        "notes": "SPOC DB import landed primary SPOC (North sheet row 12)."
       }
     ]
   },
@@ -828,6 +1023,21 @@
         "user": "system",
         "action": "create",
         "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      },
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "spocId": "SSP-W4E-SW-r27",
+          "sheet": "South-West",
+          "rowNumber": 27,
+          "subPosition": null,
+          "pocName": "Saranya",
+          "role": "primary",
+          "confidence": "high"
+        },
+        "notes": "SPOC DB import landed primary SPOC (South-West sheet row 27)."
       }
     ]
   },
@@ -932,6 +1142,21 @@
         "user": "system",
         "action": "create",
         "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      },
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "spocId": "SSP-W4E-SW-r29",
+          "sheet": "South-West",
+          "rowNumber": 29,
+          "subPosition": null,
+          "pocName": "Divya Bhat",
+          "role": "primary",
+          "confidence": "anish-resolved (medium)"
+        },
+        "notes": "SPOC DB import landed primary SPOC (South-West sheet row 29)."
       }
     ]
   },
@@ -1010,6 +1235,21 @@
         "user": "system",
         "action": "create",
         "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      },
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "spocId": "SSP-W4E-N-r13",
+          "sheet": "North",
+          "rowNumber": 13,
+          "subPosition": null,
+          "pocName": "",
+          "role": "primary",
+          "confidence": "anish-resolved (medium)"
+        },
+        "notes": "SPOC DB import landed primary SPOC (North sheet row 13)."
       }
     ]
   },
@@ -1296,6 +1536,51 @@
         "user": "system",
         "action": "create",
         "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      },
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "spocId": "SSP-W4E-N-r18-1",
+          "sheet": "North",
+          "rowNumber": 18,
+          "subPosition": 1,
+          "pocName": "Feroz Ahmad",
+          "role": "primary",
+          "confidence": "anish-resolved (multi-poc-school-confirmed)"
+        },
+        "notes": "SPOC DB import landed primary SPOC (North sheet row 18.1)."
+      },
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "spocId": "SSP-W4E-N-r18-2",
+          "sheet": "North",
+          "rowNumber": 18,
+          "subPosition": 2,
+          "pocName": "Mr.Hassan (junr wing) Fiza Banoo",
+          "role": "secondary",
+          "confidence": "anish-resolved (multi-poc-school-confirmed)"
+        },
+        "notes": "SPOC DB import landed secondary SPOC (North sheet row 18.2)."
+      },
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "spocId": "SSP-W4E-N-r18-3",
+          "sheet": "North",
+          "rowNumber": 18,
+          "subPosition": 3,
+          "pocName": "Mohd Amin(higher wing)",
+          "role": "secondary",
+          "confidence": "anish-resolved (multi-poc-school-confirmed)"
+        },
+        "notes": "SPOC DB import landed secondary SPOC (North sheet row 18.3)."
       }
     ]
   },
@@ -1582,6 +1867,21 @@
         "user": "system",
         "action": "create",
         "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      },
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "spocId": "SSP-W4E-SW-r19",
+          "sheet": "South-West",
+          "rowNumber": 19,
+          "subPosition": null,
+          "pocName": "Vaishali Chavan",
+          "role": "primary",
+          "confidence": "high"
+        },
+        "notes": "SPOC DB import landed primary SPOC (South-West sheet row 19)."
       }
     ]
   },
@@ -1608,6 +1908,21 @@
         "user": "system",
         "action": "create",
         "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      },
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "spocId": "SSP-W4E-SW-r20",
+          "sheet": "South-West",
+          "rowNumber": 20,
+          "subPosition": null,
+          "pocName": "Snehal Sahastrabudhhe",
+          "role": "primary",
+          "confidence": "high"
+        },
+        "notes": "SPOC DB import landed primary SPOC (South-West sheet row 20)."
       }
     ]
   },
@@ -1712,6 +2027,21 @@
         "user": "system",
         "action": "create",
         "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      },
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "spocId": "SSP-W4E-E-r7",
+          "sheet": "East",
+          "rowNumber": 7,
+          "subPosition": null,
+          "pocName": "Payal Banerjee",
+          "role": "primary",
+          "confidence": "high-cross-confirmed"
+        },
+        "notes": "SPOC DB import landed primary SPOC (East sheet row 7)."
       }
     ]
   },
@@ -1868,6 +2198,21 @@
         "user": "system",
         "action": "create",
         "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      },
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "spocId": "SSP-W4E-SW-r23",
+          "sheet": "South-West",
+          "rowNumber": 23,
+          "subPosition": null,
+          "pocName": "Preethi",
+          "role": "primary",
+          "confidence": "high"
+        },
+        "notes": "SPOC DB import landed primary SPOC (South-West sheet row 23)."
       }
     ]
   },
@@ -1894,6 +2239,21 @@
         "user": "system",
         "action": "create",
         "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      },
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "spocId": "SSP-W4E-N-r19",
+          "sheet": "North",
+          "rowNumber": 19,
+          "subPosition": null,
+          "pocName": "Mashraf sarfi",
+          "role": "primary",
+          "confidence": "high-cross-confirmed"
+        },
+        "notes": "SPOC DB import landed primary SPOC (North sheet row 19)."
       }
     ]
   },
@@ -1972,6 +2332,21 @@
         "user": "system",
         "action": "create",
         "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      },
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "spocId": "SSP-W4E-E-r5",
+          "sheet": "East",
+          "rowNumber": 5,
+          "subPosition": null,
+          "pocName": "Pooja Mukherjee",
+          "role": "primary",
+          "confidence": "high"
+        },
+        "notes": "SPOC DB import landed primary SPOC (East sheet row 5)."
       }
     ]
   },
@@ -2050,6 +2425,36 @@
         "user": "system",
         "action": "create",
         "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      },
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "spocId": "SSP-W4E-N-r5",
+          "sheet": "North",
+          "rowNumber": 5,
+          "subPosition": null,
+          "pocName": "Rishabh Bharadwaj",
+          "role": "primary",
+          "confidence": "high"
+        },
+        "notes": "SPOC DB import landed primary SPOC (North sheet row 5)."
+      },
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "spocId": "SSP-W4E-N-r6",
+          "sheet": "North",
+          "rowNumber": 6,
+          "subPosition": null,
+          "pocName": "Pooja Mam",
+          "role": "primary",
+          "confidence": "high"
+        },
+        "notes": "SPOC DB import landed primary SPOC (North sheet row 6)."
       }
     ]
   },
@@ -2128,6 +2533,21 @@
         "user": "system",
         "action": "create",
         "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      },
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "spocId": "SSP-W4E-E-r21",
+          "sheet": "East",
+          "rowNumber": 21,
+          "subPosition": null,
+          "pocName": "",
+          "role": "primary",
+          "confidence": "high"
+        },
+        "notes": "SPOC DB import landed primary SPOC (East sheet row 21)."
       }
     ]
   },
@@ -2180,6 +2600,21 @@
         "user": "system",
         "action": "create",
         "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      },
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "spocId": "SSP-W4E-N-r10",
+          "sheet": "North",
+          "rowNumber": 10,
+          "subPosition": null,
+          "pocName": "Mr Jabir Singh",
+          "role": "primary",
+          "confidence": "high-cross-confirmed"
+        },
+        "notes": "SPOC DB import landed primary SPOC (North sheet row 10)."
       }
     ]
   },
@@ -2258,6 +2693,21 @@
         "user": "system",
         "action": "create",
         "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      },
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "spocId": "SSP-W4E-SW-r17",
+          "sheet": "South-West",
+          "rowNumber": 17,
+          "subPosition": null,
+          "pocName": "Vidya mam",
+          "role": "primary",
+          "confidence": "anish-resolved (low)"
+        },
+        "notes": "SPOC DB import landed primary SPOC (South-West sheet row 17)."
       }
     ]
   },
@@ -2284,6 +2734,21 @@
         "user": "system",
         "action": "create",
         "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      },
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "spocId": "SSP-W4E-E-r4",
+          "sheet": "East",
+          "rowNumber": 4,
+          "subPosition": null,
+          "pocName": "Soma Banerjee",
+          "role": "primary",
+          "confidence": "high"
+        },
+        "notes": "SPOC DB import landed primary SPOC (East sheet row 4)."
       }
     ]
   },
@@ -2336,6 +2801,21 @@
         "user": "system",
         "action": "create",
         "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      },
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "spocId": "SSP-W4E-SW-r8",
+          "sheet": "South-West",
+          "rowNumber": 8,
+          "subPosition": null,
+          "pocName": "Poonam Maam",
+          "role": "primary",
+          "confidence": "high"
+        },
+        "notes": "SPOC DB import landed primary SPOC (South-West sheet row 8)."
       }
     ]
   },
@@ -2362,6 +2842,21 @@
         "user": "system",
         "action": "create",
         "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      },
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "spocId": "SSP-W4E-SW-r7",
+          "sheet": "South-West",
+          "rowNumber": 7,
+          "subPosition": null,
+          "pocName": "Nisha Maam",
+          "role": "primary",
+          "confidence": "high"
+        },
+        "notes": "SPOC DB import landed primary SPOC (South-West sheet row 7)."
       }
     ]
   },
@@ -2544,6 +3039,21 @@
         "user": "system",
         "action": "create",
         "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      },
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "spocId": "SSP-W4E-E-r22",
+          "sheet": "East",
+          "rowNumber": 22,
+          "subPosition": null,
+          "pocName": "Mrityunjay Singh",
+          "role": "primary",
+          "confidence": "high"
+        },
+        "notes": "SPOC DB import landed primary SPOC (East sheet row 22)."
       }
     ]
   },
@@ -2570,6 +3080,21 @@
         "user": "system",
         "action": "create",
         "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      },
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "spocId": "SSP-W4E-SW-r14",
+          "sheet": "South-West",
+          "rowNumber": 14,
+          "subPosition": null,
+          "pocName": "Pranesheram",
+          "role": "primary",
+          "confidence": "high"
+        },
+        "notes": "SPOC DB import landed primary SPOC (South-West sheet row 14)."
       }
     ]
   },
@@ -2596,6 +3121,21 @@
         "user": "system",
         "action": "create",
         "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      },
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "spocId": "SSP-W4E-SW-r28",
+          "sheet": "South-West",
+          "rowNumber": 28,
+          "subPosition": null,
+          "pocName": "Sathish",
+          "role": "primary",
+          "confidence": "high"
+        },
+        "notes": "SPOC DB import landed primary SPOC (South-West sheet row 28)."
       }
     ]
   },
@@ -2627,7 +3167,7 @@
   },
   {
     "id": "SCH-ST_JOHN_S_SCHOOL",
-    "name": "St. John\u2019s School",
+    "name": "St. John’s School",
     "legalEntity": null,
     "city": "Kolkata",
     "state": "West Bengal",
@@ -2700,6 +3240,21 @@
         "user": "system",
         "action": "create",
         "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      },
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "spocId": "SSP-W4E-E-r15",
+          "sheet": "East",
+          "rowNumber": 15,
+          "subPosition": null,
+          "pocName": "Shantanu Sir",
+          "role": "primary",
+          "confidence": "high-rerun-match"
+        },
+        "notes": "SPOC DB import landed primary SPOC (East sheet row 15)."
       }
     ]
   },
@@ -2726,6 +3281,21 @@
         "user": "system",
         "action": "create",
         "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      },
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "spocId": "SSP-W4E-E-r14",
+          "sheet": "East",
+          "rowNumber": 14,
+          "subPosition": null,
+          "pocName": "Chaitrayi Ma'am",
+          "role": "primary",
+          "confidence": "high-cross-confirmed"
+        },
+        "notes": "SPOC DB import landed primary SPOC (East sheet row 14)."
       }
     ]
   },
@@ -2757,7 +3327,7 @@
   },
   {
     "id": "SCH-ST_PAUL_S_MISSION_SC",
-    "name": "St. Paul\u2019s Mission School",
+    "name": "St. Paul’s Mission School",
     "legalEntity": null,
     "city": "Kolkata",
     "state": "West Bengal",
@@ -2778,6 +3348,21 @@
         "user": "system",
         "action": "create",
         "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      },
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "spocId": "SSP-W4E-E-r16",
+          "sheet": "East",
+          "rowNumber": 16,
+          "subPosition": null,
+          "pocName": "Debobrata Dey",
+          "role": "primary",
+          "confidence": "high-rerun-match"
+        },
+        "notes": "SPOC DB import landed primary SPOC (East sheet row 16)."
       }
     ]
   },
@@ -2882,6 +3467,21 @@
         "user": "system",
         "action": "create",
         "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      },
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "spocId": "SSP-W4E-E-r10",
+          "sheet": "East",
+          "rowNumber": 10,
+          "subPosition": null,
+          "pocName": "Madhushnata Saha",
+          "role": "primary",
+          "confidence": "high-cross-confirmed"
+        },
+        "notes": "SPOC DB import landed primary SPOC (East sheet row 10)."
       }
     ]
   },
@@ -2934,6 +3534,21 @@
         "user": "system",
         "action": "create",
         "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      },
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "spocId": "SSP-W4E-N-r15",
+          "sheet": "North",
+          "rowNumber": 15,
+          "subPosition": null,
+          "pocName": "Nitin Tomar",
+          "role": "primary",
+          "confidence": "anish-resolved (low)"
+        },
+        "notes": "SPOC DB import landed primary SPOC (North sheet row 15)."
       }
     ]
   },
@@ -3090,6 +3705,21 @@
         "user": "system",
         "action": "create",
         "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      },
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "spocId": "SSP-W4E-E-r20",
+          "sheet": "East",
+          "rowNumber": 20,
+          "subPosition": null,
+          "pocName": "Soumik Mistry",
+          "role": "primary",
+          "confidence": "high-cross-confirmed"
+        },
+        "notes": "SPOC DB import landed primary SPOC (East sheet row 20)."
       }
     ]
   },
@@ -3142,6 +3772,21 @@
         "user": "system",
         "action": "create",
         "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      },
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "spocId": "SSP-W4E-SW-r12",
+          "sheet": "South-West",
+          "rowNumber": 12,
+          "subPosition": null,
+          "pocName": "Ketaki mam",
+          "role": "primary",
+          "confidence": "high"
+        },
+        "notes": "SPOC DB import landed primary SPOC (South-West sheet row 12)."
       }
     ]
   },
@@ -3220,6 +3865,21 @@
         "user": "system",
         "action": "create",
         "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      },
+      {
+        "timestamp": "2026-04-28T16:00:00.000Z",
+        "user": "system-w4e-import",
+        "action": "school-spoc-imported-from-db",
+        "after": {
+          "spocId": "SSP-W4E-E-r12",
+          "sheet": "East",
+          "rowNumber": 12,
+          "subPosition": null,
+          "pocName": "Shiladitya Nandan",
+          "role": "primary",
+          "confidence": "anish-resolved (medium)"
+        },
+        "notes": "SPOC DB import landed primary SPOC (East sheet row 12)."
       }
     ]
   }

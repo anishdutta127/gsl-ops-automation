@@ -37,10 +37,21 @@ const VALID_NOTIFICATION_KINDS: ReadonlySet<NotificationKind> = new Set<Notifica
 ])
 
 describe('W4-E.1 SchoolSPOC schema', () => {
-  it('school_spocs.json seeds as an empty array; W4-E.2 backfill populates it', () => {
+  it('school_spocs.json carries the W4-E.2 backfill (44 records) and every entry is well-shaped', () => {
     const rows = schoolSpocsJson as unknown as SchoolSPOC[]
     expect(Array.isArray(rows)).toBe(true)
-    expect(rows.length).toBe(0)
+    expect(rows.length).toBeGreaterThanOrEqual(44)
+    for (const sp of rows) {
+      expect(typeof sp.id).toBe('string')
+      expect(sp.id.length).toBeGreaterThan(0)
+      expect(typeof sp.schoolId).toBe('string')
+      expect(VALID_ROLES.has(sp.role)).toBe(true)
+      expect(typeof sp.active).toBe('boolean')
+      expect(['South-West', 'East', 'North', 'manual']).toContain(sp.sourceSheet)
+      expect(Array.isArray(sp.auditLog)).toBe(true)
+      expect(sp.auditLog.length).toBeGreaterThanOrEqual(1)
+      expect(sp.auditLog[0]!.action).toBe('school-spoc-imported-from-db')
+    }
   })
 
   it('SchoolSPOC.role is the primary | secondary discriminator', () => {

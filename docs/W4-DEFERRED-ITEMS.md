@@ -159,6 +159,42 @@ Each entry: a stable id, status, surface where it was found, the question, what 
 - **Question:** When Phase 2 begins, should the system send a proactive school-facing dispatch confirmation email automatically when Ops raises a Dispatch, or stay on the compose-and-copy reminder pattern?
 - **Needed to close:** Phase 2 scoping conversation. If proactive: add a `dispatch-confirmation` CommunicationType, a compose lib, and a hook on `raiseDispatch.ts` that auto-composes on dispatch creation. Compose-and-copy stays for school-facing sends in Phase 1.
 
+## D-019 SPOC DB rows for schools not in schools.json (15 rows)
+
+- **Status:** open
+- **Surfaced by:** W4-E.2 Phase 2 mutation (`scripts/w4e-spoc-import-mutation.mjs`); see `scripts/w4e-spoc-import-mutation-report-2026-04-28.json`
+- **Context:** 15 SPOC DB rows quarantined because their school is either not in schools.json, ambiguous between two schools.json records, or the matcher cannot verify cleanly. Round 2 review decides whether to add a schools.json entry + re-import the SPOC, or accept as orphaned data.
+- **Composition (15 rows):**
+  - 3 original verification quarantines (no name match):
+    - SW16 St Anns Grammar School (Secunderbad / Malkajgiri)
+    - North16 MD Senior Secondary School (Jind / Pillukheda)
+    - North17 Aryavart Public School (Hisar / Mirkan)
+  - 4 Chennai cluster (Anish-confirmed distinct schools):
+    - SW22 Sagayamadha matriculation school
+    - SW24 PGS CBSE school
+    - SW25 Donbosco matriculation school
+    - SW26 Nabicrescent school
+  - 1 East9 R.N. Singh Memorial Academy (Anish-confirmed distinct from East22 Sri Ram Narayan Singh High School)
+  - 5 genuinely-ambiguous (Anish-confirmed not in schools.json):
+    - East13 Morden HIgh School International (sic)
+    - East19 Haryana International School
+    - North7 Kautilya World Academy, Gurugram
+    - North8 BGS Vijnatham
+    - North9 The Shreeji School, Faridabad
+  - 1 East11 St. John's School (Q1 contingency-2 demote): SPOC DB row matches both archived `SCH-ST_JOHN_S_SCHOOL` (2526) and active `SCH-ST_JOHNS_HIGH_SCHOOL` (2627 with intake + dispatch); ambiguous which record the SPOC belongs to.
+  - 1 SW9 St.Xavier School Bhilai (conservative): `SCH-ST_XAVIER_S_SR_SEC_S` schools.json record has empty city + partial-name mismatch; round 2 confirms whether the same school.
+- **Question:** For each row, decide (a) add a new school to schools.json with proper region / address data, or (b) accept as orphaned SPOC DB row with no schoolId tie.
+- **Needed to close:** Anish reviews the 15 rows; resolutions feed a follow-up SPOC re-import that targets newly-created schools.
+
+## D-020 Jaffaria Academy multi-POC parser (Hassan + Fiza unseparated)
+
+- **Status:** open
+- **Surfaced by:** W4-E.2 Phase 2 mutation; multi-POC expansion of North row 18
+- **Context:** SPOC DB North row 18 (Jaffaria Academy of Modern Education, Kargil) lists 4 POCs in source data: Feroz Ahmad, Mr. Hassan, Fiza Banoo, Mohd Amin (the phone field has 4 entries; the email field has 4 entries). The pocName cell is comma-delimited but Hassan and Fiza are smashed without a comma between them: "Feroz Ahmad, Mr.Hassan (junr wing) Fiza Banoo, Mohd Amin(higher wing)". The W4-E.2 Phase 1 parser split into 3 entries (Feroz / Hassan+Fiza-smashed / Mohd Amin); Phase 2 imported all 3 with Feroz primary and the other 2 secondary.
+- **Default-as-imported:** SchoolSPOC records `SSP-W4E-N-r18-1` (Feroz, primary) · `SSP-W4E-N-r18-2` (smashed Hassan+Fiza, secondary) · `SSP-W4E-N-r18-3` (Mohd Amin, secondary). The smashed entry's name field carries "Mr.Hassan (junr wing) Fiza Banoo" verbatim from source.
+- **Question:** Confirm the 4-name interpretation and re-confirm primary designation. If correct, split entry-2 into Hassan and Fiza; reassign primary if Anish prefers a different name.
+- **Needed to close:** Anish flags the 4-name split during round 2; a follow-up commit splits entry-2 into 2 SchoolSPOC records (Hassan + Fiza separately) using their individual phone + email tuples from the source cell. The parser fix lands once at the same time so future SPOC DB refreshes don't re-introduce the smash.
+
 ---
 
 ## How items leave this registry
