@@ -136,6 +136,28 @@ export type AuditAction =
   // verification-table row reference + confidence label so the audit
   // remains tied to Anish's W4-D.8 Phase 1 sign-off.
   | 'dispatch-backfilled-from-mastersheet'
+  // W4-E.2: emitted when the SPOC DB import mutation script creates
+  // a SchoolSPOC entry from `ops-data/SCHOOL_SPOC_DATABASE.xlsx`.
+  // Mirrored on both the SchoolSPOC and the parent School's auditLog
+  // so /schools/[id] surfaces the historical entry. The notes carry
+  // the verification-table sheet/row reference + match-confidence
+  // label so the audit ties back to Anish's W4-E.2 Phase 1 sign-off.
+  | 'school-spoc-imported-from-db'
+  // W4-E.4: emitted when the operator clicks "I sent it" on a reminder
+  // composed via the /admin/reminders surface. Sets the parent
+  // Communication's status to 'sent' (the reminder rides the existing
+  // Communication entity, not a new entity). The audit entry lands on
+  // the Communication itself; the recipient surface (MOU, IntakeRecord,
+  // Payment, Dispatch, Feedback request) does not carry a parallel
+  // entry because the source-of-truth for "we chased about X" is the
+  // Communication record indexed by mouId + type.
+  | 'reminder-sent'
+  // W4-E.5: emitted on every Notification record's auditLog.
+  // 'create' is reused for the initial creation; 'mark-read' captures
+  // a user clicking a notification or running mark-all-read. Idempotent:
+  // re-marking an already-read notification is a no-op (no audit entry
+  // appended).
+  | 'notification-marked-read'
 
 export interface AuditEntry {
   timestamp: string                // ISO
@@ -323,6 +345,80 @@ export interface MOU {
 }
 
 // ============================================================================
+// SchoolSPOC (W4-E.1; school-side point-of-contact directory)
+//
+// 1-to-many with School: a school may have multiple SPOCs (Principal,
+// Coordinator, Vice-Principal). Imported from `ops-data/SCHOOL_SPOC_
+// DATABASE.xlsx` via `scripts/w4e-spoc-import-mutation.mjs` (Phase 2,
+// post-Anish-signoff on the W4-E.2 verification table). Editable
+// thereafter via /schools/[id]/spocs (compose-and-copy lookups + audit
+// trail; the school edit form does not duplicate the directory).
+//
+// `role` heuristic on import: the first SPOC row encountered per school
+// is tagged 'primary'; subsequent rows are 'secondary'. This is a best-
+// effort default that Anish reviews on the verification table; D-017
+// captures the reorder path for multi-POC schools.
+// ============================================================================
+
+export type SchoolSpocRole = 'primary' | 'secondary'
+
+export interface SchoolSPOC {
+  id: string                       // 'SSP-...'
+  schoolId: string                 // FK to schools.json
+  name: string
+  designation: string | null       // 'Principal', 'Coordinator', 'Vice-Principal'
+  email: string | null             // RFC-5322 where present; raw text otherwise
+  phone: string | null             // E.164 where normalisable; raw text otherwise
+  role: SchoolSpocRole             // 'primary' for first row per school; 'secondary' otherwise
+  active: boolean                  // false when SPOC has left the school; never deleted
+  sourceSheet: 'East' | 'North' | 'South-West' | 'manual'
+  sourceRow: number | null         // 1-indexed row in source sheet; null for manual additions
+  createdAt: string
+  createdBy: string                // 'system-w4e-import' for backfill; User.id for later
+  auditLog: AuditEntry[]
+}
+
+// ============================================================================
+// Notification (W4-E.5; in-app feed for internal cross-team signals)
+//
+// Phase 1 surface: a TopNav <NotificationBell /> badge + dropdown of last 10
+// + a /notifications page with filters and mark-all-read. No outbound email
+// from this entity (the W3-E compose-and-copy stays the school-facing path).
+// Notifications are internal-only: when a Sales user submits a DispatchRequest,
+// Ops users get a Notification; when Ops approves it, the Sales submitter
+// gets one back. Self-broadcast is excluded server-side: createNotification
+// drops the entry when senderUserId === recipientUserId (operators do not
+// need a notification of their own action; the audit log already captures it).
+//
+// `kind` discriminator drives icon + copy in the dropdown; `actionUrl` is
+// the deep-link the click navigates to (and which marks-read in the same
+// request). `payload` carries entity FK metadata for round-trip rendering
+// without re-fetching the source entity (e.g., `dispatchRequestId`).
+// ============================================================================
+
+export type NotificationKind =
+  | 'dispatch-request-created'      // Sales submits -> notify Ops
+  | 'dispatch-request-approved'     // Ops approves   -> notify requester
+  | 'dispatch-request-rejected'     // Ops rejects    -> notify requester
+  | 'intake-completed'              // Sales completes intake -> notify Ops
+  | 'payment-recorded'              // Finance records receipt -> notify Ops + sales owner
+  | 'escalation-assigned'           // Escalation assigned -> notify assignee
+
+export interface Notification {
+  id: string                       // 'NTF-...'
+  recipientUserId: string          // FK to users.json
+  senderUserId: string             // FK to users.json; 'system' allowed for system-emitted
+  kind: NotificationKind
+  title: string                    // short headline rendered in dropdown
+  body: string                     // one-line context (e.g., "for MOU-STEAM-2627-014")
+  actionUrl: string                // deep-link path; click navigates + marks-read
+  payload: Record<string, unknown> // entity FKs (e.g., { dispatchRequestId, mouId })
+  createdAt: string                // ISO
+  readAt: string | null            // null until first mark-read; idempotent thereafter
+  auditLog: AuditEntry[]           // 'create' on creation; 'notification-marked-read' on first read
+}
+
+// ============================================================================
 // Communication (Q-I; channel x status matrix)
 // ============================================================================
 
@@ -343,6 +439,13 @@ export type CommunicationType =
   | 'feedback-request'
   | 'escalation-notification'
   | 'closing-letter'
+  // W4-E.4 reminder templates (Phase 1: manual cadence via /admin/reminders).
+  // Each rides the existing Communication entity with channel='email' and
+  // status flowing 'queued-for-manual' -> 'sent' on operator mark-sent.
+  | 'reminder-intake-chase'              // chase Sales for missing IntakeRecord
+  | 'reminder-payment-chase'             // chase school for outstanding instalment
+  | 'reminder-delivery-ack-chase'        // chase school for missing delivery acknowledgement
+  | 'reminder-feedback-chase'            // chase SPOC for unsubmitted feedback past 48h
 
 export type CommunicationStatus =
   | 'queued'             // email channel only: record written, automated send not yet attempted
@@ -847,6 +950,8 @@ export type PendingUpdateEntity =
   | 'user'
   | 'lifecycleRule'
   | 'intakeRecord'
+  | 'schoolSpoc'                   // W4-E.1
+  | 'notification'                 // W4-E.5
 
 export interface PendingUpdate {
   id: string                       // UUID

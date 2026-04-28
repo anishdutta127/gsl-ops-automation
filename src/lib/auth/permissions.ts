@@ -93,6 +93,25 @@ export type Action =
   // Admin wildcard + OpsHead. Cancel-by-creator is implicit (the
   // requester compares against requestedBy; no Action gate needed).
   | 'dispatch-request:review'
+  // W4-E.2: SPOC DB import mutation. Admin-only via wildcard. The
+  // verification table is read-only output and does not gate; only
+  // the mutation script's write path checks this.
+  | 'spoc:import'
+  // W4-E.4: reminder lifecycle. Compose-and-copy + mark-sent at
+  // /admin/reminders. 'reminder:create' grants the compose action
+  // (Admin wildcard + SalesHead + SalesRep + OpsHead per recon scope);
+  // 'reminder:view-all' grants the unfiltered list view (Admin only;
+  // other roles see reminders relevant to their own MOUs).
+  | 'reminder:create'
+  | 'reminder:view-all'
+  // W4-E.5: in-app Notification feed. 'notification:read' is granted
+  // to every authenticated user (notifications are user-scoped; the
+  // mutator filters by recipientUserId). 'notification:mark-read'
+  // gates the idempotent mark-read mutation. Both actions are server-
+  // side defense in depth; the bell + page render every user's own
+  // feed without a UI gate.
+  | 'notification:read'
+  | 'notification:mark-read'
 
 // Sentinel: Admin role grants all actions. Represented as wildcard in the
 // role map so we never have to enumerate the full action list for Admin.
@@ -107,12 +126,17 @@ const ROLE_BASE_ACTIONS: Record<UserRole, Set<Action> | typeof ADMIN_WILDCARD> =
   Leadership: new Set<Action>([
     'dispatch:override-gate',
     'escalation:resolve',
+    'notification:read',
+    'notification:mark-read',
   ]),
   SalesHead: new Set<Action>([
     'drift:approve',
     'mou:confirm-actuals',
     'dispatch-request:create',
     'escalation:resolve',
+    'reminder:create',
+    'notification:read',
+    'notification:mark-read',
   ]),
   SalesRep: new Set<Action>([
     // Phase 1: scoped MOU view only; the only mutation a SalesRep can
@@ -121,6 +145,9 @@ const ROLE_BASE_ACTIONS: Record<UserRole, Set<Action> | typeof ADMIN_WILDCARD> =
     // submit, SalesHead reviews queue when variance > 10%.
     'mou:confirm-actuals',
     'dispatch-request:create',
+    'reminder:create',
+    'notification:read',
+    'notification:mark-read',
   ]),
   OpsHead: new Set<Action>([
     'cc-rule:toggle',
@@ -141,21 +168,31 @@ const ROLE_BASE_ACTIONS: Record<UserRole, Set<Action> | typeof ADMIN_WILDCARD> =
     'school-group:edit-members',
     'escalation:resolve',
     'system:trigger-sync',
+    'reminder:create',
+    'notification:read',
+    'notification:mark-read',
   ]),
   OpsEmployee: new Set<Action>([
     // Phase 1 base: no write actions on the matrix. Misba is OpsEmployee
     // by base role with testingOverride: ['OpsHead']; her elevated grants
-    // come through effectiveRoles() below.
+    // come through effectiveRoles() below. Notification read + mark-read
+    // are baseline-granted; every authenticated user has an own feed.
+    'notification:read',
+    'notification:mark-read',
   ]),
   Finance: new Set<Action>([
     'mou:generate-pi',
     'payment:reconcile',
     'dispatch:acknowledge-override',
+    'notification:read',
+    'notification:mark-read',
   ]),
   TrainerHead: new Set<Action>([
     // Academics-lane visibility (per canViewAuditEntry) plus escalation
     // resolution on training-quality and trainer-rapport feedback.
     'escalation:resolve',
+    'notification:read',
+    'notification:mark-read',
   ]),
 }
 

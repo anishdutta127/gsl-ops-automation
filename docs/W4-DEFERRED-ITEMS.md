@@ -127,6 +127,38 @@ Each entry: a stable id, status, surface where it was found, the question, what 
   - If no: the April 2026 delivery was a final fulfilment of the 2025-26 MOU; backfill `DIS-BF-Cretile-r15` onto `MOU-STEAM-2526-011`.
 - **Needed to close:** Anish confirms with Contai SPOC. The Mastersheet Cretile data + Anish's resolutions JSON in `scripts/w4d-mastersheet-mutation.mjs` together show the full history; round 2 triage just needs the renewal answer to pick which path.
 
+## D-015 SPOC DB coverage gap (67 schools without SPOC entries)
+
+- **Status:** open
+- **Surfaced by:** W4-E recon of `ops-data/SCHOOL_SPOC_DATABASE.xlsx`
+- **Context:** The SPOC DB has 57 SPOC rows covering a subset of schools; the active 51-list plus the archived 92-list (143 unique schools across both cohorts) implies ~67 schools have no SPOC entry in the DB. W4-E.2 imports the 57 rows that exist; the gap becomes round 2 triage rather than blocking the W4-E build.
+- **Question:** For the 67 schools without SPOC entries, do we (a) add SPOC capture as part of the school edit workflow during round 2 testing, (b) ask Misba to backfill the SPOC DB upstream, or (c) accept partial coverage as Phase 1 reality?
+- **Needed to close:** Anish picks the path; if (a) or (b), schedule the follow-up work in W4-I or Phase 1.1.
+
+## D-016 North sheet rule 1 typo ("East Schools" inside North file)
+
+- **Status:** open
+- **Surfaced by:** W4-E recon of SPOC DB North sheet, top-of-sheet rule 1
+- **Context:** The North sheet's first top-of-sheet CC rule reads "Keep ... in Cc for East Schools", which is a Misba typo (the rule lives in the North file but references "East Schools"). Source-of-truth principle: the system mirrors source verbatim and does not silently auto-correct.
+- **Question:** Confirm this is a typo (rule should say "North Schools") rather than a deliberate cross-sheet reference. If a typo: fix at source in the SPOC DB next refresh; the cc_rules.json entry mirrors the corrected source on next import.
+- **Needed to close:** Anish confirms with Misba. Once fixed at source, re-run the SPOC DB import and the audit pass; the existing cc_rules.json entry updates in lockstep.
+
+## D-017 SPOC primary/secondary heuristic for multi-POC schools
+
+- **Status:** open
+- **Surfaced by:** W4-E.1 SchoolSPOC schema design
+- **Context:** The SPOC DB lists multiple POCs for some schools without explicit primary/secondary tagging. W4-E.1 ships with a "first-row-is-primary" heuristic on import: the first SPOC row encountered for a school sets `role: 'primary'`; subsequent rows set `role: 'secondary'`. This may not match Misba's mental model for schools where the first-row POC is the operational backup.
+- **Question:** For each multi-POC school, is the first-row POC actually the primary contact, or should the order be inverted for some schools?
+- **Needed to close:** Anish reviews the W4-E.2 verification table (which surfaces the heuristic-assigned role per row); flag any school where the order should be reversed. Round 2 retag swaps `role: primary` and `role: secondary` on the affected SchoolSPOC entries (single-line per-school audit entry; no FK change).
+
+## D-018 Phase 2 proactive dispatch confirmation email to school
+
+- **Status:** open
+- **Surfaced by:** W4-E recon scope-trim
+- **Context:** W4-E ships 4 reminder templates (intake chase, payment chase, delivery-ack chase, feedback chase). It does NOT ship a school-facing dispatch confirmation email triggered the moment Ops raises a Dispatch (i.e., proactive "your kit has been dispatched" notification). W4-E was already substantial; the 4 reminder scenarios cover Phase 1's manual cadence needs.
+- **Question:** When Phase 2 begins, should the system send a proactive school-facing dispatch confirmation email automatically when Ops raises a Dispatch, or stay on the compose-and-copy reminder pattern?
+- **Needed to close:** Phase 2 scoping conversation. If proactive: add a `dispatch-confirmation` CommunicationType, a compose lib, and a hook on `raiseDispatch.ts` that auto-composes on dispatch creation. Compose-and-copy stays for school-facing sends in Phase 1.
+
 ---
 
 ## How items leave this registry
