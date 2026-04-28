@@ -52,6 +52,7 @@ const WARNING_LABELS: Record<string, string> = {
   'student-count-variance-high': 'V5 Total quantity differs more than 10% from intake/MOU baseline',
   'grade-out-of-intake-range': 'V6 Per-grade allocation falls outside the intake grade range',
   'duplicate-pending-request': 'V8 A pending dispatch request already exists for this MOU + installment',
+  'stock-availability-warning': 'V9 One or more SKUs may be short of stock once pending requests are converted. Confirm with Ops at conversion.',
 }
 
 const ERROR_LABELS: Record<string, string> = {

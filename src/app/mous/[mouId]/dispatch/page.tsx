@@ -17,19 +17,22 @@
 
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import type { Dispatch, DispatchRequest, MOU, User } from '@/lib/types'
+import type { Dispatch, DispatchRequest, InventoryItem, MOU, User } from '@/lib/types'
 import mousJson from '@/data/mous.json'
 import dispatchesJson from '@/data/dispatches.json'
 import dispatchRequestsJson from '@/data/dispatch_requests.json'
+import inventoryItemsJson from '@/data/inventory_items.json'
 import { getCurrentUser } from '@/lib/auth/session'
 import { isGateUnblocked } from '@/lib/dispatch/overrideAudit'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { DetailHeaderCard } from '@/components/ops/DetailHeaderCard'
+import { InventoryStatusPanel } from '@/components/ops/InventoryStatusPanel'
 
 const allMous = mousJson as unknown as MOU[]
 const allDispatches = dispatchesJson as unknown as Dispatch[]
 const allRequests = dispatchRequestsJson as unknown as DispatchRequest[]
+const allInventoryItems = inventoryItemsJson as unknown as InventoryItem[]
 
 interface PageProps {
   params: Promise<{ mouId: string }>
@@ -147,6 +150,12 @@ export default async function DispatchPage({ params, searchParams }: PageProps) 
             </ul>
           </section>
         ) : null}
+
+        <InventoryStatusPanel
+          programme={mou.programme}
+          programmeSubType={mou.programmeSubType}
+          inventoryItems={allInventoryItems}
+        />
 
         <section aria-labelledby="dispatches-heading" className="rounded-lg border border-border bg-card p-4 sm:p-6">
           <h3 id="dispatches-heading" className="mb-3 font-heading text-base font-semibold text-brand-navy">

@@ -64,6 +64,12 @@ const ADMIN_LINKS: AdminLink[] = [
     status: 'real',
   },
   {
+    href: '/admin/inventory',
+    label: 'Inventory',
+    description: 'Per-SKU stock + reorder thresholds; auto-decrement on dispatch raise.',
+    status: 'real',
+  },
+  {
     href: '/admin/mou-import-review',
     label: 'MOU import review',
     description: 'Quarantined MOUs awaiting human resolution.',
