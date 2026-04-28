@@ -69,8 +69,8 @@ export const HELP_ROLES: RoleOrientation[] = [
   {
     role: 'Sales (Pratik, Vishwanath)',
     framing: 'You are closest to the schools. Your work moves MOUs from signed to actuals confirmed and starts the kit-dispatch flow with multi-SKU requests.',
-    workstream: 'Confirm the actual student count once a programme starts. Submit DispatchRequests at /dispatch/request when the school needs kits (Ops reviews and approves). Resolve sales-lane escalations. Spot-check school records when you visit. Compose reminders for your own MOUs at /admin/reminders when intake / payment / delivery / feedback chases are needed.',
-    whereTime: 'The kanban’s actuals-confirmed column (the queue waiting for you), /dispatch/request to start a kit shipment, the SALES-lane filter on /escalations, and the bell in the top-right showing notifications about your DR submissions and reminder chases on your MOUs.',
+    workstream: 'Track pre-MOU pursuits at /sales-pipeline (W4-F minimal container; status / recce / approval are free-text pending the round-2 interview that formalises the workflow). Confirm the actual student count once a programme starts. Submit DispatchRequests at /dispatch/request when the school needs kits (Ops reviews and approves). Resolve sales-lane escalations. Spot-check school records when you visit. Compose reminders for your own MOUs at /admin/reminders when intake / payment / delivery / feedback chases are needed.',
+    whereTime: 'The kanban’s actuals-confirmed column (the queue waiting for you), /sales-pipeline for pre-MOU schools, /dispatch/request to start a kit shipment, the SALES-lane filter on /escalations, and the bell in the top-right showing notifications about your DR submissions and reminder chases on your MOUs.',
   },
   {
     role: 'Ops core team (Pradeep, Misba, Swati, Shashank)',
@@ -348,6 +348,10 @@ export const HELP_GLOSSARY: GlossaryItem[] = [
     definition: 'Even with the button visible, some actions check your role before saving. If a button does nothing, you may not have permission. Anish can grant you wider access; ask on Teams.',
   },
   {
+    term: 'SalesOpportunity',
+    definition: 'Pre-MOU pipeline record (W4-F). Captures a school Sales is pursuing before the MOU is signed: school name (free-text), city, state, region, sales rep, programme proposed, GSL Model, status, recce status, commitments made, approval notes. Status / recce / GSL Model / approvalNotes are FREE-TEXT in Phase 1 (operators write whatever describes their state); workflow formalisation lands post-round-2 after the Pratik + Shashank interview defines the actual vocabulary (D-026). Once an MOU lands for the same school, the SalesOpportunity stays as historical record (conversionMouId FK; Phase 2 conversion flow lands with D-026).',
+  },
+  {
     term: 'SchoolSPOC',
     definition: 'Per-school point-of-contact directory entry imported from ops-data/SCHOOL_SPOC_DATABASE.xlsx via the W4-E.2 backfill. Carries name, designation, phone, email, source sheet (South-West / East / North), and a role (primary / secondary). Multi-POC schools have one primary entry plus N secondary entries; the operator views the directory at /schools/[id] (Phase 1 read-only; editing UI is Phase 2). 44 records imported; 15 schools.json gaps captured in D-019.',
   },
@@ -600,6 +604,20 @@ export const HELP_WORKFLOWS: WorkflowItem[] = [
       'For the full feed, click See all notifications at the bottom of the bell dropdown, or visit /notifications directly. The page filters by kind (8 NotificationKind values) or by All / Unread.',
       'Mark all read at once: click Mark all read (N) at the top right of /notifications when unread count is greater than zero. A flash banner confirms how many were updated.',
       'Notification kinds you might see: dispatch-request created (broadcast to Admin + OpsHead when Sales submits a DR), dispatch-request approved/rejected (single notification to the requester), dispatch-request cancelled (broadcast to Admin + OpsHead), intake-completed (broadcast to Admin + OpsHead when Sales finishes intake), payment-recorded (broadcast to Finance plus the sales-owner of the MOU), escalation-assigned (single notification to the lane head when feedback auto-escalates), reminder-due (single notification to the sales-owner when the operator composes a chase reminder). Phase 1 is refresh-on-page-navigation; no real-time polling.',
+    ],
+  },
+  {
+    task: 'Using the sales pipeline tracker (W4-F)',
+    precondition: 'You have SalesRep, SalesHead, or Admin role for create / edit; every authenticated user can view.',
+    steps: [
+      'Go to /sales-pipeline. The list defaults to your own opportunities (mine filter). Toggle to All to see the team\'s pipeline.',
+      'Click New opportunity to log a school you are pursuing. Fill in school name (free-text), city, state, region, programme proposed (optional), GSL Model (free-text), and Status. Required: schoolName, city, state, region, salesRepId, status.',
+      'Status field is free-text. Describe your current state in your own words ("Recce scheduled", "Awaiting Pratik approval", "Proposal sent"). The system will formalise standard statuses after round 2 testing (D-026).',
+      'On submit, you land on the detail page. If your school name token-matches an existing schools.json record above 0.7, the page surfaces a "did you mean" panel with two options: Link to existing (sets the FK) or Keep as new school (suppresses the suggestion permanently).',
+      'Edit any field via the Edit button on the detail page. Status changes land verbatim in the audit log (before / after; no autocorrect) so we can review what vocabulary you actually used.',
+      'When an opportunity falls out of the pipeline (school chose competitor, budget cut, etc.), click Mark as lost. A required loss reason captures the why; the row stays visible for history (filter chip Active / Lost / All on the list).',
+      'The conversion-to-MOU flow is deliberately NOT built yet. When an opportunity reaches the point where you would create an MOU, do that via the existing MOU surfaces (gsl-mou-system upstream); the SalesOpportunity\'s conversionMouId FK lands when the post-round-2 workflow formalises (D-026).',
+      'This pipeline tracker is parallel to the W4-D dispatch flow. It does NOT replace any existing workflow; it adds visibility for pre-MOU work that today happens off-system.',
     ],
   },
   {

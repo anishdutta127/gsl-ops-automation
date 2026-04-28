@@ -243,6 +243,40 @@ Each entry: a stable id, status, surface where it was found, the question, what 
 - **Question:** Do round 2 testers report friction with refresh-only? In a multi-tester pilot, an Ops user may need to know about a Sales-submitted DR within seconds rather than on next page navigation.
 - **Needed to close:** Round 2 feedback. If yes: add a 30s setInterval poll on the bell client component (cheap; reuses the existing notifications.json read), OR upgrade to SSE / WebSocket (heavier; needs a server-side subscription manager). The Phase 1 architecture leaves the door open for either path.
 
+## D-026 W4-F SalesOpportunity workflow definition (Pratik + Shashank interview)
+
+- **Status:** open
+- **Surfaced by:** W4-F.1 / W4-F.2 / W4-F.3 minimal-container build per Anish option C
+- **Context:** W4-F shipped a SalesOpportunity entity with free-text status / recceStatus / gslModel / approvalNotes fields and no state machine, approval workflow, or conversion-to-MOU flow. The Mastersheet Sheet1 source was a 2-row stub template with zero operational data; building the workflow without operational input would embed assumptions about Pratik's actual sales process that may not match reality. The post-round-2 conversation with Pratik (SalesHead) and Shashank should ground the formalisation in lived experience, not speculation. Container today captures real data so the interview has actual examples to ground in (rather than asking abstractly "what should the workflow be?").
+- **7 sub-questions for the interview:**
+
+  - **D-026.a Pre-MOU workflow states.** What states should opportunities move through, in the operator's lived language? Examples we speculated (recce-needed, recce-done, proposal-sent, awaiting-approval, approved, lost) are placeholders; capture Pratik / Shashank's vocabulary verbatim. Are some states sequential and others optional? Are there parallel states (e.g., recce + proposal can happen concurrently)?
+
+  - **D-026.b Approval flow architecture.** Sequential dual (Pratik then Shashank), parallel (both can approve any time), role-context-specific (different approvers for GSL-Trainer model vs TTT model), threshold-based (deal size or programme triggers different routes), or something else? Document any conditions that change routing (deal size, programme, region, school type). The Mastersheet has "APPROVAL FROM PRATIK" and "APPROVAL FROM SHASHANK" as separate columns; whether they are sequential or parallel is not visible from the column headers.
+
+  - **D-026.c Conversion-to-MOU trigger.** When the SalesOpportunity reaches the post-approval point, when does it become an MOU? Manual click after both approvals (sales rep navigates to a Convert button), automatic on second approval, sales-rep-initiated regardless of approvals, or something else? Where does the resulting MOU draft land (Pending Signature stage on the kanban, or somewhere new)?
+
+  - **D-026.d Recce status vocabulary.** What values do operators actually use for recceStatus? Capture the free-text values from `sales_opportunities.json` post-round-2 and normalise to an enum. The W4-F.3 audit log (verbatim before / after on every status edit) provides the raw data; the interview just classifies.
+
+  - **D-026.e GSL Model vocabulary alignment with `TrainerModel`.** Existing MOU schema has `trainerModel: 'Bootcamp' | 'GSL-T' | 'TT' | 'Other'`. SalesOpportunity has free-text `gslModel`. Are these the same dimension (i.e., the trainer model decided pre-MOU should match the trainer model on the eventual MOU), or are they different concepts? If same, normalise to one enum. If different, define the new enum's values.
+
+  - **D-026.f Ownership transfer mechanism.** How often does sales-rep reassignment happen on a pursuing opportunity? Current Phase 1 fallback: Admin / SalesHead intervenes via the edit form (changes `salesRepId` directly). Round 2 surfaces if reassignment frequency justifies a transfer-ownership action with audit attribution + notification fan-out to the new owner. Sub-question raised by Anish 2026-04-28: "edge case: SalesOpportunity ownership when SalesRep is reassigned or deactivated".
+
+  - **D-026.g Vocabulary autocomplete migration.** Once D-026.a + D-026.d formalise the status / recceStatus enums, what is the migration path for existing free-text records? Auto-map prior values to nearest enum match (Levenshtein / fuzzy; risk of wrong assumption), operator manually triages each (high-friction, faithful), or hybrid (auto-map exact-string-equal cases; operator triages anything fuzzy). The W4-F.3 audit log carries every prior value so the migration is a one-shot script.
+
+- **Needed to close:** A scheduled 30-60 minute interview with Pratik + Shashank during round 2. Output is captured as a follow-up batch (likely "W4.5-A" or similar) that builds the workflow against actual operational language, defines `sales-opportunity:approve-l1` / `approve-l2` / `convert-to-mou` permission Actions, lands the state machine in `editOpportunity`, and migrates existing free-text records to the new enums.
+
+## D-027 Phase 1.1 AY rollover verification
+
+- **Status:** open
+- **Surfaced by:** W4-F.2 OPP id sequence design (`OPP-{AY-short}-###` per academic year)
+- **Context:** GSL's academic year runs April-March. Several entity ID sequences are AY-prefixed: `OPP-2627-###` (W4-F.2), `MOU-STEAM-2627-###` (upstream gsl-mou-system), DispatchRequest `DR-...` (W4-D.2; not AY-prefixed but per-MOU), IntakeRecord `IR-W4C-###` (W4-C.4 backfill), Dispatch `DSP-{mouId}-...` and `DIS-BF-{sheet}-r{row}` (W4-D.1 / W4-D.8). The first live AY rollover in this system is April 1, 2027, when the system flips from 26-27 to 27-28. New OPP records on or after April 1, 2027 should use the `OPP-2728-###` prefix and the sequence should reset to 001 cleanly.
+- **Verification scope (Phase 1.1, before April 2027):**
+  - OPP id sequence: confirm `nextOpportunityId` reads from existing records and resets correctly (the function uses `academicYearShort(now)` so the AY recomputes per call; new records on April 1, 2027 should land as `OPP-2728-001`).
+  - MOU id sequence: confirmed handled by upstream gsl-mou-system; verify the mtime guard + sync-runner does not interfere.
+  - DispatchRequest, Dispatch, IntakeRecord, Communication, Notification, SchoolSPOC, MagicLinkToken: most use timestamp-compact or UUID id schemes that are AY-agnostic; verify no surprises.
+- **Needed to close:** A Phase 1.1 verification task in March 2027 (one month before rollover) that drives a synthetic clock-shift test through every entity creation surface to confirm all sequence counters reset cleanly. No round-2 question; this is a reminder for the Phase 1.1 maintenance batch.
+
 ---
 
 ## How items leave this registry

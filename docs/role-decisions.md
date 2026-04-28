@@ -105,3 +105,44 @@ Self-exclusion when `senderUserId === recipientUserId` (real user sender). Syste
 - `src/lib/notifications/payload_contracts.ts`: per-kind payload type contracts.
 - `src/app/notifications/[notificationId]/visit/route.ts`: visit GET handler.
 - `docs/RUNBOOK.md` §11.7: W4-E redesign overview.
+
+---
+
+## 2026-04-28: W4-F SalesOpportunity permission grants (option C minimal container)
+
+W4-F adds the pre-MOU sales pipeline tracker. Anish chose option C (minimal container; no state machine, no approval workflow, no conversion-to-MOU flow) after the recon found Mastersheet Sheet1 was a 2-row stub with zero operational data. The 4 permission Actions are deliberately scoped to the data-capture surface; approval / conversion Actions are intentionally NOT defined until the round-2 Pratik + Shashank interview formalises the workflow vocabulary (D-026).
+
+**4 new Action grants in `src/lib/auth/permissions.ts`:**
+
+- **`sales-opportunity:create`**: SalesRep + SalesHead + Admin. The form auto-fills `salesRepId` to the session user when SalesRep (email-mapped to SalesPerson); Admin / SalesHead pick from a dropdown.
+- **`sales-opportunity:edit`**: SalesRep + SalesHead + Admin. The lib (`editOpportunity.ts`) enforces own-row vs any-row via `createdBy` comparison: SalesRep can only edit own (`not-creator-and-not-lead` failure otherwise); SalesHead + Admin can edit any. The central `canPerform` gate covers role membership; per-row ownership is the lib's responsibility.
+- **`sales-opportunity:view`**: every active role baseline-granted (Admin / Leadership / OpsHead / OpsEmployee / SalesHead / SalesRep / Finance / TrainerHead). Read-only access for cross-team awareness; aligns with the Phase 1 W3-B principle "every authenticated user can view".
+- **`sales-opportunity:mark-lost`**: SalesRep + SalesHead + Admin. Same own-row vs any-row enforcement as edit.
+
+**Deliberately NOT defined in Phase 1 (held back per option C):**
+
+- `sales-opportunity:approve-l1` (Pratik approval gate)
+- `sales-opportunity:approve-l2` (Shashank approval gate)
+- `sales-opportunity:convert-to-mou` (post-approval handoff)
+
+The approval flow architecture is unknown: sequential dual / parallel / role-context-specific / threshold-based (deal size triggers different routes) / something else. Defining permission Actions before defining the workflow embeds assumptions. D-026 captures the round-2 interview path; the post-interview batch adds these Actions against the actual operational design.
+
+**Audit fidelity for W4-F.3 status edits:**
+
+`opportunity-edited` audit entries capture verbatim before / after strings on every changed field; no normalisation, no autocorrect, no enum coercion. The status field is the most operationally interesting because round-2 review will analyse "what status vocabulary did operators actually use?" against the audit history. The lib's diff capture is field-by-field rather than whole-record so the audit reader can isolate the status-change rows when the interview happens.
+
+**`schoolMatchDismissed` boolean field:**
+
+The W4-F.3 did-you-mean inline panel surfaces only when `schoolId === null` AND `schoolMatchDismissed === false` AND `findSchoolMatch` returns a candidate above the 0.7 token-overlap threshold. Two action forms close the loop: "Link to existing" calls `editOpportunity` with `schoolId` set; "Keep as new school" calls `editOpportunity` with `schoolMatchDismissed: true`. Both flips land in the audit log via the standard `opportunity-edited` action. The flag is intentionally separate from `schoolId === null` because operators may keep an opportunity unlinked deliberately (the school is genuinely new); we do not want to repeatedly resurface the suggestion on every detail-page view.
+
+**Phase 2 trigger awareness:**
+- D-026 captures the 7-sub-bullet workflow definition spec for the round-2 Pratik + Shashank interview.
+- D-027 captures the Phase 1.1 AY rollover verification (first live rollover April 1, 2027).
+
+**References:**
+- `src/lib/salesOpportunity/createOpportunity.ts`: 12-field validation + OPP-{AY}-### sequence.
+- `src/lib/salesOpportunity/editOpportunity.ts`: per-field diff capture + ownership enforcement.
+- `src/lib/salesOpportunity/markOpportunityLost.ts`: idempotent loss flip with mandatory reason.
+- `src/lib/salesOpportunity/findSchoolMatch.ts`: pure jaccard threshold helper.
+- `docs/RUNBOOK.md` §11.8: W4-F minimal container overview.
+- `docs/RUNBOOK.md` §11.9: W4-I round-2 testing email composition guidance.
