@@ -1,0 +1,412 @@
+{
+  "generatedAt": "2026-04-28T12:08:38.223Z",
+  "inputPath": "ops-data/Mastersheet-Implementation_-_AnishD.xlsx",
+  "inputSheet": "Current Inventory",
+  "independenceAxis": "SKU normalisation (verbose Mastersheet -> simple Dispatch-aligned) plus Dispatch lineItem cross-reference. Different code path from W4-C.7, W4-D.8, W4-E.2, W4-E.3.",
+  "sourcingNotes": [
+    "we don�t have this in our inventory",
+    "post april ",
+    "due to chinese leave "
+  ],
+  "summary": {
+    "totalEntries": 21,
+    "autoImport": 17,
+    "manualReview": 3,
+    "quarantine": 0,
+    "skipHeader": 1,
+    "cretileRows": 8,
+    "tinkrRows": 11,
+    "placeholderRows": 2,
+    "rowsWithDispatchCorroboration": 9,
+    "rowsWithoutDispatchCorroboration": 3
+  },
+  "verifications": [
+    {
+      "rowNumber": 4,
+      "section": "TinkRworks",
+      "mastersheetSourceName": "TinkRworks - Resuable Kits",
+      "mastersheetStock": 1330,
+      "inlineNote": null,
+      "recommendation": "SKIP-HEADER",
+      "reasoning": "Section header row; not a SKU. The 1330 figure does not reconcile with the column sum (~7243); flagged as D-033 for Misba/Pradeep round-2 clarification.",
+      "mapping": null
+    },
+    {
+      "rowNumber": 5,
+      "section": "Cretile",
+      "mastersheetSourceName": "Grade 3  Kit",
+      "mastersheetStock": 12,
+      "inlineNote": null,
+      "recommendation": "AUTO-IMPORT",
+      "reasoning": "Cretile per-grade row: Grade 3 maps to INV-CRETILE-G3 cleanly. Stock 12 units. No Req note.",
+      "mapping": {
+        "skuName": "Cretile Grade-band kit",
+        "invId": "INV-CRETILE-G3",
+        "category": "Cretile",
+        "cretileGrade": 3,
+        "mastersheetSourceName": "Grade 3  Kit",
+        "proposedStock": 12,
+        "proposedNotes": null
+      }
+    },
+    {
+      "rowNumber": 5,
+      "section": "TinkRworks",
+      "mastersheetSourceName": "STEAM:-  Launch Pad Kit (Reusable)",
+      "mastersheetStock": 136,
+      "inlineNote": "12",
+      "recommendation": "AUTO-IMPORT",
+      "reasoning": "Dispatch corroboration: 9 existing Dispatch records use skuName \"Launchpad\". Mastersheet stock 136 units imports cleanly.",
+      "mapping": {
+        "skuName": "Launchpad",
+        "invId": "INV-LAUNCHPAD",
+        "category": "TinkRworks",
+        "cretileGrade": null,
+        "mastersheetSourceName": "STEAM:-  Launch Pad Kit (Reusable)",
+        "proposedStock": 136
+      },
+      "corroboration": 9,
+      "sunsetCandidate": false
+    },
+    {
+      "rowNumber": 6,
+      "section": "Cretile",
+      "mastersheetSourceName": "Grade 4  Kit",
+      "mastersheetStock": 14,
+      "inlineNote": null,
+      "recommendation": "AUTO-IMPORT",
+      "reasoning": "Cretile per-grade row: Grade 4 maps to INV-CRETILE-G4 cleanly. Stock 14 units. No Req note.",
+      "mapping": {
+        "skuName": "Cretile Grade-band kit",
+        "invId": "INV-CRETILE-G4",
+        "category": "Cretile",
+        "cretileGrade": 4,
+        "mastersheetSourceName": "Grade 4  Kit",
+        "proposedStock": 14,
+        "proposedNotes": null
+      }
+    },
+    {
+      "rowNumber": 6,
+      "section": "TinkRworks",
+      "mastersheetSourceName": "STEAM:- P3 Project Kit K-8 ( Reusable)",
+      "mastersheetStock": 256,
+      "inlineNote": null,
+      "recommendation": "MANUAL-REVIEW",
+      "reasoning": "No Dispatch corroboration: P3 Project Kit does not appear in any of the 27 existing Dispatch records. Anish picks: AUTO-IMPORT (treat as real SKU; will be used by future dispatches) OR active=false (sunset) OR QUARANTINE.",
+      "mapping": {
+        "skuName": "P3 Project Kit",
+        "invId": "INV-P3-PROJECT-KIT",
+        "category": "TinkRworks",
+        "cretileGrade": null,
+        "mastersheetSourceName": "STEAM:- P3 Project Kit K-8 ( Reusable)",
+        "proposedStock": 256
+      },
+      "corroboration": 0,
+      "sunsetCandidate": false
+    },
+    {
+      "rowNumber": 7,
+      "section": "Cretile",
+      "mastersheetSourceName": "Grade 5  Kit",
+      "mastersheetStock": 14,
+      "inlineNote": "Grade 5-17",
+      "recommendation": "AUTO-IMPORT",
+      "reasoning": "Cretile per-grade row: Grade 5 maps to INV-CRETILE-G5 cleanly. Stock 14 units. Mastersheet \"Req\" note \"Grade 5-17\" preserved verbatim in notes field; D-035 captures the question of whether the system should track per-grade demand explicitly.",
+      "mapping": {
+        "skuName": "Cretile Grade-band kit",
+        "invId": "INV-CRETILE-G5",
+        "category": "Cretile",
+        "cretileGrade": 5,
+        "mastersheetSourceName": "Grade 5  Kit",
+        "proposedStock": 14,
+        "proposedNotes": "Mastersheet Req note: Grade 5-17"
+      }
+    },
+    {
+      "rowNumber": 7,
+      "section": "TinkRworks",
+      "mastersheetSourceName": "STEAM :- Pampered Plant Project Kit (Reusable)",
+      "mastersheetStock": 122,
+      "inlineNote": null,
+      "recommendation": "AUTO-IMPORT",
+      "reasoning": "Dispatch corroboration: 5 existing Dispatch records use skuName \"Pampered Plant\". Mastersheet stock 122 units imports cleanly.",
+      "mapping": {
+        "skuName": "Pampered Plant",
+        "invId": "INV-PAMPERED-PLANT",
+        "category": "TinkRworks",
+        "cretileGrade": null,
+        "mastersheetSourceName": "STEAM :- Pampered Plant Project Kit (Reusable)",
+        "proposedStock": 122
+      },
+      "corroboration": 5,
+      "sunsetCandidate": false
+    },
+    {
+      "rowNumber": 8,
+      "section": "Cretile",
+      "mastersheetSourceName": "Grade 6  Kit",
+      "mastersheetStock": 26,
+      "inlineNote": "Grade 6-11",
+      "recommendation": "AUTO-IMPORT",
+      "reasoning": "Cretile per-grade row: Grade 6 maps to INV-CRETILE-G6 cleanly. Stock 26 units. Mastersheet \"Req\" note \"Grade 6-11\" preserved verbatim in notes field; D-035 captures the question of whether the system should track per-grade demand explicitly.",
+      "mapping": {
+        "skuName": "Cretile Grade-band kit",
+        "invId": "INV-CRETILE-G6",
+        "category": "Cretile",
+        "cretileGrade": 6,
+        "mastersheetSourceName": "Grade 6  Kit",
+        "proposedStock": 26,
+        "proposedNotes": "Mastersheet Req note: Grade 6-11"
+      }
+    },
+    {
+      "rowNumber": 8,
+      "section": "TinkRworks",
+      "mastersheetSourceName": "STEAM :- Smart Lamp Project Kit (Reusable)",
+      "mastersheetStock": 344,
+      "inlineNote": null,
+      "recommendation": "AUTO-IMPORT",
+      "reasoning": "Dispatch corroboration: 3 existing Dispatch records use skuName \"Smart Lamp\". Mastersheet stock 344 units imports cleanly.",
+      "mapping": {
+        "skuName": "Smart Lamp",
+        "invId": "INV-SMART-LAMP",
+        "category": "TinkRworks",
+        "cretileGrade": null,
+        "mastersheetSourceName": "STEAM :- Smart Lamp Project Kit (Reusable)",
+        "proposedStock": 344
+      },
+      "corroboration": 3,
+      "sunsetCandidate": false
+    },
+    {
+      "rowNumber": 9,
+      "section": "Cretile",
+      "mastersheetSourceName": "Grade 7  Kit",
+      "mastersheetStock": 53,
+      "inlineNote": "Grade 7-9",
+      "recommendation": "AUTO-IMPORT",
+      "reasoning": "Cretile per-grade row: Grade 7 maps to INV-CRETILE-G7 cleanly. Stock 53 units. Mastersheet \"Req\" note \"Grade 7-9\" preserved verbatim in notes field; D-035 captures the question of whether the system should track per-grade demand explicitly.",
+      "mapping": {
+        "skuName": "Cretile Grade-band kit",
+        "invId": "INV-CRETILE-G7",
+        "category": "Cretile",
+        "cretileGrade": 7,
+        "mastersheetSourceName": "Grade 7  Kit",
+        "proposedStock": 53,
+        "proposedNotes": "Mastersheet Req note: Grade 7-9"
+      }
+    },
+    {
+      "rowNumber": 9,
+      "section": "TinkRworks",
+      "mastersheetSourceName": "STEAM :- Tech-A-Sketch Project Kit (Reusable)",
+      "mastersheetStock": 576,
+      "inlineNote": null,
+      "recommendation": "AUTO-IMPORT",
+      "reasoning": "Dispatch corroboration: 2 existing Dispatch records use skuName \"Tech A Sketch\". Mastersheet stock 576 units imports cleanly.",
+      "mapping": {
+        "skuName": "Tech A Sketch",
+        "invId": "INV-TECH-A-SKETCH",
+        "category": "TinkRworks",
+        "cretileGrade": null,
+        "mastersheetSourceName": "STEAM :- Tech-A-Sketch Project Kit (Reusable)",
+        "proposedStock": 576
+      },
+      "corroboration": 2,
+      "sunsetCandidate": false
+    },
+    {
+      "rowNumber": 10,
+      "section": "Cretile",
+      "mastersheetSourceName": "Grade 8  Kit",
+      "mastersheetStock": 24,
+      "inlineNote": "Grade 8-14",
+      "recommendation": "AUTO-IMPORT",
+      "reasoning": "Cretile per-grade row: Grade 8 maps to INV-CRETILE-G8 cleanly. Stock 24 units. Mastersheet \"Req\" note \"Grade 8-14\" preserved verbatim in notes field; D-035 captures the question of whether the system should track per-grade demand explicitly.",
+      "mapping": {
+        "skuName": "Cretile Grade-band kit",
+        "invId": "INV-CRETILE-G8",
+        "category": "Cretile",
+        "cretileGrade": 8,
+        "mastersheetSourceName": "Grade 8  Kit",
+        "proposedStock": 24,
+        "proposedNotes": "Mastersheet Req note: Grade 8-14"
+      }
+    },
+    {
+      "rowNumber": 10,
+      "section": "TinkRworks",
+      "mastersheetSourceName": "STEAM :- TinkRbot Explorer Project Kit (Reusable)",
+      "mastersheetStock": 598,
+      "inlineNote": "40",
+      "recommendation": "AUTO-IMPORT",
+      "reasoning": "Dispatch corroboration: 11 existing Dispatch records use skuName \"Tinkrexplorer\". Mastersheet stock 598 units imports cleanly.",
+      "mapping": {
+        "skuName": "Tinkrexplorer",
+        "invId": "INV-TINKREXPLORER",
+        "category": "TinkRworks",
+        "cretileGrade": null,
+        "mastersheetSourceName": "STEAM :- TinkRbot Explorer Project Kit (Reusable)",
+        "proposedStock": 598
+      },
+      "corroboration": 11,
+      "sunsetCandidate": false
+    },
+    {
+      "rowNumber": 11,
+      "section": "Cretile",
+      "mastersheetSourceName": "Grade 9  Kit",
+      "mastersheetStock": 12,
+      "inlineNote": "Grade 9-12",
+      "recommendation": "AUTO-IMPORT",
+      "reasoning": "Cretile per-grade row: Grade 9 maps to INV-CRETILE-G9 cleanly. Stock 12 units. Mastersheet \"Req\" note \"Grade 9-12\" preserved verbatim in notes field; D-035 captures the question of whether the system should track per-grade demand explicitly.",
+      "mapping": {
+        "skuName": "Cretile Grade-band kit",
+        "invId": "INV-CRETILE-G9",
+        "category": "Cretile",
+        "cretileGrade": 9,
+        "mastersheetSourceName": "Grade 9  Kit",
+        "proposedStock": 12,
+        "proposedNotes": "Mastersheet Req note: Grade 9-12"
+      }
+    },
+    {
+      "rowNumber": 11,
+      "section": "TinkRworks",
+      "mastersheetSourceName": "STEAM:- TinkRpy Project Kit (Reusable)",
+      "mastersheetStock": 923,
+      "inlineNote": "29",
+      "recommendation": "AUTO-IMPORT",
+      "reasoning": "Dispatch corroboration: 9 existing Dispatch records use skuName \"Tinkrpython\". Mastersheet stock 923 units imports cleanly.",
+      "mapping": {
+        "skuName": "Tinkrpython",
+        "invId": "INV-TINKRPYTHON",
+        "category": "TinkRworks",
+        "cretileGrade": null,
+        "mastersheetSourceName": "STEAM:- TinkRpy Project Kit (Reusable)",
+        "proposedStock": 923
+      },
+      "corroboration": 9,
+      "sunsetCandidate": false
+    },
+    {
+      "rowNumber": 12,
+      "section": "TinkRworks",
+      "mastersheetSourceName": "STEAM:- TinkRsynth Project Kit (Reusable)",
+      "mastersheetStock": 3,
+      "inlineNote": null,
+      "recommendation": "MANUAL-REVIEW",
+      "reasoning": "No Dispatch corroboration: Tinkrsynth does not appear in any of the 27 existing Dispatch records. Anish picks: AUTO-IMPORT (treat as real SKU; will be used by future dispatches) OR active=false (sunset) OR QUARANTINE.",
+      "mapping": {
+        "skuName": "Tinkrsynth",
+        "invId": "INV-TINKRSYNTH",
+        "category": "TinkRworks",
+        "cretileGrade": null,
+        "mastersheetSourceName": "STEAM:- TinkRsynth Project Kit (Reusable)",
+        "proposedStock": 3
+      },
+      "corroboration": 0,
+      "sunsetCandidate": false
+    },
+    {
+      "rowNumber": 13,
+      "section": "Cretile",
+      "mastersheetSourceName": "Grade 10 Kit",
+      "mastersheetStock": 13,
+      "inlineNote": null,
+      "recommendation": "AUTO-IMPORT",
+      "reasoning": "Cretile per-grade row: Grade 10 maps to INV-CRETILE-G10 cleanly. Stock 13 units. No Req note.",
+      "mapping": {
+        "skuName": "Cretile Grade-band kit",
+        "invId": "INV-CRETILE-G10",
+        "category": "Cretile",
+        "cretileGrade": 10,
+        "mastersheetSourceName": "Grade 10 Kit",
+        "proposedStock": 13,
+        "proposedNotes": null
+      }
+    },
+    {
+      "rowNumber": 13,
+      "section": "TinkRworks",
+      "mastersheetSourceName": "STEAM:- TinkRsynth Mixer PCB ",
+      "mastersheetStock": 0,
+      "inlineNote": "we don�t have this in our inventory",
+      "recommendation": "MANUAL-REVIEW",
+      "reasoning": "Mastersheet inline note: \"we don't have this in our inventory\". Anish picks: AUTO-IMPORT with active=false (sunset SKU; preserves audit trail) OR QUARANTINE (drop entirely).",
+      "mapping": {
+        "skuName": "Tinkrsynth Mixer PCB",
+        "invId": "INV-TINKRSYNTH-MIXER-PCB",
+        "category": "TinkRworks",
+        "cretileGrade": null,
+        "mastersheetSourceName": "STEAM:- TinkRsynth Mixer PCB ",
+        "proposedStock": 0
+      },
+      "corroboration": 0,
+      "sunsetCandidate": true
+    },
+    {
+      "rowNumber": 14,
+      "section": "TinkRworks",
+      "mastersheetSourceName": "STEAM :- TinkRbot Scout Project Sample",
+      "mastersheetStock": 4285,
+      "inlineNote": null,
+      "recommendation": "AUTO-IMPORT",
+      "reasoning": "Dispatch corroboration: 10 existing Dispatch records use skuName \"TinkrBotScout\". Mastersheet stock 4285 units imports cleanly.",
+      "mapping": {
+        "skuName": "TinkrBotScout",
+        "invId": "INV-TINKRBOTSCOUT",
+        "category": "TinkRworks",
+        "cretileGrade": null,
+        "mastersheetSourceName": "STEAM :- TinkRbot Scout Project Sample",
+        "proposedStock": 4285
+      },
+      "corroboration": 10,
+      "sunsetCandidate": false
+    },
+    {
+      "rowNumber": null,
+      "section": "Placeholder",
+      "mastersheetSourceName": null,
+      "mastersheetStock": 0,
+      "inlineNote": null,
+      "recommendation": "AUTO-IMPORT",
+      "reasoning": "Placeholder added per W4-G recon Q2: Push Pull Pin appears in Dispatch lineItems but is absent from Mastersheet Current Inventory. Stock 0 placeholder; round 2 (D-034) sets actual count.",
+      "mapping": {
+        "skuName": "Push Pull Pin",
+        "invId": "INV-PUSH-PULL-PIN",
+        "category": "Other",
+        "cretileGrade": null,
+        "mastersheetSourceName": null,
+        "proposedStock": 0,
+        "proposedNotes": "not in Mastersheet Current Inventory; verified absent at W4-G backfill; stock to be set by Misba/Pradeep at next inventory edit (D-034)"
+      },
+      "corroboration": 6
+    },
+    {
+      "rowNumber": null,
+      "section": "Placeholder",
+      "mastersheetSourceName": null,
+      "mastersheetStock": 0,
+      "inlineNote": null,
+      "recommendation": "AUTO-IMPORT",
+      "reasoning": "Placeholder added per W4-G recon Q2: Steam Academy appears in Dispatch lineItems but is absent from Mastersheet Current Inventory. Stock 0 placeholder; round 2 (D-034) sets actual count.",
+      "mapping": {
+        "skuName": "Steam Academy",
+        "invId": "INV-STEAM-ACADEMY",
+        "category": "Other",
+        "cretileGrade": null,
+        "mastersheetSourceName": null,
+        "proposedStock": 0,
+        "proposedNotes": "not in Mastersheet Current Inventory; verified absent at W4-G backfill; stock to be set by Misba/Pradeep at next inventory edit (D-034)"
+      },
+      "corroboration": 1
+    }
+  ],
+  "deferredHookups": {
+    "D-033": "\"TinkRworks - Reusable Kits 1330\" header at row 4 does not reconcile with column sum 7243. Skipped during verification; round 2 asks Misba/Pradeep what 1330 represents.",
+    "D-034": "Push Pull Pin + Steam Academy added with stock 0; round 2 sets actual counts.",
+    "D-035": "Cretile \"Req\" notes (\"Grade 5-17\") preserved verbatim in InventoryItem.notes; round 2 decides whether to model per-grade demand explicitly."
+  }
+}
