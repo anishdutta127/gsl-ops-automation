@@ -1,0 +1,22 @@
+{
+  "intake": {
+    "thresholdDays": 14,
+    "anchorEvent": "mou-active-from-startDate",
+    "description": "MOU has been Active (post-signing) for more than N days but no IntakeRecord exists. Reminder targets the salesOwner to chase intake completion."
+  },
+  "payment": {
+    "thresholdDays": 30,
+    "anchorEvent": "pi-issued",
+    "description": "Payment.piSentDate is older than N days and Payment.status is in {Pending, Overdue, PI Sent}. Reminder targets the school SPOC to chase outstanding instalment."
+  },
+  "delivery-ack": {
+    "thresholdDays": 7,
+    "anchorEvent": "dispatch-delivered",
+    "description": "Dispatch.stage is delivered (or Dispatch.deliveredAt is set) for more than N days and acknowledgementUrl is null. Reminder targets the school SPOC to confirm delivery."
+  },
+  "feedback-chase": {
+    "thresholdDays": 7,
+    "anchorEvent": "feedback-request-queued",
+    "description": "A feedback-request Communication was queued more than N days ago and no Feedback record was submitted for the same mouId + installmentSeq. Reminder targets the SPOC who got the original request."
+  }
+}

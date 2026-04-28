@@ -215,8 +215,17 @@ Each entry: a stable id, status, surface where it was found, the question, what 
 - **Partial-mapping noted on the 2 added rules (CCR-SW-TAMIL-NADU + CCR-NORTH-GR-INTERNATIONAL):**
   - CCR-SW-TAMIL-NADU header names "R. Balu and Rajesh"; only `sp-balu_r` is mapped. "Rajesh" not in `sales_team.json` or `users.json`. Partial CC list shipped with the rule.
   - CCR-NORTH-GR-INTERNATIONAL header names "Sahil Sharma, Pooja Sharma"; mapped to `sp-sahil` (single-name convention, unconfirmed match for "Sahil Sharma"). "Pooja Sharma" not mapped. Partial CC list shipped.
+  - **sp-sahil tentative-mapping sub-note:** the sales_team.json record `sp-sahil` ("sahil", no last name, empty territories) is the only Sahil entry. The match to GR International's "Sahil Sharma" is heuristic only. Round 2: confirm GR International's "Sahil Sharma" === existing `sp-sahil`, OR is a different Sahil who needs a new sales_team / users record.
 - **Question:** For each deferred / partial mapping, who is the canonical user (name, role, email, sales territory)? Should new `sales_team.json` entries be created, or existing `users.json` users mapped?
 - **Needed to close:** Anish + Misba confirm the 4 missing names (Rajesh, Kranthi, Pooja Sharma, Shushankita) and the unconfirmed Sahil-Sharma mapping. Each resolution either adds a sales_team / users entry, or maps to an existing entry. Once mapped, the 3 deferred rules land via a follow-up cc_rules mutation; the 2 partial rules gain the additional ccUserIds.
+
+## D-023 Phase 2 escalation reminder cadences (1st / 2nd / Nth chase)
+
+- **Status:** open
+- **Surfaced by:** W4-E.4 reminder lib design (`src/lib/reminders/detectDueReminders.ts`)
+- **Context:** Phase 1 ships ONE reminder type per scenario (intake, payment, delivery-ack, feedback chase). The system does not track "1st reminder vs 2nd vs 3rd"; if the operator's first reminder gets no response, they manually re-trigger via the same `/admin/reminders` flow. The Communication record carries the queuedAt timestamp so re-triggers are visible in audit, but no formal cadence (e.g., "1st at day 7, 2nd at day 14, escalate at day 21") is encoded.
+- **Question:** Do round 2 testers report friction with manual re-triggering? Should Phase 2 add a per-kind cadence (1st reminder thresholds → 2nd reminder thresholds with stronger language → escalation creation at the final tier)?
+- **Needed to close:** Round 2 feedback. If yes, extend `reminder_thresholds.json` with cadence steps and add a `reminderTier` column on the Communication record so the detector skips kinds where the most recent reminder is fresh enough.
 
 ---
 

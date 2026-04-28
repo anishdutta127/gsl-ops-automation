@@ -143,15 +143,18 @@ export type AuditAction =
   // the verification-table sheet/row reference + match-confidence
   // label so the audit ties back to Anish's W4-E.2 Phase 1 sign-off.
   | 'school-spoc-imported-from-db'
-  // W4-E.4: emitted when the operator clicks "I sent it" on a reminder
-  // composed via the /admin/reminders surface. Sets the parent
-  // Communication's status to 'sent' (the reminder rides the existing
-  // Communication entity, not a new entity). The audit entry lands on
-  // the Communication itself; the recipient surface (MOU, IntakeRecord,
-  // Payment, Dispatch, Feedback request) does not carry a parallel
-  // entry because the source-of-truth for "we chased about X" is the
-  // Communication record indexed by mouId + type.
-  | 'reminder-sent'
+  // W4-E.4: lifecycle for reminder Communications. 'reminder-composed'
+  // emits when an operator clicks Compose on /admin/reminders and the
+  // Communication record lands with status='queued-for-manual'. The
+  // mirrored entry on the parent entity (MOU, Payment, Dispatch, or
+  // the original feedback-request Communication) names the recipient
+  // and threshold context. 'reminder-marked-sent' emits when the
+  // operator clicks "I sent it" after pasting into Outlook; the parent
+  // entity does NOT receive a parallel entry because the source-of-
+  // truth for "we chased about X" is the Communication record indexed
+  // by mouId + type.
+  | 'reminder-composed'
+  | 'reminder-marked-sent'
   // W4-E.5: emitted on every Notification record's auditLog.
   // 'create' is reused for the initial creation; 'mark-read' captures
   // a user clicking a notification or running mark-all-read. Idempotent:
@@ -538,6 +541,14 @@ export type CcRuleContext =
   | 'closing-letter'
   | 'escalation-notification'
   | 'all-communications'
+  // W4-E.4 reminder contexts: each reminder kind picks up its own
+  // CC fan-out from cc_rules.json. Existing rules with
+  // 'all-communications' still match. New rules can target a single
+  // reminder kind by listing only that context.
+  | 'intake-reminder'
+  | 'payment-reminder'
+  | 'delivery-ack-reminder'
+  | 'feedback-chase'
 
 export interface CcRule {
   id: string                       // 'CCR-SW-RAIPUR-PUNE-NAGPUR', etc.

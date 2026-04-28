@@ -40,6 +40,12 @@ const ADMIN_LINKS: AdminLink[] = [
     status: 'real',
   },
   {
+    href: '/admin/reminders',
+    label: 'Reminders',
+    description: 'Due reminders across intake, payment, delivery acknowledgement, and feedback chase. Compose-and-copy.',
+    status: 'real',
+  },
+  {
     href: '/admin/cc-rules',
     label: 'CC rules',
     description: 'Per-context cc fan-out rules; toggle, edit, create.',
