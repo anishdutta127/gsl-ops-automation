@@ -227,6 +227,22 @@ Each entry: a stable id, status, surface where it was found, the question, what 
 - **Question:** Do round 2 testers report friction with manual re-triggering? Should Phase 2 add a per-kind cadence (1st reminder thresholds → 2nd reminder thresholds with stronger language → escalation creation at the final tier)?
 - **Needed to close:** Round 2 feedback. If yes, extend `reminder_thresholds.json` with cadence steps and add a `reminderTier` column on the Communication record so the detector skips kinds where the most recent reminder is fresh enough.
 
+## D-024 Sales-rep User onboarding for notification fan-out
+
+- **Status:** open
+- **Surfaced by:** W4-E.5 trigger wiring (`composeReminder`, `recordReceipt` payment-recorded fan-out)
+- **Context:** The notification fan-out maps `SalesPerson.email` to a matching `User.email` row to find the in-app notification recipient for a given MOU. Most current sales reps are modelled as SalesPerson records (sp-vikram, sp-balu_r, sp-sahil, etc.) but do NOT have User rows. Of the 10 testers in users.json, only Vishwanath G. (`vishwanath.g`) has both a SalesPerson + User pairing. Sales-owner notification fan-out silently skips the others.
+- **Question:** As Phase 2 expands the tester pool to the actual sales team, should each rep get a User row so notifications fire? Should the SalesPerson schema gain a `userId` column for explicit linkage instead of email matching?
+- **Needed to close:** Phase 2 onboarding plan: add User rows for each active sales rep; optionally migrate SalesPerson -> users foreign key from email match to explicit userId. The current email-match heuristic works but is fragile (a sales rep with a slightly different email between sales_team.json and users.json would silently skip).
+
+## D-025 Phase 2 real-time notification polling
+
+- **Status:** open
+- **Surfaced by:** W4-E.6 NotificationBell design choice
+- **Context:** Phase 1 notifications are refresh-on-page-navigation. The bell badge updates only when the user navigates between pages or hard-reloads. There is no setInterval / setTimeout polling, no Server-Sent Events, no WebSocket. Reasoning: the manual-trigger pattern means most notifications fire as a side effect of an operator-initiated action, and the operator typically navigates after the action; the badge updates on that navigation.
+- **Question:** Do round 2 testers report friction with refresh-only? In a multi-tester pilot, an Ops user may need to know about a Sales-submitted DR within seconds rather than on next page navigation.
+- **Needed to close:** Round 2 feedback. If yes: add a 30s setInterval poll on the bell client component (cheap; reuses the existing notifications.json read), OR upgrade to SSE / WebSocket (heavier; needs a server-side subscription manager). The Phase 1 architecture leaves the door open for either path.
+
 ---
 
 ## How items leave this registry

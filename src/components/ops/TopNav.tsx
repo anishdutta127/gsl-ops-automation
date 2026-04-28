@@ -23,6 +23,7 @@ import Link from 'next/link'
 import { LogOut } from 'lucide-react'
 import { getCurrentUser } from '@/lib/auth/session'
 import type { User, UserRole } from '@/lib/types'
+import { NotificationBell } from './NotificationBell'
 
 interface NavLink {
   href: string
@@ -107,6 +108,7 @@ export async function TopNav({ currentPath }: TopNavProps = {}) {
             {HELP_LINK.label}
           </Link>
           <span aria-hidden className="hidden h-6 w-px bg-white/20 sm:inline-block" />
+          {user ? <NotificationBell user={user} /> : null}
           {user ? (
             <span className="hidden text-sm text-white/80 sm:inline" aria-label="Signed in as">
               {user.name}

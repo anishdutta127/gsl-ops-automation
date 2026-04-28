@@ -16,8 +16,14 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest'
 
 const { broadcastSpy, createSpy, recipientsByRoleSpy } = vi.hoisted(() => ({
-  broadcastSpy: vi.fn(async () => ({ created: [], skipped: [] })),
-  createSpy: vi.fn(async () => ({ created: [], skipped: [] })),
+  broadcastSpy: vi.fn(async (_args: { kind: string; recipientUserIds: string[] }) => ({
+    created: [],
+    skipped: [],
+  })),
+  createSpy: vi.fn(async (_args: { kind: string; recipientUserId: string }) => ({
+    created: [],
+    skipped: [],
+  })),
   recipientsByRoleSpy: vi.fn((users: Array<{ id: string }>) =>
     users.map((u) => u.id),
   ),
