@@ -112,6 +112,17 @@ export type Action =
   // feed without a UI gate.
   | 'notification:read'
   | 'notification:mark-read'
+  // W4-F.1 SalesOpportunity minimal container (Anish option C).
+  // No approve-l1 / approve-l2 / convert-to-mou actions yet; D-026
+  // captures the post-round-2 workflow vocabulary definition.
+  // 'sales-opportunity:edit' is creator-or-SalesHead-or-Admin: the
+  // central canPerform gate covers role membership; per-row creator
+  // ownership is enforced by the lib (compares user.id against
+  // SalesOpportunity.createdBy).
+  | 'sales-opportunity:create'
+  | 'sales-opportunity:edit'
+  | 'sales-opportunity:view'
+  | 'sales-opportunity:mark-lost'
 
 // Sentinel: Admin role grants all actions. Represented as wildcard in the
 // role map so we never have to enumerate the full action list for Admin.
@@ -128,6 +139,7 @@ const ROLE_BASE_ACTIONS: Record<UserRole, Set<Action> | typeof ADMIN_WILDCARD> =
     'escalation:resolve',
     'notification:read',
     'notification:mark-read',
+    'sales-opportunity:view',
   ]),
   SalesHead: new Set<Action>([
     'drift:approve',
@@ -137,6 +149,10 @@ const ROLE_BASE_ACTIONS: Record<UserRole, Set<Action> | typeof ADMIN_WILDCARD> =
     'reminder:create',
     'notification:read',
     'notification:mark-read',
+    'sales-opportunity:create',
+    'sales-opportunity:edit',
+    'sales-opportunity:view',
+    'sales-opportunity:mark-lost',
   ]),
   SalesRep: new Set<Action>([
     // Phase 1: scoped MOU view only; the only mutation a SalesRep can
@@ -148,6 +164,12 @@ const ROLE_BASE_ACTIONS: Record<UserRole, Set<Action> | typeof ADMIN_WILDCARD> =
     'reminder:create',
     'notification:read',
     'notification:mark-read',
+    // W4-F.1: SalesRep creates own opportunities; the lib enforces
+    // own-row edit / mark-lost via createdBy comparison.
+    'sales-opportunity:create',
+    'sales-opportunity:edit',
+    'sales-opportunity:view',
+    'sales-opportunity:mark-lost',
   ]),
   OpsHead: new Set<Action>([
     'cc-rule:toggle',
@@ -171,6 +193,7 @@ const ROLE_BASE_ACTIONS: Record<UserRole, Set<Action> | typeof ADMIN_WILDCARD> =
     'reminder:create',
     'notification:read',
     'notification:mark-read',
+    'sales-opportunity:view',
   ]),
   OpsEmployee: new Set<Action>([
     // Phase 1 base: no write actions on the matrix. Misba is OpsEmployee
@@ -179,6 +202,7 @@ const ROLE_BASE_ACTIONS: Record<UserRole, Set<Action> | typeof ADMIN_WILDCARD> =
     // are baseline-granted; every authenticated user has an own feed.
     'notification:read',
     'notification:mark-read',
+    'sales-opportunity:view',
   ]),
   Finance: new Set<Action>([
     'mou:generate-pi',
@@ -186,6 +210,7 @@ const ROLE_BASE_ACTIONS: Record<UserRole, Set<Action> | typeof ADMIN_WILDCARD> =
     'dispatch:acknowledge-override',
     'notification:read',
     'notification:mark-read',
+    'sales-opportunity:view',
   ]),
   TrainerHead: new Set<Action>([
     // Academics-lane visibility (per canViewAuditEntry) plus escalation
@@ -193,6 +218,7 @@ const ROLE_BASE_ACTIONS: Record<UserRole, Set<Action> | typeof ADMIN_WILDCARD> =
     'escalation:resolve',
     'notification:read',
     'notification:mark-read',
+    'sales-opportunity:view',
   ]),
 }
 

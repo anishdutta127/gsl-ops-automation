@@ -155,6 +155,16 @@ export type AuditAction =
   // by mouId + type.
   | 'reminder-composed'
   | 'reminder-marked-sent'
+  // W4-F.1: SalesOpportunity lifecycle. Minimal-container scope per
+  // Anish's option C decision. Free-text status / recce / gslModel
+  // fields with no state-machine; the workflow vocabulary is deferred
+  // to D-026 (post-round-2 interview with Pratik + Shashank). The 3
+  // audit actions cover the only mutations the lib supports today;
+  // approval / conversion-to-MOU actions are intentionally NOT added
+  // until the workflow is defined.
+  | 'opportunity-created'
+  | 'opportunity-edited'
+  | 'opportunity-marked-lost'
   // W4-E.5: emitted on every Notification record's auditLog.
   // 'create' is reused for the initial creation; 'mark-read' captures
   // a user clicking a notification or running mark-all-read. Idempotent:
@@ -344,6 +354,60 @@ export interface MOU {
    */
   delayNotes: string | null
   daysToExpiry: number | null
+  auditLog: AuditEntry[]
+}
+
+// ============================================================================
+// SalesOpportunity (W4-F.1; pre-MOU sales pipeline container)
+//
+// Minimal container per Anish's option C: free-text status / recce /
+// gslModel fields, no state machine, no approval workflow, no
+// conversion-to-MOU flow. The Mastersheet Sheet1 sales-pipeline
+// surface is a 2-row stub template with no operational data; building
+// a state machine without operational input would embed assumptions
+// about Pratik's actual sales process that may not match reality.
+// D-026 captures the round-2 interview path: post-tester-interview
+// the workflow vocabulary lands in a follow-up batch.
+//
+// Schema choices that affect the lib:
+//   - schoolName is free-text initially. schoolId may FK to schools.json
+//     once the recce confirms a stable record; pre-recce it stays null.
+//   - gslModel, recceStatus, status, approvalNotes are FREE-TEXT. No
+//     enum normalisation. Operators write whatever describes their
+//     state; D-026 enumerates after round-2 interviews.
+//   - programmeProposed re-uses the existing Programme enum (sales
+//     reps pick STEAM / Young Pioneers / TinkRworks / Harvard HBPE /
+//     VEX) so the conversion-to-MOU pre-fill stays consistent when
+//     the conversion flow lands in Phase 2.
+//   - conversionMouId is recorded once a follow-up batch creates the
+//     MOU; today the field stays null even after both approvals.
+//   - lossReason populated when sales rep clicks Mark as lost.
+// ============================================================================
+
+export interface SalesOpportunity {
+  id: string                       // 'OPP-2627-001'
+  schoolName: string               // free-text; populated even pre-recce
+  schoolId: string | null          // FK to schools.json once recce confirms
+  city: string
+  state: string
+  region: string
+  salesRepId: string               // FK to sales_team.json
+  programmeProposed: Programme | null
+  /** Free-text per W4-F.1; D-026 enumerates after round 2. */
+  gslModel: string | null
+  commitmentsMade: string | null
+  outOfScopeRequirements: string | null
+  /** Free-text per W4-F.1; D-026 enumerates after round 2. */
+  recceStatus: string | null
+  recceCompletedAt: string | null
+  /** Free-text per W4-F.1; D-026 enumerates after round 2. */
+  status: string
+  /** Free-text per W4-F.1; sales rep records approval state in plain language. */
+  approvalNotes: string | null
+  conversionMouId: string | null
+  lossReason: string | null
+  createdAt: string
+  createdBy: string                // User.id
   auditLog: AuditEntry[]
 }
 
@@ -965,6 +1029,7 @@ export type PendingUpdateEntity =
   | 'intakeRecord'
   | 'schoolSpoc'                   // W4-E.1
   | 'notification'                 // W4-E.5
+  | 'salesOpportunity'             // W4-F.1
 
 export interface PendingUpdate {
   id: string                       // UUID
