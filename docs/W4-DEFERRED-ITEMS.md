@@ -10,7 +10,23 @@ Each entry: a stable id, status, surface where it was found, the question, what 
 | triaged | Anish has reviewed; resolution captured below |
 | resolved | Closed; entry kept for audit trail |
 
+## Per-batch summary
+
+| Batch | Range | Count | Theme |
+|---|---|---|---|
+| W4-A / W4-B / W4-C | D-001 to D-008 | 8 | MOU import + school recon (chain MOUs, typos, AY ambiguity) |
+| W4-D | D-009 to D-014 | 6 | Mastersheet backfill (BD Memorial chain, Julien chain, Contai renewal, dual-shipment) |
+| W4-E | D-015 to D-025 | 11 | SPOC DB import + reminders + notifications (15-row schools.json gap, multi-POC parser, deferred cc-rules) |
+| W4-F | D-026 to D-027 | 2 | SalesOpportunity workflow definition + Phase 1.1 AY rollover verification |
+| W4-G | D-028 to D-037 | 10 | Inventory thresholds, sunset SKUs, UI deferrals, Phase 2 stock features |
+
+Total: 37 entries (D-001 through D-037).
+
+The round-2 testing email at end of W4-I composes from this summary plus the per-entry detail. Audience-segmented routing is in `docs/RUNBOOK.md` §11.9.
+
 ---
+
+## W4-A / W4-B / W4-C: MOU import + school recon (D-001 through D-008)
 
 ## D-001 GMR International School (no matching MOU)
 
@@ -77,6 +93,8 @@ Each entry: a stable id, status, surface where it was found, the question, what 
 - **Context:** GMR International School lives at form xlsx row 25 (1-indexed; row 1 is header). The W4-C.4 backfill numbers IRs as `IR-W4C-NNN` where NNN = (form row - 1). GMR was skipped (no MOU match), so IR-W4C-024 was never created. The 23 IRs cover form rows 2..24 contiguously, and GMR sits at row 25.
 - **Resolution:** Verified during W4-C.7 independent verification (`scripts/w4c7-independent-verification.mjs` reads form col 4 for rows 2..max_row; the 23 mapped rows match IR-W4C-001..023 cleanly).
 
+## W4-D: Mastersheet backfill + chain MOU resolution (D-009 through D-014)
+
 ## D-009 Mastersheet row with no MOU match in either active or archived list
 
 - **Status:** open (currently no rows trigger this; sentinel entry for the W4-D.8 verification script)
@@ -126,6 +144,8 @@ Each entry: a stable id, status, surface where it was found, the question, what 
   - If yes: import the new 2627 MOU upstream + re-attach this Cretile delivery as `DIS-BF-Cretile-r15` on the new active MOU.
   - If no: the April 2026 delivery was a final fulfilment of the 2025-26 MOU; backfill `DIS-BF-Cretile-r15` onto `MOU-STEAM-2526-011`.
 - **Needed to close:** Anish confirms with Contai SPOC. The Mastersheet Cretile data + Anish's resolutions JSON in `scripts/w4d-mastersheet-mutation.mjs` together show the full history; round 2 triage just needs the renewal answer to pick which path.
+
+## W4-E: SPOC DB + reminders + notifications (D-015 through D-025)
 
 ## D-015 SPOC DB coverage gap (67 schools without SPOC entries)
 
@@ -243,6 +263,8 @@ Each entry: a stable id, status, surface where it was found, the question, what 
 - **Question:** Do round 2 testers report friction with refresh-only? In a multi-tester pilot, an Ops user may need to know about a Sales-submitted DR within seconds rather than on next page navigation.
 - **Needed to close:** Round 2 feedback. If yes: add a 30s setInterval poll on the bell client component (cheap; reuses the existing notifications.json read), OR upgrade to SSE / WebSocket (heavier; needs a server-side subscription manager). The Phase 1 architecture leaves the door open for either path.
 
+## W4-F: SalesOpportunity workflow + Phase 1.1 verification (D-026 through D-027)
+
 ## D-026 W4-F SalesOpportunity workflow definition (Pratik + Shashank interview)
 
 - **Status:** open
@@ -265,6 +287,19 @@ Each entry: a stable id, status, surface where it was found, the question, what 
   - **D-026.g Vocabulary autocomplete migration.** Once D-026.a + D-026.d formalise the status / recceStatus enums, what is the migration path for existing free-text records? Auto-map prior values to nearest enum match (Levenshtein / fuzzy; risk of wrong assumption), operator manually triages each (high-friction, faithful), or hybrid (auto-map exact-string-equal cases; operator triages anything fuzzy). The W4-F.3 audit log carries every prior value so the migration is a one-shot script.
 
 - **Needed to close:** A scheduled 30-60 minute interview with Pratik + Shashank during round 2. Output is captured as a follow-up batch (likely "W4.5-A" or similar) that builds the workflow against actual operational language, defines `sales-opportunity:approve-l1` / `approve-l2` / `convert-to-mou` permission Actions, lands the state machine in `editOpportunity`, and migrates existing free-text records to the new enums.
+
+## D-027 Phase 1.1 AY rollover verification
+
+- **Status:** open
+- **Surfaced by:** W4-F.2 OPP id sequence design (`OPP-{AY-short}-###` per academic year)
+- **Context:** GSL's academic year runs April-March. Several entity ID sequences are AY-prefixed: `OPP-2627-###` (W4-F.2), `MOU-STEAM-2627-###` (upstream gsl-mou-system), DispatchRequest `DR-...` (W4-D.2; not AY-prefixed but per-MOU), IntakeRecord `IR-W4C-###` (W4-C.4 backfill), Dispatch `DSP-{mouId}-...` and `DIS-BF-{sheet}-r{row}` (W4-D.1 / W4-D.8). The first live AY rollover in this system is April 1, 2027, when the system flips from 26-27 to 27-28. New OPP records on or after April 1, 2027 should use the `OPP-2728-###` prefix and the sequence should reset to 001 cleanly.
+- **Verification scope (Phase 1.1, before April 2027):**
+  - OPP id sequence: confirm `nextOpportunityId` reads from existing records and resets correctly (the function uses `academicYearShort(now)` so the AY recomputes per call; new records on April 1, 2027 should land as `OPP-2728-001`).
+  - MOU id sequence: confirmed handled by upstream gsl-mou-system; verify the mtime guard + sync-runner does not interfere.
+  - DispatchRequest, Dispatch, IntakeRecord, Communication, Notification, SchoolSPOC, MagicLinkToken: most use timestamp-compact or UUID id schemes that are AY-agnostic; verify no surprises.
+- **Needed to close:** A Phase 1.1 verification task in March 2027 (one month before rollover) that drives a synthetic clock-shift test through every entity creation surface to confirm all sequence counters reset cleanly. No round-2 question; this is a reminder for the Phase 1.1 maintenance batch.
+
+## W4-G: Inventory tracking (D-028 through D-037)
 
 ## D-028 Reorder thresholds (Misba/Pradeep operational input)
 
@@ -338,16 +373,13 @@ Each entry: a stable id, status, surface where it was found, the question, what 
 - **Question:** Should the remaining 3 Tinkrsynth units be (a) shipped as a final dispatch to a school still expecting them, (b) written off as obsolete and audited as a stock loss, or (c) reactivated to active: true if Tinkrsynth is still in the GSL roadmap?
 - **Needed to close:** Misba/Pradeep operational decision. The schema's sunset mode preserves reactivation flexibility either way.
 
-## D-027 Phase 1.1 AY rollover verification
+## D-037 TopNav inventory link deferral
 
 - **Status:** open
-- **Surfaced by:** W4-F.2 OPP id sequence design (`OPP-{AY-short}-###` per academic year)
-- **Context:** GSL's academic year runs April-March. Several entity ID sequences are AY-prefixed: `OPP-2627-###` (W4-F.2), `MOU-STEAM-2627-###` (upstream gsl-mou-system), DispatchRequest `DR-...` (W4-D.2; not AY-prefixed but per-MOU), IntakeRecord `IR-W4C-###` (W4-C.4 backfill), Dispatch `DSP-{mouId}-...` and `DIS-BF-{sheet}-r{row}` (W4-D.1 / W4-D.8). The first live AY rollover in this system is April 1, 2027, when the system flips from 26-27 to 27-28. New OPP records on or after April 1, 2027 should use the `OPP-2728-###` prefix and the sequence should reset to 001 cleanly.
-- **Verification scope (Phase 1.1, before April 2027):**
-  - OPP id sequence: confirm `nextOpportunityId` reads from existing records and resets correctly (the function uses `academicYearShort(now)` so the AY recomputes per call; new records on April 1, 2027 should land as `OPP-2728-001`).
-  - MOU id sequence: confirmed handled by upstream gsl-mou-system; verify the mtime guard + sync-runner does not interfere.
-  - DispatchRequest, Dispatch, IntakeRecord, Communication, Notification, SchoolSPOC, MagicLinkToken: most use timestamp-compact or UUID id schemes that are AY-agnostic; verify no surprises.
-- **Needed to close:** A Phase 1.1 verification task in March 2027 (one month before rollover) that drives a synthetic clock-shift test through every entity creation surface to confirm all sequence counters reset cleanly. No round-2 question; this is a reminder for the Phase 1.1 maintenance batch.
+- **Surfaced by:** W4-G.6 UI scope decision (admin tile shipped; topnav link not added)
+- **Context:** Phase 1 ships /admin/inventory accessible via the Admin index tile and via the inline link from the InventoryStatusPanel on /mous/[mouId]/dispatch. The topnav remains: Home / MOUs / Schools / Sales pipeline / Escalations / Admin / Help. Adding an "Inventory" link to the topnav would dilute the cross-cutting focus; the /admin tile is sufficient for OpsHead+Admin discovery.
+- **Question:** Do round-2 testers (specifically Misba and Pradeep, who own the inventory edit surface) report the extra hop (Admin → Inventory) as friction? If yes, add a topnav link.
+- **Needed to close:** Round-2 feedback. If yes, the change is one entry in `NAV_LINKS` in `src/components/ops/TopNav.tsx` with `visibleTo: ['Admin', 'OpsHead']`, mirroring the existing Admin link gate.
 
 ---
 

@@ -146,3 +146,48 @@ The W4-F.3 did-you-mean inline panel surfaces only when `schoolId === null` AND 
 - `src/lib/salesOpportunity/findSchoolMatch.ts`: pure jaccard threshold helper.
 - `docs/RUNBOOK.md` §11.8: W4-F minimal container overview.
 - `docs/RUNBOOK.md` §11.9: W4-I round-2 testing email composition guidance.
+
+---
+
+## 2026-04-28: W4-G inventory permission grants + threshold config + safeguards
+
+W4-G adds the per-SKU stock layer with auto-decrement, low-stock alerts, and threshold edits. 2 new permission Actions plus 3 architectural decisions worth recording.
+
+**2 new Action grants in `src/lib/auth/permissions.ts`:**
+
+- **`inventory:view`**: baseline-granted to every active role (Admin / Leadership / OpsHead / OpsEmployee / SalesHead / SalesRep / Finance / TrainerHead). Read-only access to /admin/inventory list and detail; aligns with the Phase 1 W3-B principle "every authenticated user can view operational state". Sales reps benefit from cross-team awareness (e.g., spot-checking stock when filing a DispatchRequest).
+- **`inventory:edit`**: OpsHead + Admin only. Covers editing currentStock (manual cycle counts or corrections), reorderThreshold (set / clear; null suppresses low-stock alert), notes, and the active flag (sunset / reactivate). The `editInventoryItem` lib enforces this gate; SalesRep / Finance / Leadership / TrainerHead all hard-block.
+
+**Decision: threshold config lives on `InventoryItem.reorderThreshold`, NOT a separate `inventory_thresholds.json` file.**
+
+Reasoning: thresholds are per-SKU, not global. A separate JSON file would duplicate the entity field that already exists in the W4-G.1 schema. Contrast with `reminder_thresholds.json`, which IS a separate file because reminder thresholds are global (the same 14 / 30 / 7 / 7 day-counts apply to every MOU). The pattern is now:
+
+- **Per-entity config** (varies by row): lives as a field on the entity itself; edited via the entity's detail page; audited per-row.
+- **Global config** (one value applies to many rows): lives as a JSON file in `src/data/`; edited via a dedicated /admin surface; audited as a config change.
+
+Future contributors picking between the two patterns: ask "does the value vary per row?" Yes → entity field. No → JSON file.
+
+**Decision: TopNav inventory link deferred to D-037.**
+
+Reasoning: the /admin tile is sufficient for OpsHead+Admin discovery in Phase 1. TopNav real estate is reserved for cross-cutting links (Home, MOUs, Schools, Sales pipeline, Escalations, Admin, Help). Adding inventory as a top-level link would dilute that. Re-evaluate at round 2 if Misba / Pradeep flag the extra hop as friction. The 1-line change matches the cc-rule:create flip pattern.
+
+**Decision: pre-W4-D backfilled Dispatches do NOT decrement inventory (`raisedFrom === 'pre-w4d'` no-op).**
+
+Reasoning: the 22 W4-D.8 backfilled Dispatches represent shipments that already happened pre-system. The Mastersheet "Current Inventory" sheet (the source for the W4-G.3 InventoryItem backfill) ALREADY represents post-historical-shipment state. Decrementing again would double-deduct: the historical shipment is reflected in `currentStock`, and decrementing the backfilled Dispatch would subtract it a second time.
+
+The safeguard is the first check in `decrementInventory.ts`: `if (args.dispatch.raisedFrom === 'pre-w4d') return { ok: true, updatedItems: [], summary: [], lowStockTriggers: [] }`. Future backfill paths that also need this no-op should adopt the same convention (or factor a `BACKFILL_RAISED_FROM_VALUES` set). The pattern is auditable: every Dispatch is one query away from "did this decrement inventory?" via `raisedFrom`.
+
+**Phase 2 trigger awareness:**
+- D-028: Misba / Pradeep set per-SKU `reorderThreshold` values during round 2 or post-round-2 setup. Until set, no low-stock alerts fire (the lib treats null threshold as "never alerts").
+- D-029 / D-030 / D-031: Phase 2 stock history sparklines / reorder PO automation / multi-warehouse stock locations.
+- D-032: round 2 surfaces if the hard-block at `insufficient-stock` creates frequent friction; the policy may soften to "allow with operator-typed override reason" similar to dispatch P2 override.
+- D-036: Tinkrsynth tail-end (3 sunset units) awaits Misba / Pradeep operational decision (ship as final dispatch / write off / reactivate).
+- D-037: TopNav inventory link (deferred per this decision; revisit at round 2).
+
+**References:**
+- `src/lib/inventory/decrementInventory.ts`: pure plan-then-apply lib with 5 hard-block scenarios + threshold-crossing detection + pre-W4-D safeguard.
+- `src/lib/inventory/editInventoryItem.ts`: 4-field edit lib with two audit codes (`inventory-stock-edited` umbrella · `inventory-threshold-edited` threshold-only path).
+- `src/app/admin/inventory/page.tsx` and `src/app/admin/inventory/[id]/page.tsx`: list + detail surfaces.
+- `src/components/ops/InventoryStatusPanel.tsx`: pre-emptive stock visibility on /mous/[mouId]/dispatch.
+- `docs/RUNBOOK.md` §11.10: W4-G inventory tracking overview.
+- `docs/W4-DEFERRED-ITEMS.md` D-028 / D-029 / D-030 / D-031 / D-032 / D-033 / D-034 / D-035 / D-036 / D-037: 10 W4-G deferred items.

@@ -157,6 +157,25 @@ describe('/help page (W3-E orientation doc)', () => {
     expect(html).toContain('Using the SPOC database (W4-E.2)')
   })
 
+  it('W4-G.7 glossary additions render (InventoryItem, Reorder threshold, Stock decrement, Sunset SKU)', async () => {
+    getCurrentUserMock.mockResolvedValue(user('Admin', 'anish.d'))
+    const { default: Page } = await import('./page')
+    const html = renderToStaticMarkup(await Page())
+    expect(html).toContain('InventoryItem')
+    expect(html).toContain('Reorder threshold')
+    expect(html).toContain('Stock decrement')
+    expect(html).toContain('Sunset SKU')
+  })
+
+  it('W4-G.7 workflow additions render (inventory tracking, V9 warning, low-stock notifications)', async () => {
+    getCurrentUserMock.mockResolvedValue(user('Admin', 'anish.d'))
+    const { default: Page } = await import('./page')
+    const html = renderToStaticMarkup(await Page())
+    expect(html).toContain('Tracking inventory and stock levels (W4-G)')
+    expect(html).toContain('What happens when I request a dispatch with low stock (V9 warning)')
+    expect(html).toContain('Receiving low-stock notifications (W4-G)')
+  })
+
   it('user-facing strings use British "Instalment" not American "Installment" (W3-E sweep)', async () => {
     getCurrentUserMock.mockResolvedValue(user('Admin', 'anish.d'))
     const { default: Page } = await import('./page')

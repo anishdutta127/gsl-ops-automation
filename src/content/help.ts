@@ -69,13 +69,13 @@ export const HELP_ROLES: RoleOrientation[] = [
   {
     role: 'Sales (Pratik, Vishwanath)',
     framing: 'You are closest to the schools. Your work moves MOUs from signed to actuals confirmed and starts the kit-dispatch flow with multi-SKU requests.',
-    workstream: 'Track pre-MOU pursuits at /sales-pipeline (W4-F minimal container; status / recce / approval are free-text pending the round-2 interview that formalises the workflow). Confirm the actual student count once a programme starts. Submit DispatchRequests at /dispatch/request when the school needs kits (Ops reviews and approves). Resolve sales-lane escalations. Spot-check school records when you visit. Compose reminders for your own MOUs at /admin/reminders when intake / payment / delivery / feedback chases are needed.',
+    workstream: 'Track pre-MOU pursuits at /sales-pipeline (W4-F minimal container; status / recce / approval are free-text pending the round-2 interview that formalises the workflow). Confirm the actual student count once a programme starts. Submit DispatchRequests at /dispatch/request when the school needs kits (Ops reviews and approves). When stock is short for any SKU on a request you submit, the form surfaces a yellow V9 warning ("stock-availability-warning"); the request is non-blocking, Ops confirms at conversion. Resolve sales-lane escalations. Spot-check school records when you visit. Compose reminders for your own MOUs at /admin/reminders when intake / payment / delivery / feedback chases are needed.',
     whereTime: 'The kanban’s actuals-confirmed column (the queue waiting for you), /sales-pipeline for pre-MOU schools, /dispatch/request to start a kit shipment, the SALES-lane filter on /escalations, and the bell in the top-right showing notifications about your DR submissions and reminder chases on your MOUs.',
   },
   {
     role: 'Ops core team (Pradeep, Misba, Swati, Shashank)',
     framing: 'You are the operational backbone. The kanban is your command centre; drive every transition forward.',
-    workstream: 'Review and convert Sales DispatchRequests at /admin/dispatch-requests, raise direct dispatches when Sales has not requested, send feedback requests, record delivery acknowledgements (renamed Confirm delivery in W4-D.6), compose reminders for stalled entities at /admin/reminders, manage CC rules and lifecycle rules, resolve OPS-lane escalations, triage MOU import review queue. You can do everything an Admin can do.',
+    workstream: 'Review and convert Sales DispatchRequests at /admin/dispatch-requests, raise direct dispatches when Sales has not requested, send feedback requests, record delivery acknowledgements (renamed Confirm delivery in W4-D.6), compose reminders for stalled entities at /admin/reminders, manage CC rules and lifecycle rules, resolve OPS-lane escalations, triage MOU import review queue. Manage per-SKU stock and reorder thresholds at /admin/inventory; the system auto-decrements stock at every dispatch raise / approval, and broadcasts an inventory-low-stock notification to Admin + OpsHead the moment a SKU crosses its threshold downward. You can do everything an Admin can do.',
     whereTime: 'The full kanban (every column, every drag), /admin surfaces, /admin/dispatch-requests for the Sales-side review queue, /admin/reminders for the chase queue, /admin/audit for the system view of who-did-what. The bell broadcasts new DRs, intake completions, payment receipts, and assignment-queue events.',
   },
   {
@@ -272,6 +272,10 @@ export const HELP_GLOSSARY: GlossaryItem[] = [
     definition: 'One payment within an MOU’s payment schedule. A 50/50 schedule has two instalments; a 25/25/25/25 schedule has four. Each instalment has its own PI number, payment record, and dispatch.',
   },
   {
+    term: 'InventoryItem',
+    definition: 'Per-SKU stock record at /admin/inventory. Carries currentStock (integer), reorderThreshold (integer or null = no alert), notes, active flag (false = sunset). Stock decrements automatically on every Dispatch raise / approval. Manual edits at /admin/inventory/[id] are audited as inventory-stock-edited or inventory-threshold-edited (W4-G.5).',
+  },
+  {
     term: 'Kanban',
     definition: 'The homepage at /. Shows every MOU as a card sorted into 9 columns (8 lifecycle stages plus Pre-Ops Legacy). Drag a card to the next column to advance the lifecycle. Each forward-by-one drag opens the existing per-stage form; skip and reverse drags require a reason logged in the audit.',
   },
@@ -336,6 +340,10 @@ export const HELP_GLOSSARY: GlossaryItem[] = [
     definition: 'Configurable in src/data/reminder_thresholds.json without code change. Misba can adjust intake / payment / delivery-ack / feedback-chase day-counts; the lib re-reads on the next request. Same pattern as lifecycle_rules.json.',
   },
   {
+    term: 'Reorder threshold',
+    definition: 'Per-SKU low-stock alert trigger on InventoryItem.reorderThreshold. When stock crosses the threshold downward via a dispatch decrement, the system broadcasts an inventory-low-stock notification to Admin + OpsHead. Threshold is null until Misba/Pradeep configures it via /admin/inventory/[id]; null means no alert (D-028 captures the operational input).',
+  },
+  {
     term: 'Reject reason',
     definition: 'When rejecting an MOU import-review item, you pick from: data-quality-issue, duplicate-of-existing, out-of-scope, awaiting-source-correction, or other (notes required for "other"). The reason lands in the audit trail.',
   },
@@ -362,6 +370,14 @@ export const HELP_GLOSSARY: GlossaryItem[] = [
   {
     term: 'Stage transition',
     definition: 'Moving an MOU card from one column to another on the kanban. Forward-by-1 (happy path, no reason): opens the per-stage form. Skip / Backward / Pre-Ops exit: requires a reason logged in the audit.',
+  },
+  {
+    term: 'Stock decrement',
+    definition: 'Automatic deduction of InventoryItem.currentStock at the moment a Dispatch is created (raiseDispatch direct) or a DispatchRequest is approved (reviewRequest convert). Walks the Dispatch.lineItems flat-or-per-grade, validates aggregate stock, applies. Hard-blocks the Dispatch creation on sku-not-found, cretile-grade-not-found, insufficient-stock, sku-sunset, or invalid-flat-cretile-line. Pre-W4-D backfilled dispatches (raisedFrom = "pre-w4d") do NOT decrement; Mastersheet inventory already reflects post-historical-shipment state (W4-G.4).',
+  },
+  {
+    term: 'Sunset SKU',
+    definition: 'InventoryItem with active = false. The SKU stays in inventory for audit continuity but cannot be dispatched (decrement hard-blocks with reason sku-sunset). Reactivation is one checkbox toggle at /admin/inventory/[id]; no migration needed. As of W4-G.3 backfill: Tinkrsynth and Tinkrsynth Mixer PCB ship as sunset (D-036 captures the tail-end stock decision).',
   },
   {
     term: 'Sync',
@@ -628,6 +644,41 @@ export const HELP_WORKFLOWS: WorkflowItem[] = [
       'CC fan-out uses the SPOC DB top-of-sheet rules via cc_rules.json. New CC contexts in W4-E.4: intake-reminder, payment-reminder, delivery-ack-reminder, feedback-chase. Existing rules with all-communications context still match; per-context rules can be added at /admin/cc-rules.',
       'Editing a SchoolSPOC entry is a Phase 2 deliverable; Phase 1 ships read-only. Round 2 testers flag any per-school correction needed (wrong primary / missing POC / typo in phone) and Anish edits the source data.',
       '15 schools have SPOCs in the SPOC DB but no schools.json entry (D-019 in W4-DEFERRED-ITEMS.md). Round 2 picks whether to add those schools to schools.json or accept as orphaned data.',
+    ],
+  },
+  {
+    task: 'Tracking inventory and stock levels (W4-G)',
+    precondition: 'You have OpsHead or Admin role for editing; every authenticated user can view.',
+    steps: [
+      'Go to /admin/inventory. The list shows every SKU with currentStock, reorderThreshold, last-updated stamp, and a status chip (Low / Out / Sunset) when applicable.',
+      'Filter by category (TinkRworks / Cretile / Other) or status (Active default / Sunset / All) using the dropdowns at the top. Click Apply to refresh the list.',
+      'Click Edit on any row (OpsHead + Admin only) to land on the detail page. Read-only roles see View instead.',
+      'On the detail page, the Identity card shows immutable fields (id, skuName, category, cretileGrade, mastersheetSourceName). Renaming a SKU or moving categories means a new InventoryItem; the old id stays for audit continuity.',
+      'The Stock + threshold form lets you edit Current stock (manual cycle counts or corrections), Reorder threshold (leave empty to clear; null means no alert), Notes (free-text), and Active (uncheck to mark sunset; sunset SKUs hard-block any future dispatch).',
+      'Click Save changes. The page refreshes with a green "Saved." banner; an audit entry lands as inventory-stock-edited or inventory-threshold-edited (with full before / after diff regardless of which code is picked).',
+      'Recent decrement history (last 10 dispatches that decremented this SKU) renders below the form. Each row shows the dispatch id, the stock delta, and the timestamp.',
+      'The full audit log renders at the bottom: every import, edit, and decrement on this SKU since it was created.',
+    ],
+  },
+  {
+    task: 'What happens when I request a dispatch with low stock (V9 warning)',
+    steps: [
+      'Submit your dispatch request as usual at /dispatch/request. Add the line items and submit.',
+      'If any SKU you requested would be short of stock once pending requests convert (yours plus all other open DRs for the same MOU + installment are aggregated), the form surfaces a yellow V9 warning: "stock-availability-warning". The warning is non-blocking; your DR submits successfully.',
+      'Ops sees the same warning at conversion time on /admin/dispatch-requests/[id]. They will confirm with the warehouse (Misba / Pradeep) before approving.',
+      'When Ops approves, the Dispatch creation hard-blocks if stock is genuinely insufficient at that moment (insufficient-stock failure). At that point Ops adjusts line items, restocks, or asks Sales to revise the request.',
+      'V9 is a soft warning; it tells you stock might be tight by the time your turn comes. The hard-block at conversion is the final gate.',
+    ],
+  },
+  {
+    task: 'Receiving low-stock notifications (W4-G)',
+    precondition: 'You have Admin or OpsHead role; the SKU has a reorderThreshold set (D-028 captures the initial setup).',
+    steps: [
+      'When a dispatch decrements a SKU and the new stock is at or below the configured reorderThreshold (and the previous stock was above the threshold; one alert per crossing, not on every decrement after the first), the system broadcasts an inventory-low-stock notification to every active Admin + OpsHead.',
+      'The bell badge in the top right increments on next page navigation. Click the bell to see the row; the title shows the SKU name and current stock; the body cites the dispatch id that triggered it.',
+      'Click the row to open /admin/inventory/[id] for that SKU. The detail page shows the recent decrement history so you can see the dispatch that caused the drop.',
+      'Decide what to do off-system: raise a PO with the supplier (Phase 1 has no PO automation; D-030 captures the Phase 2 trigger), or update the threshold if the alert was premature.',
+      'No notification fires when reorderThreshold is null. Set thresholds at /admin/inventory/[id] before you expect alerts to start landing.',
     ],
   },
 ]
