@@ -29,6 +29,7 @@ const KIND_ICON: Record<Notification['kind'], string> = {
   'payment-recorded': 'banknote',
   'escalation-assigned': 'alert-triangle',
   'reminder-due': 'bell',
+  'inventory-low-stock': 'package-minus',
 }
 
 interface NotificationBellProps {

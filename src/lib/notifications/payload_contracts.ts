@@ -97,6 +97,16 @@ export interface ReminderDuePayload {
   daysOverdue: number
 }
 
+export interface InventoryLowStockPayload {
+  inventoryItemId: string
+  skuName: string
+  currentStock: number
+  threshold: number
+  /** The dispatch whose decrement crossed the threshold; null when the
+   * crossing fired from a manual stock-edit downward. */
+  dispatchId: string | null
+}
+
 // ----------------------------------------------------------------------------
 // Discriminated union (informational; createNotification accepts loose payload
 // and validates field-by-field using the validators below).
@@ -111,6 +121,7 @@ export type NotificationPayloadByKind = {
   'payment-recorded': PaymentRecordedPayload
   'escalation-assigned': EscalationAssignedPayload
   'reminder-due': ReminderDuePayload
+  'inventory-low-stock': InventoryLowStockPayload
 }
 
 // ----------------------------------------------------------------------------
@@ -225,5 +236,13 @@ export const PAYLOAD_VALIDATORS: Record<
       schoolName: isString,
       composerName: isString,
       daysOverdue: isNumber,
+    }),
+  'inventory-low-stock': (p) =>
+    check(p, {
+      inventoryItemId: isString,
+      skuName: isString,
+      currentStock: isNumber,
+      threshold: isNumber,
+      dispatchId: isStringOrNull,
     }),
 }

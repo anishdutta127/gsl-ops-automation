@@ -123,6 +123,13 @@ export type Action =
   | 'sales-opportunity:edit'
   | 'sales-opportunity:view'
   | 'sales-opportunity:mark-lost'
+  // W4-G.1: InventoryItem stock + threshold management. View baseline-
+  // granted to every active role (Sales sees stock when raising a
+  // dispatch request; Finance + Leadership for cross-team awareness).
+  // Edit OpsHead + Admin only; Misba / Pradeep manage stock counts +
+  // thresholds at /admin/inventory.
+  | 'inventory:view'
+  | 'inventory:edit'
 
 // Sentinel: Admin role grants all actions. Represented as wildcard in the
 // role map so we never have to enumerate the full action list for Admin.
@@ -140,6 +147,7 @@ const ROLE_BASE_ACTIONS: Record<UserRole, Set<Action> | typeof ADMIN_WILDCARD> =
     'notification:read',
     'notification:mark-read',
     'sales-opportunity:view',
+    'inventory:view',
   ]),
   SalesHead: new Set<Action>([
     'drift:approve',
@@ -153,6 +161,7 @@ const ROLE_BASE_ACTIONS: Record<UserRole, Set<Action> | typeof ADMIN_WILDCARD> =
     'sales-opportunity:edit',
     'sales-opportunity:view',
     'sales-opportunity:mark-lost',
+    'inventory:view',
   ]),
   SalesRep: new Set<Action>([
     // Phase 1: scoped MOU view only; the only mutation a SalesRep can
@@ -170,6 +179,7 @@ const ROLE_BASE_ACTIONS: Record<UserRole, Set<Action> | typeof ADMIN_WILDCARD> =
     'sales-opportunity:edit',
     'sales-opportunity:view',
     'sales-opportunity:mark-lost',
+    'inventory:view',
   ]),
   OpsHead: new Set<Action>([
     'cc-rule:toggle',
@@ -194,6 +204,8 @@ const ROLE_BASE_ACTIONS: Record<UserRole, Set<Action> | typeof ADMIN_WILDCARD> =
     'notification:read',
     'notification:mark-read',
     'sales-opportunity:view',
+    'inventory:view',
+    'inventory:edit',
   ]),
   OpsEmployee: new Set<Action>([
     // Phase 1 base: no write actions on the matrix. Misba is OpsEmployee
@@ -203,6 +215,7 @@ const ROLE_BASE_ACTIONS: Record<UserRole, Set<Action> | typeof ADMIN_WILDCARD> =
     'notification:read',
     'notification:mark-read',
     'sales-opportunity:view',
+    'inventory:view',
   ]),
   Finance: new Set<Action>([
     'mou:generate-pi',
@@ -211,6 +224,7 @@ const ROLE_BASE_ACTIONS: Record<UserRole, Set<Action> | typeof ADMIN_WILDCARD> =
     'notification:read',
     'notification:mark-read',
     'sales-opportunity:view',
+    'inventory:view',
   ]),
   TrainerHead: new Set<Action>([
     // Academics-lane visibility (per canViewAuditEntry) plus escalation
@@ -219,6 +233,7 @@ const ROLE_BASE_ACTIONS: Record<UserRole, Set<Action> | typeof ADMIN_WILDCARD> =
     'notification:read',
     'notification:mark-read',
     'sales-opportunity:view',
+    'inventory:view',
   ]),
 }
 

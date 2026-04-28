@@ -31,6 +31,7 @@ const KIND_LABEL: Record<NotificationKind | 'all' | 'unread', string> = {
   'payment-recorded': 'Payment recorded',
   'escalation-assigned': 'Escalation',
   'reminder-due': 'Reminder',
+  'inventory-low-stock': 'Inventory low',
 }
 
 const FILTER_KEYS: Array<NotificationKind | 'all' | 'unread'> = [
@@ -44,6 +45,7 @@ const FILTER_KEYS: Array<NotificationKind | 'all' | 'unread'> = [
   'payment-recorded',
   'escalation-assigned',
   'reminder-due',
+  'inventory-low-stock',
 ]
 
 interface PageProps {

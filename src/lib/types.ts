@@ -155,6 +155,19 @@ export type AuditAction =
   // by mouId + type.
   | 'reminder-composed'
   | 'reminder-marked-sent'
+  // W4-G.1: InventoryItem lifecycle. 4 actions cover the only
+  // mutations the lib supports today:
+  //   - imported-from-mastersheet: backfill at W4-G.3 mutation
+  //   - stock-edited: Misba/Pradeep manual stock correction
+  //   - threshold-edited: reorder threshold set / changed
+  //   - decremented-by-dispatch: side effect of W4-G.4 hook on
+  //     raiseDispatch + approveRequest conversion paths. The audit
+  //     entry mirrors on the parent Dispatch + InventoryItem so the
+  //     audit reader can grep either side without joins.
+  | 'inventory-imported-from-mastersheet'
+  | 'inventory-stock-edited'
+  | 'inventory-threshold-edited'
+  | 'inventory-decremented-by-dispatch'
   // W4-F.1: SalesOpportunity lifecycle. Minimal-container scope per
   // Anish's option C decision. Free-text status / recce / gslModel
   // fields with no state-machine; the workflow vocabulary is deferred
@@ -358,6 +371,60 @@ export interface MOU {
 }
 
 // ============================================================================
+// InventoryItem (W4-G.1; SKU-level stock tracking)
+//
+// 18 SKU rows expected after W4-G.3 backfill: 8 Cretile per-grade rows
+// + 7 TinkRworks Reusable Kits + 3 Mastersheet TinkRworks rows held
+// for Anish review (TinkRsynth, TinkRsynth Mixer PCB, P3 Project Kit) +
+// 2 placeholder rows for Push Pull Pin and Steam Academy (in Dispatch
+// vocabulary but absent from Mastersheet; D-034 captures the round-2
+// stock-set).
+//
+// Naming convention (Anish W4-G recon decision): Dispatch-aligned simple
+// labels (Tinkrpython, Launchpad, Cretile Grade-band kit + grade) so
+// the existing 27 Dispatch records and the eventual decrement hook
+// stay consistent. Verbose Mastersheet names preserved on
+// `mastersheetSourceName` for the audit trail; that field stays null
+// for entries that originated outside Mastersheet (e.g., Push Pull Pin
+// placeholders).
+//
+// Cretile grade-band SKUs use `category: 'Cretile'` + `cretileGrade: N`;
+// TinkRworks SKUs use `category: 'TinkRworks'` + `cretileGrade: null`.
+// A Dispatch line item with `kind: 'per-grade'` decrements the matching
+// per-grade Cretile InventoryItem(s); a flat line item decrements the
+// matching TinkRworks SKU directly.
+// ============================================================================
+
+export type InventoryCategory = 'TinkRworks' | 'Cretile' | 'Other'
+
+export interface InventoryItem {
+  id: string                       // 'INV-LAUNCHPAD' / 'INV-CRETILE-G5' / etc.
+  /** Dispatch-aligned simple label; matches Dispatch.lineItems[].skuName. */
+  skuName: string
+  category: InventoryCategory
+  /** Populated for Cretile per-grade rows; null for TinkRworks flat SKUs. */
+  cretileGrade: number | null
+  /** Verbose Mastersheet name preserved for audit; null when not from Mastersheet. */
+  mastersheetSourceName: string | null
+  currentStock: number
+  /** Null until Misba/Pradeep configures via /admin/inventory/[id] (D-028). */
+  reorderThreshold: number | null
+  notes: string | null
+  /**
+   * False for sunset SKUs (e.g., TinkRsynth Mixer PCB which
+   * Mastersheet flagged "we don't have this in our inventory").
+   * Inactive items render in the list filtered behind the Active
+   * chip; decrement attempts against an inactive item warn but do
+   * not fail (round-2 will decide whether a sunset SKU should
+   * hard-block).
+   */
+  active: boolean
+  lastUpdatedAt: string
+  lastUpdatedBy: string             // User.id; 'system-w4g-import' for backfill
+  auditLog: AuditEntry[]
+}
+
+// ============================================================================
 // SalesOpportunity (W4-F.1; pre-MOU sales pipeline container)
 //
 // Minimal container per Anish's option C: free-text status / recce /
@@ -483,6 +550,7 @@ export type NotificationKind =
   | 'payment-recorded'              // Finance records receipt -> notify Ops + sales owner
   | 'escalation-assigned'           // Escalation assigned -> notify assignee
   | 'reminder-due'                  // Reminder composed -> notify sales owner of MOU
+  | 'inventory-low-stock'           // W4-G.5 stock crossed reorderThreshold downward
 
 export interface Notification {
   id: string                       // 'NTF-...'
@@ -1041,6 +1109,7 @@ export type PendingUpdateEntity =
   | 'schoolSpoc'                   // W4-E.1
   | 'notification'                 // W4-E.5
   | 'salesOpportunity'             // W4-F.1
+  | 'inventoryItem'                // W4-G.1
 
 export interface PendingUpdate {
   id: string                       // UUID
