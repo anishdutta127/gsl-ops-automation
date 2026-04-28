@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-04-28T08:42:30.129Z",
+  "generatedAt": "2026-04-28T08:52:28.253Z",
   "purpose": "W4-E.3 audit pass: SPOC DB top-of-sheet rules vs cc_rules.json. Read-only output; no mutation.",
   "inputs": {
     "spocDbRulesCount": 10,
-    "ccRulesCount": 10,
+    "ccRulesCount": 12,
     "sheetRulesFromVerification": {
       "South-West": [
         {
@@ -120,8 +120,8 @@
         "R. Balu",
         "Rajesh"
       ],
-      "outcome": "unmatched-spoc-db",
-      "matchedCcRuleId": null,
+      "outcome": "clean-match",
+      "matchedCcRuleId": "CCR-SW-TAMIL-NADU",
       "diffDetail": null,
       "notes": null
     },
@@ -260,8 +260,8 @@
         "Sahil Sharma",
         "Pooja Sharma"
       ],
-      "outcome": "unmatched-spoc-db",
-      "matchedCcRuleId": null,
+      "outcome": "clean-match",
+      "matchedCcRuleId": "CCR-NORTH-GR-INTERNATIONAL",
       "diffDetail": null,
       "notes": null
     },
@@ -360,9 +360,9 @@
     }
   ],
   "summary": {
-    "cleanMatch": 3,
+    "cleanMatch": 5,
     "contextDrift": 4,
-    "unmatchedSpocDb": 3,
+    "unmatchedSpocDb": 1,
     "partialCompound": 0,
     "derivedCcRules": 5,
     "auditClean": false

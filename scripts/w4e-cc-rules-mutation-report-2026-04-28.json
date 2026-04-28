@@ -1,0 +1,80 @@
+{
+  "generatedAt": "2026-04-28T17:00:00.000Z",
+  "purpose": "W4-E.3 Phase 2 mutation: cc_rules.json updates per Anish-signed audit-pass decisions on 2026-04-28.",
+  "decisions": {
+    "item1_tamilNadu": "ADD CCR-SW-TAMIL-NADU with sp-balu_r; Rajesh -> D-022",
+    "item2_hyderabad": "DEFER -> D-022 (neither Kranthi nor Pooja Sharma mapped)",
+    "item3_maharashtra": "DEFER -> D-022 (Shushankita not mapped)",
+    "item4_ttt_all": "DEFER -> D-022 (Shushankita not mapped); CCR-TTT-FEEDBACK stays narrow",
+    "item5_north_1_7": "KEEP AS-IS per Anish (operational practice all-communications); D-021 SPOC-DB header fix",
+    "item6_grInternational": "ADD CCR-NORTH-GR-INTERNATIONAL with sp-sahil; Pooja Sharma -> D-022; sp-sahil unconfirmed",
+    "item7_ttt_all_dup": "Combined into item 4 deferral"
+  },
+  "added": [
+    {
+      "id": "CCR-SW-TAMIL-NADU",
+      "scope": "sub-region",
+      "scopeValue": "Tamil Nadu",
+      "contexts": [
+        "all-communications"
+      ],
+      "ccUserIds": [
+        "sp-balu_r"
+      ],
+      "sourceRuleText": "Keep R. Balu and Rajesh in Cc for Tamil Nadu Schools"
+    },
+    {
+      "id": "CCR-NORTH-GR-INTERNATIONAL",
+      "scope": "school",
+      "scopeValue": "SCH-GR_INTERNATIONAL_SCH",
+      "contexts": [
+        "all-communications"
+      ],
+      "ccUserIds": [
+        "sp-sahil"
+      ],
+      "sourceRuleText": "Keep Sahil Sharma, Pooja Sharma in Cc for GR International School"
+    }
+  ],
+  "deferred": [
+    {
+      "proposedId": "CCR-SW-HYDERABAD",
+      "sheet": "South-West",
+      "rowNumber": 4,
+      "sourceText": "Keep Kranthi and Pooja Sharma in Cc for Hyderabad Schools",
+      "namedUsers": [
+        "Kranthi",
+        "Pooja Sharma"
+      ],
+      "knownMappings": {},
+      "reason": "Neither \"Kranthi\" nor \"Pooja Sharma\" exists in sales_team.json or users.json. Anish: do not fabricate ccUserIds. D-022."
+    },
+    {
+      "proposedId": "CCR-SW-MAHARASHTRA",
+      "sheet": "South-West",
+      "rowNumber": 5,
+      "sourceText": "Keep Shushankita in Cc for Schools in Maharashtra and all TTT Schools",
+      "namedUsers": [
+        "Shushankita"
+      ],
+      "knownMappings": {},
+      "reason": "\"Shushankita\" not in sales_team.json or users.json. SW#5 is a compound rule; the Maharashtra sub-region portion needs Shushankita's ID before the rule can land. D-022."
+    },
+    {
+      "proposedId": "CCR-TTT-ALL",
+      "sheet": "derived",
+      "rowNumber": null,
+      "sourceText": "Keep Shushankita in Cc for Schools in all TTT Schools (East#2 + North#3 + SW#5 TTT portion)",
+      "namedUsers": [
+        "Shushankita"
+      ],
+      "knownMappings": {},
+      "reason": "\"Shushankita\" not mapped. CCR-TTT-FEEDBACK stays narrow per Anish. CCR-TTT-ALL (training-mode TTT, all-communications) lands once Shushankita's ID is in users.json. D-022."
+    }
+  ],
+  "ccResolverUnionBehaviour": {
+    "verified": true,
+    "reference": "src/lib/ccResolver.test.ts L330 \"overlapping ccUserIds dedupe across multiple matching rules\"",
+    "conclusion": "Resolver iterates every matching rule, accumulates ccUserIds into a Set, then resolves Set -> emails (also a Set). Multiple matching rules produce union of users without duplication. CCR-TTT-FEEDBACK and CCR-TTT-ALL (when later added) combine cleanly."
+  }
+}

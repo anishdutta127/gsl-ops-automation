@@ -14,9 +14,9 @@ import { describe, expect, it } from 'vitest'
 import auditReport from '../../../scripts/w4e-cc-rules-audit-2026-04-28.json'
 
 describe('W4-E.3 audit shape', () => {
-  it('processes 10 SPOC DB rules vs 10 cc_rules.json entries', () => {
+  it('processes 10 SPOC DB rules vs 12 cc_rules.json entries (post-Phase-2 mutation)', () => {
     expect(auditReport.inputs.spocDbRulesCount).toBe(10)
-    expect(auditReport.inputs.ccRulesCount).toBe(10)
+    expect(auditReport.inputs.ccRulesCount).toBe(12)
     expect(auditReport.outcomes.length).toBe(10)
   })
 
@@ -33,12 +33,18 @@ describe('W4-E.3 audit shape', () => {
   })
 })
 
-describe('W4-E.3 audit findings (2026-04-28)', () => {
-  it('audit is NOT clean: 4 context-drift + 3 unmatched-spoc-db rows surfaced', () => {
+describe('W4-E.3 audit findings (post-mutation 2026-04-28)', () => {
+  it('audit is NOT clean: 4 context-drift + 1 unmatched-spoc-db remain after Phase 2 mutation', () => {
+    // Pre-mutation: 3 clean / 4 drift / 3 unmatched. Phase 2 added
+    // CCR-SW-TAMIL-NADU and CCR-NORTH-GR-INTERNATIONAL, lifting
+    // SW#3 + North#2 from unmatched to clean. The 4 drifts
+    // (SW#5 / East#2 / North#1 / North#3) are intentional per
+    // Anish's decisions (D-021 keeps CCR-NORTH-1-7 broad;
+    // D-022 captures the deferred Shushankita rules).
     expect(auditReport.summary.auditClean).toBe(false)
     expect(auditReport.summary.contextDrift).toBe(4)
-    expect(auditReport.summary.unmatchedSpocDb).toBe(3)
-    expect(auditReport.summary.cleanMatch).toBe(3)
+    expect(auditReport.summary.unmatchedSpocDb).toBe(1)
+    expect(auditReport.summary.cleanMatch).toBe(5)
   })
 
   it('North#1 carries the D-016 typo note verbatim ("East Schools" inside North)', () => {
@@ -49,22 +55,19 @@ describe('W4-E.3 audit findings (2026-04-28)', () => {
     expect(n1!.sheet).toBe('North')
   })
 
-  it('SW#3 Tamil Nadu and SW#4 Hyderabad are the unmatched sub-region rules', () => {
+  it('only SW#4 Hyderabad remains unmatched after Phase 2 (D-022 deferral)', () => {
     const unmatched = auditReport.outcomes
       .filter((o) => o.outcome === 'unmatched-spoc-db')
       .map((o) => o.spocId)
-    expect(unmatched).toContain('SW#3')
-    expect(unmatched).toContain('SW#4')
-    expect(unmatched).toContain('North#2')
-    expect(unmatched.length).toBe(3)
+    expect(unmatched).toEqual(['SW#4'])
   })
 
   it('CCR-TTT-FEEDBACK + CCR-NORTH-1-7 carry the context-drift signal vs SPOC-DB', () => {
     const driftRows = auditReport.outcomes.filter((o) => o.outcome === 'context-drift')
     expect(driftRows.length).toBe(4)
-    const eastN3Drift = driftRows.find((o) => o.spocId === 'North#1')
-    expect(eastN3Drift?.diffDetail?.spocContexts).toEqual(['closing-letter'])
-    expect(eastN3Drift?.diffDetail?.ccContexts).toEqual(['all-communications'])
+    const n1Drift = driftRows.find((o) => o.spocId === 'North#1')
+    expect(n1Drift?.diffDetail?.spocContexts).toEqual(['closing-letter'])
+    expect(n1Drift?.diffDetail?.ccContexts).toEqual(['all-communications'])
   })
 
   it('5 derived cc_rules entries have no SPOC DB origin (intentional system extensions)', () => {

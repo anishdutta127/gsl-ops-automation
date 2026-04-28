@@ -203,5 +203,75 @@
     "disabledBy": null,
     "disabledReason": null,
     "auditLog": []
+  },
+  {
+    "id": "CCR-SW-TAMIL-NADU",
+    "sheet": "South-West",
+    "scope": "sub-region",
+    "scopeValue": "Tamil Nadu",
+    "contexts": [
+      "all-communications"
+    ],
+    "ccUserIds": [
+      "sp-balu_r"
+    ],
+    "enabled": true,
+    "sourceRuleText": "Keep R. Balu and Rajesh in Cc for Tamil Nadu Schools",
+    "createdAt": "2026-04-28T17:00:00.000Z",
+    "createdBy": "system-w4e-audit",
+    "disabledAt": null,
+    "disabledBy": null,
+    "disabledReason": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T17:00:00.000Z",
+        "user": "system-w4e-audit",
+        "action": "cc-rule-created",
+        "after": {
+          "source": "W4-E.3 audit pass; SPOC DB South-West sheet row 3",
+          "sheetHeader": "Keep R. Balu and Rajesh in Cc for Tamil Nadu Schools",
+          "ccUserIds": [
+            "sp-balu_r"
+          ],
+          "gap": "Rajesh has no entry in sales_team.json or users.json; D-022 captures the round 2 mapping."
+        },
+        "notes": "Added per Anish W4-E.3 audit-pass decision item 1; partial CC list (sp-balu_r mapped to \"R. Balu\"); Rajesh deferred to D-022."
+      }
+    ]
+  },
+  {
+    "id": "CCR-NORTH-GR-INTERNATIONAL",
+    "sheet": "North",
+    "scope": "school",
+    "scopeValue": "SCH-GR_INTERNATIONAL_SCH",
+    "contexts": [
+      "all-communications"
+    ],
+    "ccUserIds": [
+      "sp-sahil"
+    ],
+    "enabled": true,
+    "sourceRuleText": "Keep Sahil Sharma, Pooja Sharma in Cc for GR International School",
+    "createdAt": "2026-04-28T17:00:00.000Z",
+    "createdBy": "system-w4e-audit",
+    "disabledAt": null,
+    "disabledBy": null,
+    "disabledReason": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T17:00:00.000Z",
+        "user": "system-w4e-audit",
+        "action": "cc-rule-created",
+        "after": {
+          "source": "W4-E.3 audit pass; SPOC DB North sheet row 2",
+          "sheetHeader": "Keep Sahil Sharma, Pooja Sharma in Cc for GR International School",
+          "ccUserIds": [
+            "sp-sahil"
+          ],
+          "gap": "sp-sahil is the only Sahil in sales_team.json (single-name convention) but the mapping to \"Sahil Sharma\" is unconfirmed. \"Pooja Sharma\" has no entry. D-022 captures both."
+        },
+        "notes": "Added per Anish W4-E.3 audit-pass decision item 6; partial CC list (sp-sahil tentative match for \"Sahil Sharma\"); Pooja Sharma deferred to D-022."
+      }
+    ]
   }
 ]

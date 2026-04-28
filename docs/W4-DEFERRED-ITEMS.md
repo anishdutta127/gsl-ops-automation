@@ -195,6 +195,29 @@ Each entry: a stable id, status, surface where it was found, the question, what 
 - **Question:** Confirm the 4-name interpretation and re-confirm primary designation. If correct, split entry-2 into Hassan and Fiza; reassign primary if Anish prefers a different name.
 - **Needed to close:** Anish flags the 4-name split during round 2; a follow-up commit splits entry-2 into 2 SchoolSPOC records (Hassan + Fiza separately) using their individual phone + email tuples from the source cell. The parser fix lands once at the same time so future SPOC DB refreshes don't re-introduce the smash.
 
+## D-021 CCR-NORTH-1-7 scope mismatch with SPOC DB header text
+
+- **Status:** open
+- **Surfaced by:** W4-E.3 audit pass (`scripts/w4e-cc-rules-audit-2026-04-28.json`, North#1)
+- **Context:** SPOC DB North-sheet rule 1 source text: "Keep Roveena, Pooja Sharma from Sr.no 1 to 7 in Cc while sending the closing letters for East Schools." Literal contexts: `closing-letter`. Operational practice (Anish-confirmed 2026-04-28): regional leads CC on `all-communications` for Sr.no 1-7 North MOUs, not just closing letters. CCR-NORTH-1-7 in cc_rules.json is `all-communications` and stays unchanged.
+- **Question:** Should the SPOC DB sheet header text be updated to match operational practice (i.e., "all communications" instead of "closing letters"), or should the system rule narrow to match the strict header interpretation?
+- **Needed to close:** Anish asks Misba to update SPOC DB sheet header text to match practice (or confirm narrow interpretation is correct). The North-sheet "East Schools" typo from D-016 sits alongside this fix.
+
+## D-022 CC rule additions deferred where SPOC DB header doesn't map to existing user IDs
+
+- **Status:** open
+- **Surfaced by:** W4-E.3 Phase 2 mutation (`scripts/w4e-cc-rules-mutation-report-2026-04-28.json`)
+- **Context:** Three SPOC DB top-of-sheet CC rules name users who are not in `users.json` or `sales_team.json`. Per Anish's directive: do not fabricate ccUserIds. The rules are deferred until the named users are mapped to existing IDs (or new entries are added to `sales_team.json`).
+- **Deferred rules (3):**
+  - **CCR-SW-HYDERABAD** : header text "Keep Kranthi and Pooja Sharma in Cc for Hyderabad Schools". Neither "Kranthi" nor "Pooja Sharma" exists in `sales_team.json` or `users.json`.
+  - **CCR-SW-MAHARASHTRA** : header text "Keep Shushankita in Cc for Schools in Maharashtra and all TTT Schools" (compound rule; Maharashtra portion). "Shushankita" not in `sales_team.json` or `users.json`.
+  - **CCR-TTT-ALL** : derived rule covering training-mode TTT all-communications context (East#2 + North#3 + SW#5 TTT portion). Same Shushankita mapping gap. CCR-TTT-FEEDBACK stays narrow (feedback-request only) per Anish.
+- **Partial-mapping noted on the 2 added rules (CCR-SW-TAMIL-NADU + CCR-NORTH-GR-INTERNATIONAL):**
+  - CCR-SW-TAMIL-NADU header names "R. Balu and Rajesh"; only `sp-balu_r` is mapped. "Rajesh" not in `sales_team.json` or `users.json`. Partial CC list shipped with the rule.
+  - CCR-NORTH-GR-INTERNATIONAL header names "Sahil Sharma, Pooja Sharma"; mapped to `sp-sahil` (single-name convention, unconfirmed match for "Sahil Sharma"). "Pooja Sharma" not mapped. Partial CC list shipped.
+- **Question:** For each deferred / partial mapping, who is the canonical user (name, role, email, sales territory)? Should new `sales_team.json` entries be created, or existing `users.json` users mapped?
+- **Needed to close:** Anish + Misba confirm the 4 missing names (Rajesh, Kranthi, Pooja Sharma, Shushankita) and the unconfirmed Sahil-Sharma mapping. Each resolution either adds a sales_team / users entry, or maps to an existing entry. Once mapped, the 3 deferred rules land via a follow-up cc_rules mutation; the 2 partial rules gain the additional ccUserIds.
+
 ---
 
 ## How items leave this registry

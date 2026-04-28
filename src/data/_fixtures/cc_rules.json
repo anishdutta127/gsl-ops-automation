@@ -3,9 +3,17 @@
     "id": "CCR-SW-RAIPUR-PUNE-NAGPUR",
     "sheet": "South-West",
     "scope": "sub-region",
-    "scopeValue": ["Raipur", "Pune", "Nagpur"],
-    "contexts": ["all-communications"],
-    "ccUserIds": ["sp-vikram"],
+    "scopeValue": [
+      "Raipur",
+      "Pune",
+      "Nagpur"
+    ],
+    "contexts": [
+      "all-communications"
+    ],
+    "ccUserIds": [
+      "sp-vikram"
+    ],
     "enabled": true,
     "sourceRuleText": "Keep Suresh and Pallavi in Cc for Raipur, Pune, Nagpur Schools",
     "createdAt": "2026-04-15T00:00:00Z",
@@ -20,8 +28,12 @@
     "sheet": "South-West",
     "scope": "sub-region",
     "scopeValue": "Bangalore",
-    "contexts": ["all-communications"],
-    "ccUserIds": ["sp-vishwanath"],
+    "contexts": [
+      "all-communications"
+    ],
+    "ccUserIds": [
+      "sp-vishwanath"
+    ],
     "enabled": true,
     "sourceRuleText": "Bangalore Schools always cc Vishwanath",
     "createdAt": "2026-04-15T00:00:00Z",
@@ -36,8 +48,12 @@
     "sheet": "East",
     "scope": "region",
     "scopeValue": "East",
-    "contexts": ["welcome-note"],
-    "ccUserIds": ["sp-rohan"],
+    "contexts": [
+      "welcome-note"
+    ],
+    "ccUserIds": [
+      "sp-rohan"
+    ],
     "enabled": true,
     "sourceRuleText": "Keep Prodipto, Avishek, Deepjyoti in Cc while sending the welcome note for East Schools",
     "createdAt": "2026-04-15T00:00:00Z",
@@ -52,8 +68,12 @@
     "sheet": "East",
     "scope": "region",
     "scopeValue": "East",
-    "contexts": ["dispatch-notification"],
-    "ccUserIds": ["sp-rohan"],
+    "contexts": [
+      "dispatch-notification"
+    ],
+    "ccUserIds": [
+      "sp-rohan"
+    ],
     "enabled": true,
     "sourceRuleText": "Cc East zonal coordinator on dispatch notifications",
     "createdAt": "2026-04-15T00:00:00Z",
@@ -68,8 +88,12 @@
     "sheet": "North",
     "scope": "sr-no-range",
     "scopeValue": "1..7",
-    "contexts": ["all-communications"],
-    "ccUserIds": ["sp-neha"],
+    "contexts": [
+      "all-communications"
+    ],
+    "ccUserIds": [
+      "sp-neha"
+    ],
     "enabled": true,
     "sourceRuleText": "North sheet Sr.no 1 to 7: Cc Neha on all communications",
     "createdAt": "2026-04-15T00:00:00Z",
@@ -84,8 +108,13 @@
     "sheet": "North",
     "scope": "region",
     "scopeValue": "North",
-    "contexts": ["welcome-note", "closing-letter"],
-    "ccUserIds": ["sp-neha"],
+    "contexts": [
+      "welcome-note",
+      "closing-letter"
+    ],
+    "ccUserIds": [
+      "sp-neha"
+    ],
     "enabled": true,
     "sourceRuleText": "North zonal manager on welcome and closing notes only",
     "createdAt": "2026-04-15T00:00:00Z",
@@ -100,8 +129,12 @@
     "sheet": "derived",
     "scope": "training-mode",
     "scopeValue": "TTT",
-    "contexts": ["feedback-request"],
-    "ccUserIds": ["shashank.s"],
+    "contexts": [
+      "feedback-request"
+    ],
+    "ccUserIds": [
+      "shashank.s"
+    ],
     "enabled": true,
     "sourceRuleText": "Cc TrainerHead on TTT-mode feedback requests",
     "createdAt": "2026-04-15T00:00:00Z",
@@ -116,8 +149,12 @@
     "sheet": "derived",
     "scope": "training-mode",
     "scopeValue": "GSL-Trainer",
-    "contexts": ["all-communications"],
-    "ccUserIds": ["shashank.s"],
+    "contexts": [
+      "all-communications"
+    ],
+    "ccUserIds": [
+      "shashank.s"
+    ],
     "enabled": true,
     "sourceRuleText": "Cc TrainerHead on all GSL-Trainer mode communications",
     "createdAt": "2026-04-15T00:00:00Z",
@@ -132,8 +169,12 @@
     "sheet": "derived",
     "scope": "school",
     "scopeValue": "SCH-NARAYANA_SCHOOL",
-    "contexts": ["all-communications"],
-    "ccUserIds": ["sp-rohan"],
+    "contexts": [
+      "all-communications"
+    ],
+    "ccUserIds": [
+      "sp-rohan"
+    ],
     "enabled": true,
     "sourceRuleText": "Narayana chain coordinator on all communications for the chain MOU",
     "createdAt": "2026-04-15T00:00:00Z",
@@ -148,8 +189,12 @@
     "sheet": "derived",
     "scope": "region",
     "scopeValue": "ALL",
-    "contexts": ["escalation-notification"],
-    "ccUserIds": ["ameet.z"],
+    "contexts": [
+      "escalation-notification"
+    ],
+    "ccUserIds": [
+      "ameet.z"
+    ],
     "enabled": true,
     "sourceRuleText": "Cc Leadership on every escalation notification (visibility rule)",
     "createdAt": "2026-04-15T00:00:00Z",
@@ -158,5 +203,75 @@
     "disabledBy": null,
     "disabledReason": null,
     "auditLog": []
+  },
+  {
+    "id": "CCR-SW-TAMIL-NADU",
+    "sheet": "South-West",
+    "scope": "sub-region",
+    "scopeValue": "Tamil Nadu",
+    "contexts": [
+      "all-communications"
+    ],
+    "ccUserIds": [
+      "sp-balu_r"
+    ],
+    "enabled": true,
+    "sourceRuleText": "Keep R. Balu and Rajesh in Cc for Tamil Nadu Schools",
+    "createdAt": "2026-04-28T17:00:00.000Z",
+    "createdBy": "system-w4e-audit",
+    "disabledAt": null,
+    "disabledBy": null,
+    "disabledReason": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T17:00:00.000Z",
+        "user": "system-w4e-audit",
+        "action": "cc-rule-created",
+        "after": {
+          "source": "W4-E.3 audit pass; SPOC DB South-West sheet row 3",
+          "sheetHeader": "Keep R. Balu and Rajesh in Cc for Tamil Nadu Schools",
+          "ccUserIds": [
+            "sp-balu_r"
+          ],
+          "gap": "Rajesh has no entry in sales_team.json or users.json; D-022 captures the round 2 mapping."
+        },
+        "notes": "Added per Anish W4-E.3 audit-pass decision item 1; partial CC list (sp-balu_r mapped to \"R. Balu\"); Rajesh deferred to D-022."
+      }
+    ]
+  },
+  {
+    "id": "CCR-NORTH-GR-INTERNATIONAL",
+    "sheet": "North",
+    "scope": "school",
+    "scopeValue": "SCH-GR_INTERNATIONAL_SCH",
+    "contexts": [
+      "all-communications"
+    ],
+    "ccUserIds": [
+      "sp-sahil"
+    ],
+    "enabled": true,
+    "sourceRuleText": "Keep Sahil Sharma, Pooja Sharma in Cc for GR International School",
+    "createdAt": "2026-04-28T17:00:00.000Z",
+    "createdBy": "system-w4e-audit",
+    "disabledAt": null,
+    "disabledBy": null,
+    "disabledReason": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-04-28T17:00:00.000Z",
+        "user": "system-w4e-audit",
+        "action": "cc-rule-created",
+        "after": {
+          "source": "W4-E.3 audit pass; SPOC DB North sheet row 2",
+          "sheetHeader": "Keep Sahil Sharma, Pooja Sharma in Cc for GR International School",
+          "ccUserIds": [
+            "sp-sahil"
+          ],
+          "gap": "sp-sahil is the only Sahil in sales_team.json (single-name convention) but the mapping to \"Sahil Sharma\" is unconfirmed. \"Pooja Sharma\" has no entry. D-022 captures both."
+        },
+        "notes": "Added per Anish W4-E.3 audit-pass decision item 6; partial CC list (sp-sahil tentative match for \"Sahil Sharma\"); Pooja Sharma deferred to D-022."
+      }
+    ]
   }
 ]
