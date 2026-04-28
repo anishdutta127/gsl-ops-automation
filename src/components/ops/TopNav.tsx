@@ -35,6 +35,7 @@ const NAV_LINKS: NavLink[] = [
   { href: '/', label: 'Home', visibleTo: 'all' },
   { href: '/mous', label: 'MOUs', visibleTo: 'all' },
   { href: '/schools', label: 'Schools', visibleTo: 'all' },
+  { href: '/sales-pipeline', label: 'Sales pipeline', visibleTo: 'all' },
   { href: '/escalations', label: 'Escalations', visibleTo: 'all' },
   { href: '/admin', label: 'Admin', visibleTo: ['Admin', 'OpsHead', 'Leadership'] },
 ]
