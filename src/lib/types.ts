@@ -269,7 +269,23 @@ export interface School {
   legalEntity: string | null
   city: string
   state: string
-  region: string                   // 'East' | 'North' | 'South-West' per SPOC DB
+  /**
+   * SPOC DB nomenclature: 'East' | 'North' | 'South-West' (3 values).
+   * 'South-West' is already a pre-collapsed combined region in this
+   * taxonomy, NOT separate 'South' + 'West' entries; we keep the
+   * 3-value enum so school records stay aligned with the upstream
+   * SPOC source rather than forking into a 4-value 'N|S|E|W' shape.
+   *
+   * The Sales Pipeline form (createOpportunity.REGION_OPTIONS) extends
+   * to 6 values for forward-looking pipeline data scouted pre-MOU.
+   *
+   * Phase X super-region overlay (Ameet's grouping) lives in
+   * src/lib/regions.ts: NE = North + East, SW = South-West + South + West.
+   * The overlay is derivation-only; no field is added to School. Filter
+   * machinery (applyDimensionFilters) does OR-within-dimension, so a
+   * super-region selection expands to its primary values transparently.
+   */
+  region: string
   pinCode: string | null
   contactPerson: string | null
   email: string | null

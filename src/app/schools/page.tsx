@@ -27,6 +27,7 @@ import {
   applyDimensionFilters,
   applyTextSearch,
 } from '@/lib/filterParsing'
+import { SUPER_REGION_MEMBERS } from '@/lib/regions'
 
 const allSchools = schoolsJson as unknown as School[]
 const allSchoolGroups = schoolGroupsJson as unknown as SchoolGroup[]
@@ -62,6 +63,10 @@ export default async function SchoolsListPage({ searchParams }: PageProps) {
     {
       key: 'region',
       label: 'Region',
+      shortcuts: [
+        { key: 'NE', label: 'NE', values: SUPER_REGION_MEMBERS.NE },
+        { key: 'SW', label: 'SW', values: SUPER_REGION_MEMBERS.SW },
+      ],
       options: ['East', 'North', 'South-West'].map((v) => ({ value: v, label: v })),
     },
     {

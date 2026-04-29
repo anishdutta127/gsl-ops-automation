@@ -30,6 +30,8 @@ import type {
   IntakeRecord,
   MOU,
   Payment,
+  SalesPerson,
+  School,
 } from '@/lib/types'
 import mousJson from '@/data/mous.json'
 import dispatchesJson from '@/data/dispatches.json'
@@ -37,6 +39,8 @@ import paymentsJson from '@/data/payments.json'
 import communicationsJson from '@/data/communications.json'
 import feedbackJson from '@/data/feedback.json'
 import intakeRecordsJson from '@/data/intake_records.json'
+import schoolsJson from '@/data/schools.json'
+import salesTeamJson from '@/data/sales_team.json'
 import { getCurrentUser } from '@/lib/auth/session'
 import { deriveStage, KANBAN_COLUMNS, type KanbanStageKey } from '@/lib/kanban/deriveStage'
 import { stageEnteredDate, daysSince } from '@/lib/kanban/stageEnteredDate'
@@ -45,6 +49,13 @@ import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { KanbanOverviewTabs } from '@/components/ops/KanbanOverviewTabs'
 import { KanbanBoard, type KanbanCardMeta } from '@/components/ops/KanbanBoard'
+import { FilterRail, type FilterDimension } from '@/components/ops/FilterRail'
+import { EmptyState } from '@/components/ops/EmptyState'
+import {
+  applyDimensionFilters,
+  parseDimensions,
+} from '@/lib/filterParsing'
+import { SUPER_REGION_MEMBERS } from '@/lib/regions'
 
 const allMous = mousJson as unknown as MOU[]
 const allDispatches = dispatchesJson as unknown as Dispatch[]
@@ -52,10 +63,21 @@ const allPayments = paymentsJson as unknown as Payment[]
 const allCommunications = communicationsJson as unknown as Communication[]
 const allFeedback = feedbackJson as unknown as Feedback[]
 const allIntakeRecords = intakeRecordsJson as unknown as IntakeRecord[]
+const allSchools = schoolsJson as unknown as School[]
+const allSalesTeam = salesTeamJson as unknown as SalesPerson[]
 
-export default async function HomePage() {
+const DIMENSION_KEYS = ['region', 'programme', 'salesRep', 'status'] as const
+
+interface PageProps {
+  searchParams: Promise<Record<string, string | string[] | undefined>>
+}
+
+export default async function HomePage({ searchParams }: PageProps) {
   const user = await getCurrentUser()
   if (!user) redirect('/login?next=%2F')
+
+  const sp = await searchParams
+  const active = parseDimensions(sp, DIMENSION_KEYS as unknown as string[])
 
   const deps = {
     dispatches: allDispatches,
@@ -65,7 +87,19 @@ export default async function HomePage() {
     intakeRecords: allIntakeRecords,
   }
 
+  const schoolById = new Map(allSchools.map((s) => [s.id, s]))
   const activeMous = allMous.filter((m) => m.cohortStatus === 'active')
+
+  // Phase X: filter the active cohort by Region (school-derived) /
+  // Programme / Sales Rep / Status before bucketing. AND across
+  // dimensions; OR within. Status mirrors the /mous list page (drops
+  // 'Draft' from the chip set per W4-B.4).
+  const filteredMous = applyDimensionFilters(activeMous, active, {
+    region: (m) => schoolById.get(m.schoolId)?.region ?? null,
+    programme: (m) => m.programme,
+    salesRep: (m) => m.salesPersonId,
+    status: (m) => m.status,
+  })
 
   const initialBuckets: Record<KanbanStageKey, MOU[]> = {
     'pre-ops': [],
@@ -81,7 +115,7 @@ export default async function HomePage() {
   }
   const cardMeta: Record<string, KanbanCardMeta> = {}
   const now = new Date()
-  for (const mou of activeMous) {
+  for (const mou of filteredMous) {
     const stage = deriveStage(mou, deps)
     // W4-B.1 defensive check: cross-verification is auto-skipped by
     // deriveStage's first-non-null-wins logic (cross-verification's
@@ -102,23 +136,80 @@ export default async function HomePage() {
     }
   }
 
+  const hasAnyFilter = Object.values(active).some((vs) => vs.length > 0)
+  const subtitle = hasAnyFilter
+    ? `${filteredMous.length} of ${activeMous.length} active MOUs match the current filters across ${KANBAN_COLUMNS.length} stages`
+    : `${activeMous.length} active MOUs across ${KANBAN_COLUMNS.length} stages`
+
+  const dimensions: FilterDimension[] = [
+    {
+      key: 'region',
+      label: 'Region',
+      shortcuts: [
+        { key: 'NE', label: 'NE', values: SUPER_REGION_MEMBERS.NE },
+        { key: 'SW', label: 'SW', values: SUPER_REGION_MEMBERS.SW },
+      ],
+      // School taxonomy is 3-value per SPOC DB; SW is already a
+      // pre-collapsed combined region. See src/lib/types.ts School.region.
+      options: ['East', 'North', 'South-West'].map((v) => ({ value: v, label: v })),
+    },
+    {
+      key: 'programme',
+      label: 'Programme',
+      options: ['STEAM', 'TinkRworks', 'Young Pioneers', 'Harvard HBPE', 'VEX'].map((v) => ({
+        value: v,
+        label: v,
+      })),
+    },
+    {
+      key: 'salesRep',
+      label: 'Sales rep',
+      options: allSalesTeam
+        .filter((s) => s.active)
+        .map((s) => ({ value: s.id, label: s.name })),
+    },
+    {
+      key: 'status',
+      label: 'Status',
+      // 'Draft' dropped per W4-B.4 (zero MOUs carry that status in the
+      // imported cohort). Mirrors the /mous list chip set.
+      options: ['Active', 'Pending Signature', 'Completed', 'Expired', 'Renewed'].map((v) => ({
+        value: v,
+        label: v,
+      })),
+    },
+  ]
+
   return (
     <>
       <TopNav currentPath="/" />
       <main id="main-content">
-        <PageHeader
-          title="Kanban"
-          subtitle={`${activeMous.length} active MOUs across ${KANBAN_COLUMNS.length} stages`}
-        />
+        <PageHeader title="Kanban" subtitle={subtitle} />
         <KanbanOverviewTabs activeTab="kanban" />
-        <div className="mx-auto max-w-screen-2xl space-y-4 px-4 py-6">
-          <p
-            className="text-sm text-muted-foreground"
-            data-testid="kanban-interaction-hint"
-          >
-            Click to open. Drag the grip to move.
-          </p>
-          <KanbanBoard initialBuckets={initialBuckets} cardMeta={cardMeta} />
+        <div className="mx-auto flex max-w-screen-2xl flex-col gap-4 px-4 py-6 lg:flex-row">
+          <FilterRail
+            basePath="/"
+            dimensions={dimensions}
+            active={active}
+          />
+          <div className="min-w-0 flex-1 space-y-4">
+            <p
+              className="text-sm text-muted-foreground"
+              data-testid="kanban-interaction-hint"
+            >
+              Click to open. Drag the grip to move.
+            </p>
+            {hasAnyFilter && filteredMous.length === 0 ? (
+              <div data-testid="kanban-empty-filters">
+                <EmptyState
+                  title="No MOUs match these filters."
+                  description="Adjust filters or clear them to see the full kanban."
+                />
+              </div>
+            ) : (
+              <KanbanBoard initialBuckets={initialBuckets} cardMeta={cardMeta} />
+            )}
+          </div>
         </div>
       </main>
     </>

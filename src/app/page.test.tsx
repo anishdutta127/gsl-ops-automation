@@ -35,7 +35,7 @@ describe('/ kanban homepage', () => {
   it('renders 9 stage columns with the Pre-Ops Legacy column first', async () => {
     getCurrentUserMock.mockResolvedValue(admin())
     const { default: HomePage } = await import('./page')
-    const html = renderToStaticMarkup(await HomePage())
+    const html = renderToStaticMarkup(await HomePage({ searchParams: Promise.resolve({}) }))
     expect(html).toContain('data-testid="kanban-board"')
     expect(html).toContain('data-testid="stage-column-pre-ops"')
     expect(html).toContain('data-testid="stage-column-mou-signed"')
@@ -51,14 +51,14 @@ describe('/ kanban homepage', () => {
   it('Pre-Ops column uses the "Needs triage" badge framing rather than a numeric stage label', async () => {
     getCurrentUserMock.mockResolvedValue(admin())
     const { default: HomePage } = await import('./page')
-    const html = renderToStaticMarkup(await HomePage())
+    const html = renderToStaticMarkup(await HomePage({ searchParams: Promise.resolve({}) }))
     expect(html).toContain('Needs triage:')
   })
 
   it('renders MouCards inside columns from the real fixture', async () => {
     getCurrentUserMock.mockResolvedValue(admin())
     const { default: HomePage } = await import('./page')
-    const html = renderToStaticMarkup(await HomePage())
+    const html = renderToStaticMarkup(await HomePage({ searchParams: Promise.resolve({}) }))
     expect(html).toContain('data-testid="mou-card"')
     // Real fixture has MOU-STEAM-2627-001 at "Mutahhary Public School Baroo".
     expect(html).toContain('MOU-STEAM-2627-001')
@@ -67,27 +67,27 @@ describe('/ kanban homepage', () => {
   it('SalesRep also sees the kanban (Phase 1 W3-B: UI gates disabled)', async () => {
     getCurrentUserMock.mockResolvedValue(salesRep())
     const { default: HomePage } = await import('./page')
-    const html = renderToStaticMarkup(await HomePage())
+    const html = renderToStaticMarkup(await HomePage({ searchParams: Promise.resolve({}) }))
     expect(html).toContain('data-testid="kanban-board"')
   })
 
   it('redirects unauthenticated viewer to /login with next=/', async () => {
     getCurrentUserMock.mockResolvedValue(null)
     const { default: HomePage } = await import('./page')
-    await expect(HomePage()).rejects.toThrow('REDIRECT:/login?next=%2F')
+    await expect(HomePage({ searchParams: Promise.resolve({}) })).rejects.toThrow('REDIRECT:/login?next=%2F')
   })
 
   it('contains no raw hex codes (token discipline)', async () => {
     getCurrentUserMock.mockResolvedValue(admin())
     const { default: HomePage } = await import('./page')
-    const html = renderToStaticMarkup(await HomePage())
+    const html = renderToStaticMarkup(await HomePage({ searchParams: Promise.resolve({}) }))
     expect(html).not.toMatch(/#[0-9a-fA-F]{3,6}\b/)
   })
 
   it('column counts sum to total MOU count from fixture', async () => {
     getCurrentUserMock.mockResolvedValue(admin())
     const { default: HomePage } = await import('./page')
-    const html = renderToStaticMarkup(await HomePage())
+    const html = renderToStaticMarkup(await HomePage({ searchParams: Promise.resolve({}) }))
     // Title shows "<n> active MOUs across 10 stages" post-W4-C.1
     // (post-signing-intake added at column position 3); the count is the
     // active-cohort filter result (51 in the W4-A.2 fixture).
@@ -97,7 +97,7 @@ describe('/ kanban homepage', () => {
   it('renders the kanban / overview tab strip with Kanban active (W3-F)', async () => {
     getCurrentUserMock.mockResolvedValue(admin())
     const { default: HomePage } = await import('./page')
-    const html = renderToStaticMarkup(await HomePage())
+    const html = renderToStaticMarkup(await HomePage({ searchParams: Promise.resolve({}) }))
     expect(html).toContain('data-testid="kanban-overview-tabs"')
     expect(html).toContain('data-testid="tab-kanban"')
     expect(html).toContain('data-testid="tab-overview"')
@@ -109,7 +109,7 @@ describe('/ kanban homepage', () => {
   it('renders the click-vs-drag interaction hint above the kanban', async () => {
     getCurrentUserMock.mockResolvedValue(admin())
     const { default: HomePage } = await import('./page')
-    const html = renderToStaticMarkup(await HomePage())
+    const html = renderToStaticMarkup(await HomePage({ searchParams: Promise.resolve({}) }))
     expect(html).toContain('data-testid="kanban-interaction-hint"')
     // W4-B.4 tightened the hint to a single short sentence.
     expect(html).toContain('Click to open. Drag the grip to move.')
@@ -122,7 +122,7 @@ describe('/ kanban homepage', () => {
   it('no card lands in the cross-verification column (auto-skip preserved)', async () => {
     getCurrentUserMock.mockResolvedValue(admin())
     const { default: HomePage } = await import('./page')
-    const html = renderToStaticMarkup(await HomePage())
+    const html = renderToStaticMarkup(await HomePage({ searchParams: Promise.resolve({}) }))
     // The column header itself still renders (KANBAN_COLUMNS lists 9
     // columns including cross-verification); we assert the column is
     // empty by checking the count chip and the empty-state copy.
@@ -141,7 +141,7 @@ describe('/ kanban homepage', () => {
   it('cards render the per-stage next-step label (W4-B.1 + W4-C.1)', async () => {
     getCurrentUserMock.mockResolvedValue(admin())
     const { default: HomePage } = await import('./page')
-    const html = renderToStaticMarkup(await HomePage())
+    const html = renderToStaticMarkup(await HomePage({ searchParams: Promise.resolve({}) }))
     // W4-C.1: pre-backfill, the active 51 MOUs without IntakeRecords sit
     // at post-signing-intake. Their next-step label is "Confirm actuals".
     // Post-backfill (W4-C.4) ~17 cards will gain intake records and
