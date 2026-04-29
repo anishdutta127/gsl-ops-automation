@@ -190,6 +190,12 @@ export type AuditAction =
   // re-marking an already-read notification is a no-op (no audit entry
   // appended).
   | 'notification-marked-read'
+  // W4-I.1.7: emitted on a User record's auditLog when an Admin changes
+  // a user's role. before / after capture the prior + new UserRole
+  // values; notes carry the operator-supplied reason. Phase 1 has no
+  // role-edit UI; entries are written by data-mutation scripts (round 2
+  // tester provisioning per D-040) and surface in admin audit views.
+  | 'user-role-changed'
 
 export interface AuditEntry {
   timestamp: string                // ISO

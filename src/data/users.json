@@ -14,34 +14,61 @@
     "id": "ameet.z",
     "name": "Ameet Zaveri",
     "email": "ameet.z@getsetlearn.info",
-    "role": "Leadership",
+    "role": "Admin",
     "testingOverride": false,
     "active": true,
     "passwordHash": "$2b$12$OFOCJJZomlVt1eF2EeZCruQqwupfLN7lFsCVvgBJUFCmvt1z/Eoaa",
     "createdAt": "2026-04-25T00:00:00Z",
-    "auditLog": []
+    "auditLog": [
+      {
+        "timestamp": "2026-04-29T00:00:00Z",
+        "user": "anish.d",
+        "action": "user-role-changed",
+        "before": { "role": "Leadership" },
+        "after": { "role": "Admin" },
+        "notes": "Promoted to Admin for round 2 platform testing; revert per D-040 post-testing."
+      }
+    ]
   },
   {
     "id": "pratik.d",
     "name": "Pratik D.",
     "email": "pratik.d@getsetlearn.info",
-    "role": "SalesHead",
+    "role": "Admin",
     "testingOverride": false,
     "active": true,
     "passwordHash": "$2b$12$BbNcV.TDy6iJ55r7IvvCce1Y6KD57PgJfYaqZmzwR50rjwotBWDYe",
     "createdAt": "2026-04-25T00:00:00Z",
-    "auditLog": []
+    "auditLog": [
+      {
+        "timestamp": "2026-04-29T00:00:00Z",
+        "user": "anish.d",
+        "action": "user-role-changed",
+        "before": { "role": "SalesHead" },
+        "after": { "role": "Admin" },
+        "notes": "Promoted to Admin for round 2 platform testing; revert per D-040 post-testing."
+      }
+    ]
   },
   {
     "id": "vishwanath.g",
     "name": "Vishwanath G.",
     "email": "vishwanath.g@getsetlearn.info",
-    "role": "SalesRep",
+    "role": "Admin",
     "testingOverride": false,
     "active": true,
     "passwordHash": "$2b$12$63TFLJi1309qqLrx2rf6Q.LX.UX0knFU.4RDJxKH1SWMafUw8..e2",
     "createdAt": "2026-04-25T00:00:00Z",
-    "auditLog": []
+    "auditLog": [
+      {
+        "timestamp": "2026-04-29T00:00:00Z",
+        "user": "anish.d",
+        "action": "user-role-changed",
+        "before": { "role": "SalesRep" },
+        "after": { "role": "Admin" },
+        "notes": "Promoted to Admin for round 2 platform testing; revert per D-040 post-testing."
+      }
+    ]
   },
   {
     "id": "misba.m",
@@ -80,23 +107,41 @@
     "id": "shubhangi.g",
     "name": "Shubhangi G.",
     "email": "shubhangi.g@getsetlearn.info",
-    "role": "Finance",
+    "role": "Admin",
     "testingOverride": false,
     "active": true,
     "passwordHash": "$2b$12$mJWA49vCC5QjOlYNgXiw2.wshYxubNEWIqfiwyS4KnRMNA5pRRKKC",
     "createdAt": "2026-04-25T00:00:00Z",
-    "auditLog": []
+    "auditLog": [
+      {
+        "timestamp": "2026-04-29T00:00:00Z",
+        "user": "anish.d",
+        "action": "user-role-changed",
+        "before": { "role": "Finance" },
+        "after": { "role": "Admin" },
+        "notes": "Promoted to Admin for round 2 platform testing; revert per D-040 post-testing."
+      }
+    ]
   },
   {
     "id": "pranav.b",
     "name": "Pranav B.",
     "email": "pranav.b@getsetlearn.info",
-    "role": "Finance",
+    "role": "Admin",
     "testingOverride": false,
     "active": true,
     "passwordHash": "$2b$12$.NEoPqYSHzmzKl4RDZN11eEmKWlvKvbERqd8sQbmiHZ3oNfQQ66C6",
     "createdAt": "2026-04-25T00:00:00Z",
-    "auditLog": []
+    "auditLog": [
+      {
+        "timestamp": "2026-04-29T00:00:00Z",
+        "user": "anish.d",
+        "action": "user-role-changed",
+        "before": { "role": "Finance" },
+        "after": { "role": "Admin" },
+        "notes": "Promoted to Admin for round 2 platform testing; revert per D-040 post-testing."
+      }
+    ]
   },
   {
     "id": "shashank.s",
@@ -107,6 +152,28 @@
     "active": true,
     "passwordHash": "$2b$12$j5HqWvzzIXO1y6sIAp5Wou0TNEbcxnr6HjcVaEK6Kb5cPwFWOffWm",
     "createdAt": "2026-04-25T00:00:00Z",
+    "auditLog": []
+  },
+  {
+    "id": "gowri.r",
+    "name": "Gowri R.",
+    "email": "gowri.r@getsetlearn.info",
+    "role": "Admin",
+    "testingOverride": false,
+    "active": true,
+    "passwordHash": "$2b$12$Ef0tsCE1RgVmNPVb.3TRO.EOLbzvzWXPnIBy7PA1Nsyxzy2zjpNa2",
+    "createdAt": "2026-04-29T00:00:00Z",
+    "auditLog": []
+  },
+  {
+    "id": "anita.c",
+    "name": "Anita C.",
+    "email": "anita.c@getsetlearn.info",
+    "role": "Admin",
+    "testingOverride": false,
+    "active": true,
+    "passwordHash": "$2b$12$8A8t6dWja3tJ/GRxzxiwL.4XL2k2AJHJriJEIMcsR./Zz4DmDVQqa",
+    "createdAt": "2026-04-29T00:00:00Z",
     "auditLog": []
   }
 ]

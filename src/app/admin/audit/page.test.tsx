@@ -47,6 +47,27 @@ vi.mock('@/lib/crypto/jwt', () => ({
   })),
 }))
 
+// users.json carries vishwanath.g as Admin during round 2 testing per
+// W4-I.1.7 / D-040. The wiring under test asserts that the page reads
+// the role from users.json (not the JWT claim) and that SalesRep gets
+// 0 visible entries; mock users.json so the synthetic SalesRep fixture
+// drives the assertion regardless of the live data's round 2 promotion.
+vi.mock('@/data/users.json', () => ({
+  default: [
+    {
+      id: 'vishwanath.g',
+      name: 'Vishwanath G.',
+      email: 'vishwanath.g@getsetlearn.info',
+      role: 'SalesRep',
+      testingOverride: false,
+      active: true,
+      passwordHash: 'mock',
+      createdAt: '2026-04-25T00:00:00Z',
+      auditLog: [],
+    },
+  ],
+}))
+
 beforeEach(() => {
   vi.clearAllMocks()
 })

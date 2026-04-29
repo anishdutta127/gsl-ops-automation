@@ -20,9 +20,9 @@ Each entry: a stable id, status, surface where it was found, the question, what 
 | W4-F | D-026 to D-027 | 2 | SalesOpportunity workflow definition + Phase 1.1 AY rollover verification |
 | W4-G | D-028 to D-037 | 10 | Inventory thresholds, sunset SKUs, UI deferrals, Phase 2 stock features |
 | W4-H | D-038 | 1 | Per-MOU trainer roster lib (handover worksheet pre-fill) |
-| W4-I | D-039 | 1 | Orphan AuditAction cleanup (3 unused enum values) |
+| W4-I | D-039, D-040 | 2 | Orphan AuditAction cleanup; round 2 tester role revert |
 
-Total: 39 entries (D-001 through D-039).
+Total: 40 entries (D-001 through D-040).
 
 The round-2 testing email at end of W4-I composes from this summary plus the per-entry detail. Audience-segmented routing is in `docs/RUNBOOK.md` §11.9.
 
@@ -397,7 +397,7 @@ The round-2 testing email at end of W4-I composes from this summary plus the per
   - Update `generateHandoverWorksheet.ts` to populate `TRAINER_NAMES` from the roster.
   - Update `handoverTemplates.ts` placeholder spec to reflect the new source.
 
-## W4-I: Final verification + closeout (D-039)
+## W4-I: Final verification + closeout (D-039 through D-040)
 
 ## D-039 Orphan AuditAction enum values (3 unused)
 
@@ -412,6 +412,22 @@ The round-2 testing email at end of W4-I composes from this summary plus the per
   - **Reserve it explicitly**: keep the enum value, add a comment marking it as a Phase 1.1 reservation, and document the trigger that will land the wiring.
   - **Delete it**: remove from the enum (e.g. `dispatch-line-item-edited` is replaced by `dispatch-request-converted`; the comment can be updated).
 - **Needed to close:** Anish reviews post-round-2; each path is a small follow-up commit. None block round-2 testing: the enum values are runtime-irrelevant when no caller emits them.
+
+## D-040 Round 2 testing: testers temporarily promoted to Admin
+
+- **Status:** open
+- **Surfaced by:** W4-I.1.7 round 2 tester provisioning
+- **Context:** All 12 testers in `users.json` carry `role: 'Admin'` for round 2 platform testing so each tester can exercise every feature surface without being blocked by per-role permission gates. The 5 promotions (Ameet, Pratik, Vishwanath, Shubhangi, Pranav) are audited on the User record with `action: 'user-role-changed'`, before / after roles, and notes referencing this entry. The 2 new testers (Gowri R., Anita C.) were created at Admin and have no prior role.
+- **Question:** Confirm the post-testing role assignments before any production usage so the permission model returns to designed state.
+- **Post-testing role reversion plan:**
+  - Ameet Z. -> Leadership
+  - Pratik D. -> SalesHead
+  - Vishwanath G. -> SalesRep
+  - Shubhangi G., Pranav B., Anita C. -> Finance
+  - Gowri R. -> [TBD per Anish at round 2 close]
+  - Misba M., Swati P., Pradeep R., Shashank S., Anish D. -> Admin (no change)
+- **Trigger:** round 2 testing close. Each role reversion creates a `user-role-changed` audit entry; the permission model returns to the designed state before any production usage.
+- **Needed to close:** Anish confirms each reversion target (and resolves Gowri's TBD); a follow-up commit applies the role reverts with mirrored audit entries.
 
 ---
 
