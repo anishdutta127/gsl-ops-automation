@@ -22,7 +22,7 @@ import { atomicUpdateJson } from '@/lib/githubQueue'
 const SYNC_HEALTH_PATH = 'src/data/sync_health.json'
 const MAX_ENTRIES = 50
 
-export type SyncHealthEntryKind = 'import' | 'health'
+export type SyncHealthEntryKind = 'import' | 'health' | 'sync'
 
 export interface ImportSummary {
   written: number

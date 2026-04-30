@@ -86,6 +86,30 @@ function authHeaders(): HeadersInit {
   }
 }
 
+/**
+ * Read-only fetch of a JSON file from the repo via GitHub Contents API.
+ * Returns the parsed value, or `null` if the file does not exist (404).
+ * Throws QueueUpstreamError on other non-2xx responses, or on JSON parse
+ * failure when the file exists but is malformed.
+ *
+ * Use when the caller wants the current state without committing
+ * anything. Drain-runner reads pending_updates.json + entity files via
+ * this helper before deciding what to write back.
+ */
+export async function readJsonFromGitHub<T>(path: string): Promise<T | null> {
+  const file = await getFile(path)
+  if (file === null) return null
+  try {
+    return JSON.parse(file.text) as T
+  } catch (err) {
+    throw new QueueUpstreamError(
+      path,
+      0,
+      `JSON parse failed: ${err instanceof Error ? err.message : String(err)}`,
+    )
+  }
+}
+
 async function getFile(path: string): Promise<{ text: string; sha: string } | null> {
   const url =
     `https://api.github.com/repos/${githubRepo()}/contents/${encodeURIComponent(path)}` +
