@@ -20,9 +20,9 @@ Each entry: a stable id, status, surface where it was found, the question, what 
 | W4-F | D-026 to D-027 | 2 | SalesOpportunity workflow definition + Phase 1.1 AY rollover verification |
 | W4-G | D-028 to D-037 | 10 | Inventory thresholds, sunset SKUs, UI deferrals, Phase 2 stock features |
 | W4-H | D-038 | 1 | Per-MOU trainer roster lib (handover worksheet pre-fill) |
-| W4-I | D-039 to D-042 | 4 | Orphan AuditAction cleanup; round 2 tester role revert; Azure migration target (Ops); Azure migration pattern (HR + future) |
+| W4-I | D-039 to D-043 | 5 | Orphan AuditAction cleanup; round 2 tester role revert; Azure migration target (Ops); Azure migration pattern (HR + future); 3-consecutive-failures sync detection |
 
-Total: 42 entries (D-001 through D-042).
+Total: 43 entries (D-001 through D-043).
 
 The round-2 testing email at end of W4-I composes from this summary plus the per-entry detail. Audience-segmented routing is in `docs/RUNBOOK.md` §11.9.
 
@@ -470,3 +470,13 @@ The round-2 testing email at end of W4-I composes from this summary plus the per
   - Per-platform isolation: simpler ops, easier to roll back, no inter-platform coupling. Pays multi-tenant tax three times.
   - Shared infrastructure: cheaper, single auth surface, single backup story. Couples platform release timelines.
 - **Needed to close:** Anish + GSL IT + Ameet decide the multi-platform infrastructure model before D-041 cutover, because D-041's auth + DB choices are downstream of this question.
+
+## D-043 3-consecutive-failures sync detection (Phase 1.1 polish)
+
+- **Status:** open
+- **Surfaced by:** W4-I.3.B original brief (point 5: "After 3 consecutive total failures: write sync-health anomaly entry visible to Admin"). Deferred from the W4-I.3.C-E close-out batch because the drain shipped working and Anish elected to close W4-I.3 without further hardening pre-round-2.
+- **Context:** the drain emits a `sync_health` entry every tick (success or failure). A single failure currently looks like a routine anomaly; three failures in a row should surface louder so Anish notices on `/admin` without scrolling history.
+- **Question:** does this matter enough during round-2 testing to ship now, or wait for a real consecutive-failure incident to motivate the design?
+- **Implementation sketch:** before appending the sync_health entry, read the previous 2 entries via `readJsonFromGitHub`. If both are `kind: 'sync'` and `ok: false` AND the new entry is also `ok: false`, prefix the new entry's `anomalies` with a "CRITICAL: third consecutive sync failure; investigate" line. ~25 lines + 2 unit tests.
+- **Trigger:** any single 3-consecutive-failure event observed in `sync_health.json` during round-2 testing OR Anish wants this proactively before scaling tester count beyond the current 12.
+- **Needed to close:** Anish decides ship-now vs wait-for-incident. If ship-now, lands as a small `feat(sync):` commit with one drainQueue change + the consecutive-failures unit tests.

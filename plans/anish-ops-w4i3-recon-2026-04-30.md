@@ -287,3 +287,51 @@ Bug 1 (search bar on `/admin/schools`) shipped at commit `b7b0b14` before this r
 4. **Test refactor scope:** acceptable to grow from 1531 tests to ~1600+ as part of B1, or constrain B1 to mock-compatibility-preserving changes only?
 
 When you decide, I'll write the implementation brief based on your decisions per the brief's process.
+
+---
+
+## 10. Decision outcome and verification (2026-04-30)
+
+**Anish's call: Path C (auto-cron drain) over the recon's recommended B1 (read-merger).** Reasoning per the W4-I.3 implementation brief: production target is Azure migration post-Phase-1, so heavier interim investment in B1 gets discarded at cutover. C ships in ~1 day of code (drain lib + endpoint + cron config) and predictably closes the visibility gap within 5 minutes per write without touching any of the 268 read sites or 46 write sites. Decision archived at `docs/role-decisions.md` 2026-04-30 entry; Azure backlog at `docs/W4-DEFERRED-ITEMS.md` D-041 + D-042.
+
+**Continuity choice (Y3 substitute): no manual button + no testing pause.** With auto-cron in place, neither Y1's bandaid nor Y2's pause was necessary. Misba and the other testers continued submitting writes; the queue grew through the build batches; the first cron fire drained 8 entries cleanly.
+
+### Implementation as shipped
+
+| Sub-batch | Commit | Content |
+|---|---|---|
+| W4-I.3.A | `64c0af8` | drainQueue lib + entityRegistry + tests + scripts/sync-queue.mjs |
+| W4-I.3.B | `8f4b018` | /api/admin/sync-queue route + vercel.json crons + 6 endpoint tests + admin panel label |
+| W4-I.3.B docs | `36d8cae` | CLAUDE.md + RUNBOOK + role-decisions + W4-DEFERRED-ITEMS for the architecture |
+| W4-I.3.B-fallback | `80f6472` | GitHub Actions cron in place of Vercel cron (Hobby tier did not allow */5 cadence); vercel.json crons removed |
+| W4-I.3.B fix | `ccf1bc1` | middleware allow-list for /api/admin/sync-queue (fix for the 307 redirect that surfaced on first manual workflow_dispatch) |
+| W4-I.3.C-E close | (this commit) | first-fire verification + D-043 deferred polish + recon outcome |
+
+Total scope: 1 lib (drainQueue), 1 route, 1 GitHub Actions workflow, 1 middleware allow-list line, 1 vercel.json (ignoreCommand only), and 4 doc files. Code surface minimal as designed.
+
+### Verification metrics (manual workflow_dispatch, 2026-04-30)
+
+- HTTP status: 200
+- Body: `ok=true drained=8 remaining=0 duration=2964ms`
+- Per-entity: 2 schools, 3 MOUs, 2 inventory edits, 1 duplicate-create skipped via idempotency
+- Failures: 0
+- Subsequent Vercel rebuild on the resulting `chore(sync):` commits: confirmed live; entity files updated; `/admin/schools` search now finds the queued schools.
+
+### What's deferred (Phase 1.1 polish)
+
+- **D-043** 3-consecutive-failures detection inside `drainQueue.ts`. Originally in the W4-I.3.C scope; deferred because the drain shipped working and the consecutive-failure scenario has not yet been observed. ~25 lines + 2 unit tests when it lands.
+
+### What's deferred (post-Phase-1)
+
+- **D-041** Azure migration as the Ops platform's production deployment target (4 to 8 weeks per platform).
+- **D-042** Azure migration pattern across HR + future GSL platforms (multi-platform infrastructure model decision).
+
+### Trigger to revisit Path C
+
+Per `docs/RUNBOOK.md` §11.12, migrate to Azure Postgres when ANY of:
+- Queue depth regularly exceeds 50 entries between ticks (sustained).
+- Per-tick latency exceeds 30s (sustained; suggests GitHub Contents API rate-limit pressure).
+- Tester count grows beyond 20 active concurrent users.
+- Phase 1 closes formally and round-2 testing concludes successfully.
+
+W4-I.3 closes here.

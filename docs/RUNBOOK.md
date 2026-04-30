@@ -639,7 +639,10 @@ Useful when the cron pauses (Vercel maintenance, account billing issue) or after
 **Cross-references:**
 - `plans/anish-ops-w4i3-recon-2026-04-30.md`: full reconnaissance + decision rationale.
 - `docs/role-decisions.md`: architectural decision capture.
-- `docs/W4-DEFERRED-ITEMS.md` D-041 / D-042: Azure migration backlog.
+- `docs/W4-DEFERRED-ITEMS.md` D-041 / D-042 / D-043: Azure migration backlog plus the 3-consecutive-failures detection deferral.
 - `src/lib/sync/drainQueue.ts`: the lib.
 - `src/app/api/admin/sync-queue/route.ts`: the endpoint.
-- `vercel.json`: cron schedule + ignoreCommand.
+- `.github/workflows/sync-queue-cron.yml`: the trigger layer.
+- `vercel.json`: ignoreCommand for queue-prefix rebuild skip.
+
+**First-fire verification (2026-04-30).** Manual `workflow_dispatch` triggered after `CRON_SECRET` was provisioned in both halves and the middleware allow-list fix landed (`ccf1bc1`). Result: HTTP 200, `ok=true`, drained=8 (2 schools, 3 MOUs, 2 inventory edits, 1 duplicate-create skipped via idempotency), remaining=0, duration 2964ms. Zero failures across 8 entries spanning 3 entity types confirms per-entity isolation, the audit-log defensive-append annotation path, and the chore(sync) / chore(queue) commit-message contract. The architecture is live for round-2 testing.
