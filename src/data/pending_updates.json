@@ -256,5 +256,59 @@
       ]
     },
     "retryCount": 0
+  },
+  {
+    "id": "9626bce1-e7d5-401b-ba2c-59f7909b5485",
+    "queuedAt": "2026-04-30T10:34:53.096Z",
+    "queuedBy": "misba.m",
+    "entity": "inventoryItem",
+    "operation": "update",
+    "payload": {
+      "id": "INV-TINKRSYNTH-MIXER-PCB",
+      "skuName": "Tinkrsynth Mixer PCB",
+      "category": "TinkRworks",
+      "cretileGrade": null,
+      "mastersheetSourceName": "STEAM:- TinkRsynth Mixer PCB ",
+      "currentStock": 100,
+      "reorderThreshold": 0,
+      "notes": null,
+      "active": false,
+      "lastUpdatedAt": "2026-04-30T10:34:53.094Z",
+      "lastUpdatedBy": "misba.m",
+      "auditLog": [
+        {
+          "timestamp": "2026-04-28T18:00:00.000Z",
+          "user": "system-w4g-import",
+          "action": "inventory-imported-from-mastersheet",
+          "after": {
+            "invId": "INV-TINKRSYNTH-MIXER-PCB",
+            "skuName": "Tinkrsynth Mixer PCB",
+            "category": "TinkRworks",
+            "cretileGrade": null,
+            "currentStock": 0,
+            "mastersheetSourceName": "STEAM:- TinkRsynth Mixer PCB ",
+            "active": false,
+            "confidence": "anish-resolved-sunset-explicit-mastersheet-note"
+          },
+          "notes": "Sunset at W4-G backfill per Mastersheet operator note (\"we don't have this in our inventory\")."
+        },
+        {
+          "timestamp": "2026-04-30T10:34:53.094Z",
+          "user": "misba.m",
+          "action": "inventory-stock-edited",
+          "before": {
+            "currentStock": 0,
+            "reorderThreshold": null,
+            "notes": "we don't have this in our inventory"
+          },
+          "after": {
+            "currentStock": 100,
+            "reorderThreshold": 0,
+            "notes": null
+          }
+        }
+      ]
+    },
+    "retryCount": 0
   }
 ]
