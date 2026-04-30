@@ -48,11 +48,15 @@ async function loadPage() {
   return (await import('./page')).default
 }
 
+function spParam(params: Record<string, string> = {}) {
+  return { searchParams: Promise.resolve(params) }
+}
+
 describe('/admin/schools list', () => {
   it('OpsHead sees school rows + GSTIN missing count', async () => {
     verifyMock.mockResolvedValue({ sub: 'misba.m', email: 'm@example.test', name: 'Misba', role: 'OpsHead' })
     const Page = await loadPage()
-    const html = renderToStaticMarkup(await Page())
+    const html = renderToStaticMarkup(await Page(spParam()))
     expect(html).toContain('2 schools, 2 active')
     expect(html).toContain('1 missing GSTIN')
     expect(html).toContain('Alpha School')
@@ -62,7 +66,7 @@ describe('/admin/schools list', () => {
   it('renders New school CTA + Edit links to /schools/[id]/edit', async () => {
     verifyMock.mockResolvedValue({ sub: 'misba.m', email: 'm@example.test', name: 'Misba', role: 'OpsHead' })
     const Page = await loadPage()
-    const html = renderToStaticMarkup(await Page())
+    const html = renderToStaticMarkup(await Page(spParam()))
     expect(html).toContain('href="/admin/schools/new"')
     expect(html).toContain('href="/schools/SCH-A/edit"')
   })
@@ -70,7 +74,48 @@ describe('/admin/schools list', () => {
   it('SalesRep also sees the page (Phase 1 W3-B: UI gates disabled)', async () => {
     verifyMock.mockResolvedValue({ sub: 'sp-vikram', email: 'v@example.test', name: 'Vikram', role: 'SalesRep' })
     const Page = await loadPage()
-    const html = renderToStaticMarkup(await Page())
+    const html = renderToStaticMarkup(await Page(spParam()))
     expect(html).toContain('Alpha School')
+  })
+
+  it('renders the search form', async () => {
+    verifyMock.mockResolvedValue({ sub: 'misba.m', email: 'm@example.test', name: 'Misba', role: 'OpsHead' })
+    const Page = await loadPage()
+    const html = renderToStaticMarkup(await Page(spParam()))
+    expect(html).toContain('data-testid="schools-search-input"')
+    expect(html).toContain('Search name / city / region')
+  })
+
+  it('?q=alpha filters by name (case-insensitive)', async () => {
+    verifyMock.mockResolvedValue({ sub: 'misba.m', email: 'm@example.test', name: 'Misba', role: 'OpsHead' })
+    const Page = await loadPage()
+    const html = renderToStaticMarkup(await Page(spParam({ q: 'alpha' })))
+    expect(html).toContain('Alpha School')
+    expect(html).not.toContain('Beta School')
+    expect(html).toContain('1 of 2 matching')
+  })
+
+  it('?q=delhi filters by city', async () => {
+    verifyMock.mockResolvedValue({ sub: 'misba.m', email: 'm@example.test', name: 'Misba', role: 'OpsHead' })
+    const Page = await loadPage()
+    const html = renderToStaticMarkup(await Page(spParam({ q: 'delhi' })))
+    expect(html).toContain('Beta School')
+    expect(html).not.toContain('Alpha School')
+  })
+
+  it('?q=North filters by region', async () => {
+    verifyMock.mockResolvedValue({ sub: 'misba.m', email: 'm@example.test', name: 'Misba', role: 'OpsHead' })
+    const Page = await loadPage()
+    const html = renderToStaticMarkup(await Page(spParam({ q: 'North' })))
+    expect(html).toContain('Beta School')
+    expect(html).not.toContain('Alpha School')
+  })
+
+  it('?q=nomatch shows empty state', async () => {
+    verifyMock.mockResolvedValue({ sub: 'misba.m', email: 'm@example.test', name: 'Misba', role: 'OpsHead' })
+    const Page = await loadPage()
+    const html = renderToStaticMarkup(await Page(spParam({ q: 'nomatchpattern' })))
+    expect(html).toContain('data-testid="schools-empty"')
+    expect(html).toContain('No schools match the current search.')
   })
 })
