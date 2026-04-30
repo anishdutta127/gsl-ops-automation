@@ -1,1 +1,13 @@
-[]
+[
+  {
+    "at": "2026-04-30T12:41:53.333Z",
+    "kind": "sync",
+    "ok": true,
+    "triggeredBy": "github-actions",
+    "importSummary": null,
+    "healthChecks": null,
+    "anomalies": [
+      "drained=8 remaining=0 duration=2964ms"
+    ]
+  }
+]
