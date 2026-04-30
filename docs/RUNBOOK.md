@@ -45,13 +45,14 @@ Tick each item before launch day. Anish owns each unless noted.
 - [ ] Communication to ops team: handoff line 148 contract. Excel is no longer canonical post-launch.
 - [ ] Backup snapshot of pre-launch Excel taken and archived (in case of rollback).
 
-### 1.5 Sync runner laptop state
+### 1.5 Auto-sync state (Vercel cron)
 
-- [ ] Anish's Windows laptop plugged in + awake.
-- [ ] Windows Update auto-restart deferred for the launch week.
-- [ ] GitHub Actions runner registered + tested on the new repo.
-- [ ] Cron schedule active: `30 3-13 * * 1-5` UTC (IST business hours, hourly Mon-Fri).
-- [ ] OneDrive symlink at `onedrive-data/` resolves to the live OneDrive folder.
+Replaces the laptop-hosted GitHub Actions runner described in earlier drafts. The W4-I.3 reshape moved sync to Vercel cron; see §11.12.
+
+- [ ] `CRON_SECRET` env var set in Vercel Production (Settings → Environment Variables). Generate via `openssl rand -hex 32` or similar.
+- [ ] `vercel.json` `crons` array points `/api/admin/sync-queue` at `*/5 * * * *`.
+- [ ] First post-deploy invocation observed in the Vercel cron dashboard.
+- [ ] Latest sync entry on `/admin` shows `kind: sync` with a recent timestamp.
 
 ### 1.6 Test suite + a11y baseline
 
@@ -175,11 +176,13 @@ Phase 1 outline. Detailed runbook entries land as the runner sees real prod hour
 
 Phase 1 outline. Each subsection grows as real incidents land. Living document; post-mortem updates here BEFORE the fix PR closes.
 
-### 5.1 Sync runner offline (laptop sleeping, Windows Update reboot)
+### 5.1 Auto-sync drift (Vercel cron not firing)
 
-- Symptom: dashboard "last sync" timestamp drifts past 1 hour during business hours.
-- Recovery: wake laptop; check GitHub Actions runner status; trigger a manual sync run if needed.
-- Phase 1.1 fix: cloud runner migration (eng review risk #7).
+- Symptom: latest `sync_health` entry on `/admin` is older than ~10 minutes; queue depth grows beyond a handful of entries.
+- First check: Vercel dashboard → Crons. The `/api/admin/sync-queue` job should show recent invocations every 5 min. A 401 column means `CRON_SECRET` mismatched between cron config and the env var.
+- Manual recovery: run `CRON_SECRET=<value> GSL_OPS_BASE_URL=<prod-url> node scripts/sync-queue.mjs`. This POSTs to the same endpoint cron hits; idempotent re-run is safe.
+- If the route returned 500 with `cron-secret-not-configured`: the env var is missing in Vercel; set it and redeploy.
+- If the route returned 200 but `ok: false`: the response JSON lists per-entity failures; common causes are GitHub Contents API rate limits (transient, retries on next tick) or a malformed pending entry (stays in queue, surfaces as anomaly until inspected).
 
 ### 5.2 Queue corruption (invalid JSON in pending_updates.json)
 
@@ -590,3 +593,48 @@ The deferred-items registry has grown across W4-A through W4-H to 38 entries. Th
 - **Treat D-026 as a single substantive interview spec, not 7 bullets.** D-026 needs Pratik + Shashank in a 30-60 minute conversation, not a quick reply. The round-2 email points them to a calendar slot; the interview output (states, approval flow, conversion trigger, vocabulary) feeds a follow-up batch (likely "W4.5-A" or similar) that builds the workflow against actual operational language.
 - **Provide testers context per item.** Naming a deferred ID without context ("review D-019") is friction; surface the operational question in plain language ("of these 15 schools we found in the SPOC DB but not in our system, which should we add?").
 - **Estimate testing time per role.** A Sales tester reviewing D-006 + D-011 + D-022 + D-024 + D-026 needs ~45 minutes; an Ops tester reviewing D-002 / D-009 / D-013 / D-019 / D-020 / D-023 plus the W4-G inventory cluster D-028 / D-033 / D-034 / D-035 / D-036 / D-037 needs ~45 minutes; TrainerHead (Shashank) reviewing D-038 (per-MOU trainer roster shape) is a Phase 1.1 scoping conversation, not round-2 triage; Finance D-005 / D-007 alone is ~10 minutes. Setting expectations up front improves response quality.
+
+### 11.12 W4-I.3 read-path architecture: auto-sync via Vercel cron
+
+The earlier drafts of this RUNBOOK and CLAUDE.md described a self-hosted sync runner that consumed `pending_updates.json` into the canonical entity files. The W4-I.3.1 reconnaissance (`plans/anish-ops-w4i3-recon-2026-04-30.md`) found that runner had never been built; queue commits accumulated without ever draining. The W4-I.3 batch closes the gap.
+
+**Path C chosen** over B1 (read-merger), B2 (direct writes), B3 (real database). Reasoning archived in the recon plus `docs/role-decisions.md`. Production target is Azure migration post-Phase-1; the current architecture is interim and deliberately minimal.
+
+**Mechanics.**
+
+- Vercel cron fires `POST /api/admin/sync-queue` every 5 minutes (`vercel.json` `crons` array).
+- The endpoint validates `Authorization: Bearer $CRON_SECRET` (Vercel sends this automatically when the env var is set).
+- On valid auth, it calls `drainQueue` from `src/lib/sync/drainQueue.ts`. The drain reads `pending_updates.json` via the GitHub Contents API, groups entries by entity, applies each batch to the matching entity JSON (`schools.json`, `mous.json`, etc.), then trims drained ids from the queue.
+- Per-entity writes use `chore(sync): apply <entity> batch (n=N)` commit subjects. These DO trigger Vercel rebuilds (the canonical file changed, so the bundle needs the new state).
+- The queue-trim write uses `chore(queue): drain N entries`, which `vercel.json` `ignoreCommand` matches and skips. Original write commits also use `chore(queue):` and skip rebuild.
+- A `sync_health` entry of kind `sync` is appended on every drain (success or failure) and surfaces on `/admin`.
+
+**Idempotency by construction.** Re-running the drain is safe:
+
+- `create` skips if the id already exists in the entity file.
+- `update` replaces by id; if the id is missing, it falls through as a defensive append AND annotates the entity's `auditLog` with a `create-by-fallback` entry (user `sync-drain`, notes pointing back at the original update).
+- `delete` filters by id; absent id is a no-op.
+
+**Per-entity isolation.** A failure on one entity (network blip, malformed payload, GitHub API rate limit) leaves the other entities' work in place. Failed entries stay in the queue for the next tick.
+
+**Manual recovery.** `scripts/sync-queue.mjs` POSTs to the same endpoint with the same auth contract:
+
+```
+CRON_SECRET=<value> GSL_OPS_BASE_URL=https://gsl-ops-automation.vercel.app node scripts/sync-queue.mjs
+```
+
+Useful when the cron pauses (Vercel maintenance, account billing issue) or after an incident where the queue grew large and a fresh drain is wanted out-of-cycle.
+
+**Trigger for revisit.** Migrate to Azure Postgres (D-041) when ANY of:
+- Queue depth regularly exceeds 50 entries between ticks (sustained; transient spikes are normal).
+- Per-tick latency exceeds 30s (sustained; suggests GitHub Contents API rate-limit pressure).
+- Tester count grows beyond 20 active concurrent users.
+- Phase 1 closes formally and round 2 testing concludes successfully.
+
+**Cross-references:**
+- `plans/anish-ops-w4i3-recon-2026-04-30.md`: full reconnaissance + decision rationale.
+- `docs/role-decisions.md`: architectural decision capture.
+- `docs/W4-DEFERRED-ITEMS.md` D-041 / D-042: Azure migration backlog.
+- `src/lib/sync/drainQueue.ts`: the lib.
+- `src/app/api/admin/sync-queue/route.ts`: the endpoint.
+- `vercel.json`: cron schedule + ignoreCommand.

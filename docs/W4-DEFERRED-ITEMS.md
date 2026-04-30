@@ -20,9 +20,9 @@ Each entry: a stable id, status, surface where it was found, the question, what 
 | W4-F | D-026 to D-027 | 2 | SalesOpportunity workflow definition + Phase 1.1 AY rollover verification |
 | W4-G | D-028 to D-037 | 10 | Inventory thresholds, sunset SKUs, UI deferrals, Phase 2 stock features |
 | W4-H | D-038 | 1 | Per-MOU trainer roster lib (handover worksheet pre-fill) |
-| W4-I | D-039, D-040 | 2 | Orphan AuditAction cleanup; round 2 tester role revert |
+| W4-I | D-039 to D-042 | 4 | Orphan AuditAction cleanup; round 2 tester role revert; Azure migration target (Ops); Azure migration pattern (HR + future) |
 
-Total: 40 entries (D-001 through D-040).
+Total: 42 entries (D-001 through D-042).
 
 The round-2 testing email at end of W4-I composes from this summary plus the per-entry detail. Audience-segmented routing is in `docs/RUNBOOK.md` §11.9.
 
@@ -437,3 +437,36 @@ The round-2 testing email at end of W4-I composes from this summary plus the per
 2. Anish replies with resolutions inline.
 3. The relevant code/data change lands in a follow-up commit; the entry status moves to `resolved`.
 4. Resolved entries stay for audit history; do not delete.
+
+## D-041 Azure migration as production deployment target (Ops platform)
+
+- **Status:** open
+- **Surfaced by:** W4-I.3.1 read-path reconnaissance (`plans/anish-ops-w4i3-recon-2026-04-30.md`) + W4-I.3 architecture decision (`docs/role-decisions.md` 2026-04-30 entry).
+- **Context:** the W4-I.3 reshape chose Path C (Vercel cron auto-drain) as a deliberately interim architecture. Production target is Azure migration, planned to start once Phase 1 closes formally and round 2 testing completes successfully.
+- **Question:** What is the cutover plan for the Ops platform from JSON-on-GitHub to Azure?
+- **Scope to plan:**
+  - Schema design (23 entity types becoming DB tables; audit-log-in-entity pattern needs decision: keep as JSONB column, or normalise into a separate audit table).
+  - Data migration plan (JSON file snapshot at cutover moment becomes the seed; validation pass that DB state matches pre-cutover JSON state).
+  - Auth strategy (keep JWT-with-bcrypt as today, or move to Azure AD; trade-off is ops integration vs auth-system change).
+  - Role-based access (current permission Action set becomes either RLS policies in Postgres or stays at the application layer).
+  - Deployment pipeline (Vercel-on-GitHub becomes Azure-app-service-on-GitHub; cron jobs move to Azure Functions on schedule).
+  - Monitoring + backup (DB point-in-time recovery; uptime alerting; audit log retention).
+  - Security review.
+- **Stakeholders:**
+  - Ameet Z. (Leadership): CEO authorisation; budget ratification for Azure spend.
+  - GSL IT: infrastructure access, ongoing maintenance, on-call coverage.
+  - Anish D. (project lead): technical design, migration code, cutover execution.
+- **Estimated scope:** 4 to 8 weeks per platform.
+- **Triggers to start:** Phase 1 formal close PLUS round-2 testing concludes successfully PLUS Ameet greenlights Azure budget. Earlier triggers from `docs/RUNBOOK.md` §11.12 (queue depth sustained >50, per-tick latency >30s, 20+ concurrent users) accelerate the timeline if they fire mid-pilot.
+- **Needed to close:** Phase 1 close + round-2 wrap. Then the migration plan starts as its own batch.
+
+## D-042 Azure migration pattern applies to HR and future GSL platforms
+
+- **Status:** open
+- **Surfaced by:** W4-I.3 architecture decision (`docs/role-decisions.md` 2026-04-30 entry). The current JSON-on-GitHub data layer pattern is shared across the gsl-ops-automation, gsl-mou-system, and gsl-hr-system projects. The Azure target applies to all three.
+- **Context:** D-041 plans the Ops migration. HR and any future GSL platforms (e.g., a future student platform if scope expands) follow the same pattern.
+- **Question:** Does each platform get its own migration recon + plan + implementation batch when ready, or is there a shared infrastructure layer (single Azure Postgres instance with per-platform schemas, shared Azure AD tenant, shared monitoring)?
+- **Trade-off:**
+  - Per-platform isolation: simpler ops, easier to roll back, no inter-platform coupling. Pays multi-tenant tax three times.
+  - Shared infrastructure: cheaper, single auth surface, single backup story. Couples platform release timelines.
+- **Needed to close:** Anish + GSL IT + Ameet decide the multi-platform infrastructure model before D-041 cutover, because D-041's auth + DB choices are downstream of this question.

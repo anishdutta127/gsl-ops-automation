@@ -2,6 +2,8 @@
 
 This document records the rationale behind non-default role assignments on the test roster. New decisions append here as they happen; existing entries are NOT silently re-litigated.
 
+Architecture decisions live alongside role decisions in this file when they shape role-adjacent behaviour (auth, permission gates, sync trust boundaries). The W4-I.3 sync architecture decision appears at the bottom; role decisions resume after it.
+
 ---
 
 ## 2026-04-27: Trusted core team granted Admin (Pradeep, Misba, Swati, Shashank)
@@ -233,3 +235,40 @@ This is the same principle behind the `pre-w4d` raisedFrom safeguard in inventor
 - `public/ops-templates/handover-template.docx` + `scripts/w4h-author-handover-template.mjs`: authored template + reproducibility script.
 - `docs/RUNBOOK.md` §11.11: W4-H overview + smoke-test discipline note.
 - `docs/W4-DEFERRED-ITEMS.md` D-038: Phase 1.1 trainer roster lib trigger.
+
+---
+
+## 2026-04-30: W4-I.3 read-path architecture (auto-sync via Vercel cron)
+
+**Decision:** Path C (Vercel cron auto-drain) chosen over Path B1 (read-merger), B2 (direct writes), and B3 (real database). Recon archived in `plans/anish-ops-w4i3-recon-2026-04-30.md`.
+
+**What B1 / B2 / B3 would have been:**
+- B1 read-merger: every read merges `pending_updates.json` into the source list at request time. ~5 days of work; touches all 268 read-path imports across 99 files; closes immediate-visibility for free.
+- B2 direct writes: replace `enqueueUpdate` with direct entity-file writes; remove the queue. Simpler architecture; does not solve immediate-visibility on its own (Vercel rebuild still required) so most of B1's read work is needed too.
+- B3 real database: introduce Postgres / Supabase. Real-time reads and writes; throws away the git-history-as-audit-log property. ~5 to 7 days; oversized for a 5-person internal tool.
+
+**Why C:**
+- Production target is Azure migration post-Phase-1 (D-041). Heavy interim investment in B1 or B3 gets discarded at cutover.
+- C ships in ~1 day of code (drain lib + endpoint + cron config) and predictably closes the visibility gap within 5 minutes per write.
+- C does not require touching any of the 268 read sites or the 46 write sites; lib / route / config only.
+- Path C can be removed cleanly when Azure lands: delete the cron, delete the queue, swap reads for DB queries.
+
+**Trade-off accepted:** Operators see a 1-5 minute delay between submit and visible-in-list. Acceptable for testing because the alternative (B1 immediate visibility) is wasted work pre-Azure. Misba, Swati, Gowri, Anita, Ameet, and the remaining testers see this as "submit → wait a few minutes → row appears", with the form's confirmation banner setting expectations.
+
+**Trust boundaries:**
+- The cron endpoint accepts only Vercel-supplied `Authorization: Bearer $CRON_SECRET`. No session auth; no user-callable path from the UI.
+- The CLI wrapper at `scripts/sync-queue.mjs` uses the same bearer auth. Operator-triggered ad-hoc drains via `node scripts/sync-queue.mjs` require knowing `CRON_SECRET`.
+- The drain itself runs unprivileged with respect to entity content: it copies pending payloads into entity arrays. The defensive `create-by-fallback` audit annotation makes the drain's role in any non-trivial state mutation explicit in the audit history.
+
+**Reverts cleanly when Azure lands:**
+1. Remove `crons` array from `vercel.json`.
+2. Remove `/api/admin/sync-queue` route + `src/lib/sync/`.
+3. Remove `enqueueUpdate` calls from the 46 write sites (point them at the DB instead).
+4. Remove `pending_updates.json` from `src/data/`.
+5. Update CLAUDE.md to reflect DB as the data layer.
+
+**References:**
+- `plans/anish-ops-w4i3-recon-2026-04-30.md`: reconnaissance with per-option costing and concrete numbers from this codebase.
+- `docs/RUNBOOK.md` §11.12: operational runbook for the cron + drain mechanics.
+- `docs/W4-DEFERRED-ITEMS.md` D-041 / D-042: Azure migration backlog.
+- `src/lib/sync/drainQueue.ts`, `src/app/api/admin/sync-queue/route.ts`, `vercel.json`: implementation surfaces.
