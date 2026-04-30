@@ -76,5 +76,44 @@
       ]
     },
     "retryCount": 0
+  },
+  {
+    "id": "b6656f04-5da0-463b-b50f-469404f7f895",
+    "queuedAt": "2026-04-30T08:55:28.266Z",
+    "queuedBy": "misba.m",
+    "entity": "school",
+    "operation": "create",
+    "payload": {
+      "id": "SCH-CRESCENT-HS",
+      "name": "CRESCENT-HS",
+      "legalEntity": null,
+      "city": "KANNUR",
+      "state": "KERALA",
+      "region": "South-West",
+      "pinCode": "370204",
+      "contactPerson": "MM",
+      "email": "MM@GMAIL.COM",
+      "phone": "09867695258",
+      "billingName": "NA",
+      "pan": null,
+      "gstNumber": null,
+      "notes": null,
+      "active": true,
+      "createdAt": "2026-04-30T08:55:28.265Z",
+      "auditLog": [
+        {
+          "timestamp": "2026-04-30T08:55:28.265Z",
+          "user": "misba.m",
+          "action": "create",
+          "after": {
+            "name": "CRESCENT-HS",
+            "city": "KANNUR",
+            "state": "KERALA",
+            "region": "South-West"
+          }
+        }
+      ]
+    },
+    "retryCount": 0
   }
 ]
