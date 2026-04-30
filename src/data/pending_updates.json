@@ -310,5 +310,84 @@
       ]
     },
     "retryCount": 0
+  },
+  {
+    "id": "525ab899-9c93-497b-81e7-ac30af86f11a",
+    "queuedAt": "2026-04-30T10:53:20.113Z",
+    "queuedBy": "misba.m",
+    "entity": "mou",
+    "operation": "update",
+    "payload": {
+      "id": "MOU-STEAM-2627-001",
+      "schoolId": "SCH-MUTAHHARY_PUBLIC_SCH",
+      "schoolName": "Mutahhary Public School Baroo",
+      "programme": "STEAM",
+      "programmeSubType": null,
+      "schoolScope": "SINGLE",
+      "schoolGroupId": null,
+      "status": "Active",
+      "academicYear": "2026-27",
+      "startDate": "2026-04-01",
+      "endDate": "2028-03-31",
+      "studentsMou": 500,
+      "studentsActual": 0,
+      "studentsVariance": -500,
+      "studentsVariancePct": -1,
+      "spWithoutTax": 677.966101694915,
+      "spWithTax": 800,
+      "contractValue": 400000,
+      "received": 40000,
+      "tds": 0,
+      "balance": 360000,
+      "receivedPct": 10,
+      "paymentSchedule": "50-50 half-yearly",
+      "trainerModel": "TT",
+      "salesPersonId": "sp-roveena",
+      "templateVersion": null,
+      "generatedAt": null,
+      "notes": "Status: New",
+      "daysToExpiry": 710,
+      "auditLog": [
+        {
+          "timestamp": "2026-04-27T12:00:00.000Z",
+          "user": "system",
+          "action": "auto-link-exact-match",
+          "notes": "Imported from gsl-mou-system; auto-linked to school SCH-MUTAHHARY_PUBLIC_SCH."
+        },
+        {
+          "timestamp": "2026-04-27T18:01:00.000Z",
+          "user": "system-w4-a-2",
+          "action": "mou-cohort-status-changed",
+          "before": {
+            "cohortStatus": null
+          },
+          "after": {
+            "cohortStatus": "active"
+          },
+          "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
+        },
+        {
+          "timestamp": "2026-04-17T02:32:42.986Z",
+          "user": "system-w4c-backfill",
+          "action": "intake-captured",
+          "notes": "W4-C.4 backfill from Google Form row 16 timestamped 2026-04-17T02:32:42.986Z. Casing only."
+        },
+        {
+          "timestamp": "2026-04-30T10:53:20.111Z",
+          "user": "misba.m",
+          "action": "kanban-stage-transition",
+          "before": {
+            "stage": "invoice-raised"
+          },
+          "after": {
+            "stage": "kit-dispatched"
+          },
+          "notes": "testttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt"
+        }
+      ],
+      "cohortStatus": "active",
+      "delayNotes": null
+    },
+    "retryCount": 0
   }
 ]
