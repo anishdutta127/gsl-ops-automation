@@ -156,9 +156,12 @@ export default async function AdminIndexPage({ searchParams }: PageProps) {
             </h2>
           </div>
           <span className="text-[10px] uppercase tracking-wide text-slate-500">
-            Phase 1: manual trigger
+            Auto-sync every 5 min (cron)
           </span>
         </header>
+        <p className="mb-3 text-xs text-slate-600">
+          Pending writes drain into the canonical JSON files automatically every 5 minutes via Vercel cron. The buttons below trigger MOU import and health-check on demand; queue drain does not need a manual click.
+        </p>
 
         {syncFlash ? (
           <p

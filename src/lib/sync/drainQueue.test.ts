@@ -171,7 +171,7 @@ describe('drainQueue', () => {
       pending({
         entity: 'school',
         operation: 'update',
-        payload: { id: 'SCH-MISSING', name: 'Defensive' },
+        payload: { id: 'SCH-MISSING', name: 'Defensive', auditLog: [] },
       }),
     ])
     const deps = makeDeps(state)
@@ -181,9 +181,22 @@ describe('drainQueue', () => {
     const schools = state.files.get('src/data/schools.json') as Array<{
       id: string
       name: string
+      auditLog?: Array<{ action: string; notes?: string; user: string }>
     }>
     expect(schools.find((s) => s.id === 'SCH-A')?.name).toBe('New')
-    expect(schools.find((s) => s.id === 'SCH-MISSING')?.name).toBe('Defensive')
+
+    const defensive = schools.find((s) => s.id === 'SCH-MISSING')
+    expect(defensive?.name).toBe('Defensive')
+    // Registered behaviour (W4-I.3.B): defensive append annotates the
+    // audit log with a 'create-by-fallback' entry so future readers
+    // understand the semantic mismatch.
+    const fallback = defensive?.auditLog?.find(
+      (a) => a.action === 'create-by-fallback',
+    )
+    expect(fallback).toBeDefined()
+    expect(fallback?.user).toBe('sync-drain')
+    expect(fallback?.notes).toContain('SCH-MISSING')
+    expect(fallback?.notes).toContain('create-by-fallback')
   })
 
   it('delete filters by id; missing id is a no-op', async () => {

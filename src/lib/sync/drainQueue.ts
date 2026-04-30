@@ -79,9 +79,32 @@ interface EntityRecord {
   [k: string]: unknown
 }
 
+interface DefensiveAuditEntry {
+  timestamp: string
+  user: string
+  action: 'create-by-fallback'
+  notes: string
+}
+
+function annotateDefensiveAppend(
+  payload: EntityRecord,
+  id: string,
+  drainAt: string,
+): EntityRecord {
+  const fallbackEntry: DefensiveAuditEntry = {
+    timestamp: drainAt,
+    user: 'sync-drain',
+    action: 'create-by-fallback',
+    notes: `Update referenced missing id ${id}; treated as create-by-fallback.`,
+  }
+  const existing = Array.isArray(payload.auditLog) ? payload.auditLog : []
+  return { ...payload, auditLog: [...existing, fallbackEntry] }
+}
+
 function applyOneToList(
   list: EntityRecord[],
   pending: PendingUpdate,
+  drainAt: string,
 ): { list: EntityRecord[]; outcome: 'drained' | 'skipped' } {
   const payload = pending.payload as EntityRecord
   const id = typeof payload.id === 'string' ? payload.id : null
@@ -101,7 +124,11 @@ function applyOneToList(
       next[idx] = payload
       return { list: next, outcome: 'drained' }
     }
-    return { list: [...list, payload], outcome: 'drained' }
+    // Defensive append: id missing in source. Annotate the audit log
+    // so a future maintainer reading the entity's history understands
+    // why a 'create-by-fallback' entry sits next to an 'update' one.
+    const annotated = annotateDefensiveAppend(payload, id, drainAt)
+    return { list: [...list, annotated], outcome: 'drained' }
   }
   if (pending.operation === 'delete') {
     return { list: list.filter((r) => r.id !== id), outcome: 'drained' }
@@ -115,6 +142,7 @@ export async function drainQueue(
 ): Promise<DrainResult> {
   const startedAt = deps.now()
   const startMs = startedAt.getTime()
+  const drainAt = startedAt.toISOString()
 
   let pending: PendingUpdate[] = []
   try {
@@ -196,7 +224,7 @@ export async function drainQueue(
           drainedThisEntity = 0
           skippedThisEntity = 0
           for (const entry of entries) {
-            const { list, outcome } = applyOneToList(working, entry)
+            const { list, outcome } = applyOneToList(working, entry, drainAt)
             working = list
             if (outcome === 'drained') drainedThisEntity++
             else skippedThisEntity++
