@@ -14,7 +14,7 @@ Full project context and CEO-approved scope live in `ops-data/GSL_Ops_Handoff.md
 - No in-app AI calls · prompt library lives at `docs/claude-prompts/*.md` (to be added)
 - Single source of truth is the app. Excel is a read-only export after go-live.
 - Ops does NOT sync state back to Excel. The legacy `Mastersheet-Implementation_-_AnishD.xlsx` in `ops-data/` is the format being migrated AWAY from, not a sync target. Phase 1.1 may add read-only Excel export if GSL wants the spreadsheet view restored; reverse-sync is net-new work, not a deferral.
-- Pending writes auto-drain into the canonical JSON files via Vercel cron every 5 minutes. The cron hits `/api/admin/sync-queue` (bearer-auth via `CRON_SECRET`), which calls `src/lib/sync/drainQueue.ts`. The MOU `import-tick` and the sync-`health` check stay admin-triggered via `/admin` for ad-hoc use. Architecture decision archived at `plans/anish-ops-w4i3-recon-2026-04-30.md`; chosen interim Path C (auto-cron drain) over read-merger / direct-writes / DB. Production target is Azure migration post-Phase-1 (see `docs/W4-DEFERRED-ITEMS.md` D-041).
+- Pending writes auto-drain into the canonical JSON files via a GitHub Actions cron every 5 minutes. The workflow at `.github/workflows/sync-queue-cron.yml` POSTs to `/api/admin/sync-queue` (bearer-auth via `CRON_SECRET`), which calls `src/lib/sync/drainQueue.ts`. GitHub Actions cron rather than Vercel cron because the Vercel project is on Hobby tier (no minutely cadence); both holds work fine and the choice is reversible at any tier upgrade. The MOU `import-tick` and the sync-`health` check stay admin-triggered via `/admin` for ad-hoc use. Architecture decision archived at `plans/anish-ops-w4i3-recon-2026-04-30.md`; chosen interim Path C (auto-cron drain) over read-merger / direct-writes / DB. Production target is Azure migration post-Phase-1 (see `docs/W4-DEFERRED-ITEMS.md` D-041).
 - `SyncFreshnessTile` component exists at `src/components/ops/SyncFreshnessTile.tsx` but is NOT mounted on the dashboard in Phase 1. The auto-sync runs every 5 minutes and the latest `sync_health` entry surfaces on `/admin`; a separate freshness tile on `/dashboard` is the next step if testers say they need it.
 - Every write is audited: per-entity `auditLog[]` with `{timestamp, user, action, before, after, notes}`
 - All writes go through the GitHub Contents API queue (pattern inherited from `gsl-mou-system`)
@@ -27,7 +27,7 @@ Reuse verbatim (do not reimplement):
 - `src/lib/pendingUpdates.ts` + `src/lib/githubQueue.ts`: queue writer pattern from `gsl-mou-system`
 - `src/lib/templates.ts`: docxtemplater pattern for PI / Dispatch Note / Delivery Acknowledgement
 - `next.config.mjs` with `experimental.outputFileTracingIncludes` properly nested (Next 14.2.x silent-strip gotcha)
-- `vercel.json` with `ignoreCommand` on the `^chore\(queue\):` subject prefix and `crons` driving auto-sync (W4-I.3.B). The sibling repo's GitHub Actions sync runner is NOT inherited; Vercel cron replaces it for the Ops project.
+- `vercel.json` with `ignoreCommand` on the `^chore\(queue\):` subject prefix. Auto-sync is driven by `.github/workflows/sync-queue-cron.yml` rather than Vercel cron because of the Hobby-tier minutely-cadence restriction.
 - Auth middleware from `gsl-hr-system` (per-user RBAC, bcrypt + JWT httpOnly, 7-day expiry)
 
 Do not inherit the HR candidate portal pattern. Phase 1 Ops is an internal tool; no external users.

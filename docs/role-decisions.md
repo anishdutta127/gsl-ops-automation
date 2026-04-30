@@ -238,7 +238,7 @@ This is the same principle behind the `pre-w4d` raisedFrom safeguard in inventor
 
 ---
 
-## 2026-04-30: W4-I.3 read-path architecture (auto-sync via Vercel cron)
+## 2026-04-30: W4-I.3 read-path architecture (auto-sync via cron)
 
 **Decision:** Path C (Vercel cron auto-drain) chosen over Path B1 (read-merger), B2 (direct writes), and B3 (real database). Recon archived in `plans/anish-ops-w4i3-recon-2026-04-30.md`.
 
@@ -272,3 +272,14 @@ This is the same principle behind the `pre-w4d` raisedFrom safeguard in inventor
 - `docs/RUNBOOK.md` §11.12: operational runbook for the cron + drain mechanics.
 - `docs/W4-DEFERRED-ITEMS.md` D-041 / D-042: Azure migration backlog.
 - `src/lib/sync/drainQueue.ts`, `src/app/api/admin/sync-queue/route.ts`, `vercel.json`: implementation surfaces.
+
+### 2026-04-30 update: trigger choice (GitHub Actions cron over Vercel cron)
+
+The W4-I.3.B initial implementation shipped `vercel.json` with a `crons` array pointing at `/api/admin/sync-queue` on a `*/5 * * * *` schedule. Vercel rejected this because the project is on Hobby tier (sub-daily cron cadence requires Pro). Two options:
+
+- **Upgrade to Vercel Pro.** Adds monthly spend for a single feature (cron) when no other Pro feature is in use during the testing phase.
+- **GitHub Actions cron.** Same `*/5` cadence, free, hits the same `/api/admin/sync-queue` endpoint with the same bearer-auth contract.
+
+Chose GitHub Actions for testing-phase cost reasons. Tracked at `.github/workflows/sync-queue-cron.yml`. The choice is reversible: when GSL Azure migration lands (D-041), the trigger moves to Azure Functions and the GitHub workflow retires; alternatively, if Vercel Pro is later justified for other reasons, the Pro upgrade can flip the cron back to the Vercel-native scheduler with a one-line `vercel.json` change. Trust boundary on the endpoint is unchanged across all three trigger layers (Bearer `$CRON_SECRET`).
+
+**Operational note for round-2 testing:** Anish must hold the SAME hex value in two places: Vercel Production env vars AND GitHub repository secrets. Rotating the secret means rotating both halves; the workflow fails with HTTP 401 if they drift. The RUNBOOK §5.1 covers the recovery path.

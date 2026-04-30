@@ -1,0 +1,73 @@
+name: sync-queue-cron
+
+# W4-I.3.B-fallback: GitHub Actions cron drives the auto-sync because
+# Vercel Hobby tier does not allow minutely cron cadence. The workflow
+# POSTs to /api/admin/sync-queue every 5 minutes; the route validates
+# CRON_SECRET and runs drainQueue. Identical contract to a Vercel cron
+# trigger; only the scheduler differs.
+#
+# Two secrets must hold the SAME hex string value:
+#   - GitHub repo secret CRON_SECRET (this workflow reads it)
+#   - Vercel Production env var CRON_SECRET (the route validates it)
+# Anish provisions both before the first scheduled run.
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sync-queue-cron
+  cancel-in-progress: false
+
+jobs:
+  drain:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: POST /api/admin/sync-queue
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          ENDPOINT_URL: https://gsl-ops-automation.vercel.app/api/admin/sync-queue
+        run: |
+          set -euo pipefail
+
+          if [ -z "${CRON_SECRET:-}" ]; then
+            echo "::error::CRON_SECRET is missing in GitHub repository secrets."
+            echo "Add it under Settings -> Secrets and variables -> Actions."
+            exit 1
+          fi
+
+          response=$(curl --silent --show-error \
+            --write-out "\n%{http_code}" \
+            --request POST \
+            --header "Authorization: Bearer ${CRON_SECRET}" \
+            --header "Content-Type: application/json" \
+            --data '{"triggeredBy":"github-actions"}' \
+            "${ENDPOINT_URL}")
+
+          status=$(printf '%s' "${response}" | tail -n1)
+          body=$(printf '%s' "${response}" | sed '$d')
+
+          echo "HTTP status: ${status}"
+          echo "Response body:"
+          printf '%s\n' "${body}"
+
+          if [ "${status}" != "200" ]; then
+            echo "::error::sync-queue endpoint returned HTTP ${status}"
+            exit 1
+          fi
+
+          ok=$(printf '%s' "${body}" | jq -r '.ok // false')
+          drained=$(printf '%s' "${body}" | jq -r '.drainedCount // 0')
+          remaining=$(printf '%s' "${body}" | jq -r '.remainingCount // 0')
+          duration=$(printf '%s' "${body}" | jq -r '.durationMs // 0')
+
+          echo "Summary: ok=${ok} drained=${drained} remaining=${remaining} duration=${duration}ms"
+
+          if [ "${ok}" != "true" ]; then
+            echo "::warning::drain reported ok=false; transient failures retry on next tick"
+          fi
