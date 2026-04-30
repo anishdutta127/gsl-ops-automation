@@ -563,12 +563,12 @@
     "category": "TinkRworks",
     "cretileGrade": null,
     "mastersheetSourceName": "STEAM:- TinkRsynth Project Kit (Reusable)",
-    "currentStock": 3,
-    "reorderThreshold": null,
-    "notes": null,
+    "currentStock": 100,
+    "reorderThreshold": 0,
+    "notes": "NA",
     "active": false,
-    "lastUpdatedAt": "2026-04-28T18:00:00.000Z",
-    "lastUpdatedBy": "system-w4g-import",
+    "lastUpdatedAt": "2026-04-30T10:34:13.974Z",
+    "lastUpdatedBy": "misba.m",
     "auditLog": [
       {
         "timestamp": "2026-04-28T18:00:00.000Z",
@@ -585,6 +585,21 @@
           "confidence": "anish-resolved-sunset-tail-end-stock"
         },
         "notes": "Tail-end stock (3 units); sunset SKU pending Misba/Pradeep operational decision on whether to clear remaining stock or write off (D-036)."
+      },
+      {
+        "timestamp": "2026-04-30T10:34:13.974Z",
+        "user": "misba.m",
+        "action": "inventory-stock-edited",
+        "before": {
+          "currentStock": 3,
+          "reorderThreshold": null,
+          "notes": null
+        },
+        "after": {
+          "currentStock": 100,
+          "reorderThreshold": 0,
+          "notes": "NA"
+        }
       }
     ]
   },
@@ -594,12 +609,12 @@
     "category": "TinkRworks",
     "cretileGrade": null,
     "mastersheetSourceName": "STEAM:- TinkRsynth Mixer PCB ",
-    "currentStock": 0,
-    "reorderThreshold": null,
-    "notes": "we don't have this in our inventory",
+    "currentStock": 100,
+    "reorderThreshold": 0,
+    "notes": null,
     "active": false,
-    "lastUpdatedAt": "2026-04-28T18:00:00.000Z",
-    "lastUpdatedBy": "system-w4g-import",
+    "lastUpdatedAt": "2026-04-30T10:34:53.094Z",
+    "lastUpdatedBy": "misba.m",
     "auditLog": [
       {
         "timestamp": "2026-04-28T18:00:00.000Z",
@@ -616,6 +631,21 @@
           "confidence": "anish-resolved-sunset-explicit-mastersheet-note"
         },
         "notes": "Sunset at W4-G backfill per Mastersheet operator note (\"we don't have this in our inventory\")."
+      },
+      {
+        "timestamp": "2026-04-30T10:34:53.094Z",
+        "user": "misba.m",
+        "action": "inventory-stock-edited",
+        "before": {
+          "currentStock": 0,
+          "reorderThreshold": null,
+          "notes": "we don't have this in our inventory"
+        },
+        "after": {
+          "currentStock": 100,
+          "reorderThreshold": 0,
+          "notes": null
+        }
       }
     ]
   }
