@@ -202,5 +202,59 @@
       "delayNotes": null
     },
     "retryCount": 0
+  },
+  {
+    "id": "b18f43a0-f711-4ac8-903f-9283c6f24729",
+    "queuedAt": "2026-04-30T10:34:13.975Z",
+    "queuedBy": "misba.m",
+    "entity": "inventoryItem",
+    "operation": "update",
+    "payload": {
+      "id": "INV-TINKRSYNTH",
+      "skuName": "Tinkrsynth",
+      "category": "TinkRworks",
+      "cretileGrade": null,
+      "mastersheetSourceName": "STEAM:- TinkRsynth Project Kit (Reusable)",
+      "currentStock": 100,
+      "reorderThreshold": 0,
+      "notes": "NA",
+      "active": false,
+      "lastUpdatedAt": "2026-04-30T10:34:13.974Z",
+      "lastUpdatedBy": "misba.m",
+      "auditLog": [
+        {
+          "timestamp": "2026-04-28T18:00:00.000Z",
+          "user": "system-w4g-import",
+          "action": "inventory-imported-from-mastersheet",
+          "after": {
+            "invId": "INV-TINKRSYNTH",
+            "skuName": "Tinkrsynth",
+            "category": "TinkRworks",
+            "cretileGrade": null,
+            "currentStock": 3,
+            "mastersheetSourceName": "STEAM:- TinkRsynth Project Kit (Reusable)",
+            "active": false,
+            "confidence": "anish-resolved-sunset-tail-end-stock"
+          },
+          "notes": "Tail-end stock (3 units); sunset SKU pending Misba/Pradeep operational decision on whether to clear remaining stock or write off (D-036)."
+        },
+        {
+          "timestamp": "2026-04-30T10:34:13.974Z",
+          "user": "misba.m",
+          "action": "inventory-stock-edited",
+          "before": {
+            "currentStock": 3,
+            "reorderThreshold": null,
+            "notes": null
+          },
+          "after": {
+            "currentStock": 100,
+            "reorderThreshold": 0,
+            "notes": "NA"
+          }
+        }
+      ]
+    },
+    "retryCount": 0
   }
 ]
