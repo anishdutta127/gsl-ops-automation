@@ -37,5 +37,44 @@
       ]
     },
     "retryCount": 0
+  },
+  {
+    "id": "95058f9f-4e30-454e-b18f-ccb4a794a096",
+    "queuedAt": "2026-04-30T08:51:46.610Z",
+    "queuedBy": "misba.m",
+    "entity": "school",
+    "operation": "create",
+    "payload": {
+      "id": "SCH-TEST",
+      "name": "TEST TEST",
+      "legalEntity": null,
+      "city": "Mumbai",
+      "state": "MAHARASHTRA",
+      "region": "South-West",
+      "pinCode": "401107",
+      "contactPerson": "MM",
+      "email": "MM@GMAIL.COM",
+      "phone": null,
+      "billingName": null,
+      "pan": null,
+      "gstNumber": null,
+      "notes": null,
+      "active": true,
+      "createdAt": "2026-04-30T08:51:46.607Z",
+      "auditLog": [
+        {
+          "timestamp": "2026-04-30T08:51:46.607Z",
+          "user": "misba.m",
+          "action": "create",
+          "after": {
+            "name": "TEST TEST",
+            "city": "Mumbai",
+            "state": "MAHARASHTRA",
+            "region": "South-West"
+          }
+        }
+      ]
+    },
+    "retryCount": 0
   }
 ]
