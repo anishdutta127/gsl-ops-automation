@@ -1,10 +1,15 @@
 /*
  * Auth middleware for GSL Ops Automation.
  *
- * Route scopes (per D7 final statement + Update 2):
+ * Route scopes (per D7 final statement + Update 2 + W4-I.3.B):
  *   /login, /api/login, /api/logout, /api/health   : public
  *   /api/feedback/submit                            : public; HMAC-verified by route handler
  *                                                     (D7 refinement, Tension 4)
+ *   /api/admin/sync-queue                           : public from middleware's perspective;
+ *                                                     bearer-auth via CRON_SECRET inside the
+ *                                                     route handler. Cron-triggered, not user-
+ *                                                     callable; same allow-list pattern as
+ *                                                     /api/feedback/submit (W4-I.3.B-fallback).
  *   /feedback/**                                    : public; HMAC-verified at page level by
  *                                                     the SPOC-facing form Server Component
  *                                                     (covers form, thank-you, link-expired)
@@ -13,14 +18,16 @@
  *                                                     (Update 2; covers token page + link-expired)
  *   everything else                                 : staff JWT required
  *
- * No candidate session cookie in Phase 1 (D7 final statement). The two narrow
- * public surfaces (feedback POST, status-view GET) consume MagicLinkToken via
- * stateless HMAC; no /portal/exchange or /portal/request-new-link surface.
+ * No candidate session cookie in Phase 1 (D7 final statement). The three narrow
+ * public surfaces (feedback POST, status-view GET, sync-queue cron) all enforce
+ * their own auth inside the route or page handler; middleware just lets them
+ * through.
  *
  * Forked from gsl-hr-system. Edits: candidate-cookie branch fully stripped
  * (no CANDIDATE_SESSION_COOKIE, no verifyCandidateSession import, no
  * /portal/exchange or /portal/request-new-link routes); PUBLIC_PATHS adds
- * /api/feedback/submit; PUBLIC_PREFIXES adds /feedback and /portal/status.
+ * /api/feedback/submit and /api/admin/sync-queue; PUBLIC_PREFIXES adds
+ * /feedback and /portal/status.
  */
 
 import { NextResponse } from 'next/server'
@@ -46,6 +53,7 @@ const PUBLIC_PATHS = [
   '/api/logout',
   '/api/health',
   '/api/feedback/submit',
+  '/api/admin/sync-queue',
 ]
 
 const PUBLIC_PREFIXES = [

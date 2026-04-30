@@ -125,4 +125,15 @@ describe('middleware auth gating', () => {
     await middleware(makeRequest('/portal/status/some-token'))
     expect(verifyMock).not.toHaveBeenCalled()
   })
+
+  it('/api/admin/sync-queue is public (bearer-auth via CRON_SECRET inside route handler)', async () => {
+    // Regression for the W4-I.3.B-fallback 307 incident: middleware was
+    // redirecting cron POSTs to /login because the route was not on the
+    // allow-list. The route's own bearer-auth check rejects unauthorised
+    // callers; middleware must let the request through to reach it.
+    const res = await middleware(makeRequest('/api/admin/sync-queue'))
+    expect(verifyMock).not.toHaveBeenCalled()
+    expect(issueMock).not.toHaveBeenCalled()
+    expect(res.headers.get('location')).toBeNull()
+  })
 })
