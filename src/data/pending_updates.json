@@ -389,5 +389,98 @@
       "delayNotes": null
     },
     "retryCount": 0
+  },
+  {
+    "id": "998b9234-9cbc-4039-a2c6-de30e71a6a3f",
+    "queuedAt": "2026-04-30T10:55:08.910Z",
+    "queuedBy": "misba.m",
+    "entity": "mou",
+    "operation": "update",
+    "payload": {
+      "id": "MOU-STEAM-2627-039",
+      "schoolId": "SCH-ST_PAUL_S_BOARDING_A",
+      "schoolName": "St. Paul's Boarding And Day School",
+      "programme": "STEAM",
+      "programmeSubType": null,
+      "schoolScope": "SINGLE",
+      "schoolGroupId": null,
+      "status": "Active",
+      "academicYear": "2026-27",
+      "startDate": "2026-04-01",
+      "endDate": "2027-03-31",
+      "studentsMou": 900,
+      "studentsActual": 860,
+      "studentsVariance": -40,
+      "studentsVariancePct": -0.0444,
+      "spWithoutTax": 2000,
+      "spWithTax": 2360,
+      "contractValue": 2029600,
+      "received": 0,
+      "tds": 0,
+      "balance": 2029600,
+      "receivedPct": 0,
+      "paymentSchedule": "50-50 half-yearly",
+      "trainerModel": null,
+      "salesPersonId": "sp-prodipto",
+      "templateVersion": null,
+      "generatedAt": null,
+      "notes": "Status: Retained",
+      "daysToExpiry": 344,
+      "auditLog": [
+        {
+          "timestamp": "2026-04-27T12:00:00.000Z",
+          "user": "system",
+          "action": "auto-link-exact-match",
+          "notes": "Imported from gsl-mou-system; auto-linked to school SCH-ST_PAUL_S_BOARDING_A."
+        },
+        {
+          "timestamp": "2026-04-27T18:01:00.000Z",
+          "user": "system-w4-a-2",
+          "action": "mou-cohort-status-changed",
+          "before": {
+            "cohortStatus": null
+          },
+          "after": {
+            "cohortStatus": "active"
+          },
+          "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
+        },
+        {
+          "timestamp": "2026-02-24T13:05:00.188Z",
+          "user": "system-w4c-backfill",
+          "action": "intake-captured",
+          "notes": "W4-C.4 backfill from Google Form row 2 timestamped 2026-02-24T13:05:00.188Z. (re-mirrored to correct MOU via W4-C.7)"
+        },
+        {
+          "timestamp": "2026-04-28T10:00:00.000Z",
+          "user": "system-w4c-7",
+          "action": "intake-record-corrected-w4c7",
+          "before": {
+            "mouId": "MOU-STEAM-2627-002",
+            "mappedSchoolName": "Jnana Bharathi English School"
+          },
+          "after": {
+            "mouId": "MOU-STEAM-2627-039",
+            "mappedSchoolName": "St. Paul's Boarding And Day School"
+          },
+          "notes": "St. Paul's Boarding maps to -039 not -002 (Jnana Bharathi). Form school: St. Paul's Boarding and Day School . Moved IN to this MOU."
+        },
+        {
+          "timestamp": "2026-04-30T10:55:08.910Z",
+          "user": "misba.m",
+          "action": "kanban-stage-transition",
+          "before": {
+            "stage": "invoice-raised"
+          },
+          "after": {
+            "stage": "kit-dispatched"
+          },
+          "notes": "testinng testing"
+        }
+      ],
+      "cohortStatus": "active",
+      "delayNotes": null
+    },
+    "retryCount": 0
   }
 ]
