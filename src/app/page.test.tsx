@@ -1,17 +1,32 @@
+/*
+ * / page tests (W4-I.5 P2C5: route migration).
+ *
+ * After P2C5 the kanban moved to /kanban and the new Operations
+ * Control Dashboard lives at /. These tests assert the dashboard
+ * composition (header, filters, stat cards, recent MOUs, action
+ * centre, orders tracker, comm panel, templates, sales summary,
+ * footer, and the kanban CTA in the header).
+ */
+
 import { describe, expect, it, vi, beforeEach } from 'vitest'
 import { renderToStaticMarkup } from 'react-dom/server'
 import type { User } from '@/lib/types'
 
 const getCurrentUserMock = vi.fn()
+const redirectMock = vi.fn((path: string) => { throw new Error(`REDIRECT:${path}`) })
 
 vi.mock('@/lib/auth/session', () => ({
   getCurrentUser: () => getCurrentUserMock(),
 }))
+
 vi.mock('next/navigation', () => ({
-  redirect: vi.fn((url: string) => { throw new Error(`REDIRECT:${url}`) }),
-  useRouter: () => ({ push: vi.fn(), refresh: vi.fn(), replace: vi.fn() }),
+  redirect: (p: string) => redirectMock(p),
+  notFound: vi.fn(() => { throw new Error('NEXT_NOT_FOUND') }),
 }))
-vi.mock('@/components/ops/TopNav', () => ({ TopNav: () => null }))
+
+vi.mock('@/components/ops/TopNav', () => ({
+  TopNav: () => null,
+}))
 
 beforeEach(() => {
   vi.clearAllMocks()
@@ -24,132 +39,179 @@ function admin(): User {
   }
 }
 
-function salesRep(): User {
-  return {
-    id: 'sp-vikram', name: 'Vikram', email: 'v@example.test', role: 'SalesRep',
-    testingOverride: false, active: true, passwordHash: 'X', createdAt: '', auditLog: [],
-  }
-}
+const noSp = Promise.resolve({})
 
-describe('/ kanban homepage', () => {
-  it('renders 9 stage columns with the Pre-Ops Legacy column first', async () => {
+describe('/ Operations Control Dashboard (W4-I.5 P2C5)', () => {
+  it('renders the Operations Control Dashboard header + subtitle', async () => {
     getCurrentUserMock.mockResolvedValue(admin())
-    const { default: HomePage } = await import('./page')
-    const html = renderToStaticMarkup(await HomePage({ searchParams: Promise.resolve({}) }))
-    expect(html).toContain('data-testid="kanban-board"')
-    expect(html).toContain('data-testid="stage-column-pre-ops"')
-    expect(html).toContain('data-testid="stage-column-mou-signed"')
-    expect(html).toContain('data-testid="stage-column-actuals-confirmed"')
-    expect(html).toContain('data-testid="stage-column-cross-verification"')
-    expect(html).toContain('data-testid="stage-column-invoice-raised"')
-    expect(html).toContain('data-testid="stage-column-payment-received"')
-    expect(html).toContain('data-testid="stage-column-kit-dispatched"')
-    expect(html).toContain('data-testid="stage-column-delivery-acknowledged"')
-    expect(html).toContain('data-testid="stage-column-feedback-submitted"')
+    const { default: DashboardPage } = await import('./page')
+    const html = renderToStaticMarkup(await DashboardPage({ searchParams: noSp }))
+    expect(html).toContain('Operations Control Dashboard')
+    expect(html).toContain('Track school onboarding')
+    expect(html).toContain('data-testid="dashboard-header"')
   })
 
-  it('Pre-Ops column uses the "Needs triage" badge framing rather than a numeric stage label', async () => {
+  it('renders FY selector with options + Today label', async () => {
     getCurrentUserMock.mockResolvedValue(admin())
-    const { default: HomePage } = await import('./page')
-    const html = renderToStaticMarkup(await HomePage({ searchParams: Promise.resolve({}) }))
-    expect(html).toContain('Needs triage:')
+    const { default: DashboardPage } = await import('./page')
+    const html = renderToStaticMarkup(await DashboardPage({ searchParams: noSp }))
+    expect(html).toContain('data-testid="dashboard-fy"')
+    expect(html).toContain('data-testid="dashboard-today"')
+    // Date pickers
+    expect(html).toContain('data-testid="dashboard-from-date"')
+    expect(html).toContain('data-testid="dashboard-to-date"')
   })
 
-  it('renders MouCards inside columns from the real fixture', async () => {
+  it('renders programme filter chip row with All + 5 programmes', async () => {
     getCurrentUserMock.mockResolvedValue(admin())
-    const { default: HomePage } = await import('./page')
-    const html = renderToStaticMarkup(await HomePage({ searchParams: Promise.resolve({}) }))
-    expect(html).toContain('data-testid="mou-card"')
-    // Real fixture has MOU-STEAM-2627-001 at "Mutahhary Public School Baroo".
-    expect(html).toContain('MOU-STEAM-2627-001')
+    const { default: DashboardPage } = await import('./page')
+    const html = renderToStaticMarkup(await DashboardPage({ searchParams: noSp }))
+    expect(html).toContain('data-testid="dashboard-filters"')
+    expect(html).toContain('data-testid="dashboard-chip-all"')
+    expect(html).toContain('data-testid="dashboard-chip-STEAM"')
+    expect(html).toContain('data-testid="dashboard-chip-TinkRworks"')
+    expect(html).toContain('data-testid="dashboard-chip-Young Pioneers"')
+    expect(html).toContain('data-testid="dashboard-chip-Harvard HBPE"')
+    expect(html).toContain('data-testid="dashboard-chip-VEX"')
+    expect(html).toContain('data-testid="dashboard-apply"')
+    expect(html).toContain('data-testid="dashboard-reset"')
   })
 
-  it('SalesRep also sees the kanban (Phase 1 W3-B: UI gates disabled)', async () => {
-    getCurrentUserMock.mockResolvedValue(salesRep())
-    const { default: HomePage } = await import('./page')
-    const html = renderToStaticMarkup(await HomePage({ searchParams: Promise.resolve({}) }))
-    expect(html).toContain('data-testid="kanban-board"')
+  it('renders 6 stat cards in fixed order with CTAs', async () => {
+    getCurrentUserMock.mockResolvedValue(admin())
+    const { default: DashboardPage } = await import('./page')
+    const html = renderToStaticMarkup(await DashboardPage({ searchParams: noSp }))
+    expect(html).toContain('data-testid="stat-card-mou-registry"')
+    expect(html).toContain('data-testid="stat-card-active-schools"')
+    expect(html).toContain('data-testid="stat-card-orders-raised"')
+    expect(html).toContain('data-testid="stat-card-track-shipment"')
+    expect(html).toContain('data-testid="stat-card-escalations"')
+    expect(html).toContain('data-testid="stat-card-inventory"')
+    expect(html).toContain('View MOUs')
+    expect(html).toContain('Resolve Issues')
   })
 
-  it('redirects unauthenticated viewer to /login with next=/', async () => {
+  it('Escalations CTA carries the alert variant (red)', async () => {
+    getCurrentUserMock.mockResolvedValue(admin())
+    const { default: DashboardPage } = await import('./page')
+    const html = renderToStaticMarkup(await DashboardPage({ searchParams: noSp }))
+    // The CTA's anchor carries data-testid stat-card-escalations-cta with the bg-signal-alert class.
+    expect(html).toMatch(/bg-signal-alert[^"]*"[^>]*data-testid="stat-card-escalations-cta"/)
+  })
+
+  it('redirects unauthenticated callers to /login', async () => {
     getCurrentUserMock.mockResolvedValue(null)
-    const { default: HomePage } = await import('./page')
-    await expect(HomePage({ searchParams: Promise.resolve({}) })).rejects.toThrow('REDIRECT:/login?next=%2F')
+    const { default: DashboardPage } = await import('./page')
+    await expect(DashboardPage({ searchParams: noSp })).rejects.toThrow('REDIRECT:/login?next=%2F')
+  })
+
+  it('?programme=STEAM marks the STEAM chip active', async () => {
+    getCurrentUserMock.mockResolvedValue(admin())
+    const { default: DashboardPage } = await import('./page')
+    const html = renderToStaticMarkup(
+      await DashboardPage({ searchParams: Promise.resolve({ programme: 'STEAM' }) }),
+    )
+    // SSR renders the active class string + the data-testid in either order.
+    expect(html).toMatch(/bg-brand-navy text-white"[^>]*data-testid="dashboard-chip-STEAM"/)
+  })
+
+  it('?fiscalYear=2026-27 reflects in the FY select default', async () => {
+    getCurrentUserMock.mockResolvedValue(admin())
+    const { default: DashboardPage } = await import('./page')
+    const html = renderToStaticMarkup(
+      await DashboardPage({ searchParams: Promise.resolve({ fiscalYear: '2026-27' }) }),
+    )
+    // defaultValue prop renders selected option in SSR
+    expect(html).toMatch(/<option[^>]*selected[^>]*value="2026-27"|<option[^>]*value="2026-27"[^>]*selected/)
+  })
+
+  it('renders the Recent MOU Updates table with View all link', async () => {
+    getCurrentUserMock.mockResolvedValue(admin())
+    const { default: DashboardPage } = await import('./page')
+    const html = renderToStaticMarkup(await DashboardPage({ searchParams: noSp }))
+    expect(html).toContain('data-testid="dashboard-recent-mous"')
+    expect(html).toContain('Recent MOU Updates')
+    expect(html).toContain('data-testid="recent-mous-view-all"')
+    // At least one row from the fixture should render
+    expect(html).toMatch(/data-testid="recent-mou-row-/)
+  })
+
+  it('renders the Action Center panel with total badge + 5 tiles + CTA', async () => {
+    getCurrentUserMock.mockResolvedValue(admin())
+    const { default: DashboardPage } = await import('./page')
+    const html = renderToStaticMarkup(await DashboardPage({ searchParams: noSp }))
+    expect(html).toContain('data-testid="dashboard-action-centre"')
+    expect(html).toContain('data-testid="action-centre-total-badge"')
+    expect(html).toContain('data-testid="action-tile-pending-signature"')
+    expect(html).toContain('data-testid="action-tile-orders-awaiting-approval"')
+    expect(html).toContain('data-testid="action-tile-shipments-delayed"')
+    expect(html).toContain('data-testid="action-tile-escalations-unresolved"')
+    expect(html).toContain('data-testid="action-tile-inventory-low-stock"')
+    expect(html).toContain('data-testid="action-centre-cta"')
+  })
+
+  it('renders the Orders and Shipment Tracker table', async () => {
+    getCurrentUserMock.mockResolvedValue(admin())
+    const { default: DashboardPage } = await import('./page')
+    const html = renderToStaticMarkup(await DashboardPage({ searchParams: noSp }))
+    expect(html).toContain('data-testid="dashboard-orders-tracker"')
+    expect(html).toContain('Orders and Shipment Tracker')
+    expect(html).toContain('data-testid="orders-tracker-view-all"')
+    // Real fixture row: at least one dispatch exists
+    expect(html).toMatch(/data-testid="orders-row-/)
+  })
+
+  it('renders the Communication Automation panel with 3 send buttons', async () => {
+    getCurrentUserMock.mockResolvedValue(admin())
+    const { default: DashboardPage } = await import('./page')
+    const html = renderToStaticMarkup(await DashboardPage({ searchParams: noSp }))
+    expect(html).toContain('data-testid="dashboard-communication-panel"')
+    expect(html).toContain('Communication Automation')
+    expect(html).toContain('data-testid="comm-button-welcome"')
+    expect(html).toContain('data-testid="comm-button-thank-you"')
+    expect(html).toContain('data-testid="comm-button-follow-up"')
+    expect(html).toContain('Send Welcome Note')
+    expect(html).toContain('Send Thank You Note')
+    expect(html).toContain('Send Follow-up Email')
+  })
+
+  it('renders the Communication Templates section with 2 preview cards + Create CTA', async () => {
+    getCurrentUserMock.mockResolvedValue(admin())
+    const { default: DashboardPage } = await import('./page')
+    const html = renderToStaticMarkup(await DashboardPage({ searchParams: noSp }))
+    expect(html).toContain('data-testid="dashboard-templates"')
+    expect(html).toContain('Communication Templates')
+    expect(html).toContain('data-testid="template-card-welcome"')
+    expect(html).toContain('data-testid="template-card-thank-you"')
+    expect(html).toContain('data-testid="template-edit-welcome"')
+    expect(html).toContain('data-testid="template-create-cta"')
+    expect(html).toContain('Create new template')
+  })
+
+  it('renders the Sales Pipeline summary card with View pipeline CTA', async () => {
+    getCurrentUserMock.mockResolvedValue(admin())
+    const { default: DashboardPage } = await import('./page')
+    const html = renderToStaticMarkup(await DashboardPage({ searchParams: noSp }))
+    expect(html).toContain('data-testid="dashboard-sales-pipeline-summary"')
+    expect(html).toContain('Sales Pipeline')
+    expect(html).toContain('data-testid="sales-pipeline-summary-cta"')
+    expect(html).toContain('View pipeline')
+  })
+
+  it('renders the dashboard footer + the Open Kanban Board CTA in the header', async () => {
+    getCurrentUserMock.mockResolvedValue(admin())
+    const { default: DashboardPage } = await import('./page')
+    const html = renderToStaticMarkup(await DashboardPage({ searchParams: noSp }))
+    expect(html).toContain('data-testid="dashboard-footer"')
+    expect(html).toContain('Internal use only')
+    expect(html).toContain('data-testid="dashboard-kanban-cta"')
+    expect(html).toContain('Open Kanban Board')
   })
 
   it('contains no raw hex codes (token discipline)', async () => {
     getCurrentUserMock.mockResolvedValue(admin())
-    const { default: HomePage } = await import('./page')
-    const html = renderToStaticMarkup(await HomePage({ searchParams: Promise.resolve({}) }))
-    expect(html).not.toMatch(/#[0-9a-fA-F]{3,6}\b/)
-  })
-
-  it('column counts sum to total MOU count from fixture', async () => {
-    getCurrentUserMock.mockResolvedValue(admin())
-    const { default: HomePage } = await import('./page')
-    const html = renderToStaticMarkup(await HomePage({ searchParams: Promise.resolve({}) }))
-    // Title shows "<n> active MOUs across 10 stages" post-W4-C.1
-    // (post-signing-intake added at column position 3); the count is the
-    // active-cohort filter result (51 in the W4-A.2 fixture).
-    expect(html).toMatch(/\d+ active MOUs across 10 stages/)
-  })
-
-  it('renders the kanban / overview tab strip with Kanban active (W3-F)', async () => {
-    getCurrentUserMock.mockResolvedValue(admin())
-    const { default: HomePage } = await import('./page')
-    const html = renderToStaticMarkup(await HomePage({ searchParams: Promise.resolve({}) }))
-    expect(html).toContain('data-testid="kanban-overview-tabs"')
-    expect(html).toContain('data-testid="tab-kanban"')
-    expect(html).toContain('data-testid="tab-overview"')
-    expect(html).toMatch(
-      /data-testid="tab-kanban"[^>]*aria-current="page"|aria-current="page"[^>]*data-testid="tab-kanban"/,
-    )
-  })
-
-  it('renders the click-vs-drag interaction hint above the kanban', async () => {
-    getCurrentUserMock.mockResolvedValue(admin())
-    const { default: HomePage } = await import('./page')
-    const html = renderToStaticMarkup(await HomePage({ searchParams: Promise.resolve({}) }))
-    expect(html).toContain('data-testid="kanban-interaction-hint"')
-    // W4-B.4 tightened the hint to a single short sentence.
-    expect(html).toContain('Click to open. Drag the grip to move.')
-  })
-
-  // W4-B.1 defensive check: cross-verification is auto-skipped by
-  // deriveStage's first-non-null-wins logic, so no card in the active
-  // cohort should land in that column. If this test fails, deriveStage
-  // (or stageEnteredDate) regressed.
-  it('no card lands in the cross-verification column (auto-skip preserved)', async () => {
-    getCurrentUserMock.mockResolvedValue(admin())
-    const { default: HomePage } = await import('./page')
-    const html = renderToStaticMarkup(await HomePage({ searchParams: Promise.resolve({}) }))
-    // The column header itself still renders (KANBAN_COLUMNS lists 9
-    // columns including cross-verification); we assert the column is
-    // empty by checking the count chip and the empty-state copy.
-    const sectionMatch = html.match(
-      /data-testid="droppable-cross-verification"[\s\S]*?data-testid="droppable-/,
-    ) ?? html.match(/data-testid="droppable-cross-verification"[\s\S]*$/)
-    expect(sectionMatch).not.toBeNull()
-    if (sectionMatch !== null) {
-      const section = sectionMatch[0]
-      expect(section).toContain('Empty.')
-      // No mou-card should be inside this column.
-      expect(section.match(/data-testid="mou-card"/g) ?? []).toHaveLength(0)
-    }
-  })
-
-  it('cards render the per-stage next-step label (W4-B.1 + W4-C.1)', async () => {
-    getCurrentUserMock.mockResolvedValue(admin())
-    const { default: HomePage } = await import('./page')
-    const html = renderToStaticMarkup(await HomePage({ searchParams: Promise.resolve({}) }))
-    // W4-C.1: pre-backfill, the active 51 MOUs without IntakeRecords sit
-    // at post-signing-intake. Their next-step label is "Confirm actuals".
-    // Post-backfill (W4-C.4) ~17 cards will gain intake records and
-    // advance; this assertion stays valid because plenty of active MOUs
-    // remain in post-signing-intake.
-    expect(html).toContain('Next: Confirm actuals')
-    // Defensive: the cross-verification placeholder text never reaches
-    // the rendered HTML.
-    expect(html).not.toContain('Auto-skipped')
+    const { default: DashboardPage } = await import('./page')
+    const html = renderToStaticMarkup(await DashboardPage({ searchParams: noSp }))
+    expect(html).not.toMatch(/#[0-9a-fA-F]{3,6}/)
   })
 })

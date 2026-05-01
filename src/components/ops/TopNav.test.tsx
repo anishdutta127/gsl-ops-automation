@@ -21,26 +21,34 @@ function makeUser(overrides: Partial<User> = {}): User {
 }
 
 describe('TopNav', () => {
-  it('renders Home / MOUs / Schools / Escalations links for any user', async () => {
+  it('renders Dashboard / Kanban / MOUs / Schools / Escalations links for any user (W4-I.5 P2C5)', async () => {
     getCurrentUserMock.mockResolvedValue(makeUser({ role: 'SalesRep' }))
     const { TopNav } = await import('./TopNav')
     const html = renderToStaticMarkup(await TopNav({ currentPath: '/' }))
-    expect(html).toContain('>Home<')
+    expect(html).toContain('>Dashboard<')
+    expect(html).toContain('>Kanban<')
     expect(html).toContain('href="/mous"')
     expect(html).toContain('href="/schools"')
     expect(html).toContain('href="/escalations"')
   })
 
-  it('Home link points at / (kanban homepage), not /dashboard (W3-F)', async () => {
+  it('Dashboard link points at / (W4-I.5 P2C5: dashboard is now the homepage)', async () => {
     getCurrentUserMock.mockResolvedValue(makeUser())
     const { TopNav } = await import('./TopNav')
     const html = renderToStaticMarkup(await TopNav({ currentPath: '/' }))
-    // The Home label is on a link whose href is "/", not "/dashboard".
-    expect(html).toMatch(/href="\/"[^>]*>Home<|>Home<[^>]*href="\/"/)
-    expect(html).not.toContain('>Dashboard<')
+    expect(html).toMatch(/href="\/"[^>]*>Dashboard<|>Dashboard<[^>]*href="\/"/)
+    // The pre-W4-I.5 "Home" label is gone.
+    expect(html).not.toContain('>Home<')
   })
 
-  it('GSL Ops logo links to / (kanban homepage)', async () => {
+  it('Kanban link points at /kanban (W4-I.5 P2C5)', async () => {
+    getCurrentUserMock.mockResolvedValue(makeUser())
+    const { TopNav } = await import('./TopNav')
+    const html = renderToStaticMarkup(await TopNav({ currentPath: '/' }))
+    expect(html).toMatch(/href="\/kanban"[^>]*>Kanban<|>Kanban<[^>]*href="\/kanban"/)
+  })
+
+  it('GSL Ops logo links to /', async () => {
     getCurrentUserMock.mockResolvedValue(makeUser())
     const { TopNav } = await import('./TopNav')
     const html = renderToStaticMarkup(await TopNav({ currentPath: '/' }))
@@ -85,13 +93,11 @@ describe('TopNav', () => {
     )
   })
 
-  it('Home link is aria-current="page" when currentPath is exactly /', async () => {
+  it('Dashboard link is aria-current="page" when currentPath is exactly /', async () => {
     getCurrentUserMock.mockResolvedValue(makeUser())
     const { TopNav } = await import('./TopNav')
     const html = renderToStaticMarkup(await TopNav({ currentPath: '/' }))
-    // The Home nav-link list item carries aria-current; we look for the
-    // pattern within the label element vicinity.
-    expect(html).toMatch(/aria-current="page"[^>]*>[^<]*Home/)
+    expect(html).toMatch(/aria-current="page"[^>]*>[^<]*Dashboard/)
   })
 
   it('renders Sign out button posting to /api/logout', async () => {

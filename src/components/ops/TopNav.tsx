@@ -11,12 +11,10 @@
  * link via aria-current. Touch targets 44px minimum on mobile;
  * 48px tall desktop.
  *
- * W3-F: the first nav slot is "Home" (pointing at /, the kanban).
- * The Leadership Console moved to /overview as a sibling tab; the
- * Home / Overview switch lives inside the page via
- * KanbanOverviewTabs. /dashboard still resolves (alias of /overview)
- * for bookmark compatibility, so a link there is no longer needed
- * in the global nav.
+ * W4-I.5 P2C5: the home route / now serves the Operations Control
+ * Dashboard; the kanban moved to /kanban. TopNav surfaces both as
+ * sibling links: "Dashboard" (-> /) and "Kanban" (-> /kanban). The
+ * old in-page KanbanOverviewTabs strip is no longer mounted.
  */
 
 import Link from 'next/link'
@@ -32,7 +30,8 @@ interface NavLink {
 }
 
 const NAV_LINKS: NavLink[] = [
-  { href: '/', label: 'Home', visibleTo: 'all' },
+  { href: '/', label: 'Dashboard', visibleTo: 'all' },
+  { href: '/kanban', label: 'Kanban', visibleTo: 'all' },
   { href: '/mous', label: 'MOUs', visibleTo: 'all' },
   { href: '/schools', label: 'Schools', visibleTo: 'all' },
   { href: '/sales-pipeline', label: 'Sales pipeline', visibleTo: 'all' },

@@ -29,7 +29,7 @@ export interface DashboardHeaderProps {
   fiscalYear: string
   fromDate: string
   toDate: string
-  /** Where the prominent Kanban CTA points (P2C5 will swap default to /kanban). */
+  /** Where the prominent Kanban CTA points. P2C5 set this to /kanban. */
   kanbanHref?: string
 }
 
@@ -44,7 +44,7 @@ export function DashboardHeader({
   fiscalYear,
   fromDate,
   toDate,
-  kanbanHref = '/',
+  kanbanHref = '/kanban',
 }: DashboardHeaderProps): ReactNode {
   return (
     <header
