@@ -35,6 +35,13 @@ function salesRep(id: string): User {
   }
 }
 
+function userWithRole(role: User['role'], id: string): User {
+  return {
+    id, name: id, email: `${id}@example.test`, role,
+    testingOverride: false, active: true, passwordHash: 'X', createdAt: '', auditLog: [],
+  }
+}
+
 describe('/mous/[mouId] detail page', () => {
   // Phase F: timeout extended to 30s. Test passes <4s in isolation
   // but races with parallel page-test imports under full-suite load.
@@ -77,6 +84,28 @@ describe('/mous/[mouId] detail page', () => {
     await expect(
       Page({ params: Promise.resolve({ mouId: 'NOPE' }) }),
     ).rejects.toThrow('NEXT_NOT_FOUND')
+  })
+
+  it('W4-I.4 MM2: PI action button shows for Admin and Finance', async () => {
+    for (const role of ['Admin', 'Finance'] as const) {
+      getCurrentUserMock.mockResolvedValue(userWithRole(role, `${role}-user`))
+      const { default: Page } = await import('./page')
+      const html = renderToStaticMarkup(
+        await Page({ params: Promise.resolve({ mouId: 'MOU-STEAM-2627-001' }) }),
+      )
+      expect(html).toMatch(/href="\/mous\/MOU-STEAM-2627-001\/pi"/)
+    }
+  })
+
+  it('W4-I.4 MM2: PI action button hidden from Ops / SalesRep / Sales Head / TrainerHead', async () => {
+    for (const role of ['OpsHead', 'OpsEmployee', 'SalesHead', 'TrainerHead'] as const) {
+      getCurrentUserMock.mockResolvedValue(userWithRole(role, `${role}-user`))
+      const { default: Page } = await import('./page')
+      const html = renderToStaticMarkup(
+        await Page({ params: Promise.resolve({ mouId: 'MOU-STEAM-2627-001' }) }),
+      )
+      expect(html).not.toMatch(/href="\/mous\/MOU-STEAM-2627-001\/pi"/)
+    }
   })
 
   it('contains no raw hex codes (token discipline)', async () => {

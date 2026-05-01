@@ -30,18 +30,32 @@ describe('/mous/[mouId]/pi page', () => {
     expect(html).toContain('Generate PI')
   })
 
-  it('SalesRep on own MOU also sees the form (Phase 1 W3-B: UI gates disabled)', async () => {
-    // sp-roveena owns MOU-STEAM-2627-001 post Week 3 import. Pre-W3-B
-    // SalesRep got an inline role-locked message; post-W3-B the form
-    // renders for any authenticated user. Server-side canPerform() in
-    // lib/pi/generatePi.ts still enforces at submit time.
+  it('SalesRep on own MOU now 404s (W4-I.4 MM2: PI gated to Finance + Admin)', async () => {
+    // Pre-W4-I.4 the W3-B "every user sees every page" baseline let
+    // SalesRep render the PI form even though canPerform() rejected
+    // the submit. MM2 re-gates the page so PI is invisible to non-
+    // Finance / non-Admin roles.
     getCurrentUserMock.mockResolvedValue(user('SalesRep', 'sp-roveena'))
     const { default: Page } = await import('./page')
-    const html = renderToStaticMarkup(
-      await Page({ params: Promise.resolve({ mouId: 'MOU-STEAM-2627-001' }) }),
-    )
-    expect(html).toContain('<form')
-    expect(html).toContain('Generate PI')
+    await expect(
+      Page({ params: Promise.resolve({ mouId: 'MOU-STEAM-2627-001' }) }),
+    ).rejects.toThrow('NEXT_NOT_FOUND')
+  })
+
+  it('OpsHead 404s (W4-I.4 MM2: PI gated to Finance + Admin)', async () => {
+    getCurrentUserMock.mockResolvedValue(user('OpsHead', 'misba.m'))
+    const { default: Page } = await import('./page')
+    await expect(
+      Page({ params: Promise.resolve({ mouId: 'MOU-STEAM-2627-001' }) }),
+    ).rejects.toThrow('NEXT_NOT_FOUND')
+  })
+
+  it('OpsEmployee 404s (W4-I.4 MM2: PI gated to Finance + Admin)', async () => {
+    getCurrentUserMock.mockResolvedValue(user('OpsEmployee', 'ops-emp.x'))
+    const { default: Page } = await import('./page')
+    await expect(
+      Page({ params: Promise.resolve({ mouId: 'MOU-STEAM-2627-001' }) }),
+    ).rejects.toThrow('NEXT_NOT_FOUND')
   })
 
   it('no longer renders the Phase 1 stub note (W4-B.4: stale; API is wired)', async () => {

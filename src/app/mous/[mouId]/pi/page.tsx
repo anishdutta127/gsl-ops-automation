@@ -1,14 +1,18 @@
 /*
  * /mous/[mouId]/pi
  *
- * PI generation form. Per Phase C4 hybrid: form renders + role gates,
- * but the submit endpoint is a 501 stub. Real implementation lands in
- * Phase D when docxtemplater + the PI template asset come online.
+ * PI generation form. Phase D-wired: docxtemplater + PI template
+ * online; the submit endpoint streams the rendered .docx.
  *
- * Roles: Admin + Finance per 'mou:generate-pi' (advisory only post
- * Week 3 W3-B). Page-level UI gate removed; the form renders for any
- * authenticated user. Server-side canPerform() in lib/pi/generatePi.ts
- * still enforces at submit time.
+ * Roles: Admin + Finance per 'mou:generate-pi'.
+ *
+ * W4-I.4 MM2: targeted re-gate of the W3-B "every authenticated user
+ * sees every page" baseline. Misba (OpsHead) reported PI generation as
+ * out-of-role for Implementation; the matrix already restricted the
+ * action to Finance + Admin but the page rendered for everyone. The
+ * page now 404s for users who lack the action grant. Server-side
+ * canPerform() in lib/pi/generatePi.ts continues to enforce at submit
+ * time as defence in depth.
  *
  * W4-A.6: GSTIN-missing no longer blocks PI generation. The DOCX
  * renders the literal "To be added" placeholder for SCHOOL_GSTIN
@@ -26,6 +30,7 @@ import mousJson from '@/data/mous.json'
 import schoolsJson from '@/data/schools.json'
 import paymentsJson from '@/data/payments.json'
 import { getCurrentUser } from '@/lib/auth/session'
+import { canPerform } from '@/lib/auth/permissions'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { DetailHeaderCard } from '@/components/ops/DetailHeaderCard'
@@ -54,6 +59,10 @@ export default async function PiPage({ params }: PageProps) {
   const user = await getCurrentUser()
   const mou = allMous.find((m) => m.id === mouId)
   if (!mou || !isVisibleToUser(mou, user)) notFound()
+  // W4-I.4 MM2: Ops/SalesRep/etc. cannot generate PI. Hide the page
+  // entirely (404 path) so the action is invisible, mirroring the
+  // server-side gate in lib/pi/generatePi.ts. No existence leak.
+  if (!user || !canPerform(user, 'mou:generate-pi')) notFound()
 
   const school = allSchools.find((s) => s.id === mou.schoolId)
   const pendingInstallments = allPayments.filter(

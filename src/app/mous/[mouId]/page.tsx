@@ -29,6 +29,7 @@ import paymentsJson from '@/data/payments.json'
 import feedbackJson from '@/data/feedback.json'
 import intakeRecordsJson from '@/data/intake_records.json'
 import { getCurrentUser } from '@/lib/auth/session'
+import { canPerform } from '@/lib/auth/permissions'
 import { computeLifecycle } from '@/lib/portal/lifecycleProgress'
 import { formatRs, formatDate } from '@/lib/format'
 import { TopNav } from '@/components/ops/TopNav'
@@ -85,6 +86,10 @@ export default async function MouDetailPage({ params }: PageProps) {
   const i1Dispatch = installmentDispatches.find((d) => d.installmentSeq === 1)
   const i1Feedback = mouFeedback.find((f) => f.installmentSeq === 1)
   const intakeRecord = allIntakeRecords.find((r) => r.mouId === mou.id)
+  // W4-I.4 MM2: hide the PI action button from roles that lack the
+  // matrix grant (everyone except Finance + Admin). Server-side gate
+  // in lib/pi/generatePi.ts and the PI page route still enforce.
+  const canGeneratePi = user ? canPerform(user, 'mou:generate-pi') : false
 
   const lifecycle = computeLifecycle({
     mouSignedDate: mou.startDate,
@@ -140,9 +145,11 @@ export default async function MouDetailPage({ params }: PageProps) {
                 <Link href={`/mous/${mou.id}/actuals`} className="inline-flex min-h-11 items-center rounded-md border border-border bg-card px-3 py-2 text-sm font-medium hover:bg-muted focus:outline-none focus:ring-2 focus:ring-brand-navy">
                   Actuals
                 </Link>
-                <Link href={`/mous/${mou.id}/pi`} className="inline-flex min-h-11 items-center rounded-md border border-border bg-card px-3 py-2 text-sm font-medium hover:bg-muted focus:outline-none focus:ring-2 focus:ring-brand-navy">
-                  PI
-                </Link>
+                {canGeneratePi ? (
+                  <Link href={`/mous/${mou.id}/pi`} className="inline-flex min-h-11 items-center rounded-md border border-border bg-card px-3 py-2 text-sm font-medium hover:bg-muted focus:outline-none focus:ring-2 focus:ring-brand-navy">
+                    PI
+                  </Link>
+                ) : null}
                 <Link href={`/mous/${mou.id}/dispatch`} className="inline-flex min-h-11 items-center rounded-md border border-border bg-card px-3 py-2 text-sm font-medium hover:bg-muted focus:outline-none focus:ring-2 focus:ring-brand-navy">
                   Dispatch
                 </Link>
