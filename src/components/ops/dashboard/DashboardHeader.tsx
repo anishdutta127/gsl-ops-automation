@@ -19,6 +19,7 @@
 import Link from 'next/link'
 import { Columns3 } from 'lucide-react'
 import type { ReactNode } from 'react'
+import { opsButtonClass } from '@/components/ops/OpsButton'
 
 export interface DashboardHeaderProps {
   title: string
@@ -64,7 +65,7 @@ export function DashboardHeader({
             <Link
               href={kanbanHref}
               data-testid="dashboard-kanban-cta"
-              className="mt-3 inline-flex min-h-9 items-center gap-1.5 rounded-md bg-brand-navy px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-navy/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-navy"
+              className={opsButtonClass({ variant: 'primary', size: 'sm', className: 'mt-3' })}
             >
               <Columns3 aria-hidden className="size-4" />
               Open Kanban Board

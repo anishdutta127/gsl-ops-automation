@@ -25,6 +25,7 @@ import {
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import type { StatCardData } from '@/lib/dashboard/dashboardData'
+import { opsButtonClass, type OpsButtonVariant } from '@/components/ops/OpsButton'
 
 const ICONS: Record<StatCardData['iconKey'], LucideIcon> = {
   mous: ClipboardList,
@@ -44,10 +45,11 @@ const ICON_TINT: Record<StatCardData['iconKey'], string> = {
   inventory: 'bg-brand-teal/10 text-brand-navy',
 }
 
-const CTA_BY_VARIANT: Record<StatCardData['ctaVariant'], string> = {
-  navy: 'bg-brand-navy text-white hover:bg-brand-navy/90 focus-visible:ring-brand-navy',
-  teal: 'bg-brand-teal text-brand-navy hover:bg-brand-teal/90 focus-visible:ring-brand-navy',
-  alert: 'bg-signal-alert text-white hover:bg-signal-alert/90 focus-visible:ring-signal-alert',
+// StatCardData.ctaVariant values map onto OpsButton variants.
+const CTA_VARIANT_MAP: Record<StatCardData['ctaVariant'], OpsButtonVariant> = {
+  navy: 'primary',
+  teal: 'action',
+  alert: 'destructive',
 }
 
 interface StatCardProps {
@@ -82,10 +84,11 @@ function StatCard({ data }: StatCardProps) {
       <div className="mt-4 flex-1" />
       <Link
         href={data.ctaHref}
-        className={
-          'inline-flex min-h-11 w-full items-center justify-between rounded-md px-3 py-2 text-sm font-semibold focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 '
-          + CTA_BY_VARIANT[data.ctaVariant]
-        }
+        className={opsButtonClass({
+          variant: CTA_VARIANT_MAP[data.ctaVariant],
+          size: 'md',
+          className: 'w-full justify-between',
+        })}
         data-testid={`stat-card-${data.key}-cta`}
       >
         <span>{data.ctaLabel}</span>

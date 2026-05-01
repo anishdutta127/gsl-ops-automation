@@ -12,6 +12,7 @@
 import Link from 'next/link'
 import { ArrowRight, TrendingUp } from 'lucide-react'
 import type { SalesPipelineSummaryData } from '@/lib/dashboard/dashboardData'
+import { opsButtonClass } from '@/components/ops/OpsButton'
 
 export interface DashboardSalesPipelineSummaryProps {
   data: SalesPipelineSummaryData
@@ -58,7 +59,7 @@ export function DashboardSalesPipelineSummary({
         <Link
           href={href}
           data-testid="sales-pipeline-summary-cta"
-          className="inline-flex min-h-11 items-center gap-1.5 rounded-md bg-brand-navy px-3 py-2 text-sm font-semibold text-white hover:bg-brand-navy/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-navy"
+          className={opsButtonClass({ variant: 'primary', size: 'md' })}
         >
           <span>View pipeline</span>
           <ArrowRight aria-hidden className="size-4" />

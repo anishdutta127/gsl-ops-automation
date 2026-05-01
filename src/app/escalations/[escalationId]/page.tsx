@@ -23,6 +23,7 @@ import { PageHeader } from '@/components/ops/PageHeader'
 import { DetailHeaderCard } from '@/components/ops/DetailHeaderCard'
 import { LaneBadge } from '@/components/ops/LaneBadge'
 import { AuditLogPanel } from '@/components/ops/AuditLogPanel'
+import { StatusChip, type StatusChipTone } from '@/components/ops/StatusChip'
 import { formatDate } from '@/lib/format'
 
 const allEscalations = escalationsJson as unknown as Escalation[]
@@ -46,23 +47,20 @@ function isVisibleToUser(esc: Escalation, user: User | null): boolean {
   return false
 }
 
-const SEVERITY_BADGE: Record<Escalation['severity'], { label: string; className: string }> = {
-  high: { label: 'High', className: 'border-signal-alert text-signal-alert' },
-  medium: { label: 'Medium', className: 'border-signal-attention text-signal-attention' },
-  low: { label: 'Low', className: 'border-signal-neutral text-signal-neutral' },
+const SEVERITY_TONE: Record<Escalation['severity'], { tone: StatusChipTone; label: string }> = {
+  high:   { tone: 'alert',     label: 'High' },
+  medium: { tone: 'attention', label: 'Medium' },
+  low:    { tone: 'neutral',   label: 'Low' },
 }
 
 // W4-I.4 MM5: Misba ticketing-system status vocabulary.
-const STATUS_BADGE: Record<Escalation['status'], { label: string; className: string }> = {
-  Open: { label: 'Open', className: 'border-signal-alert text-signal-alert' },
-  WIP: { label: 'WIP', className: 'border-signal-attention text-signal-attention' },
-  Closed: { label: 'Closed', className: 'border-signal-ok text-signal-ok' },
-  'Transfer to Other Department': {
-    label: 'Transfer to Other Department',
-    className: 'border-signal-attention text-signal-attention',
-  },
-  Dispatched: { label: 'Dispatched', className: 'border-signal-attention text-signal-attention' },
-  'In Transit': { label: 'In Transit', className: 'border-signal-attention text-signal-attention' },
+const STATUS_TONE: Record<Escalation['status'], { tone: StatusChipTone; label: string }> = {
+  Open:    { tone: 'alert',     label: 'Open' },
+  WIP:     { tone: 'attention', label: 'WIP' },
+  Closed:  { tone: 'ok',        label: 'Closed' },
+  'Transfer to Other Department': { tone: 'attention', label: 'Transfer to Other Department' },
+  Dispatched:   { tone: 'attention', label: 'Dispatched' },
+  'In Transit': { tone: 'attention', label: 'In Transit' },
 }
 
 export default async function EscalationDetailPage({ params }: PageProps) {
@@ -74,8 +72,8 @@ export default async function EscalationDetailPage({ params }: PageProps) {
   const school = allSchools.find((s) => s.id === esc.schoolId)
   const mou = esc.mouId ? allMous.find((m) => m.id === esc.mouId) : null
 
-  const statusMeta = STATUS_BADGE[esc.status]
-  const severityMeta = SEVERITY_BADGE[esc.severity]
+  const statusMeta = STATUS_TONE[esc.status]
+  const severityMeta = SEVERITY_TONE[esc.severity]
   const canEdit = user ? canPerform(user, 'escalation:resolve') : false
 
   const headerBadges = (
@@ -84,9 +82,7 @@ export default async function EscalationDetailPage({ params }: PageProps) {
       <span className="inline-flex items-center rounded-full border border-brand-navy bg-card px-2.5 py-1 text-xs font-semibold text-brand-navy">
         {esc.level}
       </span>
-      <span className={`inline-flex items-center rounded-full border bg-card px-2.5 py-1 text-xs font-semibold ${statusMeta.className}`}>
-        {statusMeta.label}
-      </span>
+      <StatusChip tone={statusMeta.tone} label={statusMeta.label} withDot={false} />
     </div>
   )
 
@@ -114,7 +110,7 @@ export default async function EscalationDetailPage({ params }: PageProps) {
               { label: 'Origin id', value: esc.originId ? <span className="font-mono text-xs">{esc.originId}</span> : 'n/a' },
               { label: 'Category', value: esc.category ?? <span className="text-muted-foreground">not set</span> },
               { label: 'Type', value: esc.type ?? <span className="text-muted-foreground">not set</span> },
-              { label: 'Severity', value: <span className={`inline-flex items-center rounded-sm border px-2 py-0.5 text-xs font-semibold ${severityMeta.className}`}>{severityMeta.label}</span> },
+              { label: 'Severity', value: <StatusChip tone={severityMeta.tone} label={severityMeta.label} withDot={false} /> },
               { label: 'Assigned to', value: esc.assignedTo ?? 'unassigned' },
             ]}
             actions={canEdit ? (

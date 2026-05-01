@@ -21,6 +21,7 @@ import {
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import type { ActionCenterData, ActionCenterTile } from '@/lib/dashboard/dashboardData'
+import { opsButtonClass } from '@/components/ops/OpsButton'
 
 const TILE_ICONS: Record<ActionCenterTile['iconKey'], LucideIcon> = {
   mous: ClipboardList,
@@ -99,7 +100,11 @@ export function DashboardActionCenter({
       <footer className="border-t border-border p-3 sm:p-4">
         <Link
           href={reviewHref}
-          className="inline-flex min-h-11 w-full items-center justify-between rounded-md bg-brand-navy px-3 py-2 text-sm font-semibold text-white hover:bg-brand-navy/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-navy"
+          className={opsButtonClass({
+            variant: 'primary',
+            size: 'md',
+            className: 'w-full justify-between',
+          })}
           data-testid="action-centre-cta"
         >
           <span>Review Pending Actions</span>

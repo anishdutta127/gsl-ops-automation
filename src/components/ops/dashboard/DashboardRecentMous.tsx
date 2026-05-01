@@ -23,6 +23,7 @@ import { ArrowRight } from 'lucide-react'
 import type { ReactNode } from 'react'
 import type { MOU } from '@/lib/types'
 import type { RecentMouUpdate } from '@/lib/dashboard/dashboardData'
+import { StatusChip, type StatusChipTone } from '@/components/ops/StatusChip'
 
 const DATE_FMT = new Intl.DateTimeFormat('en-GB', {
   day: '2-digit',
@@ -30,55 +31,23 @@ const DATE_FMT = new Intl.DateTimeFormat('en-GB', {
   year: 'numeric',
 })
 
-interface ChipStyle {
-  className: string
-  dotClass: string
-  label: string
+const STATUS_TONE: Record<MOU['status'], { tone: StatusChipTone; label: string }> = {
+  Active:               { tone: 'ok',        label: 'Signed' },
+  'Pending Signature':  { tone: 'attention', label: 'Pending' },
+  Draft:                { tone: 'navy',      label: 'Under Review' },
+  Renewed:              { tone: 'ok',        label: 'Renewed' },
+  Expired:              { tone: 'alert',     label: 'Expired' },
+  Completed:            { tone: 'neutral',   label: 'Completed' },
 }
 
-const STATUS_STYLE: Record<MOU['status'], ChipStyle> = {
-  Active: {
-    className: 'bg-signal-ok/15 text-signal-ok border-signal-ok/30',
-    dotClass: 'bg-signal-ok',
-    label: 'Signed',
-  },
-  'Pending Signature': {
-    className: 'bg-signal-attention/15 text-signal-attention border-signal-attention/30',
-    dotClass: 'bg-signal-attention',
-    label: 'Pending',
-  },
-  Draft: {
-    className: 'bg-brand-navy/10 text-brand-navy border-brand-navy/20',
-    dotClass: 'bg-brand-navy',
-    label: 'Under Review',
-  },
-  Renewed: {
-    className: 'bg-signal-ok/15 text-signal-ok border-signal-ok/30',
-    dotClass: 'bg-signal-ok',
-    label: 'Renewed',
-  },
-  Expired: {
-    className: 'bg-signal-alert/15 text-signal-alert border-signal-alert/30',
-    dotClass: 'bg-signal-alert',
-    label: 'Expired',
-  },
-  Completed: {
-    className: 'bg-signal-neutral/15 text-signal-neutral border-signal-neutral/30',
-    dotClass: 'bg-signal-neutral',
-    label: 'Completed',
-  },
-}
-
-function StatusChip({ status }: { status: MOU['status'] }): ReactNode {
-  const style = STATUS_STYLE[status]
+function MouStatusChip({ status }: { status: MOU['status'] }): ReactNode {
+  const { tone, label } = STATUS_TONE[status]
   return (
-    <span
-      className={`inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-xs font-medium ${style.className}`}
-      data-testid={`status-chip-${status.replace(/\s+/g, '-')}`}
-    >
-      <span aria-hidden className={`size-1.5 rounded-full ${style.dotClass}`} />
-      {style.label}
-    </span>
+    <StatusChip
+      tone={tone}
+      label={label}
+      testId={`status-chip-${status.replace(/\s+/g, '-')}`}
+    />
   )
 }
 
@@ -160,7 +129,7 @@ export function DashboardRecentMous({
                 >
                   <td className="px-4 py-3 font-medium text-foreground sm:px-5">{r.schoolName}</td>
                   <td className="px-4 py-3 text-muted-foreground">{r.programme}</td>
-                  <td className="px-4 py-3"><StatusChip status={r.status} /></td>
+                  <td className="px-4 py-3"><MouStatusChip status={r.status} /></td>
                   <td className="px-4 py-3 text-muted-foreground tabular-nums">
                     {DATE_FMT.format(new Date(r.updateDate))}
                   </td>

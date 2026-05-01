@@ -17,12 +17,12 @@
 
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
-import type { ReactNode } from 'react'
 import type {
   OrderStatusKind,
   OrdersRow,
   ShipmentStatusKind,
 } from '@/lib/dashboard/dashboardData'
+import { StatusChip, type StatusChipTone } from '@/components/ops/StatusChip'
 
 const DATE_FMT = new Intl.DateTimeFormat('en-GB', {
   day: '2-digit',
@@ -30,70 +30,20 @@ const DATE_FMT = new Intl.DateTimeFormat('en-GB', {
   year: 'numeric',
 })
 
-interface ChipStyle {
-  className: string
-  dotClass: string
-  label: string
+const ORDER_STATUS_TONE: Record<OrderStatusKind, { tone: StatusChipTone; label: string }> = {
+  'order-raised': { tone: 'navy',    label: 'Order Raised' },
+  packed:         { tone: 'neutral', label: 'Packed' },
+  shipped:        { tone: 'navy',    label: 'Shipped' },
+  delivered:      { tone: 'ok',      label: 'Delivered' },
 }
 
-const ORDER_STATUS_STYLE: Record<OrderStatusKind, ChipStyle> = {
-  'order-raised': {
-    className: 'bg-brand-navy/10 text-brand-navy border-brand-navy/20',
-    dotClass: 'bg-brand-navy',
-    label: 'Order Raised',
-  },
-  packed: {
-    className: 'bg-signal-neutral/15 text-signal-neutral border-signal-neutral/30',
-    dotClass: 'bg-signal-neutral',
-    label: 'Packed',
-  },
-  shipped: {
-    className: 'bg-brand-navy/10 text-brand-navy border-brand-navy/20',
-    dotClass: 'bg-brand-navy',
-    label: 'Shipped',
-  },
-  delivered: {
-    className: 'bg-signal-ok/15 text-signal-ok border-signal-ok/30',
-    dotClass: 'bg-signal-ok',
-    label: 'Delivered',
-  },
-}
-
-const SHIPMENT_STATUS_STYLE: Record<ShipmentStatusKind, ChipStyle> = {
-  packed: {
-    className: 'bg-signal-neutral/15 text-signal-neutral border-signal-neutral/30',
-    dotClass: 'bg-signal-neutral',
-    label: 'Packed',
-  },
-  shipped: {
-    // Reference uses a purple-ish "Shipped" chip; we map to brand-teal
-    // since purple is not in the GSL palette.
-    className: 'bg-brand-teal/15 text-brand-navy border-brand-teal/30',
-    dotClass: 'bg-brand-teal',
-    label: 'Shipped',
-  },
-  delivered: {
-    className: 'bg-signal-ok/15 text-signal-ok border-signal-ok/30',
-    dotClass: 'bg-signal-ok',
-    label: 'Delivered',
-  },
-  delayed: {
-    className: 'bg-signal-alert/15 text-signal-alert border-signal-alert/30',
-    dotClass: 'bg-signal-alert',
-    label: 'Delayed',
-  },
-}
-
-function Chip({ style, testId }: { style: ChipStyle; testId: string }): ReactNode {
-  return (
-    <span
-      className={`inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-xs font-medium ${style.className}`}
-      data-testid={testId}
-    >
-      <span aria-hidden className={`size-1.5 rounded-full ${style.dotClass}`} />
-      {style.label}
-    </span>
-  )
+// Reference uses purple for "Shipped"; we map to brand-teal since
+// purple is not in the GSL palette.
+const SHIPMENT_STATUS_TONE: Record<ShipmentStatusKind, { tone: StatusChipTone; label: string }> = {
+  packed:    { tone: 'neutral', label: 'Packed' },
+  shipped:   { tone: 'teal',    label: 'Shipped' },
+  delivered: { tone: 'ok',      label: 'Delivered' },
+  delayed:   { tone: 'alert',   label: 'Delayed' },
 }
 
 export interface DashboardOrdersTrackerProps {
@@ -164,14 +114,16 @@ export function DashboardOrdersTracker({
                   <td className="px-4 py-3 text-foreground">{r.schoolName}</td>
                   <td className="px-4 py-3 text-muted-foreground">{r.product}</td>
                   <td className="px-4 py-3">
-                    <Chip
-                      style={ORDER_STATUS_STYLE[r.orderStatus]}
+                    <StatusChip
+                      tone={ORDER_STATUS_TONE[r.orderStatus].tone}
+                      label={ORDER_STATUS_TONE[r.orderStatus].label}
                       testId={`order-status-${r.orderStatus}`}
                     />
                   </td>
                   <td className="px-4 py-3">
-                    <Chip
-                      style={SHIPMENT_STATUS_STYLE[r.shipmentStatus]}
+                    <StatusChip
+                      tone={SHIPMENT_STATUS_TONE[r.shipmentStatus].tone}
+                      label={SHIPMENT_STATUS_TONE[r.shipmentStatus].label}
                       testId={`shipment-status-${r.shipmentStatus}`}
                     />
                   </td>

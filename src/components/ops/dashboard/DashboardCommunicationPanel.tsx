@@ -14,11 +14,12 @@
 import Link from 'next/link'
 import { Send, ArrowRight } from 'lucide-react'
 import type { CommunicationButton } from '@/lib/dashboard/dashboardData'
+import { opsButtonClass, type OpsButtonVariant } from '@/components/ops/OpsButton'
 
-const VARIANT_CLASS: Record<CommunicationButton['variant'], string> = {
-  navy: 'bg-brand-navy text-white hover:bg-brand-navy/90 focus-visible:ring-brand-navy',
-  teal: 'bg-brand-teal text-brand-navy hover:bg-brand-teal/90 focus-visible:ring-brand-navy',
-  outline: 'bg-card text-brand-navy border border-border hover:bg-muted focus-visible:ring-brand-navy',
+const VARIANT_MAP: Record<CommunicationButton['variant'], OpsButtonVariant> = {
+  navy: 'primary',
+  teal: 'action',
+  outline: 'outline',
 }
 
 export interface DashboardCommunicationPanelProps {
@@ -54,10 +55,11 @@ export function DashboardCommunicationPanel({ buttons }: DashboardCommunicationP
             key={b.key}
             href={b.href}
             data-testid={`comm-button-${b.key}`}
-            className={
-              'inline-flex min-h-11 items-center justify-between rounded-md px-3 py-2 text-sm font-semibold focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 '
-              + VARIANT_CLASS[b.variant]
-            }
+            className={opsButtonClass({
+              variant: VARIANT_MAP[b.variant],
+              size: 'md',
+              className: 'w-full justify-between',
+            })}
           >
             <span>{b.label}</span>
             <ArrowRight aria-hidden className="size-4" />
