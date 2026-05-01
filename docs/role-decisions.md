@@ -283,3 +283,22 @@ The W4-I.3.B initial implementation shipped `vercel.json` with a `crons` array p
 Chose GitHub Actions for testing-phase cost reasons. Tracked at `.github/workflows/sync-queue-cron.yml`. The choice is reversible: when GSL Azure migration lands (D-041), the trigger moves to Azure Functions and the GitHub workflow retires; alternatively, if Vercel Pro is later justified for other reasons, the Pro upgrade can flip the cron back to the Vercel-native scheduler with a one-line `vercel.json` change. Trust boundary on the endpoint is unchanged across all three trigger layers (Bearer `$CRON_SECRET`).
 
 **Operational note for round-2 testing:** Anish must hold the SAME hex value in two places: Vercel Production env vars AND GitHub repository secrets. Rotating the secret means rotating both halves; the workflow fails with HTTP 401 if they drift. The RUNBOOK §5.1 covers the recovery path.
+
+## 2026-05-02: W4-I.5 close (dashboard rebuild, smart templates, design system)
+
+W4-I.5 closed in five phases (P1 reconnaissance, P2 dashboard rebuild, P3 smart templates, P4 design system polish, P5 verification). The batch added 279 tests (1515 -> 1794) without changing routes (except / and /kanban swap), permission gates, audit logging, or workflows.
+
+**Dashboard rebuild rationale.** Pre-W4-I.5 the home route / served the kanban directly. Anish's CEO-review with Ameet (`plans/anish-ops-ceo-review-2026-04-24.md`) called for an Operations Control Dashboard surface as the entry point: rate-of-change view across actuals / payments / dispatches / escalations / MOU-status, plus a recent updates feed. P2C5 swapped /. The kanban moved to /kanban, label "MOU Pipeline" in the TopNav (URL stays /kanban; the rename is surface-only). All kanban interactions byte-for-byte preserved.
+
+**Smart template flow (B + selective C).** P3 exposed lifecycle-stage-keyed template recommendations on the MOU detail page. Scoring is intentionally narrow: welcome=100 / payment-reminder=80 / dispatch-confirmation=70 / feedback-request=60. The launcher route at `/mous/[id]/send-template/[templateId]` server-composes the email and surfaces a copy-to-clipboard panel. No in-app email send (Phase 1 manual-send pattern preserved per CLAUDE.md). Communications history surfaces on the MOU detail page via the new collapsible card; sourced from MOU.auditLog `communication-sent` entries (no separate table introduced).
+
+**Design system primitives factored at 3+ threshold.** OpsButton + opsButtonClass (4 variants, 3 sizes) used at 25-plus call sites; StatusChip (6 tones) used by every list-page status column and every detail-page chip; CollapsibleCard (right-column native `<details>` primitive on the MOU detail page). The 3+ threshold is deliberate: extracting at 2 usages risks premature abstraction, extracting only at the very-end-of-W4-I.5 risks per-surface drift. The threshold was hit naturally during P4 polish and primitives factored as the second usage emerged. Two shared tone-mapping helpers (`mouStatusTone`, `escalationTones`) prevent chip vocabulary drift between list + detail surfaces.
+
+**Kanban region filter taxonomy locked at three tags.** P4C4 reduced the chip row to two super-region values (NE / SW); P4C5.5b reverted to the three primary values (East / North / South-West) plus the NE / SW shortcuts. Anish's "4 separate region tags" ask resolved to "3 tags as-is per existing data, no super-region grouping" because schools.json carries no standalone South or West records (only the compound South-West, which is real GSL operational geography). Tracked at D-044 for re-evaluation when new schools in real S / W territory get added; locked for round-2 testing.
+
+**Operational impact for testers.** The dashboard is the new homepage, so testers who bookmark / land on the dashboard. The MOU Pipeline link in TopNav goes to /kanban for the same drag-and-drop flows as before. The MOU detail page is restructured (sticky action bar + two-column body + collapsible right-column cards) but every existing data field, action, permission gate, and audit-log entry is preserved verbatim. Help docs swept (Kanban -> MOU Pipeline in prose; glossary entry renamed with internal-term note).
+
+**References:**
+- `docs/RUNBOOK.md` §11.13: architecture overview.
+- `docs/W4-DEFERRED-ITEMS.md` D-044 through D-047: items surfaced during W4-I.5.
+- DESIGN.md: primitives + tones canonical contract.

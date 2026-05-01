@@ -646,3 +646,34 @@ Useful when the cron pauses (Vercel maintenance, account billing issue) or after
 - `vercel.json`: ignoreCommand for queue-prefix rebuild skip.
 
 **First-fire verification (2026-04-30).** Manual `workflow_dispatch` triggered after `CRON_SECRET` was provisioned in both halves and the middleware allow-list fix landed (`ccf1bc1`). Result: HTTP 200, `ok=true`, drained=8 (2 schools, 3 MOUs, 2 inventory edits, 1 duplicate-create skipped via idempotency), remaining=0, duration 2964ms. Zero failures across 8 entries spanning 3 entity types confirms per-entity isolation, the audit-log defensive-append annotation path, and the chore(sync) / chore(queue) commit-message contract. The architecture is live for round-2 testing.
+
+### 11.13 W4-I.5 dashboard rebuild + smart templates + design system
+
+W4-I.5 closed the round-2 readiness work in five phases: P1 reconnaissance, P2 dashboard rebuild, P3 smart templates, P4 design system polish (P4C0 through P4C7), P5 verification. The batch added 279 tests (1515 -> 1794) and touched every primary surface without changing routes (except the / and /kanban swap; see below) or breaking existing workflows.
+
+**P2 dashboard rebuild.** Pre-W4-I.5 the home route / served the kanban directly. P2C5 swapped that: / now renders the Operations Control Dashboard (StatCard-style tiles for actuals, payments, dispatches, escalations, MOU-status counts, plus filter row + Recent Updates table), and the kanban moved to /kanban. The TopNav surfaces both as sibling links labelled "Dashboard" and "MOU Pipeline" (the in-app surface label rename landed in P4C4 incidental polish; the URL stays /kanban). The kanban content + drag-and-drop interactions are byte-for-byte preserved.
+
+**P3 smart templates.** P3C1 ships the per-MOU send-template launcher route (/mous/[id]/send-template/[templateId]) which renders a server-composed email + a copy-to-clipboard panel. P3C4 wires lifecycle-stage-keyed suggestions into a SmartSuggestionsPanel that mounts on the MOU detail page; templates are scored by use-case (welcome=100, payment-reminder=80, dispatch-confirmation=70, feedback-request=60). P3C5 adds the Communications history panel that filters MOU.auditLog for `communication-sent` entries.
+
+**P4 design system primitives.** Three primitives factored at the 3-or-more usages threshold:
+- **OpsButton + opsButtonClass** (`src/components/ops/OpsButton.tsx`): 4 variants (primary / action / outline / destructive), 3 sizes (sm / md / lg). 25-plus call sites across the app share this primitive.
+- **StatusChip** (`src/components/ops/StatusChip.tsx`): 6 tones (ok / attention / alert / neutral / navy / teal). Used by every list page that surfaces status, every detail-page metadata cell, every collapsible card count.
+- **CollapsibleCard** (inlined on `src/app/mous/[mouId]/page.tsx`): the right-column primitive on the MOU detail page. Uses native `<details>/<summary>` so collapse state is browser-native (no React client state, chevron animates via Tailwind's group-open variant).
+
+Two shared tone-mapping helpers also factored to prevent chip vocabulary drift between list + detail surfaces:
+- `src/lib/ui/mouStatusTone.ts`: MOU.status -> StatusChipTone (Active=ok, Pending Signature=attention, Completed=teal, Expired=alert, Renewed=navy, Draft=neutral).
+- `src/lib/ui/escalationTones.ts`: Escalation.status + Escalation.severity tone maps.
+
+**P4C5.5 admin sub-page restructure.** Eight admin sub-pages (`/admin/inventory` + `[id]`, `/admin/schools`, `/admin/cc-rules/new` + `[ruleId]`, `/admin/audit`, `/admin/mou-import-review`, `/admin/reminders/[id]`, `/admin/pi-counter`, `/admin/templates`) migrated off the legacy `bg-[var(--brand-navy)]` arbitrary-value syntax + hand-rolled status spans + inline button strings. Each admin surface now mounts TopNav + PageHeader + breadcrumb consistent with the rest of the app. The `signal-warn` token cleanup landed alongside (3 files referenced a non-existent `signal-warn` token; `tailwind.config.ts` only defines `signal-attention`, so the warning styling was being silently dropped).
+
+**Region filter taxonomy locked.** P4C4 reduced the kanban region filter to 2 super-region values (NE / SW); P4C5.5b reverted to the original 3 primary values (East / North / South-West) plus the NE / SW shortcuts. Anish's "4 separate region tags (N / S / E / W)" ask resolves to "3 tags as-is" because schools.json carries no standalone South or West records (only the compound South-West, which is real GSL operational geography for Maharashtra / Karnataka / Goa). New schools in real South or West territory may grow the taxonomy at the next data review. Tracked at D-044.
+
+**Operations Control Dashboard SyncFreshnessTile.** The component exists at `src/components/ops/SyncFreshnessTile.tsx` but is intentionally NOT mounted on the dashboard in Phase 1. The auto-sync runs every 5 minutes and the latest `sync_health` entry surfaces on `/admin`; a separate freshness tile on / is the next step if testers say they need it. See CLAUDE.md "Non-negotiable conventions".
+
+**MOU detail page restructure (P4C4).** Sticky action bar on md+ (status chip + action buttons + status notes textarea); two-column body (60% left = metadata + lifecycle + audit log; 40% right = collapsible cards for Smart Suggestions, Intake, Instalments, Dispatches, Communications, Escalations). Mobile collapses to single column. The audit log keeps its existing `max-h-96 overflow-y-auto` scroll container; virtualization deferred to D-046 (trigger: any MOU's auditLog crossing 30 entries in production).
+
+**Cross-references:**
+- `plans/anish-ops-w4i5-recon-2026-04-30.md` (if present) and the W4-I.5 commit cluster (P1 through P5C0) for the full scope.
+- `DESIGN.md`: the canonical design surface contract; primitives + tones are referenced here.
+- `docs/role-decisions.md`: the W4-I.5 close note.
+- `docs/W4-DEFERRED-ITEMS.md`: D-044 through D-047 surfaced during W4-I.5.
