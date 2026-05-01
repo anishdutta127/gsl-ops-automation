@@ -28,6 +28,7 @@ import usersJson from '@/data/users.json'
 import { getCurrentUser } from '@/lib/auth/session'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
+import { OpsButton } from '@/components/ops/OpsButton'
 import { DetailHeaderCard } from '@/components/ops/DetailHeaderCard'
 
 const allRequests = dispatchRequestsJson as unknown as DispatchRequest[]
@@ -193,13 +194,9 @@ export default async function DispatchRequestDetailPage({ params, searchParams }
                     className="block w-full rounded-md border border-input bg-card px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
                   />
                 </div>
-                <button
-                  type="submit"
-                  data-testid="dr-approve-submit"
-                  className="inline-flex min-h-11 items-center rounded-md bg-brand-teal px-4 py-2 text-sm font-medium text-brand-navy hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-brand-navy"
-                >
-                  Approve & convert
-                </button>
+                <OpsButton type="submit" variant="action" size="md" data-testid="dr-approve-submit">
+                  Approve &amp; convert
+                </OpsButton>
               </form>
             </section>
 
@@ -260,13 +257,9 @@ export default async function DispatchRequestDetailPage({ params, searchParams }
                     className="block w-full rounded-md border border-input bg-card px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
                   />
                 </div>
-                <button
-                  type="submit"
-                  data-testid="dr-cancel-submit"
-                  className="inline-flex min-h-11 items-center rounded-md border border-border bg-card px-4 py-2 text-sm font-medium text-foreground hover:bg-muted focus:outline-none focus:ring-2 focus:ring-brand-navy"
-                >
+                <OpsButton type="submit" variant="outline" size="md" data-testid="dr-cancel-submit">
                   Cancel request
-                </button>
+                </OpsButton>
               </form>
             </section>
           </>
