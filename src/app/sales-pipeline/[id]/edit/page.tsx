@@ -21,6 +21,7 @@ import { getCurrentUser } from '@/lib/auth/session'
 import { canPerform } from '@/lib/auth/permissions'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
+import { OpsButton, opsButtonClass } from '@/components/ops/OpsButton'
 import { REGION_OPTIONS } from '@/lib/salesOpportunity/createOpportunity'
 import { editOpportunityAction } from '../../actions'
 
@@ -102,7 +103,7 @@ export default async function OpportunityEditPage({ params, searchParams }: Page
           <p
             role="alert"
             data-testid="opp-edit-error"
-            className="flex items-start gap-2 rounded-md border border-rose-300 bg-rose-50 p-2 text-xs text-rose-900"
+            className="flex items-start gap-2 rounded-md border border-signal-alert bg-signal-alert/10 p-2 text-xs text-signal-alert"
           >
             <AlertTriangle aria-hidden className="size-4 shrink-0" />
             <span>{ERROR_FLASH[errorKey] ?? `Failed: ${errorKey}`}</span>
@@ -117,7 +118,7 @@ export default async function OpportunityEditPage({ params, searchParams }: Page
 
           <div>
             <label htmlFor="schoolName" className="block text-sm font-medium">
-              School name <span aria-hidden className="text-rose-600">*</span>
+              School name <span aria-hidden className="text-signal-alert">*</span>
             </label>
             <input
               id="schoolName" name="schoolName" type="text" required
@@ -138,7 +139,7 @@ export default async function OpportunityEditPage({ params, searchParams }: Page
               className="mt-1 block w-full rounded-md border border-input bg-card px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
               placeholder="SCH-..."
             />
-            <p className="mt-1 text-xs text-slate-500">
+            <p className="mt-1 text-xs text-muted-foreground">
               Leave blank to keep this opportunity as a new school. The detail page surfaces a token-match suggestion when applicable.
             </p>
           </div>
@@ -146,7 +147,7 @@ export default async function OpportunityEditPage({ params, searchParams }: Page
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <label htmlFor="city" className="block text-sm font-medium">
-                City <span aria-hidden className="text-rose-600">*</span>
+                City <span aria-hidden className="text-signal-alert">*</span>
               </label>
               <input
                 id="city" name="city" type="text" required
@@ -157,7 +158,7 @@ export default async function OpportunityEditPage({ params, searchParams }: Page
             </div>
             <div>
               <label htmlFor="state" className="block text-sm font-medium">
-                State <span aria-hidden className="text-rose-600">*</span>
+                State <span aria-hidden className="text-signal-alert">*</span>
               </label>
               <input
                 id="state" name="state" type="text" required
@@ -171,7 +172,7 @@ export default async function OpportunityEditPage({ params, searchParams }: Page
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <label htmlFor="region" className="block text-sm font-medium">
-                Region <span aria-hidden className="text-rose-600">*</span>
+                Region <span aria-hidden className="text-signal-alert">*</span>
               </label>
               <select
                 id="region" name="region" required
@@ -186,7 +187,7 @@ export default async function OpportunityEditPage({ params, searchParams }: Page
             </div>
             <div>
               <label htmlFor="salesRepId" className="block text-sm font-medium">
-                Sales rep <span aria-hidden className="text-rose-600">*</span>
+                Sales rep <span aria-hidden className="text-signal-alert">*</span>
               </label>
               <select
                 id="salesRepId" name="salesRepId" required
@@ -231,7 +232,7 @@ export default async function OpportunityEditPage({ params, searchParams }: Page
 
           <div>
             <label htmlFor="status" className="block text-sm font-medium">
-              Status <span aria-hidden className="text-rose-600">*</span>
+              Status <span aria-hidden className="text-signal-alert">*</span>
             </label>
             <input
               id="status" name="status" type="text" required
@@ -239,7 +240,7 @@ export default async function OpportunityEditPage({ params, searchParams }: Page
               data-testid="edit-status"
               className="mt-1 block w-full rounded-md border border-input bg-card px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
             />
-            <p className="mt-1 text-xs text-slate-500">
+            <p className="mt-1 text-xs text-muted-foreground">
               Edits to this field land verbatim in the audit log (before / after); no autocorrect.
             </p>
           </div>
@@ -302,16 +303,12 @@ export default async function OpportunityEditPage({ params, searchParams }: Page
           </div>
 
           <div className="flex flex-wrap items-center gap-3 pt-2">
-            <button
-              type="submit"
-              data-testid="edit-submit"
-              className="inline-flex min-h-11 items-center rounded-md bg-brand-navy px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-navy"
-            >
+            <OpsButton type="submit" variant="primary" size="md" data-testid="edit-submit">
               Save changes
-            </button>
+            </OpsButton>
             <Link
               href={`/sales-pipeline/${encodeURIComponent(opp.id)}`}
-              className="inline-flex min-h-11 items-center rounded-md border border-border bg-card px-3 py-2 text-sm font-medium hover:bg-muted focus:outline-none focus:ring-2 focus:ring-brand-navy"
+              className={opsButtonClass({ variant: 'outline', size: 'md' })}
             >
               Cancel
             </Link>

@@ -165,8 +165,8 @@ export default async function SalesPipelinePage({ searchParams }: PageProps) {
         breadcrumb={[{ label: 'Sales pipeline' }]}
       />
       <div className="mx-auto flex max-w-screen-xl flex-col gap-4 px-4 py-6">
-        <p className="flex items-start gap-2 rounded-md border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
-          <Briefcase aria-hidden className="size-4 shrink-0 text-slate-500" />
+        <p className="flex items-start gap-2 rounded-md border border-border bg-muted/30 p-3 text-sm text-foreground">
+          <Briefcase aria-hidden className="size-4 shrink-0 text-muted-foreground" />
           <span>
             Pre-MOU pipeline tracker. {allOpportunities.length} total opportunities; {filtered.length} match the current filter.
             Workflow vocabulary (status / recce / approval) is free-text in Phase 1; D-026 captures the post-round-2 formalisation.
@@ -177,7 +177,7 @@ export default async function SalesPipelinePage({ searchParams }: PageProps) {
           <p
             role="status"
             data-testid="sales-pipeline-created-flash"
-            className="flex items-start gap-2 rounded-md border border-emerald-300 bg-emerald-50 p-2 text-xs text-emerald-900"
+            className="flex items-start gap-2 rounded-md border border-signal-ok bg-signal-ok/10 p-2 text-xs text-signal-ok"
           >
             <CheckCircle2 aria-hidden className="size-4 shrink-0" />
             <span>Opportunity created.</span>
@@ -188,7 +188,7 @@ export default async function SalesPipelinePage({ searchParams }: PageProps) {
           <p
             role="alert"
             data-testid="sales-pipeline-error"
-            className="flex items-start gap-2 rounded-md border border-rose-300 bg-rose-50 p-2 text-xs text-rose-900"
+            className="flex items-start gap-2 rounded-md border border-signal-alert bg-signal-alert/10 p-2 text-xs text-signal-alert"
           >
             <AlertTriangle aria-hidden className="size-4 shrink-0" />
             <span>{ERROR_FLASH[errorKey] ?? `Failed: ${errorKey}`}</span>
@@ -245,7 +245,7 @@ export default async function SalesPipelinePage({ searchParams }: PageProps) {
             ) : null,
           )}
           {q !== '' ? <input type="hidden" name="q" value={q} /> : null}
-          <label htmlFor="owner-filter" className="text-xs text-slate-600">
+          <label htmlFor="owner-filter" className="text-xs text-muted-foreground">
             Sales rep
           </label>
           <select
@@ -310,13 +310,13 @@ export default async function SalesPipelinePage({ searchParams }: PageProps) {
                         isHighlighted
                           ? 'bg-brand-teal/10'
                           : isLost
-                          ? 'bg-slate-50/50'
+                          ? 'bg-muted/30'
                           : ''
                       }
                     >
                       <Link
                         href={`/sales-pipeline/${encodeURIComponent(o.id)}`}
-                        className="block min-h-11 px-4 py-3 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-brand-navy"
+                        className="block min-h-11 px-4 py-3 hover:bg-muted focus:outline-none focus:ring-2 focus:ring-brand-navy"
                       >
                         <div className="flex flex-wrap items-baseline justify-between gap-2">
                           <span className="text-sm font-medium">
@@ -327,18 +327,18 @@ export default async function SalesPipelinePage({ searchParams }: PageProps) {
                               </span>
                             ) : null}
                           </span>
-                          <span className="font-mono text-xs text-slate-500">{o.id}</span>
+                          <span className="font-mono text-xs text-muted-foreground">{o.id}</span>
                         </div>
-                        <p className="mt-1 text-xs text-slate-600">
+                        <p className="mt-1 text-xs text-muted-foreground">
                           {o.city}, {o.state} ({o.region}) · {repName(o.salesRepId)}
                           {o.programmeProposed ? ` · ${o.programmeProposed}` : ''}
                         </p>
-                        <p className="mt-1 text-[11px] uppercase tracking-wide text-slate-500">
-                          Status: <span className="text-slate-800 normal-case">{o.status}</span>
+                        <p className="mt-1 text-[11px] uppercase tracking-wide text-muted-foreground">
+                          Status: <span className="text-foreground normal-case">{o.status}</span>
                           {' · '}Updated {lastUpdated(o)}
                         </p>
                         {isLost ? (
-                          <p className="mt-1 text-[11px] italic text-slate-500">
+                          <p className="mt-1 text-[11px] italic text-muted-foreground">
                             Loss reason: {o.lossReason}
                           </p>
                         ) : null}

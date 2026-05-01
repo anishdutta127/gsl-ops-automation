@@ -15,6 +15,7 @@ import { getCurrentUser } from '@/lib/auth/session'
 import { canPerform } from '@/lib/auth/permissions'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
+import { OpsButton, opsButtonClass } from '@/components/ops/OpsButton'
 import { markOpportunityLostAction } from '../../actions'
 
 const allOpportunities = salesOpportunitiesJson as unknown as SalesOpportunity[]
@@ -76,15 +77,15 @@ export default async function OpportunityMarkLostPage({ params, searchParams }: 
           <p
             role="alert"
             data-testid="opp-mark-lost-error"
-            className="flex items-start gap-2 rounded-md border border-rose-300 bg-rose-50 p-2 text-xs text-rose-900"
+            className="flex items-start gap-2 rounded-md border border-signal-alert bg-signal-alert/10 p-2 text-xs text-signal-alert"
           >
             <AlertTriangle aria-hidden className="size-4 shrink-0" />
             <span>{ERROR_FLASH[errorKey] ?? `Failed: ${errorKey}`}</span>
           </p>
         ) : null}
 
-        <p className="flex items-start gap-2 rounded-md border border-slate-200 bg-slate-50 p-3 text-xs text-slate-700">
-          <XCircle aria-hidden className="size-4 shrink-0 text-slate-500" />
+        <p className="flex items-start gap-2 rounded-md border border-border bg-muted/30 p-3 text-xs text-foreground">
+          <XCircle aria-hidden className="size-4 shrink-0 text-muted-foreground" />
           <span>
             You are about to mark <strong>{opp.schoolName}</strong> ({opp.id}) as lost. The row stays visible for history;
             downstream filters on /sales-pipeline can suppress lost rows.
@@ -99,7 +100,7 @@ export default async function OpportunityMarkLostPage({ params, searchParams }: 
 
           <div>
             <label htmlFor="lossReason" className="block text-sm font-medium">
-              Loss reason <span aria-hidden className="text-rose-600">*</span>
+              Loss reason <span aria-hidden className="text-signal-alert">*</span>
             </label>
             <input
               id="lossReason" name="lossReason" type="text" required
@@ -107,7 +108,7 @@ export default async function OpportunityMarkLostPage({ params, searchParams }: 
               placeholder="e.g., 'School chose competitor' or 'Budget cut'"
               className="mt-1 block w-full rounded-md border border-input bg-card px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
             />
-            <p className="mt-1 text-xs text-slate-500">
+            <p className="mt-1 text-xs text-muted-foreground">
               Free-text. Captured verbatim in the audit log.
             </p>
           </div>
@@ -124,16 +125,17 @@ export default async function OpportunityMarkLostPage({ params, searchParams }: 
           </div>
 
           <div className="flex flex-wrap items-center gap-3 pt-2">
-            <button
+            <OpsButton
               type="submit"
+              variant="destructive"
+              size="md"
               data-testid="mark-lost-submit"
-              className="inline-flex min-h-11 items-center rounded-md bg-rose-700 px-4 py-2 text-sm font-semibold text-white hover:bg-rose-800 focus:outline-none focus:ring-2 focus:ring-rose-700"
             >
               Mark as lost
-            </button>
+            </OpsButton>
             <Link
               href={`/sales-pipeline/${encodeURIComponent(opp.id)}`}
-              className="inline-flex min-h-11 items-center rounded-md border border-border bg-card px-3 py-2 text-sm font-medium hover:bg-muted focus:outline-none focus:ring-2 focus:ring-brand-navy"
+              className={opsButtonClass({ variant: 'outline', size: 'md' })}
             >
               Cancel
             </Link>

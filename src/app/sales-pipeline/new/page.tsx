@@ -25,6 +25,7 @@ import { getCurrentUser } from '@/lib/auth/session'
 import { canPerform } from '@/lib/auth/permissions'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
+import { OpsButton, opsButtonClass } from '@/components/ops/OpsButton'
 import { REGION_OPTIONS } from '@/lib/salesOpportunity/createOpportunity'
 import { createOpportunityAction } from '../actions'
 
@@ -92,7 +93,7 @@ export default async function SalesPipelineNewPage({ searchParams }: PageProps) 
           <p
             role="alert"
             data-testid="sales-pipeline-new-error"
-            className="flex items-start gap-2 rounded-md border border-rose-300 bg-rose-50 p-2 text-xs text-rose-900"
+            className="flex items-start gap-2 rounded-md border border-signal-alert bg-signal-alert/10 p-2 text-xs text-signal-alert"
           >
             <AlertTriangle aria-hidden className="size-4 shrink-0" />
             <span>{ERROR_FLASH[errorKey] ?? `Failed: ${errorKey}`}</span>
@@ -105,7 +106,7 @@ export default async function SalesPipelineNewPage({ searchParams }: PageProps) 
         >
           <div>
             <label htmlFor="schoolName" className="block text-sm font-medium">
-              School name <span aria-hidden className="text-rose-600">*</span>
+              School name <span aria-hidden className="text-signal-alert">*</span>
             </label>
             <input
               id="schoolName"
@@ -115,7 +116,7 @@ export default async function SalesPipelineNewPage({ searchParams }: PageProps) 
               data-testid="form-schoolName"
               className="mt-1 block w-full rounded-md border border-input bg-card px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
             />
-            <p className="mt-1 text-xs text-slate-500">
+            <p className="mt-1 text-xs text-muted-foreground">
               Free-text. If this school already exists in the system, you can link it later from the detail page.
             </p>
           </div>
@@ -123,7 +124,7 @@ export default async function SalesPipelineNewPage({ searchParams }: PageProps) 
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <label htmlFor="city" className="block text-sm font-medium">
-                City <span aria-hidden className="text-rose-600">*</span>
+                City <span aria-hidden className="text-signal-alert">*</span>
               </label>
               <input
                 id="city"
@@ -136,7 +137,7 @@ export default async function SalesPipelineNewPage({ searchParams }: PageProps) 
             </div>
             <div>
               <label htmlFor="state" className="block text-sm font-medium">
-                State <span aria-hidden className="text-rose-600">*</span>
+                State <span aria-hidden className="text-signal-alert">*</span>
               </label>
               <input
                 id="state"
@@ -152,7 +153,7 @@ export default async function SalesPipelineNewPage({ searchParams }: PageProps) 
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <label htmlFor="region" className="block text-sm font-medium">
-                Region <span aria-hidden className="text-rose-600">*</span>
+                Region <span aria-hidden className="text-signal-alert">*</span>
               </label>
               <select
                 id="region"
@@ -171,7 +172,7 @@ export default async function SalesPipelineNewPage({ searchParams }: PageProps) 
             </div>
             <div>
               <label htmlFor="salesRepId" className="block text-sm font-medium">
-                Sales rep <span aria-hidden className="text-rose-600">*</span>
+                Sales rep <span aria-hidden className="text-signal-alert">*</span>
               </label>
               {isSalesRep && ownSalesPerson ? (
                 <>
@@ -238,7 +239,7 @@ export default async function SalesPipelineNewPage({ searchParams }: PageProps) 
                 data-testid="form-gslModel"
                 className="mt-1 block w-full rounded-md border border-input bg-card px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
               />
-              <p className="mt-1 text-xs text-slate-500">
+              <p className="mt-1 text-xs text-muted-foreground">
                 Free-text. Vocabulary will formalise after round 2 testing.
               </p>
             </div>
@@ -246,7 +247,7 @@ export default async function SalesPipelineNewPage({ searchParams }: PageProps) 
 
           <div>
             <label htmlFor="status" className="block text-sm font-medium">
-              Status <span aria-hidden className="text-rose-600">*</span>
+              Status <span aria-hidden className="text-signal-alert">*</span>
             </label>
             <input
               id="status"
@@ -257,7 +258,7 @@ export default async function SalesPipelineNewPage({ searchParams }: PageProps) 
               data-testid="form-status"
               className="mt-1 block w-full rounded-md border border-input bg-card px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
             />
-            <p className="mt-1 text-xs text-slate-500">
+            <p className="mt-1 text-xs text-muted-foreground">
               Describe your current state in your own words (e.g., &ldquo;Recce scheduled&rdquo;, &ldquo;Awaiting Pratik approval&rdquo;). The system will formalise standard statuses after round 2 testing.
             </p>
           </div>
@@ -331,16 +332,17 @@ export default async function SalesPipelineNewPage({ searchParams }: PageProps) 
           </div>
 
           <div className="flex flex-wrap items-center gap-3 pt-2">
-            <button
+            <OpsButton
               type="submit"
+              variant="primary"
+              size="md"
               data-testid="form-submit"
-              className="inline-flex min-h-11 items-center rounded-md bg-brand-navy px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-navy"
             >
               Create opportunity
-            </button>
+            </OpsButton>
             <Link
               href="/sales-pipeline"
-              className="inline-flex min-h-11 items-center rounded-md border border-border bg-card px-3 py-2 text-sm font-medium hover:bg-muted focus:outline-none focus:ring-2 focus:ring-brand-navy"
+              className={opsButtonClass({ variant: 'outline', size: 'md' })}
             >
               Cancel
             </Link>

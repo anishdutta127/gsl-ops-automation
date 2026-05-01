@@ -26,6 +26,7 @@
 
 import { Fragment } from 'react'
 import Link from 'next/link'
+import { OpsButton, opsButtonClass } from './OpsButton'
 
 export type FormCardFieldType =
   | 'text'
@@ -65,7 +66,7 @@ export interface FormCardProps {
 }
 
 const INPUT_CLASS =
-  'w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand-navy)]'
+  'w-full min-h-11 rounded-md border border-input bg-card px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy'
 
 export function FormCard({
   action,
@@ -79,7 +80,7 @@ export function FormCard({
       {errorMessage ? (
         <p
           role="alert"
-          className="mb-4 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800"
+          className="mb-4 rounded-md border border-signal-alert bg-signal-alert/10 px-3 py-2 text-sm text-signal-alert"
         >
           {errorMessage}
         </p>
@@ -91,16 +92,13 @@ export function FormCard({
           </Fragment>
         ))}
         <div className="flex items-center gap-3">
-          <button
-            type="submit"
-            className="inline-flex items-center rounded-md bg-[var(--brand-navy)] px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand-navy)] min-h-[44px]"
-          >
+          <OpsButton type="submit" variant="primary" size="md">
             {submitLabel}
-          </button>
+          </OpsButton>
           {cancelHref ? (
             <Link
               href={cancelHref}
-              className="text-sm text-slate-700 underline-offset-2 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand-navy)]"
+              className={opsButtonClass({ variant: 'outline', size: 'md' })}
             >
               Cancel
             </Link>
@@ -117,12 +115,12 @@ function FormCardFieldRow({ field }: { field: FormCardField }) {
 
   return (
     <div>
-      <label htmlFor={inputId} className="block text-sm font-medium text-[var(--brand-navy)]">
+      <label htmlFor={inputId} className="block text-sm font-medium text-brand-navy">
         {field.label}
-        {field.required ? <span aria-hidden className="ml-0.5 text-slate-500">*</span> : null}
+        {field.required ? <span aria-hidden className="ml-0.5 text-signal-alert">*</span> : null}
       </label>
       {field.hint ? (
-        <p id={descId} className="mt-0.5 text-xs text-slate-600">
+        <p id={descId} className="mt-0.5 text-xs text-muted-foreground">
           {field.hint}
         </p>
       ) : null}
@@ -178,9 +176,9 @@ function renderInput(field: FormCardField, inputId: string, descId: string | und
                 name={field.name}
                 value={o.value}
                 defaultChecked={defaults.has(o.value)}
-                className="size-4 rounded border-slate-300 text-[var(--brand-navy)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand-navy)]"
+                className="size-4 rounded border-input text-brand-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-navy"
               />
-              <span className="text-slate-800">{o.label}</span>
+              <span className="text-foreground">{o.label}</span>
             </label>
           ))}
         </fieldset>
