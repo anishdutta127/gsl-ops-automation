@@ -110,6 +110,18 @@ describe('/mous/[mouId]/dispatch page (W4-D.4)', () => {
     expect(html).not.toMatch(/#[0-9a-fA-F]{3,6}/)
   })
 
+  it('W4-I.4 MM3: kit allocation section + edit + CSV links render', async () => {
+    getCurrentUserMock.mockResolvedValue(user('Admin', 'anish.d'))
+    const { default: Page } = await import('./page')
+    const html = renderToStaticMarkup(
+      await Page({ params: Promise.resolve({ mouId: 'MOU-STEAM-2627-001' }), searchParams: noSp }),
+    )
+    expect(html).toContain('data-testid="kit-allocation-section"')
+    expect(html).toContain('data-testid="kit-allocation-edit-link"')
+    expect(html).toContain('data-testid="kit-allocation-csv-link"')
+    expect(html).toContain('href="/api/mou/MOU-STEAM-2627-001/kit-allocation"')
+  })
+
   it('W4-I.4 MM1: header card surfaces trainer model, students, and location', async () => {
     getCurrentUserMock.mockResolvedValue(user('Admin', 'anish.d'))
     const { default: Page } = await import('./page')

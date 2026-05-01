@@ -98,7 +98,8 @@ describe('deriveStage', () => {
       physicalSubmissionStatus: 'Pending' as const, softCopySubmissionStatus: 'Pending' as const,
       productConfirmed: 'STEAM' as const, gslTrainingMode: 'GSL Trainer' as const,
       schoolPointOfContactName: 'P', schoolPointOfContactPhone: '+919999999999',
-      signedMouUrl: 'https://drive.google.com/test', thankYouEmailSentAt: null, auditLog: [],
+      signedMouUrl: 'https://drive.google.com/test', thankYouEmailSentAt: null,
+      gradeBreakdown: null, rechargeableBatteries: null, auditLog: [],
     }
     expect(deriveStage(m, { ...emptyDeps, intakeRecords: [intakeRecord] })).toBe('actuals-confirmed')
   })

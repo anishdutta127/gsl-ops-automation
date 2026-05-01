@@ -30,6 +30,7 @@ import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { DetailHeaderCard } from '@/components/ops/DetailHeaderCard'
 import { InventoryStatusPanel } from '@/components/ops/InventoryStatusPanel'
+import { KitAllocationTable } from '@/components/ops/KitAllocationTable'
 
 const allMous = mousJson as unknown as MOU[]
 const allDispatches = dispatchesJson as unknown as Dispatch[]
@@ -175,6 +176,53 @@ export default async function DispatchPage({ params, searchParams }: PageProps) 
           programmeSubType={mou.programmeSubType}
           inventoryItems={allInventoryItems}
         />
+
+        {/* W4-I.4 MM3: kit allocation table (Misba ticketing-derived).
+            Single-row view per MOU. Backfill via /mous/[id]/intake/edit;
+            CSV export downloads the same row for offline ops use. */}
+        <section
+          aria-labelledby="kit-allocation-heading"
+          data-testid="kit-allocation-section"
+          className="rounded-lg border border-border bg-card p-4 sm:p-6"
+        >
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+            <h3 id="kit-allocation-heading" className="font-heading text-base font-semibold text-brand-navy">
+              Kit allocation
+            </h3>
+            <div className="flex flex-wrap gap-2">
+              <Link
+                href={`/mous/${mou.id}/intake/edit`}
+                data-testid="kit-allocation-edit-link"
+                className="inline-flex min-h-11 items-center rounded-md border border-border bg-card px-3 py-2 text-xs font-medium hover:bg-muted focus:outline-none focus:ring-2 focus:ring-brand-navy"
+              >
+                {intakeRecord ? 'Edit' : 'Backfill'}
+              </Link>
+              <a
+                href={`/api/mou/${encodeURIComponent(mou.id)}/kit-allocation`}
+                data-testid="kit-allocation-csv-link"
+                download
+                className="inline-flex min-h-11 items-center rounded-md border border-border bg-card px-3 py-2 text-xs font-medium hover:bg-muted focus:outline-none focus:ring-2 focus:ring-brand-navy"
+              >
+                Download CSV
+              </a>
+            </div>
+          </div>
+          {!intakeRecord ? (
+            <p className="text-sm text-muted-foreground">
+              No intake record on file yet. Capture intake first via{' '}
+              <Link href={`/mous/${mou.id}/intake`} className="text-brand-navy hover:underline">
+                /mous/{mou.id}/intake
+              </Link>
+              {' '}so the kit allocation row can populate.
+            </p>
+          ) : (
+            <KitAllocationTable
+              school={school ?? null}
+              schoolName={mou.schoolName}
+              intake={intakeRecord ?? null}
+            />
+          )}
+        </section>
 
         <section aria-labelledby="dispatches-heading" className="rounded-lg border border-border bg-card p-4 sm:p-6">
           <h3 id="dispatches-heading" className="mb-3 font-heading text-base font-semibold text-brand-navy">

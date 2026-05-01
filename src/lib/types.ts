@@ -201,6 +201,12 @@ export type AuditAction =
   // are modified via /escalations/[id]/edit. before / after capture the
   // changed-field diff; notes carry the operator-supplied context.
   | 'escalation-edited'
+  // W4-I.4 MM3: emitted when an IntakeRecord's editable fields are
+  // modified via /mous/[id]/intake/edit. The MM3 batch added the
+  // gradeBreakdown + rechargeableBatteries fields to power Misba's
+  // kit allocation table; the edit lib supports the full mutable set
+  // for backfill. before / after capture the field diff.
+  | 'intake-edited'
 
 export interface AuditEntry {
   timestamp: string                // ISO
@@ -1143,6 +1149,23 @@ export interface IntakeRecord {
   signedMouUrl: string
   // Thank-you email tracking (compose-and-copy via W3-E pattern; mark-sent action)
   thankYouEmailSentAt: string | null
+  /**
+   * W4-I.4 MM3: Misba ticketing-driven kit allocation breakdown.
+   * Per-grade student counts (e.g. [{grade:1,students:17},{grade:2,students:21},...])
+   * power the kit allocation table on /mous/[id]/dispatch. The free-text
+   * `grades` field above stays as the operator's plain-language record
+   * (e.g. "1-8"); gradeBreakdown is the structured per-grade count.
+   * Null on every backfill record; operators populate via the intake
+   * edit form when capturing kit allocation.
+   */
+  gradeBreakdown: { grade: number; students: number }[] | null
+  /**
+   * W4-I.4 MM3: per-school rechargeable battery count (Misba's PDF
+   * sample showed 25 batteries for KOLKATA WB). Stays nullable for
+   * backfill records and for schools / programmes that do not ship
+   * batteries.
+   */
+  rechargeableBatteries: number | null
   auditLog: AuditEntry[]
 }
 

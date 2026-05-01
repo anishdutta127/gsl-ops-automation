@@ -69,6 +69,7 @@ function intake(overrides: Partial<IntakeRecord> = {}): IntakeRecord {
     productConfirmed: 'STEAM', gslTrainingMode: 'GSL Trainer',
     schoolPointOfContactName: 'POC', schoolPointOfContactPhone: '+91',
     signedMouUrl: 'https://x', thankYouEmailSentAt: null,
+    gradeBreakdown: null, rechargeableBatteries: null,
     auditLog: [],
     ...overrides,
   }

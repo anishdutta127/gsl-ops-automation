@@ -197,7 +197,8 @@ describe('recordIntake', () => {
       productConfirmed: 'STEAM', gslTrainingMode: 'GSL Trainer',
       schoolPointOfContactName: 'P', schoolPointOfContactPhone: '+919999999999',
       signedMouUrl: 'https://drive.google.com/open?id=test',
-      thankYouEmailSentAt: null, auditLog: [],
+      thankYouEmailSentAt: null,
+      gradeBreakdown: null, rechargeableBatteries: null, auditLog: [],
     }
     const { deps, calls } = makeDeps({
       mous: [m], intakeRecords: [existing], users: [admin()],

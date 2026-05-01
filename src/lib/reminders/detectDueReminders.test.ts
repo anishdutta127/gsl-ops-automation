@@ -238,7 +238,8 @@ describe('W4-E.4 detect: intake reminder', () => {
       productConfirmed: 'STEAM', gslTrainingMode: 'GSL Trainer',
       schoolPointOfContactName: 'X', schoolPointOfContactPhone: '+910000',
       signedMouUrl: 'https://drive.google.com/x',
-      thankYouEmailSentAt: null, auditLog: [],
+      thankYouEmailSentAt: null,
+      gradeBreakdown: null, rechargeableBatteries: null, auditLog: [],
     }
     const out = detectDueReminders(makeDeps({ mous: [m], schools: [sch], intakeRecords: [ir], salesPersons: [sp] }))
     expect(out).toEqual([])

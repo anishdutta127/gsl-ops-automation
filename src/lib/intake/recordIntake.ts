@@ -90,6 +90,12 @@ export interface RecordIntakeArgs {
   schoolPointOfContactPhone: string
   signedMouUrl: string
   recordedBy: string
+  /** W4-I.4 MM3: optional at create time. Operators populate later via the
+   *  intake edit form for the kit allocation table.
+   */
+  gradeBreakdown?: { grade: number; students: number }[] | null
+  /** W4-I.4 MM3: optional at create time; nullable for non-battery programmes. */
+  rechargeableBatteries?: number | null
 }
 
 export type RecordIntakeFailureReason =
@@ -302,6 +308,8 @@ export async function recordIntake(
     schoolPointOfContactPhone: phoneNormalised,
     signedMouUrl: args.signedMouUrl.trim(),
     thankYouEmailSentAt: null,
+    gradeBreakdown: args.gradeBreakdown ?? null,
+    rechargeableBatteries: args.rechargeableBatteries ?? null,
     auditLog: [audit],
   }
 
