@@ -207,6 +207,24 @@ export type AuditAction =
   // kit allocation table; the edit lib supports the full mutable set
   // for backfill. before / after capture the field diff.
   | 'intake-edited'
+  // W4-I.5 Phase 3: CommunicationTemplate lifecycle.
+  // 'template-created'   on first save via /admin/templates/new
+  // 'template-edited'    on any field change via /admin/templates/[id]/edit
+  // 'template-deactivated' on the active=false flip (preserves history)
+  // 'template-reactivated' on active=true flip
+  | 'template-created'
+  | 'template-edited'
+  | 'template-deactivated'
+  | 'template-reactivated'
+  // W4-I.5 Phase 3: emitted on the parent MOU's auditLog when an
+  // operator clicks "Send via Outlook" on the template launcher. The
+  // audit entry records which template was used, the recipient, the
+  // resolved subject, and which variables were substituted; sufficient
+  // for the Communications tab on /mous/[id] to render the chronology
+  // without fetching the Communication entity (we do not write a
+  // Communication row at this stage; that happens later when SMTP
+  // integration lands per Phase 1.1).
+  | 'communication-sent'
 
 export interface AuditEntry {
   timestamp: string                // ISO
@@ -603,6 +621,56 @@ export interface Notification {
   createdAt: string                // ISO
   readAt: string | null            // null until first mark-read; idempotent thereafter
   auditLog: AuditEntry[]           // 'create' on creation; 'notification-marked-read' on first read
+}
+
+// ============================================================================
+// CommunicationTemplate (W4-I.5 Phase 3)
+//
+// Reusable email + WhatsApp templates editable by Ops/Admin. Handlebars-
+// style {{variable}} placeholders substituted at send-time against an MOU
+// + School + IntakeRecord context (see src/lib/templates/applyVariables.ts).
+//
+// Permission: 'template:edit' (Admin + OpsHead) gates create + edit;
+// view is universal (every authenticated user can browse templates).
+//
+// active=false hides the template from launcher pickers but keeps the
+// row + auditLog for historical reference.
+// ============================================================================
+
+export type TemplateUseCase =
+  | 'welcome'
+  | 'thank-you'
+  | 'follow-up'
+  | 'payment-reminder'
+  | 'dispatch-confirmation'
+  | 'feedback-request'
+  | 'custom'
+
+export type TemplateRecipient =
+  | 'spoc'           // intake.recipientEmail || school.email
+  | 'sales-owner'    // sales rep on the MOU
+  | 'school-email'   // school.email
+  | 'custom'         // operator types the recipient at send-time
+
+export interface CommunicationTemplate {
+  id: string                     // 'TPL-...'
+  name: string
+  useCase: TemplateUseCase
+  /** Subject line; can include {{variable}} placeholders. */
+  subject: string
+  /** Body markdown; can include {{variable}} placeholders. */
+  bodyMarkdown: string
+  defaultRecipient: TemplateRecipient
+  /** CC-rule context keys (e.g. 'all-communications', 'welcome-note'). */
+  defaultCcRules: string[]
+  /** Variable names declared as available; the launcher form picks from this. */
+  variables: string[]
+  createdBy: string              // User.id
+  createdAt: string              // ISO
+  lastEditedBy: string           // User.id
+  lastEditedAt: string           // ISO
+  active: boolean
+  auditLog: AuditEntry[]
 }
 
 // ============================================================================
@@ -1196,6 +1264,7 @@ export type PendingUpdateEntity =
   | 'notification'                 // W4-E.5
   | 'salesOpportunity'             // W4-F.1
   | 'inventoryItem'                // W4-G.1
+  | 'communicationTemplate'        // W4-I.5 Phase 3
 
 export interface PendingUpdate {
   id: string                       // UUID

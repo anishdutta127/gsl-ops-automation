@@ -130,6 +130,12 @@ export type Action =
   // thresholds at /admin/inventory.
   | 'inventory:view'
   | 'inventory:edit'
+  // W4-I.5 Phase 3: CommunicationTemplate edit grant.
+  // 'template:edit' covers create + edit + active-toggle. View is
+  // universal for any authenticated user (no Action required); the
+  // launcher picker on /mous/[id] surfaces active templates to all
+  // operators since send is a Sales / Ops shared action.
+  | 'template:edit'
 
 // Sentinel: Admin role grants all actions. Represented as wildcard in the
 // role map so we never have to enumerate the full action list for Admin.
@@ -206,6 +212,7 @@ const ROLE_BASE_ACTIONS: Record<UserRole, Set<Action> | typeof ADMIN_WILDCARD> =
     'sales-opportunity:view',
     'inventory:view',
     'inventory:edit',
+    'template:edit',
   ]),
   OpsEmployee: new Set<Action>([
     // Phase 1 base: no write actions on the matrix. Misba is OpsEmployee

@@ -1,0 +1,117 @@
+[
+  {
+    "id": "TPL-WELCOME-DEFAULT",
+    "name": "Welcome Note",
+    "useCase": "welcome",
+    "subject": "Welcome to the GetSetLearn {{programme}} programme, {{schoolName}}",
+    "bodyMarkdown": "Dear {{recipientName}},\n\nWelcome to the GetSetLearn {{programme}} programme. We are excited to begin this learning journey with {{schoolName}}.\n\nYour sales contact {{salesOwnerName}} will be in touch shortly with the next steps. In the meantime, please refer to the signed MOU at {{signedMouUrl}}.\n\nWarm regards,\n{{senderName}}\nGetSetLearn Operations\n{{currentDate}}",
+    "defaultRecipient": "spoc",
+    "defaultCcRules": ["welcome-note"],
+    "variables": ["recipientName", "schoolName", "programme", "salesOwnerName", "signedMouUrl", "senderName", "currentDate"],
+    "createdBy": "system-w4i5-phase3",
+    "createdAt": "2026-05-01T10:00:00.000Z",
+    "lastEditedBy": "system-w4i5-phase3",
+    "lastEditedAt": "2026-05-01T10:00:00.000Z",
+    "active": true,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-01T10:00:00.000Z",
+        "user": "system-w4i5-phase3",
+        "action": "template-created",
+        "notes": "Default Welcome Note template seeded by W4-I.5 Phase 3."
+      }
+    ]
+  },
+  {
+    "id": "TPL-THANK-YOU-DEFAULT",
+    "name": "Thank You Note",
+    "useCase": "thank-you",
+    "subject": "Thank you for the {{programme}} intake, {{schoolName}}",
+    "bodyMarkdown": "Dear {{recipientName}} ({{recipientDesignation}}),\n\nThank you for completing the formalities for the {{programme}} programme at {{schoolName}}. Our team will now proceed with the next steps for the {{durationYears}}-year engagement starting {{startDate}}.\n\nYour sales contact: {{salesOwnerName}}.\n\nWarm regards,\n{{senderName}}\n{{currentDate}}",
+    "defaultRecipient": "spoc",
+    "defaultCcRules": ["welcome-note"],
+    "variables": ["recipientName", "recipientDesignation", "schoolName", "programme", "durationYears", "startDate", "endDate", "salesOwnerName", "senderName", "currentDate"],
+    "createdBy": "system-w4i5-phase3",
+    "createdAt": "2026-05-01T10:00:00.000Z",
+    "lastEditedBy": "system-w4i5-phase3",
+    "lastEditedAt": "2026-05-01T10:00:00.000Z",
+    "active": true,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-01T10:00:00.000Z",
+        "user": "system-w4i5-phase3",
+        "action": "template-created",
+        "notes": "Default Thank You Note template seeded by W4-I.5 Phase 3."
+      }
+    ]
+  },
+  {
+    "id": "TPL-FOLLOW-UP-DEFAULT",
+    "name": "Follow-up Email",
+    "useCase": "follow-up",
+    "subject": "Following up on {{schoolName}} - {{programme}} programme",
+    "bodyMarkdown": "Dear {{recipientName}},\n\nA quick follow-up on the {{programme}} programme at {{schoolName}}. Could you please share an update at your earliest convenience?\n\nReach out to {{salesOwnerName}} for any clarifications.\n\nWarm regards,\n{{senderName}}\n{{currentDate}}",
+    "defaultRecipient": "spoc",
+    "defaultCcRules": ["all-communications"],
+    "variables": ["recipientName", "schoolName", "programme", "salesOwnerName", "senderName", "currentDate"],
+    "createdBy": "system-w4i5-phase3",
+    "createdAt": "2026-05-01T10:00:00.000Z",
+    "lastEditedBy": "system-w4i5-phase3",
+    "lastEditedAt": "2026-05-01T10:00:00.000Z",
+    "active": true,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-01T10:00:00.000Z",
+        "user": "system-w4i5-phase3",
+        "action": "template-created",
+        "notes": "Default Follow-up Email template seeded by W4-I.5 Phase 3."
+      }
+    ]
+  },
+  {
+    "id": "TPL-PAYMENT-REMINDER-DEFAULT",
+    "name": "Payment Reminder",
+    "useCase": "payment-reminder",
+    "subject": "Payment reminder: {{instalmentLabel}} for {{schoolName}}",
+    "bodyMarkdown": "Dear {{recipientName}},\n\nThis is a friendly reminder that {{instalmentLabel}} for the {{programme}} programme at {{schoolName}} is awaiting payment. The expected amount is {{expectedAmount}}.\n\nProforma invoice number: {{piNumber}}\n\nPlease let us know if there are any concerns; happy to clarify.\n\nWarm regards,\n{{senderName}}\n{{currentDate}}",
+    "defaultRecipient": "spoc",
+    "defaultCcRules": ["all-communications"],
+    "variables": ["recipientName", "schoolName", "programme", "instalmentLabel", "expectedAmount", "piNumber", "senderName", "currentDate"],
+    "createdBy": "system-w4i5-phase3",
+    "createdAt": "2026-05-01T10:00:00.000Z",
+    "lastEditedBy": "system-w4i5-phase3",
+    "lastEditedAt": "2026-05-01T10:00:00.000Z",
+    "active": true,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-01T10:00:00.000Z",
+        "user": "system-w4i5-phase3",
+        "action": "template-created",
+        "notes": "Default Payment Reminder template seeded by W4-I.5 Phase 3."
+      }
+    ]
+  },
+  {
+    "id": "TPL-DISPATCH-CONFIRMATION-DEFAULT",
+    "name": "Dispatch Confirmation",
+    "useCase": "dispatch-confirmation",
+    "subject": "Dispatch confirmation: {{schoolName}} ({{dispatchId}})",
+    "bodyMarkdown": "Dear {{recipientName}},\n\nThe {{programme}} kit set for {{schoolName}} has been dispatched.\n\nDispatch ID: {{dispatchId}}\nDispatched on: {{dispatchedAt}}\nExpected delivery: {{expectedDelivery}}\n\nReach out if anything looks off when the kit lands.\n\nWarm regards,\n{{senderName}}\n{{currentDate}}",
+    "defaultRecipient": "spoc",
+    "defaultCcRules": ["dispatch-notification"],
+    "variables": ["recipientName", "schoolName", "programme", "dispatchId", "dispatchedAt", "expectedDelivery", "senderName", "currentDate"],
+    "createdBy": "system-w4i5-phase3",
+    "createdAt": "2026-05-01T10:00:00.000Z",
+    "lastEditedBy": "system-w4i5-phase3",
+    "lastEditedAt": "2026-05-01T10:00:00.000Z",
+    "active": true,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-01T10:00:00.000Z",
+        "user": "system-w4i5-phase3",
+        "action": "template-created",
+        "notes": "Default Dispatch Confirmation template seeded by W4-I.5 Phase 3."
+      }
+    ]
+  }
+]

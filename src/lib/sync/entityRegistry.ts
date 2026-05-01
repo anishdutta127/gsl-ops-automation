@@ -39,6 +39,7 @@ export const ARRAY_ENTITY_TO_PATH: Record<
   notification: 'src/data/notifications.json',
   salesOpportunity: 'src/data/sales_opportunities.json',
   inventoryItem: 'src/data/inventory_items.json',
+  communicationTemplate: 'src/data/communication_templates.json',
 }
 
 export function pathForEntity(entity: PendingUpdateEntity): string | null {
