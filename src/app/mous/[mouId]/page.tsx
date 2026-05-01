@@ -14,6 +14,7 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import type {
+  CommunicationTemplate,
   Dispatch,
   Feedback,
   IntakeRecord,
@@ -28,6 +29,7 @@ import dispatchesJson from '@/data/dispatches.json'
 import paymentsJson from '@/data/payments.json'
 import feedbackJson from '@/data/feedback.json'
 import intakeRecordsJson from '@/data/intake_records.json'
+import templatesJson from '@/data/communication_templates.json'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canPerform } from '@/lib/auth/permissions'
 import { computeLifecycle } from '@/lib/portal/lifecycleProgress'
@@ -38,6 +40,8 @@ import { DetailHeaderCard } from '@/components/ops/DetailHeaderCard'
 import { LifecycleProgress } from '@/components/ops/LifecycleProgress'
 import { AuditLogPanel } from '@/components/ops/AuditLogPanel'
 import { StatusNotesSection } from '@/components/ops/StatusNotesSection'
+import { SmartSuggestionsPanel } from '@/components/ops/SmartSuggestionsPanel'
+import { getSmartTemplateSuggestions } from '@/lib/templates/smartSuggestions'
 import usersJson from '@/data/users.json'
 
 const allMous = mousJson as unknown as MOU[]
@@ -47,6 +51,7 @@ const allPayments = paymentsJson as unknown as Payment[]
 const allFeedback = feedbackJson as unknown as Feedback[]
 const allUsers = usersJson as unknown as User[]
 const allIntakeRecords = intakeRecordsJson as unknown as IntakeRecord[]
+const allTemplates = templatesJson as unknown as CommunicationTemplate[]
 
 function lastDelayNotesUpdate(mou: MOU): string | null {
   const usersById = new Map(allUsers.map((u) => [u.id, u.name]))
@@ -90,6 +95,16 @@ export default async function MouDetailPage({ params }: PageProps) {
   // matrix grant (everyone except Finance + Admin). Server-side gate
   // in lib/pi/generatePi.ts and the PI page route still enforce.
   const canGeneratePi = user ? canPerform(user, 'mou:generate-pi') : false
+
+  // W4-I.5 P3C4: smart template suggestions per lifecycle stage.
+  const smartSuggestions = getSmartTemplateSuggestions({
+    mou,
+    templates: allTemplates,
+    intake: intakeRecord ?? null,
+    dispatches: installmentDispatches,
+    payments: installments,
+    now: new Date(),
+  })
 
   const lifecycle = computeLifecycle({
     mouSignedDate: mou.startDate,
@@ -162,6 +177,8 @@ export default async function MouDetailPage({ params }: PageProps) {
               </>
             }
           />
+
+          <SmartSuggestionsPanel mouId={mou.id} suggestions={smartSuggestions} />
 
           <section aria-labelledby="lifecycle-heading" className="rounded-lg border border-border bg-card p-4 sm:p-6">
             <h3 id="lifecycle-heading" className="mb-4 font-heading text-base font-semibold text-brand-navy">
