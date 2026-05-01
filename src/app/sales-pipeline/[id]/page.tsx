@@ -40,6 +40,7 @@ import { getCurrentUser } from '@/lib/auth/session'
 import { canPerform } from '@/lib/auth/permissions'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
+import { OpsButton, opsButtonClass } from '@/components/ops/OpsButton'
 import { findSchoolMatch } from '@/lib/salesOpportunity/findSchoolMatch'
 import {
   linkExistingSchoolAction,
@@ -137,7 +138,7 @@ export default async function OpportunityDetailPage({ params, searchParams }: Pa
             key={i}
             role="status"
             data-testid="opp-detail-flash"
-            className="flex items-start gap-2 rounded-md border border-emerald-300 bg-emerald-50 p-2 text-xs text-emerald-900"
+            className="flex items-start gap-2 rounded-md border border-signal-ok bg-signal-ok/10 p-2 text-xs text-signal-ok"
           >
             <CheckCircle2 aria-hidden className="size-4 shrink-0" />
             <span>{text}</span>
@@ -148,7 +149,7 @@ export default async function OpportunityDetailPage({ params, searchParams }: Pa
           <p
             role="alert"
             data-testid="opp-detail-error"
-            className="flex items-start gap-2 rounded-md border border-rose-300 bg-rose-50 p-2 text-xs text-rose-900"
+            className="flex items-start gap-2 rounded-md border border-signal-alert bg-signal-alert/10 p-2 text-xs text-signal-alert"
           >
             <AlertTriangle aria-hidden className="size-4 shrink-0" />
             <span>{ERROR_MESSAGES[errorKey] ?? `Failed: ${errorKey}`}</span>
@@ -158,9 +159,9 @@ export default async function OpportunityDetailPage({ params, searchParams }: Pa
         {opp.lossReason !== null ? (
           <p
             data-testid="opp-detail-lost-pill"
-            className="flex items-start gap-2 rounded-md border border-slate-300 bg-slate-100 p-3 text-xs text-slate-800"
+            className="flex items-start gap-2 rounded-md border border-border bg-muted p-3 text-xs text-foreground"
           >
-            <XCircle aria-hidden className="size-4 shrink-0 text-slate-500" />
+            <XCircle aria-hidden className="size-4 shrink-0 text-muted-foreground" />
             <span>
               <strong>Lost.</strong> Reason: {opp.lossReason}
             </span>
@@ -170,14 +171,14 @@ export default async function OpportunityDetailPage({ params, searchParams }: Pa
         {suggestion ? (
           <section
             data-testid="opp-detail-school-suggestion"
-            className="rounded-md border border-amber-300 bg-amber-50 p-3 text-xs text-amber-900"
+            className="rounded-md border border-signal-attention bg-signal-attention/10 p-3 text-xs text-signal-attention"
           >
             <p className="flex items-start gap-2">
               <AlertTriangle aria-hidden className="size-4 shrink-0" />
               <span>
                 Token match found: this opportunity&rsquo;s school name resembles{' '}
                 <strong>{suggestion.schoolName}</strong>{' '}
-                <span className="text-amber-700">({suggestion.city}, score {suggestion.score.toFixed(2)})</span>
+                <span className="text-signal-attention/80">({suggestion.city}, score {suggestion.score.toFixed(2)})</span>
                 {' '}in our directory. Pick one of the actions below; we won&rsquo;t auto-link.
               </span>
             </p>
@@ -185,23 +186,25 @@ export default async function OpportunityDetailPage({ params, searchParams }: Pa
               <form action={linkExistingSchoolAction}>
                 <input type="hidden" name="id" value={opp.id} />
                 <input type="hidden" name="schoolId" value={suggestion.schoolId} />
-                <button
+                <OpsButton
                   type="submit"
+                  variant="primary"
+                  size="sm"
                   data-testid="opp-link-existing-school"
-                  className="inline-flex min-h-11 items-center rounded-md bg-brand-navy px-3 py-2 text-xs font-semibold text-white hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-navy"
                 >
                   Link to {suggestion.schoolName}
-                </button>
+                </OpsButton>
               </form>
               <form action={dismissSchoolMatchAction}>
                 <input type="hidden" name="id" value={opp.id} />
-                <button
+                <OpsButton
                   type="submit"
+                  variant="outline"
+                  size="sm"
                   data-testid="opp-dismiss-school-match"
-                  className="inline-flex min-h-11 items-center rounded-md border border-amber-300 bg-card px-3 py-2 text-xs font-medium hover:bg-muted focus:outline-none focus:ring-2 focus:ring-brand-navy"
                 >
                   Keep as new school
-                </button>
+                </OpsButton>
               </form>
             </div>
           </section>
@@ -210,7 +213,7 @@ export default async function OpportunityDetailPage({ params, searchParams }: Pa
         <section className="rounded-md border border-border bg-card p-4">
           <header className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
             <div>
-              <p className="text-xs uppercase tracking-wide text-slate-500">Opportunity</p>
+              <p className="text-xs uppercase tracking-wide text-muted-foreground">Opportunity</p>
               <p className="font-mono text-sm text-brand-navy">{opp.id}</p>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -218,7 +221,7 @@ export default async function OpportunityDetailPage({ params, searchParams }: Pa
                 <Link
                   href={`/sales-pipeline/${encodeURIComponent(opp.id)}/edit`}
                   data-testid="opp-detail-edit-link"
-                  className="inline-flex min-h-11 items-center gap-1 rounded-md bg-brand-navy px-3 py-2 text-sm font-semibold text-white hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-navy"
+                  className={opsButtonClass({ variant: 'primary', size: 'md' })}
                 >
                   <Pencil aria-hidden className="size-4" /> Edit
                 </Link>
@@ -227,7 +230,7 @@ export default async function OpportunityDetailPage({ params, searchParams }: Pa
                 <Link
                   href={`/sales-pipeline/${encodeURIComponent(opp.id)}/mark-lost`}
                   data-testid="opp-detail-mark-lost-link"
-                  className="inline-flex min-h-11 items-center gap-1 rounded-md border border-border bg-card px-3 py-2 text-sm font-medium hover:bg-muted focus:outline-none focus:ring-2 focus:ring-brand-navy"
+                  className={opsButtonClass({ variant: 'outline', size: 'md' })}
                 >
                   <XCircle aria-hidden className="size-4" /> Mark as lost
                 </Link>
@@ -237,7 +240,7 @@ export default async function OpportunityDetailPage({ params, searchParams }: Pa
 
           <dl className="grid gap-3 text-sm sm:grid-cols-2">
             <div>
-              <dt className="text-xs uppercase tracking-wide text-slate-500">School</dt>
+              <dt className="text-xs uppercase tracking-wide text-muted-foreground">School</dt>
               <dd>
                 {opp.schoolName}
                 {linkedSchool ? (
@@ -249,64 +252,64 @@ export default async function OpportunityDetailPage({ params, searchParams }: Pa
                     {linkedSchool.id}
                   </Link>
                 ) : (
-                  <span className="ml-1 text-xs text-slate-500">(not linked)</span>
+                  <span className="ml-1 text-xs text-muted-foreground">(not linked)</span>
                 )}
               </dd>
             </div>
             <div>
-              <dt className="text-xs uppercase tracking-wide text-slate-500">Sales rep</dt>
+              <dt className="text-xs uppercase tracking-wide text-muted-foreground">Sales rep</dt>
               <dd>{rep ? rep.name : opp.salesRepId}</dd>
             </div>
             <div>
-              <dt className="text-xs uppercase tracking-wide text-slate-500">City / State</dt>
+              <dt className="text-xs uppercase tracking-wide text-muted-foreground">City / State</dt>
               <dd>
                 {opp.city}, {opp.state}
               </dd>
             </div>
             <div>
-              <dt className="text-xs uppercase tracking-wide text-slate-500">Region</dt>
+              <dt className="text-xs uppercase tracking-wide text-muted-foreground">Region</dt>
               <dd>{opp.region}</dd>
             </div>
             <div>
-              <dt className="text-xs uppercase tracking-wide text-slate-500">Programme proposed</dt>
-              <dd>{opp.programmeProposed ?? <em className="text-slate-500">not set</em>}</dd>
+              <dt className="text-xs uppercase tracking-wide text-muted-foreground">Programme proposed</dt>
+              <dd>{opp.programmeProposed ?? <em className="text-muted-foreground">not set</em>}</dd>
             </div>
             <div>
-              <dt className="text-xs uppercase tracking-wide text-slate-500">GSL Model</dt>
-              <dd>{opp.gslModel ?? <em className="text-slate-500">not set</em>}</dd>
+              <dt className="text-xs uppercase tracking-wide text-muted-foreground">GSL Model</dt>
+              <dd>{opp.gslModel ?? <em className="text-muted-foreground">not set</em>}</dd>
             </div>
             <div className="sm:col-span-2">
-              <dt className="text-xs uppercase tracking-wide text-slate-500">Status</dt>
+              <dt className="text-xs uppercase tracking-wide text-muted-foreground">Status</dt>
               <dd className="font-medium">{opp.status}</dd>
             </div>
             <div>
-              <dt className="text-xs uppercase tracking-wide text-slate-500">Recce status</dt>
-              <dd>{opp.recceStatus ?? <em className="text-slate-500">not set</em>}</dd>
+              <dt className="text-xs uppercase tracking-wide text-muted-foreground">Recce status</dt>
+              <dd>{opp.recceStatus ?? <em className="text-muted-foreground">not set</em>}</dd>
             </div>
             <div>
-              <dt className="text-xs uppercase tracking-wide text-slate-500">Recce completed</dt>
-              <dd>{opp.recceCompletedAt ?? <em className="text-slate-500">not set</em>}</dd>
+              <dt className="text-xs uppercase tracking-wide text-muted-foreground">Recce completed</dt>
+              <dd>{opp.recceCompletedAt ?? <em className="text-muted-foreground">not set</em>}</dd>
             </div>
             <div className="sm:col-span-2">
-              <dt className="text-xs uppercase tracking-wide text-slate-500">Commitments made</dt>
+              <dt className="text-xs uppercase tracking-wide text-muted-foreground">Commitments made</dt>
               <dd className="whitespace-pre-wrap">
-                {opp.commitmentsMade ?? <em className="text-slate-500">none</em>}
+                {opp.commitmentsMade ?? <em className="text-muted-foreground">none</em>}
               </dd>
             </div>
             <div className="sm:col-span-2">
-              <dt className="text-xs uppercase tracking-wide text-slate-500">Out-of-scope requirements</dt>
+              <dt className="text-xs uppercase tracking-wide text-muted-foreground">Out-of-scope requirements</dt>
               <dd className="whitespace-pre-wrap">
-                {opp.outOfScopeRequirements ?? <em className="text-slate-500">none</em>}
+                {opp.outOfScopeRequirements ?? <em className="text-muted-foreground">none</em>}
               </dd>
             </div>
             <div className="sm:col-span-2">
-              <dt className="text-xs uppercase tracking-wide text-slate-500">Approval notes</dt>
+              <dt className="text-xs uppercase tracking-wide text-muted-foreground">Approval notes</dt>
               <dd className="whitespace-pre-wrap">
-                {opp.approvalNotes ?? <em className="text-slate-500">none</em>}
+                {opp.approvalNotes ?? <em className="text-muted-foreground">none</em>}
               </dd>
             </div>
             <div>
-              <dt className="text-xs uppercase tracking-wide text-slate-500">Created</dt>
+              <dt className="text-xs uppercase tracking-wide text-muted-foreground">Created</dt>
               <dd>
                 {new Date(opp.createdAt).toLocaleString('en-IN')}
                 {' by '}
@@ -315,7 +318,7 @@ export default async function OpportunityDetailPage({ params, searchParams }: Pa
             </div>
             {opp.conversionMouId ? (
               <div>
-                <dt className="text-xs uppercase tracking-wide text-slate-500">Converted to MOU</dt>
+                <dt className="text-xs uppercase tracking-wide text-muted-foreground">Converted to MOU</dt>
                 <dd>
                   <Link
                     href={`/mous/${opp.conversionMouId}`}
@@ -338,7 +341,7 @@ export default async function OpportunityDetailPage({ params, searchParams }: Pa
             Audit log
           </h2>
           {opp.auditLog.length === 0 ? (
-            <p className="mt-2 text-xs text-slate-500">No audit entries yet.</p>
+            <p className="mt-2 text-xs text-muted-foreground">No audit entries yet.</p>
           ) : (
             <ul className="mt-2 space-y-3 text-xs">
               {[...opp.auditLog].reverse().map((entry, idx) => {
@@ -351,10 +354,10 @@ export default async function OpportunityDetailPage({ params, searchParams }: Pa
                   <li
                     key={idx}
                     data-testid="opp-detail-audit-entry"
-                    className="rounded-md border border-slate-200 bg-slate-50 p-2"
+                    className="rounded-md border border-border bg-muted/30 p-2"
                   >
                     <p>
-                      <span className="font-mono text-slate-500">
+                      <span className="font-mono text-muted-foreground">
                         {new Date(entry.timestamp).toLocaleString('en-IN')}
                       </span>
                       {' · '}
@@ -363,19 +366,19 @@ export default async function OpportunityDetailPage({ params, searchParams }: Pa
                       <span className="font-mono text-brand-navy">{entry.action}</span>
                     </p>
                     {fields.length > 0 ? (
-                      <ul className="mt-1 list-disc pl-5 text-slate-700">
+                      <ul className="mt-1 list-disc pl-5 text-foreground">
                         {fields.map((f) => (
                           <li key={f}>
                             <span className="font-medium">{f}</span>:{' '}
-                            <span className="text-rose-700">{JSON.stringify(before?.[f] ?? null)}</span>
+                            <span className="text-signal-alert">{JSON.stringify(before?.[f] ?? null)}</span>
                             {' → '}
-                            <span className="text-emerald-700">{JSON.stringify(after?.[f] ?? null)}</span>
+                            <span className="text-signal-ok">{JSON.stringify(after?.[f] ?? null)}</span>
                           </li>
                         ))}
                       </ul>
                     ) : null}
                     {entry.notes ? (
-                      <p className="mt-1 text-slate-600">{entry.notes}</p>
+                      <p className="mt-1 text-muted-foreground">{entry.notes}</p>
                     ) : null}
                   </li>
                 )

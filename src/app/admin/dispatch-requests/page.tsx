@@ -25,6 +25,8 @@ import usersJson from '@/data/users.json'
 import { getCurrentUser } from '@/lib/auth/session'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
+import { StatusChip, type StatusChipTone } from '@/components/ops/StatusChip'
+import { opsButtonClass } from '@/components/ops/OpsButton'
 
 const allRequests = dispatchRequestsJson as unknown as DispatchRequest[]
 const allMous = mousJson as unknown as MOU[]
@@ -41,11 +43,11 @@ const STATUS_FILTERS: ReadonlyArray<{ key: StatusFilter; label: string }> = [
   { key: 'cancelled', label: 'Cancelled' },
 ]
 
-const STATUS_BADGE_CLASS: Record<DispatchRequest['status'], string> = {
-  'pending-approval': 'bg-signal-attention/15 text-signal-attention border-signal-attention/40',
-  approved: 'bg-signal-ok/15 text-signal-ok border-signal-ok/40',
-  rejected: 'bg-signal-alert/15 text-signal-alert border-signal-alert/40',
-  cancelled: 'bg-muted text-muted-foreground border-border',
+const STATUS_TONE: Record<DispatchRequest['status'], { tone: StatusChipTone; label: string }> = {
+  'pending-approval': { tone: 'attention', label: 'pending-approval' },
+  approved: { tone: 'ok', label: 'approved' },
+  rejected: { tone: 'alert', label: 'rejected' },
+  cancelled: { tone: 'neutral', label: 'cancelled' },
 }
 
 interface PageProps {
@@ -127,11 +129,7 @@ export default async function DispatchRequestsQueuePage({ searchParams }: PagePr
                 href={href}
                 data-testid={`dr-filter-${f.key}`}
                 aria-current={isActive ? 'page' : undefined}
-                className={
-                  isActive
-                    ? 'inline-flex min-h-11 items-center rounded-md bg-brand-navy px-3 py-2 text-sm font-medium text-white'
-                    : 'inline-flex min-h-11 items-center rounded-md border border-border bg-card px-3 py-2 text-sm font-medium text-foreground hover:bg-muted focus:outline-none focus:ring-2 focus:ring-brand-navy'
-                }
+                className={opsButtonClass({ variant: isActive ? 'primary' : 'outline', size: 'md' })}
               >
                 {f.label} ({counts[f.key]})
               </Link>
@@ -148,10 +146,7 @@ export default async function DispatchRequestsQueuePage({ searchParams }: PagePr
             className="block w-full max-w-md rounded-md border border-input bg-card px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
           />
           {status !== 'all' ? <input type="hidden" name="status" value={status} /> : null}
-          <button
-            type="submit"
-            className="inline-flex min-h-11 items-center rounded-md border border-border bg-card px-3 py-2 text-sm font-medium hover:bg-muted focus:outline-none focus:ring-2 focus:ring-brand-navy"
-          >
+          <button type="submit" className={opsButtonClass({ variant: 'outline', size: 'md' })}>
             Search
           </button>
         </form>
@@ -175,11 +170,11 @@ export default async function DispatchRequestsQueuePage({ searchParams }: PagePr
                   >
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="font-mono text-sm font-medium text-brand-navy">{r.id}</span>
-                      <span
-                        className={`rounded-sm border px-2 py-0.5 text-xs ${STATUS_BADGE_CLASS[r.status]}`}
-                      >
-                        {r.status}
-                      </span>
+                      <StatusChip
+                        tone={STATUS_TONE[r.status].tone}
+                        label={STATUS_TONE[r.status].label}
+                        withDot={false}
+                      />
                     </div>
                     <p className="mt-1 text-sm">
                       <span className="font-medium">{mou?.schoolName ?? r.mouId}</span>{' '}
