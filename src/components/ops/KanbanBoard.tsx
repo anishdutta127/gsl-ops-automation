@@ -269,37 +269,35 @@ export function KanbanBoard({ initialBuckets, cardMeta = {} }: KanbanBoardProps)
         onDragCancel={() => setActiveMou(null)}
       >
         <div className="relative">
+          {/* W4-I.5 P4C3: chevrons are always visible on md+ rather
+              than fading out at the edges. They render as <button
+              disabled> when the scroll position is already at the
+              relevant edge so the affordance reads consistently
+              across all positions while still communicating that
+              the action is unavailable. */}
           <button
             type="button"
             onClick={() => scrollByColumn(-1)}
+            disabled={!scrollEdges.left}
             aria-label="Scroll to previous columns"
-            className={
-              'absolute left-1 top-1/2 z-10 hidden size-11 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-card shadow-sm hover:bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy md:flex '
-              + (scrollEdges.left ? 'opacity-100' : 'pointer-events-none opacity-0')
-            }
+            className="absolute left-1 top-1/2 z-10 hidden size-11 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-card shadow-sm hover:bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-card md:flex"
             data-testid="kanban-scroll-left"
-            aria-hidden={scrollEdges.left ? undefined : true}
-            tabIndex={scrollEdges.left ? 0 : -1}
           >
             <ChevronLeft aria-hidden className="size-5 text-foreground" />
           </button>
           <button
             type="button"
             onClick={() => scrollByColumn(1)}
+            disabled={!scrollEdges.right}
             aria-label="Scroll to next columns"
-            className={
-              'absolute right-1 top-1/2 z-10 hidden size-11 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-card shadow-sm hover:bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy md:flex '
-              + (scrollEdges.right ? 'opacity-100' : 'pointer-events-none opacity-0')
-            }
+            className="absolute right-1 top-1/2 z-10 hidden size-11 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-card shadow-sm hover:bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-card md:flex"
             data-testid="kanban-scroll-right"
-            aria-hidden={scrollEdges.right ? undefined : true}
-            tabIndex={scrollEdges.right ? 0 : -1}
           >
             <ChevronRight aria-hidden className="size-5 text-foreground" />
           </button>
         <div
           ref={scrollRef}
-          className="flex flex-col gap-3 pb-2 md:flex-row md:overflow-x-auto md:scroll-smooth md:snap-x md:snap-mandatory"
+          className="kanban-scroll flex flex-col gap-3 pb-2 md:flex-row md:overflow-x-auto md:scroll-smooth md:snap-x md:snap-mandatory"
           role="region"
           aria-label="MOU lifecycle kanban board"
           data-testid="kanban-board"

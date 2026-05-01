@@ -29,7 +29,6 @@ vi.mock('@/data/schools.json', () => ({
   ],
 }))
 
-vi.mock('@/components/ops/TopNav', () => ({ TopNav: () => null }))
 
 beforeEach(() => {
   vi.clearAllMocks()

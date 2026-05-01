@@ -2,6 +2,11 @@ import { describe, expect, it, vi, beforeEach } from 'vitest'
 import { renderToStaticMarkup } from 'react-dom/server'
 import type { User } from '@/lib/types'
 
+// vitest.setup.ts ships a global TopNav mock so admin/page tests do not
+// have to re-add it per-file. This suite tests TopNav itself; un-mock
+// to restore the real implementation.
+vi.unmock('@/components/ops/TopNav')
+
 const getCurrentUserMock = vi.fn()
 
 vi.mock('@/lib/auth/session', () => ({

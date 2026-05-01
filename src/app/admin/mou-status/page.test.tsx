@@ -7,9 +7,6 @@ const getCurrentUserMock = vi.fn()
 vi.mock('@/lib/auth/session', () => ({
   getCurrentUser: () => getCurrentUserMock(),
 }))
-vi.mock('@/components/ops/TopNav', () => ({
-  TopNav: () => null,
-}))
 
 beforeEach(() => {
   vi.clearAllMocks()

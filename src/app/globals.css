@@ -17,6 +17,38 @@
 }
 
 /*
+ * W4-I.5 P4C3: kanban scrollbar.
+ *
+ * The kanban container at /kanban has a horizontal scroll that lives
+ * across many columns. macOS hides scrollbars by default (system
+ * preference) and Windows/Chrome ones are subtle; pre-P4C3 the only
+ * scroll affordance was a pair of edge-fading chevron buttons, which
+ * left first-time visitors uncertain whether more content was offscreen.
+ *
+ * P4C3 surfaces a permanent 10px-tall scrollbar with a brand-navy thumb
+ * scoped to .kanban-scroll. Webkit + Firefox both supported. The chevron
+ * buttons stay (now always-visible per the same commit); the scrollbar
+ * is the second affordance for operators who reach for the mouse.
+ */
+.kanban-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--brand-navy) transparent;
+}
+.kanban-scroll::-webkit-scrollbar {
+  height: 10px;
+}
+.kanban-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.kanban-scroll::-webkit-scrollbar-thumb {
+  background: var(--brand-navy);
+  border-radius: 5px;
+}
+.kanban-scroll::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in oklab, var(--brand-navy) 85%, white);
+}
+
+/*
  * Skip-to-content link (DESIGN.md "Surface 6 / Accessibility / Policy rules").
  * Visually hidden until focused; on focus reveals as a 48px white-on-navy bar
  * at the top of the viewport. Targets `#main-content`.

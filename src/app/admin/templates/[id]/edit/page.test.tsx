@@ -11,8 +11,6 @@ vi.mock('next/navigation', () => ({
   notFound: () => notFoundMock(),
   redirect: (p: string) => redirectMock(p),
 }))
-vi.mock('@/components/ops/TopNav', () => ({ TopNav: () => null }))
-
 beforeEach(() => { vi.clearAllMocks() })
 
 function user(role: User['role'], id = 'u'): User {

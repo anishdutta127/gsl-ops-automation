@@ -7,7 +7,6 @@ const getCurrentUserMock = vi.fn()
 vi.mock('@/lib/auth/session', () => ({
   getCurrentUser: () => getCurrentUserMock(),
 }))
-vi.mock('@/components/ops/TopNav', () => ({ TopNav: () => null }))
 vi.mock('next/navigation', async () => {
   const actual = await vi.importActual<typeof import('next/navigation')>('next/navigation')
   return {

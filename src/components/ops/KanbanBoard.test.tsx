@@ -180,4 +180,28 @@ describe('KanbanBoard', () => {
     const html = renderToStaticMarkup(<KanbanBoard initialBuckets={buckets} />)
     expect(html).not.toMatch(/#[0-9a-fA-F]{3,6}\b/)
   })
+
+  // W4-I.5 P4C3: chevrons are always rendered (no opacity-0 fade).
+  // SSR shows them initially disabled because scrollEdges defaults to
+  // { left: false, right: false } until the client-side effect runs;
+  // the disabled state is the consistent affordance even when the
+  // effect has not yet fired.
+  it('chevron buttons render as disabled on initial SSR (W4-I.5 P4C3)', () => {
+    const html = renderToStaticMarkup(<KanbanBoard initialBuckets={emptyBuckets} />)
+    // SSR attribute order: type, disabled, aria-label, class, data-testid.
+    expect(html).toMatch(/<button[^>]*disabled[^>]*data-testid="kanban-scroll-left"/)
+    expect(html).toMatch(/<button[^>]*disabled[^>]*data-testid="kanban-scroll-right"/)
+    // Disabled styling tokens from the className composition.
+    expect(html).toContain('disabled:opacity-40')
+    expect(html).toContain('disabled:cursor-not-allowed')
+    // Pre-P4C3 fade behaviour gone: no opacity-0 + pointer-events-none
+    // sandwich on the chevron buttons.
+    expect(html).not.toMatch(/data-testid="kanban-scroll-(left|right)"[^>]*pointer-events-none/)
+    expect(html).not.toMatch(/pointer-events-none[^>]*data-testid="kanban-scroll-(left|right)"/)
+  })
+
+  it('kanban scroll container carries the kanban-scroll class (W4-I.5 P4C3)', () => {
+    const html = renderToStaticMarkup(<KanbanBoard initialBuckets={emptyBuckets} />)
+    expect(html).toMatch(/<div[^>]*class="[^"]*\bkanban-scroll\b[^"]*"[^>]*data-testid="kanban-board"/)
+  })
 })

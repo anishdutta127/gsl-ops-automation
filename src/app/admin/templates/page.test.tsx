@@ -10,8 +10,6 @@ vi.mock('next/navigation', () => ({
   redirect: (p: string) => redirectMock(p),
   notFound: vi.fn(() => { throw new Error('NEXT_NOT_FOUND') }),
 }))
-vi.mock('@/components/ops/TopNav', () => ({ TopNav: () => null }))
-
 beforeEach(() => { vi.clearAllMocks() })
 
 function user(role: User['role'], id = 'u'): User {
