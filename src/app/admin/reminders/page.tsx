@@ -28,6 +28,8 @@ import mousJson from '@/data/mous.json'
 import type { MOU, SalesPerson } from '@/lib/types'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
+import { StatusChip, type StatusChipTone } from '@/components/ops/StatusChip'
+import { opsButtonClass } from '@/components/ops/OpsButton'
 
 const ALL_KINDS: ReadonlyArray<ReminderKind | 'all'> = [
   'all',
@@ -45,11 +47,14 @@ const KIND_LABEL: Record<ReminderKind | 'all', string> = {
   'feedback-chase': 'Feedback chase',
 }
 
-const KIND_BADGE: Record<ReminderKind, string> = {
-  intake: 'bg-amber-100 text-amber-900 border-amber-300',
-  payment: 'bg-rose-100 text-rose-900 border-rose-300',
-  'delivery-ack': 'bg-sky-100 text-sky-900 border-sky-300',
-  'feedback-chase': 'bg-violet-100 text-violet-900 border-violet-300',
+// Reminder-kind tones for the chip on each row. Maps onto the
+// StatusChip palette so the kind colour vocabulary matches the
+// rest of the design system rather than introducing new hues.
+const KIND_TONE: Record<ReminderKind, StatusChipTone> = {
+  intake: 'attention',
+  payment: 'alert',
+  'delivery-ack': 'navy',
+  'feedback-chase': 'teal',
 }
 
 const ERROR_FLASH: Record<string, string> = {
@@ -126,8 +131,8 @@ export default async function RemindersListPage({ searchParams }: PageProps) {
         ]}
       />
       <div className="mx-auto flex max-w-screen-xl flex-col gap-4 px-4 py-6">
-        <p className="flex items-start gap-2 rounded-md border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">
-          <Bell aria-hidden className="size-4 shrink-0 text-slate-500" />
+        <p className="flex items-start gap-2 rounded-md border border-border bg-muted/30 p-3 text-sm text-foreground">
+          <Bell aria-hidden className="size-4 shrink-0 text-muted-foreground" />
           <span>
             {reminders.length} reminder{reminders.length === 1 ? '' : 's'} due across the active cohort.
             Compose runs the manual-send pattern (compose, copy to Outlook, mark sent).
@@ -137,7 +142,7 @@ export default async function RemindersListPage({ searchParams }: PageProps) {
         {sentId ? (
           <p
             role="status"
-            className="flex items-start gap-2 rounded-md border border-emerald-300 bg-emerald-50 p-2 text-xs text-emerald-900"
+            className="flex items-start gap-2 rounded-md border border-signal-ok bg-signal-ok/10 p-2 text-xs text-signal-ok"
           >
             <CheckCircle2 aria-hidden className="size-4 shrink-0" />
             <span>Reminder marked as sent ({sentId}).</span>
@@ -148,7 +153,7 @@ export default async function RemindersListPage({ searchParams }: PageProps) {
           <p
             role="alert"
             data-testid="reminders-error"
-            className="flex items-start gap-2 rounded-md border border-rose-300 bg-rose-50 p-2 text-xs text-rose-900"
+            className="flex items-start gap-2 rounded-md border border-signal-alert bg-signal-alert/10 p-2 text-xs text-signal-alert"
           >
             <AlertTriangle aria-hidden className="size-4 shrink-0" />
             <span>{ERROR_FLASH[errorKey] ?? `Failed: ${errorKey}`}</span>
@@ -169,11 +174,7 @@ export default async function RemindersListPage({ searchParams }: PageProps) {
                 href={href}
                 aria-current={isActive ? 'page' : undefined}
                 data-testid={`rem-filter-${k}`}
-                className={
-                  isActive
-                    ? 'inline-flex min-h-11 items-center rounded-md bg-brand-navy px-3 py-2 text-sm font-medium text-white'
-                    : 'inline-flex min-h-11 items-center rounded-md border border-border bg-card px-3 py-2 text-sm font-medium text-foreground hover:bg-muted focus:outline-none focus:ring-2 focus:ring-brand-navy'
-                }
+                className={opsButtonClass({ variant: isActive ? 'primary' : 'outline', size: 'md' })}
               >
                 {KIND_LABEL[k]} ({counts[k]})
               </Link>
@@ -183,7 +184,7 @@ export default async function RemindersListPage({ searchParams }: PageProps) {
 
         {ownerOptions.length > 0 ? (
           <form method="GET" className="flex flex-wrap items-center gap-2">
-            <label htmlFor="owner-filter" className="text-xs text-slate-600">
+            <label htmlFor="owner-filter" className="text-xs text-muted-foreground">
               Sales owner
             </label>
             <select
@@ -200,10 +201,7 @@ export default async function RemindersListPage({ searchParams }: PageProps) {
               ))}
             </select>
             {kind !== 'all' ? <input type="hidden" name="kind" value={kind} /> : null}
-            <button
-              type="submit"
-              className="inline-flex min-h-11 items-center rounded-md border border-border bg-card px-3 py-2 text-sm font-medium hover:bg-muted focus:outline-none focus:ring-2 focus:ring-brand-navy"
-            >
+            <button type="submit" className={opsButtonClass({ variant: 'outline', size: 'md' })}>
               Apply
             </button>
           </form>
@@ -231,9 +229,11 @@ export default async function RemindersListPage({ searchParams }: PageProps) {
                 >
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className={`rounded-sm border px-2 py-0.5 text-xs ${KIND_BADGE[r.kind]}`}>
-                        {KIND_LABEL[r.kind]}
-                      </span>
+                      <StatusChip
+                        tone={KIND_TONE[r.kind]}
+                        label={KIND_LABEL[r.kind]}
+                        withDot={false}
+                      />
                       <span className="font-medium">{r.schoolName}</span>
                       {r.programme ? (
                         <span className="text-xs text-muted-foreground">· {r.programme}</span>
@@ -249,12 +249,12 @@ export default async function RemindersListPage({ searchParams }: PageProps) {
                         ? ` · to: ${r.suggestedRecipient.name}`
                         : ' · no recipient on file'}
                     </p>
-                    <p className="mt-1 text-xs text-slate-500">{r.context}</p>
+                    <p className="mt-1 text-xs text-muted-foreground">{r.context}</p>
                   </div>
                   <Link
                     href={`/admin/reminders/${encodeURIComponent(r.id)}`}
                     data-testid={`rem-compose-${r.id}`}
-                    className="inline-flex min-h-11 items-center rounded-md bg-brand-navy px-3 py-2 text-sm font-semibold text-white hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-navy"
+                    className={opsButtonClass({ variant: 'primary', size: 'md' })}
                   >
                     Compose
                   </Link>

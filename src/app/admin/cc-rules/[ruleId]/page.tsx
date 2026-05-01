@@ -20,6 +20,7 @@ import salesTeamJson from '@/data/sales_team.json'
 import { getCurrentUser } from '@/lib/auth/session'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
+import { OpsButton, opsButtonClass } from '@/components/ops/OpsButton'
 
 const rules = ccRulesJson as unknown as CcRule[]
 const users = usersJson as unknown as User[]
@@ -105,7 +106,7 @@ export default async function CcRuleDetailPage({
       {errorMessage ? (
         <p
           role="alert"
-          className="mt-4 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800"
+          className="mt-4 rounded-md border border-signal-alert bg-signal-alert/10 px-3 py-2 text-sm text-signal-alert"
         >
           {errorMessage}
         </p>
@@ -121,7 +122,7 @@ export default async function CcRuleDetailPage({
             id="cc-sheet"
             name="sheet"
             defaultValue={rule.sheet}
-            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand-navy)]"
+            className="w-full min-h-11 rounded-md border border-input bg-card px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
           >
             {SHEETS.map((s) => (
               <option key={s} value={s}>{s}</option>
@@ -134,7 +135,7 @@ export default async function CcRuleDetailPage({
             id="cc-scope"
             name="scope"
             defaultValue={rule.scope}
-            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand-navy)]"
+            className="w-full min-h-11 rounded-md border border-input bg-card px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
           >
             {SCOPES.map((s) => (
               <option key={s} value={s}>{s}</option>
@@ -152,7 +153,7 @@ export default async function CcRuleDetailPage({
             name="scopeValue"
             type="text"
             defaultValue={scopeValueToInput(rule.scopeValue)}
-            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand-navy)]"
+            className="w-full min-h-11 rounded-md border border-input bg-card px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
           />
         </Field>
 
@@ -165,9 +166,9 @@ export default async function CcRuleDetailPage({
                   name="contexts"
                   value={c}
                   defaultChecked={contextSet.has(c)}
-                  className="size-4 rounded border-slate-300 text-[var(--brand-navy)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand-navy)]"
+                  className="size-4 rounded border-input text-brand-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-navy"
                 />
-                <span className="text-slate-800">{c}</span>
+                <span className="text-foreground">{c}</span>
               </label>
             ))}
           </fieldset>
@@ -184,7 +185,7 @@ export default async function CcRuleDetailPage({
             type="text"
             defaultValue={rule.ccUserIds.join(', ')}
             list="cc-user-id-options"
-            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand-navy)]"
+            className="w-full min-h-11 rounded-md border border-input bg-card px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
           />
           <datalist id="cc-user-id-options">
             {ccUserOptions.map((o) => (
@@ -199,20 +200,17 @@ export default async function CcRuleDetailPage({
             name="sourceRuleText"
             rows={3}
             defaultValue={rule.sourceRuleText}
-            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand-navy)]"
+            className="w-full min-h-11 rounded-md border border-input bg-card px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
           />
         </Field>
 
         <div className="flex items-center gap-3">
-          <button
-            type="submit"
-            className="inline-flex items-center rounded-md bg-[var(--brand-navy)] px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand-navy)] min-h-[44px]"
-          >
+          <OpsButton type="submit" variant="primary" size="md">
             Save changes
-          </button>
+          </OpsButton>
           <Link
             href="/admin/cc-rules"
-            className="text-sm text-slate-700 underline-offset-2 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand-navy)]"
+            className={opsButtonClass({ variant: 'outline', size: 'md' })}
           >
             Cancel
           </Link>
@@ -220,18 +218,18 @@ export default async function CcRuleDetailPage({
       </form>
 
       <section className="mt-10">
-        <h2 className="text-lg font-semibold text-[var(--brand-navy)]">Audit history</h2>
+        <h2 className="text-lg font-semibold text-brand-navy">Audit history</h2>
         {rule.auditLog.length === 0 ? (
-          <p className="mt-2 text-sm text-slate-600">No audit entries yet.</p>
+          <p className="mt-2 text-sm text-muted-foreground">No audit entries yet.</p>
         ) : (
-          <ul className="mt-2 divide-y divide-slate-200 rounded-md border border-slate-200 bg-white">
+          <ul className="mt-2 divide-y divide-border rounded-md border border-border bg-card">
             {rule.auditLog.map((entry, idx) => (
               <li key={`${entry.timestamp}-${idx}`} className="px-3 py-2 text-xs">
                 <div className="flex items-baseline justify-between gap-2">
-                  <span className="font-medium text-[var(--brand-navy)]">{entry.action}</span>
-                  <span className="text-slate-500">{entry.timestamp}</span>
+                  <span className="font-medium text-brand-navy">{entry.action}</span>
+                  <span className="text-muted-foreground">{entry.timestamp}</span>
                 </div>
-                <div className="mt-0.5 text-slate-700">
+                <div className="mt-0.5 text-foreground">
                   by {entry.user}
                   {entry.notes ? `: ${entry.notes}` : ''}
                 </div>
@@ -261,11 +259,11 @@ function Field({
     <div>
       <label
         htmlFor={htmlFor}
-        className="block text-sm font-medium text-[var(--brand-navy)]"
+        className="block text-sm font-medium text-brand-navy"
       >
         {label}
       </label>
-      {hint ? <p className="mt-0.5 text-xs text-slate-600">{hint}</p> : null}
+      {hint ? <p className="mt-0.5 text-xs text-muted-foreground">{hint}</p> : null}
       <div className="mt-1.5">{children}</div>
     </div>
   )

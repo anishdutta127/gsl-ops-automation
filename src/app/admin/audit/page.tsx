@@ -100,7 +100,7 @@ export default async function AuditPage({
   if (!claims) {
     return (
       <div className="p-6">
-        <p className="text-sm text-slate-700">
+        <p className="text-sm text-foreground">
           Unauthorised. Please log in to view the audit route.
         </p>
       </div>
@@ -111,7 +111,7 @@ export default async function AuditPage({
   if (!user) {
     return (
       <div className="p-6">
-        <p className="text-sm text-slate-700">
+        <p className="text-sm text-foreground">
           User record not found for session subject {claims.sub}.
         </p>
       </div>
@@ -159,7 +159,7 @@ export default async function AuditPage({
                 <li key={chip.label}>
                   <Link
                     href={chip.removeHref}
-                    className="inline-flex items-center gap-1 rounded-full border border-slate-300 bg-white px-2 py-0.5 text-[11px] text-slate-700 hover:bg-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand-navy)]"
+                    className="inline-flex items-center gap-1 rounded-full border border-border bg-card px-2 py-0.5 text-[11px] text-foreground hover:bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
                   >
                     <span>{chip.label}</span>
                     <span aria-label={`Remove ${chip.label} filter`}>×</span>
@@ -172,11 +172,11 @@ export default async function AuditPage({
         </header>
 
         {pageRows.length === 0 ? (
-          <p className="rounded-md border border-slate-200 bg-slate-50 p-6 text-center text-sm text-slate-600">
+          <p className="rounded-md border border-border bg-muted/30 p-6 text-center text-sm text-muted-foreground">
             No audit entries match the current filters.
           </p>
         ) : (
-          <ul className="border-t border-slate-200">
+          <ul className="border-t border-border">
             {pageRows.map((row, idx) => {
               const entryUser = lookupUser(row.entry.user)
               const userMeta = entryUser
@@ -266,7 +266,7 @@ function ExportCsvLink({
     <a
       href={href}
       download={`audit-export-${new Date().toISOString().slice(0, 10)}.csv`}
-      className="mt-2 inline-block text-xs font-medium text-[var(--brand-navy)] underline-offset-2 hover:underline"
+      className="mt-2 inline-block text-xs font-medium text-brand-navy underline-offset-2 hover:underline"
     >
       Export CSV
     </a>

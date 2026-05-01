@@ -134,7 +134,7 @@ export default async function DispatchPage({ params, searchParams }: PageProps) 
           <section
             aria-labelledby="pending-requests-heading"
             data-testid="pending-requests-section"
-            className="rounded-lg border border-signal-warn bg-signal-warn/5 p-4 sm:p-6"
+            className="rounded-lg border border-signal-attention bg-signal-attention/5 p-4 sm:p-6"
           >
             <h3 id="pending-requests-heading" className="mb-3 font-heading text-base font-semibold text-brand-navy">
               Pending dispatch requests for this MOU

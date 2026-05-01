@@ -24,6 +24,7 @@ import communicationsJson from '@/data/communications.json'
 import type { Communication } from '@/lib/types'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
+import { opsButtonClass } from '@/components/ops/OpsButton'
 import { composeReminderAction, markReminderSentAction } from '../actions'
 
 const allCommunications = communicationsJson as unknown as Communication[]
@@ -70,7 +71,7 @@ function renderPostComposePanel(reminderId: string, communicationId: string) {
           <ArrowLeft aria-hidden className="size-4" /> Back to reminders
         </Link>
 
-        <p className="flex items-start gap-2 rounded-md border border-emerald-300 bg-emerald-50 p-3 text-xs text-emerald-900">
+        <p className="flex items-start gap-2 rounded-md border border-signal-ok bg-signal-ok/10 p-3 text-xs text-signal-ok">
           <Mail aria-hidden className="size-4 shrink-0" />
           <span>
             Reminder composed. Copy the content below into Outlook, send it, then click <strong>I sent it</strong>.
@@ -95,7 +96,7 @@ function renderPostComposePanel(reminderId: string, communicationId: string) {
 
           <h2 className="mt-4 text-sm font-semibold uppercase tracking-wide text-brand-navy">Body</h2>
           <pre
-            className="mt-1 whitespace-pre-wrap rounded-md border border-slate-200 bg-slate-50 p-3 text-sm font-sans"
+            className="mt-1 whitespace-pre-wrap rounded-md border border-border bg-muted/30 p-3 text-sm font-sans"
             data-testid="compose-body"
           >
             {comm.bodyEmail ?? ''}
@@ -107,13 +108,13 @@ function renderPostComposePanel(reminderId: string, communicationId: string) {
           <button
             type="submit"
             data-testid="rem-mark-sent"
-            className="inline-flex min-h-11 items-center rounded-md bg-brand-navy px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-navy"
+            className={opsButtonClass({ variant: 'primary', size: 'md' })}
           >
             I sent it
           </button>
           <Link
             href="/admin/reminders"
-            className="inline-flex min-h-11 items-center rounded-md border border-border bg-card px-3 py-2 text-sm font-medium hover:bg-muted focus:outline-none focus:ring-2 focus:ring-brand-navy"
+            className={opsButtonClass({ variant: 'outline', size: 'md' })}
           >
             Cancel
           </Link>
@@ -179,13 +180,13 @@ async function renderPreviewPanel(reminderId: string, userId: string) {
               {reminder.daysOverdue} days overdue {reminder.anchorEventLabel}
             </span>
           </p>
-          <p className="mt-1 text-xs text-slate-500">{reminder.context}</p>
+          <p className="mt-1 text-xs text-muted-foreground">{reminder.context}</p>
         </section>
 
         {preview ? (
           <section className="rounded-md border border-border bg-card p-4">
             <h2 className="text-sm font-semibold uppercase tracking-wide text-brand-navy">Preview</h2>
-            <p className="mt-1 text-xs text-slate-600">
+            <p className="mt-1 text-xs text-muted-foreground">
               To: <span className="font-mono">{preview.to}</span>
               {preview.cc.length > 0 ? (
                 <>
@@ -198,7 +199,7 @@ async function renderPreviewPanel(reminderId: string, userId: string) {
               <span className="font-semibold">Subject:</span> {preview.subject}
             </p>
             <pre
-              className="mt-1 whitespace-pre-wrap rounded-md border border-slate-200 bg-slate-50 p-3 text-sm font-sans"
+              className="mt-1 whitespace-pre-wrap rounded-md border border-border bg-muted/30 p-3 text-sm font-sans"
               data-testid="preview-body"
             >
               {preview.body}
@@ -207,7 +208,7 @@ async function renderPreviewPanel(reminderId: string, userId: string) {
         ) : previewError ? (
           <p
             role="alert"
-            className="rounded-md border border-rose-300 bg-rose-50 p-3 text-xs text-rose-900"
+            className="rounded-md border border-signal-alert bg-signal-alert/10 p-3 text-xs text-signal-alert"
           >
             Preview failed: {previewError}. Check the reminder&apos;s recipient on the list page.
           </p>
@@ -218,13 +219,13 @@ async function renderPreviewPanel(reminderId: string, userId: string) {
           <button
             type="submit"
             data-testid="rem-compose-confirm"
-            className="inline-flex min-h-11 items-center rounded-md bg-brand-navy px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-navy"
+            className={opsButtonClass({ variant: 'primary', size: 'md' })}
           >
             Compose &amp; copy
           </button>
           <Link
             href="/admin/reminders"
-            className="inline-flex min-h-11 items-center rounded-md border border-border bg-card px-3 py-2 text-sm font-medium hover:bg-muted focus:outline-none focus:ring-2 focus:ring-brand-navy"
+            className={opsButtonClass({ variant: 'outline', size: 'md' })}
           >
             Cancel
           </Link>

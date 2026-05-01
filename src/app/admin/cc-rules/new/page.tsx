@@ -20,6 +20,7 @@ import usersJson from '@/data/users.json'
 import salesTeamJson from '@/data/sales_team.json'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
+import { OpsButton, opsButtonClass } from '@/components/ops/OpsButton'
 
 const users = usersJson as unknown as User[]
 const salesTeam = salesTeamJson as unknown as SalesPerson[]
@@ -91,7 +92,7 @@ export default async function NewCcRulePage({
       {errorMessage ? (
         <p
           role="alert"
-          className="mt-4 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800"
+          className="mt-4 rounded-md border border-signal-alert bg-signal-alert/10 px-3 py-2 text-sm text-signal-alert"
         >
           {errorMessage}
         </p>
@@ -110,7 +111,7 @@ export default async function NewCcRulePage({
             required
             pattern="^CCR-[A-Z0-9-]+$"
             placeholder="CCR-NORTH-DELHI"
-            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand-navy)]"
+            className="w-full min-h-11 rounded-md border border-input bg-card px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
           />
         </Field>
 
@@ -120,7 +121,7 @@ export default async function NewCcRulePage({
             name="sheet"
             required
             defaultValue=""
-            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand-navy)]"
+            className="w-full min-h-11 rounded-md border border-input bg-card px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
           >
             <option value="" disabled>
               Choose a sheet
@@ -137,7 +138,7 @@ export default async function NewCcRulePage({
             name="scope"
             required
             defaultValue=""
-            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand-navy)]"
+            className="w-full min-h-11 rounded-md border border-input bg-card px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
           >
             <option value="" disabled>
               Choose a scope
@@ -159,7 +160,7 @@ export default async function NewCcRulePage({
             type="text"
             required
             placeholder="Raipur, Pune, Nagpur"
-            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand-navy)]"
+            className="w-full min-h-11 rounded-md border border-input bg-card px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
           />
         </Field>
 
@@ -171,9 +172,9 @@ export default async function NewCcRulePage({
                   type="checkbox"
                   name="contexts"
                   value={c}
-                  className="size-4 rounded border-slate-300 text-[var(--brand-navy)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand-navy)]"
+                  className="size-4 rounded border-input text-brand-navy focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-navy"
                 />
-                <span className="text-slate-800">{c}</span>
+                <span className="text-foreground">{c}</span>
               </label>
             ))}
           </fieldset>
@@ -191,7 +192,7 @@ export default async function NewCcRulePage({
             required
             placeholder="anish.d, sp-vikram"
             list="cc-user-id-options"
-            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand-navy)]"
+            className="w-full min-h-11 rounded-md border border-input bg-card px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
           />
           <datalist id="cc-user-id-options">
             {ccUserOptions.map((o) => (
@@ -210,20 +211,17 @@ export default async function NewCcRulePage({
             name="sourceRuleText"
             required
             rows={3}
-            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand-navy)]"
+            className="w-full min-h-11 rounded-md border border-input bg-card px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
           />
         </Field>
 
         <div className="flex items-center gap-3">
-          <button
-            type="submit"
-            className="inline-flex items-center rounded-md bg-[var(--brand-navy)] px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand-navy)] min-h-[44px]"
-          >
+          <OpsButton type="submit" variant="primary" size="md">
             Create rule
-          </button>
+          </OpsButton>
           <Link
             href="/admin/cc-rules"
-            className="text-sm text-foreground underline-offset-2 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
+            className={opsButtonClass({ variant: 'outline', size: 'md' })}
           >
             Cancel
           </Link>
@@ -250,11 +248,11 @@ function Field({
     <div>
       <label
         htmlFor={htmlFor}
-        className="block text-sm font-medium text-[var(--brand-navy)]"
+        className="block text-sm font-medium text-brand-navy"
       >
         {label}
       </label>
-      {hint ? <p className="mt-0.5 text-xs text-slate-600">{hint}</p> : null}
+      {hint ? <p className="mt-0.5 text-xs text-muted-foreground">{hint}</p> : null}
       <div className="mt-1.5">{children}</div>
     </div>
   )

@@ -59,39 +59,39 @@ export default async function PiCounterPage() {
         <div className="mx-auto max-w-screen-md space-y-6 px-4 py-6">
 
       <section className="grid gap-4 sm:grid-cols-2">
-        <div className="rounded-md border border-slate-200 bg-white p-4">
-          <p className="text-xs uppercase tracking-wide text-slate-500">
+        <div className="rounded-md border border-border bg-card p-4">
+          <p className="text-xs uppercase tracking-wide text-muted-foreground">
             Next PI number
           </p>
-          <p className="mt-1 font-mono text-lg font-semibold text-[var(--brand-navy)]">
+          <p className="mt-1 font-mono text-lg font-semibold text-brand-navy">
             {nextPiNumber}
           </p>
-          <p className="mt-2 text-xs text-slate-600">
+          <p className="mt-2 text-xs text-muted-foreground">
             Prefix {counter.prefix} · Fiscal year {counter.fiscalYear} · Counter{' '}
             {counter.next}
           </p>
         </div>
 
-        <div className="rounded-md border border-slate-200 bg-white p-4">
-          <p className="text-xs uppercase tracking-wide text-slate-500">
+        <div className="rounded-md border border-border bg-card p-4">
+          <p className="text-xs uppercase tracking-wide text-muted-foreground">
             Monotonicity
           </p>
           {monotonicity.ok ? (
             <p
-              className="mt-1 text-lg font-semibold text-[var(--signal-ok)]"
+              className="mt-1 text-lg font-semibold text-signal-ok"
               data-testid="monotonicity-status"
             >
               OK
             </p>
           ) : (
             <p
-              className="mt-1 text-lg font-semibold text-[var(--signal-alert)]"
+              className="mt-1 text-lg font-semibold text-signal-alert"
               data-testid="monotonicity-status"
             >
               Violation
             </p>
           )}
-          <p className="mt-2 text-xs text-slate-600">
+          <p className="mt-2 text-xs text-muted-foreground">
             {monotonicity.issuedCount} issued
             {monotonicity.skippedCount > 0
               ? `, ${monotonicity.skippedCount} skipped (no parseable PI number)`
@@ -101,7 +101,7 @@ export default async function PiCounterPage() {
               : '.'}
           </p>
           {monotonicity.firstViolation ? (
-            <p className="mt-2 rounded-md border border-red-200 bg-red-50 px-2 py-1 text-xs text-red-800">
+            <p className="mt-2 rounded-md border border-signal-alert bg-signal-alert/10 px-2 py-1 text-xs text-signal-alert">
               First violation at communication{' '}
               {monotonicity.firstViolation.communicationId}: previous seq{' '}
               {monotonicity.firstViolation.previousSeq}, current seq{' '}
@@ -116,11 +116,11 @@ export default async function PiCounterPage() {
           Last-issued PI
         </h2>
         {lastIssued ? (
-          <div className="mt-2 rounded-md border border-slate-200 bg-white p-4">
-            <p className="text-sm text-[var(--brand-navy)]">
+          <div className="mt-2 rounded-md border border-border bg-card p-4">
+            <p className="text-sm text-brand-navy">
               {lastSubject ?? '(no subject parseable)'}
             </p>
-            <p className="mt-1 text-xs text-slate-600">
+            <p className="mt-1 text-xs text-muted-foreground">
               Queued {lastIssued.queuedAt.slice(0, 10)} by {lastIssued.queuedBy}
               {' '}via {lastIssued.channel}. Status {lastIssued.status}.
             </p>

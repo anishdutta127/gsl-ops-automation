@@ -42,7 +42,7 @@ const STATUS_FILTERS: ReadonlyArray<{ key: StatusFilter; label: string }> = [
 ]
 
 const STATUS_BADGE_CLASS: Record<DispatchRequest['status'], string> = {
-  'pending-approval': 'bg-signal-warn/15 text-signal-warn border-signal-warn/40',
+  'pending-approval': 'bg-signal-attention/15 text-signal-attention border-signal-attention/40',
   approved: 'bg-signal-ok/15 text-signal-ok border-signal-ok/40',
   rejected: 'bg-signal-alert/15 text-signal-alert border-signal-alert/40',
   cancelled: 'bg-muted text-muted-foreground border-border',

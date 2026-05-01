@@ -255,7 +255,7 @@ export function DispatchRequestForm({ mouOptions, defaultMouId }: DispatchReques
               {selectedMou.intakeRecipientName ? ` · POC ${selectedMou.intakeRecipientName}` : ''}
             </p>
           ) : (
-            <p className="text-signal-warn">Intake form not yet completed for this MOU.</p>
+            <p className="text-signal-attention">Intake form not yet completed for this MOU.</p>
           )}
         </div>
       ) : null}

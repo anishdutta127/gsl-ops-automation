@@ -23,6 +23,7 @@ import { getCurrentUser } from '@/lib/auth/session'
 import { canPerform } from '@/lib/auth/permissions'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
+import { StatusChip } from '@/components/ops/StatusChip'
 
 const allTemplates = templatesJson as unknown as CommunicationTemplate[]
 
@@ -175,12 +176,12 @@ export default async function TemplatesListPage({ searchParams }: PageProps) {
                         {USE_CASE_LABEL[t.useCase]}
                       </span>
                       {!t.active ? (
-                        <span
-                          data-testid={`template-row-${t.id}-inactive`}
-                          className="inline-flex items-center rounded-full border border-signal-neutral bg-signal-neutral/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-signal-neutral"
-                        >
-                          Inactive
-                        </span>
+                        <StatusChip
+                          tone="neutral"
+                          label="Inactive"
+                          withDot={false}
+                          testId={`template-row-${t.id}-inactive`}
+                        />
                       ) : null}
                     </div>
                     <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
