@@ -58,7 +58,7 @@ import {
   applyDimensionFilters,
   parseDimensions,
 } from '@/lib/filterParsing'
-import { SUPER_REGIONS, superRegionFor } from '@/lib/regions'
+import { SUPER_REGION_MEMBERS } from '@/lib/regions'
 
 const allMous = mousJson as unknown as MOU[]
 const allDispatches = dispatchesJson as unknown as Dispatch[]
@@ -98,14 +98,13 @@ export default async function KanbanPage({ searchParams }: PageProps) {
   // dimensions; OR within. Status mirrors the /mous list page (drops
   // 'Draft' from the chip set per W4-B.4).
   //
-  // W4-I.5 P4C4: region accessor returns the super-region (NE / SW)
-  // rather than the primary value (East / North / South-West). Pairs
-  // with the 2-value chip row in the FilterRail dimension below.
+  // W4-I.5 P4C5.5b: reverts P4C4's reduction to NE / SW super-regions.
+  // The region accessor returns the primary value as it appears on
+  // school.region (East / North / South-West). The chip row below
+  // mirrors the /mous list page: 3 primary chips plus the NE / SW
+  // super-region shortcuts.
   const filteredMous = applyDimensionFilters(activeMous, active, {
-    region: (m) => {
-      const primary = schoolById.get(m.schoolId)?.region ?? null
-      return primary ? superRegionFor(primary) : null
-    },
+    region: (m) => schoolById.get(m.schoolId)?.region ?? null,
     programme: (m) => m.programme,
     salesRep: (m) => m.salesPersonId,
     status: (m) => m.status,
@@ -155,15 +154,15 @@ export default async function KanbanPage({ searchParams }: PageProps) {
     {
       key: 'region',
       label: 'Region',
-      // W4-I.5 P4C4: region filter reduced from 3 primary values
-      // (East / North / South-West) + 2 super-region shortcuts to 2
-      // super-region options. The accessor returns the super-region
-      // for each MOU's school region, so primary values map cleanly:
-      //   East / North -> NE
-      //   South-West   -> SW
-      // No data lost; all current school records carry one of the
-      // three primary values. See lib/regions.ts for the full mapping.
-      options: SUPER_REGIONS.map((sr) => ({ value: sr.key, label: sr.label })),
+      // W4-I.5 P4C5.5b: reverts P4C4's NE / SW-only chip row. Three
+      // primary chips reflect the region values present on schools
+      // today; the NE / SW shortcuts are kept for one-tap multi-region
+      // selection (mirrors the /mous list dimension shape).
+      shortcuts: [
+        { key: 'NE', label: 'NE', values: SUPER_REGION_MEMBERS.NE },
+        { key: 'SW', label: 'SW', values: SUPER_REGION_MEMBERS.SW },
+      ],
+      options: ['East', 'North', 'South-West'].map((v) => ({ value: v, label: v })),
     },
     {
       key: 'programme',
