@@ -1,15 +1,16 @@
 /*
- * /dashboard page-wiring tests (W3-F alias).
+ * /dashboard page tests (W4-I.5 Phase 2).
  *
- * Mocks getCurrentUser to control the role-scoping path. Asserts:
- *   - renders 5 health tiles + 9 trigger tiles + section landmarks
- *     (identical content to /overview)
- *   - renders the kanban / overview tab strip with Overview active
- *   - empty escalations state copy renders gracefully
+ * Pre-W4-I.5 this route was a /overview alias rendering 5 health
+ * tiles + 9 trigger tiles + exception feed. Phase 2 rebuilds it as
+ * the Operations Control Dashboard. The legacy OverviewContent
+ * continues to be tested via /overview's tests.
  *
- * /dashboard is an alias of /overview; the canonical route is
- * /overview. Both render OverviewContent. These tests guarantee the
- * alias keeps working for bookmark compatibility.
+ * Asserts the P2C1 scaffold:
+ *   - new dashboard header (title, subtitle, FY selector, date pickers)
+ *   - programme filter chip row
+ *   - 6 stat cards in fixed order
+ *   - filter URL roundtrip (?programme=STEAM narrows the cards)
  */
 
 import { describe, expect, it, vi, beforeEach } from 'vitest'
@@ -17,13 +18,17 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import type { User } from '@/lib/types'
 
 const getCurrentUserMock = vi.fn()
+const redirectMock = vi.fn((path: string) => { throw new Error(`REDIRECT:${path}`) })
 
 vi.mock('@/lib/auth/session', () => ({
   getCurrentUser: () => getCurrentUserMock(),
 }))
 
-// TopNav is async; mock to a sync stub so renderToStaticMarkup can render
-// the page tree without re-implementing async-component support.
+vi.mock('next/navigation', () => ({
+  redirect: (p: string) => redirectMock(p),
+  notFound: vi.fn(() => { throw new Error('NEXT_NOT_FOUND') }),
+}))
+
 vi.mock('@/components/ops/TopNav', () => ({
   TopNav: () => null,
 }))
@@ -39,61 +44,96 @@ function admin(): User {
   }
 }
 
-describe('/dashboard page', () => {
-  it('renders 5 health tiles + 9 trigger tiles + 4 section headings', async () => {
+const noSp = Promise.resolve({})
+
+describe('/dashboard page (W4-I.5)', () => {
+  it('renders the Operations Control Dashboard header + subtitle', async () => {
     getCurrentUserMock.mockResolvedValue(admin())
     const { default: DashboardPage } = await import('./page')
-    const html = renderToStaticMarkup(await DashboardPage())
-    expect(html).toContain('Active MOUs')
-    expect(html).toContain('Accuracy health')
-    expect(html).toContain('Collection')
-    expect(html).toContain('Dispatches in flight')
-    expect(html).toContain('Schools needing action')
-    expect(html).toContain('P2 overrides (7d)')
-    expect(html).toContain('Sales drift queue')
-    // W4-A.7: Legacy schools tile removed; cohortStatus filtering replaces it.
-    expect(html).not.toContain('Legacy schools')
-    expect(html).not.toContain('EXCLUDED')
-    expect(html).toContain('Email bounce (7d)')
-    expect(html).toContain('Assignment queue')
-    // Section headings
-    expect(html).toMatch(/id="health-heading"/)
-    expect(html).toMatch(/id="exceptions-heading"/)
-    expect(html).toMatch(/id="escalations-heading"/)
-    expect(html).toMatch(/id="triggers-heading"/)
+    const html = renderToStaticMarkup(await DashboardPage({ searchParams: noSp }))
+    expect(html).toContain('Operations Control Dashboard')
+    expect(html).toContain('Track school onboarding')
+    expect(html).toContain('data-testid="dashboard-header"')
   })
 
-  it('renders Ops at a glance title via PageHeader', async () => {
+  it('renders FY selector with options + Today label', async () => {
     getCurrentUserMock.mockResolvedValue(admin())
     const { default: DashboardPage } = await import('./page')
-    const html = renderToStaticMarkup(await DashboardPage())
-    expect(html).toContain('Ops at a glance')
+    const html = renderToStaticMarkup(await DashboardPage({ searchParams: noSp }))
+    expect(html).toContain('data-testid="dashboard-fy"')
+    expect(html).toContain('data-testid="dashboard-today"')
+    // Date pickers
+    expect(html).toContain('data-testid="dashboard-from-date"')
+    expect(html).toContain('data-testid="dashboard-to-date"')
   })
 
-  it('renders the kanban / overview tab strip with Overview active', async () => {
+  it('renders programme filter chip row with All + 5 programmes', async () => {
     getCurrentUserMock.mockResolvedValue(admin())
     const { default: DashboardPage } = await import('./page')
-    const html = renderToStaticMarkup(await DashboardPage())
-    expect(html).toContain('data-testid="kanban-overview-tabs"')
-    expect(html).toContain('data-testid="tab-kanban"')
-    expect(html).toContain('data-testid="tab-overview"')
-    expect(html).toMatch(
-      /data-testid="tab-overview"[^>]*aria-current="page"|aria-current="page"[^>]*data-testid="tab-overview"/,
+    const html = renderToStaticMarkup(await DashboardPage({ searchParams: noSp }))
+    expect(html).toContain('data-testid="dashboard-filters"')
+    expect(html).toContain('data-testid="dashboard-chip-all"')
+    expect(html).toContain('data-testid="dashboard-chip-STEAM"')
+    expect(html).toContain('data-testid="dashboard-chip-TinkRworks"')
+    expect(html).toContain('data-testid="dashboard-chip-Young Pioneers"')
+    expect(html).toContain('data-testid="dashboard-chip-Harvard HBPE"')
+    expect(html).toContain('data-testid="dashboard-chip-VEX"')
+    expect(html).toContain('data-testid="dashboard-apply"')
+    expect(html).toContain('data-testid="dashboard-reset"')
+  })
+
+  it('renders 6 stat cards in fixed order with CTAs', async () => {
+    getCurrentUserMock.mockResolvedValue(admin())
+    const { default: DashboardPage } = await import('./page')
+    const html = renderToStaticMarkup(await DashboardPage({ searchParams: noSp }))
+    expect(html).toContain('data-testid="stat-card-mou-registry"')
+    expect(html).toContain('data-testid="stat-card-active-schools"')
+    expect(html).toContain('data-testid="stat-card-orders-raised"')
+    expect(html).toContain('data-testid="stat-card-track-shipment"')
+    expect(html).toContain('data-testid="stat-card-escalations"')
+    expect(html).toContain('data-testid="stat-card-inventory"')
+    expect(html).toContain('View MOUs')
+    expect(html).toContain('Resolve Issues')
+  })
+
+  it('Escalations CTA carries the alert variant (red)', async () => {
+    getCurrentUserMock.mockResolvedValue(admin())
+    const { default: DashboardPage } = await import('./page')
+    const html = renderToStaticMarkup(await DashboardPage({ searchParams: noSp }))
+    // The CTA's anchor carries data-testid stat-card-escalations-cta with the bg-signal-alert class.
+    expect(html).toMatch(/bg-signal-alert[^"]*"[^>]*data-testid="stat-card-escalations-cta"/)
+  })
+
+  it('redirects unauthenticated callers to /login', async () => {
+    getCurrentUserMock.mockResolvedValue(null)
+    const { default: DashboardPage } = await import('./page')
+    await expect(DashboardPage({ searchParams: noSp })).rejects.toThrow('REDIRECT:/login?next=%2Fdashboard')
+  })
+
+  it('?programme=STEAM marks the STEAM chip active', async () => {
+    getCurrentUserMock.mockResolvedValue(admin())
+    const { default: DashboardPage } = await import('./page')
+    const html = renderToStaticMarkup(
+      await DashboardPage({ searchParams: Promise.resolve({ programme: 'STEAM' }) }),
     )
+    // SSR renders the active class string + the data-testid in either order.
+    expect(html).toMatch(/bg-brand-navy text-white"[^>]*data-testid="dashboard-chip-STEAM"/)
+  })
+
+  it('?fiscalYear=2026-27 reflects in the FY select default', async () => {
+    getCurrentUserMock.mockResolvedValue(admin())
+    const { default: DashboardPage } = await import('./page')
+    const html = renderToStaticMarkup(
+      await DashboardPage({ searchParams: Promise.resolve({ fiscalYear: '2026-27' }) }),
+    )
+    // defaultValue prop renders selected option in SSR
+    expect(html).toMatch(/<option[^>]*selected[^>]*value="2026-27"|<option[^>]*value="2026-27"[^>]*selected/)
   })
 
   it('contains no raw hex codes (token discipline)', async () => {
     getCurrentUserMock.mockResolvedValue(admin())
     const { default: DashboardPage } = await import('./page')
-    const html = renderToStaticMarkup(await DashboardPage())
+    const html = renderToStaticMarkup(await DashboardPage({ searchParams: noSp }))
     expect(html).not.toMatch(/#[0-9a-fA-F]{3,6}/)
-  })
-
-  it('renders even when getCurrentUser returns null (logged-out edge)', async () => {
-    getCurrentUserMock.mockResolvedValue(null)
-    const { default: DashboardPage } = await import('./page')
-    const result = await DashboardPage()
-    const html = renderToStaticMarkup(result)
-    expect(html).toContain('Ops at a glance')
   })
 })

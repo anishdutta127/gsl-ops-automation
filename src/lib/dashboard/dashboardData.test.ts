@@ -1,0 +1,274 @@
+import { describe, expect, it } from 'vitest'
+import {
+  buildStatCards,
+  computeSlices,
+  fiscalYearOptions,
+  isDelayed,
+  parseDashboardFilters,
+} from './dashboardData'
+import type {
+  Dispatch,
+  Escalation,
+  InventoryItem,
+  MOU,
+  School,
+} from '@/lib/types'
+
+const FIXED_NOW = new Date('2026-05-08T10:00:00.000Z')
+
+function mou(overrides: Partial<MOU> = {}): MOU {
+  return {
+    id: 'MOU-X', schoolId: 'SCH-X', schoolName: 'Test School',
+    programme: 'STEAM', programmeSubType: null, schoolScope: 'SINGLE',
+    schoolGroupId: null, status: 'Active', cohortStatus: 'active',
+    academicYear: '2026-27', startDate: '2026-04-01', endDate: '2027-03-31',
+    studentsMou: 100, studentsActual: null, studentsVariance: null,
+    studentsVariancePct: null, spWithoutTax: 4000, spWithTax: 5000,
+    contractValue: 500000, received: 0, tds: 0, balance: 500000,
+    receivedPct: 0, paymentSchedule: '25-25-25-25', trainerModel: 'GSL-T',
+    salesPersonId: null, templateVersion: null, generatedAt: null,
+    notes: null, delayNotes: null, daysToExpiry: null, auditLog: [],
+    ...overrides,
+  }
+}
+
+function school(overrides: Partial<School> = {}): School {
+  return {
+    id: 'SCH-X', name: 'Test', legalEntity: null, city: 'Pune',
+    state: 'MH', region: 'South-West', pinCode: null, contactPerson: null,
+    email: null, phone: null, billingName: null, pan: null,
+    gstNumber: null, notes: null, active: true,
+    createdAt: '2026-01-01T00:00:00Z', auditLog: [],
+    ...overrides,
+  }
+}
+
+function dispatch(overrides: Partial<Dispatch> = {}): Dispatch {
+  return {
+    id: 'DSP-X', mouId: 'MOU-X', schoolId: 'SCH-X', installmentSeq: 1,
+    stage: 'po-raised', installment1Paid: true, overrideEvent: null,
+    poRaisedAt: '2026-04-20T10:00:00Z', dispatchedAt: '2026-04-21T10:00:00Z',
+    deliveredAt: null, acknowledgedAt: null, acknowledgementUrl: null,
+    notes: null, lineItems: [{ kind: 'flat', skuName: 'X', quantity: 1 }],
+    requestId: null, raisedBy: 'u', raisedFrom: 'ops-direct', auditLog: [],
+    ...overrides,
+  }
+}
+
+function esc(overrides: Partial<Escalation> = {}): Escalation {
+  return {
+    id: 'ESC-X', createdAt: '2026-04-01T00:00:00Z', createdBy: 'u',
+    schoolId: 'SCH-X', mouId: 'MOU-X', stage: 'kit-dispatch',
+    lane: 'OPS', level: 'L1', origin: 'manual', originId: null,
+    severity: 'medium', description: '', assignedTo: null,
+    notifiedEmails: [], status: 'Open', category: null, type: null,
+    resolutionNotes: null, resolvedAt: null, resolvedBy: null, auditLog: [],
+    ...overrides,
+  }
+}
+
+function inv(overrides: Partial<InventoryItem> = {}): InventoryItem {
+  return {
+    id: 'INV-X', skuName: 'Test', category: 'Other', cretileGrade: null,
+    mastersheetSourceName: null, currentStock: 100, reorderThreshold: null,
+    notes: null, active: true, lastUpdatedAt: '2026-04-01T00:00:00Z',
+    lastUpdatedBy: 'u', auditLog: [],
+    ...overrides,
+  }
+}
+
+describe('parseDashboardFilters', () => {
+  it('returns nulls when sp empty', () => {
+    expect(parseDashboardFilters({})).toEqual({
+      fiscalYear: null, programme: null, fromDate: null, toDate: null,
+    })
+  })
+
+  it('extracts valid fiscalYear', () => {
+    expect(parseDashboardFilters({ fiscalYear: '2026-27' }).fiscalYear).toBe('2026-27')
+  })
+
+  it('treats fiscalYear=all as null filter', () => {
+    expect(parseDashboardFilters({ fiscalYear: 'all' }).fiscalYear).toBeNull()
+  })
+
+  it('rejects invalid programme', () => {
+    expect(parseDashboardFilters({ programme: 'Bootcamps' }).programme).toBeNull()
+  })
+
+  it('accepts valid programme', () => {
+    expect(parseDashboardFilters({ programme: 'STEAM' }).programme).toBe('STEAM')
+  })
+
+  it('parses ISO date strings', () => {
+    const f = parseDashboardFilters({ fromDate: '2026-01-01', toDate: '2026-05-08' })
+    expect(f.fromDate).toBe('2026-01-01')
+    expect(f.toDate).toBe('2026-05-08')
+  })
+
+  it('rejects malformed dates', () => {
+    const f = parseDashboardFilters({ fromDate: 'today', toDate: '2026/05/08' })
+    expect(f.fromDate).toBeNull()
+    expect(f.toDate).toBeNull()
+  })
+})
+
+describe('computeSlices', () => {
+  it('drops archived MOUs even when they match other filters', () => {
+    const archived = mou({ id: 'M1', cohortStatus: 'archived' })
+    const active = mou({ id: 'M2' })
+    const slices = computeSlices({
+      mous: [archived, active], schools: [], dispatches: [], escalations: [],
+      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null },
+    })
+    expect(slices.filteredMous.map((m) => m.id)).toEqual(['M2'])
+  })
+
+  it('filters by fiscalYear', () => {
+    const a = mou({ id: 'M1', academicYear: '2026-27' })
+    const b = mou({ id: 'M2', academicYear: '2025-26' })
+    const slices = computeSlices({
+      mous: [a, b], schools: [], dispatches: [], escalations: [],
+      filters: { fiscalYear: '2026-27', programme: null, fromDate: null, toDate: null },
+    })
+    expect(slices.filteredMous.map((m) => m.id)).toEqual(['M1'])
+  })
+
+  it('filters by programme', () => {
+    const steam = mou({ id: 'M1', programme: 'STEAM' })
+    const tink = mou({ id: 'M2', programme: 'TinkRworks' })
+    const slices = computeSlices({
+      mous: [steam, tink], schools: [], dispatches: [], escalations: [],
+      filters: { fiscalYear: null, programme: 'TinkRworks', fromDate: null, toDate: null },
+    })
+    expect(slices.filteredMous.map((m) => m.id)).toEqual(['M2'])
+  })
+
+  it('filters by date range against MOU.startDate', () => {
+    const inRange = mou({ id: 'M1', startDate: '2026-04-15' })
+    const outOfRange = mou({ id: 'M2', startDate: '2025-12-01' })
+    const slices = computeSlices({
+      mous: [inRange, outOfRange], schools: [], dispatches: [], escalations: [],
+      filters: { fiscalYear: null, programme: null, fromDate: '2026-01-01', toDate: '2026-05-08' },
+    })
+    expect(slices.filteredMous.map((m) => m.id)).toEqual(['M1'])
+  })
+
+  it('dispatches inherit MOU filter scope', () => {
+    const m1 = mou({ id: 'M1' })
+    const m2 = mou({ id: 'M2', programme: 'TinkRworks' })
+    const d1 = dispatch({ id: 'D1', mouId: 'M1' })
+    const d2 = dispatch({ id: 'D2', mouId: 'M2' })
+    const slices = computeSlices({
+      mous: [m1, m2], schools: [], dispatches: [d1, d2], escalations: [],
+      filters: { fiscalYear: null, programme: 'STEAM', fromDate: null, toDate: null },
+    })
+    expect(slices.filteredDispatches.map((d) => d.id)).toEqual(['D1'])
+  })
+})
+
+describe('isDelayed', () => {
+  it('flags dispatched > 7d ago without ack', () => {
+    const d = dispatch({ dispatchedAt: '2026-04-25T10:00:00Z', acknowledgedAt: null })
+    expect(isDelayed(d, FIXED_NOW)).toBe(true)
+  })
+
+  it('does not flag if acknowledged', () => {
+    const d = dispatch({ dispatchedAt: '2026-04-25T10:00:00Z', acknowledgedAt: '2026-05-01T00:00:00Z' })
+    expect(isDelayed(d, FIXED_NOW)).toBe(false)
+  })
+
+  it('does not flag if dispatched within 7d', () => {
+    const d = dispatch({ dispatchedAt: '2026-05-05T10:00:00Z', acknowledgedAt: null })
+    expect(isDelayed(d, FIXED_NOW)).toBe(false)
+  })
+
+  it('does not flag if dispatchedAt is null', () => {
+    const d = dispatch({ dispatchedAt: null, acknowledgedAt: null })
+    expect(isDelayed(d, FIXED_NOW)).toBe(false)
+  })
+})
+
+describe('buildStatCards', () => {
+  it('returns 6 cards in fixed order', () => {
+    const slices = computeSlices({
+      mous: [], schools: [], dispatches: [], escalations: [],
+      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null },
+    })
+    const cards = buildStatCards({ slices, schools: [], inventoryItems: [], now: FIXED_NOW })
+    expect(cards.map((c) => c.key)).toEqual([
+      'mou-registry', 'active-schools', 'orders-raised',
+      'track-shipment', 'escalations', 'inventory',
+    ])
+  })
+
+  it('MOU Registry counts pending signature in subtitle', () => {
+    const m1 = mou({ id: 'M1', status: 'Active' })
+    const m2 = mou({ id: 'M2', status: 'Pending Signature' })
+    const slices = computeSlices({
+      mous: [m1, m2], schools: [], dispatches: [], escalations: [],
+      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null },
+    })
+    const [registry] = buildStatCards({ slices, schools: [], inventoryItems: [], now: FIXED_NOW })
+    expect(registry!.primary).toBe(2)
+    expect(registry!.subtitle).toBe('1 pending signature')
+  })
+
+  it('Escalations card uses red CTA variant + counts high priority', () => {
+    const e1 = esc({ id: 'E1', status: 'Open', severity: 'high' })
+    const e2 = esc({ id: 'E2', status: 'Open', severity: 'medium' })
+    const e3 = esc({ id: 'E3', status: 'Closed', severity: 'high' })
+    const slices = computeSlices({
+      mous: [mou()], schools: [], dispatches: [], escalations: [e1, e2, e3],
+      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null },
+    })
+    const cards = buildStatCards({ slices, schools: [], inventoryItems: [], now: FIXED_NOW })
+    const escalations = cards.find((c) => c.key === 'escalations')!
+    expect(escalations.primary).toBe(2)
+    expect(escalations.subtitle).toBe('1 High Priority')
+    expect(escalations.ctaVariant).toBe('alert')
+  })
+
+  it('Inventory totals are summed across items + low-stock counted', () => {
+    const i1 = inv({ id: 'I1', currentStock: 100, reorderThreshold: 10 })
+    const i2 = inv({ id: 'I2', currentStock: 5, reorderThreshold: 10 })
+    const i3 = inv({ id: 'I3', currentStock: 50, reorderThreshold: null })
+    const slices = computeSlices({
+      mous: [], schools: [], dispatches: [], escalations: [],
+      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null },
+    })
+    const cards = buildStatCards({ slices, schools: [], inventoryItems: [i1, i2, i3], now: FIXED_NOW })
+    const inventory = cards.find((c) => c.key === 'inventory')!
+    expect(inventory.primary).toBe('155')   // 100 + 5 + 50
+    expect(inventory.subtitle).toBe('1 Low Stock')   // only i2 (i3 has null threshold)
+  })
+
+  it('Active Schools subtitle counts schools added this calendar month', () => {
+    const m = mou({ id: 'M1', status: 'Active', schoolId: 'SCH-1' })
+    const s1 = school({ id: 'SCH-1', createdAt: '2026-05-03T10:00:00Z' })
+    const slices = computeSlices({
+      mous: [m], schools: [s1], dispatches: [], escalations: [],
+      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null },
+    })
+    const cards = buildStatCards({ slices, schools: [s1], inventoryItems: [], now: FIXED_NOW })
+    const active = cards.find((c) => c.key === 'active-schools')!
+    expect(active.primary).toBe(1)
+    expect(active.subtitle).toBe('1 added this month')
+  })
+})
+
+describe('fiscalYearOptions', () => {
+  it('returns distinct values sorted desc', () => {
+    const mous = [
+      mou({ academicYear: '2024-25' }),
+      mou({ academicYear: '2026-27' }),
+      mou({ academicYear: '2025-26' }),
+      mou({ academicYear: '2026-27' }),
+    ]
+    expect(fiscalYearOptions(mous)).toEqual(['2026-27', '2025-26', '2024-25'])
+  })
+
+  it('returns empty array when no MOUs', () => {
+    expect(fiscalYearOptions([])).toEqual([])
+  })
+})

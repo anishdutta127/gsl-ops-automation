@@ -1,70 +1,107 @@
 /*
- * /dashboard (W3-F alias).
+ * /dashboard: Operations Control Dashboard (W4-I.5 Phase 2).
  *
- * Bookmark-compatibility alias for /overview. Pre-W3-F /dashboard
- * was the Leadership Console homepage; W3-F moves the kanban to /
- * and the Leadership Console to /overview as a sibling tab. This
- * route stays addressable so existing bookmarks, audit-log links,
- * and external references continue to work; it renders the same
- * OverviewContent body and the same tab strip with Overview active.
+ * P2 commit 1: scaffold with header (FY + date range), programme
+ * filter chips, and 6 stat cards. Subsequent commits add the Recent
+ * MOU Updates table + Action Center (commit 2), Orders Tracker +
+ * Communication Automation panel (commit 3), Communication Templates
+ * grid + Sales Pipeline summary (commit 4). Route migration to /
+ * lands in commit 5.
  *
- * The currentPath="/dashboard" prop on TopNav keeps any future
- * /dashboard-rooted nav highlight working; activeTab="overview"
- * makes the in-content tab indicator agree with the canonical
- * /overview tab. Identical data slice, identical aggregation libs.
+ * Pre-W4-I.5 this route was an alias of /overview (which still serves
+ * the legacy 5-tile + exception feed body). The new dashboard lives
+ * here while built; commit 5 will redirect /overview here too. See
+ * D-XXX (OverviewContent migration audit) for what migrated cleanly
+ * vs reshaped vs deferred.
+ *
+ * Filters propagate via URL searchParams (parseDashboardFilters);
+ * server re-renders against the new params on Apply. No client-side
+ * filter state.
  */
 
+import { redirect } from 'next/navigation'
 import type {
-  Communication,
   Dispatch,
   Escalation,
-  Feedback,
+  InventoryItem,
   MOU,
-  Payment,
   School,
 } from '@/lib/types'
 import mousJson from '@/data/mous.json'
 import schoolsJson from '@/data/schools.json'
 import dispatchesJson from '@/data/dispatches.json'
-import paymentsJson from '@/data/payments.json'
-import communicationsJson from '@/data/communications.json'
-import feedbackJson from '@/data/feedback.json'
 import escalationsJson from '@/data/escalations.json'
+import inventoryItemsJson from '@/data/inventory_items.json'
 import { getCurrentUser } from '@/lib/auth/session'
 import { TopNav } from '@/components/ops/TopNav'
-import { PageHeader } from '@/components/ops/PageHeader'
-import { KanbanOverviewTabs } from '@/components/ops/KanbanOverviewTabs'
-import { OverviewContent } from '@/components/ops/OverviewContent'
+import {
+  buildStatCards,
+  computeSlices,
+  fiscalYearOptions,
+  parseDashboardFilters,
+} from '@/lib/dashboard/dashboardData'
+import { DashboardHeader } from '@/components/ops/dashboard/DashboardHeader'
+import { DashboardFilterRow } from '@/components/ops/dashboard/DashboardFilterRow'
+import { DashboardStatCards } from '@/components/ops/dashboard/DashboardStatCards'
 
-const mous = mousJson as unknown as MOU[]
-const schools = schoolsJson as unknown as School[]
-const dispatches = dispatchesJson as unknown as Dispatch[]
-const payments = paymentsJson as unknown as Payment[]
-const communications = communicationsJson as unknown as Communication[]
-const feedback = feedbackJson as unknown as Feedback[]
-const escalations = escalationsJson as unknown as Escalation[]
+const allMous = mousJson as unknown as MOU[]
+const allSchools = schoolsJson as unknown as School[]
+const allDispatches = dispatchesJson as unknown as Dispatch[]
+const allEscalations = escalationsJson as unknown as Escalation[]
+const allInventoryItems = inventoryItemsJson as unknown as InventoryItem[]
 
-export default async function DashboardPage() {
+const DATE_DISPLAY = new Intl.DateTimeFormat('en-GB', {
+  day: '2-digit',
+  month: 'short',
+  year: 'numeric',
+})
+
+interface PageProps {
+  searchParams: Promise<Record<string, string | string[] | undefined>>
+}
+
+export default async function DashboardPage({ searchParams }: PageProps) {
   const user = await getCurrentUser()
-  // W4-A.3: see /overview for the active vs allMous split rationale.
-  const activeMous = mous.filter((m) => m.cohortStatus === 'active')
+  if (!user) redirect('/login?next=%2Fdashboard')
+
+  const sp = await searchParams
+  const filters = parseDashboardFilters(sp)
+  const now = new Date()
+  const todayLabel = DATE_DISPLAY.format(now)
+
+  const slices = computeSlices({
+    mous: allMous,
+    schools: allSchools,
+    dispatches: allDispatches,
+    escalations: allEscalations,
+    filters,
+  })
+  const cards = buildStatCards({
+    slices,
+    schools: allSchools,
+    inventoryItems: allInventoryItems,
+    now,
+  })
+  const fyOptions = fiscalYearOptions(allMous)
+  const fiscalYearForHeader = filters.fiscalYear ?? 'all'
+
   return (
     <>
       <TopNav currentPath="/dashboard" />
       <main id="main-content">
-        <PageHeader title="Ops at a glance" subtitle={user ? `Signed in as ${user.name}` : undefined} />
-        <KanbanOverviewTabs activeTab="overview" />
-        <OverviewContent
-          user={user}
-          mous={activeMous}
-          allMous={mous}
-          schools={schools}
-          dispatches={dispatches}
-          payments={payments}
-          communications={communications}
-          feedback={feedback}
-          escalations={escalations}
+        <DashboardHeader
+          title="Operations Control Dashboard"
+          subtitle="Track school onboarding, orders, shipments, inventory, and communication in one place."
+          todayLabel={todayLabel}
+          fiscalYearOptions={fyOptions}
+          fiscalYear={fiscalYearForHeader}
+          fromDate={filters.fromDate ?? ''}
+          toDate={filters.toDate ?? ''}
         />
+        <DashboardFilterRow activeProgramme={filters.programme} basePath="/dashboard" />
+        <div className="mx-auto max-w-screen-2xl space-y-6 px-4 py-6 sm:px-6">
+          <DashboardStatCards cards={cards} />
+        </div>
       </main>
     </>
   )

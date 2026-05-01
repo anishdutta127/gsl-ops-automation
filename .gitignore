@@ -45,3 +45,5 @@ onedrive-data
 # single source of truth is the app, not these files. The 3 MDs alongside
 # (handoff, exec brief, ground-truth report) stay tracked as documentation.
 ops-data/*.xlsx
+
+.vercel
