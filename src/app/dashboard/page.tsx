@@ -22,19 +22,25 @@
 import { redirect } from 'next/navigation'
 import type {
   Dispatch,
+  DispatchRequest,
   Escalation,
   InventoryItem,
   MOU,
+  SalesPerson,
   School,
 } from '@/lib/types'
 import mousJson from '@/data/mous.json'
 import schoolsJson from '@/data/schools.json'
 import dispatchesJson from '@/data/dispatches.json'
+import dispatchRequestsJson from '@/data/dispatch_requests.json'
 import escalationsJson from '@/data/escalations.json'
 import inventoryItemsJson from '@/data/inventory_items.json'
+import salesTeamJson from '@/data/sales_team.json'
 import { getCurrentUser } from '@/lib/auth/session'
 import { TopNav } from '@/components/ops/TopNav'
 import {
+  buildActionCenter,
+  buildRecentMouUpdates,
   buildStatCards,
   computeSlices,
   fiscalYearOptions,
@@ -43,12 +49,16 @@ import {
 import { DashboardHeader } from '@/components/ops/dashboard/DashboardHeader'
 import { DashboardFilterRow } from '@/components/ops/dashboard/DashboardFilterRow'
 import { DashboardStatCards } from '@/components/ops/dashboard/DashboardStatCards'
+import { DashboardRecentMous } from '@/components/ops/dashboard/DashboardRecentMous'
+import { DashboardActionCenter } from '@/components/ops/dashboard/DashboardActionCenter'
 
 const allMous = mousJson as unknown as MOU[]
 const allSchools = schoolsJson as unknown as School[]
 const allDispatches = dispatchesJson as unknown as Dispatch[]
+const allDispatchRequests = dispatchRequestsJson as unknown as DispatchRequest[]
 const allEscalations = escalationsJson as unknown as Escalation[]
 const allInventoryItems = inventoryItemsJson as unknown as InventoryItem[]
+const allSalesTeam = salesTeamJson as unknown as SalesPerson[]
 
 const DATE_DISPLAY = new Intl.DateTimeFormat('en-GB', {
   day: '2-digit',
@@ -82,6 +92,13 @@ export default async function DashboardPage({ searchParams }: PageProps) {
     inventoryItems: allInventoryItems,
     now,
   })
+  const recentMous = buildRecentMouUpdates({ slices, salesTeam: allSalesTeam })
+  const actionCenter = buildActionCenter({
+    slices,
+    dispatchRequests: allDispatchRequests,
+    inventoryItems: allInventoryItems,
+    now,
+  })
   const fyOptions = fiscalYearOptions(allMous)
   const fiscalYearForHeader = filters.fiscalYear ?? 'all'
 
@@ -101,6 +118,15 @@ export default async function DashboardPage({ searchParams }: PageProps) {
         <DashboardFilterRow activeProgramme={filters.programme} basePath="/dashboard" />
         <div className="mx-auto max-w-screen-2xl space-y-6 px-4 py-6 sm:px-6">
           <DashboardStatCards cards={cards} />
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+            <div className="lg:col-span-2">
+              <DashboardRecentMous
+                rows={recentMous}
+                totalCount={slices.filteredMous.length}
+              />
+            </div>
+            <DashboardActionCenter data={actionCenter} />
+          </div>
         </div>
       </main>
     </>

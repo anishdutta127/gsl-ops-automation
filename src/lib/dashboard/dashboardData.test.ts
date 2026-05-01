@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
+  buildActionCenter,
+  buildRecentMouUpdates,
   buildStatCards,
   computeSlices,
   fiscalYearOptions,
@@ -8,9 +10,11 @@ import {
 } from './dashboardData'
 import type {
   Dispatch,
+  DispatchRequest,
   Escalation,
   InventoryItem,
   MOU,
+  SalesPerson,
   School,
 } from '@/lib/types'
 
@@ -254,6 +258,151 @@ describe('buildStatCards', () => {
     const active = cards.find((c) => c.key === 'active-schools')!
     expect(active.primary).toBe(1)
     expect(active.subtitle).toBe('1 added this month')
+  })
+})
+
+function rep(id: string, name: string): SalesPerson {
+  return {
+    id, name, email: `${id}@x.test`, phone: null, territories: [],
+    programmes: [], active: true, joinedDate: '2026-01-01',
+  }
+}
+
+function dispatchRequest(overrides: Partial<DispatchRequest> = {}): DispatchRequest {
+  return {
+    id: 'DR-X', mouId: 'MOU-X', schoolId: 'SCH-X', requestedBy: 'sp-x',
+    requestedAt: '2026-04-01T00:00:00Z', requestReason: '', installmentSeq: 1,
+    lineItems: [], status: 'pending-approval', conversionDispatchId: null,
+    rejectionReason: null, reviewedBy: null, reviewedAt: null,
+    notes: null, auditLog: [],
+    ...overrides,
+  }
+}
+
+describe('buildRecentMouUpdates', () => {
+  it('sorts MOUs by latest auditLog timestamp desc', () => {
+    const m1 = mou({
+      id: 'M1', auditLog: [{ timestamp: '2026-04-10T00:00:00Z', user: 'u', action: 'create' }],
+    })
+    const m2 = mou({
+      id: 'M2', auditLog: [{ timestamp: '2026-04-25T00:00:00Z', user: 'u', action: 'update' }],
+    })
+    const slices = computeSlices({
+      mous: [m1, m2], schools: [], dispatches: [], escalations: [],
+      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null },
+    })
+    const rows = buildRecentMouUpdates({ slices, salesTeam: [] })
+    expect(rows.map((r) => r.mouId)).toEqual(['M2', 'M1'])
+  })
+
+  it('limits to 6 rows by default', () => {
+    const mous = Array.from({ length: 10 }, (_, i) => mou({
+      id: `M${i}`,
+      auditLog: [{ timestamp: `2026-04-${String(i + 1).padStart(2, '0')}T00:00:00Z`, user: 'u', action: 'create' }],
+    }))
+    const slices = computeSlices({
+      mous, schools: [], dispatches: [], escalations: [],
+      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null },
+    })
+    const rows = buildRecentMouUpdates({ slices, salesTeam: [] })
+    expect(rows).toHaveLength(6)
+  })
+
+  it('respects custom limit', () => {
+    const m1 = mou({ id: 'M1' })
+    const m2 = mou({ id: 'M2' })
+    const slices = computeSlices({
+      mous: [m1, m2], schools: [], dispatches: [], escalations: [],
+      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null },
+    })
+    expect(buildRecentMouUpdates({ slices, salesTeam: [], limit: 1 })).toHaveLength(1)
+  })
+
+  it('resolves owner name + initials from sales rep id', () => {
+    const m = mou({ id: 'M1', salesPersonId: 'sp-r' })
+    const slices = computeSlices({
+      mous: [m], schools: [], dispatches: [], escalations: [],
+      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null },
+    })
+    const rows = buildRecentMouUpdates({ slices, salesTeam: [rep('sp-r', 'Roveena Mendes')] })
+    expect(rows[0]!.ownerName).toBe('Roveena Mendes')
+    expect(rows[0]!.ownerInitials).toBe('RM')
+  })
+
+  it('falls back to "unassigned" when salesPersonId is null', () => {
+    const m = mou({ id: 'M1', salesPersonId: null })
+    const slices = computeSlices({
+      mous: [m], schools: [], dispatches: [], escalations: [],
+      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null },
+    })
+    const rows = buildRecentMouUpdates({ slices, salesTeam: [] })
+    expect(rows[0]!.ownerName).toBe('unassigned')
+  })
+
+  it('captures the most recent action label', () => {
+    const m = mou({
+      id: 'M1', auditLog: [
+        { timestamp: '2026-04-10T00:00:00Z', user: 'u', action: 'create' },
+        { timestamp: '2026-04-25T00:00:00Z', user: 'u', action: 'pi-issued' },
+      ],
+    })
+    const slices = computeSlices({
+      mous: [m], schools: [], dispatches: [], escalations: [],
+      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null },
+    })
+    const rows = buildRecentMouUpdates({ slices, salesTeam: [] })
+    expect(rows[0]!.lastAction).toBe('pi-issued')
+    expect(rows[0]!.updateDate).toBe('2026-04-25')
+  })
+})
+
+describe('buildActionCenter', () => {
+  it('returns 5 tiles in fixed order', () => {
+    const slices = computeSlices({
+      mous: [], schools: [], dispatches: [], escalations: [],
+      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null },
+    })
+    const data = buildActionCenter({
+      slices, dispatchRequests: [], inventoryItems: [], now: FIXED_NOW,
+    })
+    expect(data.tiles.map((t) => t.key)).toEqual([
+      'pending-signature', 'orders-awaiting-approval', 'shipments-delayed',
+      'escalations-unresolved', 'inventory-low-stock',
+    ])
+  })
+
+  it('totalOpen sums tile counts', () => {
+    const m1 = mou({ id: 'M1', status: 'Pending Signature' })
+    const m2 = mou({ id: 'M2', status: 'Pending Signature' })
+    const e1 = esc({ id: 'E1', status: 'Open', mouId: 'M1' })
+    const slices = computeSlices({
+      mous: [m1, m2], schools: [], dispatches: [], escalations: [e1],
+      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null },
+    })
+    const data = buildActionCenter({
+      slices,
+      dispatchRequests: [
+        dispatchRequest({ id: 'DR1' }), dispatchRequest({ id: 'DR2' }),
+      ],
+      inventoryItems: [
+        inv({ id: 'I1', currentStock: 5, reorderThreshold: 10 }),
+      ],
+      now: FIXED_NOW,
+    })
+    // 2 pending-sig + 2 orders-awaiting + 0 delayed + 1 esc + 1 low-stock = 6
+    expect(data.totalOpen).toBe(6)
+  })
+
+  it('singular vs plural label flip', () => {
+    const m = mou({ status: 'Pending Signature' })
+    const slices = computeSlices({
+      mous: [m], schools: [], dispatches: [], escalations: [],
+      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null },
+    })
+    const data = buildActionCenter({
+      slices, dispatchRequests: [], inventoryItems: [], now: FIXED_NOW,
+    })
+    expect(data.tiles[0]!.label).toBe('MOU pending signature')
   })
 })
 

@@ -130,6 +130,31 @@ describe('/dashboard page (W4-I.5)', () => {
     expect(html).toMatch(/<option[^>]*selected[^>]*value="2026-27"|<option[^>]*value="2026-27"[^>]*selected/)
   })
 
+  it('renders the Recent MOU Updates table with View all link', async () => {
+    getCurrentUserMock.mockResolvedValue(admin())
+    const { default: DashboardPage } = await import('./page')
+    const html = renderToStaticMarkup(await DashboardPage({ searchParams: noSp }))
+    expect(html).toContain('data-testid="dashboard-recent-mous"')
+    expect(html).toContain('Recent MOU Updates')
+    expect(html).toContain('data-testid="recent-mous-view-all"')
+    // At least one row from the fixture should render
+    expect(html).toMatch(/data-testid="recent-mou-row-/)
+  })
+
+  it('renders the Action Center panel with total badge + 5 tiles + CTA', async () => {
+    getCurrentUserMock.mockResolvedValue(admin())
+    const { default: DashboardPage } = await import('./page')
+    const html = renderToStaticMarkup(await DashboardPage({ searchParams: noSp }))
+    expect(html).toContain('data-testid="dashboard-action-centre"')
+    expect(html).toContain('data-testid="action-centre-total-badge"')
+    expect(html).toContain('data-testid="action-tile-pending-signature"')
+    expect(html).toContain('data-testid="action-tile-orders-awaiting-approval"')
+    expect(html).toContain('data-testid="action-tile-shipments-delayed"')
+    expect(html).toContain('data-testid="action-tile-escalations-unresolved"')
+    expect(html).toContain('data-testid="action-tile-inventory-low-stock"')
+    expect(html).toContain('data-testid="action-centre-cta"')
+  })
+
   it('contains no raw hex codes (token discipline)', async () => {
     getCurrentUserMock.mockResolvedValue(admin())
     const { default: DashboardPage } = await import('./page')

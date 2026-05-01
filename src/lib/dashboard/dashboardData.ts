@@ -27,10 +27,12 @@
 
 import type {
   Dispatch,
+  DispatchRequest,
   Escalation,
   InventoryItem,
   MOU,
   Programme,
+  SalesPerson,
   School,
 } from '@/lib/types'
 
@@ -329,4 +331,183 @@ export function fiscalYearOptions(mous: MOU[]): string[] {
   }
   if (set.size === 0) return []
   return Array.from(set).sort().reverse()
+}
+
+// ----------------------------------------------------------------------------
+// Recent MOU Updates (P2C2: middle row, left column)
+// ----------------------------------------------------------------------------
+
+export interface RecentMouUpdate {
+  mouId: string
+  schoolId: string
+  schoolName: string
+  programme: Programme
+  status: MOU['status']
+  /** ISO yyyy-mm-dd of the most recent meaningful activity. */
+  updateDate: string
+  /** Last action recorded on the MOU's auditLog (or 'created' fallback). */
+  lastAction: string
+  /** Sales owner name + initials for the Owner avatar column. */
+  ownerName: string
+  ownerInitials: string
+}
+
+function initialsFor(name: string): string {
+  const parts = name.trim().split(/\s+/).filter((p) => p.length > 0)
+  if (parts.length === 0) return '?'
+  if (parts.length === 1) return parts[0]!.slice(0, 2).toUpperCase()
+  return (parts[0]![0]! + parts[parts.length - 1]![0]!).toUpperCase()
+}
+
+function lastUpdateDate(mou: MOU): { iso: string; action: string } {
+  if (mou.auditLog.length > 0) {
+    const last = mou.auditLog[mou.auditLog.length - 1]!
+    return { iso: last.timestamp.slice(0, 10), action: last.action }
+  }
+  if (mou.startDate) return { iso: mou.startDate.slice(0, 10), action: 'created' }
+  return { iso: '0000-00-00', action: 'created' }
+}
+
+export interface BuildRecentMouUpdatesInputs {
+  slices: DashboardSlices
+  salesTeam: SalesPerson[]
+  /** Number of rows to return; default 6 to match the reference layout. */
+  limit?: number
+}
+
+export function buildRecentMouUpdates(
+  input: BuildRecentMouUpdatesInputs,
+): RecentMouUpdate[] {
+  const { slices, salesTeam, limit = 6 } = input
+  const repById = new Map(salesTeam.map((s) => [s.id, s]))
+  const rows = slices.filteredMous.map((m) => {
+    const { iso, action } = lastUpdateDate(m)
+    const rep = m.salesPersonId ? repById.get(m.salesPersonId) ?? null : null
+    const ownerName = rep?.name ?? (m.salesPersonId ?? 'unassigned')
+    return {
+      mouId: m.id,
+      schoolId: m.schoolId,
+      schoolName: m.schoolName,
+      programme: m.programme,
+      status: m.status,
+      updateDate: iso,
+      lastAction: action,
+      ownerName,
+      ownerInitials: initialsFor(ownerName),
+    } satisfies RecentMouUpdate
+  })
+  rows.sort((a, b) => (a.updateDate < b.updateDate ? 1 : a.updateDate > b.updateDate ? -1 : 0))
+  return rows.slice(0, limit)
+}
+
+// ----------------------------------------------------------------------------
+// Action Center (P2C2: middle row, right column)
+// ----------------------------------------------------------------------------
+
+export interface ActionCenterTile {
+  key: string
+  count: number
+  label: string
+  href: string
+  /** Tailwind colour class for the leading icon background. */
+  iconTint: string
+  iconKey: 'mous' | 'orders' | 'shipments' | 'escalations' | 'inventory'
+}
+
+export interface ActionCenterData {
+  totalOpen: number
+  tiles: ActionCenterTile[]
+}
+
+export interface BuildActionCenterInputs {
+  slices: DashboardSlices
+  dispatchRequests: DispatchRequest[]
+  inventoryItems: InventoryItem[]
+  now: Date
+}
+
+/**
+ * 5 action tiles matching the reference layout, sourced from current
+ * data state. The aggregate badge ("X open") sums the underlying tile
+ * counts so operators see a single attention number at a glance.
+ *
+ * Tile semantics:
+ *   1. MOUs pending signature (status === 'Pending Signature' in the
+ *      filtered slice)
+ *   2. Orders awaiting approval (DispatchRequest with status
+ *      'pending-approval'; not filtered by FY/programme since the
+ *      request entity does not carry programme directly)
+ *   3. Shipments delayed (isDelayed within filtered dispatches)
+ *   4. Escalations unresolved (status === 'Open' in filtered scope)
+ *   5. Inventory units low stock (count of items at/under threshold;
+ *      inventory is global, not filterable by FY/programme)
+ */
+export function buildActionCenter(input: BuildActionCenterInputs): ActionCenterData {
+  const { slices, dispatchRequests, inventoryItems, now } = input
+
+  const pendingSignatureCount = slices.filteredMous.filter(
+    (m) => m.status === 'Pending Signature',
+  ).length
+  const ordersAwaitingApproval = dispatchRequests.filter(
+    (r) => r.status === 'pending-approval',
+  ).length
+  const shipmentsDelayed = slices.filteredDispatches.filter((d) => isDelayed(d, now)).length
+  const escalationsUnresolved = slices.filteredEscalations.filter(
+    (e) => e.status === 'Open',
+  ).length
+  const inventoryLowStock = inventoryItems.filter(
+    (i) => i.reorderThreshold !== null && i.currentStock <= i.reorderThreshold,
+  ).length
+
+  const tiles: ActionCenterTile[] = [
+    {
+      key: 'pending-signature',
+      count: pendingSignatureCount,
+      label: pendingSignatureCount === 1 ? 'MOU pending signature' : 'MOUs pending signature',
+      href: '/mous?status=Pending+Signature',
+      iconTint: 'bg-signal-attention/15 text-signal-attention',
+      iconKey: 'mous',
+    },
+    {
+      key: 'orders-awaiting-approval',
+      count: ordersAwaitingApproval,
+      label: ordersAwaitingApproval === 1
+        ? 'Order awaiting approval'
+        : 'Orders awaiting approval',
+      href: '/admin/dispatch-requests',
+      iconTint: 'bg-brand-teal/15 text-brand-navy',
+      iconKey: 'orders',
+    },
+    {
+      key: 'shipments-delayed',
+      count: shipmentsDelayed,
+      label: shipmentsDelayed === 1 ? 'Shipment delayed' : 'Shipments delayed',
+      href: '/admin/dispatch-requests',
+      iconTint: 'bg-brand-navy/15 text-brand-navy',
+      iconKey: 'shipments',
+    },
+    {
+      key: 'escalations-unresolved',
+      count: escalationsUnresolved,
+      label: escalationsUnresolved === 1
+        ? 'Escalation unresolved'
+        : 'Escalations unresolved',
+      href: '/escalations?status=Open',
+      iconTint: 'bg-signal-alert/15 text-signal-alert',
+      iconKey: 'escalations',
+    },
+    {
+      key: 'inventory-low-stock',
+      count: inventoryLowStock,
+      label: inventoryLowStock === 1
+        ? 'Inventory item low stock'
+        : 'Inventory items low stock',
+      href: '/admin/inventory',
+      iconTint: 'bg-foreground/15 text-foreground',
+      iconKey: 'inventory',
+    },
+  ]
+
+  const totalOpen = tiles.reduce((sum, t) => sum + t.count, 0)
+  return { totalOpen, tiles }
 }
