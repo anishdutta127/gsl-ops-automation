@@ -666,3 +666,63 @@ export const COMMUNICATION_BUTTONS: ReadonlyArray<CommunicationButton> = [
   { key: 'thank-you', label: 'Send Thank You Note', variant: 'teal',    href: '/admin/templates?useCase=thank-you' },
   { key: 'follow-up', label: 'Send Follow-up Email', variant: 'outline', href: '/admin/templates?useCase=follow-up' },
 ]
+
+// ----------------------------------------------------------------------------
+// Communication Templates preview cards (P2C4: Phase 3 will load real
+// CommunicationTemplate entities; for now we surface Welcome + Thank You
+// from the static template content in src/content so the dashboard preview
+// matches what gets sent today.)
+// ----------------------------------------------------------------------------
+
+export interface CommunicationTemplatePreview {
+  key: string
+  name: string
+  preview: string
+  /** Edit affordance target; Phase 3 wires the real template editor. */
+  editHref: string
+}
+
+export const COMMUNICATION_TEMPLATE_PREVIEWS: ReadonlyArray<CommunicationTemplatePreview> = [
+  {
+    key: 'welcome',
+    name: 'Welcome Note',
+    preview: 'Welcome to the programme. We are excited to begin this learning journey with your school.',
+    editHref: '/admin/templates?useCase=welcome',
+  },
+  {
+    key: 'thank-you',
+    name: 'Thank You Note',
+    preview: 'Thank you for completing the formalities. Our team will now proceed with the next steps.',
+    editHref: '/admin/templates?useCase=thank-you',
+  },
+]
+
+// ----------------------------------------------------------------------------
+// Sales Pipeline summary (P2C4: Anish addition; lower hierarchy)
+// ----------------------------------------------------------------------------
+
+export interface SalesPipelineSummaryData {
+  totalOpportunities: number
+  addedThisMonth: number
+  converted: number
+  lost: number
+}
+
+export interface BuildSalesPipelineSummaryInputs {
+  opportunities: import('@/lib/types').SalesOpportunity[]
+  now: Date
+}
+
+export function buildSalesPipelineSummary(
+  input: BuildSalesPipelineSummaryInputs,
+): SalesPipelineSummaryData {
+  const { opportunities, now } = input
+  const monthStart = startOfMonthIso(now)
+  const totalOpportunities = opportunities.length
+  const addedThisMonth = opportunities.filter(
+    (o) => o.createdAt.slice(0, 10) >= monthStart,
+  ).length
+  const converted = opportunities.filter((o) => o.conversionMouId !== null).length
+  const lost = opportunities.filter((o) => o.lossReason !== null).length
+  return { totalOpportunities, addedThisMonth, converted, lost }
+}

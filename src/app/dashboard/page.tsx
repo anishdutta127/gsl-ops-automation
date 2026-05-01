@@ -26,6 +26,7 @@ import type {
   Escalation,
   InventoryItem,
   MOU,
+  SalesOpportunity,
   SalesPerson,
   School,
 } from '@/lib/types'
@@ -35,6 +36,7 @@ import dispatchesJson from '@/data/dispatches.json'
 import dispatchRequestsJson from '@/data/dispatch_requests.json'
 import escalationsJson from '@/data/escalations.json'
 import inventoryItemsJson from '@/data/inventory_items.json'
+import salesOpportunitiesJson from '@/data/sales_opportunities.json'
 import salesTeamJson from '@/data/sales_team.json'
 import { getCurrentUser } from '@/lib/auth/session'
 import { TopNav } from '@/components/ops/TopNav'
@@ -42,8 +44,10 @@ import {
   buildActionCenter,
   buildOrdersTracker,
   buildRecentMouUpdates,
+  buildSalesPipelineSummary,
   buildStatCards,
   COMMUNICATION_BUTTONS,
+  COMMUNICATION_TEMPLATE_PREVIEWS,
   computeSlices,
   fiscalYearOptions,
   parseDashboardFilters,
@@ -55,6 +59,8 @@ import { DashboardRecentMous } from '@/components/ops/dashboard/DashboardRecentM
 import { DashboardActionCenter } from '@/components/ops/dashboard/DashboardActionCenter'
 import { DashboardOrdersTracker } from '@/components/ops/dashboard/DashboardOrdersTracker'
 import { DashboardCommunicationPanel } from '@/components/ops/dashboard/DashboardCommunicationPanel'
+import { DashboardTemplates } from '@/components/ops/dashboard/DashboardTemplates'
+import { DashboardSalesPipelineSummary } from '@/components/ops/dashboard/DashboardSalesPipelineSummary'
 
 const allMous = mousJson as unknown as MOU[]
 const allSchools = schoolsJson as unknown as School[]
@@ -62,6 +68,7 @@ const allDispatches = dispatchesJson as unknown as Dispatch[]
 const allDispatchRequests = dispatchRequestsJson as unknown as DispatchRequest[]
 const allEscalations = escalationsJson as unknown as Escalation[]
 const allInventoryItems = inventoryItemsJson as unknown as InventoryItem[]
+const allOpportunities = salesOpportunitiesJson as unknown as SalesOpportunity[]
 const allSalesTeam = salesTeamJson as unknown as SalesPerson[]
 
 const DATE_DISPLAY = new Intl.DateTimeFormat('en-GB', {
@@ -106,6 +113,9 @@ export default async function DashboardPage({ searchParams }: PageProps) {
   const orderRows = buildOrdersTracker({
     slices, schools: allSchools, mous: allMous, now,
   })
+  const salesPipelineSummary = buildSalesPipelineSummary({
+    opportunities: allOpportunities, now,
+  })
   const fyOptions = fiscalYearOptions(allMous)
   const fiscalYearForHeader = filters.fiscalYear ?? 'all'
 
@@ -143,7 +153,17 @@ export default async function DashboardPage({ searchParams }: PageProps) {
             </div>
             <DashboardCommunicationPanel buttons={COMMUNICATION_BUTTONS} />
           </div>
+          <DashboardTemplates templates={COMMUNICATION_TEMPLATE_PREVIEWS} />
+          <DashboardSalesPipelineSummary data={salesPipelineSummary} />
         </div>
+        <footer
+          className="border-t border-border bg-card"
+          data-testid="dashboard-footer"
+        >
+          <div className="mx-auto max-w-screen-2xl px-4 py-4 text-xs text-muted-foreground sm:px-6">
+            Operations Control Dashboard <span aria-hidden>&middot;</span> Internal use only
+          </div>
+        </footer>
       </main>
     </>
   )

@@ -180,6 +180,39 @@ describe('/dashboard page (W4-I.5)', () => {
     expect(html).toContain('Send Follow-up Email')
   })
 
+  it('renders the Communication Templates section with 2 preview cards + Create CTA', async () => {
+    getCurrentUserMock.mockResolvedValue(admin())
+    const { default: DashboardPage } = await import('./page')
+    const html = renderToStaticMarkup(await DashboardPage({ searchParams: noSp }))
+    expect(html).toContain('data-testid="dashboard-templates"')
+    expect(html).toContain('Communication Templates')
+    expect(html).toContain('data-testid="template-card-welcome"')
+    expect(html).toContain('data-testid="template-card-thank-you"')
+    expect(html).toContain('data-testid="template-edit-welcome"')
+    expect(html).toContain('data-testid="template-create-cta"')
+    expect(html).toContain('Create new template')
+  })
+
+  it('renders the Sales Pipeline summary card with View pipeline CTA', async () => {
+    getCurrentUserMock.mockResolvedValue(admin())
+    const { default: DashboardPage } = await import('./page')
+    const html = renderToStaticMarkup(await DashboardPage({ searchParams: noSp }))
+    expect(html).toContain('data-testid="dashboard-sales-pipeline-summary"')
+    expect(html).toContain('Sales Pipeline')
+    expect(html).toContain('data-testid="sales-pipeline-summary-cta"')
+    expect(html).toContain('View pipeline')
+  })
+
+  it('renders the dashboard footer + the Open Kanban Board CTA in the header', async () => {
+    getCurrentUserMock.mockResolvedValue(admin())
+    const { default: DashboardPage } = await import('./page')
+    const html = renderToStaticMarkup(await DashboardPage({ searchParams: noSp }))
+    expect(html).toContain('data-testid="dashboard-footer"')
+    expect(html).toContain('Internal use only')
+    expect(html).toContain('data-testid="dashboard-kanban-cta"')
+    expect(html).toContain('Open Kanban Board')
+  })
+
   it('contains no raw hex codes (token discipline)', async () => {
     getCurrentUserMock.mockResolvedValue(admin())
     const { default: DashboardPage } = await import('./page')

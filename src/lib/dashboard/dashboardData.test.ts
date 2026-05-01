@@ -3,8 +3,10 @@ import {
   buildActionCenter,
   buildOrdersTracker,
   buildRecentMouUpdates,
+  buildSalesPipelineSummary,
   buildStatCards,
   COMMUNICATION_BUTTONS,
+  COMMUNICATION_TEMPLATE_PREVIEWS,
   computeSlices,
   fiscalYearOptions,
   isDelayed,
@@ -16,6 +18,7 @@ import type {
   Escalation,
   InventoryItem,
   MOU,
+  SalesOpportunity,
   SalesPerson,
   School,
 } from '@/lib/types'
@@ -501,6 +504,54 @@ describe('COMMUNICATION_BUTTONS', () => {
   it('every href links to /admin/templates with a useCase', () => {
     for (const b of COMMUNICATION_BUTTONS) {
       expect(b.href).toMatch(/^\/admin\/templates\?useCase=/)
+    }
+  })
+})
+
+function opp(overrides: Partial<SalesOpportunity> = {}): SalesOpportunity {
+  return {
+    id: 'OPP-X', schoolName: 'X', schoolId: null, city: 'P', state: 'M',
+    region: 'South-West', salesRepId: 'sp-x', programmeProposed: null,
+    gslModel: null, commitmentsMade: null, outOfScopeRequirements: null,
+    recceStatus: null, recceCompletedAt: null, status: 'open',
+    approvalNotes: null, conversionMouId: null, lossReason: null,
+    schoolMatchDismissed: false, createdAt: '2026-01-01T00:00:00Z',
+    createdBy: 'u', auditLog: [],
+    ...overrides,
+  }
+}
+
+describe('buildSalesPipelineSummary', () => {
+  it('counts opportunities total + this-month + converted + lost', () => {
+    const opps = [
+      opp({ id: 'O1', createdAt: '2026-05-03T00:00:00Z' }),                      // this month
+      opp({ id: 'O2', createdAt: '2026-05-07T00:00:00Z', conversionMouId: 'M' }), // this month + converted
+      opp({ id: 'O3', createdAt: '2026-04-01T00:00:00Z', lossReason: 'price' }),  // lost
+      opp({ id: 'O4', createdAt: '2026-03-15T00:00:00Z' }),
+    ]
+    const summary = buildSalesPipelineSummary({ opportunities: opps, now: FIXED_NOW })
+    expect(summary.totalOpportunities).toBe(4)
+    expect(summary.addedThisMonth).toBe(2)
+    expect(summary.converted).toBe(1)
+    expect(summary.lost).toBe(1)
+  })
+
+  it('returns zeros for empty input', () => {
+    const summary = buildSalesPipelineSummary({ opportunities: [], now: FIXED_NOW })
+    expect(summary).toEqual({
+      totalOpportunities: 0, addedThisMonth: 0, converted: 0, lost: 0,
+    })
+  })
+})
+
+describe('COMMUNICATION_TEMPLATE_PREVIEWS', () => {
+  it('exposes welcome + thank-you previews with edit hrefs', () => {
+    expect(COMMUNICATION_TEMPLATE_PREVIEWS.map((t) => t.key)).toEqual([
+      'welcome', 'thank-you',
+    ])
+    for (const t of COMMUNICATION_TEMPLATE_PREVIEWS) {
+      expect(t.editHref).toMatch(/^\/admin\/templates\?useCase=/)
+      expect(t.preview.length).toBeGreaterThan(10)
     }
   })
 })

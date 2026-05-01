@@ -16,6 +16,8 @@
  * caller passing `defaultFromDate` / `defaultToDate`).
  */
 
+import Link from 'next/link'
+import { Columns3 } from 'lucide-react'
 import type { ReactNode } from 'react'
 
 export interface DashboardHeaderProps {
@@ -27,6 +29,8 @@ export interface DashboardHeaderProps {
   fiscalYear: string
   fromDate: string
   toDate: string
+  /** Where the prominent Kanban CTA points (P2C5 will swap default to /kanban). */
+  kanbanHref?: string
 }
 
 const FIELD_LABEL_CLASS = 'text-[10px] font-semibold uppercase tracking-wider text-muted-foreground'
@@ -40,6 +44,7 @@ export function DashboardHeader({
   fiscalYear,
   fromDate,
   toDate,
+  kanbanHref = '/',
 }: DashboardHeaderProps): ReactNode {
   return (
     <header
@@ -56,6 +61,14 @@ export function DashboardHeader({
               {title}
             </h1>
             <p className="mt-1 max-w-2xl text-sm text-muted-foreground">{subtitle}</p>
+            <Link
+              href={kanbanHref}
+              data-testid="dashboard-kanban-cta"
+              className="mt-3 inline-flex min-h-9 items-center gap-1.5 rounded-md bg-brand-navy px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-navy/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-navy"
+            >
+              <Columns3 aria-hidden className="size-4" />
+              Open Kanban Board
+            </Link>
           </div>
 
           {/* Top-right controls. The selects + date inputs share the
