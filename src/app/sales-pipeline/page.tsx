@@ -34,6 +34,9 @@ import { canPerform } from '@/lib/auth/permissions'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { FilterRail, type FilterDimension } from '@/components/ops/FilterRail'
+import { EmptyState } from '@/components/ops/EmptyState'
+import { StatusChip } from '@/components/ops/StatusChip'
+import { opsButtonClass } from '@/components/ops/OpsButton'
 import { REGION_OPTIONS } from '@/lib/salesOpportunity/createOpportunity'
 import {
   applyDimensionFilters,
@@ -211,11 +214,10 @@ export default async function SalesPipelinePage({ searchParams }: PageProps) {
                   href={href}
                   aria-current={isActive ? 'page' : undefined}
                   data-testid={`state-filter-${s}`}
-                  className={
-                    isActive
-                      ? 'inline-flex min-h-11 items-center rounded-md bg-brand-navy px-3 py-2 text-sm font-medium text-white'
-                      : 'inline-flex min-h-11 items-center rounded-md border border-border bg-card px-3 py-2 text-sm font-medium text-foreground hover:bg-muted focus:outline-none focus:ring-2 focus:ring-brand-navy'
-                  }
+                  className={opsButtonClass({
+                    variant: isActive ? 'primary' : 'outline',
+                    size: 'md',
+                  })}
                 >
                   {s === 'active' ? 'Active' : s === 'lost' ? 'Lost' : 'All'}
                 </Link>
@@ -227,7 +229,7 @@ export default async function SalesPipelinePage({ searchParams }: PageProps) {
             <Link
               href="/sales-pipeline/new"
               data-testid="sales-pipeline-new-link"
-              className="inline-flex min-h-11 items-center gap-1 rounded-md bg-brand-navy px-3 py-2 text-sm font-semibold text-white hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-navy"
+              className={opsButtonClass({ variant: 'primary', size: 'md' })}
             >
               <Plus aria-hidden className="size-4" />
               New opportunity
@@ -259,10 +261,7 @@ export default async function SalesPipelinePage({ searchParams }: PageProps) {
               </option>
             ))}
           </select>
-          <button
-            type="submit"
-            className="inline-flex min-h-11 items-center rounded-md border border-border bg-card px-3 py-2 text-sm font-medium hover:bg-muted focus:outline-none focus:ring-2 focus:ring-brand-navy"
-          >
+          <button type="submit" className={opsButtonClass({ variant: 'outline', size: 'md' })}>
             Apply
           </button>
         </form>
@@ -276,14 +275,23 @@ export default async function SalesPipelinePage({ searchParams }: PageProps) {
           />
           <div className="min-w-0 flex-1">
             {filtered.length === 0 ? (
-              <p
+              <div
                 data-testid="sales-pipeline-empty"
-                className="rounded-md border border-border bg-card p-6 text-center text-sm text-muted-foreground"
+                className="rounded-md border border-border bg-card"
               >
-                {allOpportunities.length === 0
-                  ? "No opportunities yet. Click 'New opportunity' to track a school."
-                  : 'No opportunities match the current filter.'}
-              </p>
+                <EmptyState
+                  title={
+                    allOpportunities.length === 0
+                      ? 'No opportunities yet.'
+                      : 'No opportunities match your filters.'
+                  }
+                  description={
+                    allOpportunities.length === 0
+                      ? 'Click New opportunity to start tracking a school you are scouting.'
+                      : 'Try the Active state, clear the search, or switch the owner to All.'
+                  }
+                />
+              </div>
             ) : (
               <ul
                 className="divide-y divide-border rounded-md border border-border bg-card"
@@ -314,8 +322,8 @@ export default async function SalesPipelinePage({ searchParams }: PageProps) {
                           <span className="text-sm font-medium">
                             {o.schoolName}
                             {isLost ? (
-                              <span className="ml-2 rounded-sm border border-slate-300 bg-slate-100 px-1.5 py-px text-[10px] font-semibold uppercase tracking-wide text-slate-600">
-                                Lost
+                              <span className="ml-2 inline-block">
+                                <StatusChip tone="neutral" label="Lost" withDot={false} />
                               </span>
                             ) : null}
                           </span>

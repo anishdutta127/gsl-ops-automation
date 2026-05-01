@@ -43,6 +43,8 @@ import { PageHeader } from '@/components/ops/PageHeader'
 import { FilterRail, type FilterDimension } from '@/components/ops/FilterRail'
 import { EntityListTable, type ColumnDef } from '@/components/ops/EntityListTable'
 import { EmptyState } from '@/components/ops/EmptyState'
+import { StatusChip } from '@/components/ops/StatusChip'
+import { opsButtonClass } from '@/components/ops/OpsButton'
 import {
   parseDimensions,
   applyDimensionFilters,
@@ -54,6 +56,7 @@ import {
   KANBAN_COLUMNS,
   type KanbanStageKey,
 } from '@/lib/kanban/deriveStage'
+import { mouStatusTone } from '@/lib/ui/mouStatusTone'
 import Link from 'next/link'
 import { Archive } from 'lucide-react'
 
@@ -175,7 +178,13 @@ export default async function MousListPage({ searchParams }: PageProps) {
         </span>
       ),
     },
-    { key: 'status', header: 'Status', render: (m) => m.status },
+    {
+      key: 'status',
+      header: 'Status',
+      render: (m) => (
+        <StatusChip tone={mouStatusTone(m.status)} label={m.status} withDot={false} />
+      ),
+    },
     {
       key: 'students',
       header: 'Students',
@@ -195,14 +204,14 @@ export default async function MousListPage({ searchParams }: PageProps) {
           title={stageLabel !== null ? `MOUs at ${stageLabel}` : 'MOUs'}
           subtitle={
             stageLabel !== null
-              ? `${filtered.length} MOUs at the ${stageLabel} stage. Filtered from the kanban.`
+              ? `${filtered.length} MOUs at the ${stageLabel} stage. Filtered from the MOU Pipeline.`
               : `${filtered.length} of ${scoped.length} matching`
           }
         />
         <div className="mx-auto flex max-w-screen-xl items-center justify-end px-4 pt-2">
           <Link
             href="/mous/archive"
-            className="inline-flex min-h-11 items-center gap-1.5 rounded-md border border-border bg-card px-3 py-1.5 text-sm font-medium text-foreground hover:bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
+            className={opsButtonClass({ variant: 'outline', size: 'sm' })}
             data-testid="archive-link"
           >
             <Archive aria-hidden className="size-4" />
@@ -225,8 +234,8 @@ export default async function MousListPage({ searchParams }: PageProps) {
               caption="MOUs"
               empty={
                 <EmptyState
-                  title="No MOUs match the current filters."
-                  description="Adjust filters or clear them to see the full list."
+                  title="No MOUs match your filters."
+                  description="Try broadening the programme or region, or clearing filters to see the full list."
                 />
               }
             />

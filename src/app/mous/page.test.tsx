@@ -45,7 +45,7 @@ describe('/mous list page', () => {
     getCurrentUserMock.mockResolvedValue(salesRep('sp-arjun'))
     const { default: MousPage } = await import('./page')
     const html = renderToStaticMarkup(await MousPage({ searchParams: Promise.resolve({}) }))
-    expect(html).toContain('No MOUs match the current filters.')
+    expect(html).toContain('No MOUs match your filters.')
   })
 
   it('status filter narrows the list', async () => {
@@ -54,7 +54,7 @@ describe('/mous list page', () => {
     const html = renderToStaticMarkup(
       await MousPage({ searchParams: Promise.resolve({ status: 'Completed' }) }),
     )
-    expect(html).toContain('No MOUs match the current filters.')
+    expect(html).toContain('No MOUs match your filters.')
   })
 
   it('search filters by school name substring', async () => {
@@ -83,7 +83,7 @@ describe('/mous list page', () => {
       await MousPage({ searchParams: Promise.resolve({ stage: 'invoice-raised' }) }),
     )
     expect(html).toContain('MOUs at Invoice raised')
-    expect(html).toContain('Filtered from the kanban')
+    expect(html).toContain('Filtered from the MOU Pipeline')
   })
 
   it('?stage=pre-ops filter resolves to the Pre-Ops Legacy holding bay', async () => {

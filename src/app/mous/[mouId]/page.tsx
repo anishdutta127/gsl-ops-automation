@@ -68,9 +68,10 @@ import { DetailHeaderCard } from '@/components/ops/DetailHeaderCard'
 import { LifecycleProgress } from '@/components/ops/LifecycleProgress'
 import { AuditLogPanel } from '@/components/ops/AuditLogPanel'
 import { StatusNotesSection } from '@/components/ops/StatusNotesSection'
-import { StatusChip, type StatusChipTone } from '@/components/ops/StatusChip'
+import { StatusChip } from '@/components/ops/StatusChip'
 import { opsButtonClass } from '@/components/ops/OpsButton'
 import { getSmartTemplateSuggestions } from '@/lib/templates/smartSuggestions'
+import { mouStatusTone } from '@/lib/ui/mouStatusTone'
 
 const allMous = mousJson as unknown as MOU[]
 const allSchools = schoolsJson as unknown as School[]
@@ -91,24 +92,6 @@ function lastDelayNotesUpdate(mou: MOU): string | null {
     return `Last updated by ${name} on ${entry.timestamp.slice(0, 10)}`
   }
   return null
-}
-
-function statusTone(status: MOU['status']): StatusChipTone {
-  switch (status) {
-    case 'Active':
-      return 'ok'
-    case 'Pending Signature':
-      return 'attention'
-    case 'Completed':
-      return 'teal'
-    case 'Expired':
-      return 'alert'
-    case 'Renewed':
-      return 'navy'
-    case 'Draft':
-    default:
-      return 'neutral'
-  }
 }
 
 interface CommunicationRow {
@@ -281,7 +264,7 @@ export default async function MouDetailPage({ params }: PageProps) {
                 {mou.academicYear}
               </span>
               <StatusChip
-                tone={statusTone(mou.status)}
+                tone={mouStatusTone(mou.status)}
                 label={mou.status}
                 testId="mou-detail-status-chip"
               />

@@ -107,7 +107,7 @@ describe('/help page (W3-E orientation doc)', () => {
     expect(html).toContain('Sending a feedback request')
     expect(html).toContain('Recording a signed delivery acknowledgement')
     expect(html).toContain('Editing a lifecycle rule duration')
-    expect(html).toContain('Moving a kanban card forward')
+    expect(html).toContain('Moving a MOU Pipeline card forward')
     // W4-D.7: 3 new dispatch workflow articles + glossary additions
     expect(html).toContain('Submitting a dispatch request as Sales')
     expect(html).toContain('Reviewing and approving a dispatch request as Ops')

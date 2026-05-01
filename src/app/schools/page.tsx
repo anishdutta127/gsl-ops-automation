@@ -22,6 +22,7 @@ import { PageHeader } from '@/components/ops/PageHeader'
 import { FilterRail, type FilterDimension } from '@/components/ops/FilterRail'
 import { EntityListTable, type ColumnDef } from '@/components/ops/EntityListTable'
 import { EmptyState } from '@/components/ops/EmptyState'
+import { StatusChip } from '@/components/ops/StatusChip'
 import {
   parseDimensions,
   applyDimensionFilters,
@@ -101,7 +102,7 @@ export default async function SchoolsListPage({ searchParams }: PageProps) {
       header: 'GSTIN',
       render: (s) =>
         s.gstNumber === null ? (
-          <span className="text-muted-foreground">Missing</span>
+          <StatusChip tone="attention" label="Missing" withDot={false} />
         ) : (
           <span className="font-mono text-xs">{s.gstNumber}</span>
         ),
@@ -132,8 +133,8 @@ export default async function SchoolsListPage({ searchParams }: PageProps) {
               caption="Schools"
               empty={
                 <EmptyState
-                  title="No schools match the current filters."
-                  description="Adjust filters or clear them to see the full list."
+                  title="No schools match your filters."
+                  description="Try clearing region or chain filters, or broaden the search to see the full directory."
                 />
               }
             />

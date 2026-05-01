@@ -18,6 +18,12 @@ import { PageHeader } from '@/components/ops/PageHeader'
 import { FilterRail, type FilterDimension } from '@/components/ops/FilterRail'
 import { EntityListTable, type ColumnDef } from '@/components/ops/EntityListTable'
 import { EmptyState } from '@/components/ops/EmptyState'
+import { StatusChip } from '@/components/ops/StatusChip'
+import { LaneBadge } from '@/components/ops/LaneBadge'
+import {
+  ESCALATION_SEVERITY_TONE,
+  ESCALATION_STATUS_TONE,
+} from '@/lib/ui/escalationTones'
 import {
   parseDimensions,
   applyDimensionFilters,
@@ -119,9 +125,21 @@ export default async function EscalationsListPage({ searchParams }: PageProps) {
     {
       key: 'lane',
       header: 'Lane / Level',
-      render: (e) => `${e.lane} / ${e.level}`,
+      render: (e) => (
+        <span className="inline-flex items-center gap-2">
+          <LaneBadge lane={e.lane} />
+          <span className="text-xs text-muted-foreground">{e.level}</span>
+        </span>
+      ),
     },
-    { key: 'status', header: 'Status', render: (e) => e.status },
+    {
+      key: 'status',
+      header: 'Status',
+      render: (e) => {
+        const meta = ESCALATION_STATUS_TONE[e.status]
+        return <StatusChip tone={meta.tone} label={meta.label} withDot={false} />
+      },
+    },
     {
       key: 'category',
       header: 'Category',
@@ -132,7 +150,14 @@ export default async function EscalationsListPage({ searchParams }: PageProps) {
       header: 'Type',
       render: (e) => e.type ?? <span className="text-muted-foreground">-</span>,
     },
-    { key: 'severity', header: 'Severity', render: (e) => e.severity },
+    {
+      key: 'severity',
+      header: 'Severity',
+      render: (e) => {
+        const meta = ESCALATION_SEVERITY_TONE[e.severity]
+        return <StatusChip tone={meta.tone} label={meta.label} withDot={false} />
+      },
+    },
     {
       key: 'assigned',
       header: 'Assigned to',
@@ -164,11 +189,15 @@ export default async function EscalationsListPage({ searchParams }: PageProps) {
               caption="Escalations"
               empty={
                 <EmptyState
-                  title="No escalations match the current filters."
+                  title={
+                    scoped.length === 0
+                      ? 'No escalations found.'
+                      : 'No escalations match your filters.'
+                  }
                   description={
                     scoped.length === 0
-                      ? 'Your role has no visible escalations in this view.'
-                      : 'Adjust filters or clear them to see the full list.'
+                      ? 'Operations are running smoothly for your lane.'
+                      : 'Try clearing the lane, level, or status filter to widen the view.'
                   }
                 />
               }

@@ -23,8 +23,12 @@ import { PageHeader } from '@/components/ops/PageHeader'
 import { DetailHeaderCard } from '@/components/ops/DetailHeaderCard'
 import { LaneBadge } from '@/components/ops/LaneBadge'
 import { AuditLogPanel } from '@/components/ops/AuditLogPanel'
-import { StatusChip, type StatusChipTone } from '@/components/ops/StatusChip'
+import { StatusChip } from '@/components/ops/StatusChip'
 import { formatDate } from '@/lib/format'
+import {
+  ESCALATION_SEVERITY_TONE,
+  ESCALATION_STATUS_TONE,
+} from '@/lib/ui/escalationTones'
 
 const allEscalations = escalationsJson as unknown as Escalation[]
 const allSchools = schoolsJson as unknown as School[]
@@ -47,21 +51,8 @@ function isVisibleToUser(esc: Escalation, user: User | null): boolean {
   return false
 }
 
-const SEVERITY_TONE: Record<Escalation['severity'], { tone: StatusChipTone; label: string }> = {
-  high:   { tone: 'alert',     label: 'High' },
-  medium: { tone: 'attention', label: 'Medium' },
-  low:    { tone: 'neutral',   label: 'Low' },
-}
-
-// W4-I.4 MM5: Misba ticketing-system status vocabulary.
-const STATUS_TONE: Record<Escalation['status'], { tone: StatusChipTone; label: string }> = {
-  Open:    { tone: 'alert',     label: 'Open' },
-  WIP:     { tone: 'attention', label: 'WIP' },
-  Closed:  { tone: 'ok',        label: 'Closed' },
-  'Transfer to Other Department': { tone: 'attention', label: 'Transfer to Other Department' },
-  Dispatched:   { tone: 'attention', label: 'Dispatched' },
-  'In Transit': { tone: 'attention', label: 'In Transit' },
-}
+const SEVERITY_TONE = ESCALATION_SEVERITY_TONE
+const STATUS_TONE = ESCALATION_STATUS_TONE
 
 export default async function EscalationDetailPage({ params }: PageProps) {
   const { escalationId } = await params

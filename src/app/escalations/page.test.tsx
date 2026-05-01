@@ -36,17 +36,20 @@ describe('/escalations list page', () => {
     getCurrentUserMock.mockResolvedValue(user('OpsHead'))
     const { default: EscPage } = await import('./page')
     const html = renderToStaticMarkup(await EscPage({ searchParams: Promise.resolve({}) }))
-    // ESC-001 is OPS lane per fixture; row body renders "<lane> / <level>"
-    expect(html).toContain('OPS / L')
-    expect(html).not.toContain('ACADEMICS / L')
-    expect(html).not.toContain('SALES / L')
+    // ESC-001 is OPS lane per fixture; rows render LaneBadge with an
+    // aria-label per lane, so we count those rather than the old
+    // combined "<lane> / <level>" cell text.
+    expect(html).toContain('aria-label="Operations lane"')
+    expect(html).not.toContain('aria-label="Academics lane"')
+    expect(html).not.toContain('aria-label="Sales lane"')
   })
 
   it('SalesRep sees no escalations (empty state copy)', async () => {
     getCurrentUserMock.mockResolvedValue(user('SalesRep'))
     const { default: EscPage } = await import('./page')
     const html = renderToStaticMarkup(await EscPage({ searchParams: Promise.resolve({}) }))
-    expect(html).toContain('Your role has no visible escalations')
+    expect(html).toContain('No escalations found.')
+    expect(html).toContain('Operations are running smoothly')
   })
 
   it('lane filter narrows list', async () => {
@@ -55,9 +58,9 @@ describe('/escalations list page', () => {
     const html = renderToStaticMarkup(
       await EscPage({ searchParams: Promise.resolve({ lane: 'OPS' }) }),
     )
-    expect(html).toContain('OPS / L')
-    expect(html).not.toContain('ACADEMICS / L')
-    expect(html).not.toContain('SALES / L')
+    expect(html).toContain('aria-label="Operations lane"')
+    expect(html).not.toContain('aria-label="Academics lane"')
+    expect(html).not.toContain('aria-label="Sales lane"')
   })
 
   it('contains no raw hex codes (token discipline)', async () => {

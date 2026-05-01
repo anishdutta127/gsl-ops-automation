@@ -70,19 +70,19 @@ export const HELP_ROLES: RoleOrientation[] = [
     role: 'Sales (Pratik, Vishwanath)',
     framing: 'You are closest to the schools. Your work moves MOUs from signed to actuals confirmed and starts the kit-dispatch flow with multi-SKU requests.',
     workstream: 'Track pre-MOU pursuits at /sales-pipeline (W4-F minimal container; status / recce / approval are free-text pending the round-2 interview that formalises the workflow). Confirm the actual student count once a programme starts. Submit DispatchRequests at /dispatch/request when the school needs kits (Ops reviews and approves). When stock is short for any SKU on a request you submit, the form surfaces a yellow V9 warning ("stock-availability-warning"); the request is non-blocking, Ops confirms at conversion. Resolve sales-lane escalations. Spot-check school records when you visit. Compose reminders for your own MOUs at /admin/reminders when intake / payment / delivery / feedback chases are needed. On the per-MOU dispatch page you can download the handover worksheet (school-side printable) and the dispatch note (GSL-internal) for any raised dispatch on your MOUs.',
-    whereTime: 'The kanban’s actuals-confirmed column (the queue waiting for you), /sales-pipeline for pre-MOU schools, /dispatch/request to start a kit shipment, the SALES-lane filter on /escalations, and the bell in the top-right showing notifications about your DR submissions and reminder chases on your MOUs.',
+    whereTime: 'The MOU Pipeline’s actuals-confirmed column (the queue waiting for you), /sales-pipeline for pre-MOU schools, /dispatch/request to start a kit shipment, the SALES-lane filter on /escalations, and the bell in the top-right showing notifications about your DR submissions and reminder chases on your MOUs.',
   },
   {
     role: 'Ops core team (Pradeep, Misba, Swati, Shashank)',
-    framing: 'You are the operational backbone. The kanban is your command centre; drive every transition forward.',
+    framing: 'You are the operational backbone. The MOU Pipeline is your command centre; drive every transition forward.',
     workstream: 'Review and convert Sales DispatchRequests at /admin/dispatch-requests, raise direct dispatches when Sales has not requested, send feedback requests, record delivery acknowledgements (renamed Confirm delivery in W4-D.6), compose reminders for stalled entities at /admin/reminders, manage CC rules and lifecycle rules, resolve OPS-lane escalations, triage MOU import review queue. Manage per-SKU stock and reorder thresholds at /admin/inventory; the system auto-decrements stock at every dispatch raise / approval, and broadcasts an inventory-low-stock notification to Admin + OpsHead the moment a SKU crosses its threshold downward. Print the kits handover worksheet from /mous/[id]/dispatch before any on-site visit; re-download the dispatch note from the same per-row affordance when a paper copy is lost. You can do everything an Admin can do.',
-    whereTime: 'The full kanban (every column, every drag), /admin surfaces, /admin/dispatch-requests for the Sales-side review queue, /admin/reminders for the chase queue, /admin/audit for the system view of who-did-what. The bell broadcasts new DRs, intake completions, payment receipts, and assignment-queue events.',
+    whereTime: 'The full MOU Pipeline (every column, every drag), /admin surfaces, /admin/dispatch-requests for the Sales-side review queue, /admin/reminders for the chase queue, /admin/audit for the system view of who-did-what. The bell broadcasts new DRs, intake completions, payment receipts, and assignment-queue events.',
   },
   {
     role: 'Finance (Shubhangi, Pranav)',
-    framing: 'You unblock the kanban at one specific point: turning Actuals confirmed into Invoice raised.',
+    framing: 'You unblock the MOU Pipeline at one specific point: turning Actuals confirmed into Invoice raised.',
     workstream: 'Generate Proforma Invoices once actuals are confirmed and the school has a GSTIN. Reconcile incoming payments. Acknowledge any pre-payment dispatch overrides Leadership authorised.',
-    whereTime: 'MOU detail pages with a Generate PI button (cards in the actuals-confirmed column on the kanban) and the invoice-raised column waiting on payment. The bell broadcasts every payment-recorded event so you see the queue update in real time on next page navigation.',
+    whereTime: 'MOU detail pages with a Generate PI button (cards in the actuals-confirmed column on the MOU Pipeline) and the invoice-raised column waiting on payment. The bell broadcasts every payment-recorded event so you see the queue update in real time on next page navigation.',
   },
   {
     role: 'Leadership (Ameet)',
@@ -97,7 +97,7 @@ export const HELP_ROLES: RoleOrientation[] = [
 // ----------------------------------------------------------------------------
 
 export const HELP_LIFECYCLE_INTRO =
-  'Every MOU passes through 9 stages, displayed as columns on the kanban homepage. Cards drag forward as work happens; cards sit in place when blocked. Pre-Ops Legacy (the muted column on the left) is a holding bay for MOUs imported in Pending Signature status; cards leave it but never return.'
+  'Every MOU passes through 9 stages, displayed as columns on the MOU Pipeline (/kanban). Cards drag forward as work happens; cards sit in place when blocked. Pre-Ops Legacy (the muted column on the left) is a holding bay for MOUs imported in Pending Signature status; cards leave it but never return.'
 
 export const HELP_LIFECYCLE_STAGES: LifecycleStageEntry[] = [
   {
@@ -201,7 +201,7 @@ export const HELP_GLOSSARY: GlossaryItem[] = [
   },
   {
     term: 'Cross-verification',
-    definition: 'Lifecycle stage 3, auto-skipped in Phase 1. The kanban shows it as a column for completeness; cards advance through it without any tester action.',
+    definition: 'Lifecycle stage 3, auto-skipped in Phase 1. The MOU Pipeline shows it as a column for completeness; cards advance through it without any tester action.',
   },
   {
     term: 'CC rule',
@@ -209,7 +209,7 @@ export const HELP_GLOSSARY: GlossaryItem[] = [
   },
   {
     term: 'Days in stage',
-    definition: 'The number of whole days a MOU has been at its current kanban stage. The kanban shows this as part of the Overdue badge when the count exceeds the lifecycle rule’s default days.',
+    definition: 'The number of whole days a MOU has been at its current pipeline stage. The MOU Pipeline shows this as part of the Overdue badge when the count exceeds the lifecycle rule’s default days.',
   },
   {
     term: 'Defense in depth',
@@ -245,7 +245,7 @@ export const HELP_GLOSSARY: GlossaryItem[] = [
   },
   {
     term: 'Drift',
-    definition: 'When confirmed actuals differ from the MOU’s contracted count by more than 10%. The kanban surfaces a Drift badge on the MOU card; Sales Head reviews drift cases.',
+    definition: 'When confirmed actuals differ from the MOU’s contracted count by more than 10%. The MOU Pipeline surfaces a Drift badge on the MOU card; Sales Head reviews drift cases.',
   },
   {
     term: 'Escalation',
@@ -284,8 +284,8 @@ export const HELP_GLOSSARY: GlossaryItem[] = [
     definition: 'Per-SKU stock record at /admin/inventory. Carries currentStock (integer), reorderThreshold (integer or null = no alert), notes, active flag (false = sunset). Stock decrements automatically on every Dispatch raise / approval. Manual edits at /admin/inventory/[id] are audited as inventory-stock-edited or inventory-threshold-edited (W4-G.5).',
   },
   {
-    term: 'Kanban',
-    definition: 'The homepage at /. Shows every MOU as a card sorted into 9 columns (8 lifecycle stages plus Pre-Ops Legacy). Drag a card to the next column to advance the lifecycle. Each forward-by-one drag opens the existing per-stage form; skip and reverse drags require a reason logged in the audit.',
+    term: 'MOU Pipeline',
+    definition: 'The MOU Pipeline at /kanban (also called the Kanban; an internal term still used in dev docs and the URL). Shows every MOU as a card sorted into 9 columns (8 lifecycle stages plus Pre-Ops Legacy). Drag a card to the next column to advance the lifecycle. Each forward-by-one drag opens the existing per-stage form; skip and reverse drags require a reason logged in the audit.',
   },
   {
     term: 'Kit',
@@ -305,7 +305,7 @@ export const HELP_GLOSSARY: GlossaryItem[] = [
   },
   {
     term: 'Overdue badge',
-    definition: 'The signal-attention badge on a MOU card when the days-in-stage count exceeds the lifecycle rule’s default days for that stage. Shown as "Overdue Nd" on the kanban.',
+    definition: 'The signal-attention badge on a MOU card when the days-in-stage count exceeds the lifecycle rule’s default days for that stage. Shown as "Overdue Nd" on the MOU Pipeline.',
   },
   {
     term: 'P2 override',
@@ -325,11 +325,11 @@ export const HELP_GLOSSARY: GlossaryItem[] = [
   },
   {
     term: 'Pre-Ops Legacy',
-    definition: 'The leftmost (muted) kanban column. Holds MOUs imported from gsl-mou-system in Pending Signature status. Cards leave Pre-Ops once we have evidence the MOU was signed; they never come back. Drag-into Pre-Ops is rejected with a toast.',
+    definition: 'The leftmost (muted) MOU Pipeline column. Holds MOUs imported from gsl-mou-system in Pending Signature status. Cards leave Pre-Ops once we have evidence the MOU was signed; they never come back. Drag-into Pre-Ops is rejected with a toast.',
   },
   {
     term: 'Programme',
-    definition: 'The product GSL is delivering to a school: STEAM, Young Pioneers, Harvard HBPE, TinkRworks, or VEX. Some programmes have a sub-type (e.g., GSLT-Cretile under STEAM); the kanban card shows both as "Programme / Sub-type".',
+    definition: 'The product GSL is delivering to a school: STEAM, Young Pioneers, Harvard HBPE, TinkRworks, or VEX. Some programmes have a sub-type (e.g., GSLT-Cretile under STEAM); the MOU Pipeline card shows both as "Programme / Sub-type".',
   },
   {
     term: 'Quarantined MOU',
@@ -377,7 +377,7 @@ export const HELP_GLOSSARY: GlossaryItem[] = [
   },
   {
     term: 'Stage transition',
-    definition: 'Moving an MOU card from one column to another on the kanban. Forward-by-1 (happy path, no reason): opens the per-stage form. Skip / Backward / Pre-Ops exit: requires a reason logged in the audit.',
+    definition: 'Moving an MOU card from one column to another on the MOU Pipeline. Forward-by-1 (happy path, no reason): opens the per-stage form. Skip / Backward / Pre-Ops exit: requires a reason logged in the audit.',
   },
   {
     term: 'Stock decrement',
@@ -397,7 +397,7 @@ export const HELP_GLOSSARY: GlossaryItem[] = [
   },
   {
     term: 'Variance / Variance pct',
-    definition: 'studentsActual minus studentsMou (variance) and the same as a percentage (variancePct). If variancePct is more than 10% in either direction, the kanban shows a Drift badge and Sales Head reviews.',
+    definition: 'studentsActual minus studentsMou (variance) and the same as a percentage (variancePct). If variancePct is more than 10% in either direction, the MOU Pipeline shows a Drift badge and Sales Head reviews.',
   },
 ]
 
@@ -411,23 +411,23 @@ export const HELP_WORKFLOWS: WorkflowItem[] = [
     steps: [
       'Go to https://ops.getsetlearn.info (or the URL in the launch email).',
       'Username is your firstname.lastinitial; initial password is in the email.',
-      'You land on the kanban homepage (/). Browse the columns; click a card to see detail.',
+      'You land on the dashboard homepage (/). Click MOU Pipeline in the top nav to browse the columns; click a card to see detail.',
       'Rotate your password within 7 days of first login. Phase 1 has no self-serve reset; ping Anish on Teams when you need a change.',
     ],
   },
   {
     task: 'Finding a specific MOU',
     steps: [
-      'Quickest: type part of the school name into your browser’s find-on-page (Ctrl-F or Cmd-F) on the kanban.',
+      'Quickest: type part of the school name into your browser’s find-on-page (Ctrl-F or Cmd-F) on the MOU Pipeline.',
       'For a structured search: click MOUs in the TopNav, search by school name, or filter by status / programme / region.',
-      'Drilling into a stage: click the column header on the kanban (e.g., "Invoice raised") to see every MOU at that stage as a list.',
+      'Drilling into a stage: click the column header on the MOU Pipeline (e.g., "Invoice raised") to see every MOU at that stage as a list.',
     ],
   },
   {
     task: 'Confirming actuals on a MOU',
     precondition: 'You are Sales rep, Sales Head, or Admin.',
     steps: [
-      'Find the MOU on the kanban (it will be in the actuals-confirmed column awaiting your action).',
+      'Find the MOU on the MOU Pipeline (it will be in the actuals-confirmed column awaiting your action).',
       'Click into the MOU. Click Confirm actuals on the detail page.',
       'Enter the actual student count (must be a whole number between 1 and 20,000).',
       'Optional: add notes explaining any difference from the contracted count.',
@@ -448,7 +448,7 @@ export const HELP_WORKFLOWS: WorkflowItem[] = [
     task: 'Raising a dispatch (Ops)',
     precondition: 'Payment received OR Leadership has authorised a P2 override.',
     steps: [
-      'Find the MOU on the kanban. Click into it.',
+      'Find the MOU on the MOU Pipeline. Click into it.',
       'Click Raise dispatch on the detail page. /mous/[id]/dispatch is workflow-state-aware: if Sales has submitted a pending DispatchRequest for this MOU + installment, the page surfaces it at the top with a link to /admin/dispatch-requests/[id] for review. Convert the request rather than raising a duplicate.',
       'For the standard programme kit set without a pending request, fill the installment dropdown and submit. A dispatch note .docx downloads. Stage advances to po-raised.',
       'For multi-SKU or per-grade dispatches, send Sales to /dispatch/request first; Ops reviews and converts.',
@@ -483,7 +483,7 @@ export const HELP_WORKFLOWS: WorkflowItem[] = [
   {
     task: 'Workflow-aware /mous/[id]/dispatch (Specific C path a)',
     steps: [
-      'When you drag a card from payment-received to kit-dispatched on the kanban, the system routes you to /mous/[id]/dispatch.',
+      'When you drag a card from payment-received to kit-dispatched on the MOU Pipeline, the system routes you to /mous/[id]/dispatch.',
       'If a pending DispatchRequest exists for this MOU + installment, the page shows a "Pending dispatch requests" alert at the top with a link to the admin detail page. Convert the request there rather than raising direct (avoids duplicate Dispatches).',
       'If no pending request exists, the direct-raise form is the path. Pick installment, submit, dispatch note .docx downloads.',
       'Existing dispatches list shows a raisedFrom badge: pre-w4d (synthetic seed migrations), ops-direct (direct raise), sales-request (converted from a DispatchRequest).',
@@ -492,7 +492,7 @@ export const HELP_WORKFLOWS: WorkflowItem[] = [
   {
     task: 'Sending a feedback request',
     steps: [
-      'Find the MOU on the kanban (delivery-acknowledged column or later).',
+      'Find the MOU on the MOU Pipeline (delivery-acknowledged column or later).',
       'Click into it. Click Compose feedback request.',
       'Pick the instalment whose feedback you are collecting.',
       'Click Compose. The system generates an email + a WhatsApp message with a magic link.',
@@ -503,7 +503,7 @@ export const HELP_WORKFLOWS: WorkflowItem[] = [
   {
     task: 'Recording a signed delivery acknowledgement',
     steps: [
-      'Find the MOU on the kanban. Click Delivery ack on the detail page.',
+      'Find the MOU on the MOU Pipeline. Click Delivery ack on the detail page.',
       'Click Print blank handover form. A .docx downloads. Print it.',
       'Take the printed form to the school. Get it stamped and signed by the responsible person.',
       'Scan or photograph the signed form. Upload to GSL Drive (or wherever your team stores signed paperwork).',
@@ -563,16 +563,16 @@ export const HELP_WORKFLOWS: WorkflowItem[] = [
     ],
   },
   {
-    task: 'Moving a kanban card forward (forward-by-1)',
+    task: 'Moving a MOU Pipeline card forward (forward-by-1)',
     steps: [
-      'Drag the card from its current column to the next column on the kanban.',
+      'Drag the card from its current column to the next column on the MOU Pipeline.',
       'A confirmation dialog appears. Click Continue to form.',
       'You land on the per-stage form (Confirm actuals / Generate PI / Raise dispatch / etc.). Complete the form normally.',
-      'On return to /, the card has advanced to the new column.',
+      'On return to /kanban, the card has advanced to the new column.',
     ],
   },
   {
-    task: 'Moving a kanban card forward by more than one stage (skip)',
+    task: 'Moving a MOU Pipeline card forward by more than one stage (skip)',
     steps: [
       'Drag the card past one or more intermediate columns to a stage further forward.',
       'A warning dialog appears listing the intermediate stages you are skipping.',
@@ -581,7 +581,7 @@ export const HELP_WORKFLOWS: WorkflowItem[] = [
     ],
   },
   {
-    task: 'Moving a kanban card backward',
+    task: 'Moving a MOU Pipeline card backward',
     steps: [
       'Drag the card from its current column to a stage further left.',
       'A warning dialog appears. Backward moves do not auto-revert lifecycle data.',
@@ -759,8 +759,8 @@ export const HELP_CHANGEABLE: ChangeableItem[] = [
 export const HELP_CHANGE_SEMANTICS = [
   'Every write goes through the pending updates queue. The sync runner applies queued writes to the canonical fixture files (mous.json, schools.json, etc.) on its next tick. Most changes are visible within a minute; if you do not see your change after that, click Run health check on /admin to confirm the queue is processing.',
   'Every write is recorded in the audit log on the affected entity. The log carries timestamp, user id, action, and (where applicable) before / after values plus notes. Audit entries are append-only; there is no edit / delete on the log itself.',
-  'Visibility: most surfaces show the latest state immediately. The kanban is a Server Component that re-reads on every navigation, so dragging a card to a new column and returning to / shows the new state. The /admin/audit page filters across every entity’s log.',
-  'Undo: there is no system-level undo. To revert a change, edit the entity again; the new edit lands in the audit log alongside the original. Backward kanban drags record intent in the audit but do not auto-revert state; you do that with a follow-up edit.',
+  'Visibility: most surfaces show the latest state immediately. The MOU Pipeline is a Server Component that re-reads on every navigation, so dragging a card to a new column and returning to /kanban shows the new state. The /admin/audit page filters across every entity’s log.',
+  'Undo: there is no system-level undo. To revert a change, edit the entity again; the new edit lands in the audit log alongside the original. Backward MOU Pipeline drags record intent in the audit but do not auto-revert state; you do that with a follow-up edit.',
 ]
 
 // ----------------------------------------------------------------------------
