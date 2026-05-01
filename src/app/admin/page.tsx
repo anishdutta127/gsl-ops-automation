@@ -70,6 +70,12 @@ const ADMIN_LINKS: AdminLink[] = [
     status: 'real',
   },
   {
+    href: '/admin/templates',
+    label: 'Communication templates',
+    description: 'Reusable email templates for welcome / thank-you / payment-reminder / dispatch-confirmation flows; variable substitution via {{placeholders}}.',
+    status: 'real',
+  },
+  {
     href: '/admin/mou-import-review',
     label: 'MOU import review',
     description: 'Quarantined MOUs awaiting human resolution.',
