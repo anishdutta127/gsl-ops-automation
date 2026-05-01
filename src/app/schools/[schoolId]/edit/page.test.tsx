@@ -29,12 +29,14 @@ function makeUser(role: User['role']): User {
   }
 }
 
+const noSp = Promise.resolve({})
+
 describe('/schools/[schoolId]/edit page', () => {
-  it('renders form for Admin', { timeout: 15000 }, async () => {
+  it('renders form for Admin (with GSTIN field)', { timeout: 15000 }, async () => {
     getCurrentUserMock.mockResolvedValue(makeUser('Admin'))
     const { default: Page } = await import('./page')
     const html = renderToStaticMarkup(
-      await Page({ params: Promise.resolve({ schoolId: 'SCH-MUTAHHARY_PUBLIC_SCH' }) }),
+      await Page({ params: Promise.resolve({ schoolId: 'SCH-MUTAHHARY_PUBLIC_SCH' }), searchParams: noSp }),
     )
     expect(html).toContain('<form')
     expect(html).toContain('name="name"')
@@ -44,16 +46,37 @@ describe('/schools/[schoolId]/edit page', () => {
     expect(html).toContain('Cancel')
   })
 
-  it('renders form for OpsHead', async () => {
+  it('renders form for Finance (with GSTIN field)', async () => {
+    getCurrentUserMock.mockResolvedValue(makeUser('Finance'))
+    const { default: Page } = await import('./page')
+    const html = renderToStaticMarkup(
+      await Page({ params: Promise.resolve({ schoolId: 'SCH-MUTAHHARY_PUBLIC_SCH' }), searchParams: noSp }),
+    )
+    expect(html).toContain('<form')
+    expect(html).toContain('name="gstNumber"')
+  })
+
+  it('W4-I.4 MM4: OpsHead renders form WITHOUT the GSTIN field', async () => {
     getCurrentUserMock.mockResolvedValue(makeUser('OpsHead'))
     const { default: Page } = await import('./page')
     const html = renderToStaticMarkup(
-      await Page({ params: Promise.resolve({ schoolId: 'SCH-MUTAHHARY_PUBLIC_SCH' }) }),
+      await Page({ params: Promise.resolve({ schoolId: 'SCH-MUTAHHARY_PUBLIC_SCH' }), searchParams: noSp }),
     )
     expect(html).toContain('<form')
+    expect(html).not.toContain('name="gstNumber"')
   })
 
-  it('renders form for OpsEmployee+OpsHead testingOverride (Misba)', async () => {
+  it('W4-I.4 MM4: SalesRep renders form WITHOUT the GSTIN field', async () => {
+    getCurrentUserMock.mockResolvedValue(makeUser('SalesRep'))
+    const { default: Page } = await import('./page')
+    const html = renderToStaticMarkup(
+      await Page({ params: Promise.resolve({ schoolId: 'SCH-MUTAHHARY_PUBLIC_SCH' }), searchParams: noSp }),
+    )
+    expect(html).toContain('<form')
+    expect(html).not.toContain('name="gstNumber"')
+  })
+
+  it('W4-I.4 MM4: Misba (OpsEmployee + OpsHead override) renders form WITHOUT the GSTIN field', async () => {
     const misba: User = {
       id: 'misba.m', name: 'Misba', email: 'm@example.test', role: 'OpsEmployee',
       testingOverride: true, testingOverridePermissions: ['OpsHead'],
@@ -62,34 +85,40 @@ describe('/schools/[schoolId]/edit page', () => {
     getCurrentUserMock.mockResolvedValue(misba)
     const { default: Page } = await import('./page')
     const html = renderToStaticMarkup(
-      await Page({ params: Promise.resolve({ schoolId: 'SCH-MUTAHHARY_PUBLIC_SCH' }) }),
+      await Page({ params: Promise.resolve({ schoolId: 'SCH-MUTAHHARY_PUBLIC_SCH' }), searchParams: noSp }),
     )
     expect(html).toContain('<form')
+    expect(html).not.toContain('name="gstNumber"')
   })
 
-  it('SalesRep also sees the form (Phase 1 W3-B: UI gates disabled)', async () => {
-    getCurrentUserMock.mockResolvedValue(makeUser('SalesRep'))
+  it('W4-I.4 MM4: stale Phase 1 stub note no longer renders', async () => {
+    getCurrentUserMock.mockResolvedValue(makeUser('Admin'))
     const { default: Page } = await import('./page')
     const html = renderToStaticMarkup(
-      await Page({ params: Promise.resolve({ schoolId: 'SCH-MUTAHHARY_PUBLIC_SCH' }) }),
+      await Page({ params: Promise.resolve({ schoolId: 'SCH-MUTAHHARY_PUBLIC_SCH' }), searchParams: noSp }),
     )
-    expect(html).toContain('<form')
+    expect(html).not.toContain('Phase 1 note')
+    expect(html).not.toContain('501 stub')
   })
 
-  it('Finance also sees the form (Phase 1 W3-B: UI gates disabled)', async () => {
-    getCurrentUserMock.mockResolvedValue(makeUser('Finance'))
+  it('W4-I.4 MM4: ?error= renders the error banner', async () => {
+    getCurrentUserMock.mockResolvedValue(makeUser('Admin'))
     const { default: Page } = await import('./page')
     const html = renderToStaticMarkup(
-      await Page({ params: Promise.resolve({ schoolId: 'SCH-MUTAHHARY_PUBLIC_SCH' }) }),
+      await Page({
+        params: Promise.resolve({ schoolId: 'SCH-MUTAHHARY_PUBLIC_SCH' }),
+        searchParams: Promise.resolve({ error: 'invalid-gst' }),
+      }),
     )
-    expect(html).toContain('<form')
+    expect(html).toMatch(/role="alert"/)
+    expect(html).toContain('GSTIN')
   })
 
   it('contains no raw hex codes (token discipline)', async () => {
     getCurrentUserMock.mockResolvedValue(makeUser('Admin'))
     const { default: Page } = await import('./page')
     const html = renderToStaticMarkup(
-      await Page({ params: Promise.resolve({ schoolId: 'SCH-MUTAHHARY_PUBLIC_SCH' }) }),
+      await Page({ params: Promise.resolve({ schoolId: 'SCH-MUTAHHARY_PUBLIC_SCH' }), searchParams: noSp }),
     )
     expect(html).not.toMatch(/#[0-9a-fA-F]{3,6}/)
   })

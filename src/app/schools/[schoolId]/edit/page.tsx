@@ -6,14 +6,15 @@
  * in C5b to keep FormCard a clean primitive for the simpler admin-
  * create surfaces.
  *
- * Per-role: OpsHead and Admin per 'school:edit' (advisory only post
- * Week 3 W3-B). Page-level UI gate removed; the form renders for any
- * authenticated user. Server-side enforcement at submit time is the
- * /api/schools/[id] route's responsibility (Phase 1.1 stub).
+ * Per-role: OpsHead and Admin per 'school:edit'. Form renders for any
+ * authenticated user (W3-B baseline); the server route + lib reject
+ * unauthorised callers with reason='permission'.
  *
- * The form posts to /api/schools/[id] (placeholder route; not in C3
- * scope). For Phase 1 testers, the form renders and submits will
- * 501 until the route handler lands. Inline note documents this.
+ * W4-I.4 MM4: the form posts to /api/schools/[id] (now wired). Misba's
+ * earlier feedback that "save returns 404" was the missing route; that
+ * handler now exists. The GSTIN field is hidden for non-Finance/non-
+ * Admin users because Ops/Implementation does not require GSTIN per
+ * Misba's note.
  */
 
 import { notFound, redirect } from 'next/navigation'
@@ -27,6 +28,7 @@ const allSchools = schoolsJson as unknown as School[]
 
 interface PageProps {
   params: Promise<{ schoolId: string }>
+  searchParams: Promise<Record<string, string | string[] | undefined>>
 }
 
 const REGIONS = ['East', 'North', 'South-West'] as const
@@ -35,12 +37,35 @@ const FIELD_INPUT_CLASS =
   'block w-full rounded-md border border-input bg-card px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-brand-navy'
 const FIELD_LABEL_CLASS = 'block text-sm font-medium text-brand-navy mb-1'
 
-export default async function SchoolEditPage({ params }: PageProps) {
+const ERROR_MESSAGES: Record<string, string> = {
+  permission: 'You do not have permission to edit this school.',
+  'unknown-user': 'Session user not found. Please log in again.',
+  'school-not-found': 'School not found.',
+  'missing-name': 'Name is required.',
+  'missing-city': 'City is required.',
+  'missing-state': 'State is required.',
+  'missing-region': 'Region is required.',
+  'invalid-pin': 'PIN code must be 6 digits.',
+  'invalid-email': 'Email is not a valid address.',
+  'invalid-pan': 'PAN must match the AAAAA9999A pattern.',
+  'invalid-gst': 'GSTIN must be 15 characters in the standard pattern.',
+  'no-changes': 'No changes were made.',
+}
+
+export default async function SchoolEditPage({ params, searchParams }: PageProps) {
   const { schoolId } = await params
+  const sp = await searchParams
   const user = await getCurrentUser()
   if (!user) redirect(`/login?next=%2Fschools%2F${encodeURIComponent(schoolId)}%2Fedit`)
   const school = allSchools.find((s) => s.id === schoolId)
   if (!school) notFound()
+  // W4-I.4 MM4: GSTIN visibility mirrors the editSchool lib's
+  // canEditGstin() rule (Finance + Admin only). The lib drops the
+  // field server-side when caller lacks the role; hiding the input
+  // here keeps the UI consistent with that rule.
+  const canSeeGstin = user.role === 'Admin' || user.role === 'Finance'
+  const errorKey = typeof sp.error === 'string' ? sp.error : null
+  const errorMessage = errorKey ? ERROR_MESSAGES[errorKey] ?? `Failed: ${errorKey}` : null
 
   return (
     <>
@@ -54,9 +79,11 @@ export default async function SchoolEditPage({ params }: PageProps) {
         ]}
       />
       <div className="mx-auto max-w-2xl px-4 py-6">
-          <p className="mb-4 rounded-md border border-signal-attention bg-card px-3 py-2 text-xs text-foreground">
-            Phase 1 note: form rendering only. The submit endpoint is a 501 stub until the route handler lands in a later phase.
-          </p>
+          {errorMessage ? (
+            <div role="alert" className="mb-4 rounded-md border border-signal-alert bg-signal-alert/10 px-3 py-2 text-sm text-signal-alert">
+              {errorMessage}
+            </div>
+          ) : null}
           <form action={`/api/schools/${school.id}`} method="POST" className="space-y-4 rounded-lg border border-border bg-card p-4 sm:p-6">
 
             <div>
@@ -120,10 +147,12 @@ export default async function SchoolEditPage({ params }: PageProps) {
                 <label htmlFor="pan" className={FIELD_LABEL_CLASS}>PAN</label>
                 <input id="pan" name="pan" type="text" defaultValue={school.pan ?? ''} className={FIELD_INPUT_CLASS} />
               </div>
-              <div>
-                <label htmlFor="gstNumber" className={FIELD_LABEL_CLASS}>GSTIN</label>
-                <input id="gstNumber" name="gstNumber" type="text" defaultValue={school.gstNumber ?? ''} className={FIELD_INPUT_CLASS} />
-              </div>
+              {canSeeGstin ? (
+                <div>
+                  <label htmlFor="gstNumber" className={FIELD_LABEL_CLASS}>GSTIN</label>
+                  <input id="gstNumber" name="gstNumber" type="text" defaultValue={school.gstNumber ?? ''} className={FIELD_INPUT_CLASS} />
+                </div>
+              ) : null}
             </div>
 
             <div>
