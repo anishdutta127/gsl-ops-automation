@@ -12,6 +12,8 @@
 import { redirect } from 'next/navigation'
 import { getCurrentUser } from '@/lib/auth/session'
 import { FormCard, type FormCardField } from '@/components/ops/FormCard'
+import { TopNav } from '@/components/ops/TopNav'
+import { PageHeader } from '@/components/ops/PageHeader'
 
 const ERROR_MESSAGES: Record<string, string> = {
   permission: 'You do not have permission to create sales reps.',
@@ -72,20 +74,29 @@ export default async function NewSalesPersonPage({
   ]
 
   return (
-    <div className="p-6 max-w-3xl">
-      <h1 className="text-2xl font-bold text-[var(--brand-navy)]">New sales rep</h1>
-      <p className="mt-1 text-sm text-slate-700">
-        Self-serve per Item 8. Admin or OpsHead.
-      </p>
-      <div className="mt-6">
-        <FormCard
-          action="/api/admin/sales-team/create"
-          submitLabel="Create rep"
-          fields={fields}
-          cancelHref="/admin/sales-team"
-          errorMessage={errorMessage}
+    <>
+      <TopNav currentPath="/admin" />
+      <main id="main-content">
+        <PageHeader
+          title="New sales rep"
+          subtitle="Self-serve per Item 8. Admin or OpsHead."
+          breadcrumb={[
+            { label: 'Dashboard', href: '/' },
+            { label: 'Admin', href: '/admin' },
+            { label: 'Sales team', href: '/admin/sales-team' },
+            { label: 'New' },
+          ]}
         />
-      </div>
-    </div>
+        <div className="mx-auto max-w-screen-md px-4 py-6">
+          <FormCard
+            action="/api/admin/sales-team/create"
+            submitLabel="Create rep"
+            fields={fields}
+            cancelHref="/admin/sales-team"
+            errorMessage={errorMessage}
+          />
+        </div>
+      </main>
+    </>
   )
 }

@@ -20,6 +20,8 @@ import piCounterJson from '@/data/pi_counter.json'
 import communicationsJson from '@/data/communications.json'
 import { getCurrentUser } from '@/lib/auth/session'
 import { checkMonotonicity } from '@/lib/piCounter/monotonicity'
+import { TopNav } from '@/components/ops/TopNav'
+import { PageHeader } from '@/components/ops/PageHeader'
 
 const counter = piCounterJson as PiCounter
 const communications = communicationsJson as unknown as Communication[]
@@ -42,13 +44,21 @@ export default async function PiCounterPage() {
   const nextPiNumber = `${counter.prefix}/${counter.fiscalYear}/${String(counter.next).padStart(4, '0')}`
 
   return (
-    <div className="p-6 max-w-3xl">
-      <h1 className="text-2xl font-bold text-[var(--brand-navy)]">PI counter</h1>
-      <p className="mt-1 text-sm text-slate-700">
-        Read-only health view for the proforma-invoice counter.
-      </p>
+    <>
+      <TopNav currentPath="/admin" />
+      <main id="main-content">
+        <PageHeader
+          title="PI counter"
+          subtitle="Read-only health view for the proforma-invoice counter."
+          breadcrumb={[
+            { label: 'Dashboard', href: '/' },
+            { label: 'Admin', href: '/admin' },
+            { label: 'PI counter' },
+          ]}
+        />
+        <div className="mx-auto max-w-screen-md space-y-6 px-4 py-6">
 
-      <section className="mt-6 grid gap-4 sm:grid-cols-2">
+      <section className="grid gap-4 sm:grid-cols-2">
         <div className="rounded-md border border-slate-200 bg-white p-4">
           <p className="text-xs uppercase tracking-wide text-slate-500">
             Next PI number
@@ -101,8 +111,8 @@ export default async function PiCounterPage() {
         </div>
       </section>
 
-      <section className="mt-6">
-        <h2 className="text-lg font-semibold text-[var(--brand-navy)]">
+      <section>
+        <h2 className="text-lg font-semibold text-brand-navy">
           Last-issued PI
         </h2>
         {lastIssued ? (
@@ -116,11 +126,13 @@ export default async function PiCounterPage() {
             </p>
           </div>
         ) : (
-          <p className="mt-2 rounded-md border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
+          <p className="mt-2 rounded-md border border-border bg-muted/30 p-4 text-sm text-muted-foreground">
             No PIs issued yet.
           </p>
         )}
       </section>
-    </div>
+        </div>
+      </main>
+    </>
   )
 }

@@ -11,6 +11,8 @@ vi.mock('next/navigation', () => ({
   redirect: vi.fn((url: string) => { throw new Error(`REDIRECT:${url}`) }),
 }))
 
+vi.mock('@/components/ops/TopNav', () => ({ TopNav: () => null }))
+
 beforeEach(() => {
   vi.clearAllMocks()
 })

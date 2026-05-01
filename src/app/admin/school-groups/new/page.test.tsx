@@ -29,6 +29,8 @@ vi.mock('@/data/schools.json', () => ({
   ],
 }))
 
+vi.mock('@/components/ops/TopNav', () => ({ TopNav: () => null }))
+
 beforeEach(() => {
   vi.clearAllMocks()
   cookiesMock.mockResolvedValue({ get: () => ({ value: 'mock-jwt' }) })

@@ -15,12 +15,13 @@
  */
 
 import { notFound, redirect } from 'next/navigation'
-import Link from 'next/link'
 import type { School, SchoolGroup } from '@/lib/types'
 import schoolGroupsJson from '@/data/school_groups.json'
 import schoolsJson from '@/data/schools.json'
 import { getCurrentUser } from '@/lib/auth/session'
 import { FormCard, type FormCardField } from '@/components/ops/FormCard'
+import { TopNav } from '@/components/ops/TopNav'
+import { PageHeader } from '@/components/ops/PageHeader'
 
 const groups = schoolGroupsJson as unknown as SchoolGroup[]
 const schools = schoolsJson as unknown as School[]
@@ -69,53 +70,54 @@ export default async function SchoolGroupEditPage({
     },
   ]
 
+  const subtitle = `${group.id} · Region ${group.region} · ${group.memberSchoolIds.length} current members${group.groupMouId ? ` · MOU ${group.groupMouId}` : ''}.`
+
   return (
-    <div className="p-6 max-w-3xl">
-      <p className="mb-2 text-xs">
-        <Link
-          href="/admin/school-groups"
-          className="text-[var(--brand-navy)] underline-offset-2 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand-navy)]"
-        >
-          Back to school groups
-        </Link>
-      </p>
-      <h1 className="text-2xl font-bold text-[var(--brand-navy)]">{group.name}</h1>
-      <p className="mt-1 text-sm text-slate-700">
-        {group.id} · Region {group.region} · {group.memberSchoolIds.length} current members
-        {group.groupMouId ? ` · MOU ${group.groupMouId}` : ''}.
-      </p>
-
-      <div className="mt-6">
-        <FormCard
-          action={`/api/admin/school-groups/${encodeURIComponent(group.id)}/edit-members`}
-          submitLabel="Save members"
-          fields={fields}
-          cancelHref="/admin/school-groups"
-          errorMessage={errorMessage}
+    <>
+      <TopNav currentPath="/admin" />
+      <main id="main-content">
+        <PageHeader
+          title={group.name}
+          subtitle={subtitle}
+          breadcrumb={[
+            { label: 'Dashboard', href: '/' },
+            { label: 'Admin', href: '/admin' },
+            { label: 'School groups', href: '/admin/school-groups' },
+            { label: group.name },
+          ]}
         />
-      </div>
+        <div className="mx-auto max-w-screen-md px-4 py-6">
+          <FormCard
+            action={`/api/admin/school-groups/${encodeURIComponent(group.id)}/edit-members`}
+            submitLabel="Save members"
+            fields={fields}
+            cancelHref="/admin/school-groups"
+            errorMessage={errorMessage}
+          />
 
-      <section className="mt-10">
-        <h2 className="text-lg font-semibold text-[var(--brand-navy)]">Audit history</h2>
-        {group.auditLog.length === 0 ? (
-          <p className="mt-2 text-sm text-slate-600">No audit entries yet.</p>
-        ) : (
-          <ul className="mt-2 divide-y divide-slate-200 rounded-md border border-slate-200 bg-white">
-            {group.auditLog.map((entry, idx) => (
-              <li key={`${entry.timestamp}-${idx}`} className="px-3 py-2 text-xs">
-                <div className="flex items-baseline justify-between gap-2">
-                  <span className="font-medium text-[var(--brand-navy)]">{entry.action}</span>
-                  <span className="text-slate-500">{entry.timestamp}</span>
-                </div>
-                <div className="mt-0.5 text-slate-700">
-                  by {entry.user}
-                  {entry.notes ? `: ${entry.notes}` : ''}
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
-    </div>
+          <section className="mt-10">
+            <h2 className="text-lg font-semibold text-brand-navy">Audit history</h2>
+            {group.auditLog.length === 0 ? (
+              <p className="mt-2 text-sm text-muted-foreground">No audit entries yet.</p>
+            ) : (
+              <ul className="mt-2 divide-y divide-border rounded-md border border-border bg-card">
+                {group.auditLog.map((entry, idx) => (
+                  <li key={`${entry.timestamp}-${idx}`} className="px-3 py-2 text-xs">
+                    <div className="flex items-baseline justify-between gap-2">
+                      <span className="font-medium text-brand-navy">{entry.action}</span>
+                      <span className="text-muted-foreground">{entry.timestamp}</span>
+                    </div>
+                    <div className="mt-0.5 text-foreground">
+                      by {entry.user}
+                      {entry.notes ? `: ${entry.notes}` : ''}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+        </div>
+      </main>
+    </>
   )
 }

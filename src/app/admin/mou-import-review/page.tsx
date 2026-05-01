@@ -19,6 +19,8 @@ import { redirect } from 'next/navigation'
 import type { MouImportReviewItem } from '@/lib/types'
 import mouImportReviewJson from '@/data/mou_import_review.json'
 import { getCurrentUser } from '@/lib/auth/session'
+import { TopNav } from '@/components/ops/TopNav'
+import { PageHeader } from '@/components/ops/PageHeader'
 
 const items = mouImportReviewJson as unknown as MouImportReviewItem[]
 
@@ -69,23 +71,31 @@ export default async function MouImportReviewPage({
   const resolved = items.filter((i) => i.resolution !== null)
 
   return (
-    <div className="p-6 max-w-4xl">
-      <h1 className="text-2xl font-bold text-[var(--brand-navy)]">MOU import review</h1>
-      <p className="mt-1 text-sm text-slate-700">
-        {unresolved.length} unresolved, {resolved.length} resolved.
-      </p>
+    <>
+      <TopNav currentPath="/admin" />
+      <main id="main-content">
+        <PageHeader
+          title="MOU import review"
+          subtitle={`${unresolved.length} unresolved, ${resolved.length} resolved.`}
+          breadcrumb={[
+            { label: 'Dashboard', href: '/' },
+            { label: 'Admin', href: '/admin' },
+            { label: 'Import review' },
+          ]}
+        />
+        <div className="mx-auto max-w-screen-md px-4 py-6">
 
       {errorMessage ? (
         <p
           role="alert"
-          className="mt-4 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-800"
+          className="mt-4 rounded-md border border-signal-alert bg-signal-alert/10 px-3 py-2 text-sm text-signal-alert"
         >
           {errorMessage}
         </p>
       ) : null}
 
       <section className="mt-6">
-        <h2 className="text-lg font-semibold text-[var(--brand-navy)]">Queue</h2>
+        <h2 className="text-lg font-semibold text-brand-navy">Queue</h2>
         {unresolved.length === 0 ? (
           <p className="mt-2 rounded-md border border-slate-200 bg-slate-50 p-6 text-center text-sm text-slate-600">
             Queue is empty.
@@ -101,7 +111,7 @@ export default async function MouImportReviewPage({
 
       {resolved.length > 0 ? (
         <section className="mt-10">
-          <h2 className="text-lg font-semibold text-[var(--brand-navy)]">Resolved</h2>
+          <h2 className="text-lg font-semibold text-brand-navy">Resolved</h2>
           <ul className="mt-2 divide-y divide-slate-200 rounded-md border border-slate-200 bg-white">
             {resolved.map((item) => (
               <li key={`${item.queuedAt}-${rawRecordId(item)}`} className="px-3 py-2 text-xs">
@@ -124,7 +134,9 @@ export default async function MouImportReviewPage({
           </ul>
         </section>
       ) : null}
-    </div>
+        </div>
+      </main>
+    </>
   )
 }
 

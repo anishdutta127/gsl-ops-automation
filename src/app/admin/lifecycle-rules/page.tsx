@@ -23,6 +23,8 @@ import lifecycleRulesJson from '@/data/lifecycle_rules.json'
 import usersJson from '@/data/users.json'
 import { getCurrentUser } from '@/lib/auth/session'
 import { KANBAN_COLUMNS } from '@/lib/kanban/deriveStage'
+import { TopNav } from '@/components/ops/TopNav'
+import { PageHeader } from '@/components/ops/PageHeader'
 
 const allRules = lifecycleRulesJson as unknown as LifecycleRule[]
 const allUsers = usersJson as unknown as User[]
@@ -79,14 +81,19 @@ export default async function LifecycleRulesPage({ searchParams }: PageProps) {
   const now = new Date()
 
   return (
-    <div className="mx-auto max-w-3xl p-6">
-      <header className="mb-4">
-        <h1 className="text-2xl font-bold text-brand-navy">Lifecycle rules</h1>
-        <p className="mt-2 rounded-md border border-signal-attention bg-card p-3 text-sm text-foreground">
-          Changing a rule&rsquo;s duration retroactively recomputes overdue badges across all MOUs at that stage.
-          The audit log records who changed what and when.
-        </p>
-      </header>
+    <>
+      <TopNav currentPath="/admin" />
+      <main id="main-content">
+        <PageHeader
+          title="Lifecycle rules"
+          subtitle="Changing a rule's duration retroactively recomputes overdue badges across all MOUs at that stage. The audit log records who changed what and when."
+          breadcrumb={[
+            { label: 'Dashboard', href: '/' },
+            { label: 'Admin', href: '/admin' },
+            { label: 'Lifecycle rules' },
+          ]}
+        />
+        <div className="mx-auto max-w-screen-md px-4 py-6">
 
       {savedStage ? (
         <p
@@ -199,6 +206,8 @@ export default async function LifecycleRulesPage({ searchParams }: PageProps) {
         Pre-Ops Legacy triage budget (30 days) stays hardcoded in code as a special case;
         the W3-D collection lists only forward-stage transitions.
       </p>
-    </div>
+        </div>
+      </main>
+    </>
   )
 }

@@ -15,6 +15,8 @@ import type { School } from '@/lib/types'
 import schoolsJson from '@/data/schools.json'
 import { getCurrentUser } from '@/lib/auth/session'
 import { FormCard, type FormCardField } from '@/components/ops/FormCard'
+import { TopNav } from '@/components/ops/TopNav'
+import { PageHeader } from '@/components/ops/PageHeader'
 
 const schools = schoolsJson as unknown as School[]
 
@@ -69,20 +71,29 @@ export default async function NewSchoolGroupPage({
   ]
 
   return (
-    <div className="p-6 max-w-3xl">
-      <h1 className="text-2xl font-bold text-[var(--brand-navy)]">New school group</h1>
-      <p className="mt-1 text-sm text-slate-700">
-        Self-serve per Item 8. Admin or OpsHead.
-      </p>
-      <div className="mt-6">
-        <FormCard
-          action="/api/admin/school-groups/create"
-          submitLabel="Create group"
-          fields={fields}
-          cancelHref="/admin/school-groups"
-          errorMessage={errorMessage}
+    <>
+      <TopNav currentPath="/admin" />
+      <main id="main-content">
+        <PageHeader
+          title="New school group"
+          subtitle="Self-serve per Item 8. Admin or OpsHead."
+          breadcrumb={[
+            { label: 'Dashboard', href: '/' },
+            { label: 'Admin', href: '/admin' },
+            { label: 'School groups', href: '/admin/school-groups' },
+            { label: 'New' },
+          ]}
         />
-      </div>
-    </div>
+        <div className="mx-auto max-w-screen-md px-4 py-6">
+          <FormCard
+            action="/api/admin/school-groups/create"
+            submitLabel="Create group"
+            fields={fields}
+            cancelHref="/admin/school-groups"
+            errorMessage={errorMessage}
+          />
+        </div>
+      </main>
+    </>
   )
 }

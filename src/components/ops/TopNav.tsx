@@ -18,7 +18,7 @@
  */
 
 import Link from 'next/link'
-import { LogOut } from 'lucide-react'
+import { LayoutGrid, LogOut } from 'lucide-react'
 import { getCurrentUser } from '@/lib/auth/session'
 import type { User, UserRole } from '@/lib/types'
 import { NotificationBell } from './NotificationBell'
@@ -68,9 +68,12 @@ export async function TopNav({ currentPath }: TopNavProps = {}) {
         <div className="flex items-center gap-1">
           <Link
             href="/"
-            className="flex items-center px-3 font-heading text-base font-semibold text-white focus:outline-none focus:ring-2 focus:ring-brand-teal"
+            data-testid="topnav-wordmark"
+            aria-label="GSL Ops home"
+            className="flex items-center gap-1.5 px-3 font-heading text-lg font-bold text-white focus:outline-none focus:ring-2 focus:ring-brand-teal"
           >
-            GSL Ops
+            <LayoutGrid aria-hidden className="size-4 text-brand-teal" />
+            <span>GSL Ops</span>
           </Link>
           <ul className="flex items-stretch">
             {visibleLinks.map((link) => {

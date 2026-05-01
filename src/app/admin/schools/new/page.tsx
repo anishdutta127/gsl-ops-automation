@@ -13,6 +13,8 @@
 import { redirect } from 'next/navigation'
 import { getCurrentUser } from '@/lib/auth/session'
 import { FormCard, type FormCardField } from '@/components/ops/FormCard'
+import { TopNav } from '@/components/ops/TopNav'
+import { PageHeader } from '@/components/ops/PageHeader'
 
 const REGIONS = [
   { value: 'East', label: 'East' },
@@ -77,20 +79,29 @@ export default async function NewSchoolPage({
   ]
 
   return (
-    <div className="p-6 max-w-3xl">
-      <h1 className="text-2xl font-bold text-[var(--brand-navy)]">New school</h1>
-      <p className="mt-1 text-sm text-slate-700">
-        Self-serve per Item 8. Admin or OpsHead.
-      </p>
-      <div className="mt-6">
-        <FormCard
-          action="/api/admin/schools/create"
-          submitLabel="Create school"
-          fields={fields}
-          cancelHref="/admin/schools"
-          errorMessage={errorMessage}
+    <>
+      <TopNav currentPath="/admin" />
+      <main id="main-content">
+        <PageHeader
+          title="New school"
+          subtitle="Self-serve per Item 8. Admin or OpsHead."
+          breadcrumb={[
+            { label: 'Dashboard', href: '/' },
+            { label: 'Admin', href: '/admin' },
+            { label: 'Schools', href: '/admin/schools' },
+            { label: 'New' },
+          ]}
         />
-      </div>
-    </div>
+        <div className="mx-auto max-w-screen-md px-4 py-6">
+          <FormCard
+            action="/api/admin/schools/create"
+            submitLabel="Create school"
+            fields={fields}
+            cancelHref="/admin/schools"
+            errorMessage={errorMessage}
+          />
+        </div>
+      </main>
+    </>
   )
 }

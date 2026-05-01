@@ -18,6 +18,8 @@
 
 import { cookies } from 'next/headers'
 import Link from 'next/link'
+import { TopNav } from '@/components/ops/TopNav'
+import { PageHeader } from '@/components/ops/PageHeader'
 import { SESSION_COOKIE_NAME, verifySessionToken } from '@/lib/crypto/jwt'
 import {
   applyFilters,
@@ -131,20 +133,26 @@ export default async function AuditPage({
   const filterChips = describeFilters(filters)
 
   return (
-    <div className="flex min-h-screen flex-col sm:flex-row">
-      <AuditFilterRail
-        filters={filters}
-        knownEntities={ENTITY_TYPES}
-        knownActions={KNOWN_ACTIONS}
-      />
-      <section className="flex-1 p-4">
-        <header className="mb-4">
-          <h1 className="text-xl font-bold text-[var(--brand-navy)]">Audit log</h1>
-          <p className="mt-1 text-xs text-slate-600">
-            Showing {pageRows.length} of {filteredRows.length} entries you can see (
-            {visibleRows.length} visible to your role; {allRows.length} total in
-            the system).
-          </p>
+    <>
+      <TopNav currentPath="/admin" />
+      <main id="main-content">
+        <PageHeader
+          title="Audit log"
+          subtitle={`Showing ${pageRows.length} of ${filteredRows.length} entries you can see (${visibleRows.length} visible to your role; ${allRows.length} total in the system).`}
+          breadcrumb={[
+            { label: 'Dashboard', href: '/' },
+            { label: 'Admin', href: '/admin' },
+            { label: 'Audit log' },
+          ]}
+        />
+        <div className="flex min-h-screen flex-col sm:flex-row">
+          <AuditFilterRail
+            filters={filters}
+            knownEntities={ENTITY_TYPES}
+            knownActions={KNOWN_ACTIONS}
+          />
+          <section className="flex-1 p-4">
+            <header className="mb-4">
           {filterChips.length > 0 ? (
             <ul className="mt-2 flex flex-wrap gap-1.5">
               {filterChips.map((chip) => (
@@ -200,14 +208,16 @@ export default async function AuditPage({
           <div className="mt-4 text-center">
             <Link
               href={loadOlderHref(filters, oldestShown)}
-              className="inline-flex items-center rounded-md border border-[var(--brand-navy)] bg-white px-4 py-2 text-sm font-medium text-[var(--brand-navy)] hover:bg-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand-navy)]"
+              className="inline-flex min-h-11 items-center rounded-md border border-brand-navy bg-card px-4 py-2 text-sm font-medium text-brand-navy hover:bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
             >
               Load older entries
             </Link>
           </div>
         ) : null}
-      </section>
-    </div>
+          </section>
+        </div>
+      </main>
+    </>
   )
 }
 

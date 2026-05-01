@@ -18,6 +18,8 @@ import { getCurrentUser } from '@/lib/auth/session'
 import type { SalesPerson, User } from '@/lib/types'
 import usersJson from '@/data/users.json'
 import salesTeamJson from '@/data/sales_team.json'
+import { TopNav } from '@/components/ops/TopNav'
+import { PageHeader } from '@/components/ops/PageHeader'
 
 const users = usersJson as unknown as User[]
 const salesTeam = salesTeamJson as unknown as SalesPerson[]
@@ -71,19 +73,20 @@ export default async function NewCcRulePage({
   ]
 
   return (
-    <div className="p-6 max-w-3xl">
-      <p className="mb-2 text-xs">
-        <Link
-          href="/admin/cc-rules"
-          className="text-[var(--brand-navy)] underline-offset-2 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand-navy)]"
-        >
-          Back to CC rules
-        </Link>
-      </p>
-      <h1 className="text-2xl font-bold text-[var(--brand-navy)]">New CC rule</h1>
-      <p className="mt-1 text-sm text-slate-700">
-        Admin-only during the first 30 days post-launch (Item 8).
-      </p>
+    <>
+      <TopNav currentPath="/admin" />
+      <main id="main-content">
+        <PageHeader
+          title="New CC rule"
+          subtitle="Admin-only during the first 30 days post-launch (Item 8)."
+          breadcrumb={[
+            { label: 'Dashboard', href: '/' },
+            { label: 'Admin', href: '/admin' },
+            { label: 'CC rules', href: '/admin/cc-rules' },
+            { label: 'New' },
+          ]}
+        />
+        <div className="mx-auto max-w-screen-md px-4 py-6">
 
       {errorMessage ? (
         <p
@@ -220,13 +223,15 @@ export default async function NewCcRulePage({
           </button>
           <Link
             href="/admin/cc-rules"
-            className="text-sm text-slate-700 underline-offset-2 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand-navy)]"
+            className="text-sm text-foreground underline-offset-2 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
           >
             Cancel
           </Link>
         </div>
       </form>
-    </div>
+        </div>
+      </main>
+    </>
   )
 }
 

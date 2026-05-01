@@ -5,6 +5,8 @@
  * Edit members link to the per-group edit page.
  *
  * Permission gate: Admin or OpsHead.
+ *
+ * W4-I.5 P4C2: TopNav + PageHeader + breadcrumb.
  */
 
 import { redirect } from 'next/navigation'
@@ -12,6 +14,9 @@ import Link from 'next/link'
 import type { SchoolGroup } from '@/lib/types'
 import schoolGroupsJson from '@/data/school_groups.json'
 import { getCurrentUser } from '@/lib/auth/session'
+import { TopNav } from '@/components/ops/TopNav'
+import { PageHeader } from '@/components/ops/PageHeader'
+import { opsButtonClass } from '@/components/ops/OpsButton'
 
 const groups = schoolGroupsJson as unknown as SchoolGroup[]
 
@@ -20,57 +25,66 @@ export default async function SchoolGroupsListPage() {
   if (!user) redirect('/login?next=%2Fadmin%2Fschool-groups')
 
   return (
-    <div className="p-6 max-w-4xl">
-      <header className="mb-4 flex items-baseline justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-[var(--brand-navy)]">School groups</h1>
-          <p className="mt-1 text-sm text-slate-700">
-            {groups.length} groups. Used for chain MOUs spanning multiple campuses.
-          </p>
-        </div>
-        <Link
-          href="/admin/school-groups/new"
-          className="inline-flex items-center rounded-md bg-[var(--brand-navy)] px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand-navy)] min-h-[44px]"
-        >
-          New group
-        </Link>
-      </header>
-
-      {groups.length === 0 ? (
-        <p className="rounded-md border border-slate-200 bg-slate-50 p-6 text-center text-sm text-slate-600">
-          No school groups yet.
-        </p>
-      ) : (
-        <ul className="rounded-md border border-slate-200 bg-white">
-          {groups.map((group) => (
-            <li key={group.id} className="border-b border-slate-200 last:border-b-0">
-              <div className="flex items-stretch">
-                <div className="flex-1 px-4 py-3">
-                  <div className="flex items-baseline justify-between gap-2">
-                    <span className="text-sm font-medium text-[var(--brand-navy)]">
-                      {group.name}
-                    </span>
-                    <span className="text-xs text-slate-500">{group.id}</span>
+    <>
+      <TopNav currentPath="/admin" />
+      <main id="main-content">
+        <PageHeader
+          title="School groups"
+          subtitle={`${groups.length} groups. Used for chain MOUs spanning multiple campuses.`}
+          breadcrumb={[
+            { label: 'Dashboard', href: '/' },
+            { label: 'Admin', href: '/admin' },
+            { label: 'School groups' },
+          ]}
+          actions={
+            <Link
+              href="/admin/school-groups/new"
+              className={opsButtonClass({ variant: 'primary', size: 'md' })}
+            >
+              New group
+            </Link>
+          }
+        />
+        <div className="mx-auto max-w-screen-md px-4 py-6">
+          {groups.length === 0 ? (
+            <p className="rounded-md border border-border bg-muted/30 p-6 text-center text-sm text-muted-foreground">
+              No school groups yet.
+            </p>
+          ) : (
+            <ul className="rounded-md border border-border bg-card">
+              {groups.map((group) => (
+                <li key={group.id} className="border-b border-border last:border-b-0">
+                  <div className="flex items-stretch">
+                    <div className="flex-1 px-4 py-3">
+                      <div className="flex items-baseline justify-between gap-2">
+                        <span className="text-sm font-medium text-brand-navy">
+                          {group.name}
+                        </span>
+                        <span className="text-xs text-muted-foreground">{group.id}</span>
+                      </div>
+                      <p className="mt-0.5 text-xs text-foreground">
+                        Region: {group.region}{' '}
+                        <span aria-hidden>&middot;</span>{' '}
+                        {group.memberSchoolIds.length} members
+                        {group.groupMouId ? ` ${'·'} MOU ${group.groupMouId}` : ''}
+                      </p>
+                      {group.notes ? (
+                        <p className="mt-0.5 text-xs text-muted-foreground">{group.notes}</p>
+                      ) : null}
+                    </div>
+                    <Link
+                      href={`/admin/school-groups/${group.id}`}
+                      className="flex min-h-11 items-center px-4 text-xs font-medium text-brand-navy hover:bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
+                    >
+                      Edit members
+                    </Link>
                   </div>
-                  <p className="mt-0.5 text-xs text-slate-700">
-                    Region: {group.region} · {group.memberSchoolIds.length} members
-                    {group.groupMouId ? ` · MOU ${group.groupMouId}` : ''}
-                  </p>
-                  {group.notes ? (
-                    <p className="mt-0.5 text-xs text-slate-600">{group.notes}</p>
-                  ) : null}
-                </div>
-                <Link
-                  href={`/admin/school-groups/${group.id}`}
-                  className="flex items-center px-4 text-xs font-medium text-[var(--brand-navy)] hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand-navy)] min-h-[44px]"
-                >
-                  Edit members
-                </Link>
-              </div>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </main>
+    </>
   )
 }

@@ -48,11 +48,13 @@ describe('TopNav', () => {
     expect(html).toMatch(/href="\/kanban"[^>]*>Kanban<|>Kanban<[^>]*href="\/kanban"/)
   })
 
-  it('GSL Ops logo links to /', async () => {
+  it('GSL Ops wordmark links to / (W4-I.5 P4C2: wordmark wraps icon + label)', async () => {
     getCurrentUserMock.mockResolvedValue(makeUser())
     const { TopNav } = await import('./TopNav')
     const html = renderToStaticMarkup(await TopNav({ currentPath: '/' }))
-    expect(html).toMatch(/href="\/"[^>]*>GSL Ops<|>GSL Ops<[^>]*href="\/"/)
+    // Wordmark is a Link containing the LayoutGrid icon + <span>GSL Ops</span>.
+    expect(html).toMatch(/data-testid="topnav-wordmark"[^>]*href="\/"/)
+    expect(html).toContain('GSL Ops')
   })
 
   it('hides Admin link for SalesRep', async () => {

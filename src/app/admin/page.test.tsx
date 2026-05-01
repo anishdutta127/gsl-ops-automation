@@ -36,6 +36,8 @@ vi.mock('@/data/users.json', () => ({
   ],
 }))
 
+vi.mock('@/components/ops/TopNav', () => ({ TopNav: () => null }))
+
 beforeEach(() => {
   vi.clearAllMocks()
   cookiesMock.mockResolvedValue({

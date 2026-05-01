@@ -18,6 +18,8 @@ import ccRulesJson from '@/data/cc_rules.json'
 import usersJson from '@/data/users.json'
 import salesTeamJson from '@/data/sales_team.json'
 import { getCurrentUser } from '@/lib/auth/session'
+import { TopNav } from '@/components/ops/TopNav'
+import { PageHeader } from '@/components/ops/PageHeader'
 
 const rules = ccRulesJson as unknown as CcRule[]
 const users = usersJson as unknown as User[]
@@ -85,20 +87,20 @@ export default async function CcRuleDetailPage({
   const contextSet = new Set(rule.contexts)
 
   return (
-    <div className="p-6 max-w-3xl">
-      <p className="mb-2 text-xs">
-        <Link
-          href="/admin/cc-rules"
-          className="text-[var(--brand-navy)] underline-offset-2 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--brand-navy)]"
-        >
-          Back to CC rules
-        </Link>
-      </p>
-      <h1 className="text-2xl font-bold text-[var(--brand-navy)]">{rule.id}</h1>
-      <p className="mt-1 text-sm text-slate-700">
-        Created {rule.createdAt.slice(0, 10)} by {rule.createdBy}.{' '}
-        {rule.enabled ? 'Currently enabled.' : 'Currently disabled.'}
-      </p>
+    <>
+      <TopNav currentPath="/admin" />
+      <main id="main-content">
+        <PageHeader
+          title={rule.id}
+          subtitle={`Created ${rule.createdAt.slice(0, 10)} by ${rule.createdBy}. ${rule.enabled ? 'Currently enabled.' : 'Currently disabled.'}`}
+          breadcrumb={[
+            { label: 'Dashboard', href: '/' },
+            { label: 'Admin', href: '/admin' },
+            { label: 'CC rules', href: '/admin/cc-rules' },
+            { label: rule.id },
+          ]}
+        />
+        <div className="mx-auto max-w-screen-md px-4 py-6">
 
       {errorMessage ? (
         <p
@@ -238,7 +240,9 @@ export default async function CcRuleDetailPage({
           </ul>
         )}
       </section>
-    </div>
+        </div>
+      </main>
+    </>
   )
 }
 
