@@ -110,6 +110,30 @@ describe('/mous/[mouId]/dispatch page (W4-D.4)', () => {
     expect(html).not.toMatch(/#[0-9a-fA-F]{3,6}/)
   })
 
+  it('W4-I.4 MM1: header card surfaces trainer model, students, and location', async () => {
+    getCurrentUserMock.mockResolvedValue(user('Admin', 'anish.d'))
+    const { default: Page } = await import('./page')
+    const html = renderToStaticMarkup(
+      await Page({ params: Promise.resolve({ mouId: 'MOU-STEAM-2627-001' }), searchParams: noSp }),
+    )
+    expect(html).toContain('Trainer model')
+    expect(html).toContain('Students')
+    expect(html).toContain('Location')
+  })
+
+  it('?error=wrong-status renders the closed-MOU error banner (W4-I.4 MM1)', async () => {
+    getCurrentUserMock.mockResolvedValue(user('Admin', 'anish.d'))
+    const { default: Page } = await import('./page')
+    const html = renderToStaticMarkup(
+      await Page({
+        params: Promise.resolve({ mouId: 'MOU-STEAM-2627-001' }),
+        searchParams: Promise.resolve({ error: 'wrong-status' }),
+      }),
+    )
+    expect(html).toMatch(/role="alert"/)
+    expect(html).toContain('MOU is closed')
+  })
+
   it('W4-H.4: each existing dispatch row shows Worksheet + Note download links', async () => {
     getCurrentUserMock.mockResolvedValue(user('Admin', 'anish.d'))
     const { default: Page } = await import('./page')

@@ -33,7 +33,10 @@
  *  - unknown-user           session.sub not in users.json
  *  - mou-not-found
  *  - school-not-found
- *  - wrong-status           MOU not Active
+ *  - wrong-status           MOU is not Active or Pending Signature (W4-I.4 MM1:
+ *                           Sales-approved dispatch on Pending Signature MOUs is
+ *                           valid; only Draft / Completed / Expired / Renewed
+ *                           are rejected)
  *  - gate-locked            no payment + no override
  *  - template-missing       caller surfaces DispatchTemplateMissingError
  */
@@ -237,7 +240,9 @@ export async function raiseDispatch(
 
   const mou = deps.mous.find((m) => m.id === args.mouId)
   if (!mou) return { ok: false, reason: 'mou-not-found' }
-  if (mou.status !== 'Active') return { ok: false, reason: 'wrong-status' }
+  if (mou.status !== 'Active' && mou.status !== 'Pending Signature') {
+    return { ok: false, reason: 'wrong-status' }
+  }
 
   const school = deps.schools.find((s) => s.id === mou.schoolId)
   if (!school) return { ok: false, reason: 'school-not-found' }

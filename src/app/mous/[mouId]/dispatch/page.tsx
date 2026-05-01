@@ -17,11 +17,13 @@
 
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import type { Dispatch, DispatchRequest, InventoryItem, MOU, User } from '@/lib/types'
+import type { Dispatch, DispatchRequest, IntakeRecord, InventoryItem, MOU, School, User } from '@/lib/types'
 import mousJson from '@/data/mous.json'
 import dispatchesJson from '@/data/dispatches.json'
 import dispatchRequestsJson from '@/data/dispatch_requests.json'
 import inventoryItemsJson from '@/data/inventory_items.json'
+import intakeRecordsJson from '@/data/intake_records.json'
+import schoolsJson from '@/data/schools.json'
 import { getCurrentUser } from '@/lib/auth/session'
 import { isGateUnblocked } from '@/lib/dispatch/overrideAudit'
 import { TopNav } from '@/components/ops/TopNav'
@@ -33,6 +35,8 @@ const allMous = mousJson as unknown as MOU[]
 const allDispatches = dispatchesJson as unknown as Dispatch[]
 const allRequests = dispatchRequestsJson as unknown as DispatchRequest[]
 const allInventoryItems = inventoryItemsJson as unknown as InventoryItem[]
+const allIntakeRecords = intakeRecordsJson as unknown as IntakeRecord[]
+const allSchools = schoolsJson as unknown as School[]
 
 interface PageProps {
   params: Promise<{ mouId: string }>
@@ -44,7 +48,7 @@ const ERROR_MESSAGES: Record<string, string> = {
   'unknown-user': 'Session user not found. Please log in again.',
   'mou-not-found': 'MOU not found.',
   'school-not-found': 'School not found.',
-  'wrong-status': 'MOU is not Active; cannot raise a dispatch.',
+  'wrong-status': 'MOU is closed; cannot raise a dispatch.',
   'gate-locked': 'Payment not received and no P2 override on file. Gate is blocked.',
   'template-missing': 'Dispatch template is not authored. Contact Ops.',
   'invalid-installment-seq': 'Pick an installment number from the dropdown.',
@@ -74,6 +78,18 @@ export default async function DispatchPage({ params, searchParams }: PageProps) 
     (r) => r.mouId === mou.id && r.status === 'pending-approval',
   )
   const totalInstallments = totalInstallmentsFor(mou.paymentSchedule)
+  // W4-I.4 MM1: surface trainer model, student count, and location on the
+  // header card so Ops can confirm dispatch intent without leaving the page.
+  // Location prefers the IntakeRecord (school-confirmed) over the School
+  // record because intake captures the specific delivery address; falls
+  // back to school city/state when no intake exists yet.
+  const intakeRecord = allIntakeRecords.find((r) => r.mouId === mou.id)
+  const school = allSchools.find((s) => s.id === mou.schoolId)
+  const locationLabel = intakeRecord?.location
+    ?? (school ? `${school.city}, ${school.state}` : null)
+  const studentsLabel = mou.studentsActual !== null
+    ? `${mou.studentsActual.toLocaleString('en-IN')} (actual)`
+    : `${mou.studentsMou.toLocaleString('en-IN')} (MOU)`
 
   // Installments that already have a Dispatch on file; greyed out in the dropdown.
   const usedInstallments = new Set(mouDispatches.map((d) => d.installmentSeq))
@@ -105,6 +121,9 @@ export default async function DispatchPage({ params, searchParams }: PageProps) 
           metadata={[
             { label: 'School', value: mou.schoolName },
             { label: 'Programme', value: `${mou.programme}${mou.programmeSubType ? ' / ' + mou.programmeSubType : ''}` },
+            { label: 'Trainer model', value: mou.trainerModel ?? 'not set' },
+            { label: 'Students', value: studentsLabel },
+            { label: 'Location', value: locationLabel ?? 'not set' },
             { label: 'Pending requests', value: String(pendingRequests.length) },
             { label: 'Dispatches on file', value: String(mouDispatches.length) },
           ]}

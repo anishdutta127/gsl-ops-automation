@@ -354,7 +354,7 @@ describe('raiseDispatch', () => {
     expect(result).toEqual({ ok: false, reason: 'mou-not-found' })
   })
 
-  it('rejects wrong-status (MOU not Active)', async () => {
+  it('rejects wrong-status when MOU is closed (Completed)', async () => {
     const u = user('OpsHead', 'misba.m')
     const { deps } = makeDeps({
       mous: [mou({ status: 'Completed' })],
@@ -365,6 +365,38 @@ describe('raiseDispatch', () => {
       deps,
     )
     expect(result).toEqual({ ok: false, reason: 'wrong-status' })
+  })
+
+  it('rejects wrong-status for Draft / Expired / Renewed', async () => {
+    const u = user('OpsHead', 'misba.m')
+    for (const status of ['Draft', 'Expired', 'Renewed'] as const) {
+      const { deps } = makeDeps({
+        mous: [mou({ status })],
+        schools: [school()], users: [u], payments: [payment('Paid')],
+      })
+      const result = await raiseDispatch(
+        { mouId: 'MOU-X', installmentSeq: 1, raisedBy: 'misba.m' },
+        deps,
+      )
+      expect(result).toEqual({ ok: false, reason: 'wrong-status' })
+    }
+  })
+
+  // W4-I.4 MM1: Sales sometimes approves dispatch before signature lands
+  // (pilot kickoffs, parent-org commitments). DIS-002 P2-override fixture
+  // already implies the system was meant to support pre-signature dispatch;
+  // the active-only check contradicted that path.
+  it('accepts Pending Signature MOU (W4-I.4 MM1)', async () => {
+    const u = user('OpsHead', 'misba.m')
+    const { deps } = makeDeps({
+      mous: [mou({ status: 'Pending Signature' })],
+      schools: [school()], users: [u], payments: [payment('Paid')],
+    })
+    const result = await raiseDispatch(
+      { mouId: 'MOU-X', installmentSeq: 1, raisedBy: 'misba.m' },
+      deps,
+    )
+    expect(result.ok).toBe(true)
   })
 
   it('rejects school-not-found (data integrity issue)', async () => {
