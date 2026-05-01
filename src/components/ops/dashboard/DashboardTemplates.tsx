@@ -1,32 +1,38 @@
 /*
- * DashboardTemplates (W4-I.5 Phase 2 commit 4 + Phase 2.1).
+ * DashboardTemplates (W4-I.5 Phase 2 commit 4 + Phase 3 P3C5).
  *
  * Communication Templates section. 2-column grid of template preview
  * cards (Welcome Note + Thank You Note) sourced from the Phase 2
- * static previews. The "Edit Template" affordance per card and the
- * "+ Create new template" CTA at the bottom are disabled until
- * Phase 3 ships the template editor at /admin/templates.
+ * static previews. Edit Template + Create new template hand off to
+ * /admin/templates/[id]/edit and /admin/templates/new respectively
+ * (both surfaces exist post-P3C3).
  *
- * W4-I.5 Phase 2.1: each Phase 3-dependent affordance renders as a
- * disabled button with a "Coming soon" badge so the operator sees
- * the workflow exists without hitting a 404.
- *
- * TODO(W4-I.5 Phase 3): re-enable Edit Template + Create new template
- * as <Link href={...}> once the editor ships. Drop the disabled
- * styling and Coming-soon badge.
+ * P3C5: re-enabled from the P2.1 disabled stubs. Edit and Create
+ * are now functional <Link> elements.
  */
 
-import { Mail, Plus, Clock } from 'lucide-react'
+import Link from 'next/link'
+import { Mail, Plus } from 'lucide-react'
 import type { CommunicationTemplatePreview } from '@/lib/dashboard/dashboardData'
 
 export interface DashboardTemplatesProps {
   templates: ReadonlyArray<CommunicationTemplatePreview>
-  /** Phase 3 will use this to point at the real editor. Ignored in P2.1. */
+  /** Where the Create-new affordance points; default targets the new form. */
   createHref?: string
+}
+
+function editHrefFor(preview: CommunicationTemplatePreview): string {
+  // The preview ids match the seeded template ids ('welcome' ->
+  // 'TPL-WELCOME-DEFAULT' etc.). Keep the mapping local rather than
+  // changing the preview shape.
+  if (preview.key === 'welcome') return '/admin/templates/TPL-WELCOME-DEFAULT/edit'
+  if (preview.key === 'thank-you') return '/admin/templates/TPL-THANK-YOU-DEFAULT/edit'
+  return preview.editHref
 }
 
 export function DashboardTemplates({
   templates,
+  createHref = '/admin/templates/new',
 }: DashboardTemplatesProps) {
   return (
     <section
@@ -63,47 +69,27 @@ export function DashboardTemplates({
             <p className="mb-3 line-clamp-3 text-xs text-muted-foreground">
               {t.preview}
             </p>
-            <div className="mt-auto flex items-center gap-2">
-              <button
-                type="button"
-                disabled
-                aria-disabled="true"
-                title="Coming in next update"
+            <div className="mt-auto">
+              <Link
+                href={editHrefFor(t)}
                 data-testid={`template-edit-${t.key}`}
-                className="inline-flex min-h-9 cursor-not-allowed items-center gap-1.5 rounded-md border border-border bg-card px-3 py-1.5 text-xs font-medium text-brand-navy opacity-60"
+                className="inline-flex min-h-9 items-center rounded-md border border-border bg-card px-3 py-1.5 text-xs font-medium text-brand-navy hover:bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
               >
                 Edit Template
-              </button>
-              <span
-                className="inline-flex items-center gap-1 rounded-full bg-brand-navy/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-brand-navy"
-                data-testid={`template-edit-${t.key}-coming-soon`}
-              >
-                <Clock aria-hidden className="size-2.5" />
-                Coming soon
-              </span>
+              </Link>
             </div>
           </article>
         ))}
       </div>
       <footer className="border-t border-border p-3 sm:p-4">
-        <button
-          type="button"
-          disabled
-          aria-disabled="true"
-          title="Coming in next update"
+        <Link
+          href={createHref}
           data-testid="template-create-cta"
-          className="inline-flex min-h-11 cursor-not-allowed items-center gap-1.5 rounded-md border border-dashed border-brand-navy/30 bg-card px-3 py-2 text-sm font-medium text-brand-navy opacity-60"
+          className="inline-flex min-h-11 items-center gap-1.5 rounded-md border border-dashed border-brand-navy/30 bg-card px-3 py-2 text-sm font-medium text-brand-navy hover:bg-brand-navy/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
         >
           <Plus aria-hidden className="size-4" />
           Create new template
-          <span
-            className="ml-2 inline-flex items-center gap-1 rounded-full bg-brand-navy/10 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-brand-navy"
-            data-testid="template-create-coming-soon"
-          >
-            <Clock aria-hidden className="size-2.5" />
-            Coming soon
-          </span>
-        </button>
+        </Link>
       </footer>
     </section>
   )

@@ -41,6 +41,7 @@ import { LifecycleProgress } from '@/components/ops/LifecycleProgress'
 import { AuditLogPanel } from '@/components/ops/AuditLogPanel'
 import { StatusNotesSection } from '@/components/ops/StatusNotesSection'
 import { SmartSuggestionsPanel } from '@/components/ops/SmartSuggestionsPanel'
+import { CommunicationsHistoryPanel } from '@/components/ops/CommunicationsHistoryPanel'
 import { getSmartTemplateSuggestions } from '@/lib/templates/smartSuggestions'
 import usersJson from '@/data/users.json'
 
@@ -212,6 +213,8 @@ export default async function MouDetailPage({ params }: PageProps) {
               </ul>
             )}
           </section>
+
+          <CommunicationsHistoryPanel mou={mou} />
 
           <section aria-labelledby="audit-heading">
             <h3 id="audit-heading" className="mb-2 font-heading text-base font-semibold text-brand-navy">

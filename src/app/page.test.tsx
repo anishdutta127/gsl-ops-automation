@@ -188,30 +188,28 @@ describe('/ Operations Control Dashboard (W4-I.5 P2C5)', () => {
     expect(html).toContain('Create new template')
   })
 
-  it('W4-I.5 P2.1: Edit Template + Create new template render as disabled with Coming soon (Phase 3 stubs)', async () => {
+  it('W4-I.5 P3C5: Edit Template + Create new template render as functional links (Phase 3 wired)', async () => {
     getCurrentUserMock.mockResolvedValue(admin())
     const { default: DashboardPage } = await import('./page')
     const html = renderToStaticMarkup(await DashboardPage({ searchParams: noSp }))
-    // Each Phase 3-dependent affordance renders as <button> with the
-    // disabled attribute and a Coming soon badge alongside.
-    expect(html).toMatch(/<button[^>]*disabled[^>]*data-testid="template-edit-welcome"/)
-    expect(html).toMatch(/<button[^>]*disabled[^>]*data-testid="template-edit-thank-you"/)
-    expect(html).toMatch(/<button[^>]*disabled[^>]*data-testid="template-create-cta"/)
-    expect(html).toContain('data-testid="template-edit-welcome-coming-soon"')
-    expect(html).toContain('data-testid="template-edit-thank-you-coming-soon"')
-    expect(html).toContain('data-testid="template-create-coming-soon"')
+    // Re-enabled from P2.1 disabled stubs now that /admin/templates exists.
+    // Anchor attribute order in SSR: data-testid, class, href.
+    expect(html).toMatch(/data-testid="template-edit-welcome"[^>]*href="\/admin\/templates\/TPL-WELCOME-DEFAULT\/edit"/)
+    expect(html).toMatch(/data-testid="template-edit-thank-you"[^>]*href="\/admin\/templates\/TPL-THANK-YOU-DEFAULT\/edit"/)
+    expect(html).toMatch(/data-testid="template-create-cta"[^>]*href="\/admin\/templates\/new"/)
+    // Coming soon badges removed in P3C5.
+    expect(html).not.toContain('data-testid="template-edit-welcome-coming-soon"')
+    expect(html).not.toContain('data-testid="template-create-coming-soon"')
   })
 
-  it('W4-I.5 P2.1: Communication Automation send buttons are disabled with Coming soon (Phase 3 stubs)', async () => {
+  it('W4-I.5 P3C5: Communication Automation send buttons are functional links (Phase 3 wired)', async () => {
     getCurrentUserMock.mockResolvedValue(admin())
     const { default: DashboardPage } = await import('./page')
     const html = renderToStaticMarkup(await DashboardPage({ searchParams: noSp }))
-    expect(html).toMatch(/<button[^>]*disabled[^>]*data-testid="comm-button-welcome"/)
-    expect(html).toMatch(/<button[^>]*disabled[^>]*data-testid="comm-button-thank-you"/)
-    expect(html).toMatch(/<button[^>]*disabled[^>]*data-testid="comm-button-follow-up"/)
-    expect(html).toContain('data-testid="comm-button-welcome-coming-soon"')
-    expect(html).toContain('data-testid="comm-button-thank-you-coming-soon"')
-    expect(html).toContain('data-testid="comm-button-follow-up-coming-soon"')
+    expect(html).toMatch(/data-testid="comm-button-welcome"[^>]*href="\/admin\/templates\?useCase=welcome"/)
+    expect(html).toMatch(/data-testid="comm-button-thank-you"[^>]*href="\/admin\/templates\?useCase=thank-you"/)
+    expect(html).toMatch(/data-testid="comm-button-follow-up"[^>]*href="\/admin\/templates\?useCase=follow-up"/)
+    expect(html).not.toContain('data-testid="comm-button-welcome-coming-soon"')
   })
 
   it('renders the Sales Pipeline summary card with View pipeline CTA', async () => {
