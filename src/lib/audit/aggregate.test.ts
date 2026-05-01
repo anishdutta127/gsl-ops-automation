@@ -85,6 +85,22 @@ describe('collectAuditRows', () => {
       // 'dispatch-backfilled-from-mastersheet' action on the parent MOU's
       // auditLog so /mous/[id] surfaces the historical record.
       'dispatch-backfilled-from-mastersheet',
+      // W3-C C2: kanban skip / backward / Pre-Ops exit transitions emit
+      // 'kanban-stage-transition' on the MOU's auditLog. The action has
+      // existed in the AuditAction union since W3-C; this test missed
+      // adding it, surfaced as a pre-existing failure across the W4-I
+      // series. Cleared in W4-I.5 P4C0.
+      'kanban-stage-transition',
+      // W3-C C1 fold-in: emitted when a school/MOU edit form saves a
+      // real startDate over the synthesised AY-start placeholder.
+      'startdate-synthesis-replaced',
+      // W3-D: lifecycle-rule defaultDays edits via /admin/lifecycle-rules.
+      'lifecycle-rule-edited',
+      // W4-I.5 Phase 3: 'communication-sent' is appended on the parent
+      // MOU when an operator clicks Mark as sent on the template
+      // launcher. Adding to the recognized set so audit-aggregate
+      // staying clean does not block future Phase 3 send activity.
+      'communication-sent',
     ])
     for (const row of mouRows) {
       expect(recognizedActions.has(row.entry.action)).toBe(true)
