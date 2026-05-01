@@ -68,7 +68,7 @@ export function DashboardHeader({
               className={opsButtonClass({ variant: 'primary', size: 'sm', className: 'mt-3' })}
             >
               <Columns3 aria-hidden className="size-4" />
-              Open Kanban Board
+              MOU Pipeline
             </Link>
           </div>
 

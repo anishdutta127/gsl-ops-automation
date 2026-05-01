@@ -26,12 +26,12 @@ function makeUser(overrides: Partial<User> = {}): User {
 }
 
 describe('TopNav', () => {
-  it('renders Dashboard / Kanban / MOUs / Schools / Escalations links for any user (W4-I.5 P2C5)', async () => {
+  it('renders Dashboard / MOU Pipeline / MOUs / Schools / Escalations links for any user (W4-I.5 P2C5 + P4C4)', async () => {
     getCurrentUserMock.mockResolvedValue(makeUser({ role: 'SalesRep' }))
     const { TopNav } = await import('./TopNav')
     const html = renderToStaticMarkup(await TopNav({ currentPath: '/' }))
     expect(html).toContain('>Dashboard<')
-    expect(html).toContain('>Kanban<')
+    expect(html).toContain('>MOU Pipeline<')
     expect(html).toContain('href="/mous"')
     expect(html).toContain('href="/schools"')
     expect(html).toContain('href="/escalations"')
@@ -46,11 +46,11 @@ describe('TopNav', () => {
     expect(html).not.toContain('>Home<')
   })
 
-  it('Kanban link points at /kanban (W4-I.5 P2C5)', async () => {
+  it('MOU Pipeline link points at /kanban (W4-I.5 P4C4: label rename, URL preserved)', async () => {
     getCurrentUserMock.mockResolvedValue(makeUser())
     const { TopNav } = await import('./TopNav')
     const html = renderToStaticMarkup(await TopNav({ currentPath: '/' }))
-    expect(html).toMatch(/href="\/kanban"[^>]*>Kanban<|>Kanban<[^>]*href="\/kanban"/)
+    expect(html).toMatch(/href="\/kanban"[^>]*>MOU Pipeline<|>MOU Pipeline<[^>]*href="\/kanban"/)
   })
 
   it('GSL Ops wordmark links to / (W4-I.5 P4C2: wordmark wraps icon + label)', async () => {

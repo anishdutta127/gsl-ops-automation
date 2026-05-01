@@ -31,7 +31,7 @@ interface NavLink {
 
 const NAV_LINKS: NavLink[] = [
   { href: '/', label: 'Dashboard', visibleTo: 'all' },
-  { href: '/kanban', label: 'Kanban', visibleTo: 'all' },
+  { href: '/kanban', label: 'MOU Pipeline', visibleTo: 'all' },
   { href: '/mous', label: 'MOUs', visibleTo: 'all' },
   { href: '/schools', label: 'Schools', visibleTo: 'all' },
   { href: '/sales-pipeline', label: 'Sales pipeline', visibleTo: 'all' },

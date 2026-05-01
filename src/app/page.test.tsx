@@ -229,7 +229,7 @@ describe('/ Operations Control Dashboard (W4-I.5 P2C5)', () => {
     expect(html).toContain('data-testid="dashboard-footer"')
     expect(html).toContain('Internal use only')
     expect(html).toContain('data-testid="dashboard-kanban-cta"')
-    expect(html).toContain('Open Kanban Board')
+    expect(html).toContain('MOU Pipeline')
   })
 
   it('contains no raw hex codes (token discipline)', async () => {
