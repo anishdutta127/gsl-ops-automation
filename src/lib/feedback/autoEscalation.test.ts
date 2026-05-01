@@ -191,7 +191,7 @@ describe('feedbackAutoEscalation: Escalation shape', () => {
     expect(result?.stage).toBe('feedback-escalation')
     expect(result?.level).toBe('L1')
     expect(result?.createdBy).toBe('system')
-    expect(result?.status).toBe('open')
+    expect(result?.status).toBe('Open')
     expect(result?.schoolId).toBe('SCH-TEST')
     expect(result?.mouId).toBe('MOU-TEST')
   })

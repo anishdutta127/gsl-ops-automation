@@ -17,11 +17,22 @@
       "misba.m@getsetlearn.info",
       "ameet.z@getsetlearn.info"
     ],
-    "status": "open",
+    "status": "Open",
+    "category": null,
+    "type": null,
     "resolutionNotes": null,
     "resolvedAt": null,
     "resolvedBy": null,
-    "auditLog": []
+    "auditLog": [
+      {
+        "timestamp": "2026-05-01T10:00:00.000Z",
+        "user": "system-w4i4-mm5",
+        "action": "escalation-edited",
+        "before": { "status": "open" },
+        "after": { "status": "Open" },
+        "notes": "W4-I.4 MM5 backfill: status enum migrated to Misba ticketing vocabulary (open -> Open). category and type initialised to null."
+      }
+    ]
   },
   {
     "id": "ESC-002",
@@ -41,7 +52,9 @@
       "shashank.s@getsetlearn.info",
       "misba.m@getsetlearn.info"
     ],
-    "status": "open",
+    "status": "Open",
+    "category": null,
+    "type": null,
     "resolutionNotes": null,
     "resolvedAt": null,
     "resolvedBy": null,
@@ -51,6 +64,14 @@
         "user": "system",
         "action": "auto-create-from-feedback",
         "notes": "Auto-created via feedbackAutoEscalation hook (Update 3)."
+      },
+      {
+        "timestamp": "2026-05-01T10:00:00.000Z",
+        "user": "system-w4i4-mm5",
+        "action": "escalation-edited",
+        "before": { "status": "open" },
+        "after": { "status": "Open" },
+        "notes": "W4-I.4 MM5 backfill: status enum migrated (open -> Open). category and type initialised to null."
       }
     ]
   },
@@ -71,11 +92,22 @@
     "notifiedEmails": [
       "pratik.d@getsetlearn.info"
     ],
-    "status": "acknowledged",
+    "status": "WIP",
+    "category": null,
+    "type": null,
     "resolutionNotes": "Approved within tolerance.",
     "resolvedAt": null,
     "resolvedBy": null,
-    "auditLog": []
+    "auditLog": [
+      {
+        "timestamp": "2026-05-01T10:00:00.000Z",
+        "user": "system-w4i4-mm5",
+        "action": "escalation-edited",
+        "before": { "status": "acknowledged" },
+        "after": { "status": "WIP" },
+        "notes": "W4-I.4 MM5 backfill: status enum migrated (acknowledged -> WIP). category and type initialised to null."
+      }
+    ]
   },
   {
     "id": "ESC-004",
@@ -94,11 +126,22 @@
     "notifiedEmails": [
       "shubhangi.g@getsetlearn.info"
     ],
-    "status": "open",
+    "status": "Open",
+    "category": null,
+    "type": null,
     "resolutionNotes": null,
     "resolvedAt": null,
     "resolvedBy": null,
-    "auditLog": []
+    "auditLog": [
+      {
+        "timestamp": "2026-05-01T10:00:00.000Z",
+        "user": "system-w4i4-mm5",
+        "action": "escalation-edited",
+        "before": { "status": "open" },
+        "after": { "status": "Open" },
+        "notes": "W4-I.4 MM5 backfill: status enum migrated (open -> Open). category and type initialised to null."
+      }
+    ]
   },
   {
     "id": "ESC-005",
@@ -118,10 +161,21 @@
       "ameet.z@getsetlearn.info",
       "misba.m@getsetlearn.info"
     ],
-    "status": "resolved",
+    "status": "Closed",
+    "category": null,
+    "type": null,
     "resolutionNotes": "Alternate SPOC email captured: spoc.cedarheights.alt@example.test. Welcome note re-sent.",
     "resolvedAt": "2026-04-12T10:00:00Z",
     "resolvedBy": "ameet.z",
-    "auditLog": []
+    "auditLog": [
+      {
+        "timestamp": "2026-05-01T10:00:00.000Z",
+        "user": "system-w4i4-mm5",
+        "action": "escalation-edited",
+        "before": { "status": "resolved" },
+        "after": { "status": "Closed" },
+        "notes": "W4-I.4 MM5 backfill: status enum migrated (resolved -> Closed). category and type initialised to null."
+      }
+    ]
   }
 ]

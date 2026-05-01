@@ -196,6 +196,11 @@ export type AuditAction =
   // role-edit UI; entries are written by data-mutation scripts (round 2
   // tester provisioning per D-040) and surface in admin audit views.
   | 'user-role-changed'
+  // W4-I.4 MM5: emitted when an Escalation's editable fields (status,
+  // category, type, severity, assignedTo, description, resolutionNotes)
+  // are modified via /escalations/[id]/edit. before / after capture the
+  // changed-field diff; notes carry the operator-supplied context.
+  | 'escalation-edited'
 
 export interface AuditEntry {
   timestamp: string                // ISO
@@ -670,7 +675,28 @@ export type EscalationStage =
   | 'training-rollout'
   | 'feedback-escalation'
 
-export type EscalationStatus = 'open' | 'acknowledged' | 'resolved' | 'withdrawn'
+/**
+ * W4-I.4 MM5: Misba's ticketing-system status vocabulary. Replaces the
+ * pre-MM5 4-value enum (open / acknowledged / resolved / withdrawn) so
+ * Ops can describe the workflow they actually run (work-in-progress,
+ * cross-team transfer, courier-in-transit handoffs). Backfill mapping
+ * applied to both data/escalations.json and data/_fixtures/escalations.json:
+ *   open         -> Open
+ *   acknowledged -> WIP
+ *   resolved     -> Closed
+ *   withdrawn    -> Closed
+ *
+ * Old codepaths that emitted 'open' (autoEscalation, overrideAudit,
+ * OverviewContent filter) updated to 'Open'. Detail page's
+ * resolved/withdrawn render gate updated to check 'Closed'.
+ */
+export type EscalationStatus =
+  | 'WIP'
+  | 'Open'
+  | 'Closed'
+  | 'Transfer to Other Department'
+  | 'Dispatched'
+  | 'In Transit'
 export type EscalationSeverity = 'low' | 'medium' | 'high'
 
 export interface Escalation {
@@ -689,6 +715,15 @@ export interface Escalation {
   assignedTo: string | null        // User.id; computed from (lane, level) at creation
   notifiedEmails: string[]         // fan-out list snapshotted at creation
   status: EscalationStatus
+  /**
+   * W4-I.4 MM5: free-text Category + Type so Ops can label tickets in
+   * their own vocabulary. Free-text per the W4-F.1 minimal-container
+   * pattern; enums emerge after round 2 once tester usage settles.
+   * Both fields are nullable so historical fixtures (and future auto-
+   * created escalations) can leave them unset.
+   */
+  category: string | null
+  type: string | null
   resolutionNotes: string | null
   resolvedAt: string | null
   resolvedBy: string | null

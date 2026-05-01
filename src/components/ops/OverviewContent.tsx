@@ -93,7 +93,7 @@ export function OverviewContent({
   })
   const exceptionPreview = exceptions.slice(0, EXCEPTION_PREVIEW)
   const escalationPreview = escalations
-    .filter((e) => e.status === 'open')
+    .filter((e) => e.status === 'Open')
     .slice(0, ESCALATION_PREVIEW)
 
   return (

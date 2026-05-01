@@ -216,7 +216,7 @@ describe('Q-G Test 8: writeOverrideAudit', () => {
       severity: 'medium',
       assignedTo: 'misba.m',
       notifiedEmails: ['misba.m@example.test'],
-      status: 'open',
+      status: 'Open',
     })
     expect(escalation.id.startsWith('ESC-OVR-')).toBe(true)
     expect(escalation.auditLog).toHaveLength(1)

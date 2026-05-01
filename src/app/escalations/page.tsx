@@ -88,11 +88,14 @@ export default async function EscalationsListPage({ searchParams }: PageProps) {
     {
       key: 'status',
       label: 'Status',
+      // W4-I.4 MM5: Misba ticketing-system status vocabulary.
       options: [
-        { value: 'open', label: 'Open' },
-        { value: 'acknowledged', label: 'Acknowledged' },
-        { value: 'resolved', label: 'Resolved' },
-        { value: 'withdrawn', label: 'Withdrawn' },
+        { value: 'Open', label: 'Open' },
+        { value: 'WIP', label: 'WIP' },
+        { value: 'Closed', label: 'Closed' },
+        { value: 'Transfer to Other Department', label: 'Transfer to Other Department' },
+        { value: 'Dispatched', label: 'Dispatched' },
+        { value: 'In Transit', label: 'In Transit' },
       ],
     },
     {
@@ -119,6 +122,16 @@ export default async function EscalationsListPage({ searchParams }: PageProps) {
       render: (e) => `${e.lane} / ${e.level}`,
     },
     { key: 'status', header: 'Status', render: (e) => e.status },
+    {
+      key: 'category',
+      header: 'Category',
+      render: (e) => e.category ?? <span className="text-muted-foreground">-</span>,
+    },
+    {
+      key: 'type',
+      header: 'Type',
+      render: (e) => e.type ?? <span className="text-muted-foreground">-</span>,
+    },
     { key: 'severity', header: 'Severity', render: (e) => e.severity },
     {
       key: 'assigned',

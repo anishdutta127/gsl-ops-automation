@@ -17,6 +17,7 @@ import escalationsJson from '@/data/escalations.json'
 import schoolsJson from '@/data/schools.json'
 import mousJson from '@/data/mous.json'
 import { getCurrentUser } from '@/lib/auth/session'
+import { canPerform } from '@/lib/auth/permissions'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { DetailHeaderCard } from '@/components/ops/DetailHeaderCard'
@@ -51,11 +52,17 @@ const SEVERITY_BADGE: Record<Escalation['severity'], { label: string; className:
   low: { label: 'Low', className: 'border-signal-neutral text-signal-neutral' },
 }
 
+// W4-I.4 MM5: Misba ticketing-system status vocabulary.
 const STATUS_BADGE: Record<Escalation['status'], { label: string; className: string }> = {
-  open: { label: 'Open', className: 'border-signal-alert text-signal-alert' },
-  acknowledged: { label: 'Acknowledged', className: 'border-signal-attention text-signal-attention' },
-  resolved: { label: 'Resolved', className: 'border-signal-ok text-signal-ok' },
-  withdrawn: { label: 'Withdrawn', className: 'border-signal-neutral text-signal-neutral' },
+  Open: { label: 'Open', className: 'border-signal-alert text-signal-alert' },
+  WIP: { label: 'WIP', className: 'border-signal-attention text-signal-attention' },
+  Closed: { label: 'Closed', className: 'border-signal-ok text-signal-ok' },
+  'Transfer to Other Department': {
+    label: 'Transfer to Other Department',
+    className: 'border-signal-attention text-signal-attention',
+  },
+  Dispatched: { label: 'Dispatched', className: 'border-signal-attention text-signal-attention' },
+  'In Transit': { label: 'In Transit', className: 'border-signal-attention text-signal-attention' },
 }
 
 export default async function EscalationDetailPage({ params }: PageProps) {
@@ -69,6 +76,7 @@ export default async function EscalationDetailPage({ params }: PageProps) {
 
   const statusMeta = STATUS_BADGE[esc.status]
   const severityMeta = SEVERITY_BADGE[esc.severity]
+  const canEdit = user ? canPerform(user, 'escalation:resolve') : false
 
   const headerBadges = (
     <div className="flex flex-wrap items-center gap-2">
@@ -104,9 +112,20 @@ export default async function EscalationDetailPage({ params }: PageProps) {
               { label: 'MOU', value: mou ? <Link href={`/mous/${mou.id}`} className="text-brand-navy hover:underline focus:outline-none focus:ring-2 focus:ring-brand-navy"><span className="font-mono text-xs">{mou.id}</span></Link> : 'n/a' },
               { label: 'Origin', value: esc.origin },
               { label: 'Origin id', value: esc.originId ? <span className="font-mono text-xs">{esc.originId}</span> : 'n/a' },
+              { label: 'Category', value: esc.category ?? <span className="text-muted-foreground">not set</span> },
+              { label: 'Type', value: esc.type ?? <span className="text-muted-foreground">not set</span> },
               { label: 'Severity', value: <span className={`inline-flex items-center rounded-sm border px-2 py-0.5 text-xs font-semibold ${severityMeta.className}`}>{severityMeta.label}</span> },
               { label: 'Assigned to', value: esc.assignedTo ?? 'unassigned' },
             ]}
+            actions={canEdit ? (
+              <Link
+                href={`/escalations/${esc.id}/edit`}
+                data-testid="esc-edit-link"
+                className="inline-flex min-h-11 items-center rounded-md border border-border bg-card px-3 py-2 text-sm font-medium hover:bg-muted focus:outline-none focus:ring-2 focus:ring-brand-navy"
+              >
+                Edit
+              </Link>
+            ) : null}
           />
 
           <section aria-labelledby="notified-heading" className="rounded-lg border border-border bg-card p-4 sm:p-6">
@@ -126,7 +145,7 @@ export default async function EscalationDetailPage({ params }: PageProps) {
             )}
           </section>
 
-          {esc.status === 'resolved' || esc.status === 'withdrawn' ? (
+          {esc.status === 'Closed' ? (
             <section aria-labelledby="resolution-heading" className="rounded-lg border border-border bg-card p-4 sm:p-6">
               <h3 id="resolution-heading" className="mb-2 font-heading text-base font-semibold text-brand-navy">
                 Resolution
