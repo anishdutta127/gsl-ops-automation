@@ -188,6 +188,32 @@ describe('/ Operations Control Dashboard (W4-I.5 P2C5)', () => {
     expect(html).toContain('Create new template')
   })
 
+  it('W4-I.5 P2.1: Edit Template + Create new template render as disabled with Coming soon (Phase 3 stubs)', async () => {
+    getCurrentUserMock.mockResolvedValue(admin())
+    const { default: DashboardPage } = await import('./page')
+    const html = renderToStaticMarkup(await DashboardPage({ searchParams: noSp }))
+    // Each Phase 3-dependent affordance renders as <button> with the
+    // disabled attribute and a Coming soon badge alongside.
+    expect(html).toMatch(/<button[^>]*disabled[^>]*data-testid="template-edit-welcome"/)
+    expect(html).toMatch(/<button[^>]*disabled[^>]*data-testid="template-edit-thank-you"/)
+    expect(html).toMatch(/<button[^>]*disabled[^>]*data-testid="template-create-cta"/)
+    expect(html).toContain('data-testid="template-edit-welcome-coming-soon"')
+    expect(html).toContain('data-testid="template-edit-thank-you-coming-soon"')
+    expect(html).toContain('data-testid="template-create-coming-soon"')
+  })
+
+  it('W4-I.5 P2.1: Communication Automation send buttons are disabled with Coming soon (Phase 3 stubs)', async () => {
+    getCurrentUserMock.mockResolvedValue(admin())
+    const { default: DashboardPage } = await import('./page')
+    const html = renderToStaticMarkup(await DashboardPage({ searchParams: noSp }))
+    expect(html).toMatch(/<button[^>]*disabled[^>]*data-testid="comm-button-welcome"/)
+    expect(html).toMatch(/<button[^>]*disabled[^>]*data-testid="comm-button-thank-you"/)
+    expect(html).toMatch(/<button[^>]*disabled[^>]*data-testid="comm-button-follow-up"/)
+    expect(html).toContain('data-testid="comm-button-welcome-coming-soon"')
+    expect(html).toContain('data-testid="comm-button-thank-you-coming-soon"')
+    expect(html).toContain('data-testid="comm-button-follow-up-coming-soon"')
+  })
+
   it('renders the Sales Pipeline summary card with View pipeline CTA', async () => {
     getCurrentUserMock.mockResolvedValue(admin())
     const { default: DashboardPage } = await import('./page')

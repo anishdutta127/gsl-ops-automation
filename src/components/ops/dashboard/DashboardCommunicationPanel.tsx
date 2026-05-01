@@ -1,16 +1,23 @@
 /*
- * DashboardCommunicationPanel (W4-I.5 Phase 2 commit 3).
+ * DashboardCommunicationPanel (W4-I.5 Phase 2 commit 3 + Phase 2.1).
  *
  * Three stacked send-template buttons: Welcome (navy), Thank You
- * (teal, the recommended action), Follow-up (white outline). Each
- * links to /admin/templates with a useCase query so the launcher
- * (Phase 3) opens preselected. Until Phase 3 lands, /admin/templates
- * does not exist; the link 404s. Tracking the bare-link landing as
- * an intentional Phase 3 trigger.
+ * (teal, the recommended action), Follow-up (white outline).
+ *
+ * W4-I.5 Phase 2.1: each button is currently disabled because the
+ * Phase 3 template launcher (variable substitution + mailto E2 +
+ * /admin/templates target) is not yet built. Buttons render greyed
+ * with a "Coming soon" badge so operators see the affordance exists
+ * and the workflow is on its way. The CommunicationButton.href in
+ * the lib still carries the eventual Phase 3 target; the component
+ * ignores it until Phase 3 lands.
+ *
+ * TODO(W4-I.5 Phase 3): re-enable as <Link href={b.href}> once the
+ * template launcher ships. Drop the Coming-soon badge, keep the
+ * VARIANT_CLASS map.
  */
 
-import Link from 'next/link'
-import { Send, ArrowRight } from 'lucide-react'
+import { Send, ArrowRight, Clock } from 'lucide-react'
 import type { CommunicationButton } from '@/lib/dashboard/dashboardData'
 
 const VARIANT_CLASS: Record<CommunicationButton['variant'], string> = {
@@ -48,18 +55,30 @@ export function DashboardCommunicationPanel({ buttons }: DashboardCommunicationP
       </header>
       <div className="flex flex-col gap-2 p-3 sm:p-4">
         {buttons.map((b) => (
-          <Link
+          <button
             key={b.key}
-            href={b.href}
+            type="button"
+            disabled
+            aria-disabled="true"
+            title="Coming in next update"
             data-testid={`comm-button-${b.key}`}
             className={
-              'inline-flex min-h-11 items-center justify-between rounded-md px-3 py-2 text-sm font-semibold focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 '
+              'inline-flex min-h-11 cursor-not-allowed items-center justify-between rounded-md px-3 py-2 text-sm font-semibold opacity-60 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 '
               + VARIANT_CLASS[b.variant]
             }
           >
-            <span>{b.label}</span>
+            <span className="inline-flex items-center gap-2">
+              <span>{b.label}</span>
+              <span
+                className="inline-flex items-center gap-1 rounded-full bg-card/80 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-brand-navy"
+                data-testid={`comm-button-${b.key}-coming-soon`}
+              >
+                <Clock aria-hidden className="size-2.5" />
+                Coming soon
+              </span>
+            </span>
             <ArrowRight aria-hidden className="size-4" />
-          </Link>
+          </button>
         ))}
       </div>
     </section>
