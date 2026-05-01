@@ -511,3 +511,158 @@ export function buildActionCenter(input: BuildActionCenterInputs): ActionCenterD
   const totalOpen = tiles.reduce((sum, t) => sum + t.count, 0)
   return { totalOpen, tiles }
 }
+
+// ----------------------------------------------------------------------------
+// Orders and Shipment Tracker (P2C3: third row, left column)
+// ----------------------------------------------------------------------------
+
+export type OrderStatusKind = 'order-raised' | 'packed' | 'shipped' | 'delivered'
+export type ShipmentStatusKind = 'packed' | 'shipped' | 'delivered' | 'delayed'
+
+export interface OrdersRow {
+  dispatchId: string
+  mouId: string | null
+  schoolName: string
+  product: string
+  orderStatus: OrderStatusKind
+  shipmentStatus: ShipmentStatusKind
+  /** Best-effort expected-delivery ISO; `null` when no estimate. */
+  expectedDate: string | null
+  /** Where the Action link points (the Ops dispatch surface for the MOU). */
+  href: string
+}
+
+/**
+ * Map a Dispatch.stage onto Misba's status vocabulary plus the
+ * derived 'delayed' state for shipments.
+ *
+ *   pending        -> orderStatus 'order-raised', shipment 'packed'
+ *   po-raised      -> orderStatus 'order-raised', shipment 'packed'
+ *   dispatched     -> orderStatus 'order-raised', shipment 'shipped'
+ *   in-transit     -> orderStatus 'order-raised', shipment 'shipped'
+ *   delivered      -> orderStatus 'delivered',    shipment 'delivered'
+ *   acknowledged   -> orderStatus 'delivered',    shipment 'delivered'
+ *
+ * isDelayed overrides the shipment column to 'delayed' when the
+ * 7-day threshold trips.
+ */
+function mapDispatchStatus(d: Dispatch, now: Date): {
+  orderStatus: OrderStatusKind
+  shipmentStatus: ShipmentStatusKind
+} {
+  let orderStatus: OrderStatusKind = 'order-raised'
+  let shipmentStatus: ShipmentStatusKind = 'packed'
+  switch (d.stage) {
+    case 'pending':
+    case 'po-raised':
+      orderStatus = 'order-raised'
+      shipmentStatus = 'packed'
+      break
+    case 'dispatched':
+    case 'in-transit':
+      orderStatus = 'order-raised'
+      shipmentStatus = 'shipped'
+      break
+    case 'delivered':
+    case 'acknowledged':
+      orderStatus = 'delivered'
+      shipmentStatus = 'delivered'
+      break
+  }
+  // Only flag 'delayed' on shipments that have actually shipped. A
+  // pending or packed dispatch is not late; it's still being prepared.
+  if (shipmentStatus === 'shipped' && isDelayed(d, now)) {
+    shipmentStatus = 'delayed'
+  }
+  return { orderStatus, shipmentStatus }
+}
+
+function expectedDateFor(d: Dispatch): string | null {
+  // Prefer dispatchedAt + 7d as the expected-delivery estimate (matches
+  // the operational baseline; courier integration would replace this
+  // with a real ETA in Phase 1.1).
+  if (d.deliveredAt) return d.deliveredAt.slice(0, 10)
+  if (d.dispatchedAt) {
+    const t = new Date(d.dispatchedAt).getTime() + 7 * 24 * 60 * 60 * 1000
+    return new Date(t).toISOString().slice(0, 10)
+  }
+  if (d.poRaisedAt) {
+    const t = new Date(d.poRaisedAt).getTime() + 14 * 24 * 60 * 60 * 1000
+    return new Date(t).toISOString().slice(0, 10)
+  }
+  return null
+}
+
+function productLabelFor(d: Dispatch, mou: MOU | null): string {
+  // The reference table shows "Cretile Starter Pack" / "Bootcamp Sensor Set"
+  // style product names; our line items carry the actual SKU. Prefer the
+  // first lineItem skuName; fall back to the parent MOU's programme label
+  // (with subType when present) for legacy dispatches.
+  const first = d.lineItems[0]
+  if (first && first.skuName && !first.skuName.startsWith('Legacy single-line')) {
+    return first.skuName
+  }
+  if (mou) {
+    return mou.programmeSubType
+      ? `${mou.programme} (${mou.programmeSubType})`
+      : `${mou.programme} kit`
+  }
+  return 'Programme kit'
+}
+
+export interface BuildOrdersTrackerInputs {
+  slices: DashboardSlices
+  schools: School[]
+  mous: MOU[]
+  now: Date
+  limit?: number
+}
+
+export function buildOrdersTracker(input: BuildOrdersTrackerInputs): OrdersRow[] {
+  const { slices, schools, mous, now, limit = 6 } = input
+  const schoolById = new Map(schools.map((s) => [s.id, s]))
+  const mouById = new Map(mous.map((m) => [m.id, m]))
+  const rows = slices.filteredDispatches.map((d) => {
+    const school = schoolById.get(d.schoolId)
+    const mou = d.mouId ? mouById.get(d.mouId) ?? null : null
+    const { orderStatus, shipmentStatus } = mapDispatchStatus(d, now)
+    return {
+      dispatchId: d.id,
+      mouId: d.mouId,
+      schoolName: school?.name ?? d.schoolId,
+      product: productLabelFor(d, mou),
+      orderStatus,
+      shipmentStatus,
+      expectedDate: expectedDateFor(d),
+      href: d.mouId ? `/mous/${d.mouId}/dispatch` : '/admin/dispatch-requests',
+    } satisfies OrdersRow
+  })
+  // Sort by dispatched-at desc when available, else PO-raised desc, else by id.
+  rows.sort((a, b) => (a.dispatchId < b.dispatchId ? 1 : a.dispatchId > b.dispatchId ? -1 : 0))
+  return rows.slice(0, limit)
+}
+
+// ----------------------------------------------------------------------------
+// Communication Automation buttons (P2C3 right column placeholder data)
+// ----------------------------------------------------------------------------
+
+/**
+ * The reference layout's Communication Automation panel surfaces three
+ * stacked buttons. P2C3 ships the buttons as styled affordances; the
+ * smart template launcher (mailto E2 + variable substitution) lands in
+ * Phase 3. For now each button links to /admin/templates (which Phase 3
+ * will create) so operators see a consistent destination even if the
+ * launcher is not yet wired.
+ */
+export interface CommunicationButton {
+  key: 'welcome' | 'thank-you' | 'follow-up'
+  label: string
+  variant: 'navy' | 'teal' | 'outline'
+  href: string
+}
+
+export const COMMUNICATION_BUTTONS: ReadonlyArray<CommunicationButton> = [
+  { key: 'welcome',   label: 'Send Welcome Note',  variant: 'navy',    href: '/admin/templates?useCase=welcome' },
+  { key: 'thank-you', label: 'Send Thank You Note', variant: 'teal',    href: '/admin/templates?useCase=thank-you' },
+  { key: 'follow-up', label: 'Send Follow-up Email', variant: 'outline', href: '/admin/templates?useCase=follow-up' },
+]

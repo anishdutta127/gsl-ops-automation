@@ -40,8 +40,10 @@ import { getCurrentUser } from '@/lib/auth/session'
 import { TopNav } from '@/components/ops/TopNav'
 import {
   buildActionCenter,
+  buildOrdersTracker,
   buildRecentMouUpdates,
   buildStatCards,
+  COMMUNICATION_BUTTONS,
   computeSlices,
   fiscalYearOptions,
   parseDashboardFilters,
@@ -51,6 +53,8 @@ import { DashboardFilterRow } from '@/components/ops/dashboard/DashboardFilterRo
 import { DashboardStatCards } from '@/components/ops/dashboard/DashboardStatCards'
 import { DashboardRecentMous } from '@/components/ops/dashboard/DashboardRecentMous'
 import { DashboardActionCenter } from '@/components/ops/dashboard/DashboardActionCenter'
+import { DashboardOrdersTracker } from '@/components/ops/dashboard/DashboardOrdersTracker'
+import { DashboardCommunicationPanel } from '@/components/ops/dashboard/DashboardCommunicationPanel'
 
 const allMous = mousJson as unknown as MOU[]
 const allSchools = schoolsJson as unknown as School[]
@@ -99,6 +103,9 @@ export default async function DashboardPage({ searchParams }: PageProps) {
     inventoryItems: allInventoryItems,
     now,
   })
+  const orderRows = buildOrdersTracker({
+    slices, schools: allSchools, mous: allMous, now,
+  })
   const fyOptions = fiscalYearOptions(allMous)
   const fiscalYearForHeader = filters.fiscalYear ?? 'all'
 
@@ -126,6 +133,15 @@ export default async function DashboardPage({ searchParams }: PageProps) {
               />
             </div>
             <DashboardActionCenter data={actionCenter} />
+          </div>
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+            <div className="lg:col-span-2">
+              <DashboardOrdersTracker
+                rows={orderRows}
+                totalCount={slices.filteredDispatches.length}
+              />
+            </div>
+            <DashboardCommunicationPanel buttons={COMMUNICATION_BUTTONS} />
           </div>
         </div>
       </main>

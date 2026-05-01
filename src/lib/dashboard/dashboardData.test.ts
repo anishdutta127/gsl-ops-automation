@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest'
 import {
   buildActionCenter,
+  buildOrdersTracker,
   buildRecentMouUpdates,
   buildStatCards,
+  COMMUNICATION_BUTTONS,
   computeSlices,
   fiscalYearOptions,
   isDelayed,
@@ -403,6 +405,103 @@ describe('buildActionCenter', () => {
       slices, dispatchRequests: [], inventoryItems: [], now: FIXED_NOW,
     })
     expect(data.tiles[0]!.label).toBe('MOU pending signature')
+  })
+})
+
+describe('buildOrdersTracker', () => {
+  it('maps stage -> order/shipment status correctly', () => {
+    const m = mou({ id: 'M1' })
+    const sch = school({ id: 'SCH-X' })
+    const dPending = dispatch({ id: 'D-PENDING', mouId: 'M1', stage: 'pending' })
+    const dShipped = dispatch({
+      id: 'D-SHIPPED', mouId: 'M1', stage: 'dispatched',
+      dispatchedAt: '2026-05-05T00:00:00Z',  // recent, within 7d
+    })
+    const dDelivered = dispatch({ id: 'D-DELIVERED', mouId: 'M1', stage: 'delivered' })
+    const slices = computeSlices({
+      mous: [m], schools: [sch], dispatches: [dPending, dShipped, dDelivered], escalations: [],
+      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null },
+    })
+    const rows = buildOrdersTracker({ slices, schools: [sch], mous: [m], now: FIXED_NOW })
+    const byId = new Map(rows.map((r) => [r.dispatchId, r]))
+    expect(byId.get('D-PENDING')!.shipmentStatus).toBe('packed')
+    expect(byId.get('D-SHIPPED')!.shipmentStatus).toBe('shipped')
+    expect(byId.get('D-DELIVERED')!.shipmentStatus).toBe('delivered')
+  })
+
+  it('flags delayed shipment when isDelayed trips', () => {
+    const m = mou({ id: 'M1' })
+    const d = dispatch({
+      id: 'D-OLD', mouId: 'M1', stage: 'dispatched',
+      dispatchedAt: '2026-04-25T00:00:00Z',  // > 7d before FIXED_NOW
+      acknowledgedAt: null,
+    })
+    const slices = computeSlices({
+      mous: [m], schools: [], dispatches: [d], escalations: [],
+      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null },
+    })
+    const rows = buildOrdersTracker({ slices, schools: [], mous: [m], now: FIXED_NOW })
+    expect(rows[0]!.shipmentStatus).toBe('delayed')
+  })
+
+  it('joins school name via schoolId', () => {
+    const m = mou({ id: 'M1', schoolId: 'SCH-X' })
+    const s = school({ id: 'SCH-X', name: 'Greenwood Intl' })
+    const d = dispatch({ id: 'D-X', mouId: 'M1', schoolId: 'SCH-X' })
+    const slices = computeSlices({
+      mous: [m], schools: [s], dispatches: [d], escalations: [],
+      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null },
+    })
+    const rows = buildOrdersTracker({ slices, schools: [s], mous: [m], now: FIXED_NOW })
+    expect(rows[0]!.schoolName).toBe('Greenwood Intl')
+  })
+
+  it('falls back to programme label when lineItem is the legacy placeholder', () => {
+    const m = mou({ id: 'M1', programme: 'STEAM' })
+    const d = dispatch({
+      id: 'D-X', mouId: 'M1',
+      lineItems: [{ kind: 'flat', skuName: 'Legacy single-line item (pre-W4-D)', quantity: 1 }],
+    })
+    const slices = computeSlices({
+      mous: [m], schools: [], dispatches: [d], escalations: [],
+      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null },
+    })
+    const rows = buildOrdersTracker({ slices, schools: [], mous: [m], now: FIXED_NOW })
+    expect(rows[0]!.product).toBe('STEAM kit')
+  })
+
+  it('honours custom limit', () => {
+    const m = mou({ id: 'M1' })
+    const ds = Array.from({ length: 12 }, (_, i) => dispatch({ id: `D${i}`, mouId: 'M1' }))
+    const slices = computeSlices({
+      mous: [m], schools: [], dispatches: ds, escalations: [],
+      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null },
+    })
+    expect(buildOrdersTracker({ slices, schools: [], mous: [m], now: FIXED_NOW, limit: 3 })).toHaveLength(3)
+  })
+
+  it('Action href targets /mous/[id]/dispatch when MOU is set', () => {
+    const m = mou({ id: 'M1' })
+    const d = dispatch({ id: 'D-X', mouId: 'M1' })
+    const slices = computeSlices({
+      mous: [m], schools: [], dispatches: [d], escalations: [],
+      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null },
+    })
+    const rows = buildOrdersTracker({ slices, schools: [], mous: [m], now: FIXED_NOW })
+    expect(rows[0]!.href).toBe('/mous/M1/dispatch')
+  })
+})
+
+describe('COMMUNICATION_BUTTONS', () => {
+  it('exposes 3 buttons in fixed order with valid variants', () => {
+    expect(COMMUNICATION_BUTTONS.map((b) => b.key)).toEqual(['welcome', 'thank-you', 'follow-up'])
+    expect(COMMUNICATION_BUTTONS.map((b) => b.variant)).toEqual(['navy', 'teal', 'outline'])
+  })
+
+  it('every href links to /admin/templates with a useCase', () => {
+    for (const b of COMMUNICATION_BUTTONS) {
+      expect(b.href).toMatch(/^\/admin\/templates\?useCase=/)
+    }
   })
 })
 

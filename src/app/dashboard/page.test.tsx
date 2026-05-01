@@ -155,6 +155,31 @@ describe('/dashboard page (W4-I.5)', () => {
     expect(html).toContain('data-testid="action-centre-cta"')
   })
 
+  it('renders the Orders and Shipment Tracker table', async () => {
+    getCurrentUserMock.mockResolvedValue(admin())
+    const { default: DashboardPage } = await import('./page')
+    const html = renderToStaticMarkup(await DashboardPage({ searchParams: noSp }))
+    expect(html).toContain('data-testid="dashboard-orders-tracker"')
+    expect(html).toContain('Orders and Shipment Tracker')
+    expect(html).toContain('data-testid="orders-tracker-view-all"')
+    // Real fixture row: at least one dispatch exists
+    expect(html).toMatch(/data-testid="orders-row-/)
+  })
+
+  it('renders the Communication Automation panel with 3 send buttons', async () => {
+    getCurrentUserMock.mockResolvedValue(admin())
+    const { default: DashboardPage } = await import('./page')
+    const html = renderToStaticMarkup(await DashboardPage({ searchParams: noSp }))
+    expect(html).toContain('data-testid="dashboard-communication-panel"')
+    expect(html).toContain('Communication Automation')
+    expect(html).toContain('data-testid="comm-button-welcome"')
+    expect(html).toContain('data-testid="comm-button-thank-you"')
+    expect(html).toContain('data-testid="comm-button-follow-up"')
+    expect(html).toContain('Send Welcome Note')
+    expect(html).toContain('Send Thank You Note')
+    expect(html).toContain('Send Follow-up Email')
+  })
+
   it('contains no raw hex codes (token discipline)', async () => {
     getCurrentUserMock.mockResolvedValue(admin())
     const { default: DashboardPage } = await import('./page')
