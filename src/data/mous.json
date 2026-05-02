@@ -5202,10 +5202,21 @@
           "stage": "mou-signed"
         },
         "notes": "Test test test test test test test test"
+      },
+      {
+        "timestamp": "2026-05-02T17:29:16.798Z",
+        "user": "anish.d",
+        "action": "mou-delay-notes-updated",
+        "before": {
+          "delayNotes": null
+        },
+        "after": {
+          "delayNotes": "k"
+        }
       }
     ],
     "cohortStatus": "active",
-    "delayNotes": null
+    "delayNotes": "k"
   },
   {
     "id": "MOU-STEAM-2627-003",
