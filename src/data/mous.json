@@ -5213,10 +5213,21 @@
         "after": {
           "delayNotes": "k"
         }
+      },
+      {
+        "timestamp": "2026-05-05T10:50:59.763Z",
+        "user": "anish.d",
+        "action": "mou-delay-notes-updated",
+        "before": {
+          "delayNotes": "k"
+        },
+        "after": {
+          "delayNotes": null
+        }
       }
     ],
     "cohortStatus": "active",
-    "delayNotes": "k"
+    "delayNotes": null
   },
   {
     "id": "MOU-STEAM-2627-003",
