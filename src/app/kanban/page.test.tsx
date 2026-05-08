@@ -48,11 +48,11 @@ describe('/kanban (W4-I.5 P2C5 route)', () => {
     expect(html).toContain('data-testid="stage-column-feedback-submitted"')
   })
 
-  it('Pre-Ops column uses the "Needs triage" badge framing rather than a numeric stage label', async () => {
+  it('Pre-Ops column uses the "Pending Signature" badge framing rather than a numeric stage label', async () => {
     getCurrentUserMock.mockResolvedValue(admin())
     const { default: HomePage } = await import('./page')
     const html = renderToStaticMarkup(await HomePage({ searchParams: Promise.resolve({}) }))
-    expect(html).toContain('Needs triage:')
+    expect(html).toContain('Pending Signature:')
   })
 
   it('renders MouCards inside columns from the real fixture', async () => {

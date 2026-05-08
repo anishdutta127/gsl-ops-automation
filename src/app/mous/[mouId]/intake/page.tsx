@@ -52,7 +52,7 @@ const ERROR_MESSAGES: Record<string, string> = {
   'unknown-sales-owner': 'Pick a sales rep from the dropdown.',
   'invalid-email': 'Recipient email is not a valid address.',
   'invalid-url': 'Signed-MOU URL must be a Drive / SharePoint / Dropbox link.',
-  'invalid-students': 'Students at intake must be a positive number.',
+  'invalid-students': 'Prospective Enrolments must be a positive number.',
   'invalid-duration': 'Duration must be a whole number between 1 and 10.',
   'invalid-date': 'Start and end dates must be in yyyy-mm-dd format.',
   'date-order': 'End date must be after start date.',
@@ -191,7 +191,7 @@ export default async function IntakePage({ params, searchParams }: PageProps) {
                 <input id="grades" name="grades" type="text" required className={FIELD_INPUT_CLASS} placeholder="e.g., 1-8 or 4-8" data-testid="intake-grades" />
               </div>
               <div>
-                <label htmlFor="studentsAtIntake" className={FIELD_LABEL_CLASS}>Students at intake</label>
+                <label htmlFor="studentsAtIntake" className={FIELD_LABEL_CLASS}>Prospective Enrolments</label>
                 <input id="studentsAtIntake" name="studentsAtIntake" type="number" min="1" step="1" required defaultValue={mou.studentsMou} className={FIELD_INPUT_CLASS} data-testid="intake-students" />
                 <p className="mt-1 text-xs text-muted-foreground">MOU baseline: {mou.studentsMou}. Different value will be saved with audit warning.</p>
               </div>

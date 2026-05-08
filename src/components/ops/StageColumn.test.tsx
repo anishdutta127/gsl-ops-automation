@@ -19,13 +19,13 @@ describe('StageColumn', () => {
     expect(html).toContain('data-testid="stage-count-invoice-raised"')
   })
 
-  it('renders "Needs triage: N" framing for the muted variant', () => {
+  it('renders "Pending Signature: N" framing for the muted variant', () => {
     const html = renderToStaticMarkup(
-      <StageColumn columnKey="pre-ops" label="Needs triage" variant="muted" count={9}>
+      <StageColumn columnKey="pre-ops" label="Pending Signature" variant="muted" count={9}>
         <div>card</div>
       </StageColumn>,
     )
-    expect(html).toContain('Needs triage: 9')
+    expect(html).toContain('Pending Signature: 9')
     expect(html).toContain('italic')
   })
 

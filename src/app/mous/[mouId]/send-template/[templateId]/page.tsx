@@ -115,8 +115,16 @@ export default async function SendTemplatePage({ params, searchParams }: PagePro
     ? allSalesTeam.find((s) => s.id === mou.salesPersonId) ?? null
     : null
 
+  // Welcome notes formally come from the Trainer Head (Shashank S.),
+  // not the operator who happens to be logged in. The {{senderName}}
+  // placeholder in the body and the CC list both pin to Shashank for
+  // the welcome useCase; other templates keep the live operator.
+  const effectiveSender: User = template.useCase === 'welcome'
+    ? { ...user, name: 'Shashank S.', email: 'shashank.s@getsetlearn.info' }
+    : user
+
   const ctx = {
-    mou, school, intake, dispatch, payment, salesOwner, sender: user,
+    mou, school, intake, dispatch, payment, salesOwner, sender: effectiveSender,
     now: new Date(),
   }
   const subjectResult = applyVariables(template.subject, ctx)
@@ -124,7 +132,7 @@ export default async function SendTemplatePage({ params, searchParams }: PagePro
 
   const recipient = resolveRecipient(template.defaultRecipient, intake, school, salesOwner)
   const ccEmails = ['anish.d@getsetlearn.info']
-  if (user.email !== 'anish.d@getsetlearn.info') ccEmails.push(user.email)
+  if (effectiveSender.email !== 'anish.d@getsetlearn.info') ccEmails.push(effectiveSender.email)
 
   const mailtoUrl = (() => {
     const params = new URLSearchParams()

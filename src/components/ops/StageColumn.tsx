@@ -10,7 +10,7 @@
  * Variants:
  *   - 'lifecycle': normal column for the 8 stages.
  *   - 'muted':     Pre-Ops Legacy holding bay. Lighter background,
- *                  italic label, "Needs triage" framing rather than
+ *                  italic label, "Pending Signature" framing rather than
  *                  "Stage 0/9". One-way exit (no drop-into in C2).
  */
 
@@ -82,7 +82,7 @@ export function StageColumn({ columnKey, label, variant, count, children, header
           )}
           data-testid={`stage-count-${columnKey}`}
         >
-          {isMuted ? `Needs triage: ${count}` : count}
+          {isMuted ? `Pending Signature: ${count}` : count}
         </span>
       </header>
       <div className="flex flex-col gap-2">{children}</div>

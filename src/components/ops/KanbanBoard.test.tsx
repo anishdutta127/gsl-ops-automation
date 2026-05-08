@@ -58,10 +58,10 @@ describe('KanbanBoard', () => {
     expect(html).toContain('href="/mous/M-B"')
   })
 
-  it('Pre-Ops column carries the muted "Needs triage" framing', () => {
+  it('Pre-Ops column carries the muted "Pending Signature" framing', () => {
     const buckets = { ...emptyBuckets, 'pre-ops': [mou({ id: 'M-PO', status: 'Pending Signature' })] }
     const html = renderToStaticMarkup(<KanbanBoard initialBuckets={buckets} />)
-    expect(html).toContain('Needs triage:')
+    expect(html).toContain('Pending Signature:')
     expect(html).toContain('data-mou-id="M-PO"')
   })
 

@@ -83,6 +83,6 @@ describe('LifecycleProgress', () => {
     expect(html).toMatch(/aria-label="MOU signed: Completed[^"]*"/)
     // W4-C.1: post-signing-intake is now the in-progress stage when only
     // mouSignedDate is set; actuals-confirmed shifts to "future".
-    expect(html).toMatch(/aria-label="Post-signing intake: In progress[^"]*"/)
+    expect(html).toMatch(/aria-label="Active Schools - Onboarding: In progress[^"]*"/)
   })
 })

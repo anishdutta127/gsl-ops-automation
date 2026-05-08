@@ -19,7 +19,7 @@
 import type { ReactNode } from 'react'
 
 export interface MetadataItem {
-  label: string
+  label: ReactNode
   value: ReactNode
 }
 
@@ -54,7 +54,7 @@ export function DetailHeaderCard({
       {metadata && metadata.length > 0 ? (
         <dl className="mt-4 grid grid-cols-1 gap-x-6 gap-y-3 sm:grid-cols-2">
           {metadata.map((item, idx) => (
-            <div key={`${item.label}-${idx}`} className="min-w-0">
+            <div key={idx} className="min-w-0">
               <dt className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 {item.label}
               </dt>

@@ -92,7 +92,7 @@ describe('/mous list page', () => {
     const html = renderToStaticMarkup(
       await MousPage({ searchParams: Promise.resolve({ stage: 'pre-ops' }) }),
     )
-    expect(html).toContain('MOUs at Needs triage')
+    expect(html).toContain('MOUs at Pending Signature')
   })
 
   it('unknown ?stage= value is ignored (treated as no filter)', async () => {

@@ -53,12 +53,12 @@ export interface KanbanColumn {
 }
 
 export const KANBAN_COLUMNS: ReadonlyArray<KanbanColumn> = [
-  { key: 'pre-ops', label: 'Needs triage', variant: 'muted' },
+  { key: 'pre-ops', label: 'Pending Signature', variant: 'muted' },
   { key: 'mou-signed', label: 'MOU signed', variant: 'lifecycle' },
   // W4-C.1: post-signing-intake sits between mou-signed and actuals-confirmed.
   // Card enters when MOU.status flips to Active; exits when an IntakeRecord
   // with completedAt !== null exists for the MOU.
-  { key: 'post-signing-intake', label: 'Post-signing intake', variant: 'lifecycle' },
+  { key: 'post-signing-intake', label: 'Active Schools - Onboarding', variant: 'lifecycle' },
   { key: 'actuals-confirmed', label: 'Actuals confirmed', variant: 'lifecycle' },
   { key: 'cross-verification', label: 'Cross-verification', variant: 'lifecycle' },
   { key: 'invoice-raised', label: 'Invoice raised', variant: 'lifecycle' },

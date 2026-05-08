@@ -32,6 +32,7 @@ import {
   ArrowRight,
   ChevronDown,
   ClipboardCheck,
+  Info,
   MessageSquare,
   Receipt,
   Sparkles,
@@ -319,7 +320,21 @@ export default async function MouDetailPage({ params }: PageProps) {
                     ),
                   },
                   {
-                    label: 'Scope',
+                    label: (
+                      <span className="inline-flex items-center gap-1">
+                        Scope
+                        <Info
+                          aria-label="Scope definitions"
+                          title={
+                            'Single: one school, one programme.\n' +
+                            'Multi-school: one signing, multiple branches.\n' +
+                            'Multi-programme: one school, several programmes.\n' +
+                            'Govt-Tender: state or district level.'
+                          }
+                          className="size-3 text-muted-foreground"
+                        />
+                      </span>
+                    ),
                     value:
                       mou.schoolScope === 'GROUP' && mou.schoolGroupId
                         ? `GROUP (${mou.schoolGroupId})`
@@ -407,7 +422,7 @@ export default async function MouDetailPage({ params }: PageProps) {
                 title="Intake"
                 icon={<ClipboardCheck className="size-4" />}
                 hasData={intakeRecord !== undefined}
-                emptyHint="Post-signing intake not captured yet."
+                emptyHint="Active Schools - Onboarding not captured yet."
                 testId="card-intake"
               >
                 {intakeRecord ? (
@@ -428,7 +443,7 @@ export default async function MouDetailPage({ params }: PageProps) {
                     </div>
                     <div>
                       <dt className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                        Students at intake
+                        Prospective Enrolments
                       </dt>
                       <dd>{intakeRecord.studentsAtIntake.toLocaleString('en-IN')}</dd>
                     </div>

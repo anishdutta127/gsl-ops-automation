@@ -59,7 +59,7 @@ export interface LifecycleInput {
 
 const STAGE_LABELS: Record<StageKey, string> = {
   'mou-signed': 'MOU signed',
-  'post-signing-intake': 'Post-signing intake',
+  'post-signing-intake': 'Active Schools - Onboarding',
   'actuals-confirmed': 'Actuals confirmed',
   'cross-verification': 'Cross-verification',
   'invoice-raised': 'Invoice raised',

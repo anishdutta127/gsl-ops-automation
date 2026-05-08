@@ -33,7 +33,7 @@ const ERROR_MESSAGES: Record<string, string> = {
   'unknown-user': 'Session user not found. Please log in again.',
   'intake-not-found': 'No intake record exists for this MOU yet. Capture intake first.',
   'missing-text': 'A required text field is empty.',
-  'invalid-students': 'Students at intake must be a positive number.',
+  'invalid-students': 'Prospective Enrolments must be a positive number.',
   'invalid-grade-breakdown': 'Grade-wise counts must be whole numbers between 0 and the cohort size.',
   'invalid-batteries': 'Rechargeable batteries count cannot be negative.',
   'no-changes': 'No fields changed.',

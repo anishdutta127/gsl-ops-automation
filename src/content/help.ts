@@ -112,8 +112,8 @@ export const HELP_LIFECYCLE_STAGES: LifecycleStageEntry[] = [
   {
     number: '2',
     key: 'post-signing-intake',
-    title: 'Post-signing intake',
-    whatHappens: 'The 22-field intake form is captured at /mous/[id]/intake: sales owner, location, grades, recipient details for the welcome note, students at intake, MOU duration, signed-copy URL, school POC. Replaces the legacy Google Form. Submitting the form auto-drafts the welcome note (compose-and-copy via clipboard).',
+    title: 'Active Schools - Onboarding',
+    whatHappens: 'The 22-field intake form is captured at /mous/[id]/intake: sales owner, location, grades, recipient details for the welcome note, prospective enrolments, MOU duration, signed-copy URL, school POC. Replaces the legacy Google Form. Submitting the form auto-drafts the welcome note (compose-and-copy via clipboard).',
     whoInvolved: 'Ops core team (Misba / Pradeep / Swati)',
     systemTracks: 'IntakeRecord (22 fields); audit captures variances against MOU baseline (students, programme, training mode).',
     typicalDays: '14 days from signing to intake completion (default; editable at /admin/lifecycle-rules).',
