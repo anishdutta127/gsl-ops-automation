@@ -20,14 +20,18 @@ export const ESCALATION_SEVERITY_TONE: Record<
 }
 
 // W4-I.4 MM5: Misba ticketing-system status vocabulary.
+// Swati-feedback batch: display labels relabel without touching the
+// stored enum (Open / WIP / Closed / Transfer to Other Department /
+// Dispatched / In Transit). Filter chips, status chips, dashboard tile,
+// and detail page all read these labels.
 export const ESCALATION_STATUS_TONE: Record<
   Escalation['status'],
   { tone: StatusChipTone; label: string }
 > = {
-  Open: { tone: 'alert', label: 'Open' },
-  WIP: { tone: 'attention', label: 'WIP' },
+  Open: { tone: 'alert', label: 'Awaiting Action' },
+  WIP: { tone: 'attention', label: 'Being Resolved' },
   Closed: { tone: 'ok', label: 'Closed' },
-  'Transfer to Other Department': { tone: 'attention', label: 'Transfer to Other Department' },
+  'Transfer to Other Department': { tone: 'attention', label: 'Waiting on Someone Else' },
   Dispatched: { tone: 'attention', label: 'Dispatched' },
   'In Transit': { tone: 'attention', label: 'In Transit' },
 }

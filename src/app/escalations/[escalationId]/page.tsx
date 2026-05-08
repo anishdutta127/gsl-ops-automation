@@ -103,6 +103,10 @@ export default async function EscalationDetailPage({ params }: PageProps) {
               { label: 'Type', value: esc.type ?? <span className="text-muted-foreground">not set</span> },
               { label: 'Severity', value: <StatusChip tone={severityMeta.tone} label={severityMeta.label} withDot={false} /> },
               { label: 'Assigned to', value: esc.assignedTo ?? 'unassigned' },
+              ...(esc.waitingOn || esc.status === 'Transfer to Other Department' ? [{
+                label: 'Waiting on what/whom?',
+                value: esc.waitingOn ?? <span className="text-muted-foreground">not set</span>,
+              }] : []),
             ]}
             actions={canEdit ? (
               <Link

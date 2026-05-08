@@ -20,6 +20,7 @@
     "status": "Open",
     "category": null,
     "type": null,
+    "waitingOn": null,
     "resolutionNotes": null,
     "resolvedAt": null,
     "resolvedBy": null,
@@ -28,8 +29,12 @@
         "timestamp": "2026-05-01T10:00:00.000Z",
         "user": "system-w4i4-mm5",
         "action": "escalation-edited",
-        "before": { "status": "open" },
-        "after": { "status": "Open" },
+        "before": {
+          "status": "open"
+        },
+        "after": {
+          "status": "Open"
+        },
         "notes": "W4-I.4 MM5 backfill: status enum migrated to Misba ticketing vocabulary (open -> Open). category and type initialised to null."
       }
     ]
@@ -55,6 +60,7 @@
     "status": "Open",
     "category": null,
     "type": null,
+    "waitingOn": null,
     "resolutionNotes": null,
     "resolvedAt": null,
     "resolvedBy": null,
@@ -69,8 +75,12 @@
         "timestamp": "2026-05-01T10:00:00.000Z",
         "user": "system-w4i4-mm5",
         "action": "escalation-edited",
-        "before": { "status": "open" },
-        "after": { "status": "Open" },
+        "before": {
+          "status": "open"
+        },
+        "after": {
+          "status": "Open"
+        },
         "notes": "W4-I.4 MM5 backfill: status enum migrated (open -> Open). category and type initialised to null."
       }
     ]
@@ -95,6 +105,7 @@
     "status": "WIP",
     "category": null,
     "type": null,
+    "waitingOn": null,
     "resolutionNotes": "Approved within tolerance.",
     "resolvedAt": null,
     "resolvedBy": null,
@@ -103,8 +114,12 @@
         "timestamp": "2026-05-01T10:00:00.000Z",
         "user": "system-w4i4-mm5",
         "action": "escalation-edited",
-        "before": { "status": "acknowledged" },
-        "after": { "status": "WIP" },
+        "before": {
+          "status": "acknowledged"
+        },
+        "after": {
+          "status": "WIP"
+        },
         "notes": "W4-I.4 MM5 backfill: status enum migrated (acknowledged -> WIP). category and type initialised to null."
       }
     ]
@@ -129,6 +144,7 @@
     "status": "Open",
     "category": null,
     "type": null,
+    "waitingOn": null,
     "resolutionNotes": null,
     "resolvedAt": null,
     "resolvedBy": null,
@@ -137,8 +153,12 @@
         "timestamp": "2026-05-01T10:00:00.000Z",
         "user": "system-w4i4-mm5",
         "action": "escalation-edited",
-        "before": { "status": "open" },
-        "after": { "status": "Open" },
+        "before": {
+          "status": "open"
+        },
+        "after": {
+          "status": "Open"
+        },
         "notes": "W4-I.4 MM5 backfill: status enum migrated (open -> Open). category and type initialised to null."
       }
     ]
@@ -164,6 +184,7 @@
     "status": "Closed",
     "category": null,
     "type": null,
+    "waitingOn": null,
     "resolutionNotes": "Alternate SPOC email captured: spoc.cedarheights.alt@example.test. Welcome note re-sent.",
     "resolvedAt": "2026-04-12T10:00:00Z",
     "resolvedBy": "ameet.z",
@@ -172,8 +193,12 @@
         "timestamp": "2026-05-01T10:00:00.000Z",
         "user": "system-w4i4-mm5",
         "action": "escalation-edited",
-        "before": { "status": "resolved" },
-        "after": { "status": "Closed" },
+        "before": {
+          "status": "resolved"
+        },
+        "after": {
+          "status": "Closed"
+        },
         "notes": "W4-I.4 MM5 backfill: status enum migrated (resolved -> Closed). category and type initialised to null."
       }
     ]

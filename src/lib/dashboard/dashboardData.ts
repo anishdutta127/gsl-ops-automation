@@ -271,7 +271,7 @@ export function buildStatCards(input: BuildStatCardsInputs): StatCardData[] {
     key: 'escalations',
     label: 'Escalations',
     primary: openEscalations.length,
-    primaryUnit: 'Open',
+    primaryUnit: 'Awaiting Action',
     subtitle: highPriorityEscalations.length === 0
       ? 'None high priority'
       : `${highPriorityEscalations.length} High Priority`,

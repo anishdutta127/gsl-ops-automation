@@ -170,6 +170,7 @@ export async function writeOverrideAudit(
     status: 'Open',
     category: null,
     type: null,
+    waitingOn: null,
     resolutionNotes: null,
     resolvedAt: null,
     resolvedBy: null,

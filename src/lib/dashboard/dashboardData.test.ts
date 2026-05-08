@@ -71,7 +71,7 @@ function esc(overrides: Partial<Escalation> = {}): Escalation {
     lane: 'OPS', level: 'L1', origin: 'manual', originId: null,
     severity: 'medium', description: '', assignedTo: null,
     notifiedEmails: [], status: 'Open', category: null, type: null,
-    resolutionNotes: null, resolvedAt: null, resolvedBy: null, auditLog: [],
+    waitingOn: null, resolutionNotes: null, resolvedAt: null, resolvedBy: null, auditLog: [],
     ...overrides,
   }
 }

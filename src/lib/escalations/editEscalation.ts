@@ -52,6 +52,12 @@ export interface EditEscalationPatch {
   severity?: EscalationSeverity
   assignedTo?: string | null
   description?: string
+  /**
+   * Free-text "Waiting on what/whom?". Populated when status is the
+   * "Waiting on Someone Else" relabel of `Transfer to Other Department`
+   * (Swati-feedback batch).
+   */
+  waitingOn?: string | null
   resolutionNotes?: string | null
 }
 
@@ -142,6 +148,9 @@ export async function editEscalation(
     if (v === '') return { ok: false, reason: 'missing-description' }
     next.description = v
   }
+  if (args.patch.waitingOn !== undefined) {
+    next.waitingOn = nullIfBlank(args.patch.waitingOn)
+  }
   if (args.patch.resolutionNotes !== undefined) {
     next.resolutionNotes = nullIfBlank(args.patch.resolutionNotes)
   }
@@ -160,7 +169,7 @@ export async function editEscalation(
 
   const editableKeys: Array<keyof EditEscalationPatch> = [
     'status', 'category', 'type', 'severity', 'assignedTo',
-    'description', 'resolutionNotes',
+    'description', 'waitingOn', 'resolutionNotes',
   ]
   const changedFields: string[] = []
   const before: Record<string, unknown> = {}

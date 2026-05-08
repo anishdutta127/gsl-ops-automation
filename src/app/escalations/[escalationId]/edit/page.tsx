@@ -17,6 +17,7 @@ import { getCurrentUser } from '@/lib/auth/session'
 import { canPerform } from '@/lib/auth/permissions'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
+import { ESCALATION_STATUS_TONE } from '@/lib/ui/escalationTones'
 import { editEscalationAction } from '../../actions'
 
 const allEscalations = escalationsJson as unknown as Escalation[]
@@ -125,7 +126,7 @@ export default async function EscalationEditPage({ params, searchParams }: PageP
                 className="mt-1 block w-full rounded-md border border-input bg-card px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
               >
                 {STATUS_OPTIONS.map((s) => (
-                  <option key={s} value={s}>{s}</option>
+                  <option key={s} value={s}>{ESCALATION_STATUS_TONE[s].label}</option>
                 ))}
               </select>
             </div>
@@ -199,6 +200,22 @@ export default async function EscalationEditPage({ params, searchParams }: PageP
               data-testid="edit-description"
               className="mt-1 block w-full rounded-md border border-input bg-card px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
             />
+          </div>
+
+          <div>
+            <label htmlFor="waitingOn" className="block text-sm font-medium text-brand-navy">
+              Waiting on what/whom?
+            </label>
+            <input
+              id="waitingOn" name="waitingOn" type="text"
+              defaultValue={esc.waitingOn ?? ''}
+              data-testid="edit-waitingOn"
+              className="mt-1 block w-full rounded-md border border-input bg-card px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
+              placeholder="Required when status is Waiting on Someone Else; e.g., 'Pratik (legal sign-off)'"
+            />
+            <p className="mt-1 text-xs text-muted-foreground">
+              Populate this when the status is &ldquo;Waiting on Someone Else&rdquo; so the queue knows what is blocking.
+            </p>
           </div>
 
           <div>

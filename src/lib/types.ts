@@ -798,6 +798,12 @@ export interface Escalation {
    */
   category: string | null
   type: string | null
+  /**
+   * Free-text "Waiting on what/whom?" populated when status is the
+   * "Waiting on Someone Else" relabel of `Transfer to Other Department`
+   * (Swati-feedback batch). Other statuses leave this null.
+   */
+  waitingOn: string | null
   resolutionNotes: string | null
   resolvedAt: string | null
   resolvedBy: string | null

@@ -147,7 +147,7 @@ export function OverviewContent({
 
       <section aria-labelledby="escalations-heading">
         <div className="mb-2 flex items-baseline justify-between">
-          <h2 id="escalations-heading" className="font-heading text-lg font-semibold text-brand-navy">Open escalations</h2>
+          <h2 id="escalations-heading" className="font-heading text-lg font-semibold text-brand-navy">Awaiting action</h2>
           <Link
             href="/escalations"
             className="flex items-center gap-1 text-sm text-brand-navy hover:underline focus:outline-none focus:ring-2 focus:ring-brand-navy"
@@ -157,7 +157,7 @@ export function OverviewContent({
         </div>
         <div className="overflow-hidden rounded-lg border border-border bg-card">
           {escalationPreview.length === 0 ? (
-            <p className="px-4 py-6 text-sm text-muted-foreground">No open escalations.</p>
+            <p className="px-4 py-6 text-sm text-muted-foreground">No escalations awaiting action.</p>
           ) : (
             <ul className="divide-y divide-border" data-testid="escalation-list">
               {escalationPreview.map((e) => {

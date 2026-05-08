@@ -57,6 +57,9 @@ export async function editEscalationAction(formData: FormData): Promise<void> {
   if (formData.has('description')) {
     patch.description = String(formData.get('description') ?? '')
   }
+  if (formData.has('waitingOn')) {
+    patch.waitingOn = nullIfBlank(String(formData.get('waitingOn') ?? ''))
+  }
   if (formData.has('resolutionNotes')) {
     patch.resolutionNotes = nullIfBlank(String(formData.get('resolutionNotes') ?? ''))
   }

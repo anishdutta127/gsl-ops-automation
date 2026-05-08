@@ -95,13 +95,19 @@ export default async function EscalationsListPage({ searchParams }: PageProps) {
       key: 'status',
       label: 'Status',
       // W4-I.4 MM5: Misba ticketing-system status vocabulary.
+      // Swati-feedback batch: filter chip labels relabel via
+      // ESCALATION_STATUS_TONE so the chip matches the row chip; the
+      // stored enum value is unchanged.
       options: [
-        { value: 'Open', label: 'Open' },
-        { value: 'WIP', label: 'WIP' },
-        { value: 'Closed', label: 'Closed' },
-        { value: 'Transfer to Other Department', label: 'Transfer to Other Department' },
-        { value: 'Dispatched', label: 'Dispatched' },
-        { value: 'In Transit', label: 'In Transit' },
+        { value: 'Open', label: ESCALATION_STATUS_TONE.Open.label },
+        { value: 'WIP', label: ESCALATION_STATUS_TONE.WIP.label },
+        { value: 'Closed', label: ESCALATION_STATUS_TONE.Closed.label },
+        {
+          value: 'Transfer to Other Department',
+          label: ESCALATION_STATUS_TONE['Transfer to Other Department'].label,
+        },
+        { value: 'Dispatched', label: ESCALATION_STATUS_TONE.Dispatched.label },
+        { value: 'In Transit', label: ESCALATION_STATUS_TONE['In Transit'].label },
       ],
     },
     {
