@@ -239,7 +239,11 @@ export default async function RemindersListPage({ searchParams }: PageProps) {
                         <span className="text-xs text-muted-foreground">· {r.programme}</span>
                       ) : null}
                       {r.installmentSeq ? (
-                        <span className="text-xs text-muted-foreground">· Inst {r.installmentSeq}</span>
+                        <span className="text-xs text-muted-foreground">
+                          · {(r.kind === 'delivery-ack' || r.kind === 'feedback-chase')
+                            ? `Kit Batch ${r.installmentSeq}`
+                            : `Inst ${r.installmentSeq}`}
+                        </span>
                       ) : null}
                     </div>
                     <p className="mt-1 text-xs text-muted-foreground">

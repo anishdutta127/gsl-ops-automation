@@ -151,7 +151,7 @@ export default async function DeliveryAckPage({ params, searchParams }: PageProp
           >
             <header className="mb-3">
               <h2 className="text-base font-semibold text-brand-navy">
-                Instalment {d.installmentSeq} ({d.id})
+                Kit Batch {d.installmentSeq} ({d.id})
               </h2>
               <p className="text-xs text-muted-foreground">
                 Stage: {d.stage}
@@ -210,7 +210,7 @@ export default async function DeliveryAckPage({ params, searchParams }: PageProp
               {acknowledged.map((d) => (
                 <li key={d.id} className="flex items-baseline justify-between gap-3 px-4 py-3 text-sm">
                   <div>
-                    <span className="font-medium text-brand-navy">Inst {d.installmentSeq}</span>
+                    <span className="font-medium text-brand-navy">Kit Batch {d.installmentSeq}</span>
                     <span className="ml-2 text-xs text-muted-foreground">{d.id}</span>
                     {d.acknowledgedAt ? (
                       <span className="ml-2 text-xs text-muted-foreground">

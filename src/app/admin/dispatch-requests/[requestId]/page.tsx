@@ -118,7 +118,7 @@ export default async function DispatchRequestDetailPage({ params, searchParams }
           metadata={[
             { label: 'School', value: mou?.schoolName ?? request.mouId },
             { label: 'MOU', value: request.mouId },
-            { label: 'Installment', value: String(request.installmentSeq) },
+            { label: 'Kit Batch', value: String(request.installmentSeq) },
             { label: 'Requester', value: requester?.name ?? request.requestedBy },
             {
               label: 'Submitted',

@@ -221,7 +221,7 @@ export const HELP_GLOSSARY: GlossaryItem[] = [
   },
   {
     term: 'Dispatch',
-    definition: 'The shipment of programme materials (the "kit") to a school. Each instalment of an MOU has its own dispatch record. Stage progresses pending → po-raised → dispatched → in-transit → delivered → acknowledged. Each Dispatch carries lineItems (multi-SKU + per-grade), a raisedFrom origin (sales-request | ops-direct | pre-w4d), and optionally a requestId pointing back to the DispatchRequest it converted from.',
+    definition: 'The shipment of programme materials (the "kit") to a school. Each kit batch of an MOU has its own dispatch record. Stage progresses pending → po-raised → dispatched → in-transit → delivered → acknowledged. Each Dispatch carries lineItems (multi-SKU + per-grade), a raisedFrom origin (sales-request | ops-direct | pre-w4d), and optionally a requestId pointing back to the DispatchRequest it converted from.',
   },
   {
     term: 'Dispatch note',

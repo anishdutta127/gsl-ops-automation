@@ -38,7 +38,7 @@ beforeEach(() => {
 })
 
 describe('POST /api/dispatch/generate', () => {
-  it('happy path: 200 with .docx Content-Disposition + filename derived from dispatch id', async () => {
+  it('happy path: 303 redirect to /mous/<id>/dispatch?dispatched=<dispatchId> (Swati-feedback batch)', async () => {
     const fakeBytes = new Uint8Array([0x50, 0x4b, 0x03, 0x04])
     raiseMock.mockResolvedValue({
       ok: true,
@@ -47,14 +47,13 @@ describe('POST /api/dispatch/generate', () => {
       wasAlreadyRaised: false,
     })
     const res = await POST(buildRequest({ mouId: 'MOU-X', installmentSeq: '1' }))
-    expect(res.status).toBe(200)
-    expect(res.headers.get('content-type')).toContain('wordprocessingml')
-    const disposition = res.headers.get('content-disposition') ?? ''
-    expect(disposition).toContain('DSP-MOU-X-i1.docx')
-    expect(res.headers.get('x-already-raised')).toBe('false')
+    expect(res.status).toBe(303)
+    const loc = res.headers.get('location') ?? ''
+    expect(loc).toContain('/mous/MOU-X/dispatch')
+    expect(loc).toContain('dispatched=DSP-MOU-X-i1')
   })
 
-  it('idempotent re-render: x-already-raised header set to true', async () => {
+  it('idempotent re-render: still redirects with the existing dispatch id', async () => {
     const fakeBytes = new Uint8Array([0x50, 0x4b, 0x03, 0x04])
     raiseMock.mockResolvedValue({
       ok: true,
@@ -63,8 +62,8 @@ describe('POST /api/dispatch/generate', () => {
       wasAlreadyRaised: true,
     })
     const res = await POST(buildRequest({ mouId: 'MOU-X', installmentSeq: '1' }))
-    expect(res.status).toBe(200)
-    expect(res.headers.get('x-already-raised')).toBe('true')
+    expect(res.status).toBe(303)
+    expect(res.headers.get('location') ?? '').toContain('dispatched=DSP-MOU-X-i1')
   })
 
   it('lib failure (gate-locked) -> 303 to /mous/<id>/dispatch with error param', async () => {

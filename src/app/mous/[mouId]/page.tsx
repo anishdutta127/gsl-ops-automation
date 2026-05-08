@@ -50,6 +50,7 @@ import type {
   School,
   User,
 } from '@/lib/types'
+import { formatSkuBreakdown } from '@/lib/dispatch/formatLineItems'
 import mousJson from '@/data/mous.json'
 import schoolsJson from '@/data/schools.json'
 import dispatchesJson from '@/data/dispatches.json'
@@ -321,16 +322,18 @@ export default async function MouDetailPage({ params }: PageProps) {
                   },
                   {
                     label: (
-                      <span className="inline-flex items-center gap-1">
+                      <span
+                        className="inline-flex items-center gap-1"
+                        title={
+                          'Single: one school, one programme.\n' +
+                          'Multi-school: one signing, multiple branches.\n' +
+                          'Multi-programme: one school, several programmes.\n' +
+                          'Govt-Tender: state or district level.'
+                        }
+                      >
                         Scope
                         <Info
                           aria-label="Scope definitions"
-                          title={
-                            'Single: one school, one programme.\n' +
-                            'Multi-school: one signing, multiple branches.\n' +
-                            'Multi-programme: one school, several programmes.\n' +
-                            'Govt-Tender: state or district level.'
-                          }
                           className="size-3 text-muted-foreground"
                         />
                       </span>
@@ -492,23 +495,31 @@ export default async function MouDetailPage({ params }: PageProps) {
                 testId="card-dispatches"
               >
                 <ul className="divide-y divide-border">
-                  {installmentDispatches.map((d) => (
-                    <li key={d.id} className="py-2 text-sm">
-                      <div className="flex flex-wrap items-baseline gap-2">
-                        <span className="font-mono text-xs text-muted-foreground">
-                          Inst {d.installmentSeq}
-                        </span>
-                        <span className="rounded-sm bg-muted px-1.5 py-0.5 text-[11px]">
-                          {d.stage}
-                        </span>
-                        {d.dispatchedAt ? (
-                          <span className="text-xs text-muted-foreground">
-                            dispatched {formatDate(d.dispatchedAt)}
+                  {installmentDispatches.map((d) => {
+                    const skuBreakdown = formatSkuBreakdown(d.lineItems)
+                    return (
+                      <li key={d.id} className="py-2 text-sm">
+                        <div className="flex flex-wrap items-baseline gap-2">
+                          <span className="font-mono text-xs text-muted-foreground">
+                            Kit Batch {d.installmentSeq}
                           </span>
+                          <span className="rounded-sm bg-muted px-1.5 py-0.5 text-[11px]">
+                            {d.stage}
+                          </span>
+                          {d.dispatchedAt ? (
+                            <span className="text-xs text-muted-foreground">
+                              dispatched {formatDate(d.dispatchedAt)}
+                            </span>
+                          ) : null}
+                        </div>
+                        {skuBreakdown ? (
+                          <p className="mt-1 text-xs text-muted-foreground">
+                            {skuBreakdown}
+                          </p>
                         ) : null}
-                      </div>
-                    </li>
-                  ))}
+                      </li>
+                    )
+                  })}
                 </ul>
               </CollapsibleCard>
 

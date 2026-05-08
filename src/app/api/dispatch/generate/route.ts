@@ -3,8 +3,7 @@
  *
  * Form target for the per-MOU "Raise dispatch" affordance. Reads
  * mouId + installmentSeq, looks up the session user, calls
- * raiseDispatch, and streams the rendered .docx as a binary
- * download. Permission gate (mou:raise-dispatch) is enforced
+ * raiseDispatch. Permission gate (mou:raise-dispatch) is enforced
  * inside raiseDispatch.
  *
  * Phase 1 simplified flow: state machine deferred to Phase 1.1
@@ -12,8 +11,11 @@
  * Delivered set by D4 delivery-ack upload. Intermediate states
  * (Dispatched, In Transit) not surfaced.
  *
- * Status codes:
- *   200 OK with Content-Disposition attachment   -> success
+ * Status codes (Swati-feedback batch):
+ *   303 redirect with ?dispatched=DSP-XXX        -> success; the
+ *      dispatch page renders a flash + post-dispatch inventory
+ *      snapshot. The .docx is downloaded via the per-row
+ *      "Note" link on /mous/[id]/dispatch, not as the POST body.
  *   303 redirect with error param                -> user-facing failures
  *   500 with operator copy                       -> template-missing
  */
@@ -65,15 +67,7 @@ export async function POST(request: Request) {
     return errorTo(result.reason)
   }
 
-  const filename = `${result.dispatch.id}.docx`
-  // Copy into a fresh ArrayBuffer to satisfy BodyInit typing.
-  const body = new Uint8Array(result.docxBytes).buffer
-  return new Response(body, {
-    status: 200,
-    headers: {
-      'content-type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-      'content-disposition': `attachment; filename="${filename}"`,
-      'x-already-raised': result.wasAlreadyRaised ? 'true' : 'false',
-    },
-  })
+  const successUrl = new URL(`/mous/${mouId}/dispatch`, request.url)
+  successUrl.searchParams.set('dispatched', result.dispatch.id)
+  return NextResponse.redirect(successUrl, { status: 303 })
 }

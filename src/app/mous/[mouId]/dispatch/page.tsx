@@ -17,7 +17,8 @@
 
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import type { Dispatch, DispatchRequest, IntakeRecord, InventoryItem, MOU, School, User } from '@/lib/types'
+import { CheckCircle, Clock, Package } from 'lucide-react'
+import type { Dispatch, DispatchLineItem, DispatchRequest, IntakeRecord, InventoryItem, MOU, School, User } from '@/lib/types'
 import mousJson from '@/data/mous.json'
 import dispatchesJson from '@/data/dispatches.json'
 import dispatchRequestsJson from '@/data/dispatch_requests.json'
@@ -31,6 +32,7 @@ import { PageHeader } from '@/components/ops/PageHeader'
 import { DetailHeaderCard } from '@/components/ops/DetailHeaderCard'
 import { InventoryStatusPanel } from '@/components/ops/InventoryStatusPanel'
 import { KitAllocationTable } from '@/components/ops/KitAllocationTable'
+import { formatSkuBreakdown } from '@/lib/dispatch/formatLineItems'
 
 const allMous = mousJson as unknown as MOU[]
 const allDispatches = dispatchesJson as unknown as Dispatch[]
@@ -67,6 +69,25 @@ function totalInstallmentsFor(paymentSchedule: string): number {
   return numbers && numbers.length > 1 ? numbers.length : 1
 }
 
+interface InventoryRemainingEntry {
+  skuName: string
+  remaining: number
+}
+
+function buildInventoryRemaining(
+  lineItems: DispatchLineItem[],
+  inventoryItems: InventoryItem[],
+): InventoryRemainingEntry[] {
+  const skuNames: string[] = []
+  for (const li of lineItems) {
+    if (!skuNames.includes(li.skuName)) skuNames.push(li.skuName)
+  }
+  return skuNames.map((skuName) => {
+    const inv = inventoryItems.find((i) => i.skuName === skuName)
+    return { skuName, remaining: inv?.currentStock ?? 0 }
+  })
+}
+
 export default async function DispatchPage({ params, searchParams }: PageProps) {
   const { mouId } = await params
   const sp = await searchParams
@@ -98,6 +119,14 @@ export default async function DispatchPage({ params, searchParams }: PageProps) 
   const errorKey = typeof sp.error === 'string' ? sp.error : null
   const errorMessage = errorKey ? ERROR_MESSAGES[errorKey] ?? `Failed: ${errorKey}` : null
 
+  const dispatchedId = typeof sp.dispatched === 'string' ? sp.dispatched : null
+  const justDispatched = dispatchedId
+    ? mouDispatches.find((d) => d.id === dispatchedId) ?? null
+    : null
+  const inventoryRemainingForDispatch = justDispatched
+    ? buildInventoryRemaining(justDispatched.lineItems, allInventoryItems)
+    : []
+
   return (
     <>
       <TopNav currentPath="/mous" />
@@ -113,6 +142,32 @@ export default async function DispatchPage({ params, searchParams }: PageProps) 
         {errorMessage ? (
           <div role="alert" className="rounded-md border border-signal-alert bg-signal-alert/10 px-3 py-2 text-sm text-signal-alert">
             {errorMessage}
+          </div>
+        ) : null}
+
+        {justDispatched ? (
+          <div
+            role="status"
+            data-testid="dispatch-success-flash"
+            className="rounded-md border border-signal-ok bg-card p-3 text-sm text-foreground"
+          >
+            <p className="flex items-start gap-2">
+              <CheckCircle aria-hidden className="size-4 shrink-0 text-signal-ok" />
+              <span>
+                Dispatch <strong>{justDispatched.id}</strong> raised
+                {' '}(Kit Batch {justDispatched.installmentSeq}). Download the dispatch
+                note from the row below.
+              </span>
+            </p>
+            {inventoryRemainingForDispatch.length > 0 ? (
+              <p className="mt-2 text-xs text-muted-foreground">
+                Inventory after dispatch:{' '}
+                {inventoryRemainingForDispatch
+                  .map((e) => `${e.skuName} = ${e.remaining} units remaining`)
+                  .join('; ')}
+                .
+              </p>
+            ) : null}
           </div>
         ) : null}
 
@@ -159,9 +214,9 @@ export default async function DispatchPage({ params, searchParams }: PageProps) 
                       {r.id}
                     </Link>{' '}
                     <span className="text-muted-foreground">·</span>{' '}
-                    Inst {r.installmentSeq}{' '}
+                    Kit Batch {r.installmentSeq}{' '}
                     <span className="text-muted-foreground">·</span>{' '}
-                    {r.lineItems.length} line(s), total qty {total}{' '}
+                    {formatSkuBreakdown(r.lineItems) || `${r.lineItems.length} line(s), total qty ${total}`}{' '}
                     <span className="text-muted-foreground">·</span>{' '}
                     Reason: &ldquo;{r.requestReason}&rdquo;
                   </li>
@@ -228,25 +283,41 @@ export default async function DispatchPage({ params, searchParams }: PageProps) 
           <h3 id="dispatches-heading" className="mb-3 font-heading text-base font-semibold text-brand-navy">
             Existing dispatches
           </h3>
+          <p
+            data-testid="dispatch-stage-legend"
+            className="mb-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground"
+          >
+            <span className="inline-flex items-center gap-1">
+              <CheckCircle aria-hidden className="size-3.5 text-signal-ok" />
+              delivered
+            </span>
+            <span className="inline-flex items-center gap-1">
+              <Clock aria-hidden className="size-3.5 text-signal-attention" />
+              in-transit
+            </span>
+            <span className="inline-flex items-center gap-1">
+              <Package aria-hidden className="size-3.5 text-signal-neutral" />
+              ready to dispatch
+            </span>
+          </p>
           {mouDispatches.length === 0 ? (
             <p className="text-sm text-muted-foreground">No dispatches raised yet.</p>
           ) : (
             <ul className="divide-y divide-border">
               {mouDispatches.map((d) => {
                 const gate = isGateUnblocked(d)
+                const skuBreakdown = formatSkuBreakdown(d.lineItems)
                 return (
                   <li key={d.id} data-testid={`dispatch-row-${d.id}`} className="py-2 text-sm">
                     <span className="font-mono text-xs text-muted-foreground">{d.id}</span>{' '}
-                    <span className="font-medium">Inst {d.installmentSeq}</span>{' '}
+                    <span className="font-medium">Kit Batch {d.installmentSeq}</span>{' '}
                     <span className="rounded-sm bg-muted px-1.5 py-0.5 text-[11px]">{d.stage}</span>{' '}
                     <span className="rounded-sm bg-muted px-1.5 py-0.5 text-[11px]">{d.raisedFrom}</span>{' '}
                     <span className={gate ? 'text-signal-ok' : 'text-signal-alert'}>
                       gate {gate ? 'open' : 'blocked'}
                     </span>
-                    {d.lineItems.length > 0 ? (
-                      <span className="ml-2 text-xs text-muted-foreground">
-                        ({d.lineItems.length} line item{d.lineItems.length === 1 ? '' : 's'})
-                      </span>
+                    {skuBreakdown ? (
+                      <p className="mt-1 text-xs text-muted-foreground">{skuBreakdown}</p>
                     ) : null}
                     {d.overrideEvent ? (
                       <span className="ml-2 text-xs text-muted-foreground">

@@ -27,6 +27,7 @@ import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { StatusChip, type StatusChipTone } from '@/components/ops/StatusChip'
 import { opsButtonClass } from '@/components/ops/OpsButton'
+import { formatSkuBreakdown } from '@/lib/dispatch/formatLineItems'
 
 const allRequests = dispatchRequestsJson as unknown as DispatchRequest[]
 const allMous = mousJson as unknown as MOU[]
@@ -179,9 +180,9 @@ export default async function DispatchRequestsQueuePage({ searchParams }: PagePr
                     <p className="mt-1 text-sm">
                       <span className="font-medium">{mou?.schoolName ?? r.mouId}</span>{' '}
                       <span className="text-muted-foreground">·</span>{' '}
-                      Inst {r.installmentSeq}{' '}
+                      Kit Batch {r.installmentSeq}{' '}
                       <span className="text-muted-foreground">·</span>{' '}
-                      {r.lineItems.length} line item(s), total qty {total}
+                      {formatSkuBreakdown(r.lineItems) || `${r.lineItems.length} line item(s), total qty ${total}`}
                     </p>
                     <p className="text-xs text-muted-foreground">
                       Requested by {requesterName}

@@ -116,7 +116,7 @@ export default async function FeedbackRequestPage({ params, searchParams }: Page
             { label: 'School', value: mou.schoolName },
             { label: 'SPOC contact', value: school?.contactPerson ?? 'not set' },
             { label: 'SPOC email', value: emailMissing ? <span className="text-signal-alert">Missing</span> : school?.email },
-            { label: 'Delivered instalments eligible', value: String(deliveredDispatches.length) },
+            { label: 'Delivered kit batches eligible', value: String(deliveredDispatches.length) },
           ]}
         />
 
@@ -177,14 +177,14 @@ export default async function FeedbackRequestPage({ params, searchParams }: Page
           >
             <input type="hidden" name="mouId" value={mou.id} />
             <div>
-              <label htmlFor="installmentSeq" className={FIELD_LABEL_CLASS}>Instalment</label>
+              <label htmlFor="installmentSeq" className={FIELD_LABEL_CLASS}>Kit Batch</label>
               <select id="installmentSeq" name="installmentSeq" required className={FIELD_INPUT_CLASS}>
                 {deliveredDispatches.length === 0 ? (
-                  <option value="">No delivered instalments eligible</option>
+                  <option value="">No delivered kit batches eligible</option>
                 ) : (
                   deliveredDispatches.map((d) => (
                     <option key={d.id} value={d.installmentSeq}>
-                      Inst {d.installmentSeq} (delivered {d.deliveredAt?.slice(0, 10) ?? ''})
+                      Kit Batch {d.installmentSeq} (delivered {d.deliveredAt?.slice(0, 10) ?? ''})
                     </option>
                   ))
                 )}
