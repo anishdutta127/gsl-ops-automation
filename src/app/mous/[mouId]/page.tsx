@@ -39,6 +39,7 @@ import {
   Truck,
 } from 'lucide-react'
 import type {
+  Adjustment,
   AuditEntry,
   CommunicationTemplate,
   Dispatch,
@@ -60,6 +61,9 @@ import intakeRecordsJson from '@/data/intake_records.json'
 import templatesJson from '@/data/communication_templates.json'
 import escalationsJson from '@/data/escalations.json'
 import usersJson from '@/data/users.json'
+import adjustmentsJson from '@/data/adjustments.json'
+import { RecalcSummary } from '@/components/mou-system/RecalcSummary'
+import { canEditMOU } from '@/lib/access'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canGeneratePI } from '@/lib/access'
 import { computeLifecycle } from '@/lib/portal/lifecycleProgress'
@@ -84,6 +88,7 @@ const allUsers = usersJson as unknown as User[]
 const allIntakeRecords = intakeRecordsJson as unknown as IntakeRecord[]
 const allTemplates = templatesJson as unknown as CommunicationTemplate[]
 const allEscalations = escalationsJson as unknown as Escalation[]
+const allAdjustments = adjustmentsJson as unknown as Adjustment[]
 
 function lastDelayNotesUpdate(mou: MOU): string | null {
   const usersById = new Map(allUsers.map((u) => [u.id, u.name]))
@@ -219,6 +224,13 @@ export default async function MouDetailPage({ params, searchParams }: PageProps)
   // the canPerform wildcard would miss. Server-side canPerform at
   // lib/pi/generatePi.ts stays as defence in depth.
   const canGeneratePi = user ? canGeneratePI(user) : false
+  const canEditMou = user ? canEditMOU(user) : false
+  const mouAdjustments = allAdjustments.filter(
+    (a) => a.mouId === mou.id && a.status === 'Active',
+  )
+  const totalReceivedRs = installments.reduce((s, p) => s + (p.receivedAmount ?? 0), 0)
+  const totalAdjustmentsRs = mouAdjustments.reduce((s, a) => s + a.amountDelta, 0)
+  const balanceDuePreviousInstalments = totalAdjustmentsRs
 
   const smartSuggestions = getSmartTemplateSuggestions({
     mou,
@@ -299,6 +311,31 @@ export default async function MouDetailPage({ params, searchParams }: PageProps)
               <div className="ml-auto flex flex-wrap items-center gap-2">
                 <Link href={`/mous/${mou.id}/actuals`} className={actionBtnClass}>
                   Actuals
+                </Link>
+                {canEditMou ? (
+                  <Link
+                    href={`/mous/${mou.id}/draft`}
+                    className={actionBtnClass}
+                    data-testid="action-draft-annexure"
+                  >
+                    Annexure
+                  </Link>
+                ) : null}
+                {canEditMou ? (
+                  <Link
+                    href={`/mous/${mou.id}/signed-values`}
+                    className={actionBtnClass}
+                    data-testid="action-signed-values"
+                  >
+                    Signed values
+                  </Link>
+                ) : null}
+                <Link
+                  href={`/mous/${mou.id}/installments`}
+                  className={actionBtnClass}
+                  data-testid="action-installments"
+                >
+                  Instalments
                 </Link>
                 {canGeneratePi ? (
                   <Link href={`/mous/${mou.id}/pi`} className={actionBtnClass}>
@@ -402,6 +439,87 @@ export default async function MouDetailPage({ params, searchParams }: PageProps)
                 </h3>
                 <LifecycleProgress stages={lifecycle} />
               </section>
+
+              {installments.length > 0 && mou.spWithTax > 0 ? (
+                <section aria-labelledby="recalc-heading">
+                  <h3
+                    id="recalc-heading"
+                    className="mb-2 font-heading text-base font-semibold text-brand-navy"
+                  >
+                    Recalc preview
+                  </h3>
+                  <RecalcSummary
+                    studentsMou={mou.studentsMou}
+                    studentsActual={mou.studentsActual}
+                    perStudentPrice={mou.spWithTax}
+                    installments={installments}
+                  />
+                </section>
+              ) : null}
+
+              {(installments.length > 0 || mouAdjustments.length > 0) ? (
+                <section
+                  aria-labelledby="paid-summary-heading"
+                  className="rounded-lg border border-border bg-card p-4 sm:p-6"
+                  data-testid="paid-adjustments-summary"
+                >
+                  <h3
+                    id="paid-summary-heading"
+                    className="mb-3 font-heading text-base font-semibold text-brand-navy"
+                  >
+                    Paid + adjustments summary
+                  </h3>
+                  <dl className="grid grid-cols-1 gap-3 text-sm sm:grid-cols-3">
+                    <div>
+                      <dt className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                        Total received
+                      </dt>
+                      <dd className="font-mono tabular-nums">{formatRs(totalReceivedRs)}</dd>
+                    </div>
+                    <div>
+                      <dt className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                        Active adjustments
+                      </dt>
+                      <dd className="font-mono tabular-nums">
+                        {mouAdjustments.length === 0 ? (
+                          <span className="text-muted-foreground">{formatRs(0)}</span>
+                        ) : (
+                          formatRs(totalAdjustmentsRs)
+                        )}
+                        {mouAdjustments.length > 0 ? (
+                          <span className="ml-2 text-xs text-muted-foreground">
+                            ({mouAdjustments.length} record{mouAdjustments.length === 1 ? '' : 's'})
+                          </span>
+                        ) : null}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt
+                        className="text-xs font-semibold uppercase tracking-wider text-muted-foreground"
+                        title="Sum of active adjustments applied to the next unpaid PI. Negative = credit to the school; positive = additional charge."
+                      >
+                        Balance due previous instalments
+                      </dt>
+                      <dd className="font-mono tabular-nums">
+                        {formatRs(balanceDuePreviousInstalments)}
+                      </dd>
+                    </div>
+                  </dl>
+                  {mouAdjustments.length > 0 ? (
+                    <ul className="mt-3 divide-y divide-border border-t border-border pt-2 text-xs">
+                      {mouAdjustments.map((a) => (
+                        <li key={a.id} className="py-1.5">
+                          <span className="font-mono text-[11px] text-muted-foreground">{a.id}</span>{' '}
+                          <span className="text-foreground">{a.reason}</span>{' '}
+                          <span className="text-muted-foreground">
+                            ({formatRs(a.beforeAmount)} {'→'} {formatRs(a.afterAmount)})
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
+                </section>
+              ) : null}
 
               <section aria-labelledby="audit-heading">
                 <h3

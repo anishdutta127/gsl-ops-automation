@@ -468,6 +468,24 @@ export interface MOU {
   delayNotes: string | null
   daysToExpiry: number | null
   auditLog: AuditEntry[]
+  /**
+   * Step 5 (mou-system port). Optional drafting fields populated by the
+   * /mous/new generator + /mous/[id]/draft annexure editor. Existing 143
+   * imported records carry `undefined` for every field; the list/detail
+   * page does not read them, so backwards compatibility is preserved.
+   *
+   * The shapes are inherited verbatim from the gsl-mou-system MOU type;
+   * see src/lib/mouSystem/types.ts for the canonical definitions.
+   */
+  effectiveDate?: string | null
+  numberOfYears?: number | null
+  salesChannel?: import('./mouSystem/types').SalesChannel | null
+  schoolCrmId?: string | null
+  draftVariables?: Record<string, string> | null
+  paymentSchedules?: import('./mouSystem/types').YearPaymentSchedule[] | null
+  yearlyPricing?: import('./mouSystem/types').YearlyPricingRow[] | null
+  billingBlock?: import('./mouSystem/types').MouBillingBlock | null
+  signedMouPdfPath?: string | null
 }
 
 // ============================================================================

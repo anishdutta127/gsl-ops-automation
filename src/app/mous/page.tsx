@@ -29,6 +29,7 @@ import type {
   MOU,
   Payment,
   School,
+  SchoolGroup,
   User,
 } from '@/lib/types'
 import mousJson from '@/data/mous.json'
@@ -37,6 +38,7 @@ import dispatchesJson from '@/data/dispatches.json'
 import paymentsJson from '@/data/payments.json'
 import communicationsJson from '@/data/communications.json'
 import feedbackJson from '@/data/feedback.json'
+import schoolGroupsJson from '@/data/school_groups.json'
 import { getCurrentUser } from '@/lib/auth/session'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
@@ -66,9 +68,12 @@ const allDispatches = dispatchesJson as unknown as Dispatch[]
 const allPayments = paymentsJson as unknown as Payment[]
 const allCommunications = communicationsJson as unknown as Communication[]
 const allFeedback = feedbackJson as unknown as Feedback[]
+const allSchoolGroups = schoolGroupsJson as unknown as SchoolGroup[]
 const KANBAN_STAGE_KEYS = new Set<string>(KANBAN_COLUMNS.map((c) => c.key))
 
-const DIMENSION_KEYS = ['status', 'programme', 'region'] as const
+// Step 5: extra Gate 2 dimensions (school-group, year).
+// 'region' continues to carry the NE / SW super-region shortcut.
+const DIMENSION_KEYS = ['status', 'programme', 'region', 'schoolGroup', 'year'] as const
 
 function scopeMousForUser(mous: MOU[], user: User | null): MOU[] {
   if (!user) return mous
@@ -120,6 +125,8 @@ export default async function MousListPage({ searchParams }: PageProps) {
       status: (m) => m.status,
       programme: (m) => m.programme,
       region: (m) => regionFor(m, schoolById),
+      schoolGroup: (m) => m.schoolGroupId,
+      year: (m) => m.academicYear,
     }),
     search,
     (m) => [m.id, m.schoolName, m.programmeSubType ?? '', m.notes ?? ''],
@@ -128,6 +135,24 @@ export default async function MousListPage({ searchParams }: PageProps) {
   const stageLabel = stageParam !== null
     ? KANBAN_COLUMNS.find((c) => c.key === stageParam)?.label ?? stageParam
     : null
+
+  // Step 5: derive year + school-group filter options from the current
+  // cohort. Years are sorted reverse-chrono (latest first); groups are
+  // sorted by name. Empty options arrays fall through to a no-op chip set.
+  const yearSet = new Set<string>()
+  for (const m of scoped) {
+    if (m.academicYear) yearSet.add(m.academicYear)
+  }
+  const yearOptions = Array.from(yearSet).sort().reverse()
+
+  const groupIdsInUse = new Set<string>()
+  for (const m of scoped) {
+    if (m.schoolGroupId) groupIdsInUse.add(m.schoolGroupId)
+  }
+  const schoolGroupOptions = allSchoolGroups
+    .filter((g) => groupIdsInUse.has(g.id))
+    .slice()
+    .sort((a, b) => a.name.localeCompare(b.name))
 
   const dimensions: FilterDimension[] = [
     {
@@ -158,6 +183,16 @@ export default async function MousListPage({ searchParams }: PageProps) {
         { key: 'SW', label: 'SW', values: SUPER_REGION_MEMBERS.SW },
       ],
       options: ['East', 'North', 'South-West'].map((v) => ({ value: v, label: v })),
+    },
+    {
+      key: 'year',
+      label: 'Academic year',
+      options: yearOptions.map((v) => ({ value: v, label: v })),
+    },
+    {
+      key: 'schoolGroup',
+      label: 'School group',
+      options: schoolGroupOptions.map((g) => ({ value: g.id, label: g.name })),
     },
   ]
 

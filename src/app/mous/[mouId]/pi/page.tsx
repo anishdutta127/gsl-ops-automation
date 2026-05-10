@@ -35,6 +35,7 @@ import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { DetailHeaderCard } from '@/components/ops/DetailHeaderCard'
 import { formatRs } from '@/lib/format'
+import { getEntity, getEntityForProgramme } from '@/lib/mouSystem/company'
 
 const allMous = mousJson as unknown as MOU[]
 const allSchools = schoolsJson as unknown as School[]
@@ -76,6 +77,11 @@ export default async function PiPage({ params }: PageProps) {
   )
   // W4-A.6: GSTIN-missing surfaces an inline note (not a block).
   const gstinMissing = !school || school.gstNumber === null || (school.gstNumber ?? '').trim() === ''
+  // Step 5 re-wire: surface which GST entity (MH / UP) the PI will be
+  // raised under so Finance sees the routing before clicking Generate.
+  // Routing comes from config/company.json's programmeRouting block.
+  const entityKey = getEntityForProgramme(mou.programme)
+  const billingEntity = getEntity(entityKey)
 
   return (
     <>
@@ -96,7 +102,15 @@ export default async function PiPage({ params }: PageProps) {
             subtitle="Generate proforma invoice for the next pending instalment"
             metadata={[
               { label: 'School', value: school?.name ?? mou.schoolName },
-              { label: 'GSTIN', value: gstinMissing ? <span className="text-muted-foreground">To be added</span> : <span className="font-mono text-xs">{school?.gstNumber}</span> },
+              { label: 'GSTIN (school)', value: gstinMissing ? <span className="text-muted-foreground">To be added</span> : <span className="font-mono text-xs">{school?.gstNumber}</span> },
+              {
+                label: 'Issuing entity',
+                value: (
+                  <span className="font-mono text-xs">
+                    {billingEntity.label} {'·'} {billingEntity.gstin} {'·'} prefix {billingEntity.piPrefix}
+                  </span>
+                ),
+              },
               { label: 'Programme', value: `${mou.programme}${mou.programmeSubType ? ' / ' + mou.programmeSubType : ''}` },
               { label: 'Pending instalments', value: String(pendingInstallments.length) },
             ]}

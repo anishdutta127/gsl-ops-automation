@@ -56,7 +56,14 @@ import schoolsJson from '@/data/schools.json'
 import usersJson from '@/data/users.json'
 import companyJson from '../../../config/company.json'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
-import { issuePiNumberAtomic } from '@/lib/githubQueue'
+// Step 5 re-wire (brief item 9 + STEP5_QUESTIONS Q3): swap from the
+// legacy single-counter `issuePiNumberAtomic` in lib/githubQueue.ts to
+// the per-entity counter in lib/mouSystem/piCounterAtomic.ts. PI numbers
+// now use the GST-entity-correct sequence so the audit trail stays gap-
+// free per GSTIN. Programme -> entity routing is in
+// config/company.json's programmeRouting block.
+import { issuePiNumberAtomic } from '@/lib/mouSystem/piCounterAtomic'
+import { getEntityForProgramme, getEntity } from '@/lib/mouSystem/company'
 import { canPerform } from '@/lib/auth/permissions'
 import { formatRs, formatDate } from '@/lib/format'
 import { PI_TEMPLATE, TemplateMissingError } from './templates'
@@ -165,7 +172,11 @@ export async function generatePi(
 
   // Atomic counter advance is the FIRST write. If anything below fails
   // the counter has still moved, but PI numbers gap; never duplicate.
-  const { piNumber } = await deps.issueCounter()
+  // Step 5 re-wire: counter is per-entity (MH / UP) so the GSTIN audit
+  // trail stays gap-free; routing falls out of the programme.
+  const entityKey = getEntityForProgramme(mou.programme)
+  const entity = getEntity(entityKey)
+  const { piNumber } = await deps.issueCounter(entityKey)
   const ts = deps.now().toISOString()
 
   const totalInsts = totalInstallments(mou.paymentSchedule)
@@ -198,8 +209,11 @@ export async function generatePi(
       school.pinCode ?? '',
     ].filter((s) => s !== '').join('\n'),
     GSL_LEGAL_ENTITY: deps.company.legalEntity,
-    GSL_GSTIN: deps.company.gstin,
-    GSL_ADDRESS: deps.company.address.join('\n'),
+    // Step 5 re-wire: entity-correct GSTIN + address rather than the
+    // legacy single-entity values from config/company.json. Routing
+    // is by programme via company.json programmeRouting.
+    GSL_GSTIN: entity.gstin,
+    GSL_ADDRESS: entity.address,
     PROGRAMME: mou.programme,
     PROGRAMME_SUB_TYPE: mou.programmeSubType ?? '',
     LINE_ITEMS: lineItems.map((li) => ({
