@@ -1,0 +1,93 @@
+{
+  "snapshotTakenAt": "2026-05-10T19:38:36.463Z",
+  "sourceDirectory": "C:/Users/anish/Projects/gsl-mou-system/src/data",
+  "counts": {
+    "mous": 152,
+    "schools": 124,
+    "school_groups": 124,
+    "payments": 219,
+    "payment_logs": 9,
+    "agreements": 1,
+    "signed_values": 4,
+    "vex_products": 28,
+    "vex_pis": 5,
+    "vex_dispatches": 4,
+    "vex_orders": 141,
+    "adjustments": 0,
+    "sales_team": 5
+  },
+  "diffsAgainstPreviousSnapshot": {
+    "mous": {
+      "added": [],
+      "removed": []
+    },
+    "schools": {
+      "added": [],
+      "removed": []
+    },
+    "payments": {
+      "added": [],
+      "removed": []
+    },
+    "vexPis": {
+      "added": [],
+      "removed": []
+    }
+  },
+  "chainCandidates": [
+    {
+      "schoolId": "SCH-B_D_MEMORIAL_JR_SCHO",
+      "name": "B.D Memorial Jr. School"
+    },
+    {
+      "schoolId": "SCH-KAZIMAN_RAI_MEMORIAL",
+      "name": "KAZIMAN RAI MEMORIAL TRUST"
+    },
+    {
+      "schoolId": "SCH-RISHI_AUROBINDO_MEMO",
+      "name": "Rishi Aurobindo Memorial Academy"
+    },
+    {
+      "schoolId": "SCH-SRI_R_N_SINGH_MEMORI_4",
+      "name": "Sri R. N. Singh Memorial High School"
+    },
+    {
+      "schoolId": "SCH-SRI_R_N_SINGH_MEMORI_3",
+      "name": "Sri R. N. Singh Memorial High School (For Class 8)"
+    },
+    {
+      "schoolId": "SCH-SRI_R_N_SINGH_MEMORI",
+      "name": "Sri R. N. Singh Memorial High School (For Class 8) - MTPL 14 RD"
+    },
+    {
+      "schoolId": "SCH-SRI_R_N_SINGH_MEMORI_2",
+      "name": "Sri R. N. Singh Memorial High School - MTPL13/15"
+    },
+    {
+      "schoolId": "SCH-SRI_RAM_NARAYAN_SING",
+      "name": "Sri Ram Narayan Singh Memorial High School"
+    },
+    {
+      "schoolId": "SCH-SUMANA_DUTTA_MEMORIA",
+      "name": "Sumana Dutta Memorial Vivekananda International School"
+    },
+    {
+      "schoolId": "SCH-TECHNO_INDIA_GROUP_P_2",
+      "name": "Techno India Group Public School Asansol"
+    },
+    {
+      "schoolId": "SCH-TECHNO_INDIA_GROUP_P",
+      "name": "Techno India Group Public School Kalyani"
+    },
+    {
+      "schoolId": "SCH-TECHNO_INDIA_GROUP_P_3",
+      "name": "Techno India Group Public School Panagarh"
+    }
+  ],
+  "notes": [
+    "Idempotent snapshot. Re-running produces identical output when source is unchanged.",
+    "SchoolGroup backfill is 1:1; chain candidates listed for manual reconciliation.",
+    "Programme enum verified: 0 records with TinkRworks/VEX as programme (Gate 2 §7.1).",
+    "Audit logs preserved verbatim from source."
+  ]
+}

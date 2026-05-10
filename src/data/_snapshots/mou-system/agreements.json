@@ -1,0 +1,30 @@
+[
+  {
+    "id": "AGR-A5BACC3A",
+    "type": "Vendor",
+    "partyName": "Tinkerworks",
+    "natureOfAgreement": "Purchase of Robotic Kits",
+    "product": null,
+    "department": null,
+    "startDate": "2022-04-01",
+    "endDate": "2027-03-31",
+    "tenure": "5 year from date of agreement",
+    "noticePeriod": "60 Days",
+    "vendorLocation": "USA",
+    "physicalCustody": "Digital",
+    "documentUrl": null,
+    "daysToExpiry": 336,
+    "auditLog": [
+      {
+        "timestamp": "2026-04-29T08:26:58.730Z",
+        "user": "Pranav",
+        "action": "create"
+      },
+      {
+        "timestamp": "2026-04-29T08:31:02.552Z",
+        "user": "Pranav",
+        "action": "update"
+      }
+    ]
+  }
+]

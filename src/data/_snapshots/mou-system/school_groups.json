@@ -1,0 +1,2110 @@
+[
+  {
+    "id": "SG-ALMA_MATER_SCHOOL",
+    "name": "Alma Mater School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-ALMA_MATER_SCHOOL"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-APPLE_GLOBAL_SCHOOL",
+    "name": "Apple Global School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-APPLE_GLOBAL_SCHOOL"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-AYESHA_ALI_ACADEMY",
+    "name": "Ayesha Ali Academy",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-AYESHA_ALI_ACADEMY"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-BAPUJI_EDUCATIONAL_A",
+    "name": "BAPUJI EDUCATIONAL ASSOCIATION _PSSEMR School - CBSE",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-BAPUJI_EDUCATIONAL_A"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-BAPUJI_EDUCATIONAL_A_2",
+    "name": "BAPUJI EDUCATIONAL ASSOCIATION _PSSEMR School - CAIE",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-BAPUJI_EDUCATIONAL_A_2"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-BERHAMPORE_CITY_PUBL",
+    "name": "Berhampore City Public School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-BERHAMPORE_CITY_PUBL"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-BGS_SCHOOL",
+    "name": "BGS School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-BGS_SCHOOL"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-BHARATI_VIDYAPEETH_R",
+    "name": "Bharati Vidyapeeth Rabindranath Tagore School of Excellence",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-BHARATI_VIDYAPEETH_R"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-BILLABONG_HIGH_INTER",
+    "name": "Billabong High International School / light house _MH",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-BILLABONG_HIGH_INTER"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-BLUE_ANGELS_GLOBAL_S",
+    "name": "Blue Angels Global School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-BLUE_ANGELS_GLOBAL_S"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-BOLTON_SCHOOL",
+    "name": "Bolton School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-BOLTON_SCHOOL"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-BRIGHT_FUTURE_HIGH_S",
+    "name": "Bright Future High School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-BRIGHT_FUTURE_HIGH_S"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-B_D_MEMORIAL_JR_SCHO",
+    "name": "B.D Memorial Jr. School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-B_D_MEMORIAL_JR_SCHO"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-B_I_T_GLOBAL_SCHOOL",
+    "name": "B I T Global School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-B_I_T_GLOBAL_SCHOOL"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-CARMEL_CONVENT_HIGH_",
+    "name": "Carmel Convent High School, Durgapur",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-CARMEL_CONVENT_HIGH_"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-CARMEL_SCHOOL_DURGAP",
+    "name": "Carmel School, Durgapur",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-CARMEL_SCHOOL_DURGAP"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-CHIREC_INTERNATIONAL",
+    "name": "CHIREC International Academy",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-CHIREC_INTERNATIONAL"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-CHRIST_MISSION_SCHOO",
+    "name": "Christ Mission School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-CHRIST_MISSION_SCHOO"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-CLEVER_MINDS_SCHOOL",
+    "name": "Clever Minds School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-CLEVER_MINDS_SCHOOL"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-CONTAI_PUBLIC_SCHOOL",
+    "name": "Contai Public School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-CONTAI_PUBLIC_SCHOOL"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-DARSHAN_ACADEMY_DEVL",
+    "name": "Darshan Academy, Devlali",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-DARSHAN_ACADEMY_DEVL"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-DARSHAN_ACADEMY_PUNE",
+    "name": "Darshan Academy, Pune",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-DARSHAN_ACADEMY_PUNE"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-DELHI_WORLD_PUBLIC_S",
+    "name": "Delhi World Public School, Barasat",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-DELHI_WORLD_PUBLIC_S"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-DISCOVERI_OKAS_SCHOO",
+    "name": "Discoveri Okas School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-DISCOVERI_OKAS_SCHOO"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-DON_BONSCO_KRISHNANA",
+    "name": "Don Bonsco Krishnanagar",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-DON_BONSCO_KRISHNANA"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-DON_BOSCO_BANDEL",
+    "name": "Don Bosco Bandel",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-DON_BOSCO_BANDEL"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-DON_BOSCO_MATRIC_HIG",
+    "name": "Don Bosco Matric Higher Secondary School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-DON_BOSCO_MATRIC_HIG"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-DOON_SCHOLARS_SCHOOL",
+    "name": "Doon Scholars School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-DOON_SCHOLARS_SCHOOL"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-DPS_BANGALORE_EAST_C",
+    "name": "DPS Bangalore East (Cambridge Section) /K.K. EDUCATIONAL AND CHARITABLE TRUST",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-DPS_BANGALORE_EAST_C"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-DPS_BANGALORE_NORTH_",
+    "name": "DPS Bangalore North (Cambridge Section)",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-DPS_BANGALORE_NORTH_"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-EBENEZER_JAGANATH_MA",
+    "name": "Ebenezer Jaganath Matriculation",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-EBENEZER_JAGANATH_MA"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-EBENEZER_MODERN_MATR",
+    "name": "Ebenezer Modern Matriculation",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-EBENEZER_MODERN_MATR"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-EMBEE_ROSEBUD_HR_SEC",
+    "name": "Embee Rosebud Hr. Sec. School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-EMBEE_ROSEBUD_HR_SEC"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-FOUNDATION_WORLD_SCH",
+    "name": "Foundation World School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-FOUNDATION_WORLD_SCH"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-FRANK_PUBLIC_SCHOOL",
+    "name": "Frank Public School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-FRANK_PUBLIC_SCHOOL"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-GD_INTERNATIONAL_SCH",
+    "name": "GD International School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-GD_INTERNATIONAL_SCH"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-GLOBAL_CITY_INTERNAT",
+    "name": "Global City International School (CBSE)",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-GLOBAL_CITY_INTERNAT"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-GLOBAL_CITY_INTERNAT_2",
+    "name": "Global City International School (Cambridge Board)",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-GLOBAL_CITY_INTERNAT_2"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-GNIMS_BUSINESS_SCHOO",
+    "name": "GNIMS Business School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-GNIMS_BUSINESS_SCHOO"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-GR_INTERNATIONAL_SCH",
+    "name": "GR International School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-GR_INTERNATIONAL_SCH"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-GURU_NANAK_INSTITUTE",
+    "name": "Guru Nanak Institute of Management Studies",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-GURU_NANAK_INSTITUTE"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-HARIYANA_INTERNATION",
+    "name": "Hariyana International Academy - Class 3 & 4",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-HARIYANA_INTERNATION"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-HARIYANA_INTERNATION_2",
+    "name": "Hariyana International Academy - Class 2 - 7",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-HARIYANA_INTERNATION_2"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-HINDUSTAN_INTERNATIO",
+    "name": "Hindustan International CIE",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-HINDUSTAN_INTERNATIO"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-HINDUSTAN_INTERNATIO_2",
+    "name": "Hindustan International CBSE",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-HINDUSTAN_INTERNATIO_2"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-HOLY_CHILD_ENGLISH_A",
+    "name": "Holy Child English Academy, Malda",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-HOLY_CHILD_ENGLISH_A"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-HVB_GLOBAL_ACADEMY",
+    "name": "HVB Global Academy",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-HVB_GLOBAL_ACADEMY"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-ITIKI_SCHOOL",
+    "name": "ITIKI School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-ITIKI_SCHOOL"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-JAFFARIA_ACADEMY_OF_",
+    "name": "Jaffaria Academy of Modern Education - Kargil",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-JAFFARIA_ACADEMY_OF_"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-JNANA_BHARATHI_ENGLI",
+    "name": "Jnana Bharathi English School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-JNANA_BHARATHI_ENGLI"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-JULIEN_EDUCATIONAL_T",
+    "name": "Julien Educational Trust, Eglin Road",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-JULIEN_EDUCATIONAL_T"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-JULIEN_EDUCATIONAL_T_2",
+    "name": "Julien Educational Trust, Kalyani",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-JULIEN_EDUCATIONAL_T_2"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-JULIEN_EDUCATIONAL_T_3",
+    "name": "Julien Educational Trust, Ganganagar",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-JULIEN_EDUCATIONAL_T_3"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-JULIEN_EDUCATIONAL_T_4",
+    "name": "Julien Educational Trust, Howrah",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-JULIEN_EDUCATIONAL_T_4"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-KALYANI_SCHOOL",
+    "name": "Kalyani School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-KALYANI_SCHOOL"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-KAVYAPTA_GLOBAL_SCHO",
+    "name": "Kavyapta Global School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-KAVYAPTA_GLOBAL_SCHO"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-KAZIMAN_RAI_MEMORIAL",
+    "name": "KAZIMAN RAI MEMORIAL TRUST",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-KAZIMAN_RAI_MEMORIAL"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-KIRTI_BOOK_AGENCY_EM",
+    "name": "Kirti Book Agency (Empros International School _Chinchwad, Pune)",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-KIRTI_BOOK_AGENCY_EM"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-KIRTI_BOOK_AGENCY_EM_2",
+    "name": "Kirti Book Agency (Empros International School _Talegaon)",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-KIRTI_BOOK_AGENCY_EM_2"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-KULACHI_HANSRAJ_MODE",
+    "name": "Kulachi Hansraj Model School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-KULACHI_HANSRAJ_MODE"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-K_E_CARMEL_SCHOOL_AM",
+    "name": "K.E Carmel School - Amtala",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-K_E_CARMEL_SCHOOL_AM"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-K_E_CARMEL_SCHOOL_SU",
+    "name": "K.E Carmel School - Suri",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-K_E_CARMEL_SCHOOL_SU"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-LAXMIPAT_SINGHANIA_A",
+    "name": "Laxmipat Singhania Academy",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-LAXMIPAT_SINGHANIA_A"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-LAXMI_GLOBAL_SCHOOL",
+    "name": "Laxmi Global School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-LAXMI_GLOBAL_SCHOOL"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-LIONS_CALCUTTA_GREAT",
+    "name": "Lions Calcutta Greater Vidya Mandir",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-LIONS_CALCUTTA_GREAT"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-LORETO_DAY_SCHOOL_BB",
+    "name": "Loreto Day School BB",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-LORETO_DAY_SCHOOL_BB"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-LORETO_DAY_SCHOOL_KO",
+    "name": "Loreto Day School Kolkata",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-LORETO_DAY_SCHOOL_KO"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-LORETO_HOUSE_KOLKATA",
+    "name": "Loreto House - Kolkata",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-LORETO_HOUSE_KOLKATA"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-MAHRISHI_DAYANAND_SC",
+    "name": "Mahrishi Dayanand School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-MAHRISHI_DAYANAND_SC"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-MODERN_HIGH_SCHOOL_I",
+    "name": "Modern High School International",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-MODERN_HIGH_SCHOOL_I"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-MUSTAFA_MATRIC_SCHOO",
+    "name": "Mustafa Matric School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-MUSTAFA_MATRIC_SCHOO"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-MUTAHHARY_PUBLIC_SCH",
+    "name": "Mutahhary Public School Baroo",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-MUTAHHARY_PUBLIC_SCH"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-NABI_CRESCENT_SCHOOL",
+    "name": "Nabi Crescent School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-NABI_CRESCENT_SCHOOL"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-NARAYANA_SCHOOL",
+    "name": "NARAYANA SCHOOL",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-NARAYANA_SCHOOL"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-NATIONAL_GEMS_HIGHER",
+    "name": "National Gems Higher Secondary School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-NATIONAL_GEMS_HIGHER"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-PGIS_CHENNAI",
+    "name": "PGIS Chennai",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-PGIS_CHENNAI"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-PODAR_INTERNATIONAL_",
+    "name": "Podar International School Howrah",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-PODAR_INTERNATIONAL_"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-RAMANARAYANA_EDUCATI",
+    "name": "Ramanarayana Education Trust",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-RAMANARAYANA_EDUCATI"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-RBSM_PUBLIC_SCHOOL",
+    "name": "RBSM PUBLIC SCHOOL",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-RBSM_PUBLIC_SCHOOL"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-RISHI_AUROBINDO_MEMO",
+    "name": "Rishi Aurobindo Memorial Academy",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-RISHI_AUROBINDO_MEMO"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-RN_SHAH_INTERNATIONA",
+    "name": "RN Shah International School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-RN_SHAH_INTERNATIONA"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-ROOTLAND_SEC_SCHOOL",
+    "name": "Rootland Sec. School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-ROOTLAND_SEC_SCHOOL"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-SAGAYA_MATHA_MATRICU",
+    "name": "*Sagaya Matha Matriculation Higher Secondary School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-SAGAYA_MATHA_MATRICU"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-SANJAY_GHODAWAT_INTE",
+    "name": "Sanjay Ghodawat International School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-SANJAY_GHODAWAT_INTE"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-SD_SENIOR_SECONDARY_",
+    "name": "SD Senior Secondary School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-SD_SENIOR_SECONDARY_"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-SECUNDERABAD_PUBLIC_",
+    "name": "Secunderabad Public School/St.Ann's Grammar School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-SECUNDERABAD_PUBLIC_"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-SHAW_PUBLIC_SCHOOL",
+    "name": "Shaw Public School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-SHAW_PUBLIC_SCHOOL"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-SHEMROCK_SCHOOL",
+    "name": "Shemrock School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-SHEMROCK_SCHOOL"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-SHIVAM_EDUACTIONAL_A",
+    "name": "Shivam Eduactional Academy_Indraprastha",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-SHIVAM_EDUACTIONAL_A"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-SHIVAM_EDUACTIONAL_A_2",
+    "name": "Shivam Eduactional Academy_Bhatagaon",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-SHIVAM_EDUACTIONAL_A_2"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-SHREE_PRALHADRAO_KAS",
+    "name": "Shree Pralhadrao Kashid Foundation (Matoshree National School)",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-SHREE_PRALHADRAO_KAS"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-SRI_RAJASREE_EDUCATI",
+    "name": "Sri Rajasree Educational Society (laurel High)",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-SRI_RAJASREE_EDUCATI"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-SRI_RAM_NARAYAN_SING",
+    "name": "Sri Ram Narayan Singh Memorial High School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-SRI_RAM_NARAYAN_SING"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-SRI_R_N_SINGH_MEMORI",
+    "name": "Sri R. N. Singh Memorial High School (For Class 8) - MTPL 14 RD",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-SRI_R_N_SINGH_MEMORI"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-SRI_R_N_SINGH_MEMORI_2",
+    "name": "Sri R. N. Singh Memorial High School - MTPL13/15",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-SRI_R_N_SINGH_MEMORI_2"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-SRI_R_N_SINGH_MEMORI_3",
+    "name": "Sri R. N. Singh Memorial High School (For Class 8)",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-SRI_R_N_SINGH_MEMORI_3"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-SRI_R_N_SINGH_MEMORI_4",
+    "name": "Sri R. N. Singh Memorial High School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-SRI_R_N_SINGH_MEMORI_4"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-SRI_VAISHNAVI_SCHOOL",
+    "name": "Sri Vaishnavi School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-SRI_VAISHNAVI_SCHOOL"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-SRI_VIDHYA_NIKETHAN_",
+    "name": "Sri Vidhya Nikethan Matriculation School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-SRI_VIDHYA_NIKETHAN_"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-SSNP_SCHOOL",
+    "name": "SSNP School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-SSNP_SCHOOL"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-STEPPING_STONE_MODEL",
+    "name": "Stepping Stone Model School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-STEPPING_STONE_MODEL"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-ST_JOHNS_HIGH_SCHOOL",
+    "name": "St. Johns High School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-ST_JOHNS_HIGH_SCHOOL"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-ST_JOHN_S_SCHOOL",
+    "name": "St. John’s School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-ST_JOHN_S_SCHOOL"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-ST_MARY_CONVENT_SCHO",
+    "name": "St. Mary Convent School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-ST_MARY_CONVENT_SCHO"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-ST_MONTFORT_S_SR_SEC",
+    "name": "St. Montfort's Sr. Secondary School, Baruipur",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-ST_MONTFORT_S_SR_SEC"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-ST_PAUL_BOARDING_AND",
+    "name": "St. Paul Boarding and Day School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-ST_PAUL_BOARDING_AND"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-ST_PAUL_S_BOARDING_A",
+    "name": "St. Paul's Boarding And Day School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-ST_PAUL_S_BOARDING_A"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-ST_PAUL_S_MISSION_SC",
+    "name": "St. Paul’s Mission School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-ST_PAUL_S_MISSION_SC"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-ST_XAVIER_S_SR_SEC_S",
+    "name": "St. Xavier's Sr. Sec. School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-ST_XAVIER_S_SR_SEC_S"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-SUMANA_DUTTA_MEMORIA",
+    "name": "Sumana Dutta Memorial Vivekananda International School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-SUMANA_DUTTA_MEMORIA"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-SWARNIM_INTERNATIONA",
+    "name": "Swarnim International School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-SWARNIM_INTERNATIONA"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-TATHASTU_INNOVATIONS",
+    "name": "Tathastu Innovations (LAB ) Meerut",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-TATHASTU_INNOVATIONS"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-TECHNO_INDIA_GROUP_P",
+    "name": "Techno India Group Public School Kalyani",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-TECHNO_INDIA_GROUP_P"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-TECHNO_INDIA_GROUP_P_2",
+    "name": "Techno India Group Public School Asansol",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-TECHNO_INDIA_GROUP_P_2"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-TECHNO_INDIA_GROUP_P_3",
+    "name": "Techno India Group Public School Panagarh",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-TECHNO_INDIA_GROUP_P_3"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-THE_CAMBRIA_INTERNAT",
+    "name": "The Cambria International School & Jr College",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-THE_CAMBRIA_INTERNAT"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-THE_LEARNING_SANCTUA",
+    "name": "The Learning Sanctuary",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-THE_LEARNING_SANCTUA"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-THE_SCOTTISH_CHURCH_",
+    "name": "The Scottish Church Collegiate School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-THE_SCOTTISH_CHURCH_"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-THE_SHREE_JI_SCHOOL",
+    "name": "The Shree ji school",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-THE_SHREE_JI_SCHOOL"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-TINKRSPHERE_ACADEMY",
+    "name": "TINKRSPHERE ACADEMY,",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-TINKRSPHERE_ACADEMY"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-TIP_TOP_CONVENT_SCHO",
+    "name": "Tip Top Convent School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-TIP_TOP_CONVENT_SCHO"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-VAELS_INTERNATIONAL_",
+    "name": "Vaels International School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-VAELS_INTERNATIONAL_"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-WISDOM_HIGH_INTERNAT",
+    "name": "Wisdom High International School, Nashik",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-WISDOM_HIGH_INTERNAT"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  },
+  {
+    "id": "SG-YOUNG_HORIZONS_SCHOO",
+    "name": "Young Horizons School",
+    "region": "unknown",
+    "createdAt": "2026-05-10T00:00:00Z",
+    "createdBy": "system-cutover-snapshot",
+    "memberSchoolIds": [
+      "SCH-YOUNG_HORIZONS_SCHOO"
+    ],
+    "groupMouId": null,
+    "notes": null,
+    "primaryContact": null,
+    "primaryEmail": null,
+    "primaryPhone": null,
+    "gstNumber": null,
+    "auditLog": []
+  }
+]

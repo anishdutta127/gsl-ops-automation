@@ -1,0 +1,64 @@
+[
+  {
+    "id": "sp-1",
+    "name": "Roveena",
+    "email": "roveena.v@getsetlearn.info",
+    "phone": null,
+    "territories": [],
+    "programmes": [
+      "STEAM"
+    ],
+    "active": true,
+    "joinedDate": "2026-04-01"
+  },
+  {
+    "id": "sp-2",
+    "name": "Prodipto",
+    "email": "prodipto.b@getsetlearn.info",
+    "phone": null,
+    "territories": [],
+    "programmes": [
+      "STEAM"
+    ],
+    "active": true,
+    "joinedDate": "2026-04-01"
+  },
+  {
+    "id": "sp-3",
+    "name": "Placeholder 3",
+    "email": "sp3@getsetlearn.info",
+    "phone": null,
+    "territories": [],
+    "programmes": [
+      "Harvard HBPE"
+    ],
+    "active": true,
+    "joinedDate": "2026-04-01"
+  },
+  {
+    "id": "sp-4",
+    "name": "Placeholder 4",
+    "email": "sp4@getsetlearn.info",
+    "phone": null,
+    "territories": [],
+    "programmes": [
+      "STEAM",
+      "Young Pioneers"
+    ],
+    "active": true,
+    "joinedDate": "2026-04-01"
+  },
+  {
+    "id": "sp-5",
+    "name": "Placeholder 5",
+    "email": "sp5@getsetlearn.info",
+    "phone": null,
+    "territories": [],
+    "programmes": [
+      "STEAM",
+      "Harvard HBPE"
+    ],
+    "active": false,
+    "joinedDate": "2026-04-01"
+  }
+]

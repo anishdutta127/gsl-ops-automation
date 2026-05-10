@@ -15,6 +15,7 @@ const ADMIN_NAV: Array<{ label: string; href: string }> = [
   { label: 'School groups', href: '/admin/school-groups' },
   { label: 'Import review', href: '/admin/mou-import-review' },
   { label: 'PI counter', href: '/admin/pi-counter' },
+  { label: 'Data snapshot', href: '/admin/data-snapshot' },
 ]
 
 export default function AdminLayout({
