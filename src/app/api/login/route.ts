@@ -25,6 +25,7 @@ import {
   issueSessionToken,
   sessionCookieOptions,
 } from '@/lib/crypto/jwt'
+import { dashboardPathForDepartment } from '@/lib/departmentAccents'
 
 export async function POST(request: Request) {
   const form = await request.formData()
@@ -51,7 +52,12 @@ export async function POST(request: Request) {
     role: result.user.role,
   })
 
-  const target = validatedNext ?? '/'
+  const target =
+    validatedNext ??
+    dashboardPathForDepartment({
+      department: result.user.department ?? null,
+      role: result.user.role,
+    })
   const url = new URL(target, request.url)
   const response = NextResponse.redirect(url, { status: 303 })
   response.cookies.set(SESSION_COOKIE_NAME, token, sessionCookieOptions())

@@ -1,54 +1,70 @@
 /*
  * TopNav (DESIGN.md "Surface 1" + cross-cutting nav).
  *
- * Server Component rendered on every authenticated page. Reads the
- * current user via getCurrentUser; renders role-aware nav links.
- * "Admin" appears only for Admin role and OpsHead role (matrix
- * default). User-menu surfaces the current name + a Sign out form
- * posting to /api/logout.
+ * Gate 1 Step 3 rewrites the nav from a flat link list into a
+ * workflow-stage bar with seven stages: Pipeline, Active MOUs,
+ * Dispatch, Finance, Operations, Reports, Admin. The active stage
+ * shows a department-coloured underline and bolder weight. Each
+ * stage carries a small dot indicator when the current user's
+ * primary department maps to that stage (e.g., a Sales user gets
+ * a teal dot under Pipeline; an Ops user gets orange dots under
+ * Dispatch and Operations).
  *
- * Visual: horizontal flex bar, navy bg, teal underline on active
- * link via aria-current. Touch targets 44px minimum on mobile;
- * 48px tall desktop.
+ * Three visual principles locked here for every subsequent gate:
+ *   1. Workflow-stage navigation, not feature-module navigation.
+ *   2. Department badge as visual filter, not hard wall: same nav
+ *      for every role, with dept dots as orientation hints.
+ *   3. Three-tier information density (overview / lane / detail);
+ *      this nav is the overview-tier entry point.
  *
- * W4-I.5 P2C5: the home route / now serves the Operations Control
- * Dashboard; the kanban moved to /kanban. TopNav surfaces both as
- * sibling links: "Dashboard" (-> /) and "Kanban" (-> /kanban). The
- * old in-page KanbanOverviewTabs strip is no longer mounted.
+ * The mobile drawer (TopNavMobile) renders the same structure under
+ * a hamburger affordance.
  */
 
 import Link from 'next/link'
 import { LayoutGrid, LogOut } from 'lucide-react'
 import { getCurrentUser } from '@/lib/auth/session'
-import type { User, UserRole } from '@/lib/types'
+import type { Department, User } from '@/lib/types'
+import { accentFor, type StageDepartment } from '@/lib/departmentAccents'
 import { NotificationBell } from './NotificationBell'
+import { TopNavMobile } from './TopNavMobile'
 
-interface NavLink {
+interface NavStage {
   href: string
   label: string
-  visibleTo: 'all' | UserRole[]
+  /** Department this stage primarily belongs to; drives the dot indicator. */
+  department: StageDepartment
 }
 
-const NAV_LINKS: NavLink[] = [
-  { href: '/', label: 'Dashboard', visibleTo: 'all' },
-  { href: '/kanban', label: 'MOU Pipeline', visibleTo: 'all' },
-  { href: '/mous', label: 'MOUs', visibleTo: 'all' },
-  { href: '/schools', label: 'Schools', visibleTo: 'all' },
-  { href: '/sales-pipeline', label: 'Sales pipeline', visibleTo: 'all' },
-  { href: '/escalations', label: 'Escalations', visibleTo: 'all' },
-  { href: '/admin', label: 'Admin', visibleTo: ['Admin', 'OpsHead', 'Leadership'] },
+export const NAV_STAGES: NavStage[] = [
+  { href: '/sales-pipeline', label: 'Pipeline', department: 'sales' },
+  { href: '/mous', label: 'Active MOUs', department: 'cross-functional' },
+  { href: '/dispatch', label: 'Dispatch', department: 'ops' },
+  { href: '/finance', label: 'Finance', department: 'finance' },
+  { href: '/operations', label: 'Operations', department: 'ops' },
+  { href: '/reports', label: 'Reports', department: 'neutral' },
+  { href: '/admin', label: 'Admin', department: 'neutral' },
 ]
 
-const HELP_LINK: NavLink = { href: '/help', label: 'Help', visibleTo: 'all' }
+const HELP_HREF = '/help'
 
-function isVisible(link: NavLink, user: User | null): boolean {
-  if (link.visibleTo === 'all') return true
-  if (!user) return false
-  if (link.visibleTo.includes(user.role)) return true
-  if (user.testingOverride && user.testingOverridePermissions) {
-    return user.testingOverridePermissions.some((r) => link.visibleTo !== 'all' && link.visibleTo.includes(r))
-  }
-  return false
+function isStageActive(currentPath: string | undefined, stageHref: string): boolean {
+  if (!currentPath) return false
+  if (currentPath === stageHref) return true
+  return currentPath.startsWith(stageHref + '/')
+}
+
+/**
+ * A stage's dot indicator surfaces only when the current user's
+ * department maps to that stage. Cross-functional and neutral
+ * stages never carry a dot; null department (Admin / Leadership)
+ * sees no dots either since their lane is "everything".
+ */
+function shouldShowDeptDot(user: User | null, stageDept: StageDepartment): boolean {
+  if (!user || !user.active) return false
+  const userDept: Department = user.department ?? null
+  if (userDept === null) return false
+  return userDept === stageDept
 }
 
 interface TopNavProps {
@@ -57,58 +73,78 @@ interface TopNavProps {
 
 export async function TopNav({ currentPath }: TopNavProps = {}) {
   const user = await getCurrentUser()
-  const visibleLinks = NAV_LINKS.filter((l) => isVisible(l, user))
 
   return (
     <nav
       className="sticky top-0 z-40 border-b border-border bg-brand-navy text-white"
       aria-label="Primary navigation"
+      data-testid="topnav"
     >
-      <div className="mx-auto flex min-h-12 max-w-screen-xl items-stretch justify-between px-4">
-        <div className="flex items-center gap-1">
+      <div className="mx-auto flex min-h-12 max-w-screen-xl items-stretch justify-between px-2 sm:px-4">
+        <div className="flex flex-1 items-center gap-1 overflow-hidden">
           <Link
             href="/"
             data-testid="topnav-wordmark"
             aria-label="GSL Ops home"
-            className="flex items-center gap-1.5 px-3 font-heading text-lg font-bold text-white focus:outline-none focus:ring-2 focus:ring-brand-teal"
+            className="flex shrink-0 items-center gap-1.5 px-3 font-heading text-lg font-bold text-white focus:outline-none focus:ring-2 focus:ring-brand-teal"
           >
             <LayoutGrid aria-hidden className="size-4 text-brand-teal" />
             <span>GSL Ops</span>
           </Link>
-          <ul className="flex items-stretch">
-            {visibleLinks.map((link) => {
-              const active = currentPath === link.href || (currentPath?.startsWith(link.href + '/') ?? false)
+          {/* Desktop stage list */}
+          <ul className="hidden items-stretch overflow-x-auto md:flex">
+            {NAV_STAGES.map((stage) => {
+              const active = isStageActive(currentPath, stage.href)
+              const accent = accentFor(stage.department)
+              const dot = shouldShowDeptDot(user, stage.department)
               return (
-                <li key={link.href} className="flex">
+                <li key={stage.href} className="flex">
                   <Link
-                    href={link.href}
+                    href={stage.href}
                     aria-current={active ? 'page' : undefined}
+                    data-testid={`topnav-stage-${stage.label.replace(/\s+/g, '-').toLowerCase()}`}
+                    data-stage-active={active ? 'true' : 'false'}
+                    data-stage-dept={stage.department}
                     className={
-                      'flex min-h-11 items-center px-3 text-sm font-medium text-white hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-brand-teal ' +
-                      (active ? 'border-b-2 border-brand-teal' : 'border-b-2 border-transparent')
+                      'relative flex min-h-11 items-center gap-1.5 px-3 text-sm text-white hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-brand-teal ' +
+                      (active
+                        ? 'border-b-2 font-semibold ' + accent.navUnderlineClass
+                        : 'border-b-2 border-transparent font-medium')
                     }
                   >
-                    {link.label}
+                    <span>{stage.label}</span>
+                    {dot ? (
+                      <span
+                        aria-hidden
+                        data-testid={`topnav-dept-dot-${stage.label.replace(/\s+/g, '-').toLowerCase()}`}
+                        className={'size-1.5 rounded-full ' + accent.navDotClass}
+                      />
+                    ) : null}
                   </Link>
                 </li>
               )
             })}
           </ul>
+          {/* Mobile drawer trigger */}
+          <TopNavMobile
+            stages={NAV_STAGES}
+            currentPath={currentPath}
+            userDepartment={user?.department ?? null}
+            helpHref={HELP_HREF}
+          />
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-1 sm:gap-3">
           <Link
-            href={HELP_LINK.href}
-            aria-current={
-              currentPath === HELP_LINK.href || (currentPath?.startsWith(HELP_LINK.href + '/') ?? false)
-                ? 'page'
-                : undefined
-            }
+            href={HELP_HREF}
+            aria-current={isStageActive(currentPath, HELP_HREF) ? 'page' : undefined}
             className={
-              'flex min-h-11 items-center px-3 text-sm font-medium text-white hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-brand-teal ' +
-              (currentPath === HELP_LINK.href ? 'border-b-2 border-brand-teal' : 'border-b-2 border-transparent')
+              'hidden min-h-11 items-center px-3 text-sm font-medium text-white hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-brand-teal sm:flex ' +
+              (isStageActive(currentPath, HELP_HREF)
+                ? 'border-b-2 border-brand-teal'
+                : 'border-b-2 border-transparent')
             }
           >
-            {HELP_LINK.label}
+            Help
           </Link>
           <span aria-hidden className="hidden h-6 w-px bg-white/20 sm:inline-block" />
           {user ? <NotificationBell user={user} /> : null}
@@ -124,7 +160,7 @@ export async function TopNav({ currentPath }: TopNavProps = {}) {
               aria-label="Sign out"
             >
               <LogOut aria-hidden className="size-4" />
-              <span>Sign out</span>
+              <span className="hidden sm:inline">Sign out</span>
             </button>
           </form>
         </div>

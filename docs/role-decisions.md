@@ -21,7 +21,7 @@ Architecture decisions live alongside role decisions in this file when they shap
 | `swati.p` | Admin (created Admin) | `'ops'` | Operating as Ops in the pilot per swati-feedback work; refactor commits on the current branch confirm her workflow. |
 | `shubhangi.g` | Admin (was Finance) | `'finance'` | Accounts lead per gsl-mou-system CLAUDE.md. |
 | `pranav.b` | Admin (was Finance) | `'finance'` | Accounts per gsl-mou-system CLAUDE.md. |
-| `shashank.s` | Admin (was TrainerHead) | `'ops'` | Provisional per MERGE_PLAN.md §7.3; Academics is treated as part of operational execution under Pradeep + Shashank. Re-visit at Gate 4 when training rollout becomes a first-class module. |
+| `shashank.s` | Admin (was TrainerHead) | `null` | Cross-functional Admin during pilot. The Academics-lane audit-route scoping (TrainerHead) continues to be enforced via `lib/auth/permissions.ts canViewAuditEntry`; the department layer is a no-op for him during the pilot. Revisit at Gate 4 when training rollout becomes a first-class module and an `'academics'` department becomes warranted. |
 | `gowri.r` | Admin (created Admin) | `null` | No prior real-world role tagged in earlier docs; defaults to cross-functional Admin until corrected. |
 | `anita.c` | Admin (created Admin) | `'finance'` | Anita is "accounts" per gsl-mou-system CLAUDE.md "Primary users"; aligning department to her real function. |
 

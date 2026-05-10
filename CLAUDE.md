@@ -27,7 +27,7 @@ Gate 1 Step 2 introduced a workflow-stage department on every User. The field is
 | Department | Workflow stages | Role mapping at user-creation time |
 |---|---|---|
 | `'sales'` | Pipeline, Active MOUs, dispatch approval, school master edits | `SalesHead`, `SalesRep` |
-| `'ops'` | Operations (schools, escalations, VEX, vendors, inventory), dispatch raise, training rollout | `OpsHead`, `OpsEmployee`, `TrainerHead` (provisional, see MERGE_PLAN.md §7.3) |
+| `'ops'` | Operations (schools, escalations, VEX, vendors, inventory), dispatch raise, training rollout | `OpsHead`, `OpsEmployee`, `TrainerHead` (seed default; Shashank is `null` in the pilot per role-decisions 2026-05-10) |
 | `'finance'` | PI generation, payment matching, Tally export, adjustments, dispatch execution | `Finance` |
 | `null` | All stages (cross-functional Admin or Leadership) | `Admin`, `Leadership` |
 
