@@ -24,7 +24,7 @@ const allEscalations = escalationsJson as unknown as Escalation[]
 const allSchools = schoolsJson as unknown as School[]
 
 const STATUS_OPTIONS: ReadonlyArray<Escalation['status']> = [
-  'Open', 'WIP', 'Closed', 'Transfer to Other Department',
+  'Open', 'WIP', 'Closed', 'Transferred',
   'Dispatched', 'In Transit',
 ]
 const SEVERITY_OPTIONS: ReadonlyArray<Escalation['severity']> = ['low', 'medium', 'high']
@@ -186,7 +186,7 @@ export default async function EscalationEditPage({ params, searchParams }: PageP
               placeholder="e.g., misba.m"
             />
             <p className="mt-1 text-xs text-muted-foreground">
-              Leave blank to unassign. Use Transfer to Other Department status when re-routing.
+              Leave blank to unassign. Use the Transferred status when re-routing.
             </p>
           </div>
 

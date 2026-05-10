@@ -18,8 +18,11 @@
       "ameet.z@getsetlearn.info"
     ],
     "status": "Open",
-    "category": null,
-    "type": null,
+    "category": "Other",
+    "type": "Operational",
+    "ownedByDepartment": "ops",
+    "slaTargetDate": "2026-04-30T16:30:00.000Z",
+    "slaBreached": true,
     "waitingOn": null,
     "resolutionNotes": null,
     "resolvedAt": null,
@@ -36,6 +39,26 @@
           "status": "Open"
         },
         "notes": "W4-I.4 MM5 backfill: status enum migrated to Misba ticketing vocabulary (open -> Open). category and type initialised to null."
+      },
+      {
+        "timestamp": "2026-05-10T00:00:00.000Z",
+        "user": "system-gate1-step5",
+        "action": "update",
+        "before": {
+          "category": null,
+          "type": null,
+          "ownedByDepartment": null,
+          "slaTargetDate": null,
+          "slaBreached": null
+        },
+        "after": {
+          "category": "Other",
+          "type": "Operational",
+          "ownedByDepartment": "ops",
+          "slaTargetDate": "2026-04-30T16:30:00.000Z",
+          "slaBreached": true
+        },
+        "notes": "Gate 1 Step 5 backfill: typed category + type vocabulary, ownedByDepartment derived from lane=OPS, SLA computed from severity=medium (P2 / 7d window from createdAt)."
       }
     ]
   },
@@ -58,8 +81,11 @@
       "misba.m@getsetlearn.info"
     ],
     "status": "Open",
-    "category": null,
-    "type": null,
+    "category": "Training Issue",
+    "type": "Operational",
+    "ownedByDepartment": "ops",
+    "slaTargetDate": "2026-04-27T14:00:00.000Z",
+    "slaBreached": true,
     "waitingOn": null,
     "resolutionNotes": null,
     "resolvedAt": null,
@@ -82,6 +108,26 @@
           "status": "Open"
         },
         "notes": "W4-I.4 MM5 backfill: status enum migrated (open -> Open). category and type initialised to null."
+      },
+      {
+        "timestamp": "2026-05-10T00:00:00.000Z",
+        "user": "system-gate1-step5",
+        "action": "update",
+        "before": {
+          "category": null,
+          "type": null,
+          "ownedByDepartment": null,
+          "slaTargetDate": null,
+          "slaBreached": null
+        },
+        "after": {
+          "category": "Training Issue",
+          "type": "Operational",
+          "ownedByDepartment": "ops",
+          "slaTargetDate": "2026-04-27T14:00:00.000Z",
+          "slaBreached": true
+        },
+        "notes": "Gate 1 Step 5 backfill: feedback-quality escalation tagged Training Issue (origin=feedback on training-quality category); ownedByDepartment derived from ACADEMICS lane mapping to ops per MERGE_PLAN.md provisional rule; SLA computed from severity=high (P1 / 72h window)."
       }
     ]
   },
@@ -103,8 +149,11 @@
       "pratik.d@getsetlearn.info"
     ],
     "status": "WIP",
-    "category": null,
-    "type": null,
+    "category": "Other",
+    "type": "Internal",
+    "ownedByDepartment": "sales",
+    "slaTargetDate": "2026-05-22T11:15:00.000Z",
+    "slaBreached": false,
     "waitingOn": null,
     "resolutionNotes": "Approved within tolerance.",
     "resolvedAt": null,
@@ -121,6 +170,26 @@
           "status": "WIP"
         },
         "notes": "W4-I.4 MM5 backfill: status enum migrated (acknowledged -> WIP). category and type initialised to null."
+      },
+      {
+        "timestamp": "2026-05-10T00:00:00.000Z",
+        "user": "system-gate1-step5",
+        "action": "update",
+        "before": {
+          "category": null,
+          "type": null,
+          "ownedByDepartment": null,
+          "slaTargetDate": null,
+          "slaBreached": null
+        },
+        "after": {
+          "category": "Other",
+          "type": "Internal",
+          "ownedByDepartment": "sales",
+          "slaTargetDate": "2026-05-22T11:15:00.000Z",
+          "slaBreached": false
+        },
+        "notes": "Gate 1 Step 5 backfill: drift-approval is an internal-routing ticket (type=Internal); ownedByDepartment derived from SALES lane; SLA computed from severity=low (P3 / 30d window)."
       }
     ]
   },
@@ -142,8 +211,11 @@
       "shubhangi.g@getsetlearn.info"
     ],
     "status": "Open",
-    "category": null,
-    "type": null,
+    "category": "School Communication",
+    "type": "Customer-facing",
+    "ownedByDepartment": "ops",
+    "slaTargetDate": "2026-04-22T09:30:00.000Z",
+    "slaBreached": true,
     "waitingOn": null,
     "resolutionNotes": null,
     "resolvedAt": null,
@@ -160,6 +232,26 @@
           "status": "Open"
         },
         "notes": "W4-I.4 MM5 backfill: status enum migrated (open -> Open). category and type initialised to null."
+      },
+      {
+        "timestamp": "2026-05-10T00:00:00.000Z",
+        "user": "system-gate1-step5",
+        "action": "update",
+        "before": {
+          "category": null,
+          "type": null,
+          "ownedByDepartment": null,
+          "slaTargetDate": null,
+          "slaBreached": null
+        },
+        "after": {
+          "category": "School Communication",
+          "type": "Customer-facing",
+          "ownedByDepartment": "ops",
+          "slaTargetDate": "2026-04-22T09:30:00.000Z",
+          "slaBreached": true
+        },
+        "notes": "Gate 1 Step 5 backfill: GSTIN-blocked PI is school-side (type=Customer-facing) communication (category); ownedByDepartment derived from OPS lane; SLA computed from severity=medium (P2 / 7d window)."
       }
     ]
   },
@@ -182,8 +274,11 @@
       "misba.m@getsetlearn.info"
     ],
     "status": "Closed",
-    "category": null,
-    "type": null,
+    "category": "School Communication",
+    "type": "Customer-facing",
+    "ownedByDepartment": "ops",
+    "slaTargetDate": "2026-04-13T13:45:00.000Z",
+    "slaBreached": false,
     "waitingOn": null,
     "resolutionNotes": "Alternate SPOC email captured: spoc.cedarheights.alt@example.test. Welcome note re-sent.",
     "resolvedAt": "2026-04-12T10:00:00Z",
@@ -200,6 +295,26 @@
           "status": "Closed"
         },
         "notes": "W4-I.4 MM5 backfill: status enum migrated (resolved -> Closed). category and type initialised to null."
+      },
+      {
+        "timestamp": "2026-05-10T00:00:00.000Z",
+        "user": "system-gate1-step5",
+        "action": "update",
+        "before": {
+          "category": null,
+          "type": null,
+          "ownedByDepartment": null,
+          "slaTargetDate": null,
+          "slaBreached": null
+        },
+        "after": {
+          "category": "School Communication",
+          "type": "Customer-facing",
+          "ownedByDepartment": "ops",
+          "slaTargetDate": "2026-04-13T13:45:00.000Z",
+          "slaBreached": false
+        },
+        "notes": "Gate 1 Step 5 backfill: bounced welcome-note is school-side communication; ownedByDepartment from OPS lane; SLA computed from severity=high (P1 / 72h); slaBreached=false because escalation closed before now (closed escalations stop the clock)."
       }
     ]
   }

@@ -54,7 +54,7 @@ describe('/escalations/[escalationId]/edit page (W4-I.4 MM5)', () => {
     expect(html).toContain('value="Open"')
     expect(html).toContain('value="WIP"')
     expect(html).toContain('value="Closed"')
-    expect(html).toContain('value="Transfer to Other Department"')
+    expect(html).toContain('value="Transferred"')
     expect(html).toContain('value="Dispatched"')
     expect(html).toContain('value="In Transit"')
   })

@@ -789,10 +789,42 @@ export type EscalationStatus =
   | 'WIP'
   | 'Open'
   | 'Closed'
-  | 'Transfer to Other Department'
+  | 'Transferred'
   | 'Dispatched'
   | 'In Transit'
-export type EscalationSeverity = 'low' | 'medium' | 'high'
+/**
+ * Gate 1 Step 5: 'critical' added as the P0 tier (24h SLA per the
+ * Misba ticketing-system spec). 'high' = P1 (72h), 'medium' = P2
+ * (7 days), 'low' = P3 (30 days). SLA target dates computed by
+ * src/lib/escalations/sla.ts.
+ */
+export type EscalationSeverity = 'critical' | 'high' | 'medium' | 'low'
+
+/**
+ * Gate 1 Step 5: typed Category vocabulary per the Misba ticketing
+ * spec. Replaces the W4-I.4 free-text string. Existing data is
+ * migrated to 'Other' so legacy escalations stay valid.
+ */
+export type EscalationCategory =
+  | 'Dispatch Delay'
+  | 'Payment Issue'
+  | 'Quality Complaint'
+  | 'Training Issue'
+  | 'School Communication'
+  | 'Inventory Shortfall'
+  | 'Vendor Issue'
+  | 'Other'
+
+/**
+ * Gate 1 Step 5: typed Type vocabulary per the Misba ticketing spec.
+ * Existing data is migrated to 'Operational'.
+ */
+export type EscalationType =
+  | 'Internal'
+  | 'Customer-facing'
+  | 'Vendor-facing'
+  | 'Regulatory'
+  | 'Operational'
 
 export interface Escalation {
   id: string
@@ -811,17 +843,44 @@ export interface Escalation {
   notifiedEmails: string[]         // fan-out list snapshotted at creation
   status: EscalationStatus
   /**
-   * W4-I.4 MM5: free-text Category + Type so Ops can label tickets in
-   * their own vocabulary. Free-text per the W4-F.1 minimal-container
-   * pattern; enums emerge after round 2 once tester usage settles.
-   * Both fields are nullable so historical fixtures (and future auto-
-   * created escalations) can leave them unset.
+   * Gate 1 Step 5: typed Category + Type vocabulary per the Misba
+   * ticketing spec. Replaces the W4-I.4 free-text strings. Nullable
+   * to keep round 1 fixtures valid; the migration script seeds
+   * 'Other' / 'Operational' for legacy entries.
    */
-  category: string | null
-  type: string | null
+  category: EscalationCategory | null
+  type: EscalationType | null
+  /**
+   * Gate 1 Step 5: dept that owns the ticket today (creator's dept by
+   * default; flips on Transferred status flow). Optional on the type
+   * because pre-Gate-1 escalations did not carry the field; the
+   * migration script backfills from `lane` (OPS->ops, SALES->sales,
+   * ACADEMICS->ops). New escalations always set it.
+   */
+  ownedByDepartment?: 'sales' | 'ops' | 'finance'
+  /**
+   * Gate 1 Step 5: transfer flow fields. transferredFromDepartment is
+   * the dept that initiated the transfer; transferredToDepartment is
+   * the receiving dept. transferredAt + transferReason capture the
+   * audit. The receiving dept's escalation is in 'Transferred' status
+   * with assignedTo cleared until claimed. All optional because
+   * non-transferred escalations leave them null.
+   */
+  transferredFromDepartment?: 'sales' | 'ops' | 'finance' | null
+  transferredToDepartment?: 'sales' | 'ops' | 'finance' | null
+  transferredAt?: string | null
+  transferReason?: string | null
+  /**
+   * Gate 1 Step 5: SLA target ISO date computed from severity +
+   * createdAt by src/lib/escalations/sla.ts. slaBreached is the
+   * computed flag (true when target < now AND status is not Closed).
+   * Both optional pre-migration; the migration script backfills.
+   */
+  slaTargetDate?: string
+  slaBreached?: boolean
   /**
    * Free-text "Waiting on what/whom?" populated when status is the
-   * "Waiting on Someone Else" relabel of `Transfer to Other Department`
+   * "Waiting on Someone Else" relabel of `Transferred`
    * (Swati-feedback batch). Other statuses leave this null.
    */
   waitingOn: string | null

@@ -103,8 +103,8 @@ export default async function EscalationsListPage({ searchParams }: PageProps) {
         { value: 'WIP', label: ESCALATION_STATUS_TONE.WIP.label },
         { value: 'Closed', label: ESCALATION_STATUS_TONE.Closed.label },
         {
-          value: 'Transfer to Other Department',
-          label: ESCALATION_STATUS_TONE['Transfer to Other Department'].label,
+          value: 'Transferred',
+          label: ESCALATION_STATUS_TONE['Transferred'].label,
         },
         { value: 'Dispatched', label: ESCALATION_STATUS_TONE.Dispatched.label },
         { value: 'In Transit', label: ESCALATION_STATUS_TONE['In Transit'].label },

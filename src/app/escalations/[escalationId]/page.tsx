@@ -18,6 +18,8 @@ import schoolsJson from '@/data/schools.json'
 import mousJson from '@/data/mous.json'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canPerform } from '@/lib/auth/permissions'
+import { canManageEscalations, getDepartment } from '@/lib/access'
+import { isSlaBreached, slaHoursRemaining } from '@/lib/escalations/sla'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { DetailHeaderCard } from '@/components/ops/DetailHeaderCard'
@@ -29,6 +31,10 @@ import {
   ESCALATION_SEVERITY_TONE,
   ESCALATION_STATUS_TONE,
 } from '@/lib/ui/escalationTones'
+import {
+  claimEscalationAction,
+  transferEscalationAction,
+} from '../actions'
 
 const allEscalations = escalationsJson as unknown as Escalation[]
 const allSchools = schoolsJson as unknown as School[]
@@ -36,6 +42,24 @@ const allMous = mousJson as unknown as MOU[]
 
 interface PageProps {
   params: Promise<{ escalationId: string }>
+  searchParams?: Promise<Record<string, string | string[] | undefined>>
+}
+
+const NOTICE_COPY: Record<string, string> = {
+  transferred:
+    'Transferred. The receiving department has been notified; assignedTo cleared until claimed.',
+  claimed: 'Claimed. Status flipped to WIP and assignedTo set to you.',
+  edited: 'Saved. Will reflect everywhere within ~5 minutes.',
+}
+
+const ERROR_COPY: Record<string, string> = {
+  permission: 'You do not have permission to perform that action.',
+  'invalid-target': 'Pick a target department.',
+  'missing-reason': 'A reason is required when transferring.',
+  'same-department': 'Already owned by that department; nothing to transfer.',
+  'already-closed': 'Closed escalations cannot be transferred.',
+  'not-transferred': 'Only transferred escalations can be claimed.',
+  'wrong-department': 'You must belong to the receiving department to claim.',
 }
 
 function isVisibleToUser(esc: Escalation, user: User | null): boolean {
@@ -54,8 +78,13 @@ function isVisibleToUser(esc: Escalation, user: User | null): boolean {
 const SEVERITY_TONE = ESCALATION_SEVERITY_TONE
 const STATUS_TONE = ESCALATION_STATUS_TONE
 
-export default async function EscalationDetailPage({ params }: PageProps) {
+export default async function EscalationDetailPage({ params, searchParams }: PageProps) {
   const { escalationId } = await params
+  const sp = (await searchParams) ?? {}
+  const noticeKey = typeof sp.notice === 'string' ? sp.notice : null
+  const noticeMessage = noticeKey ? NOTICE_COPY[noticeKey] ?? null : null
+  const errorKey = typeof sp.error === 'string' ? sp.error : null
+  const errorMessage = errorKey ? ERROR_COPY[errorKey] ?? `Failed: ${errorKey}` : null
   const user = await getCurrentUser()
   const esc = allEscalations.find((e) => e.id === escalationId)
   if (!esc || !isVisibleToUser(esc, user)) notFound()
@@ -66,6 +95,27 @@ export default async function EscalationDetailPage({ params }: PageProps) {
   const statusMeta = STATUS_TONE[esc.status]
   const severityMeta = SEVERITY_TONE[esc.severity]
   const canEdit = user ? canPerform(user, 'escalation:resolve') : false
+  const canManage = user ? canManageEscalations(user) : false
+  // SLA chip + countdown banner. Closed escalations stop accruing
+  // breach (the lib clamps remaining=0 + breached=false).
+  const now = new Date()
+  const slaBreached = esc.slaTargetDate
+    ? isSlaBreached({ status: esc.status, slaTargetDate: esc.slaTargetDate, now })
+    : false
+  const slaHrs = esc.slaTargetDate
+    ? slaHoursRemaining({ status: esc.status, slaTargetDate: esc.slaTargetDate, now })
+    : null
+  // Transfer flow visibility: transfer is only meaningful for open
+  // tickets. Claim is only meaningful while a transfer is awaiting
+  // pickup. Admin (null dept) can claim any transferred ticket; other
+  // canManage users must be in the receiving department.
+  const canTransfer = canManage && esc.status !== 'Transferred' && esc.status !== 'Closed'
+  const userDept = user ? getDepartment(user) : null
+  const isAdminWildcard = user?.role === 'Admin' && userDept === null
+  const canClaim =
+    canManage &&
+    esc.status === 'Transferred' &&
+    (isAdminWildcard || userDept === esc.ownedByDepartment)
 
   const headerBadges = (
     <div className="flex flex-wrap items-center gap-2">
@@ -89,6 +139,52 @@ export default async function EscalationDetailPage({ params }: PageProps) {
           ]}
         />
         <div className="mx-auto flex max-w-screen-xl flex-col gap-4 px-4 py-6">
+          {noticeMessage ? (
+            <div
+              role="status"
+              data-testid="esc-notice"
+              data-notice={noticeKey}
+              className="rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-900"
+            >
+              {noticeMessage}
+            </div>
+          ) : null}
+          {errorMessage ? (
+            <div
+              role="alert"
+              data-testid="esc-error"
+              data-error={errorKey}
+              className="rounded-md border border-signal-alert bg-signal-alert/10 px-3 py-2 text-sm text-signal-alert"
+            >
+              {errorMessage}
+            </div>
+          ) : null}
+          {esc.slaTargetDate ? (
+            <div
+              data-testid="esc-sla-banner"
+              data-sla-breached={slaBreached ? 'true' : 'false'}
+              className={
+                'rounded-md border px-3 py-2 text-sm ' +
+                (slaBreached
+                  ? 'border-signal-alert bg-signal-alert/10 text-signal-alert'
+                  : 'border-border bg-card text-foreground')
+              }
+            >
+              <span className="font-semibold">SLA:</span>{' '}
+              {esc.status === 'Closed' ? (
+                <>Closed before SLA window expired.</>
+              ) : slaBreached ? (
+                <>
+                  Breached by {Math.abs(slaHrs ?? 0)}h. Target was{' '}
+                  {formatDate(esc.slaTargetDate)}.
+                </>
+              ) : (
+                <>
+                  {slaHrs ?? 0}h remaining. Target {formatDate(esc.slaTargetDate)}.
+                </>
+              )}
+            </div>
+          ) : null}
 
           <DetailHeaderCard
             title={esc.description}
@@ -103,7 +199,7 @@ export default async function EscalationDetailPage({ params }: PageProps) {
               { label: 'Type', value: esc.type ?? <span className="text-muted-foreground">not set</span> },
               { label: 'Severity', value: <StatusChip tone={severityMeta.tone} label={severityMeta.label} withDot={false} /> },
               { label: 'Assigned to', value: esc.assignedTo ?? 'unassigned' },
-              ...(esc.waitingOn || esc.status === 'Transfer to Other Department' ? [{
+              ...(esc.waitingOn || esc.status === 'Transferred' ? [{
                 label: 'Waiting on what/whom?',
                 value: esc.waitingOn ?? <span className="text-muted-foreground">not set</span>,
               }] : []),
@@ -157,6 +253,103 @@ export default async function EscalationDetailPage({ params }: PageProps) {
                   </div>
                 ) : null}
               </dl>
+            </section>
+          ) : null}
+
+          {canTransfer ? (
+            <section
+              aria-labelledby="transfer-heading"
+              data-testid="esc-transfer-form"
+              className="rounded-lg border border-border bg-card p-4 sm:p-6"
+            >
+              <h3
+                id="transfer-heading"
+                className="mb-3 font-heading text-base font-semibold text-brand-navy"
+              >
+                Transfer to another department
+              </h3>
+              <p className="mb-3 text-sm text-muted-foreground">
+                Sets status to Transferred and clears the assignee. The receiving
+                department must claim the ticket.
+              </p>
+              <form action={transferEscalationAction} className="space-y-3">
+                <input type="hidden" name="id" value={esc.id} />
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <label className="block text-sm">
+                    <span className="mb-1 block font-medium text-brand-navy">Target department</span>
+                    <select
+                      name="targetDepartment"
+                      defaultValue=""
+                      required
+                      className="block w-full rounded-md border border-input bg-card px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-navy"
+                    >
+                      <option value="" disabled>Pick a department</option>
+                      {(['sales', 'ops', 'finance'] as const)
+                        .filter((d) => d !== esc.ownedByDepartment)
+                        .map((d) => (
+                          <option key={d} value={d}>{d}</option>
+                        ))}
+                    </select>
+                  </label>
+                </div>
+                <label className="block text-sm">
+                  <span className="mb-1 block font-medium text-brand-navy">Reason (required)</span>
+                  <textarea
+                    name="reason"
+                    rows={2}
+                    required
+                    className="block w-full rounded-md border border-input bg-card px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-navy"
+                  />
+                </label>
+                <button
+                  type="submit"
+                  className="inline-flex min-h-11 items-center rounded-md bg-brand-teal px-3 py-2 text-sm font-medium text-brand-navy hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-brand-navy"
+                >
+                  Transfer
+                </button>
+              </form>
+            </section>
+          ) : null}
+
+          {esc.status === 'Transferred' ? (
+            <section
+              aria-labelledby="claim-heading"
+              data-testid="esc-claim-section"
+              className="rounded-lg border border-border bg-card p-4 sm:p-6"
+            >
+              <h3
+                id="claim-heading"
+                className="mb-2 font-heading text-base font-semibold text-brand-navy"
+              >
+                Awaiting claim by {esc.ownedByDepartment ?? 'unassigned'}
+              </h3>
+              {esc.transferReason ? (
+                <p className="mb-2 text-sm text-foreground">
+                  <span className="font-semibold">Reason:</span> {esc.transferReason}
+                </p>
+              ) : null}
+              {esc.transferredAt ? (
+                <p className="mb-3 text-xs text-muted-foreground">
+                  Transferred at {formatDate(esc.transferredAt)} from{' '}
+                  {esc.transferredFromDepartment ?? 'unassigned'}.
+                </p>
+              ) : null}
+              {canClaim ? (
+                <form action={claimEscalationAction}>
+                  <input type="hidden" name="id" value={esc.id} />
+                  <button
+                    type="submit"
+                    data-testid="esc-claim-button"
+                    className="inline-flex min-h-11 items-center rounded-md bg-brand-teal px-3 py-2 text-sm font-medium text-brand-navy hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-brand-navy"
+                  >
+                    Claim this ticket
+                  </button>
+                </form>
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  Only members of the {esc.ownedByDepartment ?? 'receiving'} department can claim this ticket.
+                </p>
+              )}
             </section>
           ) : null}
 

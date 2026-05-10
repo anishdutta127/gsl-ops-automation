@@ -14,14 +14,15 @@ export const ESCALATION_SEVERITY_TONE: Record<
   Escalation['severity'],
   { tone: StatusChipTone; label: string }
 > = {
-  high: { tone: 'alert', label: 'High' },
-  medium: { tone: 'attention', label: 'Medium' },
-  low: { tone: 'neutral', label: 'Low' },
+  critical: { tone: 'alert', label: 'Critical (P0)' },
+  high: { tone: 'alert', label: 'High (P1)' },
+  medium: { tone: 'attention', label: 'Medium (P2)' },
+  low: { tone: 'neutral', label: 'Low (P3)' },
 }
 
 // W4-I.4 MM5: Misba ticketing-system status vocabulary.
 // Swati-feedback batch: display labels relabel without touching the
-// stored enum (Open / WIP / Closed / Transfer to Other Department /
+// stored enum (Open / WIP / Closed / Transferred /
 // Dispatched / In Transit). Filter chips, status chips, dashboard tile,
 // and detail page all read these labels.
 export const ESCALATION_STATUS_TONE: Record<
@@ -31,7 +32,7 @@ export const ESCALATION_STATUS_TONE: Record<
   Open: { tone: 'alert', label: 'Awaiting Action' },
   WIP: { tone: 'attention', label: 'Being Resolved' },
   Closed: { tone: 'ok', label: 'Closed' },
-  'Transfer to Other Department': { tone: 'attention', label: 'Waiting on Someone Else' },
+  'Transferred': { tone: 'attention', label: 'Waiting on Someone Else' },
   Dispatched: { tone: 'attention', label: 'Dispatched' },
   'In Transit': { tone: 'attention', label: 'In Transit' },
 }

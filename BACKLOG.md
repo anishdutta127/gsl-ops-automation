@@ -3,6 +3,34 @@
 Phase 1.1+ items deferred from Phase 1. Each entry names the trigger
 that should pull it onto the active plan.
 
+## Escalations ticketing polish (Phase 1.1)
+
+- **Saved filters per user (localStorage).** Gate 1 Step 5 ships
+  category / type / status / severity / SLA-breached / owning-
+  department filters as standard URL-state filters; the brief also
+  asked for per-user saved filter sets via localStorage. Deferred
+  because the discovery UX (a "Save filter" affordance + a saved-
+  filters dropdown) is non-trivial and the URL-share pattern covers
+  most multi-tab needs.
+  Trigger: any tester reports "I keep retyping the same filter
+  combination". The save flow is a thin client component on top of
+  the existing FilterRail.
+
+- **Multi-column sort with default SLA-breached first.** Gate 1
+  Step 5 list defaults to most-recent-first across all entries with
+  SLA-breached chips visible inline; the brief also asked for
+  multi-column sort with SLA-breached as the primary key. Deferred
+  because EntityListTable currently sorts by a single column and
+  multi-column sort is a primitive change.
+  Trigger: any tester reports the list ordering does not surface
+  breached tickets quickly enough.
+
+- **Hard delete of escalations (Admin only).** Brief calls for an
+  Admin-only hard-delete action. Deferred because the data model
+  flips status to Closed for the operationally-relevant "done"
+  state, and no historical ticket has been hard-deleted yet.
+  Trigger: an Admin asks to permanently remove a stray test ticket.
+
 ## Stage-scoped side navigation (Gate 5 polish)
 
 - **Stage-scoped side rail.** The Gate 1 brief calls for a side nav

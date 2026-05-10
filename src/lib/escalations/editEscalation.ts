@@ -25,8 +25,10 @@
 import type {
   AuditEntry,
   Escalation,
+  EscalationCategory,
   EscalationSeverity,
   EscalationStatus,
+  EscalationType,
   PendingUpdate,
   User,
 } from '@/lib/types'
@@ -39,22 +41,44 @@ const VALID_STATUSES: ReadonlyArray<EscalationStatus> = [
   'Open',
   'WIP',
   'Closed',
-  'Transfer to Other Department',
+  'Transferred',
   'Dispatched',
   'In Transit',
 ]
-const VALID_SEVERITIES: ReadonlyArray<EscalationSeverity> = ['low', 'medium', 'high']
+const VALID_SEVERITIES: ReadonlyArray<EscalationSeverity> = [
+  'critical',
+  'high',
+  'medium',
+  'low',
+]
+const VALID_CATEGORIES: ReadonlyArray<EscalationCategory> = [
+  'Dispatch Delay',
+  'Payment Issue',
+  'Quality Complaint',
+  'Training Issue',
+  'School Communication',
+  'Inventory Shortfall',
+  'Vendor Issue',
+  'Other',
+]
+const VALID_TYPES: ReadonlyArray<EscalationType> = [
+  'Internal',
+  'Customer-facing',
+  'Vendor-facing',
+  'Regulatory',
+  'Operational',
+]
 
 export interface EditEscalationPatch {
   status?: EscalationStatus
-  category?: string | null
-  type?: string | null
+  category?: EscalationCategory | null
+  type?: EscalationType | null
   severity?: EscalationSeverity
   assignedTo?: string | null
   description?: string
   /**
    * Free-text "Waiting on what/whom?". Populated when status is the
-   * "Waiting on Someone Else" relabel of `Transfer to Other Department`
+   * "Waiting on Someone Else" relabel of `Transferred`
    * (Swati-feedback batch).
    */
   waitingOn?: string | null
@@ -74,6 +98,8 @@ export type EditEscalationFailureReason =
   | 'escalation-not-found'
   | 'invalid-status'
   | 'invalid-severity'
+  | 'invalid-category'
+  | 'invalid-type'
   | 'missing-description'
   | 'no-changes'
 
@@ -129,10 +155,16 @@ export async function editEscalation(
     next.status = args.patch.status
   }
   if (args.patch.category !== undefined) {
-    next.category = nullIfBlank(args.patch.category)
+    if (args.patch.category !== null && !VALID_CATEGORIES.includes(args.patch.category)) {
+      return { ok: false, reason: 'invalid-category' }
+    }
+    next.category = args.patch.category
   }
   if (args.patch.type !== undefined) {
-    next.type = nullIfBlank(args.patch.type)
+    if (args.patch.type !== null && !VALID_TYPES.includes(args.patch.type)) {
+      return { ok: false, reason: 'invalid-type' }
+    }
+    next.type = args.patch.type
   }
   if (args.patch.severity !== undefined) {
     if (!VALID_SEVERITIES.includes(args.patch.severity)) {

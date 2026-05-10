@@ -85,29 +85,45 @@ describe('editEscalation', () => {
     expect(calls[0]).toMatchObject({ entity: 'escalation', operation: 'update' })
   })
 
-  it('captures category and type as free text', async () => {
+  it('captures typed category and type (Gate 1 Step 5 enum)', async () => {
     const u = user('OpsHead', 'misba.m')
     const { deps } = makeDeps({ escalations: [esc()], users: [u] })
     const result = await editEscalation(
       {
         id: 'ESC-X', editedBy: 'misba.m',
-        patch: { category: 'Logistics', type: 'Courier delay' },
+        patch: { category: 'Inventory Shortfall', type: 'Vendor-facing' },
       },
       deps,
     )
     expect(result.ok).toBe(true)
     if (!result.ok) return
-    expect(result.escalation.category).toBe('Logistics')
-    expect(result.escalation.type).toBe('Courier delay')
+    expect(result.escalation.category).toBe('Inventory Shortfall')
+    expect(result.escalation.type).toBe('Vendor-facing')
     expect(result.changedFields).toEqual(['category', 'type'])
   })
 
-  it('blank category/type normalises to null', async () => {
+  it('rejects category outside the Gate 1 Step 5 enum', async () => {
     const u = user('OpsHead', 'misba.m')
-    const e = esc({ category: 'X', type: 'Y' })
+    const { deps } = makeDeps({ escalations: [esc()], users: [u] })
+    const result = await editEscalation(
+      {
+        id: 'ESC-X', editedBy: 'misba.m',
+        // 'Logistics' is not in the 8-value vocabulary
+        patch: { category: 'Logistics' as unknown as 'Other' },
+      },
+      deps,
+    )
+    expect(result.ok).toBe(false)
+    if (result.ok) return
+    expect(result.reason).toBe('invalid-category')
+  })
+
+  it('null category clears the value', async () => {
+    const u = user('OpsHead', 'misba.m')
+    const e = esc({ category: 'Other', type: 'Operational' })
     const { deps } = makeDeps({ escalations: [e], users: [u] })
     const result = await editEscalation(
-      { id: 'ESC-X', editedBy: 'misba.m', patch: { category: '   ', type: '' } },
+      { id: 'ESC-X', editedBy: 'misba.m', patch: { category: null, type: null } },
       deps,
     )
     expect(result.ok).toBe(true)
@@ -118,7 +134,7 @@ describe('editEscalation', () => {
 
   it('all 6 status values are valid', async () => {
     const u = user('OpsHead', 'misba.m')
-    const statuses = ['Open', 'WIP', 'Closed', 'Transfer to Other Department', 'Dispatched', 'In Transit'] as const
+    const statuses = ['Open', 'WIP', 'Closed', 'Transferred', 'Dispatched', 'In Transit'] as const
     for (const status of statuses) {
       const { deps } = makeDeps({ escalations: [esc({ status: 'Open' })], users: [u] })
       const result = await editEscalation(
@@ -167,7 +183,7 @@ describe('editEscalation', () => {
     })
     const { deps } = makeDeps({ escalations: [original], users: [u] })
     const result = await editEscalation(
-      { id: 'ESC-X', editedBy: 'misba.m', patch: { category: 'Logistics' } },
+      { id: 'ESC-X', editedBy: 'misba.m', patch: { category: 'Inventory Shortfall' } },
       deps,
     )
     expect(result.ok).toBe(true)
@@ -254,7 +270,9 @@ describe('editEscalation', () => {
     const u = user('OpsHead', 'misba.m')
     const { deps } = makeDeps({ escalations: [esc()], users: [u] })
     const result = await editEscalation(
-      { id: 'ESC-X', editedBy: 'misba.m', patch: { severity: 'critical' as never } },
+      // 'panic' is not in the Gate 1 Step 5 4-tier severity vocabulary
+      // (critical / high / medium / low).
+      { id: 'ESC-X', editedBy: 'misba.m', patch: { severity: 'panic' as never } },
       deps,
     )
     expect(result).toEqual({ ok: false, reason: 'invalid-severity' })
