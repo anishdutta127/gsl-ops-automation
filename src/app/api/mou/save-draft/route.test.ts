@@ -29,7 +29,7 @@ import { POST } from './route'
 import type { User } from '@/lib/types'
 
 function user(overrides: Partial<User> & Pick<User, 'role' | 'department'>): User {
-  return {
+  const base: User = {
     id: 'u-test',
     name: 'Test User',
     email: 'test@example.test',
@@ -40,8 +40,8 @@ function user(overrides: Partial<User> & Pick<User, 'role' | 'department'>): Use
     passwordHash: 'X',
     createdAt: '2026-04-01T00:00:00Z',
     auditLog: [],
-    ...overrides,
   }
+  return { ...base, ...overrides }
 }
 
 function buildRequest(body: object): Request {

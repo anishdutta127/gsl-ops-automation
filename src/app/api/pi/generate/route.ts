@@ -22,8 +22,25 @@
 import { NextResponse } from 'next/server'
 import { generatePi } from '@/lib/pi/generatePi'
 import { getCurrentSession } from '@/lib/auth/session'
+import {
+  isPiParallelBuildLocked,
+  parallelBuildLockMessage,
+} from '@/lib/pi/parallelBuildLock'
 
 export async function POST(request: Request) {
+  // Parallel-build lock (Gate 2 housekeeping item A). Default ON: the
+  // per-entity counter at pi_counter_map.json is also the cutover-
+  // ready snapshot; advancing it during the parallel-build window
+  // collides with the next legitimate PI from gsl-mou-system. Checked
+  // BEFORE auth so even an authenticated tester cannot accidentally
+  // advance the counter. Production unlock: PI_PARALLEL_BUILD_LOCK=false.
+  if (isPiParallelBuildLocked()) {
+    return NextResponse.json(
+      { error: 'parallel-build-locked', message: parallelBuildLockMessage() },
+      { status: 503 },
+    )
+  }
+
   const form = await request.formData()
   const mouId = String(form.get('mouId') ?? '')
   const instalmentSeqRaw = String(form.get('instalmentSeq') ?? '')

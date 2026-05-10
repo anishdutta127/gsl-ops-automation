@@ -3,6 +3,43 @@
 Phase 1.1+ items deferred from Phase 1. Each entry names the trigger
 that should pull it onto the active plan.
 
+## .docx Generate flow port (Gate 2 Step 5 follow-up)
+
+Step 5's `GeneratorWizard` ships the drafting flow + Save Draft action
+but the wizard's "Generate" button currently shows an inline note
+explaining the parallel-build window rather than producing the .docx.
+Pranav continues to get the rendered MOU document from
+gsl-mou-system.vercel.app until cutover. After cutover Ops becomes the
+source of truth and the wizard must actually emit the .docx.
+
+Implementation shape when this re-activates:
+
+- Wire the wizard's Generate button to a new `/api/mou/generate-docx`
+  route (or extend the existing `/api/mou/save-draft` shape).
+- Route reads the persisted draft, loads the matching `.docx` template
+  from `public/mou-templates/` (already populated: STEAM, YP, HBPE;
+  Robotics template still needs sourcing if Robotics goes live on the
+  wizard).
+- Renders via `mouSystem/templates.ts` + the `docx` library
+  (`mouSystem/mouDoc.ts`), uses combined GSL+AMG logo header from
+  `public/branding/gsl_amg_logo.png`.
+- Streams the binary back as `Content-Disposition: attachment`.
+- Audit entry on the MOU: `mou-docx-generated` with template version,
+  render timestamp, downloader user id.
+
+Trigger: **before Gate 5 cutover handover to Pranav. Wizard's Generate
+button currently shows parallel-build note; needs to actually generate
+the .docx by reading from `public/mou-templates/` and using the
+migrated `mouSystem/templates.ts` library. Without this, Pranav cannot
+draft new MOUs on Ops platform at cutover.**
+
+References:
+- `src/components/mou-system/GeneratorWizard.tsx` (Generate button + inline note).
+- `src/lib/mouSystem/templates.ts` (template registry).
+- `src/lib/mouSystem/mouDoc.ts` (docx renderer).
+- `public/mou-templates/`, `public/branding/gsl_amg_logo.png`.
+- `docs/decisions/STEP5_QUESTIONS_resolved.md` Q3 / Q8 background.
+
 ## Chain MOU SchoolGroup reconciliation (Gate 2 Step 4 follow-up)
 
 Gate 2 Step 4 backfilled SchoolGroups 1:1 by default. Twelve schools in

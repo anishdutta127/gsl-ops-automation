@@ -1,4 +1,4 @@
-import { describe, expect, it, vi, beforeEach } from 'vitest'
+import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest'
 import { renderToStaticMarkup } from 'react-dom/server'
 import type { User } from '@/lib/types'
 
@@ -13,7 +13,22 @@ vi.mock('next/navigation', () => ({
 }))
 vi.mock('@/components/ops/TopNav', () => ({ TopNav: () => null }))
 
-beforeEach(() => { vi.clearAllMocks() })
+// Gate 2 housekeeping A: most tests assume the route is ACTIVE; toggle
+// the parallel-build lock OFF in beforeEach. The lock-on case has its
+// own describe block below.
+const ORIGINAL_LOCK = process.env.PI_PARALLEL_BUILD_LOCK
+beforeEach(() => {
+  vi.clearAllMocks()
+  process.env.PI_PARALLEL_BUILD_LOCK = 'false'
+})
+
+afterEach(() => {
+  if (ORIGINAL_LOCK === undefined) {
+    delete process.env.PI_PARALLEL_BUILD_LOCK
+  } else {
+    process.env.PI_PARALLEL_BUILD_LOCK = ORIGINAL_LOCK
+  }
+})
 
 function user(role: User['role'], id = 'u'): User {
   return {
@@ -109,5 +124,40 @@ describe('/mous/[mouId]/pi page', () => {
       await Page({ params: Promise.resolve({ mouId: 'MOU-STEAM-2627-001' }) }),
     )
     expect(html).not.toMatch(/#[0-9a-fA-F]{3,6}/)
+  })
+})
+
+describe('/mous/[mouId]/pi page: parallel-build lock UI', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('shows lock banner instead of Generate form when locked (default)', async () => {
+    delete process.env.PI_PARALLEL_BUILD_LOCK
+    getCurrentUserMock.mockResolvedValue(user('Finance', 'shubhangi.g'))
+    // Bust module cache so the page re-reads the env var.
+    vi.resetModules()
+    const { default: Page } = await import('./page')
+    const html = renderToStaticMarkup(
+      await Page({ params: Promise.resolve({ mouId: 'MOU-STEAM-2627-001' }) }),
+    )
+    expect(html).toContain('data-testid="pi-parallel-build-banner"')
+    expect(html).toContain('Locked during parallel-build window')
+    expect(html).toContain('gsl-mou-system')
+    expect(html).not.toContain('<form')
+    expect(html).not.toContain('>Generate PI<')
+  })
+
+  it("renders the Generate form when PI_PARALLEL_BUILD_LOCK=false", async () => {
+    process.env.PI_PARALLEL_BUILD_LOCK = 'false'
+    getCurrentUserMock.mockResolvedValue(user('Finance', 'shubhangi.g'))
+    vi.resetModules()
+    const { default: Page } = await import('./page')
+    const html = renderToStaticMarkup(
+      await Page({ params: Promise.resolve({ mouId: 'MOU-STEAM-2627-001' }) }),
+    )
+    expect(html).toContain('<form')
+    expect(html).toContain('>Generate PI<')
+    expect(html).not.toContain('data-testid="pi-parallel-build-banner"')
   })
 })

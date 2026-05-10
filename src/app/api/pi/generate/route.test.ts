@@ -7,7 +7,7 @@
  * failures redirect to /login.
  */
 
-import { describe, expect, it, vi, beforeEach } from 'vitest'
+import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest'
 
 vi.mock('@/lib/pi/generatePi', () => ({
   generatePi: vi.fn(),
@@ -35,11 +35,24 @@ function buildRequest(body: Record<string, string>): Request {
   })
 }
 
+// Existing tests assume the route is ACTIVE. Disable the parallel-build
+// lock for the full suite; the lock-default-on case is covered by the
+// dedicated 'parallel-build lock' describe block at the bottom.
+const ORIGINAL_LOCK = process.env.PI_PARALLEL_BUILD_LOCK
 beforeEach(() => {
   vi.clearAllMocks()
   sessionMock.mockResolvedValue({
     sub: 'shubhangi.g', email: 's@example.test', name: 'Shubhangi', role: 'Finance',
   })
+  process.env.PI_PARALLEL_BUILD_LOCK = 'false'
+})
+
+afterEach(() => {
+  if (ORIGINAL_LOCK === undefined) {
+    delete process.env.PI_PARALLEL_BUILD_LOCK
+  } else {
+    process.env.PI_PARALLEL_BUILD_LOCK = ORIGINAL_LOCK
+  }
 })
 
 describe('POST /api/pi/generate', () => {
@@ -108,5 +121,81 @@ describe('POST /api/pi/generate', () => {
     const loc = res.headers.get('location') ?? ''
     expect(loc).toContain('/login')
     expect(loc).toContain('next=%2Fmous%2FMOU-X')
+  })
+})
+
+describe('POST /api/pi/generate: parallel-build lock', () => {
+  // These tests deliberately do NOT inherit the suite-level beforeEach
+  // that disables the lock; they manage the env var themselves.
+  const SAVE_LOCK = process.env.PI_PARALLEL_BUILD_LOCK
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  afterEach(() => {
+    if (SAVE_LOCK === undefined) {
+      delete process.env.PI_PARALLEL_BUILD_LOCK
+    } else {
+      process.env.PI_PARALLEL_BUILD_LOCK = SAVE_LOCK
+    }
+  })
+
+  it('returns 503 with lock copy when lock env is unset (fail-closed default)', async () => {
+    delete process.env.PI_PARALLEL_BUILD_LOCK
+    const res = await POST(buildRequest({ mouId: 'MOU-X', instalmentSeq: '1' }))
+    expect(res.status).toBe(503)
+    const body = await res.json()
+    expect(body.error).toBe('parallel-build-locked')
+    expect(body.message).toContain('PI generation is locked during the parallel-build window')
+    expect(body.message).toContain('Gate 5 cutover')
+    expect(generateMock).not.toHaveBeenCalled()
+  })
+
+  it('returns 503 when lock env is empty (fail-closed)', async () => {
+    process.env.PI_PARALLEL_BUILD_LOCK = ''
+    const res = await POST(buildRequest({ mouId: 'MOU-X', instalmentSeq: '1' }))
+    expect(res.status).toBe(503)
+    expect(generateMock).not.toHaveBeenCalled()
+  })
+
+  it("returns 503 when lock env is 'true' (explicit lock-on)", async () => {
+    process.env.PI_PARALLEL_BUILD_LOCK = 'true'
+    const res = await POST(buildRequest({ mouId: 'MOU-X', instalmentSeq: '1' }))
+    expect(res.status).toBe(503)
+    expect(generateMock).not.toHaveBeenCalled()
+  })
+
+  it("does NOT advance counter when locked (generatePi never invoked)", async () => {
+    delete process.env.PI_PARALLEL_BUILD_LOCK
+    await POST(buildRequest({ mouId: 'MOU-X', instalmentSeq: '1' }))
+    expect(generateMock).not.toHaveBeenCalled()
+  })
+
+  it("activates the route at Gate 5 cutover (PI_PARALLEL_BUILD_LOCK=false)", async () => {
+    process.env.PI_PARALLEL_BUILD_LOCK = 'false'
+    sessionMock.mockResolvedValue({
+      sub: 'shubhangi.g', email: 's@example.test', name: 'Shubhangi', role: 'Finance',
+    })
+    generateMock.mockResolvedValue({
+      ok: true,
+      piNumber: 'MTPL/UP/26-27/0017',
+      payment: { id: 'MOU-X-i1' },
+      docxBytes: new Uint8Array([0x50, 0x4b]),
+    })
+    const res = await POST(buildRequest({ mouId: 'MOU-X', instalmentSeq: '1' }))
+    expect(res.status).toBe(200)
+    expect(generateMock).toHaveBeenCalledTimes(1)
+  })
+
+  it('lock check fires BEFORE auth (no session leak via 401 vs 503 timing)', async () => {
+    delete process.env.PI_PARALLEL_BUILD_LOCK
+    sessionMock.mockResolvedValue(null)
+    const res = await POST(buildRequest({ mouId: 'MOU-X', instalmentSeq: '1' }))
+    // 503 lock, NOT 303 redirect to login. Lock check is the first
+    // gate; an unauthenticated caller learns the route is locked
+    // before learning they need to log in.
+    expect(res.status).toBe(503)
+    expect(res.headers.get('location')).toBeNull()
   })
 })

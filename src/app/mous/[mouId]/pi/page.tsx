@@ -36,6 +36,10 @@ import { PageHeader } from '@/components/ops/PageHeader'
 import { DetailHeaderCard } from '@/components/ops/DetailHeaderCard'
 import { formatRs } from '@/lib/format'
 import { getEntity, getEntityForProgramme } from '@/lib/mouSystem/company'
+import {
+  isPiParallelBuildLocked,
+  parallelBuildLockMessage,
+} from '@/lib/pi/parallelBuildLock'
 
 const allMous = mousJson as unknown as MOU[]
 const allSchools = schoolsJson as unknown as School[]
@@ -77,6 +81,7 @@ export default async function PiPage({ params }: PageProps) {
   )
   // W4-A.6: GSTIN-missing surfaces an inline note (not a block).
   const gstinMissing = !school || school.gstNumber === null || (school.gstNumber ?? '').trim() === ''
+  const parallelBuildLocked = isPiParallelBuildLocked()
   // Step 5 re-wire: surface which GST entity (MH / UP) the PI will be
   // raised under so Finance sees the routing before clicking Generate.
   // Routing comes from config/company.json's programmeRouting block.
@@ -133,42 +138,56 @@ export default async function PiPage({ params }: PageProps) {
             </p>
           ) : null}
 
-          <form
-            action="/api/pi/generate"
-            method="POST"
-            className="space-y-4 rounded-lg border border-border bg-card p-4 sm:p-6"
-          >
-            <input type="hidden" name="mouId" value={mou.id} />
-            <div>
-              <label htmlFor="installmentSeq" className={FIELD_LABEL_CLASS}>Instalment</label>
-              <select id="installmentSeq" name="installmentSeq" required className={FIELD_INPUT_CLASS}>
-                {pendingInstallments.length === 0 ? (
-                  <option value="">No pending instalments</option>
-                ) : (
-                  pendingInstallments.map((p) => (
-                    <option key={p.id} value={p.instalmentSeq}>
-                      {p.instalmentLabel} - {formatRs(p.expectedAmount)} ({p.status})
-                    </option>
-                  ))
-                )}
-              </select>
+          {parallelBuildLocked ? (
+            <div
+              role="status"
+              data-testid="pi-parallel-build-banner"
+              className="flex items-start gap-2 rounded-md border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900"
+            >
+              <Info aria-hidden className="size-4 shrink-0 text-amber-700" />
+              <div>
+                <p className="font-semibold">Locked during parallel-build window</p>
+                <p className="mt-1">{parallelBuildLockMessage()}</p>
+              </div>
             </div>
-            <div className="flex flex-wrap gap-2 border-t border-border pt-4">
-              <button
-                type="submit"
-                disabled={pendingInstallments.length === 0}
-                className="inline-flex min-h-11 items-center rounded-md bg-brand-teal px-4 py-2 text-sm font-medium text-brand-navy hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-brand-navy disabled:opacity-50"
-              >
-                Generate PI
-              </button>
-              <Link
-                href={`/mous/${mou.id}`}
-                className="inline-flex min-h-11 items-center rounded-md border border-border bg-card px-4 py-2 text-sm font-medium hover:bg-muted focus:outline-none focus:ring-2 focus:ring-brand-navy"
-              >
-                Cancel
-              </Link>
-            </div>
-          </form>
+          ) : (
+            <form
+              action="/api/pi/generate"
+              method="POST"
+              className="space-y-4 rounded-lg border border-border bg-card p-4 sm:p-6"
+            >
+              <input type="hidden" name="mouId" value={mou.id} />
+              <div>
+                <label htmlFor="installmentSeq" className={FIELD_LABEL_CLASS}>Instalment</label>
+                <select id="installmentSeq" name="installmentSeq" required className={FIELD_INPUT_CLASS}>
+                  {pendingInstallments.length === 0 ? (
+                    <option value="">No pending instalments</option>
+                  ) : (
+                    pendingInstallments.map((p) => (
+                      <option key={p.id} value={p.instalmentSeq}>
+                        {p.instalmentLabel} - {formatRs(p.expectedAmount)} ({p.status})
+                      </option>
+                    ))
+                  )}
+                </select>
+              </div>
+              <div className="flex flex-wrap gap-2 border-t border-border pt-4">
+                <button
+                  type="submit"
+                  disabled={pendingInstallments.length === 0}
+                  className="inline-flex min-h-11 items-center rounded-md bg-brand-teal px-4 py-2 text-sm font-medium text-brand-navy hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-brand-navy disabled:opacity-50"
+                >
+                  Generate PI
+                </button>
+                <Link
+                  href={`/mous/${mou.id}`}
+                  className="inline-flex min-h-11 items-center rounded-md border border-border bg-card px-4 py-2 text-sm font-medium hover:bg-muted focus:outline-none focus:ring-2 focus:ring-brand-navy"
+                >
+                  Cancel
+                </Link>
+              </div>
+            </form>
+          )}
 
         </div>
       </main>
