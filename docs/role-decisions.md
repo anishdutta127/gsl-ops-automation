@@ -21,7 +21,9 @@ Architecture decisions live alongside role decisions in this file when they shap
 | `swati.p` | Admin (created Admin) | `'ops'` | Operating as Ops in the pilot per swati-feedback work; refactor commits on the current branch confirm her workflow. |
 | `shubhangi.g` | Admin (was Finance) | `'finance'` | Accounts lead per gsl-mou-system CLAUDE.md. |
 | `pranav.b` | Admin (was Finance) | `'finance'` | Accounts per gsl-mou-system CLAUDE.md. |
-| `shashank.s` | Admin (was TrainerHead) | `null` | Cross-functional Admin during pilot. The Academics-lane audit-route scoping (TrainerHead) continues to be enforced via `lib/auth/permissions.ts canViewAuditEntry`; the department layer is a no-op for him during the pilot. Revisit at Gate 4 when training rollout becomes a first-class module and an `'academics'` department becomes warranted. |
+| `shashank.s` | Admin (was TrainerHead) | `null` | Cross-functional Admin during pilot per Anish's Step 3 review call. The Academics-lane audit-route scoping (TrainerHead) continues to be enforced via `lib/auth/permissions.ts canViewAuditEntry`; the department layer is a no-op for him during the pilot. Revisit at Gate 4 when training rollout becomes a first-class module and an `'academics'` department becomes warranted. |
+
+**TrainerHead default vs Shashank override (Step 3 review):** the seed mapping in `defaultDepartmentForRole(role: UserRole)` continues to return `'ops'` for any future `TrainerHead` user. Shashank's specific department override to `null` lives in `src/data/users.json` only; it is a per-user override, not a change to the seed default. If a real TrainerHead user joins the team post-pilot, they will seed with `department: 'ops'` (Academics-as-Ops-execution); revisit at Gate 4 when training rollout becomes a first-class module.
 | `gowri.r` | Admin (created Admin) | `null` | No prior real-world role tagged in earlier docs; defaults to cross-functional Admin until corrected. |
 | `anita.c` | Admin (created Admin) | `'finance'` | Anita is "accounts" per gsl-mou-system CLAUDE.md "Primary users"; aligning department to her real function. |
 

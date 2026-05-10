@@ -40,6 +40,8 @@ Two-layer access model:
 
 EDIT gate semantics: `Admin` with `department: null` is the cross-functional wildcard (Anish, Ameet, Gowri at seed). `Admin` with an explicit department is department-scoped, which is what makes Misba's MM2 redirect work even though her role is Admin: `canGeneratePI(misba)` returns false because her department is `'ops'`, not `'finance'`. `canViewAllAuditLogs` and `canManageUsers` are meta-actions and check role only (Admin / Leadership wildcard regardless of department).
 
+Read this principle as: **Admin role + `department: 'ops'` means trusted Ops user with PI gates still enforced.** The Admin role lifts the testers above the cc-rule + audit-route + dispatch-request scoping that role-decisions.md 2026-04-27 collapsed for the trusted core team; the department field re-establishes write-side scoping per the Misba MM2 acceptance criterion. **Admin role + `department: null` means cross-functional wildcard** (Anish, Ameet, Gowri at seed). **Escape hatch:** flip a user's department to null via `/admin/users` for testing scenarios that need a department-restricted user to act outside their lane (e.g., asking Misba to walk through the PI generation flow once during pilot review). The flip is logged as a `user-role-changed` audit entry; revert post-test.
+
 ## Testing-vs-production access defaults
 
 `TESTING_OPEN_ACCESS` env var controls VIEW-gate strictness. Defaults to **fail-open for testers** (a missing or empty env var reads as `true`).

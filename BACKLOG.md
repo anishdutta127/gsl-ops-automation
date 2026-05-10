@@ -3,6 +3,23 @@
 Phase 1.1+ items deferred from Phase 1. Each entry names the trigger
 that should pull it onto the active plan.
 
+## Stage-scoped side navigation (Gate 5 polish)
+
+- **Stage-scoped side rail.** The Gate 1 brief calls for a side nav
+  within each top-level stage (e.g., inside Operations: Schools /
+  Escalations / VEX / Vendors / Inventory; inside Pipeline: Drafts /
+  Sent / Awaiting Signature / Signed). Gate 1 Step 3 ships card-list
+  index stub pages at `/dispatch`, `/finance`, `/operations`,
+  `/reports` instead, because the entity routes those side rails
+  would point at are still scattered across the existing app shape
+  and Gates 2-4 will migrate the canonical entities into the new
+  stage routes. Building the side rail before that migration means
+  rebuilding it after each gate as routes shift.
+  Trigger: after Gate 4 ships (Status Tracker + Notifications +
+  Audit + Workflow handoff), before Gate 5 polish. At that point
+  every entity has a stable stage home and the side rail can be
+  built once against the final route shape.
+
 ## Filters (Phase X)
 
 - **Sales Channel filter dimension.** Deferred pending the MOU phase 3a
