@@ -299,15 +299,26 @@ export interface SessionClaims {
 }
 
 // ============================================================================
-// Programme (Update 1: GSLT-Cretile is a STEAM sub-type via programmeSubType)
+// Programme (Gate 2 §7.1 reduction to 4 values: STEAM, Young Pioneers,
+// Harvard HBPE, Robotics. VEX migrates to a parallel module: see VexPi /
+// VexDispatch / VexOrder below; the sales-team carries VEX as a
+// SalesProgramme separately.) GSLT-Cretile + TinkRworks remain STEAM
+// sub-types via programmeSubType.
 // ============================================================================
 
 export type Programme =
-  | 'STEAM'            // covers GSLT-Cretile via programmeSubType per Update 1
+  | 'STEAM'            // covers GSLT-Cretile + TinkRworks via programmeSubType
   | 'Young Pioneers'
   | 'Harvard HBPE'
-  | 'TinkRworks'       // 5 of 24 2026-04 MOUs per ground-truth §1
-  | 'VEX'              // 1 of 24
+  | 'Robotics'         // Gate 2: added as the fourth canonical programme
+
+/**
+ * Programmes a sales rep / sales opportunity may carry. Extends Programme
+ * with the parallel VEX module so a rep can own VEX kit pursuits without
+ * triggering an MOU programme of the same name. Pre-Gate-2 'TinkRworks'
+ * tags are migrated to ['STEAM'] (TinkRworks is a STEAM subtype).
+ */
+export type SalesProgramme = Programme | 'VEX'
 
 // ============================================================================
 // School
@@ -364,6 +375,17 @@ export interface SchoolGroup {
   memberSchoolIds: string[]
   groupMouId: string | null        // FK to mous.json when one-MOU-covers-all-members
   notes: string | null
+  // Gate 2 §7.2: chain-billing fields. Live on SchoolGroup so a chain
+  // billing centrally surfaces one master GSTIN + one primary contact;
+  // standalone schools (1:1 group) leave these null and bill through
+  // their own School fields. Chain MOU PI generation reads master
+  // GSTIN from here when school.gstNumber is null. Optional on the
+  // type so pre-Gate-2 SchoolGroup fixtures + libs continue to compile;
+  // production records always set them explicitly post Gate 2.
+  primaryContact?: string | null
+  primaryEmail?: string | null
+  primaryPhone?: string | null
+  gstNumber?: string | null
   auditLog: AuditEntry[]
 }
 
@@ -537,7 +559,7 @@ export interface SalesOpportunity {
   state: string
   region: string
   salesRepId: string               // FK to sales_team.json
-  programmeProposed: Programme | null
+  programmeProposed: SalesProgramme | null
   /** Free-text per W4-F.1; D-026 enumerates after round 2. */
   gslModel: string | null
   commitmentsMade: string | null
@@ -1166,7 +1188,12 @@ export interface SalesPerson {
   email: string
   phone: string | null
   territories: string[]
-  programmes: Programme[]
+  /**
+   * Programmes a rep handles. SalesProgramme widens Programme with 'VEX'
+   * because reps own VEX kit pursuits even though VEX is not a Programme
+   * MOU type post-Gate 2.
+   */
+  programmes: SalesProgramme[]
   active: boolean
   joinedDate: string               // ISO YYYY-MM-DD
 }
@@ -1271,6 +1298,18 @@ export type SubmissionStatus =
  */
 export type GslTrainingMode = 'GSL Trainer' | 'Train The Trainer (TTT)'
 
+/**
+ * Intake-time captured product. Wider than Programme because operators
+ * have historically recorded the actual kit variant (TinkRworks) or a
+ * parallel-module pursuit (VEX) at intake even when the MOU programme
+ * itself is STEAM. Gate 2 §7.1: Programme reduces to 4 values; this
+ * type carries the legacy intake vocabulary so 6 historical intake
+ * records (5 TinkRworks + 1 VEX, all linked to STEAM MOUs) keep their
+ * captured signal. Future refactor can split into productConfirmed
+ * (Programme) + productVariant (free-text or controlled vocab).
+ */
+export type IntakeProductConfirmed = Programme | 'VEX' | 'TinkRworks'
+
 export interface IntakeRecord {
   id: string                       // UUID; generated on first save
   mouId: string                    // FK to mous.json (1-to-1 in Phase 1)
@@ -1294,7 +1333,9 @@ export interface IntakeRecord {
   physicalSubmissionStatus: SubmissionStatus
   softCopySubmissionStatus: SubmissionStatus
   // Product + training mode (variance vs MOU surfaces a warning)
-  productConfirmed: Programme      // variance vs mou.programme warns
+  // Uses IntakeProductConfirmed (Programme | 'VEX' | 'TinkRworks') because
+  // 6 W4-C.7 backfill records carry the legacy variant captured at intake.
+  productConfirmed: IntakeProductConfirmed
   gslTrainingMode: GslTrainingMode // variance vs mou.trainerModel warns
   // School POC (W4-C.1: split from the Google Form's combined POC + phone field)
   schoolPointOfContactName: string
@@ -1351,6 +1392,17 @@ export type PendingUpdateEntity =
   | 'salesOpportunity'             // W4-F.1
   | 'inventoryItem'                // W4-G.1
   | 'communicationTemplate'        // W4-I.5 Phase 3
+  // Gate 2 entity migrations from gsl-mou-system
+  | 'adjustment'                   // Phase 3 R2 adjustment-as-line-item
+  | 'signedValues'                 // signed-values capture (mou-system Phase 3 §4)
+  | 'piCounterMap'                 // multi-entity per-GSTIN counter (Gate 2 §3)
+  | 'vexProduct'                   // 28-SKU master
+  | 'vexPi'                        // VEX module proforma
+  | 'vexDispatch'                  // VEX partial-dispatch records
+  | 'vexOrder'                     // legacy Tally-imported VEX vouchers
+  | 'vendor'                       // vendor master
+  | 'agreement'                    // NDA / vendor agreement registry
+  | 'piIssue'                      // mou-system pi issuance ledger
 
 export interface PendingUpdate {
   id: string                       // UUID
@@ -1367,6 +1419,268 @@ export interface PiCounter {
   fiscalYear: string               // '26-27'
   next: number                     // next number to issue
   prefix: string                   // 'GSL/OPS' (Phase 1 default per Q-B)
+}
+
+// ============================================================================
+// Gate 2 §3: PiCounterMap (multi-entity per-GSTIN counter)
+// ============================================================================
+//
+// gsl-mou-system uses a per-GST-entity counter so MTPL/MH and MTPL/UP each
+// keep gap-free sequential PI numbers. Migrated verbatim. The Phase 1 Ops
+// PiCounter (single counter) stays for backward compatibility; PI generation
+// reads from PiCounterMap when the entity routing layer is wired.
+
+export interface PiCounterMap {
+  fiscalYear: string               // '2627'
+  entities: {
+    MH: { next: number }
+    UP: { next: number }
+  }
+}
+
+// ============================================================================
+// Gate 2: Adjustment (Phase 3 R2 adjustment-as-line-item)
+// ============================================================================
+//
+// When an actuals update changes the economics of a programme MOU after a
+// PI has been issued or paid, the original PI is preserved and a separate
+// Adjustment record is created. The next unpaid PI surfaces the cumulative
+// adjustments as a "Balance due Previous Instalments / (Excess Received)"
+// line so the school sees a clean audit trail. Status 'Reversed' marks
+// adjustments cancelled in error.
+
+export type AdjustmentTrigger =
+  | 'actuals_update'
+  | 'installment_plan_change'
+  | 'manual'
+  | 'vex_overpayment'
+
+export type AdjustmentStatus = 'Active' | 'Reversed'
+
+export interface Adjustment {
+  id: string                            // 'ADJ-...'
+  mouId: string
+  schoolId: string
+  triggeredByEvent: AdjustmentTrigger
+  triggeredAt: string                   // ISO
+  triggeredBy: string                   // User.id
+  /** The previously-issued installment whose economics no longer match. */
+  originalInstallmentId: string
+  /** The next unpaid installment this adjustment is added to. null = floating. */
+  appliedToInstallmentId: string | null
+  /** Signed. Negative = credit to school. Positive = additional charge. */
+  amountDelta: number
+  reason: string
+  beforeAmount: number
+  afterAmount: number
+  status: AdjustmentStatus
+}
+
+// ============================================================================
+// Gate 2: SignedValues (mou-system Phase 3 §4)
+// ============================================================================
+//
+// Captures the signed-PDF source-of-truth values per MOU when the agreement
+// returns from the school. Legal canonical for the contract; the MOU
+// commercial fields stay editable for ops accuracy, but the SignedValues
+// row is the legally binding snapshot.
+
+export interface SignedValues {
+  mouId: string
+  signedDate: string                    // ISO yyyy-mm-dd
+  signedBy: string                      // User.id of capturer
+  pricePerStudent: number
+  studentCount: number
+  duration: string
+  signedScanUrl: string | null          // link, not upload
+  capturedAt: string                    // ISO
+  notes: string | null
+}
+
+// ============================================================================
+// Gate 2: VEX module entities (28-SKU partial dispatch)
+// ============================================================================
+//
+// VEX kit orders are billed PI-by-PI, not under an MOU. The PI counter is
+// shared with programme PIs per GST entity. One VexPi may have multiple
+// VexDispatch records as warehouse stock arrives in waves.
+
+export interface VexProduct {
+  partNumber: string
+  name: string
+  /** Unit price set per PI; null until accounts captures one. */
+  defaultUnitPrice: number | null
+  active: boolean
+}
+
+export interface VexLineItem {
+  productName: string
+  quantity: number
+  ratePerUnit: number
+  amount: number
+}
+
+export interface VexPiLineItem {
+  partNumber: string
+  productName: string
+  quantity: number
+  unitPrice: number
+  total: number
+}
+
+export type VexPiStatus =
+  | 'Generated'
+  | 'Payment Pending'
+  | 'Delivery Pending'
+  | 'Partially Dispatched'
+  | 'Completed'
+
+export interface VexPi {
+  id: string                            // 'VEXPI-MH-2627-001'
+  piNumber: string                      // 'MTPL/MH/2627/0042' (shared programme + VEX counter)
+  entityKey: 'MH' | 'UP'
+  issueDate: string                     // ISO yyyy-mm-dd
+  schoolName: string                    // ship-to
+  shippingAddress: string
+  billingName: string
+  billingAddress: string
+  schoolGstNumber: string | null
+  contactPerson: string
+  contactNo: string
+  lineItems: VexPiLineItem[]
+  subtotal: number
+  freightCharges: number
+  taxableValue: number
+  gstPct: number                        // 0.18 default
+  gstAmount: number
+  total: number
+  status: VexPiStatus
+  generatedBy: string                   // User.id
+  generatedAt: string                   // ISO
+  paymentReceivedAmount: number
+  paymentLogIds: string[]
+  notes: string | null
+  auditLog: AuditEntry[]
+}
+
+export interface VexDispatchItem {
+  partNumber: string
+  qty: number
+}
+
+export type VexDispatchStatus =
+  | 'Requested'
+  | 'Request Raised to Warehouse'
+  | 'Invoiced'
+  | 'Shipped'
+
+export type VexDispatchMode = 'Air' | 'Surface'
+
+export interface VexDispatch {
+  id: string                            // 'VEXD-MH-2627-001'
+  piId: string                          // FK to vex_pis.json
+  items: VexDispatchItem[]
+  freight: number
+  mode: VexDispatchMode
+  status: VexDispatchStatus
+  requestedBy: string                   // User.id
+  requestedAt: string                   // ISO
+  taxInvoiceNumber: string | null
+  taxInvoicePath: string | null
+  invoicedAt: string | null
+  notes: string | null
+  supportingDocPath: string | null
+  warehouseEmailSentAt: string | null
+  warehouseEmailSentBy: string | null
+  auditLog: AuditEntry[]
+}
+
+export type LegacyVexDispatchStatus =
+  | 'Proforma Sent'
+  | 'Payment Received'
+  | 'Invoice Generated'
+  | 'Dispatched'
+
+export interface VexOrder {
+  id: string                            // stable slug or UUID
+  orderDate: string                     // ISO yyyy-mm-dd
+  schoolId: string | null               // FK after normalisation
+  schoolName: string                    // raw name from Tally import
+  schoolNameNormalised: string | null
+  buyerAddress: string | null
+  consigneeAddress: string | null
+  voucherNumber: string                 // e.g. MTPL/UP/2526/1
+  voucherType: string | null
+  lineItems: VexLineItem[]
+  subtotal: number
+  freightCharges: number
+  sgst: number
+  cgst: number
+  igst: number
+  roundOff: number
+  total: number
+  paymentReceived: boolean
+  paymentDate: string | null
+  dispatchStatus: LegacyVexDispatchStatus
+  dispatchDate: string | null
+  invoiceDate: string | null            // when GST invoice was generated in Tally
+  salesPersonId: string | null
+  importedFromTally: boolean
+  auditLog: AuditEntry[]
+}
+
+// ============================================================================
+// Gate 2: Vendor + Agreement (NDA + vendor-agreement registry)
+// ============================================================================
+//
+// Vendor master holds the entity registry. Agreement covers both NDAs and
+// vendor agreements; the type discriminator distinguishes them.
+
+export interface Vendor {
+  id: string                            // 'VEN-...'
+  name: string
+  legalEntity: string | null
+  category: string | null               // 'Logistics' | 'Print' | 'Warehouse' | etc.
+  primaryContact: string | null
+  primaryEmail: string | null
+  primaryPhone: string | null
+  address: string | null
+  pan: string | null
+  gstNumber: string | null
+  bankAccount: string | null
+  ifsc: string | null
+  notes: string | null
+  active: boolean
+  createdAt: string                     // ISO
+  auditLog: AuditEntry[]
+}
+
+export type AgreementType = 'Vendor' | 'NDA'
+
+export type AgreementCustody = 'Physical' | 'Digital'
+
+export interface Agreement {
+  id: string                            // 'AGR-...'
+  type: AgreementType
+  partyName: string
+  vendorId: string | null               // FK to vendors.json when type='Vendor'
+  natureOfAgreement: string
+  product: string | null
+  department: string | null
+  /**
+   * Short summary of commercial terms shown in the Agreements registry.
+   * Optional; recommend keeping under a couple of sentences.
+   */
+  keyTerms: string | null
+  startDate: string                     // ISO yyyy-mm-dd
+  endDate: string | null                // null = indefinite
+  tenure: string | null                 // '5 years from date of agreement'
+  noticePeriod: string | null
+  vendorLocation: string | null
+  physicalCustody: AgreementCustody | null
+  documentUrl: string | null
+  daysToExpiry: number | null           // computed by sync
+  auditLog: AuditEntry[]
 }
 
 // ============================================================================

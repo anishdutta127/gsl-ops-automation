@@ -254,7 +254,7 @@ describe('createRequest soft warnings V3-V6, V8 (allow submit)', () => {
 
   it('V4 kit-type-programme-mismatch when SKU does not align with programme', async () => {
     const { deps } = makeDeps({
-      mous: [mou({ programme: 'TinkRworks' })],
+      mous: [mou({ programme: 'STEAM', programmeSubType: 'TinkRworks' })],
     })
     const result = await createRequest(
       {

@@ -13,9 +13,9 @@ import { ArrowLeft, AlertTriangle } from 'lucide-react'
 import salesOpportunitiesJson from '@/data/sales_opportunities.json'
 import salesTeamJson from '@/data/sales_team.json'
 import type {
-  Programme,
   SalesOpportunity,
   SalesPerson,
+  SalesProgramme,
 } from '@/lib/types'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canPerform } from '@/lib/auth/permissions'
@@ -28,11 +28,11 @@ import { editOpportunityAction } from '../../actions'
 const allOpportunities = salesOpportunitiesJson as unknown as SalesOpportunity[]
 const allSalesTeam = salesTeamJson as unknown as SalesPerson[]
 
-const ALL_PROGRAMMES: ReadonlyArray<Programme> = [
+const ALL_PROGRAMMES: ReadonlyArray<SalesProgramme> = [
   'STEAM',
-  'TinkRworks',
   'Young Pioneers',
   'Harvard HBPE',
+  'Robotics',
   'VEX',
 ]
 

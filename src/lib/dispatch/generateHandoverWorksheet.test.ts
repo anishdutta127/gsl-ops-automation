@@ -130,7 +130,7 @@ describe('generateHandoverWorksheet', () => {
             },
           ],
         }),
-        mou: mou({ programme: 'TinkRworks', programmeSubType: 'Cretile' }),
+        mou: mou({ programme: 'STEAM', programmeSubType: 'TinkRworks' }),
         school: school(),
         now: () => new Date(FIXED_TS),
       },
@@ -144,7 +144,7 @@ describe('generateHandoverWorksheet', () => {
     expect(text).toContain('ROW 1|26-Apr-2026||Grade 5|Cretile Grade-band kit|30|')
     expect(text).toContain('ROW 2|26-Apr-2026||Grade 6|Cretile Grade-band kit|25|')
     expect(text).toContain('ROW 3|26-Apr-2026||Grade 7|Cretile Grade-band kit|20|')
-    expect(text).toContain('P=TinkRworks / Cretile')
+    expect(text).toContain('P=STEAM / TinkRworks')
   })
 
   it('mixed shape: 1 flat + 2-grade per-grade -> 3 rows, SR continuous 1..3', async () => {

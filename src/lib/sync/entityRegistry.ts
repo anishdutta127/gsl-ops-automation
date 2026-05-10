@@ -15,7 +15,7 @@
 import type { PendingUpdateEntity } from '@/lib/types'
 
 export const ARRAY_ENTITY_TO_PATH: Record<
-  Exclude<PendingUpdateEntity, 'piCounter'>,
+  Exclude<PendingUpdateEntity, 'piCounter' | 'piCounterMap'>,
   string
 > = {
   salesTeam: 'src/data/sales_team.json',
@@ -40,9 +40,22 @@ export const ARRAY_ENTITY_TO_PATH: Record<
   salesOpportunity: 'src/data/sales_opportunities.json',
   inventoryItem: 'src/data/inventory_items.json',
   communicationTemplate: 'src/data/communication_templates.json',
+  // Gate 2 entity migrations
+  adjustment: 'src/data/adjustments.json',
+  signedValues: 'src/data/signed_values.json',
+  vexProduct: 'src/data/vex_products.json',
+  vexPi: 'src/data/vex_pis.json',
+  vexDispatch: 'src/data/vex_dispatches.json',
+  vexOrder: 'src/data/vex_orders.json',
+  vendor: 'src/data/vendors.json',
+  agreement: 'src/data/agreements.json',
+  piIssue: 'src/data/pi_issues.json',
 }
 
 export function pathForEntity(entity: PendingUpdateEntity): string | null {
-  if (entity === 'piCounter') return null
+  // piCounter + piCounterMap are object-shaped, not arrays; the drain
+  // only handles arrays. Counter writes go through atomic counter-
+  // increment helpers, not enqueueUpdate.
+  if (entity === 'piCounter' || entity === 'piCounterMap') return null
   return ARRAY_ENTITY_TO_PATH[entity] ?? null
 }

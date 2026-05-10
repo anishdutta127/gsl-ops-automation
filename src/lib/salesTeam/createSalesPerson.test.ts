@@ -55,7 +55,7 @@ const happyArgs = {
   email: 'priya.m@getsetlearn.info',
   phone: '+91-98100-00099',
   territories: ['Bangalore', 'Hyderabad'],
-  programmes: ['STEAM', 'TinkRworks'] as const,
+  programmes: ['STEAM', 'Robotics'] as const,
   joinedDate: '2026-04-15',
   createdBy: 'misba.m',
 }

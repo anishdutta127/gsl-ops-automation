@@ -58,16 +58,15 @@ const PROGRAMME_ACCENT: Record<Programme, ProgrammeAccent | null> = {
     className: 'bg-brand-teal/10 text-brand-navy border-brand-teal/40',
     label: 'STEAM',
   },
-  TinkRworks: {
-    className: 'bg-brand-navy/10 text-brand-navy border-brand-navy/30',
-    label: 'TinkR',
-  },
   'Young Pioneers': {
     className: 'bg-violet-100 text-violet-900 border-violet-300',
     label: 'YP',
   },
   'Harvard HBPE': null,
-  VEX: null,
+  Robotics: {
+    className: 'bg-brand-navy/10 text-brand-navy border-brand-navy/30',
+    label: 'Robotics',
+  },
 }
 
 const SCHOOL_NAME_MAX = 32

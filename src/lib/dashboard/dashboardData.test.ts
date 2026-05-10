@@ -145,10 +145,10 @@ describe('computeSlices', () => {
 
   it('filters by programme', () => {
     const steam = mou({ id: 'M1', programme: 'STEAM' })
-    const tink = mou({ id: 'M2', programme: 'TinkRworks' })
+    const tink = mou({ id: 'M2', programme: 'Robotics' })
     const slices = computeSlices({
       mous: [steam, tink], schools: [], dispatches: [], escalations: [],
-      filters: { fiscalYear: null, programme: 'TinkRworks', fromDate: null, toDate: null, products: [] },
+      filters: { fiscalYear: null, programme: 'Robotics', fromDate: null, toDate: null, products: [] },
     })
     expect(slices.filteredMous.map((m) => m.id)).toEqual(['M2'])
   })
@@ -165,7 +165,7 @@ describe('computeSlices', () => {
 
   it('dispatches inherit MOU filter scope', () => {
     const m1 = mou({ id: 'M1' })
-    const m2 = mou({ id: 'M2', programme: 'TinkRworks' })
+    const m2 = mou({ id: 'M2', programme: 'Robotics' })
     const d1 = dispatch({ id: 'D1', mouId: 'M1' })
     const d2 = dispatch({ id: 'D2', mouId: 'M2' })
     const slices = computeSlices({

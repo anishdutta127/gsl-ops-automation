@@ -125,7 +125,11 @@ function lineItemMismatchesProgramme(
   const subType = mou.programmeSubType
   for (const item of items) {
     const sku = item.skuName.toLowerCase()
-    if (programme === 'TinkRworks') {
+    // Gate 2 §7.1: TinkRworks is now a STEAM subtype rather than a
+    // standalone Programme. Match TinkRworks kits when the MOU is
+    // STEAM with the TinkRworks subtype, alongside the GSLT-Cretile
+    // subtype branch below.
+    if (programme === 'STEAM' && (subType === 'TinkRworks' || subType === 'TinkRworks-Cretile')) {
       if (!sku.includes('tinkr') && !sku.includes('tws') && !sku.includes('tink')) return true
     } else if (programme === 'STEAM' && subType === 'GSLT-Cretile') {
       if (!sku.includes('cretile') && !sku.includes('grade')) return true

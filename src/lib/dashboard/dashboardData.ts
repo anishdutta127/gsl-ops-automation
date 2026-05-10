@@ -55,10 +55,9 @@ export interface DashboardFilters {
 
 export const PROGRAMME_OPTIONS: ReadonlyArray<Programme> = [
   'STEAM',
-  'TinkRworks',
   'Young Pioneers',
   'Harvard HBPE',
-  'VEX',
+  'Robotics',
 ]
 
 const DELAYED_SHIPMENT_DAYS = 7

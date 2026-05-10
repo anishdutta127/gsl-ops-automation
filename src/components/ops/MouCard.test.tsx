@@ -177,13 +177,13 @@ describe('MouCard W4-E.6.5 programme accent', () => {
     expect(html).toContain('>STEAM<')
   })
 
-  it('renders TinkRworks accent chip with brand-navy tokens', () => {
+  it('renders Robotics accent chip with brand-navy tokens (Gate 2 §7.1)', () => {
     const html = renderToStaticMarkup(
-      <MouCard mou={mou({ id: 'M', programme: 'TinkRworks' as Programme })} />,
+      <MouCard mou={mou({ id: 'M', programme: 'Robotics' })} />,
     )
-    expect(html).toContain('data-programme="TinkRworks"')
+    expect(html).toContain('data-programme="Robotics"')
     expect(html).toContain('bg-brand-navy/10')
-    expect(html).toContain('>TinkR<')
+    expect(html).toContain('>Robotics<')
   })
 
   it('renders Young Pioneers accent chip with violet tokens', () => {

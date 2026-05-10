@@ -16,13 +16,13 @@ import {
   type EditOpportunityPatch,
 } from '@/lib/salesOpportunity/editOpportunity'
 import { markOpportunityLost } from '@/lib/salesOpportunity/markOpportunityLost'
-import type { Programme } from '@/lib/types'
+import type { SalesProgramme } from '@/lib/types'
 
-const VALID_PROGRAMMES: ReadonlyArray<Programme> = [
+const VALID_PROGRAMMES: ReadonlyArray<SalesProgramme> = [
   'STEAM',
-  'TinkRworks',
   'Young Pioneers',
   'Harvard HBPE',
+  'Robotics',
   'VEX',
 ]
 
@@ -59,12 +59,12 @@ export async function createOpportunityAction(formData: FormData): Promise<void>
     redirect('/sales-pipeline/new?error=invalid-region')
   }
 
-  let programmeProposed: Programme | null = null
+  let programmeProposed: SalesProgramme | null = null
   if (programmeRaw !== '') {
-    if (!VALID_PROGRAMMES.includes(programmeRaw as Programme)) {
+    if (!VALID_PROGRAMMES.includes(programmeRaw as SalesProgramme)) {
       redirect('/sales-pipeline/new?error=invalid-programme')
     }
-    programmeProposed = programmeRaw as Programme
+    programmeProposed = programmeRaw as SalesProgramme
   }
 
   const result = await createOpportunity({
@@ -135,13 +135,13 @@ export async function editOpportunityAction(formData: FormData): Promise<void> {
     if (v === '') {
       patch.programmeProposed = null
     } else {
-      const VALID: ReadonlyArray<Programme> = [
-        'STEAM', 'TinkRworks', 'Young Pioneers', 'Harvard HBPE', 'VEX',
+      const VALID: ReadonlyArray<SalesProgramme> = [
+        'STEAM', 'Young Pioneers', 'Harvard HBPE', 'Robotics', 'VEX',
       ]
-      if (!VALID.includes(v as Programme)) {
+      if (!VALID.includes(v as SalesProgramme)) {
         redirect(`/sales-pipeline/${encodeURIComponent(id)}/edit?error=invalid-programme`)
       }
-      patch.programmeProposed = v as Programme
+      patch.programmeProposed = v as SalesProgramme
     }
   }
   if (formData.has('gslModel')) patch.gslModel = String(formData.get('gslModel') ?? '')

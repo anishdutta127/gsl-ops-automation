@@ -19,9 +19,9 @@
 import type {
   AuditEntry,
   PendingUpdate,
-  Programme,
   SalesOpportunity,
   SalesPerson,
+  SalesProgramme,
   User,
 } from '@/lib/types'
 import salesOpportunitiesJson from '@/data/sales_opportunities.json'
@@ -31,11 +31,11 @@ import { canPerform } from '@/lib/auth/permissions'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
 import { REGION_OPTIONS } from './createOpportunity'
 
-const VALID_PROGRAMMES: ReadonlyArray<Programme> = [
+const VALID_PROGRAMMES: ReadonlyArray<SalesProgramme> = [
   'STEAM',
-  'TinkRworks',
   'Young Pioneers',
   'Harvard HBPE',
+  'Robotics',
   'VEX',
 ]
 const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/
@@ -52,7 +52,7 @@ export interface EditOpportunityPatch {
   state?: string
   region?: string
   salesRepId?: string
-  programmeProposed?: Programme | null
+  programmeProposed?: SalesProgramme | null
   gslModel?: string | null
   commitmentsMade?: string | null
   outOfScopeRequirements?: string | null

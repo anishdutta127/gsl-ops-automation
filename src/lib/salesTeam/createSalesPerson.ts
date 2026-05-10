@@ -13,17 +13,17 @@
  * are free-form strings (cities + regions vary by hire).
  */
 
-import type { Programme, SalesPerson, User } from '@/lib/types'
+import type { SalesPerson, SalesProgramme, User } from '@/lib/types'
 import salesTeamJson from '@/data/sales_team.json'
 import usersJson from '@/data/users.json'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
 import { canPerform } from '@/lib/auth/permissions'
 
-const VALID_PROGRAMMES: ReadonlyArray<Programme> = [
+const VALID_PROGRAMMES: ReadonlyArray<SalesProgramme> = [
   'STEAM',
   'Young Pioneers',
   'Harvard HBPE',
-  'TinkRworks',
+  'Robotics',
   'VEX',
 ]
 
@@ -36,7 +36,7 @@ export interface CreateSalesPersonArgs {
   email: string
   phone: string | null
   territories: string[]
-  programmes: Programme[]
+  programmes: SalesProgramme[]
   joinedDate: string
   createdBy: string
 }

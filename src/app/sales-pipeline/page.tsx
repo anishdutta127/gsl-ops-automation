@@ -28,7 +28,7 @@ import { redirect } from 'next/navigation'
 import { Briefcase, Plus, AlertTriangle, CheckCircle2 } from 'lucide-react'
 import salesOpportunitiesJson from '@/data/sales_opportunities.json'
 import salesTeamJson from '@/data/sales_team.json'
-import type { Programme, SalesOpportunity, SalesPerson } from '@/lib/types'
+import type { SalesOpportunity, SalesPerson, SalesProgramme } from '@/lib/types'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canPerform } from '@/lib/auth/permissions'
 import { TopNav } from '@/components/ops/TopNav'
@@ -50,18 +50,18 @@ const allSalesTeam = salesTeamJson as unknown as SalesPerson[]
 
 const DIMENSION_KEYS = ['region', 'programme'] as const
 
-const PROGRAMME_OPTIONS: ReadonlyArray<Programme> = [
+const PROGRAMME_OPTIONS: ReadonlyArray<SalesProgramme> = [
   'STEAM',
-  'TinkRworks',
   'Young Pioneers',
   'Harvard HBPE',
+  'Robotics',
   'VEX',
 ]
 
 const ERROR_FLASH: Record<string, string> = {
   permission: 'You do not have permission to perform this action.',
   'invalid-region': 'Region must be one of the listed values.',
-  'invalid-programme': 'Programme must be one of STEAM / TinkRworks / Young Pioneers / Harvard HBPE / VEX or left blank.',
+  'invalid-programme': 'Programme must be one of STEAM / Young Pioneers / Harvard HBPE / Robotics / VEX or left blank.',
   'missing-school-name': 'School name is required.',
   'missing-city': 'City is required.',
   'missing-state': 'State is required.',

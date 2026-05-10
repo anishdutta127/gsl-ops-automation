@@ -218,47 +218,35 @@ These known-debt items travel with the migration. Gate 2 does not block on them,
 
 ---
 
-## 5. Cutover plan: 2-week parallel run
+## 5. Cutover plan: post Gate 5
 
-The parallel run is two weeks. During this window both repos are deployed; Ops is the write target, mou-system is read-only-but-displayed.
+**Gate 2 entry update:** cutover happens **after Gate 5 final verification**, not after Gate 2 or Gate 3. Pranav, Shubhangi, and Anita continue using `gsl-mou-system.vercel.app` for daily MOU / PI / payment work during Gates 2-5 build. The migrated MOU module on Ops platform is parallel-built, populated with imported data for verification, but not handed over as system-of-record until Gate 5 ships and we manually flip.
 
-### 5.1 Pre-cutover checklist (T-7 days)
+The parallel-build window therefore spans Gates 2-5, not 2 weeks. During this window:
+- mou-system is the write target for live MOU + PI + payment work.
+- Ops platform receives one-shot snapshots from mou-system at each gate boundary (Gate 2 Step 4, then re-snapshot at Gate 5 cutover).
+- The recalc engine, PI generation, payment matching libs migrate verbatim to Ops in Gate 2 Step 2 and run on imported data for verification; they do not produce production PIs during the parallel-build window.
+- The PI counter ownership stays with mou-system (see §8).
 
-- All Gate 2 entity migrations land in Ops `main`. Vercel deploy green.
-- The 12-MOU lifecycle replay test is green on Ops.
-- `gsl-mou-system` repo carries a top-of-app banner: "Reading from gsl-ops-automation. Writes have moved." (Gate 5 ships the banner; Gate 2 ships the data side.)
-- The schools-identity reconciliation pass (per Ground-Truth report §4) has run once in dry-run mode and the cluster review UI has been opened with Pradeep + Shubhangi for sign-off.
-- Anish has CRON_SECRET parity between Vercel Production env vars and GitHub repository secrets (RUNBOOK §5.1).
-- A snapshot of `gsl-mou-system/src/data/*.json` is captured at the cutover instant (T-1 hr) and committed to the Ops repo as `src/data/_snapshots/mou-system-cutover-{ISO}.json` for one-off recovery.
+**Cutover day** (post Gate 5 final verification):
 
-### 5.2 Cutover instant (T-0)
+1. Final read from `gsl-mou-system/src/data/*.json`: the most recent state of MOUs, payments, PIs, VEX records.
+2. One-shot import into Ops via `scripts/cutover-load.mjs`. Audit log every entity creation as `'cutover-import'`.
+3. Lock the PI counter (see §9): Ops reads `pi_counter.json` from mou-system one final time, persists it locally, and from this moment forward Ops is the only system that issues PIs.
+4. `gsl-mou-system` middleware flips to read-only banner mode: every POST / PUT / DELETE returns HTTP 410 Gone with a redirect URL pointing to the equivalent Ops route. Reads continue to serve from the snapshot at cutover instant.
+5. Ops `/` and per-department dashboards surface the per-department onboarding banner from §6.
 
-1. `gsl-mou-system` middleware flips to read-only: every POST / PUT / DELETE returns HTTP 410 Gone with a redirect URL pointing to the equivalent Ops route. Reads continue to serve from the snapshot at the cutover instant; data does not change after T-0 in mou-system.
-2. The mou-system `/api/admin/import` route is disabled; Anish-only bulk imports go through Ops `/api/admin/*` routes.
-3. The cutover snapshot is loaded into Ops via `scripts/cutover-load.mjs` (write once, audit log every entity creation as `'cutover-import'`). The snapshot replays through the queue; no direct file writes.
-4. Ops `/dashboard` and per-department dashboards surface a one-time banner: "Welcome to the unified GSL Ops Platform. MOU lifecycle, finance, dispatch, escalations, training rollout, and reporting are now in one app." The banner dismisses on user click and persists in `localStorage['cutover-banner-dismissed']`.
+**Rollback contract:**
+- 48-hour rollback window. If a catastrophic regression surfaces in the first 48h, re-enable writes on `gsl-mou-system` and pause Ops writes; Anish replays any Ops-side captures into mou-system via a one-off script.
+- After 48h the rollback path is closed. Ops becomes the only source of truth and the parallel-build mechanic is retired. Anish's 48h sign-off is the formal gate.
 
-### 5.3 Two-week observation window (T-0 to T+14)
+**Per-department onboarding banner** (Gate 5 deliverable, copy locked in §6) shows on first login post-cutover. Banner ID is set to the cutover date; dismissal stored in `localStorage`.
 
-- Both apps are deployed. Ops is the only write target.
-- mou-system continues to render its UI but every write affordance is disabled with the redirect message.
-- A daily diff report (`scripts/cutover-diff.mjs`) compares the cutover snapshot to current Ops state and writes `docs/cutover-diff-{date}.md`. Anish reviews each morning; any unexpected divergence (a school that disappeared, an MOU whose `contractValue` changed) is logged and root-caused before the next morning.
-- The legacy `gsl-mou-system` repo remains green on Vercel for read access during the window. Breakage is a P0.
+### Notes on the parallel-build window
 
-### 5.4 Post-window cutover (T+14)
-
-- `gsl-mou-system` Vercel project stops being deployed on every merge. The repo flips to a static archive: the README is replaced with a one-screen "This system has moved to gsl-ops-automation. The archive remains for historical lookup at <readonly-archive-url>." The last-deployed Vercel build URL is preserved as the read-only archive; future investigations point there, not at the live mou-system URL.
-- The redirect middleware in `gsl-mou-system` updates to redirect every route to the Ops equivalent. Hard-coded URL list lives in `gsl-mou-system/middleware.ts`; Gate 5 ships the URL map.
-- Ops removes the cutover banner. The dashboards surface the unified product as the steady state.
-
-### 5.5 Rollback contract
-
-The cutover is reversible during the two-week window:
-1. Ops middleware flips Ops to read-only.
-2. mou-system middleware un-flips writes.
-3. Any Ops-only writes captured during T-0 to rollback-instant are replayed into mou-system via a one-off script.
-
-After T+14 the rollback path is closed. Ops becomes the only source of truth and the parallel-run mechanic is retired. Anish's pre-T+14 sign-off is the gate.
+- Bookmark preservation: Ops platform's MOU / PI / payment routes use the same path structure as gsl-mou-system (`/mous`, `/mous/[id]`, `/mous/[id]/pi`, `/payments/*`, `/vex/*`). A user pasting `https://gsl-ops-automation.vercel.app/mous/MOU-STEAM-2526-001` lands on the migrated equivalent.
+- Daily diff report: `scripts/cutover-diff.mjs` is built in Gate 2 Step 4 and runs on Anish's local machine each morning during the parallel-build window. It compares the most recent Ops snapshot to the current mou-system state and writes `docs/cutover-diff-{date}.md`. Anish reviews; any unexpected divergence is logged and root-caused before the next morning.
+- The legacy `gsl-mou-system` Vercel project stays deployed throughout the parallel-build window. After cutover + 48h rollback period passes, it stops being redeployed; the last build URL preserves as a read-only archive.
 
 ---
 
@@ -308,11 +296,33 @@ Cutover-day banner shape, locked here so Gate 5 does not re-litigate.
 
 ## 7. Open questions parked for Gate 2 entry
 
-Unresolved at Gate 1 close. Gate 2 starts with these on the table.
+Originally unresolved at Gate 1 close. Gate 2 entry decisions below.
 
-1. **Two `Programme` enum shapes diverge between repos.** mou-system: 3-value (`STEAM` / `Young Pioneers` / `Harvard HBPE`). Ops: 5-value (added `Robotics` and `VEX`). Reconciliation: extend, do not replace. The mou-system 3-value enum is a proper subset of Ops' 5-value enum, so existing mou-system data lifts cleanly; Ops' Robotics and VEX MOUs (none today) become the operating reality post-cutover.
-2. **`SchoolGroup` for chain MOUs (Narayana Group precedent).** Ground-Truth report §1.3 flagged Narayana Group of Schools West Bengal at 7,950 students as a single MOU row representing a chain. mou-system has no `SchoolGroup` entity. Gate 2 either (a) keeps `MOU → 1 School` and represents the chain as one school with a chain-name field, or (b) introduces `SchoolGroup → N Schools → N MOUs`. Decision held for Gate 2 entry.
-3. **`TrainerHead` department mapping.** The brief maps Sales / Ops / Finance to departments and leaves Admin / Leadership null. The Ops repo also has `TrainerHead` (Shashank's role pre-Admin promotion). Gate 1 Step 2 backfilled Shashank as `department: null` (cross-functional Admin during pilot per Anish's call); the `defaultDepartmentForRole(TrainerHead)` seed mapping returns `'ops'` for any future TrainerHead user, but Shashank himself is null. Revisit at Gate 4 when training rollout becomes a first-class module and an `'academics'` department becomes warranted.
+### 7.1 Programme enum (Gate 2 decision)
+
+**Decision:** Programme reduces to 4 canonical values: `STEAM | Young Pioneers | Harvard HBPE | Robotics`. VEX is a parallel module (its own `VexPi` / `VexDispatch` / `VexOrder` entities, separate counter sequence shared with programme PIs per GST entity). TinkRworks is a STEAM subtype captured via `MOU.programmeSubType = 'TinkRworks'`.
+
+**Migration shape:**
+- `Programme` (TypeScript): `'STEAM' | 'Young Pioneers' | 'Harvard HBPE' | 'Robotics'`.
+- `SalesProgramme = Programme | 'VEX'` for sales-team + sales-opportunity contexts (a rep can own VEX kit pursuits without an MOU programme of the same name).
+- `IntakeProductConfirmed = Programme | 'VEX' | 'TinkRworks'` for intake-time captured product (6 historical W4-C.7 backfill records carry the legacy variant on STEAM-programme MOUs; preserved as captured signal until a future productSubtype split).
+- Live data migrated in Gate 2 Step 1: 2 sales-team records (Vikram T's `['STEAM','TinkRworks']` → `['STEAM']`; Arjun K's `['TinkRworks','VEX']` → `['STEAM','VEX']`). 0 MOUs use TinkRworks or VEX as `programme` so the MOU-side migration is enum-only.
+- `MouCard` accent palette retains Robotics with the brand-navy chip (formerly TinkRworks).
+- Dispatch line-item programme matching (`createRequest.lineItemMismatchesProgramme`) tightened to read TinkRworks as `programme === 'STEAM' && subType === 'TinkRworks'` rather than the standalone TinkRworks programme.
+
+### 7.2 SchoolGroup model (Gate 2 decision)
+
+**Decision:** Option B. `SchoolGroup → has many School → has many MOU`. Each existing School backfills to its own SchoolGroup (1:1 by default). Chain commercial terms live on SchoolGroup.
+
+**Migration shape:**
+- `SchoolGroup` already existed in Ops platform from Q-I groundwork. Gate 2 Step 1 extends it with chain-billing fields: `primaryContact`, `primaryEmail`, `primaryPhone`, `gstNumber` (all optional `string | null` to keep round 1 fixtures + the existing `schoolGroup.ts` lib compiling without forced migration).
+- Chain MOU PI generation reads `SchoolGroup.gstNumber` when `school.gstNumber` is null.
+- Standalone schools (1:1 group) leave the chain-billing fields null and bill through their own School fields.
+- The 1:1 backfill (every standalone School gets its own SchoolGroup) lands in Gate 2 Step 4 (one-time data import).
+
+### 7.3 TrainerHead department mapping (Gate 1 decision, retained)
+
+The brief maps Sales / Ops / Finance to departments and leaves Admin / Leadership null. The Ops repo also has `TrainerHead` (Shashank's role pre-Admin promotion). Gate 1 Step 2 backfilled Shashank as `department: null` (cross-functional Admin during pilot per Anish's call); the `defaultDepartmentForRole(TrainerHead)` seed mapping returns `'ops'` for any future TrainerHead user, but Shashank himself is null. Revisit at Gate 4 when training rollout becomes a first-class module and an `'academics'` department becomes warranted.
 4. **`OpsEmployee` vs `Operations` vs `Ops Coordinator` vs `Ops Lead` role names.** The brief mentions `Operations` / `Ops Coordinator` / `Ops Lead`. The Ops repo has `OpsHead` and `OpsEmployee`. Gate 1 Step 2 maps both to `department: 'ops'` and does not introduce new role names. The role-design conversation post-pilot will revisit naming.
 5. **`Premium-Sales` role.** The brief mentions `Premium-Sales` mapping to `department: 'sales'`. The Ops repo does not have this role today. Gate 1 Step 2 leaves the helper structure ready (the dept resolver is a switch-by-role) so adding `Premium-Sales` later is a one-line change. Do not introduce the role pre-emptively.
 6. **`Accounts` role vs `Finance`.** The brief mentions `Accounts` mapping to `department: 'finance'`. Ops has `Finance`. Same approach: Gate 1 Step 2 keys off existing `Finance`; future role additions are a one-line change.
@@ -335,6 +345,18 @@ When Gate 2 begins, the engineer reads:
 10. `docs/role-decisions.md` (current Ops permission posture).
 
 That ten-file reading order, plus this plan, is enough to land Gate 2 without re-reading the full mou-system codebase.
+
+---
+
+## 9. PI counter ownership during parallel-build (Gate 2 §3)
+
+**Until Gate 5 cutover:** mou-system continues to issue PIs and increment its `pi_counter.json` (the single-counter shape) and `pi_counter_map.json` (the per-GSTIN shape under MTPL/MH and MTPL/UP). Pranav, Shubhangi, and Anita continue daily PI work on `gsl-mou-system.vercel.app`.
+
+**Ops platform during parallel-build:** Gate 2 Step 3 copies the latest `company.json` and `pi_counter*.json` snapshot from mou-system into Ops. Ops uses these for verification; recalc + PI generation libs run on imported data, but **Ops does not issue production PIs until Gate 5 cutover**. Any PI generated by Ops during parallel-build is an internal verification artefact, never sent to a school, never persisted to the `pi_issues` ledger.
+
+**At cutover:** the counter state is read one final time from mou-system and locked into Ops. From cutover instant onward, Ops is the only system that issues PIs. The `pi_counter_map.json` carries the next sequence value per GSTIN and Ops's atomic `issuePiNumberAtomic` increments it per issuance.
+
+**Counter doubt mitigation:** if a PI gets issued on mou-system between the final-snapshot-read and the cutover-flip (a < 5-minute window), the daily diff report (§5) catches the mismatch the next morning. Recovery: re-read mou-system's counter, increment Ops's counter to match, re-issue on Ops with the correct sequence, mark the original mou-system PI as superseded. The probability of a collision is low because PI issuance during parallel-build is mou-system-only by policy; the cutover-day flip happens with mou-system in maintenance mode (writes already disabled).
 
 ---
 

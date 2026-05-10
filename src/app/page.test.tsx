@@ -67,12 +67,16 @@ describe('/ Operations Control Dashboard (W4-I.5 P2C5)', () => {
     const { default: DashboardPage } = await import('./page')
     const html = renderToStaticMarkup(await DashboardPage({ searchParams: noSp }))
     expect(html).toContain('data-testid="dashboard-filters"')
+    // Gate 2 §7.1: Programme reduced to 4 values; the dashboard
+    // chip row drops TinkRworks + VEX in favour of Robotics. Sales
+    // pipeline + sales team retain VEX as a SalesProgramme.
     expect(html).toContain('data-testid="dashboard-chip-all"')
     expect(html).toContain('data-testid="dashboard-chip-STEAM"')
-    expect(html).toContain('data-testid="dashboard-chip-TinkRworks"')
     expect(html).toContain('data-testid="dashboard-chip-Young Pioneers"')
     expect(html).toContain('data-testid="dashboard-chip-Harvard HBPE"')
-    expect(html).toContain('data-testid="dashboard-chip-VEX"')
+    expect(html).toContain('data-testid="dashboard-chip-Robotics"')
+    expect(html).not.toContain('data-testid="dashboard-chip-TinkRworks"')
+    expect(html).not.toContain('data-testid="dashboard-chip-VEX"')
     expect(html).toContain('data-testid="dashboard-apply"')
     expect(html).toContain('data-testid="dashboard-reset"')
   })

@@ -20,9 +20,9 @@ import crypto from 'node:crypto'
 import type {
   AuditEntry,
   PendingUpdate,
-  Programme,
   SalesOpportunity,
   SalesPerson,
+  SalesProgramme,
   User,
 } from '@/lib/types'
 import salesOpportunitiesJson from '@/data/sales_opportunities.json'
@@ -31,11 +31,11 @@ import usersJson from '@/data/users.json'
 import { canPerform } from '@/lib/auth/permissions'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
 
-const VALID_PROGRAMMES: ReadonlyArray<Programme> = [
+const VALID_PROGRAMMES: ReadonlyArray<SalesProgramme> = [
   'STEAM',
-  'TinkRworks',
   'Young Pioneers',
   'Harvard HBPE',
+  'Robotics',
   'VEX',
 ]
 
@@ -62,7 +62,7 @@ export interface CreateOpportunityArgs {
   state: string
   region: string
   salesRepId: string
-  programmeProposed: Programme | null
+  programmeProposed: SalesProgramme | null
   gslModel: string | null
   commitmentsMade: string | null
   outOfScopeRequirements: string | null

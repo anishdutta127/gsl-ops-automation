@@ -20,7 +20,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, AlertTriangle } from 'lucide-react'
 import salesTeamJson from '@/data/sales_team.json'
-import type { Programme, SalesPerson } from '@/lib/types'
+import type { SalesPerson, SalesProgramme } from '@/lib/types'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canPerform } from '@/lib/auth/permissions'
 import { TopNav } from '@/components/ops/TopNav'
@@ -31,11 +31,11 @@ import { createOpportunityAction } from '../actions'
 
 const allSalesTeam = salesTeamJson as unknown as SalesPerson[]
 
-const ALL_PROGRAMMES: ReadonlyArray<Programme> = [
+const ALL_PROGRAMMES: ReadonlyArray<SalesProgramme> = [
   'STEAM',
-  'TinkRworks',
   'Young Pioneers',
   'Harvard HBPE',
+  'Robotics',
   'VEX',
 ]
 

@@ -31,9 +31,9 @@
 import type {
   AuditEntry,
   GslTrainingMode,
+  IntakeProductConfirmed,
   IntakeRecord,
   MOU,
-  Programme,
   SubmissionStatus,
   TrainerModel,
   User,
@@ -58,11 +58,14 @@ const VALID_TRAINING_MODES: ReadonlyArray<GslTrainingMode> = [
   'GSL Trainer',
   'Train The Trainer (TTT)',
 ]
-const VALID_PROGRAMMES: ReadonlyArray<Programme> = [
+// Wider than Programme; includes legacy 'TinkRworks' / 'VEX' captured at
+// intake time on STEAM-programme MOUs. See IntakeProductConfirmed.
+const VALID_PROGRAMMES: ReadonlyArray<IntakeProductConfirmed> = [
   'STEAM',
-  'TinkRworks',
   'Young Pioneers',
   'Harvard HBPE',
+  'Robotics',
+  'TinkRworks',
   'VEX',
 ]
 
@@ -84,7 +87,7 @@ export interface RecordIntakeArgs {
   endDate: string
   physicalSubmissionStatus: SubmissionStatus
   softCopySubmissionStatus: SubmissionStatus
-  productConfirmed: Programme
+  productConfirmed: IntakeProductConfirmed
   gslTrainingMode: GslTrainingMode
   schoolPointOfContactName: string
   schoolPointOfContactPhone: string
