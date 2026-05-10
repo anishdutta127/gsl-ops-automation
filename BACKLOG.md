@@ -3,6 +3,47 @@
 Phase 1.1+ items deferred from Phase 1. Each entry names the trigger
 that should pull it onto the active plan.
 
+## Chain MOU SchoolGroup reconciliation (Gate 2 Step 4 follow-up)
+
+Gate 2 Step 4 backfilled SchoolGroups 1:1 by default. Twelve schools in
+the gsl-mou-system snapshot have names matching chain patterns and
+need manual SchoolGroup consolidation before Gate 5 cutover. Surfaced
+in `src/data/_snapshots/mou-system/_meta.json` under `chainCandidates`
+and on `/admin/data-snapshot`. The Ground-Truth report §1.3 flagged
+the canonical case (Narayana Group of Schools West Bengal: 7,950
+students captured as a single MOU row representing N branches).
+
+Schools requiring review:
+- `SCH-B_D_MEMORIAL_JR_SCHO`: B.D Memorial Jr. School (4-branch
+  precedent in the Cretile delivery tracker)
+- `SCH-KAZIMAN_RAI_MEMORIAL`: KAZIMAN RAI MEMORIAL TRUST
+- `SCH-RISHI_AUROBINDO_MEMO`: Rishi Aurobindo Memorial Academy
+- `SCH-SRI_R_N_SINGH_MEMORI`, `_2`, `_3`, `_4`: Sri R. N. Singh
+  Memorial High School (4 records suggesting branch split)
+- `SCH-SRI_RAM_NARAYAN_SING`: Sri Ram Narayan Singh Memorial High
+  School
+- `SCH-SUMANA_DUTTA_MEMORIA`: Sumana Dutta Memorial Vivekananda
+  International School
+- `SCH-TECHNO_INDIA_GROUP_P`, `_2`, `_3`: Techno India Group Public
+  School (Kalyani + Asansol + Panagarh)
+
+Trigger: before Gate 5 cutover, manually reconcile chain MOUs into
+proper SchoolGroups. Decision per school: is this a chain (multiple
+branches under one MOU billed centrally) or a standalone school? For
+each chain, consolidate the per-branch School records into a single
+SchoolGroup with `memberSchoolIds` listing every branch and
+`groupMouId` pointing at the chain MOU. The `chain-billing fields`
+on SchoolGroup (primaryContact, primaryEmail, primaryPhone,
+gstNumber) carry the central billing details; child Schools'
+gstNumber stays null and the PI generation lib reads from
+SchoolGroup. The 1:1 default is preserved for any School the
+reviewer leaves alone.
+
+References:
+- `ops-data/ground-truth-data-report-2026-04-24.md` §1.3 (Narayana).
+- `docs/MERGE_PLAN.md` §7.2 (SchoolGroup model, Option B).
+- `src/data/_snapshots/mou-system/_meta.json` `chainCandidates`.
+
 ## Escalations ticketing polish (Phase 1.1)
 
 - **Saved filters per user (localStorage).** Gate 1 Step 5 ships

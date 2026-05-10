@@ -447,8 +447,17 @@ function summarisePaymentSchedules(
 }
 
 function nextDraftSequence(programme: Programme, list: MOU[]): string {
+  // Gate 2 Step 5 (sub-agent flag #4): explicit Robotics branch.
+  // Pre-fix the ternary bucketed Robotics into HBPE; post-fix the
+  // Robotics MOU id prefix is `MOU-ROBO-<fy>-DRAFT-<seq>`.
   const code =
-    programme === 'STEAM' ? 'STEAM' : programme === 'Young Pioneers' ? 'YP' : 'HBPE'
+    programme === 'STEAM'
+      ? 'STEAM'
+      : programme === 'Young Pioneers'
+        ? 'YP'
+        : programme === 'Robotics'
+          ? 'ROBO'
+          : 'HBPE'
   const fy = '2627'
   const prefix = `MOU-${code}-${fy}-DRAFT-`
   const taken = list
