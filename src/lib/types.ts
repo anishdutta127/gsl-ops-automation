@@ -225,6 +225,28 @@ export type AuditAction =
   // Communication row at this stage; that happens later when SMTP
   // integration lands per Phase 1.1).
   | 'communication-sent'
+  // Gate 2 Step 6: Finance bank-entry matcher writes this on the
+  // Payment row and mirrors it on the parent MOU's auditLog when
+  // /finance/payments confirms a candidate. before / after capture
+  // receivedAmount + receivedDate + paymentMode + bankReference +
+  // status (Paid or Partial). Notes record the variance vs the
+  // expected amount when the bank entry differs.
+  | 'payment-matched'
+  // Gate 2 Step 6: emitted when /finance/pi/[paymentId] re-issues a
+  // PI. before / after capture the old + new piNumber; notes record
+  // the entity counter that advanced. Mirrored on both the Payment
+  // row and the parent MOU's auditLog. The old number is voided in
+  // the sense that Payment.piNumber is overwritten; the audit log
+  // remains the canonical history of voided numbers.
+  | 'pi-reissued'
+  // Gate 2 Step 6: emitted on the parent MOU's auditLog when
+  // /finance/adjustments reverses an Adjustment. before / after
+  // capture the status flip ('Active' -> 'Reversed') plus the
+  // adjustmentId + amountDelta for context. Idempotent: a second
+  // click on an already-reversed adjustment does NOT write a no-op
+  // entry; the reverseAdjustment lib returns 'already-reversed'
+  // without touching the audit log.
+  | 'adjustment-reversed'
 
 export interface AuditEntry {
   timestamp: string                // ISO

@@ -1,45 +1,93 @@
 /*
- * /finance (Gate 1 Step 3 stage landing page).
+ * /finance (Gate 2 Step 6 : full Finance workspace index).
  *
- * Finance stage entry. PI generation + Tally export migrate in Gate
- * 2 from gsl-mou-system; for Gate 1 the page is a thin index card
- * surface that points at the existing payment + adjustment routes.
+ * Replaces the Gate 1 Step 3 stub. Quick-link cards to the four
+ * Gate-2 sub-routes (payments matcher, unmatched queue, tally export,
+ * adjustments log) plus a pointer back at the per-MOU PI route at
+ * /mous/[id]/pi which the existing flow uses. The /finance/pi/[id]
+ * route surfaces a single PI when navigated directly (e.g., from an
+ * audit row link) but is not a primary entry-point.
+ *
+ * View gate: canAccessFinance (Finance + Admin + Leadership read-only
+ * in production lockdown). Testing-mode toggle keeps the route open
+ * for every active user.
  */
 
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, Banknote, FileX2, Receipt, ScrollText } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 import { getCurrentUser } from '@/lib/auth/session'
+import { canAccessFinance } from '@/lib/access'
 import { TopNav } from '@/components/ops/TopNav'
 import { accentFor } from '@/lib/departmentAccents'
+import paymentLogsJson from '@/data/payment_logs.json'
+import adjustmentsJson from '@/data/adjustments.json'
+import paymentsJson from '@/data/payments.json'
+import type { Adjustment, Payment, PaymentLog } from '@/lib/types'
 
-const ENTITIES = [
-  {
-    label: 'PI generation',
-    href: '/admin/pi-counter',
-    description: 'Sequential per-GSTIN PI counters (Gate 2 lifts the full module from gsl-mou-system).',
-  },
-  {
-    label: 'Payment matching',
-    href: '/mous',
-    description: 'Per-MOU payment receipt + reconciliation lives on the MOU detail page.',
-  },
-  {
-    label: 'Inventory',
-    href: '/admin/inventory',
-    description: 'Per-SKU stock and reorder thresholds.',
-  },
-  {
-    label: 'Adjustments',
-    href: '/finance',
-    description: 'Adjustment-as-line-item lifecycle (Gate 2 wires the data flow).',
-  },
-]
+const allLogs = paymentLogsJson as unknown as PaymentLog[]
+const allAdjustments = adjustmentsJson as unknown as Adjustment[]
+const allPayments = paymentsJson as unknown as Payment[]
 
-export default async function FinanceStagePage() {
+interface QuickLink {
+  href: string
+  label: string
+  description: string
+  icon: LucideIcon
+  count: number | null
+  unit: string | null
+}
+
+export default async function FinanceIndexPage() {
   const user = await getCurrentUser()
   if (!user) redirect('/login?next=%2Ffinance')
+  if (!canAccessFinance(user)) redirect('/?notice=finance-access-required')
+
   const accent = accentFor('finance')
+
+  const unmatchedCount = allLogs.filter((l) => l.unmatched).length
+  const activeAdjustments = allAdjustments.filter((a) => a.status === 'Active').length
+  const pendingMatch = allPayments.filter(
+    (p) => p.status === 'PI Sent' || p.status === 'Due Soon' || p.status === 'Overdue',
+  ).length
+
+  const links: QuickLink[] = [
+    {
+      href: '/finance/payments',
+      label: 'Match a payment',
+      description:
+        'Enter what hit the bank; the matcher ranks candidate Proforma Invoices and you Confirm the match.',
+      icon: Banknote,
+      count: pendingMatch,
+      unit: pendingMatch === 1 ? 'Awaiting Match' : 'Awaiting Match',
+    },
+    {
+      href: '/finance/payments/unmatched',
+      label: 'Unmatched payments',
+      description: 'Bank entries parked without an instalment match. Re-attempt match from this list.',
+      icon: FileX2,
+      count: unmatchedCount,
+      unit: unmatchedCount === 1 ? 'Parked' : 'Parked',
+    },
+    {
+      href: '/finance/tally-export',
+      label: 'Tally export',
+      description: 'Generate Tally Prime 6.2 voucher XML for a fiscal year + entity selection.',
+      icon: Receipt,
+      count: null,
+      unit: null,
+    },
+    {
+      href: '/finance/adjustments',
+      label: 'Adjustments',
+      description:
+        'Adjustment-as-line-item log. Reverse an active adjustment from the detail view.',
+      icon: ScrollText,
+      count: activeAdjustments,
+      unit: activeAdjustments === 1 ? 'Active' : 'Active',
+    },
+  ]
 
   return (
     <>
@@ -60,39 +108,52 @@ export default async function FinanceStagePage() {
                 accent.badgeTextClass
               }
             >
-              Finance stage
+              Finance workspace
             </span>
             <h1 className="mt-3 font-heading text-2xl font-bold text-brand-navy">
               Finance workspace
             </h1>
             <p className="mt-1 text-sm text-slate-700">
-              PI generation, payment matching, Tally export, adjustments. Full module migrates in Gate 2.
+              Bank-entry matching, Tally export, adjustment log. PI generation lives on the per-MOU route at /mous/[id]/pi.
             </p>
           </header>
+
           <ul className="grid gap-3 sm:grid-cols-2">
-            {ENTITIES.map((entity) => (
-              <li key={entity.href}>
-                <Link
-                  href={entity.href}
-                  className={
-                    'group flex items-center justify-between rounded-md border border-border bg-card p-4 transition-colors hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-brand-navy ' +
-                    'border-l-4 ' +
-                    accent.cardBorderClass
-                  }
-                >
-                  <div>
-                    <div className="font-medium text-brand-navy">{entity.label}</div>
-                    <div className="mt-0.5 text-sm text-slate-600">
-                      {entity.description}
+            {links.map((link) => {
+              const Icon = link.icon
+              return (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className={
+                      'group flex h-full items-start justify-between gap-3 rounded-md border border-border bg-card p-4 transition-colors hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-brand-navy ' +
+                      'border-l-4 ' +
+                      accent.cardBorderClass
+                    }
+                  >
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2">
+                        <Icon aria-hidden className="size-4 text-violet-700" />
+                        <span className="font-medium text-brand-navy">{link.label}</span>
+                      </div>
+                      <p className="mt-1 text-sm text-slate-600">{link.description}</p>
+                      {link.count !== null ? (
+                        <p className="mt-2 text-xs text-slate-500">
+                          <span className="font-mono font-semibold text-brand-navy">
+                            {link.count}
+                          </span>{' '}
+                          {link.unit}
+                        </p>
+                      ) : null}
                     </div>
-                  </div>
-                  <ArrowRight
-                    aria-hidden
-                    className="size-4 shrink-0 text-slate-400 transition-transform group-hover:translate-x-0.5"
-                  />
-                </Link>
-              </li>
-            ))}
+                    <ArrowRight
+                      aria-hidden
+                      className="size-4 shrink-0 text-slate-400 transition-transform group-hover:translate-x-0.5"
+                    />
+                  </Link>
+                </li>
+              )
+            })}
           </ul>
         </div>
       </main>
