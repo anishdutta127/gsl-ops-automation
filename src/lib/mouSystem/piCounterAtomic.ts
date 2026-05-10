@@ -2,21 +2,25 @@
  * Per-entity atomic PI number issuer for the mou-system port.
  *
  * The Ops platform's `src/lib/githubQueue.ts` exposes `issuePiNumberAtomic()`
- * with a single-counter shape (`PiCounter`). The mou-system libs depend on
- * a per-entity counter map (`PiCounterMap`) so each GSTIN registration can
- * keep its own gap-free sequence (Phase 3 Step 3).
+ * with a single-counter shape (`PiCounter`) on `src/data/pi_counter.json`.
+ * The mou-system libs depend on a per-entity counter map (`PiCounterMap`)
+ * so each GSTIN registration can keep its own gap-free sequence (Phase 3
+ * Step 3).
  *
- * Rather than mutate Ops's `githubQueue.ts`, this module wraps Ops's
- * `atomicUpdateJson` to maintain a separate `pi_counter.json` file under
- * the entity-map shape used by the ported libs. Callers should import
- * `issuePiNumberAtomic` from here when porting from gsl-mou-system.
+ * Gate 2 Step 3: this module reads / writes a SEPARATE file
+ * `src/data/pi_counter_map.json` to keep the two counter shapes from
+ * stomping on each other during the parallel-build window. Ops's legacy
+ * single-counter file `src/data/pi_counter.json` stays untouched while
+ * Ops's dispatch / delivery-ack / pi-generate libs continue to use it.
+ * At Gate 5 cutover, Ops's libs migrate to consume this file's per-
+ * entity shape and the legacy file retires (see MERGE_PLAN.md §9).
  */
 
 import { atomicUpdateJson } from '@/lib/githubQueue'
 import { company, formatPiNumber, type EntityKey } from './company'
 import type { PiCounter, PiCounterMap } from './types'
 
-const PI_COUNTER_PATH = 'src/data/pi_counter.json'
+const PI_COUNTER_PATH = 'src/data/pi_counter_map.json'
 
 /**
  * Default counter map. Per Phase 3 Step 3 each GST entity has its own
