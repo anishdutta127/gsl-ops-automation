@@ -1,0 +1,43 @@
+{
+  "_comment": "Phase 3 Step 3 : MAF Technologies GSTIN registrations and PI prefixes per programme. Editable via /api/admin/import for Anish only.",
+  "name": "MAF Technologies Pvt Ltd",
+  "pan": "AAOCM1035E",
+  "email": "accounts@getsetlearn.info",
+  "warehouseEmail": "warehouse@getsetlearn.info",
+  "tallyVersion": "prime-6.2",
+  "fiscalYear": "26-27",
+  "entities": {
+    "MH": {
+      "label": "Maharashtra",
+      "stateCode": "27",
+      "state": "Maharashtra",
+      "gstin": "27AAOCM1035E1ZN",
+      "address": "4th Floor, Mafatlal House, Backbay Reclamation, Churchgate, Mumbai (MH) - 400020",
+      "city": "Mumbai",
+      "pin": "400020",
+      "hsn": "999294",
+      "piPrefix": "MTPL/MH",
+      "piPrefixSeparator": "/"
+    },
+    "UP": {
+      "label": "Uttar Pradesh",
+      "stateCode": "09",
+      "state": "Uttar Pradesh",
+      "gstin": "09AAOCM1035E1ZL",
+      "address": "E-29, Sector-8, Noida, Uttar Pradesh - 201301",
+      "city": "Noida",
+      "pin": "201301",
+      "hsn": "999294",
+      "piPrefix": "MTPL/UP",
+      "piPrefixSeparator": "/"
+    }
+  },
+  "programmeRouting": {
+    "Young Pioneers": "MH",
+    "Harvard HBPE": "MH",
+    "STEAM": "UP",
+    "Robotics": "UP",
+    "VEX": "MH"
+  },
+  "vexDefaultEntity": "MH"
+}

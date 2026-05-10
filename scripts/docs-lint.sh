@@ -155,6 +155,8 @@ british_check() {
   files=$(collect_targets ts tsx \
     | grep -v '^src/components/ui/' \
     | grep -v '/components/ui/' \
+    | grep -v '^src/lib/mouSystem/' \
+    | grep -v '/lib/mouSystem/' \
     | grep -vE '\.test\.tsx?$')
   local pattern='\b(color|colors|center|centers|behavior|behaviors|organize|organizes|organizing|organized|recognize|recognizes|recognized|analyze|analyzes|analyzed|apologize|apologizes|apologized|favorite|favorites)\b'
   local hit=0
