@@ -23,14 +23,14 @@
  */
 
 import Link from 'next/link'
-import { notFound } from 'next/navigation'
+import { notFound, redirect } from 'next/navigation'
 import { Info } from 'lucide-react'
 import type { MOU, Payment, School, User } from '@/lib/types'
 import mousJson from '@/data/mous.json'
 import schoolsJson from '@/data/schools.json'
 import paymentsJson from '@/data/payments.json'
 import { getCurrentUser } from '@/lib/auth/session'
-import { canPerform } from '@/lib/auth/permissions'
+import { canGeneratePI } from '@/lib/access'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { DetailHeaderCard } from '@/components/ops/DetailHeaderCard'
@@ -59,10 +59,16 @@ export default async function PiPage({ params }: PageProps) {
   const user = await getCurrentUser()
   const mou = allMous.find((m) => m.id === mouId)
   if (!mou || !isVisibleToUser(mou, user)) notFound()
-  // W4-I.4 MM2: Ops/SalesRep/etc. cannot generate PI. Hide the page
-  // entirely (404 path) so the action is invisible, mirroring the
-  // server-side gate in lib/pi/generatePi.ts. No existence leak.
-  if (!user || !canPerform(user, 'mou:generate-pi')) notFound()
+  // Gate 1 Step 4 (MM2): Ops/SalesRep/etc. cannot generate PI.
+  // canGeneratePI from lib/access.ts (department-scoped) blocks
+  // Admin-role users with department='ops' too (Misba's case): the
+  // canPerform layer-2 wildcard would let her reach this page, but
+  // layer-1 department gating fires first. Server-side canPerform
+  // gate at lib/pi/generatePi.ts continues as defence in depth.
+  if (!user) notFound()
+  if (!canGeneratePI(user)) {
+    redirect(`/mous/${mou.id}?notice=pi-finance-only`)
+  }
 
   const school = allSchools.find((s) => s.id === mou.schoolId)
   const pendingInstallments = allPayments.filter(

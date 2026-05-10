@@ -49,6 +49,7 @@ import {
   computeSlices,
   fiscalYearOptions,
   parseDashboardFilters,
+  productOptionsForFilters,
 } from '@/lib/dashboard/dashboardData'
 import { DashboardHeader } from '@/components/ops/dashboard/DashboardHeader'
 import { DashboardFilterRow } from '@/components/ops/dashboard/DashboardFilterRow'
@@ -116,6 +117,15 @@ export default async function HomePage({ searchParams }: PageProps) {
   })
   const fyOptions = fiscalYearOptions(allMous)
   const fiscalYearForHeader = filters.fiscalYear ?? 'all'
+  // Gate 1 Step 4 (MM6): hide the Sales pipeline summary for Ops
+  // department users. Sales / Finance / Admin / Leadership see it
+  // (Sales owns the funnel; the rest monitor cross-functionally).
+  const showSalesPipelineSummary = (user.department ?? null) !== 'ops'
+  // Gate 1 Step 4 (MM7): products filter under "All Programmes".
+  const productOptions = productOptionsForFilters({
+    inventoryItems: allInventoryItems,
+    dispatches: allDispatches,
+  })
 
   return (
     <>
@@ -130,7 +140,12 @@ export default async function HomePage({ searchParams }: PageProps) {
           fromDate={filters.fromDate ?? ''}
           toDate={filters.toDate ?? ''}
         />
-        <DashboardFilterRow activeProgramme={filters.programme} basePath="/" />
+        <DashboardFilterRow
+          activeProgramme={filters.programme}
+          basePath="/"
+          productOptions={productOptions}
+          activeProducts={filters.products}
+        />
         <div className="mx-auto max-w-screen-2xl space-y-6 px-4 py-6 sm:px-6">
           <DashboardStatCards cards={cards} />
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
@@ -152,7 +167,9 @@ export default async function HomePage({ searchParams }: PageProps) {
             <DashboardCommunicationPanel buttons={COMMUNICATION_BUTTONS} />
           </div>
           <DashboardTemplates templates={COMMUNICATION_TEMPLATE_PREVIEWS} />
-          <DashboardSalesPipelineSummary data={salesPipelineSummary} />
+          {showSalesPipelineSummary ? (
+            <DashboardSalesPipelineSummary data={salesPipelineSummary} />
+          ) : null}
         </div>
         <footer
           className="border-t border-border bg-card"

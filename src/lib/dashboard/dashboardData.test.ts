@@ -89,7 +89,7 @@ function inv(overrides: Partial<InventoryItem> = {}): InventoryItem {
 describe('parseDashboardFilters', () => {
   it('returns nulls when sp empty', () => {
     expect(parseDashboardFilters({})).toEqual({
-      fiscalYear: null, programme: null, fromDate: null, toDate: null,
+      fiscalYear: null, programme: null, fromDate: null, toDate: null, products: [],
     })
   })
 
@@ -128,7 +128,7 @@ describe('computeSlices', () => {
     const active = mou({ id: 'M2' })
     const slices = computeSlices({
       mous: [archived, active], schools: [], dispatches: [], escalations: [],
-      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null },
+      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null, products: [] },
     })
     expect(slices.filteredMous.map((m) => m.id)).toEqual(['M2'])
   })
@@ -138,7 +138,7 @@ describe('computeSlices', () => {
     const b = mou({ id: 'M2', academicYear: '2025-26' })
     const slices = computeSlices({
       mous: [a, b], schools: [], dispatches: [], escalations: [],
-      filters: { fiscalYear: '2026-27', programme: null, fromDate: null, toDate: null },
+      filters: { fiscalYear: '2026-27', programme: null, fromDate: null, toDate: null, products: [] },
     })
     expect(slices.filteredMous.map((m) => m.id)).toEqual(['M1'])
   })
@@ -148,7 +148,7 @@ describe('computeSlices', () => {
     const tink = mou({ id: 'M2', programme: 'TinkRworks' })
     const slices = computeSlices({
       mous: [steam, tink], schools: [], dispatches: [], escalations: [],
-      filters: { fiscalYear: null, programme: 'TinkRworks', fromDate: null, toDate: null },
+      filters: { fiscalYear: null, programme: 'TinkRworks', fromDate: null, toDate: null, products: [] },
     })
     expect(slices.filteredMous.map((m) => m.id)).toEqual(['M2'])
   })
@@ -158,7 +158,7 @@ describe('computeSlices', () => {
     const outOfRange = mou({ id: 'M2', startDate: '2025-12-01' })
     const slices = computeSlices({
       mous: [inRange, outOfRange], schools: [], dispatches: [], escalations: [],
-      filters: { fiscalYear: null, programme: null, fromDate: '2026-01-01', toDate: '2026-05-08' },
+      filters: { fiscalYear: null, programme: null, fromDate: '2026-01-01', toDate: '2026-05-08', products: [] },
     })
     expect(slices.filteredMous.map((m) => m.id)).toEqual(['M1'])
   })
@@ -170,7 +170,7 @@ describe('computeSlices', () => {
     const d2 = dispatch({ id: 'D2', mouId: 'M2' })
     const slices = computeSlices({
       mous: [m1, m2], schools: [], dispatches: [d1, d2], escalations: [],
-      filters: { fiscalYear: null, programme: 'STEAM', fromDate: null, toDate: null },
+      filters: { fiscalYear: null, programme: 'STEAM', fromDate: null, toDate: null, products: [] },
     })
     expect(slices.filteredDispatches.map((d) => d.id)).toEqual(['D1'])
   })
@@ -202,7 +202,7 @@ describe('buildStatCards', () => {
   it('returns 6 cards in fixed order', () => {
     const slices = computeSlices({
       mous: [], schools: [], dispatches: [], escalations: [],
-      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null },
+      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null, products: [] },
     })
     const cards = buildStatCards({ slices, schools: [], inventoryItems: [], now: FIXED_NOW })
     expect(cards.map((c) => c.key)).toEqual([
@@ -216,7 +216,7 @@ describe('buildStatCards', () => {
     const m2 = mou({ id: 'M2', status: 'Pending Signature' })
     const slices = computeSlices({
       mous: [m1, m2], schools: [], dispatches: [], escalations: [],
-      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null },
+      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null, products: [] },
     })
     const [registry] = buildStatCards({ slices, schools: [], inventoryItems: [], now: FIXED_NOW })
     expect(registry!.primary).toBe(2)
@@ -229,7 +229,7 @@ describe('buildStatCards', () => {
     const e3 = esc({ id: 'E3', status: 'Closed', severity: 'high' })
     const slices = computeSlices({
       mous: [mou()], schools: [], dispatches: [], escalations: [e1, e2, e3],
-      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null },
+      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null, products: [] },
     })
     const cards = buildStatCards({ slices, schools: [], inventoryItems: [], now: FIXED_NOW })
     const escalations = cards.find((c) => c.key === 'escalations')!
@@ -244,7 +244,7 @@ describe('buildStatCards', () => {
     const i3 = inv({ id: 'I3', currentStock: 50, reorderThreshold: null })
     const slices = computeSlices({
       mous: [], schools: [], dispatches: [], escalations: [],
-      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null },
+      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null, products: [] },
     })
     const cards = buildStatCards({ slices, schools: [], inventoryItems: [i1, i2, i3], now: FIXED_NOW })
     const inventory = cards.find((c) => c.key === 'inventory')!
@@ -257,7 +257,7 @@ describe('buildStatCards', () => {
     const s1 = school({ id: 'SCH-1', createdAt: '2026-05-03T10:00:00Z' })
     const slices = computeSlices({
       mous: [m], schools: [s1], dispatches: [], escalations: [],
-      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null },
+      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null, products: [] },
     })
     const cards = buildStatCards({ slices, schools: [s1], inventoryItems: [], now: FIXED_NOW })
     const active = cards.find((c) => c.key === 'active-schools')!
@@ -294,7 +294,7 @@ describe('buildRecentMouUpdates', () => {
     })
     const slices = computeSlices({
       mous: [m1, m2], schools: [], dispatches: [], escalations: [],
-      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null },
+      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null, products: [] },
     })
     const rows = buildRecentMouUpdates({ slices, salesTeam: [] })
     expect(rows.map((r) => r.mouId)).toEqual(['M2', 'M1'])
@@ -307,7 +307,7 @@ describe('buildRecentMouUpdates', () => {
     }))
     const slices = computeSlices({
       mous, schools: [], dispatches: [], escalations: [],
-      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null },
+      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null, products: [] },
     })
     const rows = buildRecentMouUpdates({ slices, salesTeam: [] })
     expect(rows).toHaveLength(6)
@@ -318,7 +318,7 @@ describe('buildRecentMouUpdates', () => {
     const m2 = mou({ id: 'M2' })
     const slices = computeSlices({
       mous: [m1, m2], schools: [], dispatches: [], escalations: [],
-      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null },
+      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null, products: [] },
     })
     expect(buildRecentMouUpdates({ slices, salesTeam: [], limit: 1 })).toHaveLength(1)
   })
@@ -327,7 +327,7 @@ describe('buildRecentMouUpdates', () => {
     const m = mou({ id: 'M1', salesPersonId: 'sp-r' })
     const slices = computeSlices({
       mous: [m], schools: [], dispatches: [], escalations: [],
-      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null },
+      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null, products: [] },
     })
     const rows = buildRecentMouUpdates({ slices, salesTeam: [rep('sp-r', 'Roveena Mendes')] })
     expect(rows[0]!.ownerName).toBe('Roveena Mendes')
@@ -338,7 +338,7 @@ describe('buildRecentMouUpdates', () => {
     const m = mou({ id: 'M1', salesPersonId: null })
     const slices = computeSlices({
       mous: [m], schools: [], dispatches: [], escalations: [],
-      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null },
+      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null, products: [] },
     })
     const rows = buildRecentMouUpdates({ slices, salesTeam: [] })
     expect(rows[0]!.ownerName).toBe('unassigned')
@@ -353,7 +353,7 @@ describe('buildRecentMouUpdates', () => {
     })
     const slices = computeSlices({
       mous: [m], schools: [], dispatches: [], escalations: [],
-      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null },
+      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null, products: [] },
     })
     const rows = buildRecentMouUpdates({ slices, salesTeam: [] })
     expect(rows[0]!.lastAction).toBe('pi-issued')
@@ -365,7 +365,7 @@ describe('buildActionCenter', () => {
   it('returns 5 tiles in fixed order', () => {
     const slices = computeSlices({
       mous: [], schools: [], dispatches: [], escalations: [],
-      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null },
+      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null, products: [] },
     })
     const data = buildActionCenter({
       slices, dispatchRequests: [], inventoryItems: [], now: FIXED_NOW,
@@ -382,7 +382,7 @@ describe('buildActionCenter', () => {
     const e1 = esc({ id: 'E1', status: 'Open', mouId: 'M1' })
     const slices = computeSlices({
       mous: [m1, m2], schools: [], dispatches: [], escalations: [e1],
-      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null },
+      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null, products: [] },
     })
     const data = buildActionCenter({
       slices,
@@ -402,7 +402,7 @@ describe('buildActionCenter', () => {
     const m = mou({ status: 'Pending Signature' })
     const slices = computeSlices({
       mous: [m], schools: [], dispatches: [], escalations: [],
-      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null },
+      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null, products: [] },
     })
     const data = buildActionCenter({
       slices, dispatchRequests: [], inventoryItems: [], now: FIXED_NOW,
@@ -423,7 +423,7 @@ describe('buildOrdersTracker', () => {
     const dDelivered = dispatch({ id: 'D-DELIVERED', mouId: 'M1', stage: 'delivered' })
     const slices = computeSlices({
       mous: [m], schools: [sch], dispatches: [dPending, dShipped, dDelivered], escalations: [],
-      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null },
+      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null, products: [] },
     })
     const rows = buildOrdersTracker({ slices, schools: [sch], mous: [m], now: FIXED_NOW })
     const byId = new Map(rows.map((r) => [r.dispatchId, r]))
@@ -441,7 +441,7 @@ describe('buildOrdersTracker', () => {
     })
     const slices = computeSlices({
       mous: [m], schools: [], dispatches: [d], escalations: [],
-      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null },
+      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null, products: [] },
     })
     const rows = buildOrdersTracker({ slices, schools: [], mous: [m], now: FIXED_NOW })
     expect(rows[0]!.shipmentStatus).toBe('delayed')
@@ -453,7 +453,7 @@ describe('buildOrdersTracker', () => {
     const d = dispatch({ id: 'D-X', mouId: 'M1', schoolId: 'SCH-X' })
     const slices = computeSlices({
       mous: [m], schools: [s], dispatches: [d], escalations: [],
-      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null },
+      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null, products: [] },
     })
     const rows = buildOrdersTracker({ slices, schools: [s], mous: [m], now: FIXED_NOW })
     expect(rows[0]!.schoolName).toBe('Greenwood Intl')
@@ -467,7 +467,7 @@ describe('buildOrdersTracker', () => {
     })
     const slices = computeSlices({
       mous: [m], schools: [], dispatches: [d], escalations: [],
-      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null },
+      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null, products: [] },
     })
     const rows = buildOrdersTracker({ slices, schools: [], mous: [m], now: FIXED_NOW })
     expect(rows[0]!.product).toBe('STEAM kit')
@@ -478,7 +478,7 @@ describe('buildOrdersTracker', () => {
     const ds = Array.from({ length: 12 }, (_, i) => dispatch({ id: `D${i}`, mouId: 'M1' }))
     const slices = computeSlices({
       mous: [m], schools: [], dispatches: ds, escalations: [],
-      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null },
+      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null, products: [] },
     })
     expect(buildOrdersTracker({ slices, schools: [], mous: [m], now: FIXED_NOW, limit: 3 })).toHaveLength(3)
   })
@@ -488,7 +488,7 @@ describe('buildOrdersTracker', () => {
     const d = dispatch({ id: 'D-X', mouId: 'M1' })
     const slices = computeSlices({
       mous: [m], schools: [], dispatches: [d], escalations: [],
-      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null },
+      filters: { fiscalYear: null, programme: null, fromDate: null, toDate: null, products: [] },
     })
     const rows = buildOrdersTracker({ slices, schools: [], mous: [m], now: FIXED_NOW })
     expect(rows[0]!.href).toBe('/mous/M1/dispatch')
@@ -569,5 +569,126 @@ describe('fiscalYearOptions', () => {
 
   it('returns empty array when no MOUs', () => {
     expect(fiscalYearOptions([])).toEqual([])
+  })
+})
+
+// ----------------------------------------------------------------------------
+// Gate 1 Step 4 (MM7): products filter
+// ----------------------------------------------------------------------------
+
+describe('parseDashboardFilters: products', () => {
+  it('returns empty array when products param is absent', () => {
+    expect(parseDashboardFilters({}).products).toEqual([])
+  })
+
+  it('parses CSV string into array', async () => {
+    const { parseDashboardFilters: parse } = await import('./dashboardData')
+    const f = parse({ products: 'Cretile Grade 5,TinkRsynth Mixer PCB' })
+    expect(f.products).toEqual(['Cretile Grade 5', 'TinkRsynth Mixer PCB'])
+  })
+
+  it('accepts repeated query params (Next.js array form)', async () => {
+    const { parseDashboardFilters: parse } = await import('./dashboardData')
+    const f = parse({ products: ['SKU-A', 'SKU-B'] })
+    expect(f.products).toEqual(['SKU-A', 'SKU-B'])
+  })
+})
+
+describe('productOptionsForFilters', () => {
+  it('returns distinct sorted SKUs from inventory + dispatches', async () => {
+    const { productOptionsForFilters } = await import('./dashboardData')
+    const inventoryItems = [inv({ id: 'INV-1', skuName: 'Beta' }), inv({ id: 'INV-2', skuName: 'Alpha' })]
+    const dispatches = [
+      dispatch({
+        id: 'D1',
+        lineItems: [{ kind: 'flat', skuName: 'Gamma', quantity: 1 }],
+      }),
+      dispatch({
+        id: 'D2',
+        lineItems: [{ kind: 'flat', skuName: 'Beta', quantity: 2 }],
+      }),
+    ]
+    expect(productOptionsForFilters({ inventoryItems, dispatches })).toEqual([
+      'Alpha',
+      'Beta',
+      'Gamma',
+    ])
+  })
+
+  it('returns empty array when both sources are empty', async () => {
+    const { productOptionsForFilters } = await import('./dashboardData')
+    expect(productOptionsForFilters({ inventoryItems: [], dispatches: [] })).toEqual([])
+  })
+})
+
+describe('computeSlices: products filter', () => {
+  it('passes a dispatch when at least one line item matches a selected product', () => {
+    const m = mou({ id: 'M1' })
+    const d1 = dispatch({
+      id: 'D1',
+      mouId: 'M1',
+      lineItems: [{ kind: 'flat', skuName: 'Cretile Grade 5', quantity: 1 }],
+    })
+    const d2 = dispatch({
+      id: 'D2',
+      mouId: 'M1',
+      lineItems: [{ kind: 'flat', skuName: 'TinkRsynth Mixer PCB', quantity: 1 }],
+    })
+    const slices = computeSlices({
+      mous: [m],
+      schools: [],
+      dispatches: [d1, d2],
+      escalations: [],
+      filters: {
+        fiscalYear: null,
+        programme: null,
+        fromDate: null,
+        toDate: null,
+        products: ['Cretile Grade 5'],
+      },
+    })
+    expect(slices.filteredDispatches.map((d) => d.id)).toEqual(['D1'])
+  })
+
+  it('drops a dispatch with no matching line item', () => {
+    const m = mou({ id: 'M1' })
+    const d = dispatch({
+      id: 'D1',
+      mouId: 'M1',
+      lineItems: [{ kind: 'flat', skuName: 'Other SKU', quantity: 1 }],
+    })
+    const slices = computeSlices({
+      mous: [m],
+      schools: [],
+      dispatches: [d],
+      escalations: [],
+      filters: {
+        fiscalYear: null,
+        programme: null,
+        fromDate: null,
+        toDate: null,
+        products: ['Cretile Grade 5'],
+      },
+    })
+    expect(slices.filteredDispatches).toHaveLength(0)
+  })
+
+  it('empty products array does not filter', () => {
+    const m = mou({ id: 'M1' })
+    const d = dispatch({ id: 'D1', mouId: 'M1' })
+    const slices = computeSlices({
+      mous: [m],
+      schools: [],
+      dispatches: [d],
+      escalations: [],
+      filters: {
+        fiscalYear: null,
+        programme: null,
+        fromDate: null,
+        toDate: null,
+        products: [],
+      },
+    })
+    expect(slices.filteredDispatches.map((d) => d.id)).toEqual(['D1'])
   })
 })

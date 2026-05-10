@@ -61,7 +61,7 @@ import templatesJson from '@/data/communication_templates.json'
 import escalationsJson from '@/data/escalations.json'
 import usersJson from '@/data/users.json'
 import { getCurrentUser } from '@/lib/auth/session'
-import { canPerform } from '@/lib/auth/permissions'
+import { canGeneratePI } from '@/lib/access'
 import { computeLifecycle } from '@/lib/portal/lifecycleProgress'
 import { formatRs, formatDate } from '@/lib/format'
 import { TopNav } from '@/components/ops/TopNav'
@@ -177,6 +177,13 @@ function CollapsibleCard({
 
 interface PageProps {
   params: Promise<{ mouId: string }>
+  searchParams?: Promise<Record<string, string | string[] | undefined>>
+}
+
+const NOTICE_COPY: Record<string, string> = {
+  'pi-finance-only':
+    'PI generation is a Finance function. If you need a PI raised, please reach out to accounts.',
+  saved: 'Saved. Will reflect everywhere within ~5 minutes.',
 }
 
 function isVisibleToUser(mou: MOU, user: User | null): boolean {
@@ -185,8 +192,11 @@ function isVisibleToUser(mou: MOU, user: User | null): boolean {
   return true
 }
 
-export default async function MouDetailPage({ params }: PageProps) {
+export default async function MouDetailPage({ params, searchParams }: PageProps) {
   const { mouId } = await params
+  const sp = (await searchParams) ?? {}
+  const noticeKey = typeof sp.notice === 'string' ? sp.notice : null
+  const noticeMessage = noticeKey ? NOTICE_COPY[noticeKey] ?? null : null
   const user = await getCurrentUser()
   const mou = allMous.find((m) => m.id === mouId)
   if (!mou || !isVisibleToUser(mou, user)) {
@@ -203,10 +213,12 @@ export default async function MouDetailPage({ params }: PageProps) {
   const i1Dispatch = installmentDispatches.find((d) => d.installmentSeq === 1)
   const i1Feedback = mouFeedback.find((f) => f.installmentSeq === 1)
   const intakeRecord = allIntakeRecords.find((r) => r.mouId === mou.id)
-  // W4-I.4 MM2: hide the PI action button from roles that lack the
-  // matrix grant (everyone except Finance + Admin). Server-side gate
-  // in lib/pi/generatePi.ts and the PI page route still enforce.
-  const canGeneratePi = user ? canPerform(user, 'mou:generate-pi') : false
+  // Gate 1 Step 4 (MM2): hide the PI action button from roles that
+  // lack the canGeneratePI department gate. canGeneratePI catches the
+  // dept-scoped Admin case (Misba: Admin role + ops department) that
+  // the canPerform wildcard would miss. Server-side canPerform at
+  // lib/pi/generatePi.ts stays as defence in depth.
+  const canGeneratePi = user ? canGeneratePI(user) : false
 
   const smartSuggestions = getSmartTemplateSuggestions({
     mou,
@@ -246,6 +258,20 @@ export default async function MouDetailPage({ params }: PageProps) {
             { label: mou.id },
           ]}
         />
+
+        {noticeMessage ? (
+          <div className="border-b border-border bg-amber-50">
+            <div
+              className="mx-auto flex max-w-screen-xl items-start gap-2 px-4 py-3 text-sm text-amber-900"
+              role="status"
+              data-testid="mou-detail-notice"
+              data-notice={noticeKey}
+            >
+              <Info aria-hidden className="size-4 shrink-0 text-amber-700" />
+              <span>{noticeMessage}</span>
+            </div>
+          </div>
+        ) : null}
 
         {/* Sticky action bar. md+ sticks below TopNav (top-12 = 48px
             matches TopNav min-h-12). Mobile leaves it static so the

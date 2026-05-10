@@ -24,6 +24,11 @@ const allMous = mousJson as unknown as MOU[]
 
 interface PageProps {
   params: Promise<{ schoolId: string }>
+  searchParams?: Promise<Record<string, string | string[] | undefined>>
+}
+
+const NOTICE_COPY: Record<string, string> = {
+  saved: 'Saved. Will reflect everywhere within ~5 minutes.',
 }
 
 function canEdit(user: User | null): boolean {
@@ -33,8 +38,11 @@ function canEdit(user: User | null): boolean {
   return false
 }
 
-export default async function SchoolDetailPage({ params }: PageProps) {
+export default async function SchoolDetailPage({ params, searchParams }: PageProps) {
   const { schoolId } = await params
+  const sp = (await searchParams) ?? {}
+  const noticeKey = typeof sp.notice === 'string' ? sp.notice : null
+  const noticeMessage = noticeKey ? NOTICE_COPY[noticeKey] ?? null : null
   const school = allSchools.find((s) => s.id === schoolId)
   if (!school) notFound()
 
@@ -56,6 +64,16 @@ export default async function SchoolDetailPage({ params }: PageProps) {
     <>
       <TopNav currentPath="/schools" />
       <main id="main-content">
+        {noticeMessage ? (
+          <div
+            role="status"
+            data-testid="school-detail-notice"
+            data-notice={noticeKey}
+            className="border-b border-border bg-emerald-50 px-4 py-3 text-sm text-emerald-900"
+          >
+            {noticeMessage}
+          </div>
+        ) : null}
         <PageHeader
           title={school.name}
           breadcrumb={[

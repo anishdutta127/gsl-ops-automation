@@ -54,8 +54,11 @@ export async function POST(request: Request, { params }: RouteParams) {
 
   // Build a patch from the form fields. Required text fields stay as
   // strings (the lib enforces non-empty); optional fields normalise
-  // empty -> null. gstNumber is included unconditionally; the lib drops
-  // it when the caller is not Finance/Admin.
+  // empty -> null. Finance-only fields (gstNumber, pan, billingName)
+  // are only included when the form actually sent them; the edit page
+  // hides those inputs for non-Finance editors per
+  // src/lib/schoolFieldConfig.ts. Omitting them from the patch
+  // preserves the existing School value (Ops save does not wipe).
   const patch: EditSchoolPatch = {
     name: required(form.get('name')),
     legalEntity: nullable(form.get('legalEntity')),
@@ -66,14 +69,16 @@ export async function POST(request: Request, { params }: RouteParams) {
     contactPerson: nullable(form.get('contactPerson')),
     email: nullable(form.get('email')),
     phone: nullable(form.get('phone')),
-    billingName: nullable(form.get('billingName')),
-    pan: nullable(form.get('pan')),
     notes: nullable(form.get('notes')),
   }
-  // Only include gstNumber when the form actually sent the field.
-  // Hidden field would be absent for non-Finance/non-Admin users.
   if (form.has('gstNumber')) {
     patch.gstNumber = nullable(form.get('gstNumber'))
+  }
+  if (form.has('pan')) {
+    patch.pan = nullable(form.get('pan'))
+  }
+  if (form.has('billingName')) {
+    patch.billingName = nullable(form.get('billingName'))
   }
   // Checkboxes are absent from FormData when unchecked; treat that
   // as active=false so the deactivate flow works through the form.
@@ -87,5 +92,6 @@ export async function POST(request: Request, { params }: RouteParams) {
   if (!result.ok) return errorTo(result.reason)
 
   const url = new URL(`/schools/${id}`, request.url)
+  url.searchParams.set('notice', 'saved')
   return NextResponse.redirect(url, { status: 303 })
 }

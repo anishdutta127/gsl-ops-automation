@@ -38,7 +38,11 @@ describe('POST /api/schools/[id] (W4-I.4 MM4)', () => {
       name: 'New', city: 'Pune', state: 'MH', region: 'South-West',
     }), ctx)
     expect(res.status).toBe(303)
-    expect(res.headers.get('location')).toBe('http://localhost/schools/SCH-X')
+    // Gate 1 Step 4 (MM4): success redirect carries ?notice=saved so
+    // the school detail surfaces the honest toast.
+    expect(res.headers.get('location')).toBe(
+      'http://localhost/schools/SCH-X?notice=saved',
+    )
   })
 
   it('passes school id from route param to editSchool', async () => {

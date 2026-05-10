@@ -21,6 +21,7 @@ import { notFound, redirect } from 'next/navigation'
 import type { School } from '@/lib/types'
 import schoolsJson from '@/data/schools.json'
 import { getCurrentUser } from '@/lib/auth/session'
+import { canEditFinanceSchoolFields } from '@/lib/schoolFieldConfig'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 
@@ -59,11 +60,14 @@ export default async function SchoolEditPage({ params, searchParams }: PageProps
   if (!user) redirect(`/login?next=%2Fschools%2F${encodeURIComponent(schoolId)}%2Fedit`)
   const school = allSchools.find((s) => s.id === schoolId)
   if (!school) notFound()
-  // W4-I.4 MM4: GSTIN visibility mirrors the editSchool lib's
-  // canEditGstin() rule (Finance + Admin only). The lib drops the
-  // field server-side when caller lacks the role; hiding the input
-  // here keeps the UI consistent with that rule.
-  const canSeeGstin = user.role === 'Admin' || user.role === 'Finance'
+  // Gate 1 Step 4 (MM4 extended): GSTIN + PAN + billing block hidden
+  // from non-Finance editors per the brief, via the shared rule in
+  // src/lib/schoolFieldConfig.ts. canEditFinanceSchoolFields wraps
+  // canEditFinanceData (department gate). Misba (Admin role + ops
+  // department) reads as non-Finance and gets all three fields
+  // stripped from the form. The route preserves the existing values
+  // on save so an Ops save does not wipe them.
+  const canSeeFinanceFields = canEditFinanceSchoolFields(user)
   const errorKey = typeof sp.error === 'string' ? sp.error : null
   const errorMessage = errorKey ? ERROR_MESSAGES[errorKey] ?? `Failed: ${errorKey}` : null
 
@@ -136,24 +140,26 @@ export default async function SchoolEditPage({ params, searchParams }: PageProps
                 <label htmlFor="phone" className={FIELD_LABEL_CLASS}>Phone</label>
                 <input id="phone" name="phone" type="tel" defaultValue={school.phone ?? ''} className={FIELD_INPUT_CLASS} />
               </div>
-              <div>
-                <label htmlFor="billingName" className={FIELD_LABEL_CLASS}>Billing name</label>
-                <input id="billingName" name="billingName" type="text" defaultValue={school.billingName ?? ''} className={FIELD_INPUT_CLASS} />
-              </div>
+              {canSeeFinanceFields ? (
+                <div>
+                  <label htmlFor="billingName" className={FIELD_LABEL_CLASS}>Billing name</label>
+                  <input id="billingName" name="billingName" type="text" defaultValue={school.billingName ?? ''} className={FIELD_INPUT_CLASS} />
+                </div>
+              ) : null}
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div>
-                <label htmlFor="pan" className={FIELD_LABEL_CLASS}>PAN</label>
-                <input id="pan" name="pan" type="text" defaultValue={school.pan ?? ''} className={FIELD_INPUT_CLASS} />
-              </div>
-              {canSeeGstin ? (
+            {canSeeFinanceFields ? (
+              <div className="grid gap-4 sm:grid-cols-2" data-testid="school-edit-finance-fields">
+                <div>
+                  <label htmlFor="pan" className={FIELD_LABEL_CLASS}>PAN</label>
+                  <input id="pan" name="pan" type="text" defaultValue={school.pan ?? ''} className={FIELD_INPUT_CLASS} />
+                </div>
                 <div>
                   <label htmlFor="gstNumber" className={FIELD_LABEL_CLASS}>GSTIN</label>
                   <input id="gstNumber" name="gstNumber" type="text" defaultValue={school.gstNumber ?? ''} className={FIELD_INPUT_CLASS} />
                 </div>
-              ) : null}
-            </div>
+              </div>
+            ) : null}
 
             <div>
               <label htmlFor="notes" className={FIELD_LABEL_CLASS}>Notes</label>

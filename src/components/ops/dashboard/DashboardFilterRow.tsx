@@ -30,11 +30,17 @@ export interface DashboardFilterRowProps {
   activeProgramme: Programme | null
   /** Path the form posts to (defaults to '/dashboard'; P2C5 will swap to '/'). */
   basePath?: string
+  /** Distinct product names available for the MM7 product filter. */
+  productOptions?: string[]
+  /** Active product names from URL. Empty array = no filter. */
+  activeProducts?: string[]
 }
 
 export function DashboardFilterRow({
   activeProgramme,
   basePath = '/dashboard',
+  productOptions = [],
+  activeProducts = [],
 }: DashboardFilterRowProps) {
   // Each chip is a radio input visually styled as a pill button. The
   // 'all' chip carries no programme value (so it submits as no
@@ -56,33 +62,56 @@ export function DashboardFilterRow({
           action={basePath}
           className="flex flex-wrap items-center justify-between gap-3"
         >
-          <fieldset className="flex flex-wrap items-center gap-2">
-            <legend className="sr-only">Programme filter</legend>
-            {chips.map((c) => {
-              const checked = c.value === '' ? activeProgramme === null : activeProgramme === c.value
-              return (
-                <label
-                  key={c.key}
-                  className={
-                    'inline-flex cursor-pointer items-center rounded-full border px-3 py-1.5 text-xs font-medium transition focus-within:ring-2 focus-within:ring-brand-navy '
-                    + (checked
-                      ? 'border-brand-navy bg-brand-navy text-white'
-                      : 'border-border bg-card text-foreground hover:bg-muted')
-                  }
-                  data-testid={`dashboard-chip-${c.key}`}
+          <div className="flex flex-wrap items-center gap-3">
+            <fieldset className="flex flex-wrap items-center gap-2">
+              <legend className="sr-only">Programme filter</legend>
+              {chips.map((c) => {
+                const checked = c.value === '' ? activeProgramme === null : activeProgramme === c.value
+                return (
+                  <label
+                    key={c.key}
+                    className={
+                      'inline-flex cursor-pointer items-center rounded-full border px-3 py-1.5 text-xs font-medium transition focus-within:ring-2 focus-within:ring-brand-navy '
+                      + (checked
+                        ? 'border-brand-navy bg-brand-navy text-white'
+                        : 'border-border bg-card text-foreground hover:bg-muted')
+                    }
+                    data-testid={`dashboard-chip-${c.key}`}
+                  >
+                    <input
+                      type="radio"
+                      name="programme"
+                      value={c.value}
+                      defaultChecked={checked}
+                      className="sr-only"
+                    />
+                    {c.label}
+                  </label>
+                )
+              })}
+            </fieldset>
+            {productOptions.length > 0 ? (
+              <label
+                className="inline-flex items-center gap-2 text-xs font-medium text-foreground"
+                data-testid="dashboard-product-filter"
+              >
+                <span className="sr-only">Product filter</span>
+                <span aria-hidden>Products</span>
+                <select
+                  name="products"
+                  multiple
+                  defaultValue={activeProducts}
+                  size={Math.min(4, productOptions.length)}
+                  className="min-w-[12rem] rounded-md border border-border bg-card px-2 py-1 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-brand-navy"
+                  data-testid="dashboard-product-select"
                 >
-                  <input
-                    type="radio"
-                    name="programme"
-                    value={c.value}
-                    defaultChecked={checked}
-                    className="sr-only"
-                  />
-                  {c.label}
-                </label>
-              )
-            })}
-          </fieldset>
+                  {productOptions.map((p) => (
+                    <option key={p} value={p}>{p}</option>
+                  ))}
+                </select>
+              </label>
+            ) : null}
+          </div>
           <div className="flex items-center gap-2">
             <button
               type="submit"

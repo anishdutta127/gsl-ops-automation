@@ -45,6 +45,12 @@ export interface DashboardFilters {
   programme: Programme | null    // null = no filter
   fromDate: string | null        // ISO yyyy-mm-dd or null (open-ended)
   toDate: string | null          // ISO yyyy-mm-dd or null (open-ended)
+  /**
+   * Gate 1 Step 4 (MM7): product-wise filter for cross-cutting views.
+   * Empty array = no filter. Each entry is a product name from
+   * inventory + dispatch records (productOptionsForFilters helper).
+   */
+  products: string[]
 }
 
 export const PROGRAMME_OPTIONS: ReadonlyArray<Programme> = [
@@ -78,7 +84,40 @@ export function parseDashboardFilters(
   const toDate = typeof sp.toDate === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(sp.toDate)
     ? sp.toDate
     : null
-  return { fiscalYear, programme, fromDate, toDate }
+  const rawProducts = sp.products
+  let products: string[] = []
+  if (Array.isArray(rawProducts)) {
+    products = rawProducts.filter((v): v is string => typeof v === 'string' && v.trim() !== '')
+  } else if (typeof rawProducts === 'string' && rawProducts.trim() !== '') {
+    products = rawProducts.split(',').map((s) => s.trim()).filter(Boolean)
+  }
+  return { fiscalYear, programme, fromDate, toDate, products }
+}
+
+/**
+ * Distinct SKU names available for the MM7 product-wise filter.
+ * Sourced from inventory items (the W4-G master) plus dispatch line
+ * items (covers any historical SKU not yet captured in inventory).
+ * Sorted alphabetically for predictable filter-dropdown ordering.
+ *
+ * "Product" in the brief maps to the W4-G + W4-D `skuName` field; the
+ * filter UI calls them products to match Misba's wording while the
+ * data layer continues to key off skuName.
+ */
+export function productOptionsForFilters(args: {
+  inventoryItems: InventoryItem[]
+  dispatches: Dispatch[]
+}): string[] {
+  const set = new Set<string>()
+  for (const item of args.inventoryItems) {
+    if (item.skuName.trim()) set.add(item.skuName.trim())
+  }
+  for (const d of args.dispatches) {
+    for (const li of d.lineItems) {
+      if (li.skuName.trim()) set.add(li.skuName.trim())
+    }
+  }
+  return Array.from(set).sort((a, b) => a.localeCompare(b))
 }
 
 // ----------------------------------------------------------------------------
@@ -132,7 +171,10 @@ export function computeSlices(input: DashboardSliceInputs): DashboardSlices {
   const filteredSchoolIds = new Set(filteredMous.map((m) => m.schoolId))
 
   // Dispatches inherit MOU's filter scope (filtered MOU id), and additionally
-  // gate on poRaisedAt within the date range when one is set.
+  // gate on poRaisedAt within the date range when one is set. Gate 1 Step 4
+  // (MM7) folds in a products filter: when filters.products is non-empty,
+  // only dispatches that include at least one matching SKU pass.
+  const productFilter = new Set(filters.products)
   const filteredDispatches = dispatches.filter((d) => {
     if (d.mouId === null) return false
     if (!filteredMouIds.has(d.mouId)) return false
@@ -141,6 +183,10 @@ export function computeSlices(input: DashboardSliceInputs): DashboardSlices {
         // Allow dispatches without a poRaisedAt only when no range is set.
         if (d.poRaisedAt !== null) return false
       }
+    }
+    if (productFilter.size > 0) {
+      const matched = d.lineItems.some((li) => productFilter.has(li.skuName.trim()))
+      if (!matched) return false
     }
     return true
   })

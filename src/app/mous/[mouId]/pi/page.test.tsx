@@ -4,9 +4,13 @@ import type { User } from '@/lib/types'
 
 const getCurrentUserMock = vi.fn()
 const notFoundMock = vi.fn(() => { throw new Error('NEXT_NOT_FOUND') })
+const redirectMock = vi.fn((url: string) => { throw new Error(`NEXT_REDIRECT:${url}`) })
 
 vi.mock('@/lib/auth/session', () => ({ getCurrentUser: () => getCurrentUserMock() }))
-vi.mock('next/navigation', () => ({ notFound: () => notFoundMock() }))
+vi.mock('next/navigation', () => ({
+  notFound: () => notFoundMock(),
+  redirect: (url: string) => redirectMock(url),
+}))
 vi.mock('@/components/ops/TopNav', () => ({ TopNav: () => null }))
 
 beforeEach(() => { vi.clearAllMocks() })
@@ -30,32 +34,49 @@ describe('/mous/[mouId]/pi page', () => {
     expect(html).toContain('Generate PI')
   })
 
-  it('SalesRep on own MOU now 404s (W4-I.4 MM2: PI gated to Finance + Admin)', async () => {
-    // Pre-W4-I.4 the W3-B "every user sees every page" baseline let
-    // SalesRep render the PI form even though canPerform() rejected
-    // the submit. MM2 re-gates the page so PI is invisible to non-
-    // Finance / non-Admin roles.
+  it('SalesRep on own MOU redirects with notice (Gate 1 Step 4 MM2)', async () => {
+    // Gate 1 Step 4 changes the PI gate from notFound() to a redirect
+    // back to the MOU detail page with a ?notice=pi-finance-only param,
+    // so the user sees an explanatory toast instead of a bare 404. The
+    // canGeneratePI department gate fires (SalesRep has dept='sales',
+    // not 'finance').
     getCurrentUserMock.mockResolvedValue(user('SalesRep', 'sp-roveena'))
     const { default: Page } = await import('./page')
     await expect(
       Page({ params: Promise.resolve({ mouId: 'MOU-STEAM-2627-001' }) }),
-    ).rejects.toThrow('NEXT_NOT_FOUND')
+    ).rejects.toThrow(/NEXT_REDIRECT:\/mous\/MOU-STEAM-2627-001\?notice=pi-finance-only/)
   })
 
-  it('OpsHead 404s (W4-I.4 MM2: PI gated to Finance + Admin)', async () => {
+  it('OpsHead redirects with notice (Gate 1 Step 4 MM2)', async () => {
     getCurrentUserMock.mockResolvedValue(user('OpsHead', 'misba.m'))
     const { default: Page } = await import('./page')
     await expect(
       Page({ params: Promise.resolve({ mouId: 'MOU-STEAM-2627-001' }) }),
-    ).rejects.toThrow('NEXT_NOT_FOUND')
+    ).rejects.toThrow(/NEXT_REDIRECT:\/mous\/MOU-STEAM-2627-001\?notice=pi-finance-only/)
   })
 
-  it('OpsEmployee 404s (W4-I.4 MM2: PI gated to Finance + Admin)', async () => {
+  it('OpsEmployee redirects with notice (Gate 1 Step 4 MM2)', async () => {
     getCurrentUserMock.mockResolvedValue(user('OpsEmployee', 'ops-emp.x'))
     const { default: Page } = await import('./page')
     await expect(
       Page({ params: Promise.resolve({ mouId: 'MOU-STEAM-2627-001' }) }),
-    ).rejects.toThrow('NEXT_NOT_FOUND')
+    ).rejects.toThrow(/NEXT_REDIRECT:\/mous\/MOU-STEAM-2627-001\?notice=pi-finance-only/)
+  })
+
+  it('Admin role with department=ops redirects (Misba MM2 canonical case)', async () => {
+    // The trusted-core-team Admin promotion (2026-04-27) made Misba
+    // role=Admin; her MM2 redirect comes from her department='ops'.
+    // canGeneratePI sees Admin + non-null department and treats her
+    // as department-scoped, not as the cross-functional wildcard.
+    const misba: User = {
+      ...user('Admin', 'misba.m'),
+      department: 'ops',
+    }
+    getCurrentUserMock.mockResolvedValue(misba)
+    const { default: Page } = await import('./page')
+    await expect(
+      Page({ params: Promise.resolve({ mouId: 'MOU-STEAM-2627-001' }) }),
+    ).rejects.toThrow(/NEXT_REDIRECT:\/mous\/MOU-STEAM-2627-001\?notice=pi-finance-only/)
   })
 
   it('no longer renders the Phase 1 stub note (W4-B.4: stale; API is wired)', async () => {

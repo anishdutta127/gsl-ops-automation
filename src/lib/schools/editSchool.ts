@@ -28,20 +28,18 @@ import schoolsJson from '@/data/schools.json'
 import usersJson from '@/data/users.json'
 import { canPerform } from '@/lib/auth/permissions'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
+import {
+  FINANCE_ONLY_SCHOOL_FIELDS,
+  canEditFinanceSchoolFields,
+} from '@/lib/schoolFieldConfig'
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const PIN_PATTERN = /^\d{6}$/
 const PAN_PATTERN = /^[A-Z]{5}\d{4}[A-Z]$/
 const GST_PATTERN = /^\d{2}[A-Z]{5}\d{4}[A-Z]\d[A-Z]\d$/
 
-/**
- * Roles permitted to view + mutate gstNumber. Mirrors the
- * 'mou:generate-pi' grant set (Finance + Admin) because GSTIN is the
- * Finance-side field that PI generation depends on.
- */
-function canEditGstin(user: User): boolean {
-  return user.role === 'Admin' || user.role === 'Finance'
-}
+// canEditGstin retired Gate 1 Step 4 in favour of canEditFinanceSchoolFields
+// from schoolFieldConfig.ts (department-aware; Misba MM2 + MM4 cases).
 
 /**
  * Patch-able fields. id, createdAt, auditLog are not editable via this
@@ -130,13 +128,16 @@ export async function editSchool(
   const existing = deps.schools.find((s) => s.id === args.id)
   if (!existing) return { ok: false, reason: 'school-not-found' }
 
-  // Drop gstNumber from the patch when the caller cannot edit it. This
-  // keeps the form-hide and the server-side rule consistent without
-  // failing the request loudly (the page hides the field; a stale
-  // browser tab could still submit one).
+  // Drop Finance-only fields from the patch when the caller cannot
+  // edit them (defence in depth: the form already hides the inputs,
+  // but a stale browser tab could still submit one). The shared
+  // FINANCE_ONLY_SCHOOL_FIELDS list keeps the form / route / lib in
+  // sync.
   const patch: EditSchoolPatch = { ...args.patch }
-  if (!canEditGstin(user)) {
-    delete patch.gstNumber
+  if (!canEditFinanceSchoolFields(user)) {
+    for (const field of FINANCE_ONLY_SCHOOL_FIELDS) {
+      delete patch[field]
+    }
   }
 
   const next: School = { ...existing }
