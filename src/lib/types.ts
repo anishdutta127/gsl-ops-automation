@@ -249,11 +249,32 @@ export type UserRole =
   | 'Finance'
   | 'TrainerHead'
 
+/**
+ * Workflow-stage department a user belongs to. Independent of `role`:
+ * the post-2026-04-27 trusted core team are all Admin role but their
+ * department field reflects the real-world function they exercise
+ * during the pilot (Misba = ops, Shubhangi = finance, etc.). Admin
+ * and Leadership map to null; a null department reads as "sees all
+ * stages" through the wildcard branches in lib/access.ts. See
+ * docs/role-decisions.md "2026-05-10: Gate 1 department backfill"
+ * for the per-user rationale.
+ */
+export type Department = 'sales' | 'ops' | 'finance' | null
+
 export interface User {
   id: string                                    // GSL ID convention: email-prefix (e.g., 'anish.d')
   name: string
   email: string                                 // for outbound notifications, magic-link issuance
   role: UserRole                                // base role
+  /**
+   * Workflow-stage department. Optional on the type to keep the
+   * pre-Gate-1 test corpus compiling; lib/access.ts getDepartment()
+   * falls back to defaultDepartmentForRole(user.role) when this
+   * field is undefined. Production user records (src/data/users.json
+   * and src/data/_fixtures/users.json) always set the field
+   * explicitly post Gate 1 Step 2.
+   */
+  department?: Department
   testingOverride: boolean                      // default false; only Misba is true at fixture seed
   testingOverridePermissions?: UserRole[]       // present iff testingOverride is true
   active: boolean

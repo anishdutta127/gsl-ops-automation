@@ -6,6 +6,41 @@ Architecture decisions live alongside role decisions in this file when they shap
 
 ---
 
+## 2026-05-10: Gate 1 department backfill (workflow-stage scoping)
+
+**Decision:** Every User in `src/data/users.json` and `src/data/_fixtures/users.json` gets an explicit `department` field, set per the trusted core team's real-world function rather than their (Admin) role. Per-user mapping:
+
+| User | Role | Department | Rationale |
+|---|---|---|---|
+| `anish.d` | Admin | `null` | Cross-functional Admin wildcard. |
+| `ameet.z` | Admin (was Leadership) | `null` | Leadership posture preserved through department; views all stages, edits limited per gate. |
+| `pratik.d` | Admin (was SalesHead) | `'sales'` | Sales head function; canEditMOU + canApproveDispatch fire. |
+| `vishwanath.g` | Admin (was SalesRep) | `'sales'` | Sales rep function; same gates as Pratik. |
+| `misba.m` | Admin (was OpsEmployee) | `'ops'` | Ops function; the canonical Misba MM2 redirect case (PI gen blocked by department even though role is Admin). |
+| `pradeep.r` | Admin (was OpsHead) | `'ops'` | Ops head function. |
+| `swati.p` | Admin (created Admin) | `'ops'` | Operating as Ops in the pilot per swati-feedback work; refactor commits on the current branch confirm her workflow. |
+| `shubhangi.g` | Admin (was Finance) | `'finance'` | Accounts lead per gsl-mou-system CLAUDE.md. |
+| `pranav.b` | Admin (was Finance) | `'finance'` | Accounts per gsl-mou-system CLAUDE.md. |
+| `shashank.s` | Admin (was TrainerHead) | `'ops'` | Provisional per MERGE_PLAN.md §7.3; Academics is treated as part of operational execution under Pradeep + Shashank. Re-visit at Gate 4 when training rollout becomes a first-class module. |
+| `gowri.r` | Admin (created Admin) | `null` | No prior real-world role tagged in earlier docs; defaults to cross-functional Admin until corrected. |
+| `anita.c` | Admin (created Admin) | `'finance'` | Anita is "accounts" per gsl-mou-system CLAUDE.md "Primary users"; aligning department to her real function. |
+
+**Trade-off accepted:** Misba can no longer bypass `canGeneratePI` via her Admin role. This is the brief's explicit design (MM2 acceptance criterion) and is the correct outcome: the Ops user must be redirected from `/mous/[id]/pi` even during testing. If a testing scenario needs Misba to exercise PI generation, set her department to `null` for that session via `/admin/users` (the one-line flip pattern).
+
+**Alternative considered:** keeping Admin role as full wildcard (the role-decisions 2026-04-27 implication). Rejected because MM2 explicitly wants Ops users blocked from PI generation; under the wildcard reading, Misba would not hit the redirect.
+
+**Field shape:** `department?: 'sales' | 'ops' | 'finance' | null`. Optional on the User type to keep the pre-Gate-1 test corpus compiling without 104 fixture-site rewrites; `getDepartment(user)` falls back to `defaultDepartmentForRole(user.role)` when undefined. Production user records always set the field explicitly.
+
+**Phase 2 trigger:** the role-design conversation post-pilot revisits Admin-role separation-of-duties; at that point the department field becomes the primary axis and Admin role can collapse to "Admin / non-Admin" as a meta-distinction (canManageUsers, canViewAllAuditLogs).
+
+**References:**
+- `src/lib/access.ts`: department-aware VIEW + EDIT gates with TESTING_OPEN_ACCESS toggle.
+- `src/lib/access.test.ts`: 64 tests covering every helper × every role × testing-mode toggle.
+- `CLAUDE.md` "Department system" + "Testing-vs-production access defaults": canonical reference card.
+- `docs/MERGE_PLAN.md` §7: open questions around role mapping (TrainerHead, Premium-Sales, Accounts).
+
+---
+
 ## 2026-04-27: Trusted core team granted Admin (Pradeep, Misba, Swati, Shashank)
 
 **Decision:** Five of the ten testers are granted the `Admin` role rather than their nominal functional role per Anish's directive on 2026-04-27. Specifically:

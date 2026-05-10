@@ -20,6 +20,39 @@ Full project context and CEO-approved scope live in `ops-data/GSL_Ops_Handoff.md
 - All writes go through the GitHub Contents API queue (pattern inherited from `gsl-mou-system`)
 - Single-tenant. No multi-tenant tax. `config/company.json` holds the identity bundle.
 
+## Department system
+
+Gate 1 Step 2 introduced a workflow-stage department on every User. The field is independent of `role`: the trusted core team carries `role: 'Admin'` per the 2026-04-27 promotion (`docs/role-decisions.md`) but their `department` reflects the real-world function they exercise during the pilot.
+
+| Department | Workflow stages | Role mapping at user-creation time |
+|---|---|---|
+| `'sales'` | Pipeline, Active MOUs, dispatch approval, school master edits | `SalesHead`, `SalesRep` |
+| `'ops'` | Operations (schools, escalations, VEX, vendors, inventory), dispatch raise, training rollout | `OpsHead`, `OpsEmployee`, `TrainerHead` (provisional, see MERGE_PLAN.md §7.3) |
+| `'finance'` | PI generation, payment matching, Tally export, adjustments, dispatch execution | `Finance` |
+| `null` | All stages (cross-functional Admin or Leadership) | `Admin`, `Leadership` |
+
+The seed mapping is enforced by `defaultDepartmentForRole(role)` in `src/lib/access.ts`; post-seed the field is editable per user. Production user records live in `src/data/users.json` and `src/data/_fixtures/users.json` with the field set explicitly. Pre-Gate-1 test fixtures may omit the field; `getDepartment(user)` falls back to the role default in that case.
+
+Two-layer access model:
+
+- **Layer 1, `src/lib/access.ts`**: department-level VIEW + EDIT gates. Surface-level checks for navigation visibility, page guards, primary-action affordances. The single source of truth for department-aware gating; ad-hoc role checks elsewhere are a smell, refactor through this file.
+- **Layer 2, `src/lib/auth/permissions.ts`**: action-level `canPerform(user, action)` for fine-grained mutation gating. Stays as the server-side defence in depth even when Layer 1 opens up in testing mode.
+
+EDIT gate semantics: `Admin` with `department: null` is the cross-functional wildcard (Anish, Ameet, Gowri at seed). `Admin` with an explicit department is department-scoped, which is what makes Misba's MM2 redirect work even though her role is Admin: `canGeneratePI(misba)` returns false because her department is `'ops'`, not `'finance'`. `canViewAllAuditLogs` and `canManageUsers` are meta-actions and check role only (Admin / Leadership wildcard regardless of department).
+
+## Testing-vs-production access defaults
+
+`TESTING_OPEN_ACCESS` env var controls VIEW-gate strictness. Defaults to **fail-open for testers** (a missing or empty env var reads as `true`).
+
+| Env value | VIEW gates | EDIT gates |
+|---|---|---|
+| unset, `''`, `'true'`, `'TRUE'` (default) | every active user can see every stage | strict per department, regardless of testing mode |
+| `'false'` (production lockdown) | strict per department; Admin / Leadership are the only cross-cutting roles | strict per department, same as testing mode |
+
+Rationale: pilot testers reported friction when role gates hid functions they needed to internalise the system (W3-B). Opening VIEW gates removes the friction without compromising what the pilot is actually testing for: role / department correctness on EDIT actions. An Ops user must not be able to generate a PI even when discoverability is wide-open. Production lockdown is a one-line env flip.
+
+The default lives in code (not env), so a missing env var fails open for testers, not closed.
+
 ## Inheritance from sibling projects
 
 Reuse verbatim (do not reimplement):
