@@ -18,6 +18,17 @@ import { accentFor } from '@/lib/departmentAccents'
 
 const ENTITIES = [
   {
+    label: 'Kits for Dispatch',
+    href: '/dispatch/kits',
+    description:
+      'Allocate kits per school, route through Sales approval + Accounts execution + POD upload.',
+  },
+  {
+    label: 'Final dispatch summary',
+    href: '/dispatch/kits/summary',
+    description: 'Read-only flat view + CSV export of every kit dispatch.',
+  },
+  {
     label: 'Raise dispatch request',
     href: '/dispatch/request',
     description: 'Sales submits a kit dispatch request to Ops for review.',
