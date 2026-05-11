@@ -30,9 +30,19 @@ const ENTITIES = [
     description: 'Per-SKU stock and reorder thresholds.',
   },
   {
-    label: 'Vendors and agreements',
-    href: '/admin',
-    description: 'NDA + vendor agreements registry (Gate 2 lifts the full registry).',
+    label: 'VEX orders',
+    href: '/operations/vex',
+    description: 'VEX PIs, SKU master, dispatch progression.',
+  },
+  {
+    label: 'Vendors',
+    href: '/operations/vendors',
+    description: 'Vendor master: contacts, GSTIN, banking.',
+  },
+  {
+    label: 'Agreements',
+    href: '/operations/agreements',
+    description: 'NDA and vendor agreement registry with renewal tracking.',
   },
 ]
 
