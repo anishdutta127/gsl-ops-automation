@@ -44,12 +44,32 @@ import dispatchRequestsJson from '@/data/dispatch_requests.json'
 import inventoryItemsJson from '@/data/inventory_items.json'
 import mouImportReviewJson from '@/data/mou_import_review.json'
 import templatesJson from '@/data/communication_templates.json'
+// Gate 3.5 Step 8: Admin landing prepends the Leadership three-section
+// overview + Finance/Ops health tiles before the existing admin
+// toolbox. Data fed from the same canonical files as
+// /dashboard/leadership.
+import mousJson from '@/data/mous.json'
+import paymentsJson from '@/data/payments.json'
+import schoolsJson from '@/data/schools.json'
+import escalationsJson from '@/data/escalations.json'
+import kitDispatchesJson from '@/data/kit_dispatches.json'
 import type {
   CommunicationTemplate,
   DispatchRequest,
   InventoryItem,
+  MOU,
   MouImportReviewItem,
+  Payment,
+  School,
+  Escalation,
+  KitDispatch,
 } from '@/lib/types'
+import {
+  computeAttentionItems,
+  computeDeliveryHealth,
+  computeFinancialHealth,
+} from '@/lib/dashboard/leadershipData'
+import { LeadershipOverview } from '@/components/dashboard/LeadershipOverview'
 import type { SyncHealthEntry } from '@/lib/syncHealth/appendEntry'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
@@ -250,19 +270,64 @@ export default async function AdminIndexPage({ searchParams }: PageProps) {
     },
   ]
 
+  // Gate 3.5 Step 8: compute Leadership overview data to prepend
+  // before the Admin toolbox. Same helpers as /dashboard/leadership
+  // so both surfaces stay in sync.
+  const allMous = (mousJson as unknown as MOU[])
+  const allPayments = (paymentsJson as unknown as Payment[])
+  const allSchools = (schoolsJson as unknown as School[])
+  const allEscalations = (escalationsJson as unknown as Escalation[])
+  const allKitDispatches = (kitDispatchesJson as unknown as KitDispatch[])
+  const now = new Date()
+  const financial = computeFinancialHealth({
+    mous: allMous,
+    payments: allPayments,
+    fy: '2026-27',
+    now,
+  })
+  const delivery = computeDeliveryHealth({
+    mous: allMous,
+    schools: allSchools,
+    escalations: allEscalations,
+    dispatches: allKitDispatches,
+    payments: allPayments,
+    now,
+  })
+  const attention = computeAttentionItems({
+    mous: allMous,
+    schools: allSchools,
+    escalations: allEscalations,
+    dispatches: allKitDispatches,
+    payments: allPayments,
+    now,
+  })
+
   return (
     <>
       <TopNav currentPath="/admin" />
       <main id="main-content">
         <PageHeader
           title="Admin"
-          subtitle={`Welcome, ${user.name}. Pick an area to manage.`}
+          subtitle={`Welcome, ${user.name}. Leadership overview plus the Admin toolbox.`}
           breadcrumb={[
             { label: 'Dashboard', href: '/' },
             { label: 'Admin' },
           ]}
         />
-        <div className="mx-auto max-w-screen-xl space-y-6 px-4 py-6">
+        <div className="mx-auto max-w-screen-xl space-y-6 px-4 py-6" data-testid="admin-landing">
+          {/* Gate 3.5 Step 8: Leadership three-section overview at the
+              top of the Admin landing, followed by the existing Admin
+              toolbox. The overview's two tiles (Finance / Operations
+              health) link to the dedicated dept dashboards. */}
+          <LeadershipOverview
+            financial={financial}
+            delivery={delivery}
+            attention={attention}
+            fyLabel="2026-27"
+          />
+          <h2 className="font-heading text-base font-semibold text-brand-navy" id="admin-toolbox-heading">
+            Admin toolbox
+          </h2>
           {/* System sync panel keeps its dedicated card; the trigger
               forms + flash banners + latest-entry summary do not fit
               the StatCard shape. */}
