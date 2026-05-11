@@ -1,0 +1,172 @@
+[
+  {
+    "stage": "pipeline",
+    "responsibleDepartment": "sales",
+    "responsibleUserId": null,
+    "escalationDepartment": "leadership",
+    "notes": "Sales drafting MOU",
+    "updatedAt": "2026-05-11T00:00:00.000Z",
+    "updatedBy": "gate4.9-seed",
+    "audit": [
+      {
+        "timestamp": "2026-05-11T00:00:00.000Z",
+        "user": "gate4.9-seed",
+        "action": "create",
+        "notes": "Gate 4.9 default seed."
+      }
+    ]
+  },
+  {
+    "stage": "mou-uploaded",
+    "responsibleDepartment": "sales",
+    "responsibleUserId": null,
+    "escalationDepartment": "ops",
+    "notes": "Sales submits signed MOU",
+    "updatedAt": "2026-05-11T00:00:00.000Z",
+    "updatedBy": "gate4.9-seed",
+    "audit": [
+      {
+        "timestamp": "2026-05-11T00:00:00.000Z",
+        "user": "gate4.9-seed",
+        "action": "create",
+        "notes": "Gate 4.9 default seed."
+      }
+    ]
+  },
+  {
+    "stage": "active",
+    "responsibleDepartment": "ops",
+    "responsibleUserId": null,
+    "escalationDepartment": "sales",
+    "notes": "Ops validates data, kits config",
+    "updatedAt": "2026-05-11T00:00:00.000Z",
+    "updatedBy": "gate4.9-seed",
+    "audit": [
+      {
+        "timestamp": "2026-05-11T00:00:00.000Z",
+        "user": "gate4.9-seed",
+        "action": "create",
+        "notes": "Gate 4.9 default seed."
+      }
+    ]
+  },
+  {
+    "stage": "payment-pending",
+    "responsibleDepartment": "finance",
+    "responsibleUserId": null,
+    "escalationDepartment": "sales",
+    "notes": "Finance generates PI",
+    "updatedAt": "2026-05-11T00:00:00.000Z",
+    "updatedBy": "gate4.9-seed",
+    "audit": [
+      {
+        "timestamp": "2026-05-11T00:00:00.000Z",
+        "user": "gate4.9-seed",
+        "action": "create",
+        "notes": "Gate 4.9 default seed."
+      }
+    ]
+  },
+  {
+    "stage": "installment-1-received",
+    "responsibleDepartment": "finance",
+    "responsibleUserId": null,
+    "escalationDepartment": "leadership",
+    "notes": "Finance reconciles payment",
+    "updatedAt": "2026-05-11T00:00:00.000Z",
+    "updatedBy": "gate4.9-seed",
+    "audit": [
+      {
+        "timestamp": "2026-05-11T00:00:00.000Z",
+        "user": "gate4.9-seed",
+        "action": "create",
+        "notes": "Gate 4.9 default seed."
+      }
+    ]
+  },
+  {
+    "stage": "pi-generated",
+    "responsibleDepartment": "finance",
+    "responsibleUserId": null,
+    "escalationDepartment": "ops",
+    "notes": "Finance issues PI for that installment",
+    "updatedAt": "2026-05-11T00:00:00.000Z",
+    "updatedBy": "gate4.9-seed",
+    "audit": [
+      {
+        "timestamp": "2026-05-11T00:00:00.000Z",
+        "user": "gate4.9-seed",
+        "action": "create",
+        "notes": "Gate 4.9 default seed."
+      }
+    ]
+  },
+  {
+    "stage": "dispatch-requested",
+    "responsibleDepartment": "ops",
+    "responsibleUserId": null,
+    "escalationDepartment": "sales",
+    "notes": "Ops allocates kits",
+    "updatedAt": "2026-05-11T00:00:00.000Z",
+    "updatedBy": "gate4.9-seed",
+    "audit": [
+      {
+        "timestamp": "2026-05-11T00:00:00.000Z",
+        "user": "gate4.9-seed",
+        "action": "create",
+        "notes": "Gate 4.9 default seed."
+      }
+    ]
+  },
+  {
+    "stage": "shipment-in-progress",
+    "responsibleDepartment": "ops",
+    "responsibleUserId": null,
+    "escalationDepartment": "finance",
+    "notes": "Ops tracks shipment + uploads POD",
+    "updatedAt": "2026-05-11T00:00:00.000Z",
+    "updatedBy": "gate4.9-seed",
+    "audit": [
+      {
+        "timestamp": "2026-05-11T00:00:00.000Z",
+        "user": "gate4.9-seed",
+        "action": "create",
+        "notes": "Gate 4.9 default seed."
+      }
+    ]
+  },
+  {
+    "stage": "delivered",
+    "responsibleDepartment": "ops",
+    "responsibleUserId": null,
+    "escalationDepartment": "leadership",
+    "notes": "Ops confirms delivery + POD",
+    "updatedAt": "2026-05-11T00:00:00.000Z",
+    "updatedBy": "gate4.9-seed",
+    "audit": [
+      {
+        "timestamp": "2026-05-11T00:00:00.000Z",
+        "user": "gate4.9-seed",
+        "action": "create",
+        "notes": "Gate 4.9 default seed."
+      }
+    ]
+  },
+  {
+    "stage": "closed",
+    "responsibleDepartment": "finance",
+    "responsibleUserId": null,
+    "escalationDepartment": "leadership",
+    "notes": "Finance closes books on completed MOU",
+    "updatedAt": "2026-05-11T00:00:00.000Z",
+    "updatedBy": "gate4.9-seed",
+    "audit": [
+      {
+        "timestamp": "2026-05-11T00:00:00.000Z",
+        "user": "gate4.9-seed",
+        "action": "create",
+        "notes": "Gate 4.9 default seed."
+      }
+    ]
+  }
+]
