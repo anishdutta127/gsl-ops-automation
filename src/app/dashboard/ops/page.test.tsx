@@ -23,6 +23,19 @@ vi.mock('@/lib/auth/session', () => ({
 vi.mock('next/navigation', () => ({
   redirect: (p: string) => redirectMock(p),
   notFound: vi.fn(() => { throw new Error('NEXT_NOT_FOUND') }),
+  // Gate 4.95 Session 3: OpsFilterBar is a client component that calls
+  // useRouter + useSearchParams. The page renders it via SSR, so these
+  // mocks must be present even though the test only exercises HTML.
+  useRouter: vi.fn(() => ({
+    push: vi.fn(),
+    replace: vi.fn(),
+    refresh: vi.fn(),
+    back: vi.fn(),
+    forward: vi.fn(),
+    prefetch: vi.fn(),
+  })),
+  useSearchParams: vi.fn(() => new URLSearchParams()),
+  usePathname: vi.fn(() => '/dashboard/ops'),
 }))
 
 vi.mock('@/components/ops/TopNav', () => ({
@@ -243,5 +256,64 @@ describe('/dashboard/ops Operations Control Dashboard (Gate 3.6 Step 4)', () => 
     const { default: DashboardPage } = await import('./page')
     const html = renderToStaticMarkup(await DashboardPage({ searchParams: noSp }))
     expect(html).not.toMatch(/#[0-9a-fA-F]{3,6}/)
+  })
+})
+
+describe('/dashboard/ops Gate 4.95 Session 3 augmentations', () => {
+  it('renders the OpsFilterBar with region chips, super-region shortcuts, sales rep + ops owner selects, Apply + Reset', async () => {
+    getCurrentUserMock.mockResolvedValue(admin())
+    const { default: DashboardPage } = await import('./page')
+    const html = renderToStaticMarkup(await DashboardPage({ searchParams: noSp }))
+    expect(html).toContain('data-testid="ops-augment-filter-bar"')
+    expect(html).toContain('data-testid="ops-chip-super-NE"')
+    expect(html).toContain('data-testid="ops-chip-super-SW"')
+    expect(html).toContain('data-testid="ops-chip-region-East"')
+    expect(html).toContain('data-testid="ops-chip-region-North"')
+    expect(html).toContain('data-testid="ops-chip-region-South-West"')
+    expect(html).toContain('data-testid="ops-select-sales-rep"')
+    expect(html).toContain('data-testid="ops-select-ops-owner"')
+    expect(html).toContain('data-testid="ops-augment-apply"')
+    expect(html).toContain('data-testid="ops-augment-reset"')
+  })
+
+  it('renders the prominent Workflow Kanban tile linking to /dashboard/ops/kanban', async () => {
+    getCurrentUserMock.mockResolvedValue(admin())
+    const { default: DashboardPage } = await import('./page')
+    const html = renderToStaticMarkup(await DashboardPage({ searchParams: noSp }))
+    expect(html).toContain('data-testid="ops-kanban-tile"')
+    expect(html).toMatch(
+      /data-testid="ops-kanban-tile"[^>]*href="\/dashboard\/ops\/kanban"|href="\/dashboard\/ops\/kanban"[^>]*data-testid="ops-kanban-tile"/,
+    )
+    expect(html).toContain('Workflow Kanban view')
+  })
+
+  it('renders the programme breakdown row with 5 programmes (incl. VEX)', async () => {
+    getCurrentUserMock.mockResolvedValue(admin())
+    const { default: DashboardPage } = await import('./page')
+    const html = renderToStaticMarkup(await DashboardPage({ searchParams: noSp }))
+    expect(html).toContain('data-testid="ops-programme-breakdown"')
+    expect(html).toContain('data-testid="ops-programme-row-STEAM"')
+    expect(html).toContain('data-testid="ops-programme-row-Young Pioneers"')
+    expect(html).toContain('data-testid="ops-programme-row-Harvard HBPE"')
+    expect(html).toContain('data-testid="ops-programme-row-Robotics"')
+    expect(html).toContain('data-testid="ops-programme-row-VEX"')
+  })
+
+  it('region filter via ?region=East narrows the dashboard scope', async () => {
+    getCurrentUserMock.mockResolvedValue(admin())
+    const { default: DashboardPage } = await import('./page')
+    const html = renderToStaticMarkup(
+      await DashboardPage({ searchParams: Promise.resolve({ region: 'East' }) }),
+    )
+    // Filter footnote appears on the programme breakdown because at
+    // least one augmentation dimension is active.
+    expect(html).toContain('data-testid="ops-programme-filter-footnote"')
+  })
+
+  it('contains no em-dash characters (British English copy)', async () => {
+    getCurrentUserMock.mockResolvedValue(admin())
+    const { default: DashboardPage } = await import('./page')
+    const html = renderToStaticMarkup(await DashboardPage({ searchParams: noSp }))
+    expect(html).not.toContain(String.fromCharCode(0x2014))
   })
 })

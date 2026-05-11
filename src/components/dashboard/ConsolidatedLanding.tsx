@@ -594,7 +594,7 @@ function DrillDownZone({
         iconTextClass="text-orange-700"
         icon={<Truck aria-hidden className="size-6" />}
         title="Operations"
-        subtitle="Schools, dispatches, escalations, inventory."
+        subtitle="Schools, dispatches, escalations, inventory. Track active dispatches by stage in the workflow Kanban view."
         kpis={[
           { label: 'Active dispatches', value: `${ops.activeDispatches}` },
           { label: 'Pending allocation', value: `${ops.pendingAllocation}` },

@@ -23,10 +23,14 @@ import type {
   DispatchRequest,
   Escalation,
   InventoryItem,
+  KitDispatch,
   MOU,
+  Payment,
   SalesOpportunity,
   SalesPerson,
   School,
+  StageResponsibility,
+  User,
 } from '@/lib/types'
 import mousJson from '@/data/mous.json'
 import schoolsJson from '@/data/schools.json'
@@ -36,6 +40,10 @@ import escalationsJson from '@/data/escalations.json'
 import inventoryItemsJson from '@/data/inventory_items.json'
 import salesOpportunitiesJson from '@/data/sales_opportunities.json'
 import salesTeamJson from '@/data/sales_team.json'
+import kitDispatchesJson from '@/data/kit_dispatches.json'
+import paymentsJson from '@/data/payments.json'
+import usersJson from '@/data/users.json'
+import stageResponsibilityJson from '@/data/stage_responsibility.json'
 import { getCurrentUser } from '@/lib/auth/session'
 import { TopNav } from '@/components/ops/TopNav'
 import {
@@ -51,6 +59,14 @@ import {
   parseDashboardFilters,
   productOptionsForFilters,
 } from '@/lib/dashboard/dashboardData'
+import {
+  applyOpsAugmentFilters,
+  buildOpsOwnerOptions,
+  buildSalesRepOptions,
+  computeOpsProgrammeBreakdown,
+  isOpsAugmentFiltersEmpty,
+  parseOpsAugmentFilters,
+} from '@/lib/dashboard/opsAugmentData'
 import { DashboardHeader } from '@/components/ops/dashboard/DashboardHeader'
 import { DashboardFilterRow } from '@/components/ops/dashboard/DashboardFilterRow'
 import { DashboardStatCards } from '@/components/ops/dashboard/DashboardStatCards'
@@ -59,6 +75,9 @@ import { DashboardActionCenter } from '@/components/ops/dashboard/DashboardActio
 import { DashboardOrdersTracker } from '@/components/ops/dashboard/DashboardOrdersTracker'
 import { DashboardCommunicationPanel } from '@/components/ops/dashboard/DashboardCommunicationPanel'
 import { DashboardTemplates } from '@/components/ops/dashboard/DashboardTemplates'
+import { OpsFilterBar } from '@/components/dashboard/OpsFilterBar'
+import { OpsProgrammeBreakdown } from '@/components/dashboard/OpsProgrammeBreakdown'
+import { OpsKanbanTile } from '@/components/dashboard/OpsKanbanTile'
 
 const allMous = mousJson as unknown as MOU[]
 const allSchools = schoolsJson as unknown as School[]
@@ -68,6 +87,10 @@ const allEscalations = escalationsJson as unknown as Escalation[]
 const allInventoryItems = inventoryItemsJson as unknown as InventoryItem[]
 const allOpportunities = salesOpportunitiesJson as unknown as SalesOpportunity[]
 const allSalesTeam = salesTeamJson as unknown as SalesPerson[]
+const allKitDispatches = kitDispatchesJson as unknown as KitDispatch[]
+const allPayments = paymentsJson as unknown as Payment[]
+const allUsers = usersJson as unknown as User[]
+const allStageResponsibility = stageResponsibilityJson as unknown as StageResponsibility[]
 
 const DATE_DISPLAY = new Intl.DateTimeFormat('en-GB', {
   day: '2-digit',
@@ -85,6 +108,7 @@ export default async function OpsDashboardPage({ searchParams }: PageProps) {
 
   const sp = await searchParams
   const filters = parseDashboardFilters(sp)
+  const augmentFilters = parseOpsAugmentFilters(sp)
   const now = new Date()
   const todayLabel = DATE_DISPLAY.format(now)
 
@@ -95,6 +119,41 @@ export default async function OpsDashboardPage({ searchParams }: PageProps) {
     escalations: allEscalations,
     filters,
   })
+
+  // Intersect the augmentation dimensions (region / sales rep / ops
+  // owner) against the existing slice. The augmentation lib returns
+  // the post-filter MOU id set; we narrow the slice in-place so all
+  // downstream builders (stat cards, recent MOUs, orders tracker)
+  // see the same scope.
+  const augmentResult = applyOpsAugmentFilters({
+    mous: slices.filteredMous,
+    schools: allSchools,
+    filters: augmentFilters,
+    stageResponsibility: allStageResponsibility,
+    dispatches: allKitDispatches,
+    paymentsForStage: allPayments.map((p) => ({
+      mouId: p.mouId,
+      instalmentSeq: p.instalmentSeq,
+      status: p.status,
+      dueDateIso: p.dueDateIso,
+      piGeneratedAt: p.piGeneratedAt,
+    })),
+    now,
+  })
+  if (!augmentResult.passthrough) {
+    slices.filteredMous = slices.filteredMous.filter((m) =>
+      augmentResult.filteredMouIds.has(m.id),
+    )
+    slices.filteredSchoolIds = new Set(slices.filteredMous.map((m) => m.schoolId))
+    slices.filteredDispatches = slices.filteredDispatches.filter(
+      (d) => d.mouId !== null && augmentResult.filteredMouIds.has(d.mouId),
+    )
+    slices.filteredEscalations = slices.filteredEscalations.filter((e) =>
+      e.mouId === null
+        ? slices.filteredSchoolIds.has(e.schoolId)
+        : augmentResult.filteredMouIds.has(e.mouId),
+    )
+  }
   const cards = buildStatCards({
     slices,
     schools: allSchools,
@@ -118,6 +177,22 @@ export default async function OpsDashboardPage({ searchParams }: PageProps) {
     inventoryItems: allInventoryItems,
     dispatches: allDispatches,
   })
+  const salesRepOptions = buildSalesRepOptions(allSalesTeam)
+  const opsOwnerOptions = buildOpsOwnerOptions(allUsers)
+  const programmeBreakdown = computeOpsProgrammeBreakdown({
+    mous: slices.filteredMous,
+    kitDispatches: allKitDispatches,
+  })
+  const filterActive =
+    filters.fiscalYear !== null
+    || filters.programme !== null
+    || filters.fromDate !== null
+    || filters.toDate !== null
+    || filters.products.length > 0
+    || !isOpsAugmentFiltersEmpty(augmentFilters)
+  const activeKanbanCardCount = allKitDispatches.filter(
+    (d) => d.dispatchStatus !== 'Delivered',
+  ).length
 
   return (
     <>
@@ -138,8 +213,18 @@ export default async function OpsDashboardPage({ searchParams }: PageProps) {
           productOptions={productOptions}
           activeProducts={filters.products}
         />
+        <OpsFilterBar
+          initialRegions={augmentFilters.regions}
+          initialSuperRegions={augmentFilters.superRegions}
+          initialSalesRepIds={augmentFilters.salesRepIds}
+          initialOpsOwnerIds={augmentFilters.opsOwnerIds}
+          salesRepOptions={salesRepOptions}
+          opsOwnerOptions={opsOwnerOptions}
+        />
         <div className="mx-auto max-w-screen-2xl space-y-6 px-4 py-6 sm:px-6">
+          <OpsKanbanTile totalActiveCards={activeKanbanCardCount} />
           <DashboardStatCards cards={cards} />
+          <OpsProgrammeBreakdown rows={programmeBreakdown} filterActive={filterActive} />
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
             <div className="lg:col-span-2">
               <DashboardRecentMous
