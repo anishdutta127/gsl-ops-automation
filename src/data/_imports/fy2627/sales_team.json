@@ -1,0 +1,289 @@
+[
+  {
+    "id": "sp-vikram",
+    "name": "Vikram T.",
+    "email": "vikram.t@getsetlearn.info",
+    "phone": "+91-98100-00001",
+    "territories": [
+      "Pune",
+      "Mumbai",
+      "Nashik"
+    ],
+    "programmes": [
+      "STEAM"
+    ],
+    "active": true,
+    "joinedDate": "2025-06-01"
+  },
+  {
+    "id": "sp-vishwanath",
+    "name": "Vishwanath G.",
+    "email": "vishwanath.g@getsetlearn.info",
+    "phone": "+91-98100-00002",
+    "territories": [
+      "Bengaluru",
+      "Hyderabad",
+      "Chennai"
+    ],
+    "programmes": [
+      "STEAM",
+      "Young Pioneers"
+    ],
+    "active": true,
+    "joinedDate": "2025-07-15"
+  },
+  {
+    "id": "sp-neha",
+    "name": "Neha A.",
+    "email": "neha.a@getsetlearn.info",
+    "phone": "+91-98100-00003",
+    "territories": [
+      "New Delhi",
+      "Chandigarh",
+      "Jaipur"
+    ],
+    "programmes": [
+      "STEAM",
+      "Harvard HBPE"
+    ],
+    "active": true,
+    "joinedDate": "2025-09-01"
+  },
+  {
+    "id": "sp-rohan",
+    "name": "Rohan B.",
+    "email": "rohan.b@getsetlearn.info",
+    "phone": "+91-98100-00004",
+    "territories": [
+      "Kolkata",
+      "Asansol",
+      "Durgapur",
+      "Burdwan"
+    ],
+    "programmes": [
+      "STEAM",
+      "Young Pioneers"
+    ],
+    "active": true,
+    "joinedDate": "2025-10-10"
+  },
+  {
+    "id": "sp-arjun",
+    "name": "Arjun K.",
+    "email": "arjun.k@getsetlearn.info",
+    "phone": "+91-98100-00005",
+    "territories": [
+      "Lucknow",
+      "Indore",
+      "Coimbatore"
+    ],
+    "programmes": [
+      "STEAM",
+      "VEX"
+    ],
+    "active": true,
+    "joinedDate": "2026-01-05"
+  },
+  {
+    "id": "sp-anshuman",
+    "name": "Anshuman",
+    "email": "anshuman@getsetlearn.info",
+    "phone": null,
+    "territories": [],
+    "programmes": [
+      "STEAM",
+      "Young Pioneers"
+    ],
+    "active": true,
+    "joinedDate": "2025-04-01"
+  },
+  {
+    "id": "sp-balachandra",
+    "name": "Balachandra",
+    "email": "balachandra@getsetlearn.info",
+    "phone": null,
+    "territories": [],
+    "programmes": [
+      "STEAM",
+      "Young Pioneers"
+    ],
+    "active": true,
+    "joinedDate": "2025-04-01"
+  },
+  {
+    "id": "sp-balu_r",
+    "name": "Balu R",
+    "email": "balu.r@getsetlearn.info",
+    "phone": null,
+    "territories": [],
+    "programmes": [
+      "STEAM",
+      "Young Pioneers"
+    ],
+    "active": true,
+    "joinedDate": "2025-04-01"
+  },
+  {
+    "id": "sp-hirak",
+    "name": "Hirak",
+    "email": "hirak@getsetlearn.info",
+    "phone": null,
+    "territories": [],
+    "programmes": [
+      "STEAM",
+      "Young Pioneers"
+    ],
+    "active": true,
+    "joinedDate": "2025-04-01"
+  },
+  {
+    "id": "sp-krishnamurthy",
+    "name": "Krishnamurthy",
+    "email": "krishnamurthy@getsetlearn.info",
+    "phone": null,
+    "territories": [],
+    "programmes": [
+      "STEAM",
+      "Young Pioneers"
+    ],
+    "active": true,
+    "joinedDate": "2025-04-01"
+  },
+  {
+    "id": "sp-prodipto",
+    "name": "Prodipto",
+    "email": "prodipto@getsetlearn.info",
+    "phone": null,
+    "territories": [],
+    "programmes": [
+      "STEAM",
+      "Young Pioneers"
+    ],
+    "active": true,
+    "joinedDate": "2025-04-01"
+  },
+  {
+    "id": "sp-ranotosh",
+    "name": "Ranotosh",
+    "email": "ranotosh@getsetlearn.info",
+    "phone": null,
+    "territories": [],
+    "programmes": [
+      "STEAM",
+      "Young Pioneers"
+    ],
+    "active": true,
+    "joinedDate": "2025-04-01"
+  },
+  {
+    "id": "sp-roveena",
+    "name": "Roveena",
+    "email": "roveena@getsetlearn.info",
+    "phone": null,
+    "territories": [],
+    "programmes": [
+      "STEAM",
+      "Young Pioneers"
+    ],
+    "active": true,
+    "joinedDate": "2025-04-01"
+  },
+  {
+    "id": "sp-sabyasachi",
+    "name": "Sabyasachi",
+    "email": "sabyasachi@getsetlearn.info",
+    "phone": null,
+    "territories": [],
+    "programmes": [
+      "STEAM",
+      "Young Pioneers"
+    ],
+    "active": true,
+    "joinedDate": "2025-04-01"
+  },
+  {
+    "id": "sp-somnath",
+    "name": "Somnath",
+    "email": "somnath@getsetlearn.info",
+    "phone": null,
+    "territories": [],
+    "programmes": [
+      "STEAM",
+      "Young Pioneers"
+    ],
+    "active": true,
+    "joinedDate": "2025-04-01"
+  },
+  {
+    "id": "sp-sumit",
+    "name": "Sumit",
+    "email": "sumit@getsetlearn.info",
+    "phone": null,
+    "territories": [],
+    "programmes": [
+      "STEAM",
+      "Young Pioneers"
+    ],
+    "active": true,
+    "joinedDate": "2025-04-01"
+  },
+  {
+    "id": "sp-suresh",
+    "name": "Suresh",
+    "email": "suresh@getsetlearn.info",
+    "phone": null,
+    "territories": [],
+    "programmes": [
+      "STEAM",
+      "Young Pioneers"
+    ],
+    "active": true,
+    "joinedDate": "2025-04-01"
+  },
+  {
+    "id": "sp-tanuj",
+    "name": "Tanuj",
+    "email": "tanuj@getsetlearn.info",
+    "phone": null,
+    "territories": [],
+    "programmes": [
+      "STEAM",
+      "Young Pioneers"
+    ],
+    "active": true,
+    "joinedDate": "2025-04-01"
+  },
+  {
+    "id": "sp-sahil",
+    "name": "sahil",
+    "email": "sahil@getsetlearn.info",
+    "phone": null,
+    "territories": [],
+    "programmes": [
+      "STEAM",
+      "Young Pioneers"
+    ],
+    "active": true,
+    "joinedDate": "2025-04-01"
+  },
+  {
+    "id": "sp-brij-singh",
+    "name": "Brij Singh",
+    "email": null,
+    "phone": null,
+    "territories": [],
+    "active": true,
+    "notes": "Auto-created during Pranav FY26-27 import.",
+    "createdAt": "2026-05-11T14:40:21.325Z"
+  },
+  {
+    "id": "sp-balu-r",
+    "name": "Balu R",
+    "email": null,
+    "phone": null,
+    "territories": [],
+    "active": true,
+    "notes": "Auto-created during Pranav FY26-27 import.",
+    "createdAt": "2026-05-11T14:40:21.325Z"
+  }
+]

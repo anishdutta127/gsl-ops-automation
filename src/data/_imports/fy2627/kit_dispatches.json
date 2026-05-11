@@ -1,0 +1,3394 @@
+[
+  {
+    "id": "DISPATCH-MOU-STEAM-2026-embee-rosebu-dc-0226",
+    "mouId": "MOU-STEAM-2026-embee-rosebu",
+    "schoolId": "sch-embee-rosebud-hr-sec-school",
+    "schoolName": "Embee Rosebud Hr.Sec. School",
+    "productSelected": "TinkRworks",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 12,
+        "kitType": "Reusable",
+        "productName": "TPY"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 12,
+        "kitType": "Reusable",
+        "productName": "TEX"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-hirak",
+    "salesApprovedAt": "2026-02-19",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-02-19T00:00:00Z",
+      "deliveryChallanNumber": "DC-0226",
+      "actualDispatchedQty": 24,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-02-19T00:00:00Z",
+    "importNotes": "ewayBill=Y; studentsServed=125; source=misba.tw; row=3"
+  },
+  {
+    "id": "DISPATCH-ORPHAN-tw-the-learning-sac-dc-0227",
+    "mouId": "UNMAPPED",
+    "schoolId": "sch-the-learning-sactuary",
+    "schoolName": "The Learning Sactuary",
+    "productSelected": "TinkRworks",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 12,
+        "kitType": "Reusable",
+        "productName": "LP"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 12,
+        "kitType": "Reusable",
+        "productName": "TPY"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 12,
+        "kitType": "Reusable",
+        "productName": "TEX"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-hirak",
+    "salesApprovedAt": "2026-02-19",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-02-19T00:00:00Z",
+      "deliveryChallanNumber": "DC-0227",
+      "actualDispatchedQty": 36,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-02-19T00:00:00Z",
+    "importNotes": "ewayBill=Y; studentsServed=170; source=misba.tw; row=4"
+  },
+  {
+    "id": "DISPATCH-ORPHAN-tw-aarohi-bharti-dc-0229",
+    "mouId": "UNMAPPED",
+    "schoolId": "sch-aarohi-bharti",
+    "schoolName": "Aarohi Bharti",
+    "productSelected": "TinkRworks",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 1,
+        "kitType": "Reusable",
+        "productName": "T-Aske"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 1,
+        "kitType": "Reusable",
+        "productName": "TSYN"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 1,
+        "kitType": "Reusable",
+        "productName": "PP"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 1,
+        "kitType": "Reusable",
+        "productName": "LP"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 1,
+        "kitType": "Reusable",
+        "productName": "TPY"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 1,
+        "kitType": "Reusable",
+        "productName": "TEX"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": null,
+    "salesApprovedAt": "2026-02-19",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-02-19T00:00:00Z",
+      "deliveryChallanNumber": "DC-0229",
+      "actualDispatchedQty": 6,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-02-19T00:00:00Z",
+    "importNotes": "source=misba.tw; row=5"
+  },
+  {
+    "id": "DISPATCH-ORPHAN-tw-loreto-day-schoo-dc-0231",
+    "mouId": "UNMAPPED",
+    "schoolId": "sch-loreto-day-school-bow-bazar-kolkata",
+    "schoolName": "Loreto Day School, Bow Bazar-Kolkata",
+    "productSelected": "TinkRworks",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 5,
+        "kitType": "Reusable",
+        "productName": "PP"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 7,
+        "kitType": "Reusable",
+        "productName": "LP"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 5,
+        "kitType": "Reusable",
+        "productName": "P3 K-8"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 5,
+        "kitType": "Reusable",
+        "productName": "TPY"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 27,
+        "kitType": "Reusable",
+        "productName": "TEX"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 27,
+        "kitType": "Reusable",
+        "productName": "TBS"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-prodipto",
+    "salesApprovedAt": "2026-03-22",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-03-22T00:00:00Z",
+      "deliveryChallanNumber": "DC-0231",
+      "actualDispatchedQty": 76,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-03-22T00:00:00Z",
+    "importNotes": "ewayBill=Y; studentsServed=559; source=misba.tw; row=6"
+  },
+  {
+    "id": "DISPATCH-ORPHAN-tw-loreto-house-kol-dc-0232",
+    "mouId": "UNMAPPED",
+    "schoolId": "sch-loreto-house-kolkata",
+    "schoolName": "Loreto House - Kolkata",
+    "productSelected": "TinkRworks",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 5,
+        "kitType": "Reusable",
+        "productName": "SA"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 5,
+        "kitType": "Reusable",
+        "productName": "PP"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 7,
+        "kitType": "Reusable",
+        "productName": "LP"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 5,
+        "kitType": "Reusable",
+        "productName": "P3 K-8"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 5,
+        "kitType": "Reusable",
+        "productName": "TPY"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 27,
+        "kitType": "Reusable",
+        "productName": "TEX"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 27,
+        "kitType": "Reusable",
+        "productName": "TBS"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-prodipto",
+    "salesApprovedAt": "2026-03-22",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-03-22T00:00:00Z",
+      "deliveryChallanNumber": "DC-0232",
+      "actualDispatchedQty": 81,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-03-22T00:00:00Z",
+    "importNotes": "ewayBill=Y; studentsServed=608; source=misba.tw; row=7"
+  },
+  {
+    "id": "DISPATCH-ORPHAN-tw-julien-day-schoo-dc-0233",
+    "mouId": "UNMAPPED",
+    "schoolId": "sch-julien-day-school-elgin-road",
+    "schoolName": "Julien Day  School, Elgin Road",
+    "productSelected": "TinkRworks",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 7,
+        "kitType": "Reusable",
+        "productName": "LP"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 5,
+        "kitType": "Reusable",
+        "productName": "TPY"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 5,
+        "kitType": "Reusable",
+        "productName": "TEX"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 30,
+        "kitType": "Reusable",
+        "productName": "TBS"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-prodipto",
+    "salesApprovedAt": "2026-03-22",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-03-22T00:00:00Z",
+      "deliveryChallanNumber": "DC-0233",
+      "actualDispatchedQty": 47,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-03-22T00:00:00Z",
+    "importNotes": "ewayBill=Y; studentsServed=270; source=misba.tw; row=8"
+  },
+  {
+    "id": "DISPATCH-ORPHAN-tw-julien-day-schoo-dc-0234",
+    "mouId": "UNMAPPED",
+    "schoolId": "sch-julien-day-school-kalyani",
+    "schoolName": "Julien Day  School, Kalyani",
+    "productSelected": "TinkRworks",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 7,
+        "kitType": "Reusable",
+        "productName": "LP"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 5,
+        "kitType": "Reusable",
+        "productName": "TPY"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 7,
+        "kitType": "Reusable",
+        "productName": "TEX"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 25,
+        "kitType": "Reusable",
+        "productName": "TBS"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-prodipto",
+    "salesApprovedAt": "2026-03-23",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-03-23T00:00:00Z",
+      "deliveryChallanNumber": "DC-0234",
+      "actualDispatchedQty": 44,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-03-23T00:00:00Z",
+    "importNotes": "ewayBill=Y; studentsServed=474; source=misba.tw; row=9"
+  },
+  {
+    "id": "DISPATCH-ORPHAN-tw-julien-day-schoo-dc-0235",
+    "mouId": "UNMAPPED",
+    "schoolId": "sch-julien-day-school-ganganagar",
+    "schoolName": "Julien Day  School, Ganganagar",
+    "productSelected": "TinkRworks",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 7,
+        "kitType": "Reusable",
+        "productName": "LP"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 5,
+        "kitType": "Reusable",
+        "productName": "TPY"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 10,
+        "kitType": "Reusable",
+        "productName": "TEX"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 20,
+        "kitType": "Reusable",
+        "productName": "TBS"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-prodipto",
+    "salesApprovedAt": "2026-03-23",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-03-23T00:00:00Z",
+      "deliveryChallanNumber": "DC-0235",
+      "actualDispatchedQty": 42,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-03-23T00:00:00Z",
+    "importNotes": "ewayBill=Y; studentsServed=589; source=misba.tw; row=10"
+  },
+  {
+    "id": "DISPATCH-ORPHAN-tw-julien-day-schoo-dc-0236",
+    "mouId": "UNMAPPED",
+    "schoolId": "sch-julien-day-school-howrah",
+    "schoolName": "Julien Day  School, Howrah",
+    "productSelected": "TinkRworks",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 7,
+        "kitType": "Reusable",
+        "productName": "LP"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 5,
+        "kitType": "Reusable",
+        "productName": "TPY"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 5,
+        "kitType": "Reusable",
+        "productName": "TEX"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 20,
+        "kitType": "Reusable",
+        "productName": "TBS"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-prodipto",
+    "salesApprovedAt": "2026-03-23",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-03-23T00:00:00Z",
+      "deliveryChallanNumber": "DC-0236",
+      "actualDispatchedQty": 37,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-03-23T00:00:00Z",
+    "importNotes": "ewayBill=Y; studentsServed=239; source=misba.tw; row=11"
+  },
+  {
+    "id": "DISPATCH-MOU-STEAM-2026-swarnim-inte-dc-0237",
+    "mouId": "MOU-STEAM-2026-swarnim-inte",
+    "schoolId": "sch-swarnim-international-school",
+    "schoolName": "SWARNIM INTERNATIONAL SCHOOL",
+    "productSelected": "TinkRworks",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 1,
+        "kitType": "Reusable",
+        "productName": "PP"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 3,
+        "kitType": "Reusable",
+        "productName": "LP"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 6,
+        "kitType": "Reusable",
+        "productName": "P3 K-8"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 5,
+        "kitType": "Reusable",
+        "productName": "TEX"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-prodipto",
+    "salesApprovedAt": "2026-03-23",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-03-23T00:00:00Z",
+      "deliveryChallanNumber": "DC-0237",
+      "actualDispatchedQty": 15,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-03-23T00:00:00Z",
+    "importNotes": "studentsServed=250; source=misba.tw; row=12"
+  },
+  {
+    "id": "DISPATCH-ORPHAN-tw-st-paul-s-missio-dc-0238",
+    "mouId": "UNMAPPED",
+    "schoolId": "sch-st-paul-s-mission-school-kolkata",
+    "schoolName": "St. Paul’s Mission School ,Kolkata",
+    "productSelected": "TinkRworks",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 1,
+        "kitType": "Reusable",
+        "productName": "P3 K-8"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 1,
+        "kitType": "Reusable",
+        "productName": "TEX"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 17,
+        "kitType": "Reusable",
+        "productName": "TBS"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-prodipto",
+    "salesApprovedAt": "2026-03-23",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-03-23T00:00:00Z",
+      "deliveryChallanNumber": "DC-0238",
+      "actualDispatchedQty": 19,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-03-23T00:00:00Z",
+    "importNotes": "ewayBill=Y; studentsServed=400; source=misba.tw; row=13"
+  },
+  {
+    "id": "DISPATCH-MOU-STEAM-2026-st-paul-s-bo-dc-0239",
+    "mouId": "MOU-STEAM-2026-st-paul-s-bo",
+    "schoolId": "sch-st-paul-s-boarding-and-day-school",
+    "schoolName": "St. Paul's Boarding And Day School",
+    "productSelected": "TinkRworks",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 15,
+        "kitType": "Reusable",
+        "productName": "SLPK"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 15,
+        "kitType": "Reusable",
+        "productName": "PP"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 15,
+        "kitType": "Reusable",
+        "productName": "LP"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 15,
+        "kitType": "Reusable",
+        "productName": "P3 K-8"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 15,
+        "kitType": "Reusable",
+        "productName": "TBS"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-prodipto",
+    "salesApprovedAt": "2026-03-23",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-03-23T00:00:00Z",
+      "deliveryChallanNumber": "DC-0239",
+      "actualDispatchedQty": 75,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-03-23T00:00:00Z",
+    "importNotes": "ewayBill=Y; studentsServed=860; source=misba.tw; row=14"
+  },
+  {
+    "id": "DISPATCH-MOU-STEAM-2026-st-paul-s-bo-mtpl-up-2627-1",
+    "mouId": "MOU-STEAM-2026-st-paul-s-bo",
+    "schoolId": "sch-st-paul-s-boarding-and-day-school",
+    "schoolName": "St. Paul's Boarding And Day School",
+    "productSelected": "TinkRworks",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 1,
+        "kitType": "Reusable",
+        "productName": "VEX GO Small Classroom Bundle"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 1,
+        "kitType": "Reusable",
+        "productName": "VEX GO Classroom Bundle"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": null,
+    "salesApprovedAt": "2026-04-05",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-04-05T00:00:00Z",
+      "deliveryChallanNumber": "MTPL/UP/2627/1",
+      "actualDispatchedQty": 2,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-04-05T00:00:00Z",
+    "importNotes": "ewayBill=Y; source=misba.tw; row=15"
+  },
+  {
+    "id": "DISPATCH-MOU-STEAM-2026-carmel-conve-dc-0240",
+    "mouId": "MOU-STEAM-2026-carmel-conve",
+    "schoolId": "sch-carmel-convent-high-school-durgapur",
+    "schoolName": "Carmel Convent High School, Durgapur",
+    "productSelected": "TinkRworks",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 17,
+        "kitType": "Reusable",
+        "productName": "T-Aske"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 17,
+        "kitType": "Reusable",
+        "productName": "SLPK"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 20,
+        "kitType": "Reusable",
+        "productName": "TPY"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 20,
+        "kitType": "Reusable",
+        "productName": "TEX"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 20,
+        "kitType": "Reusable",
+        "productName": "TBS"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-prodipto",
+    "salesApprovedAt": "2026-03-23",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-03-23T00:00:00Z",
+      "deliveryChallanNumber": "DC-0240",
+      "actualDispatchedQty": 94,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-03-23T00:00:00Z",
+    "importNotes": "ewayBill=Y; studentsServed=1000; source=misba.tw; row=16"
+  },
+  {
+    "id": "DISPATCH-MOU-STEAM-2026-carmel-schoo-dc-0241",
+    "mouId": "MOU-STEAM-2026-carmel-schoo",
+    "schoolId": "sch-carmel-school-durgapur",
+    "schoolName": "Carmel School, Durgapur",
+    "productSelected": "TinkRworks",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 17,
+        "kitType": "Reusable",
+        "productName": "T-Aske"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 17,
+        "kitType": "Reusable",
+        "productName": "SLPK"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 20,
+        "kitType": "Reusable",
+        "productName": "TPY"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 20,
+        "kitType": "Reusable",
+        "productName": "TEX"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 20,
+        "kitType": "Reusable",
+        "productName": "TBS"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-prodipto",
+    "salesApprovedAt": "2026-03-23",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-03-23T00:00:00Z",
+      "deliveryChallanNumber": "DC-0241",
+      "actualDispatchedQty": 94,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-03-23T00:00:00Z",
+    "importNotes": "ewayBill=Y; studentsServed=900; source=misba.tw; row=17"
+  },
+  {
+    "id": "DISPATCH-ORPHAN-tw-st-montfort-s-se-dc-0242",
+    "mouId": "UNMAPPED",
+    "schoolId": "sch-st-montfort-s-senior-secondary-school",
+    "schoolName": "St. Montfort's Senior Secondary School",
+    "productSelected": "TinkRworks",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 5,
+        "kitType": "Reusable",
+        "productName": "LP"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 5,
+        "kitType": "Reusable",
+        "productName": "TPY"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 10,
+        "kitType": "Reusable",
+        "productName": "TEX"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-prodipto",
+    "salesApprovedAt": "2026-03-23",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-03-23T00:00:00Z",
+      "deliveryChallanNumber": "DC-0242",
+      "actualDispatchedQty": 20,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-03-23T00:00:00Z",
+    "importNotes": "studentsServed=500; source=misba.tw; row=18"
+  },
+  {
+    "id": "DISPATCH-MOU-STEAM-2026-the-scottish-dc-0243",
+    "mouId": "MOU-STEAM-2026-the-scottish",
+    "schoolId": "sch-the-scottish-church-collegiate-school",
+    "schoolName": "The Scottish Church Collegiate School",
+    "productSelected": "TinkRworks",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 10,
+        "kitType": "Reusable",
+        "productName": "PP"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 2,
+        "kitType": "Reusable",
+        "productName": "P3 K-8"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-prodipto",
+    "salesApprovedAt": "2026-03-23",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-03-23T00:00:00Z",
+      "deliveryChallanNumber": "DC-0243",
+      "actualDispatchedQty": 12,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-03-23T00:00:00Z",
+    "importNotes": "studentsServed=100; source=misba.tw; row=19"
+  },
+  {
+    "id": "DISPATCH-MOU-STEAM-2026-st-johns-hig-dc-0244",
+    "mouId": "MOU-STEAM-2026-st-johns-hig",
+    "schoolId": "sch-st-johns-high-school",
+    "schoolName": "St. Johns High School",
+    "productSelected": "TinkRworks",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 5,
+        "kitType": "Reusable",
+        "productName": "TSYN"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 2,
+        "kitType": "Reusable",
+        "productName": "LP"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 18,
+        "kitType": "Reusable",
+        "productName": "TPY"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 18,
+        "kitType": "Reusable",
+        "productName": "TEX"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-prodipto",
+    "salesApprovedAt": "2026-03-23",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-03-23T00:00:00Z",
+      "deliveryChallanNumber": "DC-0244",
+      "actualDispatchedQty": 43,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-03-23T00:00:00Z",
+    "importNotes": "ewayBill=Y; studentsServed=600; source=misba.tw; row=20"
+  },
+  {
+    "id": "DISPATCH-MOU-STEAM-2026-holy-child-e-dc-0245",
+    "mouId": "MOU-STEAM-2026-holy-child-e",
+    "schoolId": "sch-holy-child-english-academy-malda",
+    "schoolName": "Holy Child English Academy - Malda",
+    "productSelected": "TinkRworks",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 8,
+        "kitType": "Reusable",
+        "productName": "SLPK"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 10,
+        "kitType": "Reusable",
+        "productName": "TSYN"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 12,
+        "kitType": "Reusable",
+        "productName": "PP"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 12,
+        "kitType": "Reusable",
+        "productName": "LP"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 12,
+        "kitType": "Reusable",
+        "productName": "AEG 3-5"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 12,
+        "kitType": "Reusable",
+        "productName": "P3 K-8"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 10,
+        "kitType": "Reusable",
+        "productName": "TPY"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 10,
+        "kitType": "Reusable",
+        "productName": "TEX"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-hirak",
+    "salesApprovedAt": "2026-03-25",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-03-25T00:00:00Z",
+      "deliveryChallanNumber": "DC-0245",
+      "actualDispatchedQty": 86,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-03-25T00:00:00Z",
+    "importNotes": "ewayBill=Y; studentsServed=523; source=misba.tw; row=21"
+  },
+  {
+    "id": "DISPATCH-MOU-STEAM-2026-darshan-acad-dc-001",
+    "mouId": "MOU-STEAM-2026-darshan-acad",
+    "schoolId": "sch-darshan-academy-devlali",
+    "schoolName": "Darshan Academy_Devlali",
+    "productSelected": "TinkRworks",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 11,
+        "kitType": "Reusable",
+        "productName": "T-Aske"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 9,
+        "kitType": "Reusable",
+        "productName": "TSYN"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 10,
+        "kitType": "Reusable",
+        "productName": "TPY"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-suresh",
+    "salesApprovedAt": "2026-04-07",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-04-07T00:00:00Z",
+      "deliveryChallanNumber": "DC-001",
+      "actualDispatchedQty": 30,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-04-07T00:00:00Z",
+    "importNotes": "ewayBill=y; studentsServed=234; source=misba.tw; row=22"
+  },
+  {
+    "id": "DISPATCH-MOU-STEAM-2026-lions-calcut-dc-006",
+    "mouId": "MOU-STEAM-2026-lions-calcut",
+    "schoolId": "sch-lions-calcutta-greater-vidya-mandir",
+    "schoolName": "Lions Calcutta Greater Vidya Mandir",
+    "productSelected": "TinkRworks",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 10,
+        "kitType": "Reusable",
+        "productName": "TEX"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-prodipto",
+    "salesApprovedAt": "2026-04-23",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-04-23T00:00:00Z",
+      "deliveryChallanNumber": "DC-006",
+      "actualDispatchedQty": 10,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-04-23T00:00:00Z",
+    "importNotes": "studentsServed=873; source=misba.tw; row=23"
+  },
+  {
+    "id": "DISPATCH-MOU-STEAM-2026-laxmipat-sin-dc-007",
+    "mouId": "MOU-STEAM-2026-laxmipat-sin",
+    "schoolId": "sch-laxmipat-singhania-academy",
+    "schoolName": "Laxmipat Singhania Academy",
+    "productSelected": "TinkRworks",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 38,
+        "kitType": "Reusable",
+        "productName": "TPY"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-prodipto-avishek",
+    "salesApprovedAt": "2026-04-26",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-04-26T00:00:00Z",
+      "deliveryChallanNumber": "DC-007",
+      "actualDispatchedQty": 38,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-04-26T00:00:00Z",
+    "importNotes": "ewayBill=y; source=misba.tw; row=24"
+  },
+  {
+    "id": "DISPATCH-MOU-STEAM-2026-contai-publi-dc-008",
+    "mouId": "MOU-STEAM-2026-contai-publi",
+    "schoolId": "sch-contai-public-school",
+    "schoolName": "Contai Public School",
+    "productSelected": "TinkRworks",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 15,
+        "kitType": "Reusable",
+        "productName": "TPY"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 15,
+        "kitType": "Reusable",
+        "productName": "TEX"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-prodipto-avishek",
+    "salesApprovedAt": "2026-04-26",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-04-26T00:00:00Z",
+      "deliveryChallanNumber": "DC-008",
+      "actualDispatchedQty": 30,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-04-26T00:00:00Z",
+    "importNotes": "ewayBill=y; source=misba.tw; row=25"
+  },
+  {
+    "id": "DISPATCH-MOU-STEAM-2026-loreto-conve-dc-0010",
+    "mouId": "MOU-STEAM-2026-loreto-conve",
+    "schoolId": "sch-loreto-convent-entally",
+    "schoolName": "Loreto Convent Entally",
+    "productSelected": "TinkRworks",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 13,
+        "kitType": "Reusable",
+        "productName": "PP"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 13,
+        "kitType": "Reusable",
+        "productName": "LP"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 13,
+        "kitType": "Reusable",
+        "productName": "P3 K-8"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 13,
+        "kitType": "Reusable",
+        "productName": "TPY"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 13,
+        "kitType": "Reusable",
+        "productName": "TEX"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 13,
+        "kitType": "Reusable",
+        "productName": "TBS"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-prodipto",
+    "salesApprovedAt": "2026-05-10",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-05-10T00:00:00Z",
+      "deliveryChallanNumber": "DC-0010",
+      "actualDispatchedQty": 78,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-05-10T00:00:00Z",
+    "importNotes": "ewayBill=y; studentsServed=505; source=misba.tw; row=26"
+  },
+  {
+    "id": "DISPATCH-MOU-STEAM-2026-mahrishi-day-dc-0225",
+    "mouId": "MOU-STEAM-2026-mahrishi-day",
+    "schoolId": "sch-mahrishi-dayanand-school",
+    "schoolName": "Mahrishi Dayanand School",
+    "productSelected": "Cretile",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 3,
+        "students": 8,
+        "kitsQty": 8,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 3"
+      },
+      {
+        "grade": 4,
+        "students": 6,
+        "kitsQty": 6,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 4"
+      },
+      {
+        "grade": 5,
+        "students": 6,
+        "kitsQty": 6,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 5"
+      },
+      {
+        "grade": 6,
+        "students": 6,
+        "kitsQty": 6,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 6"
+      },
+      {
+        "grade": 7,
+        "students": 8,
+        "kitsQty": 8,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 7"
+      },
+      {
+        "grade": 8,
+        "students": 8,
+        "kitsQty": 8,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade -8"
+      },
+      {
+        "grade": 9,
+        "students": 8,
+        "kitsQty": 8,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 9"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": null,
+    "salesApprovedAt": "2026-02-12",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-02-12T00:00:00Z",
+      "deliveryChallanNumber": "DC-0225",
+      "actualDispatchedQty": 50,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-02-12T00:00:00Z",
+    "importNotes": "studentsServed=144; source=misba.cretile; row=3"
+  },
+  {
+    "id": "DISPATCH-ORPHAN-cretile-aarohi-bharti-dc-0229",
+    "mouId": "UNMAPPED",
+    "schoolId": "sch-aarohi-bharti",
+    "schoolName": "Aarohi Bharti",
+    "productSelected": "Cretile",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 6,
+        "students": 1,
+        "kitsQty": 1,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 6"
+      },
+      {
+        "grade": 7,
+        "students": 1,
+        "kitsQty": 1,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 7"
+      },
+      {
+        "grade": 8,
+        "students": 1,
+        "kitsQty": 1,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade -8"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": null,
+    "salesApprovedAt": "2026-02-19",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-02-19T00:00:00Z",
+      "deliveryChallanNumber": "DC-0229",
+      "actualDispatchedQty": 3,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-02-19T00:00:00Z",
+    "importNotes": "source=misba.cretile; row=4"
+  },
+  {
+    "id": "DISPATCH-MOU-STEAM-2026-rootland-sec-dc-0228",
+    "mouId": "MOU-STEAM-2026-rootland-sec",
+    "schoolId": "sch-rootland-sec-school",
+    "schoolName": "Rootland Sec. School",
+    "productSelected": "Cretile",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 5,
+        "students": 12,
+        "kitsQty": 12,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 5"
+      },
+      {
+        "grade": 6,
+        "students": 11,
+        "kitsQty": 11,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 6"
+      },
+      {
+        "grade": 7,
+        "students": 9,
+        "kitsQty": 9,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 7"
+      },
+      {
+        "grade": 8,
+        "students": 12,
+        "kitsQty": 12,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade -8"
+      },
+      {
+        "grade": 9,
+        "students": 12,
+        "kitsQty": 12,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 9"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": null,
+    "salesApprovedAt": "2026-02-22",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-02-22T00:00:00Z",
+      "deliveryChallanNumber": "DC-0228",
+      "actualDispatchedQty": 56,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-02-22T00:00:00Z",
+    "importNotes": "ewayBill=Y; studentsServed=263; source=misba.cretile; row=5"
+  },
+  {
+    "id": "DISPATCH-MOU-STEAM-2026-blue-angels--dc-mh-01",
+    "mouId": "MOU-STEAM-2026-blue-angels-",
+    "schoolId": "sch-blue-angels-global-school",
+    "schoolName": "Blue Angels Global School",
+    "productSelected": "Cretile",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 1,
+        "students": 1,
+        "kitsQty": 1,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 1"
+      },
+      {
+        "grade": 2,
+        "students": 1,
+        "kitsQty": 1,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 2"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-roveena",
+    "salesApprovedAt": "2026-04-02",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-04-02T00:00:00Z",
+      "deliveryChallanNumber": "DC_MH_01",
+      "actualDispatchedQty": 2,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-04-02T00:00:00Z",
+    "importNotes": "source=misba.cretile; row=6"
+  },
+  {
+    "id": "DISPATCH-ORPHAN-cretile-blue-angels-glob-dc-009",
+    "mouId": "UNMAPPED",
+    "schoolId": "sch-blue-angels-global-school-replacement-for-damaged-kits",
+    "schoolName": "Blue Angels Global School (Replacement for damaged kits)",
+    "productSelected": "Cretile",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 7,
+        "students": 8,
+        "kitsQty": 8,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 7"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-roveena",
+    "salesApprovedAt": "2026-05-06",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-05-06T00:00:00Z",
+      "deliveryChallanNumber": "DC-009",
+      "actualDispatchedQty": 8,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-05-06T00:00:00Z",
+    "importNotes": "source=misba.cretile; row=7"
+  },
+  {
+    "id": "DISPATCH-MOU-STEAM-2026-blue-angels--4030",
+    "mouId": "MOU-STEAM-2026-blue-angels-",
+    "schoolId": "sch-blue-angels-global-school",
+    "schoolName": "Blue Angels Global School",
+    "productSelected": "Cretile",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 1,
+        "students": 9,
+        "kitsQty": 9,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 1"
+      },
+      {
+        "grade": 2,
+        "students": 9,
+        "kitsQty": 9,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 2"
+      },
+      {
+        "grade": 3,
+        "students": 11,
+        "kitsQty": 11,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 3"
+      },
+      {
+        "grade": 4,
+        "students": 11,
+        "kitsQty": 11,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 4"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-roveena",
+    "salesApprovedAt": "2026-04-06",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-04-06T00:00:00Z",
+      "deliveryChallanNumber": "4030",
+      "actualDispatchedQty": 40,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-04-06T00:00:00Z",
+    "importNotes": "billing=Direct to school; source=misba.cretile; row=8"
+  },
+  {
+    "id": "DISPATCH-MOU-STEAM-2026-blue-angels--4031",
+    "mouId": "MOU-STEAM-2026-blue-angels-",
+    "schoolId": "sch-blue-angels-global-school",
+    "schoolName": "Blue Angels Global School",
+    "productSelected": "Cretile",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 5,
+        "students": 9,
+        "kitsQty": 9,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 5"
+      },
+      {
+        "grade": 6,
+        "students": 9,
+        "kitsQty": 9,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 6"
+      },
+      {
+        "grade": 7,
+        "students": 11,
+        "kitsQty": 11,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 7"
+      },
+      {
+        "grade": 8,
+        "students": 9,
+        "kitsQty": 9,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade -8"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-roveena",
+    "salesApprovedAt": "2026-04-06",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-04-06T00:00:00Z",
+      "deliveryChallanNumber": "4031",
+      "actualDispatchedQty": 38,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-04-06T00:00:00Z",
+    "importNotes": "billing=Direct to school; source=misba.cretile; row=9"
+  },
+  {
+    "id": "DISPATCH-MOU-STEAM-2026-blue-angels--4032",
+    "mouId": "MOU-STEAM-2026-blue-angels-",
+    "schoolId": "sch-blue-angels-global-school",
+    "schoolName": "Blue Angels Global School",
+    "productSelected": "Cretile",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 9,
+        "students": 9,
+        "kitsQty": 9,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 9"
+      },
+      {
+        "grade": 10,
+        "students": 9,
+        "kitsQty": 9,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 10"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-roveena",
+    "salesApprovedAt": "2026-04-06",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-04-06T00:00:00Z",
+      "deliveryChallanNumber": "4032",
+      "actualDispatchedQty": 18,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-04-06T00:00:00Z",
+    "importNotes": "billing=Direct to school; source=misba.cretile; row=10"
+  },
+  {
+    "id": "DISPATCH-MOU-STEAM-2026-kavyapta-glo-4017",
+    "mouId": "MOU-STEAM-2026-kavyapta-glo",
+    "schoolId": "sch-kavyapta-global-school",
+    "schoolName": "Kavyapta Global School",
+    "productSelected": "Cretile",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 3,
+        "students": 10,
+        "kitsQty": 10,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 3"
+      },
+      {
+        "grade": 4,
+        "students": 20,
+        "kitsQty": 20,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 4"
+      },
+      {
+        "grade": 5,
+        "students": 20,
+        "kitsQty": 20,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 5"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-prodipto",
+    "salesApprovedAt": "2026-04-06",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-04-06T00:00:00Z",
+      "deliveryChallanNumber": "4017",
+      "actualDispatchedQty": 50,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-04-06T00:00:00Z",
+    "importNotes": "billing=Direct to school; source=misba.cretile; row=11"
+  },
+  {
+    "id": "DISPATCH-ORPHAN-cretile-k-e-carmel-amtal-4019",
+    "mouId": "UNMAPPED",
+    "schoolId": "sch-k-e-carmel-amtala",
+    "schoolName": "K.E. Carmel-Amtala",
+    "productSelected": "Cretile",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 4,
+        "students": 13,
+        "kitsQty": 13,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 4"
+      },
+      {
+        "grade": 5,
+        "students": 13,
+        "kitsQty": 13,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 5"
+      },
+      {
+        "grade": 9,
+        "students": 12,
+        "kitsQty": 12,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 9"
+      },
+      {
+        "grade": 10,
+        "students": 12,
+        "kitsQty": 12,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 10"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-ranotosh",
+    "salesApprovedAt": "2026-04-06",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-04-06T00:00:00Z",
+      "deliveryChallanNumber": "4019",
+      "actualDispatchedQty": 50,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-04-06T00:00:00Z",
+    "importNotes": "billing=Direct to school; source=misba.cretile; row=12"
+  },
+  {
+    "id": "DISPATCH-ORPHAN-cretile-st-mary-s-conven-4021",
+    "mouId": "UNMAPPED",
+    "schoolId": "sch-st-mary-s-convent-high-school",
+    "schoolName": "St. Mary's Convent High School",
+    "productSelected": "Cretile",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 6,
+        "students": 11,
+        "kitsQty": 11,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 6"
+      },
+      {
+        "grade": 7,
+        "students": 11,
+        "kitsQty": 11,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 7"
+      },
+      {
+        "grade": 8,
+        "students": 11,
+        "kitsQty": 11,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade -8"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-ranotosh",
+    "salesApprovedAt": "2026-04-06",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-04-06T00:00:00Z",
+      "deliveryChallanNumber": "4021",
+      "actualDispatchedQty": 33,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-04-06T00:00:00Z",
+    "importNotes": "billing=Direct to school; source=misba.cretile; row=13"
+  },
+  {
+    "id": "DISPATCH-ORPHAN-cretile-don-bosco-school-4023",
+    "mouId": "UNMAPPED",
+    "schoolId": "sch-don-bosco-school-krishnanagar",
+    "schoolName": "Don Bosco School Krishnanagar,",
+    "productSelected": "Cretile",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 4,
+        "students": 15,
+        "kitsQty": 15,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 4"
+      },
+      {
+        "grade": 5,
+        "students": 15,
+        "kitsQty": 15,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 5"
+      },
+      {
+        "grade": 6,
+        "students": 15,
+        "kitsQty": 15,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 6"
+      },
+      {
+        "grade": 7,
+        "students": 15,
+        "kitsQty": 15,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 7"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-sabyasachi",
+    "salesApprovedAt": "2026-04-06",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-04-06T00:00:00Z",
+      "deliveryChallanNumber": "4023",
+      "actualDispatchedQty": 60,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-04-06T00:00:00Z",
+    "importNotes": "billing=Direct to school; source=misba.cretile; row=14"
+  },
+  {
+    "id": "DISPATCH-ORPHAN-cretile-don-bosco-school-4024",
+    "mouId": "UNMAPPED",
+    "schoolId": "sch-don-bosco-school-krishnanagar",
+    "schoolName": "Don Bosco School Krishnanagar,",
+    "productSelected": "Cretile",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 8,
+        "students": 15,
+        "kitsQty": 15,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade -8"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-sabyasachi",
+    "salesApprovedAt": "2026-04-06",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-04-06T00:00:00Z",
+      "deliveryChallanNumber": "4024",
+      "actualDispatchedQty": 15,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-04-06T00:00:00Z",
+    "importNotes": "billing=Direct to school; source=misba.cretile; row=15"
+  },
+  {
+    "id": "DISPATCH-MOU-STEAM-2026-delhi-world--4026",
+    "mouId": "MOU-STEAM-2026-delhi-world-",
+    "schoolId": "sch-delhi-world-public-school-barasat",
+    "schoolName": "Delhi World Public School- Barasat",
+    "productSelected": "Cretile",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 1,
+        "students": 11,
+        "kitsQty": 11,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 1"
+      },
+      {
+        "grade": 2,
+        "students": 9,
+        "kitsQty": 9,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 2"
+      },
+      {
+        "grade": 3,
+        "students": 6,
+        "kitsQty": 6,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 3"
+      },
+      {
+        "grade": 4,
+        "students": 5,
+        "kitsQty": 5,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 4"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-prodipto",
+    "salesApprovedAt": "2026-04-06",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-04-06T00:00:00Z",
+      "deliveryChallanNumber": "4026",
+      "actualDispatchedQty": 31,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-04-06T00:00:00Z",
+    "importNotes": "billing=Direct to school; source=misba.cretile; row=16"
+  },
+  {
+    "id": "DISPATCH-MOU-STEAM-2026-delhi-world--4027",
+    "mouId": "MOU-STEAM-2026-delhi-world-",
+    "schoolId": "sch-delhi-world-public-school-barasat",
+    "schoolName": "Delhi World Public School- Barasat",
+    "productSelected": "Cretile",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 5,
+        "students": 6,
+        "kitsQty": 6,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 5"
+      },
+      {
+        "grade": 6,
+        "students": 7,
+        "kitsQty": 7,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 6"
+      },
+      {
+        "grade": 7,
+        "students": 5,
+        "kitsQty": 5,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 7"
+      },
+      {
+        "grade": 8,
+        "students": 4,
+        "kitsQty": 4,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade -8"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-prodipto",
+    "salesApprovedAt": "2026-04-06",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-04-06T00:00:00Z",
+      "deliveryChallanNumber": "4027",
+      "actualDispatchedQty": 22,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-04-06T00:00:00Z",
+    "importNotes": "billing=Direct to school; source=misba.cretile; row=17"
+  },
+  {
+    "id": "DISPATCH-MOU-STEAM-2026-delhi-world--4028",
+    "mouId": "MOU-STEAM-2026-delhi-world-",
+    "schoolId": "sch-delhi-world-public-school-barasat",
+    "schoolName": "Delhi World Public School- Barasat",
+    "productSelected": "Cretile",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 9,
+        "students": 3,
+        "kitsQty": 3,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 9"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-prodipto",
+    "salesApprovedAt": "2026-04-06",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-04-06T00:00:00Z",
+      "deliveryChallanNumber": "4028",
+      "actualDispatchedQty": 3,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-04-06T00:00:00Z",
+    "importNotes": "billing=Direct to school; source=misba.cretile; row=18"
+  },
+  {
+    "id": "DISPATCH-MOU-STEAM-2026-k-e-carmel-s-4049",
+    "mouId": "MOU-STEAM-2026-k-e-carmel-s",
+    "schoolId": "sch-k-e-carmel-school-suri",
+    "schoolName": "K E Carmel School, Suri",
+    "productSelected": "Cretile",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 1,
+        "students": 16,
+        "kitsQty": 16,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 1"
+      },
+      {
+        "grade": 2,
+        "students": 16,
+        "kitsQty": 16,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 2"
+      },
+      {
+        "grade": 3,
+        "students": 16,
+        "kitsQty": 16,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 3"
+      },
+      {
+        "grade": 4,
+        "students": 16,
+        "kitsQty": 16,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 4"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-sabyasachi",
+    "salesApprovedAt": "2026-04-14",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-04-14T00:00:00Z",
+      "deliveryChallanNumber": "4049",
+      "actualDispatchedQty": 64,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-04-14T00:00:00Z",
+    "importNotes": "billing=Direct to school; source=misba.cretile; row=19"
+  },
+  {
+    "id": "DISPATCH-MOU-STEAM-2026-k-e-carmel-s-4050",
+    "mouId": "MOU-STEAM-2026-k-e-carmel-s",
+    "schoolId": "sch-k-e-carmel-school-suri",
+    "schoolName": "K E Carmel School, Suri",
+    "productSelected": "Cretile",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 5,
+        "students": 16,
+        "kitsQty": 16,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 5"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-sabyasachi",
+    "salesApprovedAt": "2026-04-14",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-04-14T00:00:00Z",
+      "deliveryChallanNumber": "4050",
+      "actualDispatchedQty": 16,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-04-14T00:00:00Z",
+    "importNotes": "billing=Direct to school; source=misba.cretile; row=20"
+  },
+  {
+    "id": "DISPATCH-ORPHAN-cretile-b-d-memorial-jr--4052",
+    "mouId": "UNMAPPED",
+    "schoolId": "sch-b-d-memorial-jr-school-bansdroni",
+    "schoolName": "B.D. Memorial Jr. School - Bansdroni",
+    "productSelected": "Cretile",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 3,
+        "students": 8,
+        "kitsQty": 8,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 3"
+      },
+      {
+        "grade": 4,
+        "students": 8,
+        "kitsQty": 8,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 4"
+      },
+      {
+        "grade": 5,
+        "students": 8,
+        "kitsQty": 8,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 5"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-prodipto",
+    "salesApprovedAt": "2026-04-14",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-04-14T00:00:00Z",
+      "deliveryChallanNumber": "4052",
+      "actualDispatchedQty": 24,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-04-14T00:00:00Z",
+    "importNotes": "billing=Direct to school; source=misba.cretile; row=21"
+  },
+  {
+    "id": "DISPATCH-ORPHAN-cretile-b-d-memorial-jr--4054",
+    "mouId": "UNMAPPED",
+    "schoolId": "sch-b-d-memorial-jr-school-golf-garden",
+    "schoolName": "B.D. Memorial Jr. School - Golf Garden",
+    "productSelected": "Cretile",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 3,
+        "students": 5,
+        "kitsQty": 5,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 3"
+      },
+      {
+        "grade": 4,
+        "students": 6,
+        "kitsQty": 6,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 4"
+      },
+      {
+        "grade": 5,
+        "students": 7,
+        "kitsQty": 7,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 5"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-prodipto",
+    "salesApprovedAt": "2026-04-14",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-04-14T00:00:00Z",
+      "deliveryChallanNumber": "4054",
+      "actualDispatchedQty": 18,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-04-14T00:00:00Z",
+    "importNotes": "billing=Direct to school; source=misba.cretile; row=22"
+  },
+  {
+    "id": "DISPATCH-ORPHAN-cretile-b-d-memorial-jr--4063",
+    "mouId": "UNMAPPED",
+    "schoolId": "sch-b-d-memorial-jr-school-garia",
+    "schoolName": "B.D. Memorial Jr. School - Garia",
+    "productSelected": "Cretile",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 3,
+        "students": 5,
+        "kitsQty": 5,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 3"
+      },
+      {
+        "grade": 4,
+        "students": 6,
+        "kitsQty": 6,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 4"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-prodipto",
+    "salesApprovedAt": "2026-04-14",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-04-14T00:00:00Z",
+      "deliveryChallanNumber": "4063",
+      "actualDispatchedQty": 11,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-04-14T00:00:00Z",
+    "importNotes": "billing=Direct to school; source=misba.cretile; row=23"
+  },
+  {
+    "id": "DISPATCH-ORPHAN-cretile-b-d-memorial-jr--4065",
+    "mouId": "UNMAPPED",
+    "schoolId": "sch-b-d-memorial-jr-school-vijaygarh",
+    "schoolName": "B.D. Memorial Jr. School - Vijaygarh",
+    "productSelected": "Cretile",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 3,
+        "students": 6,
+        "kitsQty": 6,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 3"
+      },
+      {
+        "grade": 4,
+        "students": 4,
+        "kitsQty": 4,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 4"
+      },
+      {
+        "grade": 5,
+        "students": 4,
+        "kitsQty": 4,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 5"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-prodipto",
+    "salesApprovedAt": "2026-04-14",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-04-14T00:00:00Z",
+      "deliveryChallanNumber": "4065",
+      "actualDispatchedQty": 14,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-04-14T00:00:00Z",
+    "importNotes": "billing=Direct to school; source=misba.cretile; row=24"
+  },
+  {
+    "id": "DISPATCH-ORPHAN-cretile-rajesh-perumal-4057",
+    "mouId": "UNMAPPED",
+    "schoolId": "sch-rajesh-perumal",
+    "schoolName": "Rajesh Perumal",
+    "productSelected": "Cretile",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 1,
+        "students": 1,
+        "kitsQty": 1,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 1"
+      },
+      {
+        "grade": 2,
+        "students": 1,
+        "kitsQty": 1,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 2"
+      },
+      {
+        "grade": 9,
+        "students": 1,
+        "kitsQty": 1,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 9"
+      },
+      {
+        "grade": 10,
+        "students": 1,
+        "kitsQty": 1,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 10"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": null,
+    "salesApprovedAt": "2026-04-14",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-04-14T00:00:00Z",
+      "deliveryChallanNumber": "4057",
+      "actualDispatchedQty": 4,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-04-14T00:00:00Z",
+    "importNotes": "billing=Direct to school; source=misba.cretile; row=25"
+  },
+  {
+    "id": "DISPATCH-ORPHAN-cretile-pallavi-tatawati-4059",
+    "mouId": "UNMAPPED",
+    "schoolId": "sch-pallavi-tatawati",
+    "schoolName": "Pallavi Tatawati",
+    "productSelected": "Cretile",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 1,
+        "students": 1,
+        "kitsQty": 1,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 1"
+      },
+      {
+        "grade": 2,
+        "students": 1,
+        "kitsQty": 1,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 2"
+      },
+      {
+        "grade": 9,
+        "students": 1,
+        "kitsQty": 1,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 9"
+      },
+      {
+        "grade": 10,
+        "students": 1,
+        "kitsQty": 1,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 10"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": null,
+    "salesApprovedAt": "2026-04-14",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-04-14T00:00:00Z",
+      "deliveryChallanNumber": "4059",
+      "actualDispatchedQty": 4,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-04-14T00:00:00Z",
+    "importNotes": "billing=Direct to school; source=misba.cretile; row=26"
+  },
+  {
+    "id": "DISPATCH-ORPHAN-cretile-prashant-mishra-4061",
+    "mouId": "UNMAPPED",
+    "schoolId": "sch-prashant-mishra",
+    "schoolName": "Prashant Mishra",
+    "productSelected": "Cretile",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 1,
+        "students": 1,
+        "kitsQty": 1,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 1"
+      },
+      {
+        "grade": 2,
+        "students": 1,
+        "kitsQty": 1,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 2"
+      },
+      {
+        "grade": 9,
+        "students": 1,
+        "kitsQty": 1,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 9"
+      },
+      {
+        "grade": 10,
+        "students": 1,
+        "kitsQty": 1,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 10"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": null,
+    "salesApprovedAt": "2026-04-14",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-04-14T00:00:00Z",
+      "deliveryChallanNumber": "4061",
+      "actualDispatchedQty": 4,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-04-14T00:00:00Z",
+    "importNotes": "billing=Direct to school; source=misba.cretile; row=27"
+  },
+  {
+    "id": "DISPATCH-MOU-STEAM-2026-contai-publi-4067",
+    "mouId": "MOU-STEAM-2026-contai-publi",
+    "schoolId": "sch-contai-public-school",
+    "schoolName": "Contai Public School",
+    "productSelected": "Cretile",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 9,
+        "students": 30,
+        "kitsQty": 30,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 9"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-prodipto",
+    "salesApprovedAt": "2026-04-14",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-04-14T00:00:00Z",
+      "deliveryChallanNumber": "4067",
+      "actualDispatchedQty": 30,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-04-14T00:00:00Z",
+    "importNotes": "billing=Direct to school; source=misba.cretile; row=28"
+  },
+  {
+    "id": "DISPATCH-MOU-STEAM-2026-young-horizo-4069",
+    "mouId": "MOU-STEAM-2026-young-horizo",
+    "schoolId": "sch-young-horizons-school",
+    "schoolName": "Young Horizons School",
+    "productSelected": "Cretile",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 4,
+        "students": 15,
+        "kitsQty": 15,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 4"
+      },
+      {
+        "grade": 5,
+        "students": 15,
+        "kitsQty": 15,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 5"
+      },
+      {
+        "grade": 6,
+        "students": 12,
+        "kitsQty": 12,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 6"
+      },
+      {
+        "grade": 7,
+        "students": 10,
+        "kitsQty": 10,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 7"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-prodipto",
+    "salesApprovedAt": "2026-04-14",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-04-14T00:00:00Z",
+      "deliveryChallanNumber": "4069",
+      "actualDispatchedQty": 52,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-04-14T00:00:00Z",
+    "importNotes": "billing=Direct to school; source=misba.cretile; row=29"
+  },
+  {
+    "id": "DISPATCH-MOU-STEAM-2026-young-horizo-4070",
+    "mouId": "MOU-STEAM-2026-young-horizo",
+    "schoolId": "sch-young-horizons-school",
+    "schoolName": "Young Horizons School",
+    "productSelected": "Cretile",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 8,
+        "students": 11,
+        "kitsQty": 11,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade -8"
+      },
+      {
+        "grade": 9,
+        "students": 10,
+        "kitsQty": 10,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 9"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-prodipto",
+    "salesApprovedAt": "2026-04-14",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-04-14T00:00:00Z",
+      "deliveryChallanNumber": "4070",
+      "actualDispatchedQty": 21,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-04-14T00:00:00Z",
+    "importNotes": "billing=Direct to school; source=misba.cretile; row=30"
+  },
+  {
+    "id": "DISPATCH-ORPHAN-cretile-st-john-high-sch-4072",
+    "mouId": "UNMAPPED",
+    "schoolId": "sch-st-john-high-school",
+    "schoolName": "St John High School",
+    "productSelected": "Cretile",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 1,
+        "students": 12,
+        "kitsQty": 12,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 1"
+      },
+      {
+        "grade": 2,
+        "students": 10,
+        "kitsQty": 10,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 2"
+      },
+      {
+        "grade": 3,
+        "students": 12,
+        "kitsQty": 12,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 3"
+      },
+      {
+        "grade": 4,
+        "students": 10,
+        "kitsQty": 10,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 4"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-prodipto",
+    "salesApprovedAt": "2026-04-14",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-04-14T00:00:00Z",
+      "deliveryChallanNumber": "4072",
+      "actualDispatchedQty": 44,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-04-14T00:00:00Z",
+    "importNotes": "billing=Direct to school; source=misba.cretile; row=31"
+  },
+  {
+    "id": "DISPATCH-ORPHAN-cretile-bit-global-schoo-4097",
+    "mouId": "UNMAPPED",
+    "schoolId": "sch-bit-global-school",
+    "schoolName": "BIT Global School",
+    "productSelected": "Cretile",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 5,
+        "students": 24,
+        "kitsQty": 24,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 5"
+      },
+      {
+        "grade": 6,
+        "students": 25,
+        "kitsQty": 25,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 6"
+      },
+      {
+        "grade": 7,
+        "students": 26,
+        "kitsQty": 26,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 7"
+      },
+      {
+        "grade": 8,
+        "students": 25,
+        "kitsQty": 25,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade -8"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-tanuj",
+    "salesApprovedAt": "2026-04-22",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-04-22T00:00:00Z",
+      "deliveryChallanNumber": "4097",
+      "actualDispatchedQty": 100,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-04-22T00:00:00Z",
+    "importNotes": "billing=Direct to school; source=misba.cretile; row=32"
+  },
+  {
+    "id": "DISPATCH-ORPHAN-cretile-bit-global-schoo-4103",
+    "mouId": "UNMAPPED",
+    "schoolId": "sch-bit-global-school",
+    "schoolName": "BIT Global School",
+    "productSelected": "Cretile",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 1,
+        "students": 17,
+        "kitsQty": 17,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 1"
+      },
+      {
+        "grade": 2,
+        "students": 21,
+        "kitsQty": 21,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 2"
+      },
+      {
+        "grade": 3,
+        "students": 20,
+        "kitsQty": 20,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 3"
+      },
+      {
+        "grade": 4,
+        "students": 15,
+        "kitsQty": 15,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 4"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-tanuj",
+    "salesApprovedAt": "2026-04-22",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-04-22T00:00:00Z",
+      "deliveryChallanNumber": "4103",
+      "actualDispatchedQty": 73,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-04-22T00:00:00Z",
+    "importNotes": "billing=Direct to school; source=misba.cretile; row=33"
+  },
+  {
+    "id": "DISPATCH-ORPHAN-cretile-tathastu-4099",
+    "mouId": "UNMAPPED",
+    "schoolId": "sch-tathastu",
+    "schoolName": "Tathastu",
+    "productSelected": "Cretile",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 1,
+        "students": 1,
+        "kitsQty": 1,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 1"
+      },
+      {
+        "grade": 2,
+        "students": 1,
+        "kitsQty": 1,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 2"
+      },
+      {
+        "grade": 3,
+        "students": 1,
+        "kitsQty": 1,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 3"
+      },
+      {
+        "grade": 4,
+        "students": 1,
+        "kitsQty": 1,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 4"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-sumit",
+    "salesApprovedAt": "2026-04-22",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-04-22T00:00:00Z",
+      "deliveryChallanNumber": "4099",
+      "actualDispatchedQty": 4,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-04-22T00:00:00Z",
+    "importNotes": "billing=Direct to school; source=misba.cretile; row=34"
+  },
+  {
+    "id": "DISPATCH-ORPHAN-cretile-tathastu-4100",
+    "mouId": "UNMAPPED",
+    "schoolId": "sch-tathastu",
+    "schoolName": "Tathastu",
+    "productSelected": "Cretile",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 5,
+        "students": 1,
+        "kitsQty": 1,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 5"
+      },
+      {
+        "grade": 6,
+        "students": 1,
+        "kitsQty": 1,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 6"
+      },
+      {
+        "grade": 7,
+        "students": 1,
+        "kitsQty": 1,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 7"
+      },
+      {
+        "grade": 8,
+        "students": 1,
+        "kitsQty": 1,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade -8"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-sumit",
+    "salesApprovedAt": "2026-04-22",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-04-22T00:00:00Z",
+      "deliveryChallanNumber": "4100",
+      "actualDispatchedQty": 4,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-04-22T00:00:00Z",
+    "importNotes": "billing=Direct to school; source=misba.cretile; row=35"
+  },
+  {
+    "id": "DISPATCH-ORPHAN-cretile-tathastu-4101",
+    "mouId": "UNMAPPED",
+    "schoolId": "sch-tathastu",
+    "schoolName": "Tathastu",
+    "productSelected": "Cretile",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 9,
+        "students": 1,
+        "kitsQty": 1,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 9"
+      },
+      {
+        "grade": 10,
+        "students": 1,
+        "kitsQty": 1,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 10"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-sumit",
+    "salesApprovedAt": "2026-04-22",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-04-22T00:00:00Z",
+      "deliveryChallanNumber": "4101",
+      "actualDispatchedQty": 2,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-04-22T00:00:00Z",
+    "importNotes": "billing=Direct to school; source=misba.cretile; row=36"
+  },
+  {
+    "id": "DISPATCH-MOU-STEAM-2026-gmr-internat-4110",
+    "mouId": "MOU-STEAM-2026-gmr-internat",
+    "schoolId": "sch-gmr-international-school",
+    "schoolName": "GMR International School",
+    "productSelected": "Cretile",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 1,
+        "students": 5,
+        "kitsQty": 5,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 1"
+      },
+      {
+        "grade": 2,
+        "students": 5,
+        "kitsQty": 5,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 2"
+      },
+      {
+        "grade": 3,
+        "students": 5,
+        "kitsQty": 5,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 3"
+      },
+      {
+        "grade": 4,
+        "students": 5,
+        "kitsQty": 5,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 4"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-sumit",
+    "salesApprovedAt": "2026-04-27",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-04-27T00:00:00Z",
+      "deliveryChallanNumber": "4110",
+      "actualDispatchedQty": 20,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-04-27T00:00:00Z",
+    "importNotes": "billing=Direct to school; source=misba.cretile; row=37"
+  },
+  {
+    "id": "DISPATCH-MOU-STEAM-2026-gmr-internat-4111",
+    "mouId": "MOU-STEAM-2026-gmr-internat",
+    "schoolId": "sch-gmr-international-school",
+    "schoolName": "GMR International School",
+    "productSelected": "Cretile",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 5,
+        "students": 4,
+        "kitsQty": 4,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 5"
+      },
+      {
+        "grade": 6,
+        "students": 4,
+        "kitsQty": 4,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 6"
+      },
+      {
+        "grade": 7,
+        "students": 3,
+        "kitsQty": 3,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 7"
+      },
+      {
+        "grade": 8,
+        "students": 3,
+        "kitsQty": 3,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade -8"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-sumit",
+    "salesApprovedAt": "2026-04-27",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-04-27T00:00:00Z",
+      "deliveryChallanNumber": "4111",
+      "actualDispatchedQty": 14,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-04-27T00:00:00Z",
+    "importNotes": "billing=Direct to school; source=misba.cretile; row=38"
+  },
+  {
+    "id": "DISPATCH-MOU-STEAM-2026-christ-missi-4116",
+    "mouId": "MOU-STEAM-2026-christ-missi",
+    "schoolId": "sch-christ-mission-school",
+    "schoolName": "Christ Mission School",
+    "productSelected": "Cretile",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 3,
+        "students": 9,
+        "kitsQty": 9,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 3"
+      },
+      {
+        "grade": 4,
+        "students": 8,
+        "kitsQty": 8,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 4"
+      },
+      {
+        "grade": 5,
+        "students": 9,
+        "kitsQty": 9,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 5"
+      },
+      {
+        "grade": 6,
+        "students": 8,
+        "kitsQty": 8,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 6"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-prodipto",
+    "salesApprovedAt": "2026-04-28",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-04-28T00:00:00Z",
+      "deliveryChallanNumber": "4116",
+      "actualDispatchedQty": 34,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-04-28T00:00:00Z",
+    "importNotes": "billing=Direct to school; source=misba.cretile; row=39"
+  },
+  {
+    "id": "DISPATCH-MOU-STEAM-2026-christ-missi-4117",
+    "mouId": "MOU-STEAM-2026-christ-missi",
+    "schoolId": "sch-christ-mission-school",
+    "schoolName": "Christ Mission School",
+    "productSelected": "Cretile",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 7,
+        "students": 8,
+        "kitsQty": 8,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade 7"
+      },
+      {
+        "grade": 8,
+        "students": 8,
+        "kitsQty": 8,
+        "kitType": "Consumable",
+        "productName": "Cretile Grade-band kit Grade -8"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-prodipto",
+    "salesApprovedAt": "2026-04-28",
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-04-28T00:00:00Z",
+      "deliveryChallanNumber": "4117",
+      "actualDispatchedQty": 16,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-04-28T00:00:00Z",
+    "importNotes": "billing=Direct to school; source=misba.cretile; row=40"
+  },
+  {
+    "id": "DISPATCH-MOU-STEAM-2026-st-paul-s-bo-unknown-dc",
+    "mouId": "MOU-STEAM-2026-st-paul-s-bo",
+    "schoolId": "sch-st-paul-s-boarding-and-day-school",
+    "schoolName": "St. Paul's Boarding And Day School",
+    "productSelected": "Hardware",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 1,
+        "kitType": "Reusable",
+        "productName": "Smart Board"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 1,
+        "kitType": "Reusable",
+        "productName": "Smart Board"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-prodipto",
+    "salesApprovedAt": null,
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-05-11T14:40:21.346Z",
+      "deliveryChallanNumber": null,
+      "actualDispatchedQty": 2,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-05-11T14:40:21.346Z",
+    "importNotes": "hardwarePrice=72950; source=misba.hardware; row=4"
+  },
+  {
+    "id": "DISPATCH-ORPHAN-hardware-blue-angle-schoo-5",
+    "mouId": "UNMAPPED",
+    "schoolId": "sch-blue-angle-school",
+    "schoolName": "Blue Angle School",
+    "productSelected": "Hardware",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 10,
+        "kitType": "Reusable",
+        "productName": "Tab"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 1,
+        "kitType": "Reusable",
+        "productName": "Smart Board"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-sumit",
+    "salesApprovedAt": null,
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-05-11T14:40:21.346Z",
+      "deliveryChallanNumber": null,
+      "actualDispatchedQty": 11,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-05-11T14:40:21.346Z",
+    "importNotes": "hardwarePrice=210985; source=misba.hardware; row=5"
+  },
+  {
+    "id": "DISPATCH-ORPHAN-hardware-tathasu-6",
+    "mouId": "UNMAPPED",
+    "schoolId": "sch-tathasu",
+    "schoolName": "Tathasu",
+    "productSelected": "Hardware",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 1,
+        "kitType": "Reusable",
+        "productName": "Tab"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 165000,
+        "kitType": "Reusable",
+        "productName": "Lab -setup"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 40000,
+        "kitType": "Reusable",
+        "productName": "Trainer Cost"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-sumit",
+    "salesApprovedAt": null,
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-05-11T14:40:21.346Z",
+      "deliveryChallanNumber": null,
+      "actualDispatchedQty": 205001,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-05-11T14:40:21.346Z",
+    "importNotes": "hardwarePrice=218854; source=misba.hardware; row=6"
+  },
+  {
+    "id": "DISPATCH-ORPHAN-hardware-carmel-convent-h-7",
+    "mouId": "UNMAPPED",
+    "schoolId": "sch-carmel-convent-high-school",
+    "schoolName": "Carmel Convent High School",
+    "productSelected": "Hardware",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 1,
+        "kitType": "Reusable",
+        "productName": "Projector"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-prodipto",
+    "salesApprovedAt": null,
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-05-11T14:40:21.346Z",
+      "deliveryChallanNumber": null,
+      "actualDispatchedQty": 1,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-05-11T14:40:21.346Z",
+    "importNotes": "hardwarePrice=12990; source=misba.hardware; row=7"
+  },
+  {
+    "id": "DISPATCH-ORPHAN-hardware-st-mary-s-conven-8",
+    "mouId": "UNMAPPED",
+    "schoolId": "sch-st-mary-s-convent-school",
+    "schoolName": "St. Mary’s Convent School",
+    "productSelected": "Hardware",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 1,
+        "kitType": "Reusable",
+        "productName": "Projector"
+      },
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 5,
+        "kitType": "Reusable",
+        "productName": "Bluetooth Modules"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-prodipto",
+    "salesApprovedAt": null,
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-05-11T14:40:21.346Z",
+      "deliveryChallanNumber": null,
+      "actualDispatchedQty": 6,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-05-11T14:40:21.346Z",
+    "importNotes": "hardwarePrice=15985; source=misba.hardware; row=8"
+  },
+  {
+    "id": "DISPATCH-ORPHAN-hardware-st-john-s-high-s-9",
+    "mouId": "UNMAPPED",
+    "schoolId": "sch-st-john-s-high-school",
+    "schoolName": "St. John’s High School",
+    "productSelected": "Hardware",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 1,
+        "kitType": "Reusable",
+        "productName": "Printer"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-prodipto",
+    "salesApprovedAt": null,
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-05-11T14:40:21.346Z",
+      "deliveryChallanNumber": null,
+      "actualDispatchedQty": 1,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-05-11T14:40:21.346Z",
+    "importNotes": "hardwarePrice=14999; source=misba.hardware; row=9"
+  },
+  {
+    "id": "DISPATCH-ORPHAN-hardware-loreto-house-10",
+    "mouId": "UNMAPPED",
+    "schoolId": "sch-loreto-house",
+    "schoolName": "Loreto House",
+    "productSelected": "Hardware",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 4,
+        "kitType": "Reusable",
+        "productName": "Drones"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-prodipto",
+    "salesApprovedAt": null,
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-05-11T14:40:21.346Z",
+      "deliveryChallanNumber": null,
+      "actualDispatchedQty": 4,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-05-11T14:40:21.346Z",
+    "importNotes": "source=misba.hardware; row=10"
+  },
+  {
+    "id": "DISPATCH-MOU-STEAM-2026-contai-publi-unknown-dc",
+    "mouId": "MOU-STEAM-2026-contai-publi",
+    "schoolId": "sch-contai-public-school",
+    "schoolName": "Contai Public School",
+    "productSelected": "Hardware",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 1,
+        "kitType": "Reusable",
+        "productName": "Drones"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-prodipto",
+    "salesApprovedAt": null,
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-05-11T14:40:21.346Z",
+      "deliveryChallanNumber": null,
+      "actualDispatchedQty": 1,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-05-11T14:40:21.346Z",
+    "importNotes": "source=misba.hardware; row=11"
+  },
+  {
+    "id": "DISPATCH-MOU-STEAM-2026-lions-calcut-unknown-dc",
+    "mouId": "MOU-STEAM-2026-lions-calcut",
+    "schoolId": "sch-lions-calcutta-greater-vidya-mandir",
+    "schoolName": "Lions Calcutta Greater Vidya Mandir",
+    "productSelected": "Hardware",
+    "dispatchStatus": "Delivered",
+    "allocations": [
+      {
+        "grade": 0,
+        "students": 0,
+        "kitsQty": 6,
+        "kitType": "Reusable",
+        "productName": "keyboards and mice"
+      }
+    ],
+    "salesApprovalStatus": "Approved",
+    "salesApprovedBy": "sp-prodipto",
+    "salesApprovedAt": null,
+    "salesRejectionReason": null,
+    "dispatchSummary": {
+      "dispatchedAt": "2026-05-11T14:40:21.346Z",
+      "deliveryChallanNumber": null,
+      "actualDispatchedQty": 6,
+      "executedBy": "gate4.5-import"
+    },
+    "shipmentTracking": null,
+    "pod": null,
+    "auditLog": [],
+    "createdAt": "2026-05-11T14:40:21.346Z",
+    "importNotes": "hardwarePrice=5094; source=misba.hardware; row=12"
+  }
+]

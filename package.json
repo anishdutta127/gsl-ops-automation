@@ -12,7 +12,11 @@
     "docs-lint": "bash scripts/docs-lint.sh",
     "verify": "npx tsc --noEmit && npm run lint && npm run docs-lint && npm run test",
     "seed:dev": "node scripts/seed-dev.mjs",
-    "smoke:test": "bash scripts/smoke-test.sh"
+    "smoke:test": "bash scripts/smoke-test.sh",
+    "import:fy2627": "node scripts/import-fy2627.mjs",
+    "import:fy2627:dry": "node scripts/import-fy2627.mjs --dry-run",
+    "import:pranav": "node scripts/import-fy2627.mjs --pranav-only",
+    "import:misba": "node scripts/import-fy2627.mjs --misba-only"
   },
   "simple-git-hooks": {
     "pre-commit": "bash scripts/docs-lint.sh && npx --no-install next lint --quiet --max-warnings 0"
@@ -51,6 +55,7 @@
     "simple-git-hooks": "^2.11.1",
     "tailwindcss": "^3.4.1",
     "typescript": "^5",
-    "vitest": "^2.1.4"
+    "vitest": "^2.1.4",
+    "xlsx": "^0.18.5"
   }
 }

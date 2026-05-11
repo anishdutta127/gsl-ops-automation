@@ -1,0 +1,1184 @@
+{
+  "runStartedAt": "2026-05-11T14:40:21.258Z",
+  "dryRun": false,
+  "strict": false,
+  "sources": {
+    "pranav": {
+      "path": "C:\\Users\\anish\\Projects\\gsl-ops-automation\\phase-pranav-misba-imports\\Pratik_-_School_Invoicing_Summary_2026-27.xlsx",
+      "sheets": [
+        "STEAM 2026-27PD ",
+        "YP_2026-27",
+        "Billing details _PD",
+        "2025-26_Proforma Invoice_PD",
+        "Sheet2",
+        "Sheet1",
+        "2026-27-PD "
+      ],
+      "importedAt": "2026-05-11T14:40:21.323Z"
+    },
+    "misba": {
+      "path": "C:\\Users\\anish\\Projects\\gsl-ops-automation\\phase-pranav-misba-imports\\Kit_Delivery_2026.xlsx",
+      "sheets": [
+        "Pratik",
+        "TW",
+        "Cretile ",
+        "Hardware "
+      ],
+      "importedAt": "2026-05-11T14:40:21.344Z"
+    }
+  },
+  "counts": {
+    "mous": {
+      "inserted": 61,
+      "updated": 13,
+      "unchanged": 0
+    },
+    "schools": {
+      "inserted": 101,
+      "updated": 22,
+      "unchanged": 23
+    },
+    "salesTeam": {
+      "inserted": 2,
+      "updated": 0,
+      "unchanged": 62
+    },
+    "payments": {
+      "inserted": 133,
+      "updated": 30,
+      "unchanged": 0
+    },
+    "kitDispatches": {
+      "inserted": 71,
+      "updated": 1,
+      "unchanged": 0
+    },
+    "inventoryItems": {
+      "inserted": 32,
+      "updated": 0,
+      "unchanged": 200
+    }
+  },
+  "skipped": [],
+  "errors": [
+    {
+      "stage": "pranav.steam",
+      "row": 33,
+      "school": "Empyrean School",
+      "message": "sale amount missing or unparseable; imported with contractValue=null"
+    },
+    {
+      "stage": "pranav.steam",
+      "row": 34,
+      "school": "Empyrean School",
+      "message": "sale amount missing or unparseable; imported with contractValue=null"
+    },
+    {
+      "stage": "pranav.steam",
+      "row": 41,
+      "school": "Doon Scholars School",
+      "message": "sale amount missing or unparseable; imported with contractValue=null"
+    }
+  ],
+  "warnings": [
+    {
+      "stage": "pranav.steam",
+      "row": 5,
+      "school": "Mutahhary Public School Baroo",
+      "message": "installment % sum 0.900 != 1.0"
+    },
+    {
+      "stage": "pranav.steam",
+      "row": 21,
+      "school": "Holy Child English Academy, Malda",
+      "message": "installment % sum 0.750 != 1.0"
+    },
+    {
+      "stage": "pranav.steam",
+      "row": 57,
+      "school": "Berhampore City Public School",
+      "message": "installment % sum 0.750 != 1.0"
+    },
+    {
+      "stage": "pranav.steam",
+      "row": 64,
+      "school": "St. Johns High School",
+      "message": "installment % sum 0.750 != 1.0"
+    }
+  ],
+  "chainMouCandidates": [],
+  "crossValidationGaps": [
+    {
+      "stage": "misba.tw",
+      "row": 4,
+      "school": "The Learning Sactuary",
+      "dcNumber": "DC-0227",
+      "message": "no matching MOU found in Pranav import"
+    },
+    {
+      "stage": "misba.tw",
+      "row": 5,
+      "school": "Aarohi Bharti",
+      "dcNumber": "DC-0229",
+      "message": "no matching MOU found in Pranav import"
+    },
+    {
+      "stage": "misba.tw",
+      "row": 6,
+      "school": "Loreto Day School, Bow Bazar-Kolkata",
+      "dcNumber": "DC-0231",
+      "message": "no matching MOU found in Pranav import"
+    },
+    {
+      "stage": "misba.tw",
+      "row": 7,
+      "school": "Loreto House - Kolkata",
+      "dcNumber": "DC-0232",
+      "message": "no matching MOU found in Pranav import"
+    },
+    {
+      "stage": "misba.tw",
+      "row": 8,
+      "school": "Julien Day  School, Elgin Road",
+      "dcNumber": "DC-0233",
+      "message": "no matching MOU found in Pranav import"
+    },
+    {
+      "stage": "misba.tw",
+      "row": 9,
+      "school": "Julien Day  School, Kalyani",
+      "dcNumber": "DC-0234",
+      "message": "no matching MOU found in Pranav import"
+    },
+    {
+      "stage": "misba.tw",
+      "row": 10,
+      "school": "Julien Day  School, Ganganagar",
+      "dcNumber": "DC-0235",
+      "message": "no matching MOU found in Pranav import"
+    },
+    {
+      "stage": "misba.tw",
+      "row": 11,
+      "school": "Julien Day  School, Howrah",
+      "dcNumber": "DC-0236",
+      "message": "no matching MOU found in Pranav import"
+    },
+    {
+      "stage": "misba.tw",
+      "row": 13,
+      "school": "St. Paul’s Mission School ,Kolkata",
+      "dcNumber": "DC-0238",
+      "message": "no matching MOU found in Pranav import"
+    },
+    {
+      "stage": "misba.tw",
+      "row": 18,
+      "school": "St. Montfort's Senior Secondary School",
+      "dcNumber": "DC-0242",
+      "message": "no matching MOU found in Pranav import"
+    },
+    {
+      "stage": "misba.cretile",
+      "row": 4,
+      "school": "Aarohi Bharti",
+      "dcNumber": "DC-0229",
+      "message": "no matching MOU found in Pranav import"
+    },
+    {
+      "stage": "misba.cretile",
+      "row": 7,
+      "school": "Blue Angels Global School (Replacement for damaged kits)",
+      "dcNumber": "DC-009",
+      "message": "no matching MOU found in Pranav import"
+    },
+    {
+      "stage": "misba.cretile",
+      "row": 12,
+      "school": "K.E. Carmel-Amtala",
+      "dcNumber": "4019",
+      "message": "no matching MOU found in Pranav import"
+    },
+    {
+      "stage": "misba.cretile",
+      "row": 13,
+      "school": "St. Mary's Convent High School",
+      "dcNumber": "4021",
+      "message": "no matching MOU found in Pranav import"
+    },
+    {
+      "stage": "misba.cretile",
+      "row": 14,
+      "school": "Don Bosco School Krishnanagar,",
+      "dcNumber": "4023",
+      "message": "no matching MOU found in Pranav import"
+    },
+    {
+      "stage": "misba.cretile",
+      "row": 15,
+      "school": "Don Bosco School Krishnanagar,",
+      "dcNumber": "4024",
+      "message": "no matching MOU found in Pranav import"
+    },
+    {
+      "stage": "misba.cretile",
+      "row": 21,
+      "school": "B.D. Memorial Jr. School - Bansdroni",
+      "dcNumber": "4052",
+      "message": "no matching MOU found in Pranav import"
+    },
+    {
+      "stage": "misba.cretile",
+      "row": 22,
+      "school": "B.D. Memorial Jr. School - Golf Garden",
+      "dcNumber": "4054",
+      "message": "no matching MOU found in Pranav import"
+    },
+    {
+      "stage": "misba.cretile",
+      "row": 23,
+      "school": "B.D. Memorial Jr. School - Garia",
+      "dcNumber": "4063",
+      "message": "no matching MOU found in Pranav import"
+    },
+    {
+      "stage": "misba.cretile",
+      "row": 24,
+      "school": "B.D. Memorial Jr. School - Vijaygarh",
+      "dcNumber": "4065",
+      "message": "no matching MOU found in Pranav import"
+    },
+    {
+      "stage": "misba.cretile",
+      "row": 25,
+      "school": "Rajesh Perumal",
+      "dcNumber": "4057",
+      "message": "no matching MOU found in Pranav import"
+    },
+    {
+      "stage": "misba.cretile",
+      "row": 26,
+      "school": "Pallavi Tatawati",
+      "dcNumber": "4059",
+      "message": "no matching MOU found in Pranav import"
+    },
+    {
+      "stage": "misba.cretile",
+      "row": 27,
+      "school": "Prashant Mishra",
+      "dcNumber": "4061",
+      "message": "no matching MOU found in Pranav import"
+    },
+    {
+      "stage": "misba.cretile",
+      "row": 31,
+      "school": "St John High School",
+      "dcNumber": "4072",
+      "message": "no matching MOU found in Pranav import"
+    },
+    {
+      "stage": "misba.cretile",
+      "row": 32,
+      "school": "BIT Global School",
+      "dcNumber": "4097",
+      "message": "no matching MOU found in Pranav import"
+    },
+    {
+      "stage": "misba.cretile",
+      "row": 33,
+      "school": "BIT Global School",
+      "dcNumber": "4103",
+      "message": "no matching MOU found in Pranav import"
+    },
+    {
+      "stage": "misba.cretile",
+      "row": 34,
+      "school": "Tathastu",
+      "dcNumber": "4099",
+      "message": "no matching MOU found in Pranav import"
+    },
+    {
+      "stage": "misba.cretile",
+      "row": 35,
+      "school": "Tathastu",
+      "dcNumber": "4100",
+      "message": "no matching MOU found in Pranav import"
+    },
+    {
+      "stage": "misba.cretile",
+      "row": 36,
+      "school": "Tathastu",
+      "dcNumber": "4101",
+      "message": "no matching MOU found in Pranav import"
+    },
+    {
+      "stage": "misba.hardware",
+      "row": 5,
+      "school": "Blue Angle School",
+      "dcNumber": "",
+      "message": "no matching MOU found in Pranav import"
+    },
+    {
+      "stage": "misba.hardware",
+      "row": 6,
+      "school": "Tathasu",
+      "dcNumber": "",
+      "message": "no matching MOU found in Pranav import"
+    },
+    {
+      "stage": "misba.hardware",
+      "row": 7,
+      "school": "Carmel Convent High School",
+      "dcNumber": "",
+      "message": "no matching MOU found in Pranav import"
+    },
+    {
+      "stage": "misba.hardware",
+      "row": 8,
+      "school": "St. Mary’s Convent School",
+      "dcNumber": "",
+      "message": "no matching MOU found in Pranav import"
+    },
+    {
+      "stage": "misba.hardware",
+      "row": 9,
+      "school": "St. John’s High School",
+      "dcNumber": "",
+      "message": "no matching MOU found in Pranav import"
+    },
+    {
+      "stage": "misba.hardware",
+      "row": 10,
+      "school": "Loreto House",
+      "dcNumber": "",
+      "message": "no matching MOU found in Pranav import"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC DC-0226 from Misba sheet not found in Pratik summary",
+      "school": "Embee Rosebud Hr.Sec. School"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC DC-0227 from Misba sheet not found in Pratik summary",
+      "school": "The Learning Sactuary"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC DC-0229 from Misba sheet not found in Pratik summary",
+      "school": "Aarohi Bharti"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC DC-0231 from Misba sheet not found in Pratik summary",
+      "school": "Loreto Day School, Bow Bazar-Kolkata"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC DC-0232 from Misba sheet not found in Pratik summary",
+      "school": "Loreto House - Kolkata"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC DC-0233 from Misba sheet not found in Pratik summary",
+      "school": "Julien Day  School, Elgin Road"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC DC-0234 from Misba sheet not found in Pratik summary",
+      "school": "Julien Day  School, Kalyani"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC DC-0235 from Misba sheet not found in Pratik summary",
+      "school": "Julien Day  School, Ganganagar"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC DC-0236 from Misba sheet not found in Pratik summary",
+      "school": "Julien Day  School, Howrah"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC DC-0237 from Misba sheet not found in Pratik summary",
+      "school": "SWARNIM INTERNATIONAL SCHOOL"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC DC-0238 from Misba sheet not found in Pratik summary",
+      "school": "St. Paul’s Mission School ,Kolkata"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC DC-0239 from Misba sheet not found in Pratik summary",
+      "school": "St. Paul's Boarding And Day School"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC MTPL/UP/2627/1 from Misba sheet not found in Pratik summary",
+      "school": "St. Paul's Boarding And Day School"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC DC-0240 from Misba sheet not found in Pratik summary",
+      "school": "Carmel Convent High School, Durgapur"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC DC-0241 from Misba sheet not found in Pratik summary",
+      "school": "Carmel School, Durgapur"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC DC-0242 from Misba sheet not found in Pratik summary",
+      "school": "St. Montfort's Senior Secondary School"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC DC-0243 from Misba sheet not found in Pratik summary",
+      "school": "The Scottish Church Collegiate School"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC DC-0244 from Misba sheet not found in Pratik summary",
+      "school": "St. Johns High School"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC DC-0245 from Misba sheet not found in Pratik summary",
+      "school": "Holy Child English Academy - Malda"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC DC-001 from Misba sheet not found in Pratik summary",
+      "school": "Darshan Academy_Devlali"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC DC-006 from Misba sheet not found in Pratik summary",
+      "school": "Lions Calcutta Greater Vidya Mandir"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC DC-007 from Misba sheet not found in Pratik summary",
+      "school": "Laxmipat Singhania Academy"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC DC-008 from Misba sheet not found in Pratik summary",
+      "school": "Contai Public School"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC DC-0010 from Misba sheet not found in Pratik summary",
+      "school": "Loreto Convent Entally"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC DC-0225 from Misba sheet not found in Pratik summary",
+      "school": "Mahrishi Dayanand School"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC DC-0229 from Misba sheet not found in Pratik summary",
+      "school": "Aarohi Bharti"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC DC-0228 from Misba sheet not found in Pratik summary",
+      "school": "Rootland Sec. School"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC DC_MH_01 from Misba sheet not found in Pratik summary",
+      "school": "Blue Angels Global School"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC DC-009 from Misba sheet not found in Pratik summary",
+      "school": "Blue Angels Global School (Replacement for damaged kits)"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC 4030 from Misba sheet not found in Pratik summary",
+      "school": "Blue Angels Global School"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC 4031 from Misba sheet not found in Pratik summary",
+      "school": "Blue Angels Global School"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC 4032 from Misba sheet not found in Pratik summary",
+      "school": "Blue Angels Global School"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC 4017 from Misba sheet not found in Pratik summary",
+      "school": "Kavyapta Global School"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC 4019 from Misba sheet not found in Pratik summary",
+      "school": "K.E. Carmel-Amtala"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC 4021 from Misba sheet not found in Pratik summary",
+      "school": "St. Mary's Convent High School"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC 4023 from Misba sheet not found in Pratik summary",
+      "school": "Don Bosco School Krishnanagar,"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC 4024 from Misba sheet not found in Pratik summary",
+      "school": "Don Bosco School Krishnanagar,"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC 4026 from Misba sheet not found in Pratik summary",
+      "school": "Delhi World Public School- Barasat"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC 4027 from Misba sheet not found in Pratik summary",
+      "school": "Delhi World Public School- Barasat"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC 4028 from Misba sheet not found in Pratik summary",
+      "school": "Delhi World Public School- Barasat"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC 4049 from Misba sheet not found in Pratik summary",
+      "school": "K E Carmel School, Suri"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC 4050 from Misba sheet not found in Pratik summary",
+      "school": "K E Carmel School, Suri"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC 4052 from Misba sheet not found in Pratik summary",
+      "school": "B.D. Memorial Jr. School - Bansdroni"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC 4054 from Misba sheet not found in Pratik summary",
+      "school": "B.D. Memorial Jr. School - Golf Garden"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC 4063 from Misba sheet not found in Pratik summary",
+      "school": "B.D. Memorial Jr. School - Garia"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC 4065 from Misba sheet not found in Pratik summary",
+      "school": "B.D. Memorial Jr. School - Vijaygarh"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC 4057 from Misba sheet not found in Pratik summary",
+      "school": "Rajesh Perumal"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC 4059 from Misba sheet not found in Pratik summary",
+      "school": "Pallavi Tatawati"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC 4061 from Misba sheet not found in Pratik summary",
+      "school": "Prashant Mishra"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC 4067 from Misba sheet not found in Pratik summary",
+      "school": "Contai Public School"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC 4069 from Misba sheet not found in Pratik summary",
+      "school": "Young Horizons School"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC 4070 from Misba sheet not found in Pratik summary",
+      "school": "Young Horizons School"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC 4072 from Misba sheet not found in Pratik summary",
+      "school": "St John High School"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC 4097 from Misba sheet not found in Pratik summary",
+      "school": "BIT Global School"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC 4103 from Misba sheet not found in Pratik summary",
+      "school": "BIT Global School"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC 4099 from Misba sheet not found in Pratik summary",
+      "school": "Tathastu"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC 4100 from Misba sheet not found in Pratik summary",
+      "school": "Tathastu"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC 4101 from Misba sheet not found in Pratik summary",
+      "school": "Tathastu"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC 4110 from Misba sheet not found in Pratik summary",
+      "school": "GMR International School"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC 4111 from Misba sheet not found in Pratik summary",
+      "school": "GMR International School"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC 4116 from Misba sheet not found in Pratik summary",
+      "school": "Christ Mission School"
+    },
+    {
+      "stage": "cross-validation",
+      "message": "DC 4117 from Misba sheet not found in Pratik summary",
+      "school": "Christ Mission School"
+    }
+  ],
+  "autoCreatedSalesReps": [
+    {
+      "id": "sp-brij-singh",
+      "name": "Brij Singh"
+    },
+    {
+      "id": "sp-balu-r",
+      "name": "Balu R"
+    }
+  ],
+  "autoCreatedSchools": [
+    {
+      "id": "sch-mutahhary-public-school-baroo",
+      "name": "Mutahhary Public School Baroo",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-jnana-bharathi-english-school",
+      "name": "Jnana Bharathi English School",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-mahrishi-dayanand-school",
+      "name": "Mahrishi Dayanand School",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-techno-india-group-public-school-kalyani",
+      "name": "Techno India Group Public School Kalyani",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-techno-india-group-public-school-asansol",
+      "name": "Techno India Group Public School Asansol",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-techno-india-group-public-school-panagarh",
+      "name": "Techno India Group Public School Panagarh",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-st-mary-convent-school",
+      "name": "St. Mary Convent School",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-loreto-day-school-bb",
+      "name": "Loreto Day School BB",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-kavyapta-global-school",
+      "name": "Kavyapta Global School",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-embee-rosebud-hr-sec-school",
+      "name": "Embee Rosebud Hr. Sec. School",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-the-learning-sanctuary",
+      "name": "The Learning Sanctuary",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-rootland-sec-school",
+      "name": "Rootland Sec. School",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-k-e-carmel-school-amtala",
+      "name": "K.E Carmel School - Amtala",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-k-e-carmel-school-suri",
+      "name": "K.E Carmel School - Suri",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-blue-angels-global-school",
+      "name": "Blue Angels Global School",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-tathastu-innovations-lab-meerut",
+      "name": "Tathastu Innovations (LAB ) Meerut",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-holy-child-english-academy-malda",
+      "name": "Holy Child English Academy, Malda",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-sd-senior-secondary-school",
+      "name": "SD Senior Secondary School",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-christ-mission-school",
+      "name": "Christ Mission School",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-delhi-world-public-school-barasat",
+      "name": "Delhi World Public School, Barasat",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-jaffaria-academy-of-modern-education-kargil",
+      "name": "Jaffaria Academy of Modern Education - Kargil",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-b-d-memorial-jr-school",
+      "name": "B.D Memorial Jr. School",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-tjs-public-school-cbse",
+      "name": "TJS Public School (CBSE)",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-abhyasa-public-school",
+      "name": "Abhyasa Public School",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-loreto-convent-entally",
+      "name": "Loreto Convent Entally",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-gnims-business-school",
+      "name": "GNIMS Business School",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-guru-nanak-institute-of-management-studies",
+      "name": "Guru Nanak Institute of Management Studies",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-b-k-birla-public-school-kalyan",
+      "name": "B.K. Birla Public School - Kalyan",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-empyrean-school",
+      "name": "Empyrean School",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-st-johns-high-school-rkp",
+      "name": "St. Johns High School - RKP",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-cardinal-warriors-school",
+      "name": "Cardinal Warriors School",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-radcliffe-education-private-limited",
+      "name": "Radcliffe Education Private Limited",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-lions-calcutta-greater-vidya-mandir",
+      "name": "Lions Calcutta Greater Vidya Mandir",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-b-i-t-global-school",
+      "name": "B I T Global School",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-don-bonsco-krishnanagar",
+      "name": "Don Bonsco Krishnanagar",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-doon-scholars-school",
+      "name": "Doon Scholars School",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-loreto-day-school-kolkata",
+      "name": "Loreto Day School Kolkata",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-carmel-convent-high-school-durgapur",
+      "name": "Carmel Convent High School, Durgapur",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-carmel-school-durgapur",
+      "name": "Carmel School, Durgapur",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-st-montfort-s-sr-secondary-school-baruipur",
+      "name": "St. Montfort's Sr. Secondary School, Baruipur",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-laxmipat-singhania-academy",
+      "name": "Laxmipat Singhania Academy",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-julien-educational-trust-eglin-road",
+      "name": "Julien Educational Trust, Eglin Road",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-julien-educational-trust-kalyani",
+      "name": "Julien Educational Trust, Kalyani",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-julien-educational-trust-ganganagar",
+      "name": "Julien Educational Trust, Ganganagar",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-julien-educational-trust-howrah",
+      "name": "Julien Educational Trust, Howrah",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-contai-public-school",
+      "name": "Contai Public School",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-swarnim-international-school",
+      "name": "Swarnim International School",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-st-paul-s-mission-school",
+      "name": "St. Paul’s Mission School",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-st-paul-s-boarding-and-day-school",
+      "name": "St. Paul's Boarding And Day School",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-berhampore-city-public-school",
+      "name": "Berhampore City Public School",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-shaw-public-school",
+      "name": "Shaw Public School",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-sri-r-n-singh-memorial-high-school-for-class-8",
+      "name": "Sri R. N. Singh Memorial High School (For Class 8)",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-sri-r-n-singh-memorial-high-school",
+      "name": "Sri R. N. Singh Memorial High School",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-sumana-dutta-memorial-vivekananda-international-school",
+      "name": "Sumana Dutta Memorial Vivekananda International School",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-hariyana-international-academy-class-2-7",
+      "name": "Hariyana International Academy - Class 2 - 7",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-the-scottish-church-collegiate-school",
+      "name": "The Scottish Church Collegiate School",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-st-johns-high-school",
+      "name": "St. Johns High School",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-rishi-aurobindo-memorial-academy",
+      "name": "Rishi Aurobindo Memorial Academy",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-darshan-academy-devlali",
+      "name": "Darshan Academy, Devlali",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-young-horizons-school",
+      "name": "Young Horizons School",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-ramanarayana-education-trust",
+      "name": "Ramanarayana Education Trust",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-gmr-international-school",
+      "name": "GMR International School",
+      "source": "pranav.steam"
+    },
+    {
+      "id": "sch-dps-international",
+      "name": "DPS International",
+      "source": "pranav.yp"
+    },
+    {
+      "id": "sch-chirec-international-academy",
+      "name": "CHIREC International Academy",
+      "source": "pranav.yp"
+    },
+    {
+      "id": "sch-learn-vel-private-limited-velammal-global-school-puzhal",
+      "name": "Learn Vel Private Limited - (Velammal Global School - Puzhal)",
+      "source": "pranav.yp"
+    },
+    {
+      "id": "sch-learn-vel-private-limited-velammal-global-school-mambakkam",
+      "name": "Learn Vel Private Limited - (Velammal Global School - Mambakkam)",
+      "source": "pranav.yp"
+    },
+    {
+      "id": "sch-elpro-international-school",
+      "name": "Elpro International School",
+      "source": "pranav.yp"
+    },
+    {
+      "id": "sch-gopi-birla-memorial-school",
+      "name": "Gopi Birla Memorial School",
+      "source": "pranav.yp"
+    },
+    {
+      "id": "sch-21k-learning-private-limited",
+      "name": "21K Learning Private Limited",
+      "source": "pranav.yp"
+    },
+    {
+      "id": "sch-21k-school-education-private-limited",
+      "name": "21K School Education Private Limited",
+      "source": "pranav.yp"
+    },
+    {
+      "id": "sch-hyderabad-public-school",
+      "name": "Hyderabad Public School",
+      "source": "pranav.yp"
+    },
+    {
+      "id": "sch-the-learning-sactuary",
+      "name": "The Learning Sactuary",
+      "source": "misba.tw"
+    },
+    {
+      "id": "sch-aarohi-bharti",
+      "name": "Aarohi Bharti",
+      "source": "misba.tw"
+    },
+    {
+      "id": "sch-loreto-day-school-bow-bazar-kolkata",
+      "name": "Loreto Day School, Bow Bazar-Kolkata",
+      "source": "misba.tw"
+    },
+    {
+      "id": "sch-loreto-house-kolkata",
+      "name": "Loreto House - Kolkata",
+      "source": "misba.tw"
+    },
+    {
+      "id": "sch-julien-day-school-elgin-road",
+      "name": "Julien Day  School, Elgin Road",
+      "source": "misba.tw"
+    },
+    {
+      "id": "sch-julien-day-school-kalyani",
+      "name": "Julien Day  School, Kalyani",
+      "source": "misba.tw"
+    },
+    {
+      "id": "sch-julien-day-school-ganganagar",
+      "name": "Julien Day  School, Ganganagar",
+      "source": "misba.tw"
+    },
+    {
+      "id": "sch-julien-day-school-howrah",
+      "name": "Julien Day  School, Howrah",
+      "source": "misba.tw"
+    },
+    {
+      "id": "sch-st-paul-s-mission-school-kolkata",
+      "name": "St. Paul’s Mission School ,Kolkata",
+      "source": "misba.tw"
+    },
+    {
+      "id": "sch-st-montfort-s-senior-secondary-school",
+      "name": "St. Montfort's Senior Secondary School",
+      "source": "misba.tw"
+    },
+    {
+      "id": "sch-blue-angels-global-school-replacement-for-damaged-kits",
+      "name": "Blue Angels Global School (Replacement for damaged kits)",
+      "source": "misba.cretile"
+    },
+    {
+      "id": "sch-k-e-carmel-amtala",
+      "name": "K.E. Carmel-Amtala",
+      "source": "misba.cretile"
+    },
+    {
+      "id": "sch-st-mary-s-convent-high-school",
+      "name": "St. Mary's Convent High School",
+      "source": "misba.cretile"
+    },
+    {
+      "id": "sch-don-bosco-school-krishnanagar",
+      "name": "Don Bosco School Krishnanagar,",
+      "source": "misba.cretile"
+    },
+    {
+      "id": "sch-b-d-memorial-jr-school-bansdroni",
+      "name": "B.D. Memorial Jr. School - Bansdroni",
+      "source": "misba.cretile"
+    },
+    {
+      "id": "sch-b-d-memorial-jr-school-golf-garden",
+      "name": "B.D. Memorial Jr. School - Golf Garden",
+      "source": "misba.cretile"
+    },
+    {
+      "id": "sch-b-d-memorial-jr-school-garia",
+      "name": "B.D. Memorial Jr. School - Garia",
+      "source": "misba.cretile"
+    },
+    {
+      "id": "sch-b-d-memorial-jr-school-vijaygarh",
+      "name": "B.D. Memorial Jr. School - Vijaygarh",
+      "source": "misba.cretile"
+    },
+    {
+      "id": "sch-rajesh-perumal",
+      "name": "Rajesh Perumal",
+      "source": "misba.cretile"
+    },
+    {
+      "id": "sch-pallavi-tatawati",
+      "name": "Pallavi Tatawati",
+      "source": "misba.cretile"
+    },
+    {
+      "id": "sch-prashant-mishra",
+      "name": "Prashant Mishra",
+      "source": "misba.cretile"
+    },
+    {
+      "id": "sch-st-john-high-school",
+      "name": "St John High School",
+      "source": "misba.cretile"
+    },
+    {
+      "id": "sch-bit-global-school",
+      "name": "BIT Global School",
+      "source": "misba.cretile"
+    },
+    {
+      "id": "sch-tathastu",
+      "name": "Tathastu",
+      "source": "misba.cretile"
+    },
+    {
+      "id": "sch-blue-angle-school",
+      "name": "Blue Angle School",
+      "source": "misba.hardware"
+    },
+    {
+      "id": "sch-tathasu",
+      "name": "Tathasu",
+      "source": "misba.hardware"
+    },
+    {
+      "id": "sch-carmel-convent-high-school",
+      "name": "Carmel Convent High School",
+      "source": "misba.hardware"
+    },
+    {
+      "id": "sch-st-mary-s-convent-school",
+      "name": "St. Mary’s Convent School",
+      "source": "misba.hardware"
+    },
+    {
+      "id": "sch-st-john-s-high-school",
+      "name": "St. John’s High School",
+      "source": "misba.hardware"
+    },
+    {
+      "id": "sch-loreto-house",
+      "name": "Loreto House",
+      "source": "misba.hardware"
+    }
+  ]
+}
