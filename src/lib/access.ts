@@ -210,6 +210,25 @@ export function canExecuteDispatch(user: User): boolean {
 }
 
 /**
+ * Allocate kits to grades on a KitDispatch (Gate 3 Step 3). Ops + Admin.
+ * Distinct from canRaiseDispatch (which gates the legacy DispatchRequest
+ * lib path): canAllocateKits is the Misba-spec kit allocation form
+ * gate.
+ */
+export function canAllocateKits(user: User): boolean {
+  return editGate(user, ['ops'])
+}
+
+/**
+ * Upload POD + edit shipment tracking on a KitDispatch (Gate 3 Step 8).
+ * Ops + Admin. POD upload auto-flips dispatchStatus to 'Delivered' per
+ * the joint-spec Step 11 logic.
+ */
+export function canUploadPOD(user: User): boolean {
+  return editGate(user, ['ops'])
+}
+
+/**
  * Manage warehouse inventory stock + thresholds (Misba doc Step 9
  * suggested inventory module). Finance + Admin per the brief.
  *

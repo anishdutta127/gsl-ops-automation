@@ -40,6 +40,7 @@ export const ARRAY_ENTITY_TO_PATH: Record<
   salesOpportunity: 'src/data/sales_opportunities.json',
   inventoryItem: 'src/data/inventory_items.json',
   communicationTemplate: 'src/data/communication_templates.json',
+  kitDispatch: 'src/data/kit_dispatches.json',
   // Gate 2 entity migrations
   adjustment: 'src/data/adjustments.json',
   signedValues: 'src/data/signed_values.json',

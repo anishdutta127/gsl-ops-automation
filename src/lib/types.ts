@@ -1442,6 +1442,7 @@ export type PendingUpdateEntity =
   | 'salesOpportunity'             // W4-F.1
   | 'inventoryItem'                // W4-G.1
   | 'communicationTemplate'        // W4-I.5 Phase 3
+  | 'kitDispatch'                  // Gate 3 Steps 2-9 (Misba joint spec)
   // Gate 2 entity migrations from gsl-mou-system
   | 'adjustment'                   // Phase 3 R2 adjustment-as-line-item
   | 'signedValues'                 // signed-values capture (mou-system Phase 3 §4)
@@ -1760,4 +1761,124 @@ export interface LifecycleRule {
   updatedAt: string                // ISO
   updatedBy: string                // User.id; 'system' on initial seed
   auditLog: AuditEntry[]
+}
+
+// ============================================================================
+// KitDispatch (Gate 3 Steps 2-9; Misba + Shashank + Pranav joint spec)
+//
+// One KitDispatch record per (MOU x School) pair once the MOU is signed
+// and ready for kit shipment. Per joint spec section 2: entry appears
+// only after MOU lifecycle is complete (status >= 'Active'); payment
+// status is computed live from payments.json and is NOT stored on the
+// record (single source of truth).
+//
+// The record progresses through: Sales/Ops allocate grades+kits (Step 3)
+// -> Sales approve or reject (Step 4) -> Sales edit dispatch summary
+// (Step 5; dual-writes School Master) -> Accounts execute partial /
+// full dispatch + upload Tally challan (Step 6) -> dispatchStatus
+// auto-transitions per Step 7 logic -> Ops adds shipment tracking +
+// POD (Step 8) -> POD upload flips status to 'Delivered' (Step 11
+// updated logic).
+//
+// Distinct from the existing Dispatch entity (W4-D) which models the
+// per-installment kit handover lifecycle. Gate 3 KitDispatch is the
+// Misba-spec rebuild that consolidates allocation -> approval ->
+// execution -> tracking -> POD into one record. Coexists with the
+// pre-existing Dispatch records; the two systems run in parallel
+// while operators migrate.
+// ============================================================================
+
+export type KitDispatchStatus = 'Not Started' | 'Pending' | 'In Transit' | 'Delivered'
+
+export type KitSalesApprovalStatus = 'Pending' | 'Approved' | 'Rejected'
+
+export interface KitAllocation {
+  /** 1-12. */
+  grade: number
+  /** Per-grade student count. Pulled from MOU.gradewiseDistribution if Sales
+   *  entered it at draft; entered fresh by Ops at allocation time otherwise. */
+  students: number
+  /** Number of physical kits to dispatch for this grade. Defaults to students
+   *  but editable: Reusable kits may be shared across multiple students. */
+  kitsQty: number
+  /** Reusable returns to GSL post-course; Consumable stays with the student. */
+  kitType: 'Reusable' | 'Consumable' | null
+  /** SKU name verbatim from inventory_items.json at allocation time. Stored as
+   *  a name (not an id) so the audit trail survives SKU id changes; the
+   *  allocation flow validates the name exists in inventory before submit. */
+  productName: string
+}
+
+export interface AccountsDispatchEntry {
+  grade: number
+  studentsRequested: number
+  productRequested: string
+  qtyRequested: number
+  /** Finance-editable; the only column Accounts fill in at Step 6. Cannot
+   *  exceed qtyRequested; can be 0 for partial dispatch (Cretile stock-out). */
+  qtyActualDispatched: number
+}
+
+export interface DispatchSummary {
+  /** Editable by Sales; dual-writes back to School master on save. */
+  schoolName: string
+  shippingAddress: string
+  contactPerson: string
+  contactNumber: string
+  /** Free-text remarks Sales adds at Step 5 (e.g. "Kits are returnable"). */
+  salesRemarks: string | null
+  approvedBy: string                 // User.id; Sales who approved
+  approvedAt: string                 // ISO
+  /** Populated by Accounts at Step 6 once they record actual dispatch. */
+  accountsEntries: AccountsDispatchEntry[]
+  /** public/delivery-challans/<dispatchId>.pdf once uploaded by Accounts. */
+  deliveryChallanPath: string | null
+  /** ISO timestamp when "Email Warehouse" button was clicked at Step 6.
+   *  Gate 4 wires actual SMTP delivery; for Step 6 this is intent-only. */
+  warehouseEmailLoggedAt: string | null
+}
+
+export interface ShipmentTracking {
+  courierName: string
+  trackingId: string
+  /** ISO YYYY-MM-DD. Defaults to the accounts-execute timestamp. */
+  dispatchDate: string
+  /** ISO YYYY-MM-DD; optional. */
+  expectedDelivery: string | null
+  deliveryStatus: 'In Transit' | 'Delivered'
+  updatedAt: string
+  updatedBy: string                  // User.id
+}
+
+export interface PODRecord {
+  /** public/delivery-pods/<dispatchId>.<ext> */
+  filePath: string
+  uploadedAt: string
+  uploadedBy: string                 // User.id
+}
+
+export interface KitDispatch {
+  /** 'DISPATCH-<mouId>' format; minted at first-allocation-submit time.
+   *  See STEP9_QUESTIONS.md Q2 for the timing rationale. */
+  id: string
+  mouId: string
+  schoolId: string
+  schoolName: string                 // denormalised at create time
+  productSelected: 'TinkRworks' | 'Cretile' | 'Both'
+  dispatchStatus: KitDispatchStatus
+  allocations: KitAllocation[]
+  salesApprovalStatus: KitSalesApprovalStatus
+  salesApprovedBy: string | null
+  salesApprovedAt: string | null
+  salesRejectionReason: string | null
+  /** Populated by Step 4 approve action; mutated by Step 5 (sales edit)
+   *  and Step 6 (Accounts execution). */
+  dispatchSummary: DispatchSummary | null
+  /** Populated by Step 8 once Ops records courier metadata. */
+  shipmentTracking: ShipmentTracking | null
+  /** Populated by Step 8 POD upload; presence flips dispatchStatus to
+   *  'Delivered' per Step 11 logic. */
+  pod: PODRecord | null
+  auditLog: AuditEntry[]
+  createdAt: string
 }
