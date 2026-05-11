@@ -30,6 +30,14 @@ import { getCurrentUser } from '@/lib/auth/session'
 import { canManageUsers } from '@/lib/access'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
+import { loadFy2627Meta } from '@/lib/imports/fy2627Meta'
+import { Fy2627ImportStatus } from '@/components/admin/Fy2627ImportStatus'
+import {
+  getResponsibilityMatrix,
+  userOverrideCount,
+} from '@/lib/stageResponsibility'
+import { STAGE_ORDER } from '@/lib/statusTracker'
+import { UserCog } from 'lucide-react'
 
 interface SnapshotMeta {
   snapshotTakenAt: string
@@ -77,6 +85,16 @@ export default async function DataSnapshotPage() {
   const hasDiffs = Object.values(diffs).some(
     (d) => d.added.length > 0 || d.removed.length > 0,
   )
+  // Gate 4.7 Step 1: Excel import meta surfaced alongside the
+  // gsl-mou-system snapshot. Both live under src/data/_imports/* or
+  // src/data/_snapshots/* depending on origin.
+  const fy2627Meta = loadFy2627Meta()
+  // Gate 4.9 Step 7: stage responsibility config summary surfaced
+  // here so admin can see whether the matrix has been customised
+  // without opening the configuration page.
+  const responsibilityMatrix = getResponsibilityMatrix()
+  const stageOverrides = userOverrideCount(responsibilityMatrix)
+  const stageTotal = STAGE_ORDER.length
 
   return (
     <>
@@ -282,6 +300,40 @@ export default async function DataSnapshotPage() {
               </section>
             </>
           )}
+
+          {/* Gate 4.7 Step 1: FY26-27 Excel import status (Pranav +
+              Misba). Renders even when the gsl-mou-system snapshot is
+              missing because the two imports are independent of each
+              other and the snapshot is not a prerequisite. */}
+          <Fy2627ImportStatus meta={fy2627Meta} />
+
+          {/* Gate 4.9 Step 7: stage responsibility config summary.
+              Calm one-line banner so admin sees the matrix state
+              without leaving this page. */}
+          <section
+            data-testid="stage-responsibility-banner"
+            className="rounded-md border border-border bg-card p-4"
+          >
+            <div className="flex items-start gap-3">
+              <UserCog aria-hidden className="size-5 shrink-0 text-brand-navy" />
+              <div className="flex-1">
+                <p className="text-sm text-slate-700">
+                  Stage responsibility for{' '}
+                  <strong>{stageOverrides}</strong> of {stageTotal} stages is
+                  set to specific users. The remaining{' '}
+                  <strong>{stageTotal - stageOverrides}</strong> default to
+                  whole-department ownership.
+                </p>
+                <Link
+                  href="/admin/stage-responsibility"
+                  data-testid="stage-responsibility-configure-link"
+                  className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-brand-navy underline-offset-2 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
+                >
+                  Configure stage responsibility
+                </Link>
+              </div>
+            </div>
+          </section>
         </div>
       </main>
     </>

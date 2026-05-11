@@ -97,7 +97,7 @@ interface PlainTile {
   label: string
   description: string
   iconKey: 'audit' | 'cc-rules' | 'lifecycle' | 'cohort' | 'pi-counter'
-    | 'schools' | 'spocs' | 'sales-team' | 'groups'
+    | 'schools' | 'spocs' | 'sales-team' | 'groups' | 'stage-responsibility'
   status?: 'placeholder'
 }
 
@@ -115,6 +115,7 @@ const PLAIN_ICON: Record<PlainTile['iconKey'], LucideIcon> = {
   lifecycle: Settings,
   cohort: ClipboardList,
   'pi-counter': Database,
+  'stage-responsibility': Users,
   schools: ClipboardList,
   spocs: Users,
   'sales-team': Users,
@@ -226,6 +227,12 @@ export default async function AdminIndexPage({ searchParams }: PageProps) {
       label: 'Lifecycle rules',
       description: 'Editable per-stage default durations; drives kanban overdue badges.',
       iconKey: 'lifecycle',
+    },
+    {
+      href: '/admin/stage-responsibility',
+      label: 'Stage responsibility',
+      description: 'Who owns each lifecycle stage (department + optional user override + escalation routing).',
+      iconKey: 'stage-responsibility',
     },
     {
       href: '/admin/mou-status',
