@@ -40,6 +40,29 @@ References:
 - `src/lib/pi/parallelBuildLock.ts` (the lock that hides this bug today).
 - `docs/decisions/STEP5_QUESTIONS_resolved.md` background, `STEP6_QUESTIONS.md` Q6 the canonical write-up.
 
+## VEX dispatch status rewind (Gate 2 Step 7 follow-up)
+
+Gate 2 Step 7's dispatch transition route enforces forward-only status
+transitions (`Requested → Request Raised to Warehouse → Invoiced →
+Shipped`). The API returns 400 `invalid-transition` if `nextIdx <
+currentIdx`. The chosen invariant protects against UI-bypass scripted
+writes that could reset a Shipped dispatch back to Requested.
+
+The cost: if Ops misclicks Shipped on the wrong dispatch row, the only
+recovery path is an Admin JSON edit to `src/data/vex_dispatches.json`
+followed by a manual audit entry recording the correction. There is no
+in-app rewind affordance.
+
+Trigger: **if Ops requests a rewind capability after 30 days of usage.**
+The fix is small (drop the `nextIdx < currentIdx` check OR add a
+`canAdminRewind` gate that allows backwards transitions for Admin
+with audit). Surface in BACKLOG until usage validates demand.
+
+References:
+- `src/app/api/operations/vex/pi/[id]/dispatch/[dispatchId]/transition/route.ts`
+  lines 107-118 (the forward-only check).
+- `STEP7_QUESTIONS.md` Q4 (decision archive).
+
 ## .docx Generate flow port (Gate 2 Step 5 follow-up)
 
 Step 5's `GeneratorWizard` ships the drafting flow + Save Draft action

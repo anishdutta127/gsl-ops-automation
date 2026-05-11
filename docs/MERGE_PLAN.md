@@ -228,19 +228,55 @@ The parallel-build window therefore spans Gates 2-5, not 2 weeks. During this wi
 - The recalc engine, PI generation, payment matching libs migrate verbatim to Ops in Gate 2 Step 2 and run on imported data for verification; they do not produce production PIs during the parallel-build window.
 - The PI counter ownership stays with mou-system (see §8).
 
-**Cutover day** (post Gate 5 final verification):
+**T-48h to T-0 (pre-cutover preparation):**
 
-1. Final read from `gsl-mou-system/src/data/*.json`: the most recent state of MOUs, payments, PIs, VEX records.
-2. One-shot import into Ops via `scripts/cutover-load.mjs`. Audit log every entity creation as `'cutover-import'`.
-3. Lock the PI counter (see §9): Ops reads `pi_counter.json` from mou-system one final time, persists it locally, and from this moment forward Ops is the only system that issues PIs.
+1. T-48h: Anish notifies Pranav, Shubhangi, Anita that cutover lands in 48 hours. Cutover date set on a Tuesday-Wednesday-Thursday slot to avoid weekend rollback complications.
+2. T-24h: Anish runs `scripts/cutover-snapshot.mjs` (final mou-system → Ops snapshot promotion). Verifies the snapshot diff against the previous run is non-empty and explainable. Promotes the snapshot to `src/data/*.json` on a feature branch.
+3. T-24h to T-0: feature branch reviewed; merge to main. Vercel preview deployment is the dry-run for cutover-day environment.
+4. T-1h: Anish confirms Vercel main is green, all tests pass, no pending PRs.
+
+**Cutover day (T-0):**
+
+1. Final read from `gsl-mou-system/src/data/*.json`: the most recent state of MOUs, payments, PIs, VEX records. Compare against the T-24h snapshot; any new records that arrived in the last 24h are imported through `scripts/cutover-load.mjs` (audit log every entity creation as `'cutover-import'`).
+2. Lock the PI counter (see §9): Ops reads `pi_counter.json` from mou-system one final time, persists it locally, and from this moment forward Ops is the only system that issues PIs.
+3. **Flip `PI_PARALLEL_BUILD_LOCK=false` on Vercel.** The parallel-build lock at `src/lib/pi/parallelBuildLock.ts` defaults fail-closed; this env-var flip is the moment Ops's PI generation routes (`/api/pi/generate`, `/api/operations/vex/pi/create`) start issuing real PI numbers. Without this flip Ops cannot generate PIs.
 4. `gsl-mou-system` middleware flips to read-only banner mode: every POST / PUT / DELETE returns HTTP 410 Gone with a redirect URL pointing to the equivalent Ops route. Reads continue to serve from the snapshot at cutover instant.
 5. Ops `/` and per-department dashboards surface the per-department onboarding banner from §6.
+6. Anish announces cutover to all users via WhatsApp + email; Pranav, Shubhangi, Anita first-login walkthrough scheduled within the same hour.
 
 **Rollback contract:**
-- 48-hour rollback window. If a catastrophic regression surfaces in the first 48h, re-enable writes on `gsl-mou-system` and pause Ops writes; Anish replays any Ops-side captures into mou-system via a one-off script.
+- **48-hour rollback window.** If a catastrophic regression surfaces in the first 48h:
+  1. Re-enable `gsl-mou-system` writes (revert the middleware redirect).
+  2. Flip `PI_PARALLEL_BUILD_LOCK=true` on Vercel to halt Ops PI generation.
+  3. Pause Ops user logins (banner: "Maintenance: returning to gsl-mou-system briefly").
+  4. Anish replays any Ops-side captures into mou-system via a one-off script.
 - After 48h the rollback path is closed. Ops becomes the only source of truth and the parallel-build mechanic is retired. Anish's 48h sign-off is the formal gate.
 
 **Per-department onboarding banner** (Gate 5 deliverable, copy locked in §6) shows on first login post-cutover. Banner ID is set to the cutover date; dismissal stored in `localStorage`.
+
+### 5.1 Snapshot promotion (Gate 2 Step 8)
+
+Gate 2 Step 8 promoted the 2026-05-10 mou-system snapshot from `src/data/_snapshots/mou-system/*` to top-level `src/data/*.json` for V1-V7 verification:
+
+- `vex_pis.json` (5 records)
+- `vex_orders.json` (141 records)
+- `vex_dispatches.json` (4 records)
+- `vex_products.json` (28 SKUs)
+- `agreements.json` (1 Tinkerworks vendor agreement)
+
+These are **pre-cutover staging data** for verification, NOT mou-system working data. Ops's working data during parallel-build. The snapshot under `_snapshots/mou-system/` remains the immutable reference for diff/refresh purposes; running `scripts/cutover-snapshot.mjs` at T-24h overwrites both the snapshot and the top-level files in sync.
+
+Verification-time inconsistencies (e.g., a tester recording a payment on Ops during the parallel-build window) are acceptable until T-24h, at which point the next snapshot pass syncs the latest mou-system state on top of any local Ops drift. The drift is logged but not blocking.
+
+### 5.2 Gate 5 cutover prerequisites
+
+Items that MUST be resolved before T-0; tracked in BACKLOG.md with explicit triggers naming the cutover deadline:
+
+- **PI generator render-only split** (Gate 2 Step 6 follow-up). Without this, downloading an existing PI from `/finance/pi/[paymentId]` after cutover burns a fresh PI number. Trigger entry at top of BACKLOG.md.
+- **.docx Generate flow port** (Gate 2 Step 5 follow-up). Without this, the GeneratorWizard's Generate button shows a parallel-build note instead of producing the .docx; Pranav cannot draft new MOUs on Ops at cutover.
+- **Chain MOU SchoolGroup reconciliation** (Gate 2 Step 4 follow-up). The 12 chain-candidate schools flagged at `src/data/_snapshots/mou-system/_meta.json` `chainCandidates` need manual consolidation. The 1:1 default works for now but billing centralisation breaks at cutover if the chain MOU does not point to a consolidated SchoolGroup.
+
+Gates 3-5 will add their own cutover prereqs to this list as they ship. The list is the bridge between BACKLOG.md and the formal cutover-day checklist; nothing here moves to "done" without a green CI run on the relevant fix.
 
 ### Notes on the parallel-build window
 

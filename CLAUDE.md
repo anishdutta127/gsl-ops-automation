@@ -42,6 +42,16 @@ EDIT gate semantics: `Admin` with `department: null` is the cross-functional wil
 
 Read this principle as: **Admin role + `department: 'ops'` means trusted Ops user with PI gates still enforced.** The Admin role lifts the testers above the cc-rule + audit-route + dispatch-request scoping that role-decisions.md 2026-04-27 collapsed for the trusted core team; the department field re-establishes write-side scoping per the Misba MM2 acceptance criterion. **Admin role + `department: null` means cross-functional wildcard** (Anish, Ameet, Gowri at seed). **Escape hatch:** flip a user's department to null via `/admin/users` for testing scenarios that need a department-restricted user to act outside their lane (e.g., asking Misba to walk through the PI generation flow once during pilot review). The flip is logged as a `user-role-changed` audit entry; revert post-test.
 
+### VEX dispatch lifecycle role split (Gate 2 Step 7)
+
+The VEX dispatch lifecycle `Requested → Request Raised to Warehouse → Invoiced → Shipped` is gated by TWO department roles at the transition route, not one:
+
+- `canRaiseDispatch` (Ops + Admin wildcard) drives **Request Raised to Warehouse** and **Shipped**. Ops owns the warehouse handover and the final shipped status.
+- `canEditFinanceData` (Finance + Admin wildcard) drives **Invoiced**. Marking a dispatch Invoiced attests that the tax invoice exists, which is a Finance act; the tax invoice number + path are Finance-uploaded.
+- Either role can read the dispatch detail; the gate is on the specific transition action.
+
+Both roles share Admin's null-department wildcard. The Step 7 brief's "canRaiseDispatch covers everything" wording was imprecise. The split was chosen during build because tax invoicing is semantically a Finance act; locking it behind a Finance gate prevents Ops accidentally attesting an invoice that hasn't been raised. Status transitions are forward-only at the API; rewinds require Admin JSON edit (BACKLOG: dispatch rewind capability).
+
 ## Testing-vs-production access defaults
 
 `TESTING_OPEN_ACCESS` env var controls VIEW-gate strictness. Defaults to **fail-open for testers** (a missing or empty env var reads as `true`).
