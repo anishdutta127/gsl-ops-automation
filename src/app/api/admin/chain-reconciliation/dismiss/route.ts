@@ -38,16 +38,25 @@ export async function POST(request: Request) {
   }
 
   try {
-    await atomicUpdateJson<DismissalsFile>(DISMISSALS_PATH, (current) => {
-      const file = (current as DismissalsFile | null) ?? { dismissedSchoolIds: [] }
-      const existing = new Set(file.dismissedSchoolIds ?? [])
-      // Idempotency: already-dismissed is a no-op.
-      if (existing.has(schoolId)) return file
-      return {
-        _comment: file._comment,
-        dismissedSchoolIds: [...(file.dismissedSchoolIds ?? []), schoolId],
-      }
-    })
+    await atomicUpdateJson<DismissalsFile>(
+      DISMISSALS_PATH,
+      (current) => {
+        const file = (current as DismissalsFile | null) ?? { dismissedSchoolIds: [] }
+        const existing = new Set(file.dismissedSchoolIds ?? [])
+        // Idempotency: already-dismissed is a no-op.
+        if (existing.has(schoolId)) {
+          return { next: file, commitMessage: 'chore(chain-reconciliation): already dismissed; no-op.' }
+        }
+        return {
+          next: {
+            _comment: file._comment,
+            dismissedSchoolIds: [...(file.dismissedSchoolIds ?? []), schoolId],
+          },
+          commitMessage: `chore(chain-reconciliation): mark ${schoolId} as standalone.`,
+        }
+      },
+      { defaultValue: { dismissedSchoolIds: [] } as DismissalsFile },
+    )
   } catch (e) {
     const url = new URL('/admin/chain-mou-reconciliation', request.url)
     url.searchParams.set('error', e instanceof Error ? e.message : 'dismiss-failed')

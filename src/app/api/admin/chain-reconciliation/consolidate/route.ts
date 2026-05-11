@@ -45,24 +45,25 @@ export async function POST(request: Request) {
   try {
     // Read schools, build the consolidation, then write both files.
     let members: School[] = []
-    await atomicUpdateJson<School[]>(SCHOOLS_PATH, (current) => {
-      const list = Array.isArray(current) ? current : []
-      members = list.filter((s) => memberSchoolIds.includes(s.id))
-      if (members.length === 0) return list
-      const result = buildConsolidation({
-        members,
-        input: {
-          memberSchoolIds,
-          chainName,
-          region,
-          createdBy: user.id,
-        },
-        now: new Date(),
-      })
-      // Update each member school in the list with the audit entry.
-      const updatedById = new Map(result.updatedSchools.map((s) => [s.id, s]))
-      return list.map((s) => updatedById.get(s.id) ?? s)
-    })
+    await atomicUpdateJson<School[]>(
+      SCHOOLS_PATH,
+      (current) => {
+        const list = Array.isArray(current) ? current : []
+        members = list.filter((s) => memberSchoolIds.includes(s.id))
+        if (members.length === 0) return { next: list, commitMessage: 'chore(chain-reconciliation): no members; no-op.' }
+        const result = buildConsolidation({
+          members,
+          input: { memberSchoolIds, chainName, region, createdBy: user.id },
+          now: new Date(),
+        })
+        const updatedById = new Map(result.updatedSchools.map((s) => [s.id, s]))
+        return {
+          next: list.map((s) => updatedById.get(s.id) ?? s),
+          commitMessage: `chore(chain-reconciliation): link ${memberSchoolIds.length} school(s) to ${chainName}.`,
+        }
+      },
+      { defaultValue: [] as School[] },
+    )
 
     if (members.length === 0) {
       const url = new URL('/admin/chain-mou-reconciliation', request.url)
@@ -73,22 +74,26 @@ export async function POST(request: Request) {
     // Build the group record from the same inputs (deterministic id).
     const consolidation = buildConsolidation({
       members,
-      input: {
-        memberSchoolIds,
-        chainName,
-        region,
-        createdBy: user.id,
-      },
+      input: { memberSchoolIds, chainName, region, createdBy: user.id },
       now: new Date(),
     })
     groupName = consolidation.group.name
-    await atomicUpdateJson<SchoolGroup[]>(GROUPS_PATH, (current) => {
-      const list = Array.isArray(current) ? current : []
-      // Idempotency: if a group with this id already exists, skip
-      // appending so a duplicate submit does not create duplicates.
-      if (list.some((g) => g.id === consolidation.group.id)) return list
-      return [...list, consolidation.group]
-    })
+    await atomicUpdateJson<SchoolGroup[]>(
+      GROUPS_PATH,
+      (current) => {
+        const list = Array.isArray(current) ? current : []
+        // Idempotency: if a group with this id already exists, skip
+        // appending so a duplicate submit does not create duplicates.
+        if (list.some((g) => g.id === consolidation.group.id)) {
+          return { next: list, commitMessage: 'chore(chain-reconciliation): group exists; no-op.' }
+        }
+        return {
+          next: [...list, consolidation.group],
+          commitMessage: `chore(chain-reconciliation): create SchoolGroup ${consolidation.group.id}.`,
+        }
+      },
+      { defaultValue: [] as SchoolGroup[] },
+    )
   } catch (e) {
     const url = new URL('/admin/chain-mou-reconciliation', request.url)
     url.searchParams.set('error', e instanceof Error ? e.message : 'consolidate-failed')
