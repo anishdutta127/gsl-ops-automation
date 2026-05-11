@@ -25,7 +25,7 @@
  */
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { Plus, Save, CheckCircle, AlertCircle, Trash2, Info } from 'lucide-react'
+import { Plus, Save, CheckCircle, AlertCircle, Trash2 } from 'lucide-react'
 import type { PlaceholderSpec, TemplateSpec } from '@/lib/mouSystem/templates'
 import { SALES_CHANNELS, TRAINER_MODELS } from '@/lib/mouSystem/templates'
 import { formatRs } from '@/lib/format'
@@ -172,6 +172,7 @@ export function GeneratorWizard({
   )
 
   const [saveState, setSaveState] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle')
+  const [generateState, setGenerateState] = useState<'idle' | 'generating' | 'generated' | 'error'>('idle')
   const [serverError, setServerError] = useState<string | null>(null)
 
   const selectedSchool = useMemo(
@@ -426,6 +427,68 @@ export function GeneratorWizard({
     } catch (e) {
       setSaveState('error')
       setServerError(e instanceof Error ? e.message : 'Save failed')
+    }
+  }, [
+    validationError, currentUserName, currentUserId, draftId, template, values,
+    selectedSchool, annexureRaw, trainerModel, salesChannel, salesPersonId,
+    crmSchoolId, schedules, yearlyPricing, billing, productSelection,
+    gradewiseDistribution,
+  ])
+
+  const generateDocx = useCallback(async () => {
+    if (validationError) {
+      setServerError(validationError)
+      setGenerateState('error')
+      return
+    }
+    setGenerateState('generating')
+    setServerError(null)
+    try {
+      const res = await fetch('/api/mou/generate-docx', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          draftMouId: draftId,
+          templateId: template.id,
+          programme: template.programme,
+          schoolId: selectedSchool?.id ?? null,
+          schoolName: values.SCHOOL_NAME ?? selectedSchool?.name ?? '',
+          variables: values,
+          annexureHtml: annexureRaw,
+          trainerModel,
+          salesChannel,
+          salesPersonId: salesPersonId || null,
+          schoolCrmId: crmSchoolId.trim() || null,
+          paymentSchedules: schedules,
+          yearlyPricing,
+          billingBlock: billing,
+          productSelection,
+          gradewiseDistribution,
+        }),
+      })
+      if (!res.ok) {
+        const errBody = (await res.json().catch(() => ({}))) as { error?: string; message?: string }
+        throw new Error(errBody.message ?? errBody.error ?? `Generate failed (${res.status})`)
+      }
+      // Pull the persisted MOU id off the custom header so the wizard
+      // can keep working with the same draft after generation.
+      const savedMouId = res.headers.get('x-mou-id')
+      if (savedMouId) setDraftId(savedMouId)
+      const filename = `${savedMouId ?? draftId ?? 'mou'}.docx`
+      const blob = await res.blob()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = filename
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
+      setGenerateState('generated')
+      setTimeout(() => setGenerateState('idle'), 6000)
+    } catch (e) {
+      setGenerateState('error')
+      setServerError(e instanceof Error ? e.message : 'Generate failed')
     }
   }, [
     draftId,
@@ -855,20 +918,31 @@ export function GeneratorWizard({
           type="button"
           onClick={() => void saveDraft()}
           disabled={saveState === 'saving'}
-          className="inline-flex min-h-11 items-center gap-2 rounded-md bg-brand-navy px-4 py-2 text-sm font-semibold text-white hover:bg-brand-navy/90 disabled:opacity-60"
+          data-testid="wizard-save-draft"
+          className="inline-flex min-h-11 items-center gap-2 rounded-md border border-border bg-white px-4 py-2 text-sm font-medium text-brand-navy hover:bg-slate-50 disabled:opacity-60"
         >
           <Save aria-hidden className="size-4" /> {saveState === 'saving' ? 'Saving…' : 'Save draft'}
+        </button>
+        <button
+          type="button"
+          onClick={() => void generateDocx()}
+          disabled={generateState === 'generating'}
+          data-testid="wizard-generate-docx"
+          className="inline-flex min-h-11 items-center gap-2 rounded-md bg-brand-navy px-4 py-2 text-sm font-semibold text-white hover:bg-brand-navy/90 disabled:opacity-60"
+        >
+          <Save aria-hidden className="size-4" />{' '}
+          {generateState === 'generating' ? 'Generating…' : 'Generate .docx'}
         </button>
         {saveState === 'saved' && (
           <span className="inline-flex items-center gap-1 text-xs text-emerald-700">
             <CheckCircle aria-hidden className="size-3" /> Saved. Will reflect everywhere within ~5 minutes.
           </span>
         )}
-        <p className="ml-auto inline-flex items-start gap-2 text-xs text-muted-foreground">
-          <Info aria-hidden className="mt-0.5 size-4 shrink-0" />
-          Generate-as-Word is wired in the gsl-mou-system process during the parallel-build window.
-          Save the draft here; the .docx download remains available there until cutover.
-        </p>
+        {generateState === 'generated' && (
+          <span className="inline-flex items-center gap-1 text-xs text-emerald-700" data-testid="wizard-generate-success">
+            <CheckCircle aria-hidden className="size-3" /> Generated. Check your downloads.
+          </span>
+        )}
       </div>
     </div>
   )
