@@ -1,0 +1,4 @@
+{
+  "_comment": "Gate 5A Step 4: schoolIds dismissed from the /admin/chain-mou-reconciliation surface as 'not a chain'. The chainReconciliation lib filters these out of the candidate list. Audit lives on the School record.",
+  "dismissedSchoolIds": []
+}
