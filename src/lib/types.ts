@@ -201,6 +201,11 @@ export type AuditAction =
   // are modified via /escalations/[id]/edit. before / after capture the
   // changed-field diff; notes carry the operator-supplied context.
   | 'escalation-edited'
+  // Gate 4 Step 4: emitted on MOU auditLog when an operator clicks
+  // "Send reminder" on the workflow handoff banner. Captures the
+  // stage + owner + recipient count; drives the per-stage per-24h
+  // cooldown check on subsequent reminder attempts.
+  | 'workflow-reminder-sent'
   // W4-I.4 MM3: emitted when an IntakeRecord's editable fields are
   // modified via /mous/[id]/intake/edit. The MM3 batch added the
   // gradeBreakdown + rechargeableBatteries fields to power Misba's
@@ -447,7 +452,10 @@ export type MouStatus =
  */
 export type CohortStatus = 'active' | 'archived'
 
-export type TrainerModel = 'Bootcamp' | 'GSL-T' | 'TT' | 'Other'
+// Gate 4.7 Step 6b: 'AIQ' added as a real GSL trainer model after the
+// Pranav FY26-27 import flagged it via importNotes.trainerModelRaw=AIQ
+// on 1 STEAM row. Locked decision per Anish.
+export type TrainerModel = 'Bootcamp' | 'GSL-T' | 'TT' | 'AIQ' | 'Other'
 
 export interface MOU {
   id: string                       // 'MOU-STEAM-2627-001'
@@ -518,6 +526,14 @@ export interface MOU {
   gradewiseDistribution?:
     | import('./mouSystem/types').GradewiseDistributionRow[]
     | null
+  /**
+   * Gate 4.5: free-text bag for Excel-import context that does not fit
+   * the schema cleanly (acquisitionStatus, ypLevel, termination, etc.).
+   * Format: `key1=value1; key2=value2`. Set by the FY26-27 import
+   * scripts; null on records that did not originate from an Excel
+   * import.
+   */
+  importNotes?: string | null
 }
 
 // ============================================================================
@@ -545,7 +561,7 @@ export interface MOU {
 // matching TinkRworks SKU directly.
 // ============================================================================
 
-export type InventoryCategory = 'TinkRworks' | 'Cretile' | 'Other'
+export type InventoryCategory = 'TinkRworks' | 'Cretile' | 'Hardware' | 'Other'
 
 export interface InventoryItem {
   id: string                       // 'INV-LAUNCHPAD' / 'INV-CRETILE-G5' / etc.
@@ -572,6 +588,12 @@ export interface InventoryItem {
   lastUpdatedAt: string
   lastUpdatedBy: string             // User.id; 'system-w4g-import' for backfill
   auditLog: AuditEntry[]
+  /**
+   * Gate 4.5: free-text bag for Excel-import context. Format:
+   * `key1=value1; key2=value2`. Null on records that did not
+   * originate from an Excel import.
+   */
+  importNotes?: string | null
 }
 
 // ============================================================================
@@ -701,6 +723,11 @@ export type NotificationKind =
   | 'escalation-assigned'           // Escalation assigned -> notify assignee
   | 'reminder-due'                  // Reminder composed -> notify sales owner of MOU
   | 'inventory-low-stock'           // W4-G.5 stock crossed reorderThreshold downward
+  // Gate 4 Step 2: three new triggers from Misba's 7-step workflow doc.
+  | 'mou-uploaded'                  // Signed MOU PDF imported -> notify Ops + Finance
+  | 'kits-allocated-for-approval'   // Ops finalises kit allocation -> notify Sales for approval
+  | 'dispatch-executed'             // Tally Delivery Challan uploaded -> notify Ops (shipment) + Sales (info)
+  | 'pod-uploaded'                  // POD uploaded -> notify Finance (tax invoice) + Sales (info)
 
 export interface Notification {
   id: string                       // 'NTF-...'
@@ -1454,6 +1481,7 @@ export type PendingUpdateEntity =
   | 'vendor'                       // vendor master
   | 'agreement'                    // NDA / vendor agreement registry
   | 'piIssue'                      // mou-system pi issuance ledger
+  | 'stageResponsibility'          // Gate 4.9 stage-level ownership config
 
 export interface PendingUpdate {
   id: string                       // UUID
@@ -1864,7 +1892,7 @@ export interface KitDispatch {
   mouId: string
   schoolId: string
   schoolName: string                 // denormalised at create time
-  productSelected: 'TinkRworks' | 'Cretile' | 'Both'
+  productSelected: 'TinkRworks' | 'Cretile' | 'Both' | 'Hardware'
   dispatchStatus: KitDispatchStatus
   allocations: KitAllocation[]
   salesApprovalStatus: KitSalesApprovalStatus
@@ -1881,4 +1909,54 @@ export interface KitDispatch {
   pod: PODRecord | null
   auditLog: AuditEntry[]
   createdAt: string
+  /**
+   * Gate 4.5: free-text bag for Excel-import context (eway bill flag,
+   * billing remarks, students-served count, kit-return notes). Format:
+   * `key1=value1; key2=value2`. Null on records that did not originate
+   * from an Excel import.
+   */
+  importNotes?: string | null
 }
+
+// ============================================================================
+// StageResponsibility (Gate 4.9)
+//
+// Leadership-configurable mapping from each of the 10 master lifecycle
+// stages (see src/lib/statusTracker.ts) to a responsible party.
+// Single owner per stage; user override on top of the department
+// default. Notification fan-out narrows to the user when set; falls
+// back to department broadcast otherwise.
+//
+// Persisted as a single document keyed by stage in
+// src/data/stage_responsibility.json. Audit log appends on every
+// update via stageResponsibility.ts/updateStageResponsibility.
+// ============================================================================
+
+export type ResponsibilityDepartment =
+  | 'sales'
+  | 'ops'
+  | 'finance'
+  | 'leadership'
+  | 'admin'
+
+export interface StageResponsibility {
+  /** Which lifecycle stage this row configures. Matches LifecycleStage. */
+  stage: import('./statusTracker').LifecycleStage
+  /** Department that owns the stage by default. */
+  responsibleDepartment: ResponsibilityDepartment
+  /** Optional User.id that owns the stage for the configured department.
+   *  When set, narrows notifications + accountability to that user.
+   *  Null means whole-department ownership. */
+  responsibleUserId: string | null
+  /** Department to route to when the stage stalls past its SLA. */
+  escalationDepartment: ResponsibilityDepartment
+  /** Free-text leadership memo describing the stage. */
+  notes: string | null
+  /** ISO timestamp of the last leadership-touched config change. */
+  updatedAt: string
+  /** User.id of the last person to touch this stage. */
+  updatedBy: string
+  /** Append-only history of leadership edits. */
+  audit: AuditEntry[]
+}
+

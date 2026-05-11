@@ -70,6 +70,15 @@ export type Action =
   | 'school-group:edit-members'
   // Escalation lifecycle
   | 'escalation:resolve'
+  // Gate 4 Step 5: manual escalation creation via /escalations/new.
+  // Every authenticated user can raise a ticket (Sales on Ops, Ops on
+  // Finance, etc.); resolution stays scoped to the owning dept via the
+  // separate 'escalation:resolve' gate above.
+  | 'escalation:create'
+  // Gate 4.9: stage responsibility configuration. Leadership + Admin
+  // configure the 10-stage ownership matrix at /admin/stage-responsibility.
+  // Other roles can view but not edit.
+  | 'stage-responsibility:configure'
   // System operations (Phase E manual-trigger pattern)
   // Admin + OpsHead can manually trigger MOU import + health check
   // from /admin. Phase 1.1 may add cron-based auto-trigger requiring
@@ -150,6 +159,8 @@ const ROLE_BASE_ACTIONS: Record<UserRole, Set<Action> | typeof ADMIN_WILDCARD> =
   Leadership: new Set<Action>([
     'dispatch:override-gate',
     'escalation:resolve',
+    'escalation:create',
+    'stage-responsibility:configure',
     'notification:read',
     'notification:mark-read',
     'sales-opportunity:view',
@@ -160,6 +171,7 @@ const ROLE_BASE_ACTIONS: Record<UserRole, Set<Action> | typeof ADMIN_WILDCARD> =
     'mou:confirm-actuals',
     'dispatch-request:create',
     'escalation:resolve',
+    'escalation:create',
     'reminder:create',
     'notification:read',
     'notification:mark-read',
@@ -176,6 +188,7 @@ const ROLE_BASE_ACTIONS: Record<UserRole, Set<Action> | typeof ADMIN_WILDCARD> =
     // submit, SalesHead reviews queue when variance > 10%.
     'mou:confirm-actuals',
     'dispatch-request:create',
+    'escalation:create',
     'reminder:create',
     'notification:read',
     'notification:mark-read',
@@ -205,6 +218,7 @@ const ROLE_BASE_ACTIONS: Record<UserRole, Set<Action> | typeof ADMIN_WILDCARD> =
     'school-group:create',
     'school-group:edit-members',
     'escalation:resolve',
+    'escalation:create',
     'system:trigger-sync',
     'reminder:create',
     'notification:read',
@@ -219,6 +233,7 @@ const ROLE_BASE_ACTIONS: Record<UserRole, Set<Action> | typeof ADMIN_WILDCARD> =
     // by base role with testingOverride: ['OpsHead']; her elevated grants
     // come through effectiveRoles() below. Notification read + mark-read
     // are baseline-granted; every authenticated user has an own feed.
+    'escalation:create',
     'notification:read',
     'notification:mark-read',
     'sales-opportunity:view',
@@ -228,6 +243,7 @@ const ROLE_BASE_ACTIONS: Record<UserRole, Set<Action> | typeof ADMIN_WILDCARD> =
     'mou:generate-pi',
     'payment:reconcile',
     'dispatch:acknowledge-override',
+    'escalation:create',
     'notification:read',
     'notification:mark-read',
     'sales-opportunity:view',
@@ -237,6 +253,7 @@ const ROLE_BASE_ACTIONS: Record<UserRole, Set<Action> | typeof ADMIN_WILDCARD> =
     // Academics-lane visibility (per canViewAuditEntry) plus escalation
     // resolution on training-quality and trainer-rapport feedback.
     'escalation:resolve',
+    'escalation:create',
     'notification:read',
     'notification:mark-read',
     'sales-opportunity:view',

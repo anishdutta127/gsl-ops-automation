@@ -44,7 +44,7 @@ export interface KitDispatchListRow {
   schoolId: string
   schoolName: string
   /** Null when MOU has not yet captured productSelection (Sales/Ops will pick on the allocation form). */
-  productSelected: 'TinkRworks' | 'Cretile' | 'Both' | null
+  productSelected: 'TinkRworks' | 'Cretile' | 'Both' | 'Hardware' | null
   paymentStatus: PaymentStatus
   dispatchStatus: KitDispatchStatus
   /** Sales rep for filtering. Null when MOU has no rep assigned. */

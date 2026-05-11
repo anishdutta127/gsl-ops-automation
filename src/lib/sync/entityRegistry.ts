@@ -51,6 +51,10 @@ export const ARRAY_ENTITY_TO_PATH: Record<
   vendor: 'src/data/vendors.json',
   agreement: 'src/data/agreements.json',
   piIssue: 'src/data/pi_issues.json',
+  // Gate 4.9: stage responsibility config. Array of one row per
+  // lifecycle stage; the lib synthesises `id=stage` on the payload so
+  // the drain's by-id upsert matches.
+  stageResponsibility: 'src/data/stage_responsibility.json',
 }
 
 export function pathForEntity(entity: PendingUpdateEntity): string | null {

@@ -11,7 +11,7 @@ export interface SummaryRow {
   dispatchId: string
   schoolName: string
   mouId: string
-  productSelected: 'TinkRworks' | 'Cretile' | 'Both'
+  productSelected: 'TinkRworks' | 'Cretile' | 'Both' | 'Hardware'
   totalDispatchedQty: number
   dispatchStatus: string
   podPath: string | null
