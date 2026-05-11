@@ -42,18 +42,18 @@ describe('VEX PI id format: VEX-OWN sequential per entity (Gate 2 §V5)', () => 
     const byEntity = new Map<string, number[]>()
     for (const pi of vexPis) {
       const parts = pi.id.split('-')
-      const entity = parts[1]
-      const seq = Number(parts[3])
+      const entity = parts[1] ?? ''
+      const seq = Number(parts[3] ?? 0)
       if (!byEntity.has(entity)) byEntity.set(entity, [])
       byEntity.get(entity)!.push(seq)
     }
-    for (const [entity, seqs] of byEntity) {
+    byEntity.forEach((seqs: number[], entity: string) => {
       seqs.sort((a, b) => a - b)
       expect(seqs[0], `${entity} first seq`).toBe(1)
       for (let i = 1; i < seqs.length; i++) {
-        expect(seqs[i], `${entity} seq[${i}]`).toBe(seqs[i - 1] + 1)
+        expect(seqs[i], `${entity} seq[${i}]`).toBe((seqs[i - 1] ?? 0) + 1)
       }
-    }
+    })
   })
 
   it('VEX piNumber sequence has gaps proving it is the shared counter', () => {

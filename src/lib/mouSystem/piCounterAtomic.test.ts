@@ -107,7 +107,7 @@ describe('issuePiNumberAtomic: shared counter (V5)', () => {
     expect(seqs).toEqual([17, 18, 19, 20, 21])
     // Gap-free invariant: no skips.
     for (let i = 1; i < seqs.length; i++) {
-      expect(seqs[i]).toBe(seqs[i - 1] + 1)
+      expect(seqs[i]).toBe((seqs[i - 1] ?? 0) + 1)
     }
   })
 
