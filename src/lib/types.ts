@@ -252,6 +252,14 @@ export type AuditAction =
   // entry; the reverseAdjustment lib returns 'already-reversed'
   // without touching the audit log.
   | 'adjustment-reversed'
+  // Gate 4.95 Session 4 (renewals lifecycle): operator marks the
+  // school as having declined to renew the MOU. notes carries the
+  // free-text reason captured at /finance/renewals. MOU.status is
+  // NOT mutated by this action; the audit entry alone records the
+  // signal so the renewal bucket reader can compute renewalStatus
+  // from the log. A subsequent 'status_change' to 'Renewed' supersedes
+  // a prior decline (operators may change their mind).
+  | 'mou-renewal-declined'
 
 export interface AuditEntry {
   timestamp: string                // ISO
