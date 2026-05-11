@@ -3,6 +3,43 @@
 Phase 1.1+ items deferred from Phase 1. Each entry names the trigger
 that should pull it onto the active plan.
 
+## PI generator render-only split (Gate 2 Step 6 follow-up, Gate 5 prereq)
+
+Step 6's `/finance/pi/[paymentId]` view surfaces a Download button
+that re-renders the PI .docx via the existing `src/lib/pi/generatePi.ts`
+helper. That helper advances the per-entity PI counter on every call.
+During the parallel-build window the Download button is hidden behind
+the same `PI_PARALLEL_BUILD_LOCK` gate that protects the issue flow,
+so the bug is dormant. **After Gate 5 cutover, the lock flips off and
+each Download click burns a fresh PI number** -- a Finance user
+opening the same PI twice would advance MTPL/UP/26-27/0017 to /0019
+without anything new being issued.
+
+Implementation shape when this re-activates:
+
+- Split `src/lib/pi/generatePi.ts` into two libs:
+  - `renderPi(payment, mou, school) -> docxBytes` (pure render; reads
+    the piNumber already on the Payment record; does NOT advance the
+    counter or write any audit).
+  - `issueAndRenderPi(mouId, instalmentSeq, generatedBy) -> { piNumber,
+    docxBytes, payment }` (existing behaviour; advances counter, writes
+    Payment + audit).
+- Re-wire `/finance/pi/[paymentId]` download to `renderPi`.
+- `/mous/[id]/pi` Generate flow stays on `issueAndRenderPi`.
+- Test: download the same PI twice -> identical .docx bytes, counter
+  unchanged, no audit entries appended.
+
+Trigger: **before Gate 5 cutover, split `src/lib/pi/generatePi.ts`
+into render-only (no counter) and issue-and-render (counter advance).
+Re-wire `/finance/pi/[paymentId]` download to use render-only. Without
+this, Pranav clicking Download twice burns 2 PI numbers.**
+
+References:
+- `src/lib/pi/generatePi.ts` (current single-purpose helper).
+- `src/app/finance/pi/[paymentId]/page.tsx` (Download button, lock-gated).
+- `src/lib/pi/parallelBuildLock.ts` (the lock that hides this bug today).
+- `docs/decisions/STEP5_QUESTIONS_resolved.md` background, `STEP6_QUESTIONS.md` Q6 the canonical write-up.
+
 ## .docx Generate flow port (Gate 2 Step 5 follow-up)
 
 Step 5's `GeneratorWizard` ships the drafting flow + Save Draft action
