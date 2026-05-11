@@ -1,16 +1,5 @@
 [
   {
-    "at": "2026-05-08T14:58:37.011Z",
-    "kind": "sync",
-    "ok": true,
-    "triggeredBy": "github-actions",
-    "importSummary": null,
-    "healthChecks": null,
-    "anomalies": [
-      "drained=0 remaining=0 duration=110ms"
-    ]
-  },
-  {
     "at": "2026-05-08T16:19:59.025Z",
     "kind": "sync",
     "ok": true,
@@ -552,6 +541,23 @@
   },
   {
     "at": "2026-05-11T06:49:06.370Z",
+    "kind": "health",
+    "ok": false,
+    "triggeredBy": "misba.m",
+    "importSummary": null,
+    "healthChecks": {
+      "jsonValid": false,
+      "counterMonotonic": true,
+      "queueDepth": 0,
+      "oldestPendingMinutes": null
+    },
+    "anomalies": [
+      "pi_counter.json failed to parse: raw length 0",
+      "pending_updates.json failed to parse: raw length 0"
+    ]
+  },
+  {
+    "at": "2026-05-11T06:49:06.133Z",
     "kind": "health",
     "ok": false,
     "triggeredBy": "misba.m",
