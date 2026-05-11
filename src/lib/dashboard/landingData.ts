@@ -23,13 +23,13 @@ import type {
   MOU,
   Payment,
   PaymentLog,
-  Programme,
   School,
 } from '@/lib/types'
 import {
   fiscalYearOfIso,
   type MonthlyReceiptPoint,
 } from './leadershipData'
+import { bucketByStage, type LifecycleStage } from '@/lib/statusTracker'
 
 // ===========================================================================
 // Zone 1: Commercial position
@@ -154,24 +154,19 @@ export interface OperationalPosition {
   /** MOUs signed (Active) without a KitDispatch record or without
    *  any grade-wise allocation captured yet. */
   pendingAllocation: number
-  /** Programme-wise breakdown of active dispatches, in PROGRAMME_ORDER. */
-  activeByProgramme: Record<Programme, number>
-}
-
-function emptyByProgramme(): Record<Programme, number> {
-  return {
-    STEAM: 0,
-    'Young Pioneers': 0,
-    'Harvard HBPE': 0,
-    Robotics: 0,
-  }
+  /** Gate 4 Step 1: MOU counts by lifecycle stage (boardroom-level
+   *  view of pipeline health). Replaces the old programme-wise
+   *  breakdown on the landing Zone 2 first column. */
+  byStage: Record<LifecycleStage, number>
 }
 
 export function computeOperationalPosition(args: {
   mous: MOU[]
   dispatches: KitDispatch[]
+  payments: Payment[]
+  now: Date
 }): OperationalPosition {
-  const { mous, dispatches } = args
+  const { mous, dispatches, payments, now } = args
 
   const activeDispatchRecords = dispatches.filter(
     (d) => d.dispatchStatus !== 'Delivered',
@@ -180,15 +175,6 @@ export function computeOperationalPosition(args: {
   const inTransit = activeDispatchRecords.filter(
     (d) => d.dispatchStatus === 'In Transit',
   ).length
-
-  const programmeByMouId = new Map<string, Programme>(
-    mous.map((m) => [m.id, m.programme]),
-  )
-  const activeByProgramme = emptyByProgramme()
-  for (const d of activeDispatchRecords) {
-    const programme = programmeByMouId.get(d.mouId)
-    if (programme) activeByProgramme[programme] += 1
-  }
 
   // Pending allocation: an Active MOU that has no KitDispatch record OR
   // has a KitDispatch with zero allocation rows. The gradewiseDistribution
@@ -208,11 +194,13 @@ export function computeOperationalPosition(args: {
     }
   }
 
+  const byStage = bucketByStage({ mous, payments, dispatches, now })
+
   return {
     activeDispatches,
     inTransit,
     pendingAllocation,
-    activeByProgramme,
+    byStage,
   }
 }
 
@@ -233,6 +221,19 @@ export interface LandingAttentionItem {
 const HIGH_VALUE_OVERDUE_RS = 2_500_000 // Rs 25 lakh
 const HIGH_VALUE_RECENT_RS = 5_000_000 // Rs 50 lakh
 
+/**
+ * Gate 4.7 Step 3: last-24h critical changes can interleave with
+ * attention items at priority 1.5 (after P0 escalations, before
+ * other attention items). The page composes the critical-changes
+ * list separately and passes it in so this lib stays free of audit
+ * log iteration.
+ */
+export interface LandingCriticalChange {
+  description: string
+  href: string
+  timestamp: string
+}
+
 export function computeLandingAttention(args: {
   mous: MOU[]
   schools: School[]
@@ -240,6 +241,8 @@ export function computeLandingAttention(args: {
   dispatches: KitDispatch[]
   payments: Payment[]
   now: Date
+  /** Gate 4.7 Step 3: recent critical changes to interleave at priority 1.5. */
+  recentCriticalChanges?: LandingCriticalChange[]
 }): LandingAttentionItem[] {
   const {
     mous,
@@ -248,11 +251,29 @@ export function computeLandingAttention(args: {
     dispatches,
     payments,
     now,
+    recentCriticalChanges = [],
   } = args
   const nowMs = now.getTime()
   const items: LandingAttentionItem[] = []
   const schoolNameById = new Map(schools.map((s) => [s.id, s.name]))
   const mouById = new Map(mous.map((m) => [m.id, m]))
+
+  // Gate 4.7 Step 3: critical changes in the last 24h slot in at
+  // priority 1.5 (between P0 escalations and the existing P1 items).
+  // Sorted newest-first within the bucket so the top change wins ties.
+  const sorted = [...recentCriticalChanges].sort((a, b) =>
+    b.timestamp.localeCompare(a.timestamp),
+  )
+  sorted.forEach((c, idx) => {
+    items.push({
+      severity: 'info',
+      description: c.description,
+      href: c.href,
+      // Stagger priority within the bucket so newer changes outrank
+      // older ones; cap below the P1 floor (priority 2).
+      priority: 1.5 + idx * 0.001,
+    })
+  })
 
   // (1) Open P0 escalations.
   for (const e of escalations) {

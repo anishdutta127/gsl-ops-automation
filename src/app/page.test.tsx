@@ -89,12 +89,15 @@ describe('/ consolidated landing (Gate 3.6)', () => {
     )
   })
 
-  it('Zone 2 has 3 operational columns linking into dispatch surfaces', async () => {
+  it('Zone 2 surfaces pipeline-by-stage + in-transit + pending-allocation columns', async () => {
     getCurrentUserMock.mockResolvedValue(admin())
     const { default: HomePage } = await import('./page')
     const html = renderToStaticMarkup(await HomePage())
     expect(html).toContain('Operational position')
-    expect(html).toMatch(/data-testid="op-active-dispatches"[^>]*href="\/dispatch"/)
+    // Gate 4 Step 1: first column now reads MOUs in pipeline by stage,
+    // backed by the statusTracker.bucketByStage helper.
+    expect(html).toMatch(/data-testid="op-pipeline-by-stage"[^>]*href="\/mous"/)
+    expect(html).toContain('data-testid="stage-bar"')
     expect(html).toMatch(
       /data-testid="op-in-transit"[^>]*href="\/dispatch\?status=In\+Transit"/,
     )
@@ -132,9 +135,11 @@ describe('/ consolidated landing (Gate 3.6)', () => {
       /data-testid="quick-raise-dispatch"[^>]*href="\/dispatch\/kits"/,
     )
     expect(html).toMatch(
-      /data-testid="quick-open-escalations"[^>]*href="\/escalations"/,
+      /data-testid="quick-raise-escalation"[^>]*href="\/escalations\/new"/,
     )
-    expect(html).toMatch(/data-testid="quick-generate-pi"[^>]*href="\/mous"/)
+    expect(html).toMatch(
+      /data-testid="quick-generate-pi"[^>]*href="\/finance\/pi\/pending"/,
+    )
   })
 
   it('Zone 5 renders Finance, Ops, Leadership tiles with KPI numbers', async () => {

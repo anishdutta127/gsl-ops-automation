@@ -49,11 +49,12 @@ import type {
   OperationalPosition,
   OpsTileKpis,
 } from '@/lib/dashboard/landingData'
+import { type MonthlyReceiptPoint } from '@/lib/dashboard/leadershipData'
 import {
-  PROGRAMME_ORDER,
-  PROGRAMME_PALETTE,
-  type MonthlyReceiptPoint,
-} from '@/lib/dashboard/leadershipData'
+  STAGE_LABEL,
+  STAGE_ORDER,
+  type LifecycleStage,
+} from '@/lib/statusTracker'
 
 interface Props {
   commercial: CommercialPosition
@@ -247,8 +248,26 @@ function ReceiptSparkline({ points }: { points: MonthlyReceiptPoint[] }) {
 // Zone 2: Operational position
 // ===========================================================================
 
+// Stage palette: completed stages on the brand-teal end, current /
+// transit-in-progress on amber, pre-onboarding on navy. The palette
+// is deliberately tonal rather than per-stage rainbow so a 10-segment
+// bar still reads cleanly at landing-card width.
+const STAGE_BAR_CLASS: Record<LifecycleStage, string> = {
+  pipeline: 'bg-slate-400',
+  'mou-uploaded': 'bg-slate-500',
+  active: 'bg-brand-navy/70',
+  'payment-pending': 'bg-amber-500',
+  'installment-1-received': 'bg-amber-600',
+  'pi-generated': 'bg-violet-500',
+  'dispatch-requested': 'bg-orange-500',
+  'shipment-in-progress': 'bg-orange-600',
+  delivered: 'bg-brand-teal',
+  closed: 'bg-emerald-600',
+}
+
 function OperationalZone({ data }: { data: OperationalPosition }) {
-  const total = data.activeDispatches || 1
+  const stageTotal = STAGE_ORDER.reduce((sum, s) => sum + data.byStage[s], 0)
+  const stageDenominator = stageTotal || 1
   return (
     <section
       aria-labelledby="operational-heading"
@@ -265,39 +284,47 @@ function OperationalZone({ data }: { data: OperationalPosition }) {
       </div>
       <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
         <Link
-          href="/dispatch"
-          data-testid="op-active-dispatches"
+          href="/mous"
+          data-testid="op-pipeline-by-stage"
           className="block rounded-md border border-border bg-white p-3 transition-colors hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
         >
           <div className="text-[11px] uppercase tracking-wide text-slate-600">
-            Active dispatches
+            MOUs in pipeline
           </div>
           <div className="mt-1 font-heading text-2xl font-bold text-brand-navy">
-            {data.activeDispatches}
+            {stageTotal}
           </div>
-          <div className="mt-3 flex h-2 w-full overflow-hidden rounded-full bg-slate-100">
-            {PROGRAMME_ORDER.map((p) => {
-              const segWidth = (data.activeByProgramme[p] / total) * 100
+          <div
+            className="mt-3 flex h-2 w-full overflow-hidden rounded-full bg-slate-100"
+            data-testid="stage-bar"
+            role="img"
+            aria-label={`Pipeline by stage: ${STAGE_ORDER.map(
+              (s) => `${STAGE_LABEL[s]} ${data.byStage[s]}`,
+            ).join(', ')}`}
+          >
+            {STAGE_ORDER.map((s) => {
+              const segWidth = (data.byStage[s] / stageDenominator) * 100
               if (segWidth === 0) return null
               return (
                 <div
-                  key={p}
-                  className={PROGRAMME_PALETTE[p]}
+                  key={s}
+                  className={STAGE_BAR_CLASS[s]}
                   style={{ width: `${segWidth}%` }}
-                  title={`${p}: ${data.activeByProgramme[p]}`}
+                  title={`${STAGE_LABEL[s]}: ${data.byStage[s]}`}
+                  data-testid={`stage-seg-${s}`}
                 />
               )
             })}
           </div>
           <div className="mt-2 flex flex-wrap gap-2 text-[10px] text-slate-600">
-            {PROGRAMME_ORDER.map((p) =>
-              data.activeByProgramme[p] > 0 ? (
-                <span key={p} className="inline-flex items-center gap-1">
+            {STAGE_ORDER.map((s) =>
+              data.byStage[s] > 0 ? (
+                <span key={s} className="inline-flex items-center gap-1">
                   <span
-                    className={`inline-block size-2 rounded-sm ${PROGRAMME_PALETTE[p]}`}
+                    className={`inline-block size-2 rounded-sm ${STAGE_BAR_CLASS[s]}`}
                     aria-hidden
                   />
-                  {p}: {data.activeByProgramme[p]}
+                  {STAGE_LABEL[s]}: {data.byStage[s]}
                 </span>
               ) : null,
             )}
@@ -461,27 +488,26 @@ const QUICK_ACTIONS: QuickAction[] = [
     tooltip: 'Allocate kits and raise a new dispatch',
   },
   {
-    // Phase 1 has no manual escalation-creation flow; escalations
-    // auto-create from feedback + P2 dispatch override. V1 honest-copy
-    // audit: the button reads "Open escalations" so it does what the
-    // user expects. A "Raise escalation" net-new flow is a Phase 1.1
-    // candidate.
-    href: '/escalations',
-    label: 'Open escalations',
+    // Gate 4 Step 5 carry-forward: the dedicated /escalations/new flow
+    // landed in Gate 4. The button now opens the create form so any
+    // logged-in user can raise a ticket directly. Resolution stays
+    // scoped to the owning department via 'escalation:resolve'.
+    href: '/escalations/new',
+    label: 'Raise escalation',
     icon: <MessageSquareWarning aria-hidden className="size-4" />,
-    testId: 'quick-open-escalations',
-    tooltip: 'Review open escalations across schools and MOUs',
+    testId: 'quick-raise-escalation',
+    tooltip: 'Log a new escalation against a school or MOU',
   },
   {
-    // /mous list is the entry point: pick an MOU, drill to its
-    // installments page, generate the PI on the pending installment.
-    // Phase 1.1 candidate: a dedicated "pending installments" shortlist
-    // surface that skips the MOU list step.
-    href: '/mous',
+    // Gate 4 Step 6 carry-forward: the pending-PI shortlist landed in
+    // Gate 4 so the button now opens that surface directly (overdue +
+    // due-within-30d installments without a PI yet, gated by the
+    // PI parallel build lock).
+    href: '/finance/pi/pending',
     label: 'Generate PI',
     icon: <FileText aria-hidden className="size-4" />,
     testId: 'quick-generate-pi',
-    tooltip: 'Open the MOU list to pick an installment and generate its proforma invoice',
+    tooltip: 'Open the pending-PI shortlist and generate against an installment',
   },
 ]
 

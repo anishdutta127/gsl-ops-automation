@@ -276,7 +276,12 @@ describe('computeOperationalPosition', () => {
       kitDispatch({ id: 'D-3', mouId: 'M-3', dispatchStatus: 'In Transit' }),
       kitDispatch({ id: 'D-4', mouId: 'M-4', dispatchStatus: 'Delivered' }),
     ]
-    const result = computeOperationalPosition({ mous: [], dispatches })
+    const result = computeOperationalPosition({
+      mous: [],
+      dispatches,
+      payments: [],
+      now: NOW,
+    })
     expect(result.activeDispatches).toBe(3)
     expect(result.inTransit).toBe(2)
   })
@@ -292,16 +297,41 @@ describe('computeOperationalPosition', () => {
       kitDispatch({ id: 'D-1', mouId: 'M-1', allocations: [{ grade: 5, students: 30, kitsQty: 30, kitType: 'Consumable', productName: 'Cretile Grade-band kit Grade 5' } as KitDispatch['allocations'][number]] }),
       kitDispatch({ id: 'D-2', mouId: 'M-2', allocations: [] }),
     ]
-    const result = computeOperationalPosition({ mous, dispatches })
+    const result = computeOperationalPosition({
+      mous,
+      dispatches,
+      payments: [],
+      now: NOW,
+    })
     expect(result.pendingAllocation).toBe(2) // M-2 (empty alloc) + M-3 (no record)
   })
 
   it('returns zero counts on empty inputs', () => {
-    const result = computeOperationalPosition({ mous: [], dispatches: [] })
+    const result = computeOperationalPosition({
+      mous: [],
+      dispatches: [],
+      payments: [],
+      now: NOW,
+    })
     expect(result.activeDispatches).toBe(0)
     expect(result.inTransit).toBe(0)
     expect(result.pendingAllocation).toBe(0)
-    expect(result.activeByProgramme.STEAM).toBe(0)
+    expect(result.byStage.pipeline).toBe(0)
+  })
+
+  it('byStage buckets MOUs across lifecycle stages', () => {
+    const mous = [
+      mou({ id: 'M-1', status: 'Draft' }),
+      mou({ id: 'M-2', status: 'Active', studentsActual: 50 }),
+    ]
+    const result = computeOperationalPosition({
+      mous,
+      dispatches: [],
+      payments: [],
+      now: NOW,
+    })
+    expect(result.byStage.pipeline).toBe(1)
+    expect(result.byStage.active).toBe(1)
   })
 })
 
@@ -434,7 +464,12 @@ describe('computeTileSlices', () => {
       fy: '2026-27',
       now: NOW,
     })
-    const operational = computeOperationalPosition({ mous: [], dispatches: [] })
+    const operational = computeOperationalPosition({
+      mous: [],
+      dispatches: [],
+      payments: [],
+      now: NOW,
+    })
     const result = computeTileSlices({
       mous: [],
       payments,
@@ -461,7 +496,12 @@ describe('computeTileSlices', () => {
       fy: '2026-27',
       now: NOW,
     })
-    const operational = computeOperationalPosition({ mous: [], dispatches: [] })
+    const operational = computeOperationalPosition({
+      mous: [],
+      dispatches: [],
+      payments: [],
+      now: NOW,
+    })
     const result = computeTileSlices({
       mous: [],
       payments: [],
@@ -501,7 +541,12 @@ describe('edge cases: empty data', () => {
       fy: '2026-27',
       now: NOW,
     })
-    const operational = computeOperationalPosition({ mous: [], dispatches: [] })
+    const operational = computeOperationalPosition({
+      mous: [],
+      dispatches: [],
+      payments: [],
+      now: NOW,
+    })
     const tiles = computeTileSlices({
       mous: [],
       payments: [],

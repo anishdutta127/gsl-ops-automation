@@ -41,7 +41,12 @@ import {
   computeOperationalPosition,
   computeTileSlices,
   currentFiscalYear,
+  type LandingCriticalChange,
 } from '@/lib/dashboard/landingData'
+import {
+  collectCriticalChanges,
+  withinTrailingWindow,
+} from '@/lib/criticalChanges'
 
 const allMous = mousJson as unknown as MOU[]
 const allPayments = paymentsJson as unknown as Payment[]
@@ -66,7 +71,36 @@ export default async function HomePage() {
   const operational = computeOperationalPosition({
     mous: allMous,
     dispatches: allKitDispatches,
+    payments: allPayments,
+    now,
   })
+  // Gate 4.7 Step 3: collect critical changes in the last 24h across
+  // every MOU. Cap at 5 per MOU (top-most recent) and 50 overall so
+  // the interleave doesn't blow up on a heavy-activity day; the
+  // landing zone itself further caps total visible items to 5.
+  const ONE_DAY_MS = 24 * 60 * 60 * 1000
+  const recentCriticalChanges: LandingCriticalChange[] = []
+  for (const mou of allMous) {
+    if (!mou.auditLog || mou.auditLog.length === 0) continue
+    const changes = collectCriticalChanges({
+      entityType: 'mou',
+      entityId: mou.id,
+      entityLabel: mou.schoolName,
+      hrefBase: '/mous',
+      auditLog: mou.auditLog,
+    })
+    const recent = withinTrailingWindow(changes, now, ONE_DAY_MS)
+    for (const c of recent.slice(0, 5)) {
+      recentCriticalChanges.push({
+        description: `${mou.schoolName}: ${c.action}`,
+        href: c.href,
+        timestamp: c.timestamp,
+      })
+      if (recentCriticalChanges.length >= 50) break
+    }
+    if (recentCriticalChanges.length >= 50) break
+  }
+
   const attention = computeLandingAttention({
     mous: allMous,
     schools: allSchools,
@@ -74,6 +108,7 @@ export default async function HomePage() {
     dispatches: allKitDispatches,
     payments: allPayments,
     now,
+    recentCriticalChanges,
   })
   const tiles = computeTileSlices({
     mous: allMous,
