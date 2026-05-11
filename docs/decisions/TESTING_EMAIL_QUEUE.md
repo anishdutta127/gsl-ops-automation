@@ -95,6 +95,71 @@ The Ground-Truth report §1.3 flagged the canonical case: Narayana Group of Scho
 
 ---
 
+## Item 6: MOU eligibility threshold for Kits for Dispatch list
+
+**Owner:** Pranav.
+**Question:** does "after MOU is completed" in the joint spec mean literal `status === 'Completed'`, or "MOU process done" (Active onwards)?
+
+**Context.** Gate 3 Step 2's Kits for Dispatch list view (`/dispatch/kits`) shows MOUs at `status in {Active, Completed, Expired, Renewed}`. The joint spec section 2 says "Entry should appear here only after MOU is completed". The production corpus (152 MOUs) has 0 records at literal 'Completed' status; reading "completed" as "MOU is process-done" matches the operator-facing language.
+
+**Why we're asking:** if Pranav wants strict `'Completed'`-only, the list filter is a one-line change in `src/lib/kitDispatch/derive.ts`. The data may then need a status-transition pass to flip Active MOUs that have kits owed.
+
+**Status:** awaiting Pranav.
+
+---
+
+## Item 7: Per-grade multi-SKU allocation
+
+**Owner:** Shashank.
+**Question:** can a single Grade row in the kit allocation form receive both a TinkRworks kit and a Cretile kit, or is one SKU per grade row sufficient?
+
+**Context.** Gate 3 Step 3's allocation form models one SKU per grade row (matches joint spec table layout). For a 'Both' MOU where Grade 5 gets one TinkRworks + one Cretile kit, today's model needs two rows for Grade 5. The data integrity holds; the UX is slightly clunky.
+
+**Why we're asking:** if real workflow includes multi-SKU-per-grade, Phase 1.1 swaps to a SKU-array-per-grade row shape. Trivial schema migration since the canonical form is `kitDispatch.allocations: KitAllocation[]` and the rows are not keyed by grade today.
+
+**Status:** awaiting Shashank's first month of usage.
+
+---
+
+## Item 8: Warehouse email template
+
+**Owner:** Misba + Pranav.
+**Question:** what is the recipient address, subject line, and body skeleton for the warehouse-dispatch notification?
+
+**Context.** Joint spec section 7 mentions "Email to Warehouse" without template body. Gate 3 Step 6 logs `warehouseEmailLoggedAt` + audit entry as a placeholder; actual SMTP wire-up is Gate 4. Without the template, Gate 4 cannot ship the integration.
+
+**Why we're asking:** Gate 4 needs the recipient (`warehouse@getsetlearn.info`?), the subject (e.g. "[GSL Ops] Dispatch raised: {schoolName}"), and the body skeleton (what fields the warehouse sees -- school address, SKU list, freight mode, dispatch summary?).
+
+**Status:** awaiting Misba + Pranav before Gate 4 Step that wires the email.
+
+---
+
+## Item 9: POD photo upload alongside PDF
+
+**Owner:** Shashank.
+**Question:** should POD accept JPG/PNG images in addition to PDF?
+
+**Context.** Gate 3 Step 8's POD upload route accepts `application/pdf` only. Some couriers issue physical PODs that Anita photographs with her phone (JPG output). Flipping the route to accept `image/jpeg,image/png` alongside PDF is a 1-line config change; the existing storage layout works for either format.
+
+**Why we're asking:** if photographing physical PODs is the common path, ship the multi-format support now. If Shashank routinely gets digital PDF PODs from the courier portal, keep PDF-only for tighter validation.
+
+**Status:** awaiting Shashank.
+
+---
+
+## Item 10: Final Dispatch Summary export format
+
+**Owner:** Misba.
+**Question:** is CSV export sufficient, or is Excel (.xlsx) expected?
+
+**Context.** Gate 3 Step 9 ships CSV export at `/dispatch/kits/summary` (CSV emit lib pinned for backwards compatibility with any pipeline downstream of the summary). Joint spec mentions "exportable" without naming format. If Misba's onward consumers (leadership reports, school-wise tracker) expect .xlsx, a Phase 1.1 add converts CSV-to-XLSX via the `xlsx` or `exceljs` library.
+
+**Why we're asking:** CSV is the simpler ship and works with every spreadsheet tool. XLSX preserves formatting if Misba pastes into a polished report.
+
+**Status:** awaiting Misba.
+
+---
+
 ## Appending new items
 
 Add to the bottom only. Use the template:
