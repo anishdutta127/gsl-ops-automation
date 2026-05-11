@@ -18,6 +18,7 @@ import mousJson from '@/data/mous.json'
 import kitDispatchesJson from '@/data/kit_dispatches.json'
 import inventoryItemsJson from '@/data/inventory_items.json'
 import { allocateKits } from '@/lib/kitDispatch/allocate'
+import { emitKitsAllocatedForApproval } from '@/lib/notifications/workflowTriggers'
 
 const mous = mousJson as unknown as MOU[]
 const kitDispatches = kitDispatchesJson as unknown as KitDispatch[]
@@ -99,5 +100,28 @@ export async function POST(
       { status },
     )
   }
+
+  // Gate 4.5 Step 4: notify Sales that kits are allocated + Sales review
+  // is required before Finance can execute. Best-effort: a fan-out
+  // failure does not roll back the allocation write. createNotification
+  // dedups by (kind + recipient + relatedEntityId) within 60s so a retry
+  // on transient error is safe.
+  try {
+    const totalKits = result.dispatch.allocations.reduce(
+      (s, a) => s + a.kitsQty,
+      0,
+    )
+    await emitKitsAllocatedForApproval({
+      kitDispatchId: result.dispatch.id,
+      mouId: result.dispatch.mouId,
+      schoolName: result.dispatch.schoolName,
+      allocationCount: result.dispatch.allocations.length,
+      totalKits,
+      senderUserId: user.id,
+    })
+  } catch (notifyErr) {
+    console.error('[allocate] notification fan-out failed:', notifyErr)
+  }
+
   return NextResponse.json({ ok: true, dispatchId: result.dispatch.id })
 }

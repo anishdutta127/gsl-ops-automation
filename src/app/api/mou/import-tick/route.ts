@@ -23,6 +23,7 @@ import { importOnce } from '@/lib/importer/fromMou'
 import { canPerform } from '@/lib/auth/permissions'
 import { getCurrentSession } from '@/lib/auth/session'
 import { appendSyncHealth, type SyncHealthEntry } from '@/lib/syncHealth/appendEntry'
+import { emitMouUploaded } from '@/lib/notifications/workflowTriggers'
 
 const users = usersJson as unknown as User[]
 
@@ -65,6 +66,26 @@ export async function POST(request: Request) {
     if (!entry.ok) ok = false
     if (entry.anomalies.length > 0) anomalies.push(...entry.anomalies)
     await appendSyncHealth(entry)
+
+    // Gate 4 Step 2: fan-out a notification for every freshly-written
+    // MOU. Best-effort: a fan-out failure does not roll back the
+    // import. The createNotification helper dedups within a 60s window
+    // so re-runs after partial failure are safe.
+    for (const writtenMou of result.written) {
+      try {
+        await emitMouUploaded({
+          mouId: writtenMou.id,
+          schoolName: writtenMou.schoolName,
+          programme: writtenMou.programme,
+          contractValue: writtenMou.contractValue,
+          importedFrom: 'sheet-import',
+          senderUserId: 'system',
+        })
+      } catch (notifyErr) {
+        const message = notifyErr instanceof Error ? notifyErr.message : String(notifyErr)
+        anomalies.push(`notification fan-out failed for ${writtenMou.id}: ${message}`)
+      }
+    }
   } catch (err) {
     ok = false
     const message = err instanceof Error ? err.message : String(err)

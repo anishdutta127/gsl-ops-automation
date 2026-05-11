@@ -18,6 +18,7 @@ import type {
 import kitDispatchesJson from '@/data/kit_dispatches.json'
 import inventoryItemsJson from '@/data/inventory_items.json'
 import { executeAccountsDispatch } from '@/lib/kitDispatch/accountsExecute'
+import { emitDispatchExecuted } from '@/lib/notifications/workflowTriggers'
 
 const kitDispatches = kitDispatchesJson as unknown as KitDispatch[]
 const inventory = inventoryItemsJson as unknown as InventoryItem[]
@@ -85,6 +86,29 @@ export async function POST(
     const status = result.reason === 'dispatch-not-found' ? 404 : 400
     return NextResponse.json({ error: result.reason }, { status })
   }
+
+  // Gate 4.5 Step 4: fan out 'dispatch-executed' to Ops + Sales.
+  // result.dispatch is the updated KitDispatch with dispatchSummary
+  // populated. Best-effort fan-out; failure does not roll back the
+  // execute write.
+  try {
+    // DispatchSummary holds `deliveryChallanPath` (file path) not a
+    // discrete invoice number; the Tally export is a downstream step.
+    // We pass null for taxInvoiceNumber + taxInvoiceDate here so the
+    // payload validator (isStringOrNull) accepts the call; when the
+    // Tally export route lands in Gate 5 it can pass the real values.
+    await emitDispatchExecuted({
+      kitDispatchId: result.dispatch.id,
+      mouId: result.dispatch.mouId,
+      schoolName: result.dispatch.schoolName,
+      taxInvoiceNumber: null,
+      taxInvoiceDate: null,
+      senderUserId: user.id,
+    })
+  } catch (notifyErr) {
+    console.error('[accounts-execute] notification fan-out failed:', notifyErr)
+  }
+
   return NextResponse.json({
     ok: true,
     newDispatchStatus: result.newDispatchStatus,

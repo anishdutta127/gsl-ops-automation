@@ -14,6 +14,7 @@ import { canUploadPOD } from '@/lib/access'
 import type { KitDispatch } from '@/lib/types'
 import kitDispatchesJson from '@/data/kit_dispatches.json'
 import { recordPOD } from '@/lib/kitDispatch/shipment'
+import { emitPodUploaded } from '@/lib/notifications/workflowTriggers'
 
 const kitDispatches = kitDispatchesJson as unknown as KitDispatch[]
 
@@ -72,5 +73,21 @@ export async function POST(
     const status = result.reason === 'dispatch-not-found' ? 404 : 400
     return NextResponse.json({ error: result.reason }, { status })
   }
+
+  // Gate 4.5 Step 4: fan out 'pod-uploaded' to Finance (raise tax
+  // invoice) + Sales (informational). Best-effort; failure does not
+  // roll back the POD write.
+  try {
+    await emitPodUploaded({
+      kitDispatchId: kd.id,
+      mouId: kd.mouId,
+      schoolName: kd.schoolName,
+      deliveredOn: new Date().toISOString().slice(0, 10),
+      senderUserId: user.id,
+    })
+  } catch (notifyErr) {
+    console.error('[pod-upload] notification fan-out failed:', notifyErr)
+  }
+
   return NextResponse.json({ ok: true, path: publicPath, newDispatchStatus: result.newDispatchStatus })
 }
