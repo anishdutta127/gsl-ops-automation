@@ -1,11 +1,12 @@
 /*
- * / page tests (W4-I.5 P2C5: route migration).
+ * /dashboard/ops page tests (Gate 3.6 Step 4 relocation).
  *
- * After P2C5 the kanban moved to /kanban and the new Operations
- * Control Dashboard lives at /. These tests assert the dashboard
- * composition (header, filters, stat cards, recent MOUs, action
- * centre, orders tracker, comm panel, templates, sales summary,
- * footer, and the kanban CTA in the header).
+ * Pre-Gate-3.6 these tests targeted /. Gate 3.6 moves the
+ * Operations Control Dashboard to /dashboard/ops and replaces /
+ * with the consolidated landing. The dashboard composition
+ * (header, filters, stat cards, recent MOUs, action centre,
+ * orders tracker, comm panel, templates, footer, and the kanban
+ * CTA in the header) is unchanged.
  */
 
 import { describe, expect, it, vi, beforeEach } from 'vitest'
@@ -41,7 +42,7 @@ function admin(): User {
 
 const noSp = Promise.resolve({})
 
-describe('/ Operations Control Dashboard (W4-I.5 P2C5)', () => {
+describe('/dashboard/ops Operations Control Dashboard (Gate 3.6 Step 4)', () => {
   it('renders the Operations Control Dashboard header + subtitle', async () => {
     getCurrentUserMock.mockResolvedValue(admin())
     const { default: DashboardPage } = await import('./page')
@@ -106,7 +107,7 @@ describe('/ Operations Control Dashboard (W4-I.5 P2C5)', () => {
   it('redirects unauthenticated callers to /login', async () => {
     getCurrentUserMock.mockResolvedValue(null)
     const { default: DashboardPage } = await import('./page')
-    await expect(DashboardPage({ searchParams: noSp })).rejects.toThrow('REDIRECT:/login?next=%2F')
+    await expect(DashboardPage({ searchParams: noSp })).rejects.toThrow('REDIRECT:/login?next=%2Fdashboard%2Fops')
   })
 
   it('?programme=STEAM marks the STEAM chip active', async () => {
