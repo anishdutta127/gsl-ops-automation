@@ -98,9 +98,14 @@ export default async function KitDispatchDetailPage({
   const kd = findKitDispatch({ kitDispatches, mouId })
   const paymentStatus = aggregatePaymentStatusForMou(mou.id, payments)
 
-  const productSelection =
+  // Hardware kit dispatches do not belong to the Sales pre-allocation
+  // flow, so we coerce them to null here. The TinkRworks/Cretile/Both
+  // trio is what the pre-allocation UI knows how to render.
+  const productSelectionRaw =
     (mou.productSelection as 'TinkRworks' | 'Cretile' | 'Both' | null | undefined) ??
     (kd?.productSelected ?? null)
+  const productSelection: 'TinkRworks' | 'Cretile' | 'Both' | null =
+    productSelectionRaw === 'Hardware' ? null : (productSelectionRaw ?? null)
 
   const eligibleSkus = eligibleSkusForMou({ inventory, productSelection })
 

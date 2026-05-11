@@ -160,6 +160,103 @@ The Ground-Truth report §1.3 flagged the canonical case: Narayana Group of Scho
 
 ---
 
+## Item 8: Loud-fail FY26-27 sale amounts
+
+**Owner:** Pranav.
+**Question:** what are the correct sale amounts for Empyrean School (Pratik STEAM rows 33-34) and Doon Scholars School (row 41)?
+
+**Context.** Three FY26-27 STEAM rows imported during Gate 4.5 with `contractValue=0` and `importNotes.loudFail=missing-contract-value` because the Excel cells in column O were empty. The platform represents them as MOUs but the dashboard will read them as zero-value until you fill them in. Empyrean appears in two consecutive rows (33 and 34) with the same school name; the import collapsed them to one MOU (slug match). If you intended two separate MOUs for Empyrean, the schoolName needs to disambiguate (e.g. branch / campus suffix).
+
+**Why we're asking:** these are cutover prereqs. The 3 records stay 0-value until you confirm or update.
+
+**Status:** awaiting Pranav.
+
+---
+
+## Item 9: FY26-27 3-installment plans
+
+**Owner:** Pranav.
+**Question:** for Mutahhary Public School (Baroo), Holy Child English Academy (Malda), Berhampore City Public School, and St Johns High School, are the 3-installment plans intentional, or should they be 4-installment?
+
+**Context.** Gate 4.5 import logged 4 warnings where the installment-percentage columns sum to less than 1.0 (typically 0.75 or 0.90), meaning only 3 of 4 installment slots are configured. The platform stores them as 3-installment plans with the missing slot left null. If they should be 4-installment plans, the fourth row needs a percentage and a month.
+
+**Why we're asking:** affects the platform's payment schedule + the "PI due within 30 days" rollup.
+
+**Status:** awaiting Pranav.
+
+---
+
+## Item 10: Auto-created sales rep enrichment
+
+**Owner:** Pranav (assignment) + Anish (data entry via /admin/sales-team).
+**Question:** what are the email, phone, and territory assignments for Brij Singh and Balu R?
+
+**Context.** Gate 4.5 import auto-created two new SalesPerson records from names that appeared in Pranav's STEAM column E but were absent from `sales_team.json`. They default to null email, null phone, empty territories. The new records do not block any flow today (no MOU references them by id) but show up in the sales-rep dropdown with no contact details.
+
+**Why we're asking:** the dropdown reads as incomplete until enriched. Five-minute fix via /admin/sales-team once Pranav confirms the contact info.
+
+**Status:** awaiting Pranav for contact info; Anish executes the edit.
+
+---
+
+## Item 11: FY26-27 orphan dispatch reconciliation
+
+**Owner:** Misba.
+**Question:** for each of the 97 orphan dispatches surfaced on /admin/data-snapshot, is the school name a spelling typo (re-key to an existing MOU) or a true orphan (no MOU exists yet)?
+
+**Context.** Gate 4.5 import wrote 72 KitDispatch records from Misba's TW + Cretile + Hardware sheets. 97 dispatch->MOU links failed because the dispatch school name does not match any MOU school name from Pranav's import. Buckets observed: spelling typos ("Sactuary" vs "Sanctuary"), trailing whitespace differences, and true orphans (school had a dispatch this year but no FY26-27 MOU on Pranav's sheet). The dispatches imported with `mouId='UNMAPPED'`; the admin surface lists each row with school + DC number for review.
+
+**Why we're asking:** orphans need disambiguation before Gate 5 cutover. The platform should not flip to production with 97 unmapped dispatches.
+
+**Status:** awaiting Misba.
+
+---
+
+## Item 12: FY26-27 auto-created schools review
+
+**Owner:** Anish.
+**Question:** are any of the 99 auto-created schools dedup typos that should merge with an existing school, or chain branches (e.g., the three Techno India Group entries) that should join a SchoolGroup?
+
+**Context.** Gate 4.5 import created 99 new School records: 65 from Pranav's STEAM sheet, 9 from YP, plus 25 from Misba's kit-delivery imports for schools that had a dispatch but no MOU. Slug-based dedup caught exact matches; near-duplicates (case variation, trailing whitespace, slight name spellings) did not merge. Three Techno India Group branches (Kalyani, Asansol, Panagarh) are visually chain candidates per Gate 2 chain-MOU patterns.
+
+**Why we're asking:** chain-MOU consolidation is a leadership-level decision per the SchoolGroup design. Slug-collision dedups are reversible until cutover; merge typos are not.
+
+**Status:** awaiting Anish review of `_meta.json.autoCreatedSchools[]`.
+
+---
+
+## Item 13: Stage responsibility design choices
+
+**Owner:** Ameet + Anish.
+**Question:** confirm the two design choices baked into Gate 4.9 stage responsibility, or specify changes:
+(a) Mapping is stage-level: one owner per stage applies to all entities at that stage, not per-entity assignment.
+(b) Each stage has a single responsible party plus one escalation department. Multiple owners per stage is out of scope.
+
+**Context.** Gate 4.9 ships a leadership-configurable matrix at `/admin/stage-responsibility` for the 10 master lifecycle stages, plus a read-only Leadership view at `/dashboard/leadership/accountability`. Default mapping per stage:
+
+| Stage | Responsible | Escalation | Notes |
+|---|---|---|---|
+| Pipeline | Sales | Leadership | Sales drafting MOU |
+| MOU uploaded | Sales | Ops | Sales submits signed MOU |
+| Active | Ops | Sales | Ops validates data + kits config |
+| Payment pending | Finance | Sales | Finance generates PI |
+| 1st instalment received | Finance | Leadership | Finance reconciles payment |
+| PI generated | Finance | Ops | Finance issues PI for that instalment |
+| Dispatch requested | Ops | Sales | Ops allocates kits |
+| Shipment in progress | Ops | Finance | Ops tracks shipment + uploads POD |
+| Delivered | Ops | Leadership | Ops confirms delivery + POD |
+| Closed | Finance | Leadership | Finance closes books on completed MOU |
+
+Department by default; per-stage user override available when leadership wants a specific person held accountable. Notifications today broadcast to the owning department; when a user override is set, the fan-out narrows to that single user (mou-uploaded, kits-allocated, dispatch-executed, pod-uploaded triggers all respect the override).
+
+Every change to a stage row writes to its audit log with who/when/before/after. Leadership can change the mapping any time without code changes.
+
+**Why we're asking:** changing either decision after cutover is non-trivial. (a) -> per-entity ownership multiplies admin work by ~74x for FY26-27 (74 MOUs); (b) -> dual owners doubles the notification fan-out and the accountability surface. Locked answers let us close Gate 4.9 cleanly and proceed to Gate 5 cutover prep.
+
+**Status:** awaiting Ameet + Anish.
+
+---
+
 ## Appending new items
 
 Add to the bottom only. Use the template:

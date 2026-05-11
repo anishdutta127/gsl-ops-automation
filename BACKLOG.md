@@ -3,6 +3,36 @@
 Phase 1.1+ items deferred from Phase 1. Each entry names the trigger
 that should pull it onto the active plan.
 
+## Gate 5 cutover prereqs (FY26-27 import reconciliation, Gate 4.5 + 4.7)
+
+These are NOT platform bugs and NOT backlog candidates in the usual
+sense - they are data-hygiene tasks owned by the right human user.
+The platform should not flip from staging to production while any of
+them remain open. Each item has a corresponding entry in
+`docs/decisions/TESTING_EMAIL_QUEUE.md` for the testing email and is
+surfaced on `/admin/data-snapshot` for live visibility.
+
+- **Item 8 (Pranav)**: confirm correct sale amounts for 3 loud-fail
+  rows (Empyrean School Pratik STEAM rows 33-34, Doon Scholars row 41).
+- **Item 9 (Pranav)**: confirm 3-installment plans are intentional for
+  Mutahhary Public School, Holy Child English Academy (Malda),
+  Berhampore City Public School, and St Johns High School.
+- **Item 10 (Pranav + Anish)**: enrich auto-created sales reps Brij
+  Singh and Balu R with email, phone, and territory assignments.
+- **Item 11 (Misba)**: reconcile 97 orphan dispatches via
+  `/admin/data-snapshot` - distinguish spelling typos (re-key to
+  existing MOU) from true orphans (no MOU exists yet).
+- **Item 12 (Anish)**: review 99 auto-created schools for dedup typos
+  and chain candidates (especially the three Techno India Group
+  branches that look like chain-MOU candidates per Gate 2 chain-MOU
+  patterns).
+
+Trigger to clear from backlog: each item is resolved in
+`TESTING_EMAIL_QUEUE.md` with a "Status: resolved" line, and the
+underlying data is updated in the staged `src/data/_imports/fy2627/`
+files. Gate 5 cutover script reads `_meta.json` plus this list; any
+unresolved item blocks the cutover step.
+
 ## PI generator render-only split (Gate 2 Step 6 follow-up, Gate 5 prereq)
 
 Step 6's `/finance/pi/[paymentId]` view surfaces a Download button
