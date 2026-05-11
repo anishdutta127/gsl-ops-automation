@@ -32,17 +32,26 @@ const KIND_LABEL: Record<NotificationKind | 'all' | 'unread', string> = {
   'escalation-assigned': 'Escalation',
   'reminder-due': 'Reminder',
   'inventory-low-stock': 'Inventory low',
+  // Gate 4 Step 2: new lifecycle kinds.
+  'mou-uploaded': 'MOU uploaded',
+  'kits-allocated-for-approval': 'Kits allocated',
+  'dispatch-executed': 'Dispatch executed',
+  'pod-uploaded': 'POD uploaded',
 }
 
 const FILTER_KEYS: Array<NotificationKind | 'all' | 'unread'> = [
   'all',
   'unread',
+  'mou-uploaded',
   'dispatch-request-created',
   'dispatch-request-approved',
   'dispatch-request-rejected',
   'dispatch-request-cancelled',
+  'kits-allocated-for-approval',
   'intake-completed',
   'payment-recorded',
+  'dispatch-executed',
+  'pod-uploaded',
   'escalation-assigned',
   'reminder-due',
   'inventory-low-stock',

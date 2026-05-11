@@ -30,6 +30,11 @@ const KIND_ICON: Record<Notification['kind'], string> = {
   'escalation-assigned': 'alert-triangle',
   'reminder-due': 'bell',
   'inventory-low-stock': 'package-minus',
+  // Gate 4 Step 2: three new trigger kinds + the kit-allocation remap.
+  'mou-uploaded': 'file-plus',
+  'kits-allocated-for-approval': 'boxes',
+  'dispatch-executed': 'truck',
+  'pod-uploaded': 'clipboard-check',
 }
 
 interface NotificationBellProps {

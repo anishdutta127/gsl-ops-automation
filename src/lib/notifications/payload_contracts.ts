@@ -107,6 +107,39 @@ export interface InventoryLowStockPayload {
   dispatchId: string | null
 }
 
+// Gate 4 Step 2 payload contracts.
+
+export interface MouUploadedPayload {
+  mouId: string
+  schoolName: string
+  programme: string
+  contractValue: number
+  importedFrom: string // 'sheet-import' | 'manual'
+}
+
+export interface KitsAllocatedForApprovalPayload {
+  kitDispatchId: string
+  mouId: string
+  schoolName: string
+  allocationCount: number
+  totalKits: number
+}
+
+export interface DispatchExecutedPayload {
+  kitDispatchId: string
+  mouId: string
+  schoolName: string
+  taxInvoiceNumber: string | null
+  taxInvoiceDate: string | null
+}
+
+export interface PodUploadedPayload {
+  kitDispatchId: string
+  mouId: string
+  schoolName: string
+  deliveredOn: string
+}
+
 // ----------------------------------------------------------------------------
 // Discriminated union (informational; createNotification accepts loose payload
 // and validates field-by-field using the validators below).
@@ -122,6 +155,10 @@ export type NotificationPayloadByKind = {
   'escalation-assigned': EscalationAssignedPayload
   'reminder-due': ReminderDuePayload
   'inventory-low-stock': InventoryLowStockPayload
+  'mou-uploaded': MouUploadedPayload
+  'kits-allocated-for-approval': KitsAllocatedForApprovalPayload
+  'dispatch-executed': DispatchExecutedPayload
+  'pod-uploaded': PodUploadedPayload
 }
 
 // ----------------------------------------------------------------------------
@@ -244,5 +281,36 @@ export const PAYLOAD_VALIDATORS: Record<
       currentStock: isNumber,
       threshold: isNumber,
       dispatchId: isStringOrNull,
+    }),
+  'mou-uploaded': (p) =>
+    check(p, {
+      mouId: isString,
+      schoolName: isString,
+      programme: isString,
+      contractValue: isNumber,
+      importedFrom: isString,
+    }),
+  'kits-allocated-for-approval': (p) =>
+    check(p, {
+      kitDispatchId: isString,
+      mouId: isString,
+      schoolName: isString,
+      allocationCount: isNumber,
+      totalKits: isNumber,
+    }),
+  'dispatch-executed': (p) =>
+    check(p, {
+      kitDispatchId: isString,
+      mouId: isString,
+      schoolName: isString,
+      taxInvoiceNumber: isStringOrNull,
+      taxInvoiceDate: isStringOrNull,
+    }),
+  'pod-uploaded': (p) =>
+    check(p, {
+      kitDispatchId: isString,
+      mouId: isString,
+      schoolName: isString,
+      deliveredOn: isString,
     }),
 }
