@@ -1,29 +1,71 @@
 /*
- * /dashboard/finance (Gate 3.5 Step 7 rebuild).
+ * /dashboard/finance (Gate 4.95 Session 2 rebuild).
  *
- * Replaces the 60-LOC skeleton with a focused two-card layout:
- * 3 KPI tiles up top, "Payments needing attention" + "PIs awaiting
- * payment" in the middle, Tally export quick link in the footer.
+ * Rich Finance workspace combining the legacy two-card layout
+ * (Payments needing attention + PIs awaiting payment) with the
+ * Gate 4.95 sections: KPI strip, high-priority alerts, top overdue
+ * payments + renewal needed, amount receipt summary, VEX kit orders,
+ * programme breakdown. Filters live in a URL-mirrored bar at the top.
  *
- * Mobile: cards stack vertically.
+ * The two-card middle layout from the previous build is preserved as
+ * Row 3; do not restyle it without an explicit user ask.
  */
 
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
-import { ArrowRight, FileText, Receipt, AlertCircle } from 'lucide-react'
-import type { Adjustment, MOU, Payment, PaymentLog } from '@/lib/types'
+import { ArrowRight } from 'lucide-react'
+import type {
+  Adjustment,
+  Escalation,
+  MOU,
+  Payment,
+  PaymentLog,
+  School,
+  VexDispatch,
+  VexPi,
+} from '@/lib/types'
 import mousJson from '@/data/mous.json'
 import paymentsJson from '@/data/payments.json'
 import paymentLogsJson from '@/data/payment_logs.json'
 import adjustmentsJson from '@/data/adjustments.json'
+import escalationsJson from '@/data/escalations.json'
+import schoolsJson from '@/data/schools.json'
+import vexPisJson from '@/data/vex_pis.json'
+import vexDispatchesJson from '@/data/vex_dispatches.json'
 import { getCurrentUser } from '@/lib/auth/session'
 import { TopNav } from '@/components/ops/TopNav'
 import { formatRs } from '@/lib/format'
+import {
+  applyFilters,
+  computeAmountReceiptSummary,
+  computeHighPriorityAlerts,
+  computeKpiStrip,
+  computeProgrammeBreakdown,
+  computeRenewalNeeded,
+  computeTopOverduePayments,
+  computeVexKitOrders,
+  filterSubtitle,
+  fyOptionsList,
+  parseFinanceFilters,
+  type FinanceFilters,
+} from '@/lib/dashboard/financeDashboardData'
+import { FinanceFilterBar } from '@/components/dashboard/FinanceFilterBar'
+import { KpiStrip } from '@/components/dashboard/finance/KpiStrip'
+import { HighPriorityAlertsPanel } from '@/components/dashboard/finance/HighPriorityAlertsPanel'
+import { TopOverduePaymentsPanel } from '@/components/dashboard/finance/TopOverduePaymentsPanel'
+import { RenewalNeededPanel } from '@/components/dashboard/finance/RenewalNeededPanel'
+import { AmountReceiptSummary } from '@/components/dashboard/finance/AmountReceiptSummary'
+import { VexKitOrdersTile } from '@/components/dashboard/finance/VexKitOrdersTile'
+import { ProgrammeBreakdown } from '@/components/dashboard/finance/ProgrammeBreakdown'
 
 const allMous = mousJson as unknown as MOU[]
 const allPayments = paymentsJson as unknown as Payment[]
 const allPaymentLogs = paymentLogsJson as unknown as PaymentLog[]
 const allAdjustments = adjustmentsJson as unknown as Adjustment[]
+const allEscalations = escalationsJson as unknown as Escalation[]
+const allSchools = schoolsJson as unknown as School[]
+const allVexPis = vexPisJson as unknown as VexPi[]
+const allVexDispatches = vexDispatchesJson as unknown as VexDispatch[]
 
 function daysBetween(from: string | null, to: Date): number | null {
   if (!from) return null
@@ -39,25 +81,80 @@ function bucketByAge(daysOld: number | null): string {
   return '>7 days'
 }
 
-export default async function FinanceDashboard() {
+function serializeFilters(f: FinanceFilters): string {
+  const params = new URLSearchParams()
+  if (f.programmes.length > 0) params.set('p', f.programmes.join(','))
+  if (f.salesChannels.length > 0) params.set('sc', f.salesChannels.join(','))
+  if (f.fy) params.set('fy', f.fy)
+  if (f.from) params.set('from', f.from)
+  if (f.to) params.set('to', f.to)
+  return params.toString()
+}
+
+function windowLabel(filters: FinanceFilters): string {
+  if (filters.from || filters.to) {
+    return `${filters.from ?? '...'} to ${filters.to ?? '...'}`
+  }
+  if (filters.fy) return `FY ${filters.fy}`
+  return 'this FY'
+}
+
+export default async function FinanceDashboard({
+  searchParams,
+}: {
+  searchParams: Record<string, string | string[] | undefined>
+}) {
   const user = await getCurrentUser()
   if (!user) redirect('/login?next=%2Fdashboard%2Ffinance')
 
   const now = new Date()
+  const filters = parseFinanceFilters(searchParams ?? {})
+  const fyOptions = fyOptionsList(allMous, now)
+  const subtitle = filterSubtitle(filters, now)
 
-  const totalOutstanding = allMous
-    .filter((m) => m.status === 'Active')
-    .reduce((s, m) => s + (m.balance ?? 0), 0)
+  const { filteredMous, filteredMouIds, filteredPayments, windowFrom, windowTo } =
+    applyFilters({ mous: allMous, payments: allPayments, filters })
 
-  const monthIsoPrefix = now.toISOString().slice(0, 7)
-  const pisIssuedThisMonth = allPayments.filter(
-    (p) => p.piGeneratedAt?.startsWith(monthIsoPrefix) ?? false,
-  ).length
+  const kpiStrip = computeKpiStrip({
+    filteredMous,
+    filteredPayments,
+    escalations: allEscalations,
+    filteredMouIds,
+  })
+  const highPriorityAlerts = computeHighPriorityAlerts({
+    escalations: allEscalations,
+    schools: allSchools,
+    filteredMouIds,
+  })
+  const topOverdue = computeTopOverduePayments({ filteredPayments, now })
+  const renewal = computeRenewalNeeded({ filteredMous, now })
+  const receiptSummary = computeAmountReceiptSummary({
+    filteredPayments,
+    windowFrom,
+    windowTo,
+  })
+  const vexKitOrders = computeVexKitOrders({
+    vexPis: allVexPis,
+    vexDispatches: allVexDispatches,
+    windowFrom,
+    windowTo,
+  })
+  const programmeBreakdown = computeProgrammeBreakdown(filteredMous)
 
-  const adjustmentsActive = allAdjustments.filter(
-    (a) => a.status === 'Active',
-  ).length
+  const qs = serializeFilters(filters)
+  const schoolsHref = qs
+    ? `/finance/schools-receipts?${qs}`
+    : '/finance/schools-receipts'
+  const receiptsHref = qs ? `/finance/receipts?${qs}` : '/finance/receipts'
+  const wLabel = windowLabel(filters)
+  const filterActive =
+    filters.programmes.length > 0 ||
+    filters.salesChannels.length > 0 ||
+    filters.fy !== null ||
+    filters.from !== null ||
+    filters.to !== null
 
+  // Existing two-card layout data (preserved).
   const unmatched = allPaymentLogs
     .filter((pl) => pl.unmatched || (pl.matchedInstallmentIds ?? []).length === 0)
     .slice()
@@ -81,8 +178,13 @@ export default async function FinanceDashboard() {
     .sort((a, b) => (a.piGeneratedAt! < b.piGeneratedAt! ? 1 : -1))
     .slice(0, 10)
 
+  // Adjustments count surfaced in the Tally footer line.
+  const adjustmentsActive = allAdjustments.filter(
+    (a) => a.status === 'Active',
+  ).length
+
   // Scan payment auditLogs for a tally-export entry; if none present
-  // in the data, show "never". The action verb is not in the canonical
+  // the footer shows "never". The action verb is not in the canonical
   // AuditAction union today (would be added when Tally export actually
   // audits); the cast accepts whatever string surfaces.
   let lastTallyExportTs: string | null = null
@@ -102,43 +204,20 @@ export default async function FinanceDashboard() {
   return (
     <>
       <TopNav currentPath="/dashboard/finance" />
-      <main id="main-content" data-testid="finance-dashboard">
+      <div data-testid="finance-dashboard">
         <div className="mx-auto flex max-w-screen-xl flex-col gap-6 px-4 py-6 sm:px-6">
           <header>
             <h1 className="font-heading text-2xl font-bold text-brand-navy">
               Finance workspace
             </h1>
-            <p className="mt-1 text-sm text-slate-600">
-              PIs, payments, adjustments, Tally export in one view.
-            </p>
+            <p className="mt-1 text-sm text-slate-600">{subtitle}</p>
           </header>
 
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <KpiTile
-              icon={<AlertCircle aria-hidden className="size-5 text-violet-600" />}
-              label="Total outstanding"
-              value={formatRs(totalOutstanding)}
-              href="/finance/payments/unmatched"
-              hrefLabel="Reconcile unmatched"
-              testId="kpi-outstanding"
-            />
-            <KpiTile
-              icon={<FileText aria-hidden className="size-5 text-brand-teal" />}
-              label="PIs issued this month"
-              value={`${pisIssuedThisMonth}`}
-              href="/finance/payments?status=PI-issued"
-              hrefLabel="View list"
-              testId="kpi-pis-issued"
-            />
-            <KpiTile
-              icon={<Receipt aria-hidden className="size-5 text-amber-600" />}
-              label="Adjustments active"
-              value={`${adjustmentsActive}`}
-              href="/finance/adjustments"
-              hrefLabel="Manage adjustments"
-              testId="kpi-adjustments"
-            />
-          </div>
+          <FinanceFilterBar initialFilters={filters} fyOptions={fyOptions} />
+
+          <KpiStrip data={kpiStrip} schoolsHref={schoolsHref} />
+
+          <HighPriorityAlertsPanel alerts={highPriorityAlerts} />
 
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
             <PaymentsAttentionCard
@@ -149,6 +228,28 @@ export default async function FinanceDashboard() {
             <PisAwaitingCard payments={awaiting} now={now} />
           </div>
 
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+            <TopOverduePaymentsPanel rows={topOverdue} />
+            <RenewalNeededPanel
+              rows={renewal.rows}
+              expiredCount={renewal.expiredCount}
+              expiringSoonCount={renewal.expiringSoonCount}
+            />
+          </div>
+
+          <AmountReceiptSummary
+            data={receiptSummary}
+            windowLabel={wLabel}
+            receiptsHref={receiptsHref}
+          />
+
+          <VexKitOrdersTile data={vexKitOrders} windowLabel={wLabel} />
+
+          <ProgrammeBreakdown
+            rows={programmeBreakdown}
+            filterActive={filterActive}
+          />
+
           <div className="rounded-md border border-border bg-card p-3 text-sm text-slate-700">
             Last Tally export:{' '}
             <strong className="text-brand-navy">
@@ -156,50 +257,19 @@ export default async function FinanceDashboard() {
                 ? new Date(lastTallyExportTs).toISOString().slice(0, 10)
                 : 'never'}
             </strong>
-            .{' '}
+            . {adjustmentsActive} active{' '}
+            {adjustmentsActive === 1 ? 'adjustment' : 'adjustments'}.{' '}
             <Link
               href="/finance/tally-export"
-              className="font-semibold text-brand-navy underline-offset-2 hover:underline"
+              className="font-semibold text-brand-navy underline-offset-2 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-teal"
               data-testid="tally-export-cta"
             >
               Run new export <ArrowRight aria-hidden className="ml-0.5 inline size-3" />
             </Link>
           </div>
         </div>
-      </main>
-    </>
-  )
-}
-
-function KpiTile({
-  icon,
-  label,
-  value,
-  href,
-  hrefLabel,
-  testId,
-}: {
-  icon: React.ReactNode
-  label: string
-  value: string
-  href: string
-  hrefLabel: string
-  testId: string
-}) {
-  return (
-    <div className="rounded-md border border-border bg-card p-4" data-testid={testId}>
-      <div className="flex items-center gap-2">
-        {icon}
-        <span className="text-xs uppercase tracking-wide text-slate-600">{label}</span>
       </div>
-      <div className="mt-2 font-heading text-2xl font-bold text-brand-navy">{value}</div>
-      <Link
-        href={href}
-        className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-brand-navy underline-offset-2 hover:underline focus:outline-none focus:ring-2 focus:ring-brand-navy"
-      >
-        {hrefLabel} <ArrowRight aria-hidden className="size-3" />
-      </Link>
-    </div>
+    </>
   )
 }
 
