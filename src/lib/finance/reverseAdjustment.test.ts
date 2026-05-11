@@ -13,6 +13,7 @@ import {
   type ReverseAdjustmentDeps,
 } from './reverseAdjustment'
 import type { Adjustment, MOU, PendingUpdate, User } from '@/lib/types'
+import type { enqueueUpdate } from '@/lib/pendingUpdates'
 
 const FIXED_TS = '2026-05-15T10:00:00.000Z'
 
@@ -97,7 +98,12 @@ function makeDeps(args: {
   mous: MOU[]
   users: User[]
 }) {
-  const enqueueMock = vi.fn(async () => ({ id: 'pq' }) as unknown as PendingUpdate)
+  // Typed mock with full enqueueUpdate signature so mock.calls[N][0] is
+  // typed as the EnqueueArgs[0] rather than `never` under strict tsc.
+  // Runtime is identical; the cast is purely type-side.
+  const enqueueMock = vi.fn<typeof enqueueUpdate>(
+    async () => ({ id: 'pq' }) as unknown as PendingUpdate,
+  )
   const deps: ReverseAdjustmentDeps = {
     adjustments: args.adjustments,
     mous: args.mous,
