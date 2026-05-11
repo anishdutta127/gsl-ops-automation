@@ -1,14 +1,31 @@
 /*
- * PI generation (Phase D1).
+ * PI generation (Phase D1) + render-only split (Gate 5A Step 2).
  *
- * Real implementation. Inputs: mouId + instalmentSeq + generatedBy.
- * The lib resolves school + MOU data, gates on GSTIN presence,
- * atomically increments the PI counter to obtain a unique PI number,
- * loads the .docx template from public/ops-templates/, fills it via
- * docxtemplater, builds + enqueues a Payment record, and appends a
- * `pi-issued` audit entry on the MOU.
+ * Two public entry points:
+ *   - renderPi(args)             pure render. NO counter advance, NO
+ *                                Payment enqueue, NO audit. Used by
+ *                                /finance/pi/[paymentId] Download for
+ *                                already-issued PIs.
+ *   - issueAndRenderPi(args)     advances the per-entity counter, builds
+ *                                + enqueues the Payment record, appends
+ *                                'pi-issued' audit on the MOU, returns
+ *                                the rendered .docx. Idempotent: if a
+ *                                Payment already exists for the
+ *                                (mouId, instalmentSeq) pair with a
+ *                                piNumber set, falls through to renderPi
+ *                                behaviour so the counter does not
+ *                                burn a fresh number on a duplicate
+ *                                click.
  *
- * Failure modes:
+ * `generatePi` is preserved as a deprecated alias for issueAndRenderPi
+ * to keep historical call sites + tests working.
+ *
+ * Counter monotonicity: issuePiNumberAtomic is called BEFORE any other
+ * write in the issue path. Re-issuing the same PI via /finance/pi/.../
+ * reissue advances the counter (per-issue is the legal convention);
+ * Download re-rendering does NOT.
+ *
+ * Failure modes (issueAndRenderPi):
  *  - `permission`             not Admin or Finance
  *  - `unknown-user`           session.sub not in users.json
  *  - `mou-not-found`
@@ -16,28 +33,18 @@
  *  - `wrong-status`           MOU not Active
  *  - `template-missing`       caller surfaces TemplateMissingError to operator
  *
+ * Failure modes (renderPi):
+ *  - `payment-not-found`      paymentId not in payments.json
+ *  - `payment-missing-pi-number` Payment row has piNumber === null
+ *  - `mou-not-found`
+ *  - `school-not-found`
+ *  - `template-missing`
+ *
  * W4-A.6: GSTIN no longer blocks PI generation. The DOCX renders the
  * literal "GSTIN: To be added" placeholder when school.gstNumber is
  * null or empty; Finance backfills the GSTIN later via
  * /schools/[id]/edit and the PI document gets re-issued (or
- * annotated) before GST filing. The pre-W4-A.6 'gstin-required'
- * failure branch is removed; tests previously covering it now assert
- * the placeholder path.
- *
- * Counter monotonicity is preserved: issuePiNumberAtomic is called
- * BEFORE any other write, and the API route reads the returned
- * piNumber into the docx. Re-rendering the same PI uses the same
- * Payment.id (`<mouId>-i<seq>`) so retries do not duplicate.
- *
- * Idempotency divergence vs raiseDispatch: this lib advances the PI
- * counter on every successful call (no per-call idempotency by
- * design). PI numbers have external significance (GST filing, legal
- * documents); a duplicate click creates a counter gap rather than
- * re-rendering the same PI. raiseDispatch.ts intentionally differs
- * (idempotent re-render). Phase 1.1 may add per-(mouId,
- * instalmentSeq) lookup to suppress duplicates pre-counter-advance
- * if testers report accidental duplicates. See RUNBOOK section 10
- * "PI vs Dispatch idempotency divergence".
+ * annotated) before GST filing.
  */
 
 import { readFile } from 'node:fs/promises'
@@ -53,15 +60,10 @@ import type {
 } from '@/lib/types'
 import mousJson from '@/data/mous.json'
 import schoolsJson from '@/data/schools.json'
+import paymentsJson from '@/data/payments.json'
 import usersJson from '@/data/users.json'
 import companyJson from '../../../config/company.json'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
-// Step 5 re-wire (brief item 9 + STEP5_QUESTIONS Q3): swap from the
-// legacy single-counter `issuePiNumberAtomic` in lib/githubQueue.ts to
-// the per-entity counter in lib/mouSystem/piCounterAtomic.ts. PI numbers
-// now use the GST-entity-correct sequence so the audit trail stays gap-
-// free per GSTIN. Programme -> entity routing is in
-// config/company.json's programmeRouting block.
 import { issuePiNumberAtomic } from '@/lib/mouSystem/piCounterAtomic'
 import { getEntityForProgramme, getEntity } from '@/lib/mouSystem/company'
 import { canPerform } from '@/lib/auth/permissions'
@@ -97,6 +99,10 @@ export type GeneratePiResult =
       piNumber: string
       payment: Payment
       docxBytes: Uint8Array
+      /** True when the call short-circuited via idempotency (existing
+       *  payment + piNumber already on record); no counter advance,
+       *  no enqueue, no audit. False on first-ever issue. */
+      reissued?: boolean
     }
   | { ok: false; reason: GeneratePiFailureReason; templateError?: TemplateMissingError }
 
@@ -104,6 +110,7 @@ export interface GeneratePiDeps {
   mous: MOU[]
   schools: School[]
   users: User[]
+  payments: Payment[]
   company: CompanyConfig
   enqueue: typeof enqueueUpdate
   issueCounter: typeof issuePiNumberAtomic
@@ -127,6 +134,7 @@ const defaultDeps: GeneratePiDeps = {
   mous: mousJson as unknown as MOU[],
   schools: schoolsJson as unknown as School[],
   users: usersJson as unknown as User[],
+  payments: paymentsJson as unknown as Payment[],
   company: companyJson as CompanyConfig,
   enqueue: enqueueUpdate,
   issueCounter: issuePiNumberAtomic,
@@ -142,12 +150,153 @@ interface LineItem {
 }
 
 function totalInstallments(paymentSchedule: string): number {
-  // '25-25-25-25 quarterly' -> 4. Falls back to 1 when unparseable.
   const numbers = paymentSchedule.match(/\d+/g)
   return numbers && numbers.length > 1 ? numbers.length : 1
 }
 
-export async function generatePi(
+function buildPlaceholderBag(args: {
+  piNumber: string
+  piDateIso: string
+  mou: MOU
+  school: School
+  company: CompanyConfig
+  entity: ReturnType<typeof getEntity>
+  studentsForBilling: number
+  subtotal: number
+  gstAmount: number
+  total: number
+  instalmentLabel: string
+}): Record<string, unknown> {
+  const { piNumber, piDateIso, mou, school, company, entity,
+    studentsForBilling, subtotal, gstAmount, total, instalmentLabel } = args
+
+  const renderedGstin = (school.gstNumber !== null && school.gstNumber.trim() !== '')
+    ? school.gstNumber
+    : 'To be added'
+
+  const lineItems: LineItem[] = [
+    {
+      description: `${mou.programme}${mou.programmeSubType ? ` (${mou.programmeSubType})` : ''} - Instalment ${instalmentLabel}`,
+      students: studentsForBilling,
+      rate: mou.spWithoutTax,
+      amount: subtotal,
+    },
+  ]
+
+  return {
+    PI_NUMBER: piNumber,
+    PI_DATE: formatDate(piDateIso),
+    SCHOOL_NAME: school.legalEntity ?? school.name,
+    SCHOOL_GSTIN: renderedGstin,
+    SCHOOL_ADDRESS: [
+      school.name,
+      `${school.city}, ${school.state}`,
+      school.pinCode ?? '',
+    ].filter((s) => s !== '').join('\n'),
+    GSL_LEGAL_ENTITY: company.legalEntity,
+    GSL_GSTIN: entity.gstin,
+    GSL_ADDRESS: entity.address,
+    PROGRAMME: mou.programme,
+    PROGRAMME_SUB_TYPE: mou.programmeSubType ?? '',
+    LINE_ITEMS: lineItems.map((li) => ({
+      description: li.description,
+      students: String(li.students),
+      rate: formatRs(li.rate),
+      amount: formatRs(li.amount),
+    })),
+    SUBTOTAL: formatRs(subtotal),
+    GST_AMOUNT: formatRs(gstAmount),
+    TOTAL: formatRs(total),
+    INSTALLMENT_LABEL: `Instalment ${instalmentLabel}`,
+    PAYMENT_TERMS: company.paymentTerms,
+    ACCOUNT_DETAILS: company.accountDetails.join('\n'),
+  }
+}
+
+async function renderDocxFromBag(
+  bag: Record<string, unknown>,
+  loadTemplate: GeneratePiDeps['loadTemplate'],
+): Promise<{ ok: true; docxBytes: Uint8Array } | { ok: false; templateError: TemplateMissingError }> {
+  try {
+    const templateBytes = await loadTemplate(PI_TEMPLATE.file)
+    const zip = new PizZip(templateBytes)
+    const doc = new Docxtemplater(zip, {
+      paragraphLoop: true,
+      linebreaks: true,
+    })
+    doc.render(bag)
+    const out = doc.getZip().generate({ type: 'uint8array' })
+    return { ok: true, docxBytes: out as unknown as Uint8Array }
+  } catch (err) {
+    if (err instanceof TemplateMissingError) {
+      return { ok: false, templateError: err }
+    }
+    throw err
+  }
+}
+
+// ===========================================================================
+// renderPi: pure render, no counter advance, no enqueue, no audit.
+// ===========================================================================
+
+export interface RenderPiArgs {
+  /** Payment.id of the instalment whose piNumber should be rendered. */
+  paymentId: string
+}
+
+export type RenderPiFailureReason =
+  | 'payment-not-found'
+  | 'payment-missing-pi-number'
+  | 'mou-not-found'
+  | 'school-not-found'
+  | 'template-missing'
+
+export type RenderPiResult =
+  | { ok: true; piNumber: string; docxBytes: Uint8Array }
+  | { ok: false; reason: RenderPiFailureReason; templateError?: TemplateMissingError }
+
+export async function renderPi(
+  args: RenderPiArgs,
+  deps: GeneratePiDeps = defaultDeps,
+): Promise<RenderPiResult> {
+  const payment = deps.payments.find((p) => p.id === args.paymentId)
+  if (!payment) return { ok: false, reason: 'payment-not-found' }
+  if (!payment.piNumber) return { ok: false, reason: 'payment-missing-pi-number' }
+
+  const mou = deps.mous.find((m) => m.id === payment.mouId)
+  if (!mou) return { ok: false, reason: 'mou-not-found' }
+
+  const school = deps.schools.find((s) => s.id === mou.schoolId)
+  if (!school) return { ok: false, reason: 'school-not-found' }
+
+  const entityKey = getEntityForProgramme(mou.programme)
+  const entity = getEntity(entityKey)
+
+  const totalInsts = totalInstallments(mou.paymentSchedule)
+  const instalmentLabel = `${payment.instalmentSeq} of ${totalInsts}`
+  const studentsForBilling = mou.studentsActual ?? mou.studentsMou
+  const subtotal = studentsForBilling * mou.spWithoutTax
+  const gstAmount = Math.round(subtotal * deps.company.gstRate)
+  const total = subtotal + gstAmount
+
+  const bag = buildPlaceholderBag({
+    piNumber: payment.piNumber,
+    piDateIso: payment.piGeneratedAt ?? deps.now().toISOString(),
+    mou, school, company: deps.company, entity,
+    studentsForBilling, subtotal, gstAmount, total, instalmentLabel,
+  })
+  const r = await renderDocxFromBag(bag, deps.loadTemplate)
+  if (!r.ok) return { ok: false, reason: 'template-missing', templateError: r.templateError }
+  return { ok: true, piNumber: payment.piNumber, docxBytes: r.docxBytes }
+}
+
+// ===========================================================================
+// issueAndRenderPi: advances counter, enqueues Payment + MOU update,
+// writes 'pi-issued' audit, returns rendered .docx. Idempotent on
+// duplicate (mouId, instalmentSeq) calls.
+// ===========================================================================
+
+export async function issueAndRenderPi(
   args: GeneratePiArgs,
   deps: GeneratePiDeps = defaultDeps,
 ): Promise<GeneratePiResult> {
@@ -163,17 +312,38 @@ export async function generatePi(
 
   const school = deps.schools.find((s) => s.id === mou.schoolId)
   if (!school) return { ok: false, reason: 'school-not-found' }
-  // W4-A.6: GSTIN-missing no longer blocks. Finance backfills via the
-  // school edit form; the DOCX renders a "To be added" placeholder
-  // until then.
-  const renderedGstin = (school.gstNumber !== null && school.gstNumber.trim() !== '')
-    ? school.gstNumber
-    : 'To be added'
 
-  // Atomic counter advance is the FIRST write. If anything below fails
-  // the counter has still moved, but PI numbers gap; never duplicate.
-  // Step 5 re-wire: counter is per-entity (MH / UP) so the GSTIN audit
-  // trail stays gap-free; routing falls out of the programme.
+  // Idempotency check: if a Payment row already exists for this
+  // (mouId, instalmentSeq) AND has a piNumber, short-circuit to a
+  // render-only path. Prevents a duplicate click burning a fresh PI
+  // number off the counter.
+  const expectedPaymentId = `${mou.id}-i${args.instalmentSeq}`
+  const existing = deps.payments.find((p) => p.id === expectedPaymentId)
+  if (existing && existing.piNumber) {
+    const renderResult = await renderPi({ paymentId: expectedPaymentId }, deps)
+    if (!renderResult.ok) {
+      // The only render failure expected here is template-missing; the
+      // other reasons were ruled out by the lookups above. Surface as
+      // a GeneratePiResult shape so callers keep their existing
+      // failure-handling logic intact.
+      if (renderResult.reason === 'template-missing') {
+        return { ok: false, reason: 'template-missing', templateError: renderResult.templateError }
+      }
+      // Should not happen; fall through to ok=false for safety.
+      return { ok: false, reason: 'template-missing' }
+    }
+    return {
+      ok: true,
+      piNumber: existing.piNumber,
+      payment: existing,
+      docxBytes: renderResult.docxBytes,
+      reissued: true,
+    }
+  }
+
+  // First-ever issue. Advance counter atomically BEFORE any other
+  // write. If anything below fails the counter has still moved, but
+  // PI numbers gap; they never duplicate.
   const entityKey = getEntityForProgramme(mou.programme)
   const entity = getEntity(entityKey)
   const { piNumber } = await deps.issueCounter(entityKey)
@@ -187,65 +357,13 @@ export async function generatePi(
   const total = subtotal + gstAmount
   const expectedAmount = Math.round(mou.contractValue / totalInsts)
 
-  const lineItems: LineItem[] = [
-    {
-      description: `${mou.programme}${mou.programmeSubType ? ` (${mou.programmeSubType})` : ''} - Instalment ${instalmentLabel}`,
-      students: studentsForBilling,
-      rate: mou.spWithoutTax,
-      amount: subtotal,
-    },
-  ]
-
-  // Build placeholder bag for docxtemplater. Multi-line addresses are
-  // joined by newline; the template's table loop reads LINE_ITEMS.
-  const placeholderBag = {
-    PI_NUMBER: piNumber,
-    PI_DATE: formatDate(ts),
-    SCHOOL_NAME: school.legalEntity ?? school.name,
-    SCHOOL_GSTIN: renderedGstin,
-    SCHOOL_ADDRESS: [
-      school.name,
-      `${school.city}, ${school.state}`,
-      school.pinCode ?? '',
-    ].filter((s) => s !== '').join('\n'),
-    GSL_LEGAL_ENTITY: deps.company.legalEntity,
-    // Step 5 re-wire: entity-correct GSTIN + address rather than the
-    // legacy single-entity values from config/company.json. Routing
-    // is by programme via company.json programmeRouting.
-    GSL_GSTIN: entity.gstin,
-    GSL_ADDRESS: entity.address,
-    PROGRAMME: mou.programme,
-    PROGRAMME_SUB_TYPE: mou.programmeSubType ?? '',
-    LINE_ITEMS: lineItems.map((li) => ({
-      description: li.description,
-      students: String(li.students),
-      rate: formatRs(li.rate),
-      amount: formatRs(li.amount),
-    })),
-    SUBTOTAL: formatRs(subtotal),
-    GST_AMOUNT: formatRs(gstAmount),
-    TOTAL: formatRs(total),
-    INSTALLMENT_LABEL: `Instalment ${instalmentLabel}`,
-    PAYMENT_TERMS: deps.company.paymentTerms,
-    ACCOUNT_DETAILS: deps.company.accountDetails.join('\n'),
-  }
-
-  let docxBytes: Uint8Array
-  try {
-    const templateBytes = await deps.loadTemplate(PI_TEMPLATE.file)
-    const zip = new PizZip(templateBytes)
-    const doc = new Docxtemplater(zip, {
-      paragraphLoop: true,
-      linebreaks: true,
-    })
-    doc.render(placeholderBag)
-    const out = doc.getZip().generate({ type: 'uint8array' })
-    docxBytes = out as unknown as Uint8Array
-  } catch (err) {
-    if (err instanceof TemplateMissingError) {
-      return { ok: false, reason: 'template-missing', templateError: err }
-    }
-    throw err
+  const bag = buildPlaceholderBag({
+    piNumber, piDateIso: ts, mou, school, company: deps.company, entity,
+    studentsForBilling, subtotal, gstAmount, total, instalmentLabel,
+  })
+  const r = await renderDocxFromBag(bag, deps.loadTemplate)
+  if (!r.ok) {
+    return { ok: false, reason: 'template-missing', templateError: r.templateError }
   }
 
   const auditEntry: AuditEntry = {
@@ -266,14 +384,14 @@ export async function generatePi(
   }
 
   const payment: Payment = {
-    id: `${mou.id}-i${args.instalmentSeq}`,
+    id: expectedPaymentId,
     mouId: mou.id,
     schoolName: school.name,
     programme: mou.programme,
     instalmentLabel,
     instalmentSeq: args.instalmentSeq,
     totalInstalments: totalInsts,
-    description: lineItems[0]!.description,
+    description: `${mou.programme}${mou.programmeSubType ? ` (${mou.programmeSubType})` : ''} - Instalment ${instalmentLabel}`,
     dueDateRaw: null,
     dueDateIso: null,
     expectedAmount,
@@ -313,5 +431,12 @@ export async function generatePi(
     payload: updatedMou as unknown as Record<string, unknown>,
   })
 
-  return { ok: true, piNumber, payment, docxBytes }
+  return { ok: true, piNumber, payment, docxBytes: r.docxBytes, reissued: false }
 }
+
+/**
+ * @deprecated Use issueAndRenderPi. Preserved as an alias for back-compat
+ * with existing call sites + the generatePi.test.ts fixture; future code
+ * should call issueAndRenderPi directly so the intent is explicit.
+ */
+export const generatePi = issueAndRenderPi

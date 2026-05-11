@@ -17,6 +17,8 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vites
 import PizZip from 'pizzip'
 import {
   generatePi,
+  issueAndRenderPi,
+  renderPi,
   type GeneratePiDeps,
 } from './generatePi'
 import { TemplateMissingError } from './templates'
@@ -115,6 +117,7 @@ function makeDeps(opts: {
   mous: MOU[]
   schools: School[]
   users: User[]
+  payments?: Payment[]
   loadTemplateOverride?: GeneratePiDeps['loadTemplate']
 }): {
   deps: GeneratePiDeps
@@ -147,6 +150,7 @@ function makeDeps(opts: {
       mous: opts.mous,
       schools: opts.schools,
       users: opts.users,
+      payments: opts.payments ?? [],
       company,
       enqueue: enqueue as unknown as GeneratePiDeps['enqueue'],
       issueCounter: issueCounter as unknown as GeneratePiDeps['issueCounter'],
@@ -356,5 +360,171 @@ describe('generatePi', () => {
       expect(r1.piNumber).toBe('GSL/OPS/26-27/0001')
       expect(r2.piNumber).toBe('GSL/OPS/26-27/0002')
     }
+  })
+})
+
+// ===========================================================================
+// Gate 5A Step 2: render-only + idempotency tests.
+// ===========================================================================
+
+function payment(over: Partial<Payment> = {}): Payment {
+  return {
+    id: 'MOU-X-i1',
+    mouId: 'MOU-X',
+    schoolName: 'Test School',
+    programme: 'STEAM',
+    instalmentLabel: '1 of 4',
+    instalmentSeq: 1,
+    totalInstalments: 4,
+    description: 'STEAM - Instalment 1 of 4',
+    dueDateRaw: null,
+    dueDateIso: null,
+    expectedAmount: 200000,
+    receivedAmount: null,
+    receivedDate: null,
+    paymentMode: null,
+    bankReference: null,
+    piNumber: 'GSL/OPS/26-27/0042',
+    taxInvoiceNumber: null,
+    status: 'PI Sent',
+    notes: null,
+    piSentDate: FIXED_TS,
+    piSentTo: 'spoc@example.test',
+    piGeneratedAt: FIXED_TS,
+    studentCountActual: 200,
+    partialPayments: null,
+    auditLog: [],
+    ...over,
+  }
+}
+
+describe('renderPi (Gate 5A Step 2: render-only download path)', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('renders .docx for an already-issued PI WITHOUT advancing the counter', async () => {
+    const u = user('Finance', 'shubhangi.g')
+    const m = mou()
+    const s = school()
+    const p = payment()
+    const { deps, enqueueCalls, counterCalls } = makeDeps({
+      mous: [m], schools: [s], users: [u], payments: [p],
+    })
+    const result = await renderPi({ paymentId: 'MOU-X-i1' }, deps)
+    expect(result.ok).toBe(true)
+    if (!result.ok) return
+    expect(result.piNumber).toBe('GSL/OPS/26-27/0042')
+    expect(result.docxBytes.byteLength).toBeGreaterThan(100)
+    expect(counterCalls.count).toBe(0)
+    expect(enqueueCalls).toHaveLength(0)
+  })
+
+  it('two renderPi calls produce identical .docx bytes (deterministic, idempotent)', async () => {
+    const u = user('Finance', 'shubhangi.g')
+    const { deps, counterCalls } = makeDeps({
+      mous: [mou()], schools: [school()], users: [u], payments: [payment()],
+    })
+    const r1 = await renderPi({ paymentId: 'MOU-X-i1' }, deps)
+    const r2 = await renderPi({ paymentId: 'MOU-X-i1' }, deps)
+    expect(r1.ok && r2.ok).toBe(true)
+    if (r1.ok && r2.ok) {
+      expect(Array.from(r1.docxBytes)).toEqual(Array.from(r2.docxBytes))
+    }
+    expect(counterCalls.count).toBe(0)
+  })
+
+  it('returns payment-not-found when paymentId is unknown', async () => {
+    const u = user('Finance', 'shubhangi.g')
+    const { deps } = makeDeps({
+      mous: [mou()], schools: [school()], users: [u], payments: [payment()],
+    })
+    const result = await renderPi({ paymentId: 'GHOST-i9' }, deps)
+    expect(result).toEqual({ ok: false, reason: 'payment-not-found' })
+  })
+
+  it('returns payment-missing-pi-number when the payment exists but has no piNumber', async () => {
+    const u = user('Finance', 'shubhangi.g')
+    const noPi = payment({ piNumber: null })
+    const { deps } = makeDeps({
+      mous: [mou()], schools: [school()], users: [u], payments: [noPi],
+    })
+    const result = await renderPi({ paymentId: 'MOU-X-i1' }, deps)
+    expect(result).toEqual({ ok: false, reason: 'payment-missing-pi-number' })
+  })
+
+  it('returns template-missing when production .docx is absent', async () => {
+    const u = user('Finance', 'shubhangi.g')
+    const { deps } = makeDeps({
+      mous: [mou()], schools: [school()], users: [u], payments: [payment()],
+      loadTemplateOverride: async () => {
+        throw new TemplateMissingError('pi-v1', 'public/ops-templates/pi-template.docx')
+      },
+    })
+    const result = await renderPi({ paymentId: 'MOU-X-i1' }, deps)
+    expect(result.ok).toBe(false)
+    if (result.ok) return
+    expect(result.reason).toBe('template-missing')
+  })
+})
+
+describe('issueAndRenderPi idempotency (Gate 5A Step 2: no counter burn on duplicate click)', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('first call advances counter, second call for same (mouId, instalmentSeq) does NOT', async () => {
+    const u = user('Finance', 'shubhangi.g')
+    const m = mou()
+    const s = school()
+    // First call: no payment yet, counter advances to seq=1.
+    const seedDeps = makeDeps({ mous: [m], schools: [s], users: [u], payments: [] })
+    const r1 = await issueAndRenderPi(
+      { mouId: 'MOU-X', instalmentSeq: 1, generatedBy: 'shubhangi.g' },
+      seedDeps.deps,
+    )
+    expect(r1.ok).toBe(true)
+    if (!r1.ok) return
+    expect(seedDeps.counterCalls.count).toBe(1)
+    expect(r1.reissued).toBe(false)
+
+    // Second call: payment now exists with piNumber. The counter must
+    // NOT advance and no new enqueue should happen.
+    const persistedPayment = seedDeps.enqueueCalls[0]!.payload as unknown as Payment
+    const dupeDeps = makeDeps({
+      mous: [m], schools: [s], users: [u], payments: [persistedPayment],
+    })
+    const r2 = await issueAndRenderPi(
+      { mouId: 'MOU-X', instalmentSeq: 1, generatedBy: 'shubhangi.g' },
+      dupeDeps.deps,
+    )
+    expect(r2.ok).toBe(true)
+    if (!r2.ok) return
+    expect(dupeDeps.counterCalls.count).toBe(0)
+    expect(dupeDeps.enqueueCalls).toHaveLength(0)
+    expect(r2.reissued).toBe(true)
+    expect(r2.piNumber).toBe(r1.piNumber)
+  })
+
+  it('different instalmentSeq still advances counter (only the same instalment is idempotent)', async () => {
+    const u = user('Finance', 'shubhangi.g')
+    const m = mou()
+    const s = school()
+    const existingP = payment() // i1 already issued.
+    const { deps, counterCalls } = makeDeps({
+      mous: [m], schools: [s], users: [u], payments: [existingP],
+    })
+    const r = await issueAndRenderPi(
+      { mouId: 'MOU-X', instalmentSeq: 2, generatedBy: 'shubhangi.g' },
+      deps,
+    )
+    expect(r.ok).toBe(true)
+    expect(counterCalls.count).toBe(1)
+  })
+})
+
+describe('generatePi alias (Gate 5A Step 2 back-compat)', () => {
+  it('generatePi remains exported as alias to issueAndRenderPi', () => {
+    expect(generatePi).toBe(issueAndRenderPi)
   })
 })

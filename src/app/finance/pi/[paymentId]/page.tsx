@@ -22,7 +22,7 @@
 
 import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
-import { Info } from 'lucide-react'
+import { Download, Info } from 'lucide-react'
 import type { MOU, Payment, School } from '@/lib/types'
 import mousJson from '@/data/mous.json'
 import paymentsJson from '@/data/payments.json'
@@ -177,6 +177,31 @@ export default async function FinancePiViewPage({ params, searchParams }: PagePr
                 : { label: 'Issuing entity', value: '-' },
             ]}
           />
+
+          {payment.piNumber ? (
+            <section
+              aria-labelledby="download-heading"
+              data-testid="pi-download-section"
+              className="rounded-md border border-border bg-card p-4 sm:p-6"
+            >
+              <h2 id="download-heading" className="font-heading text-base font-semibold text-brand-navy">
+                Download PI
+              </h2>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Re-renders the PI .docx from the existing number on
+                record. Counter is not advanced; click as many times
+                as needed without burning a fresh number.
+              </p>
+              <a
+                href={`/api/finance/pi/${payment.id}/download`}
+                data-testid="pi-download-cta"
+                className="mt-3 inline-flex min-h-11 items-center gap-2 rounded-md bg-brand-navy px-4 py-2 text-sm font-semibold text-white hover:bg-brand-navy/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-teal"
+              >
+                <Download aria-hidden className="size-4" />
+                Download .docx
+              </a>
+            </section>
+          ) : null}
 
           <section
             aria-labelledby="reissue-heading"
