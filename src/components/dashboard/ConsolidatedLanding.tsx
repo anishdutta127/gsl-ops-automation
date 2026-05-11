@@ -75,13 +75,18 @@ export function ConsolidatedLanding({
   leadership,
   fyLabel,
 }: Props) {
+  // Gate 4.95 Step 4: drill-down tiles promoted above Quick actions
+  // and Items requiring attention so a user opening the platform sees
+  // their department dashboard as the next-action option before
+  // scanning attention items. Order: Commercial -> Operational ->
+  // Drill-down tiles -> Quick actions -> Items requiring attention.
   return (
     <div className="flex flex-col gap-6" data-testid="landing-zones">
       <CommercialZone data={commercial} fyLabel={fyLabel} />
       <OperationalZone data={operational} />
-      <AttentionZone items={attention} />
-      <QuickActionsZone />
       <DrillDownZone finance={finance} ops={ops} leadership={leadership} />
+      <QuickActionsZone />
+      <AttentionZone items={attention} />
     </div>
   )
 }

@@ -74,6 +74,20 @@ describe('/ consolidated landing (Gate 3.6)', () => {
     expect(html).toContain('data-testid="zone-drill-down"')
   })
 
+  it('Gate 4.95: drill-down tiles render above Quick actions and Items requiring attention', async () => {
+    getCurrentUserMock.mockResolvedValue(admin())
+    const { default: HomePage } = await import('./page')
+    const html = renderToStaticMarkup(await HomePage())
+    const idxOperational = html.indexOf('data-testid="zone-operational"')
+    const idxDrillDown = html.indexOf('data-testid="zone-drill-down"')
+    const idxQuickActions = html.indexOf('data-testid="zone-quick-actions"')
+    const idxAttention = html.indexOf('data-testid="zone-attention"')
+    expect(idxOperational).toBeGreaterThan(-1)
+    expect(idxDrillDown).toBeGreaterThan(idxOperational)
+    expect(idxQuickActions).toBeGreaterThan(idxDrillDown)
+    expect(idxAttention).toBeGreaterThan(idxQuickActions)
+  })
+
   it('Zone 1 surfaces 4 KPIs + sparkline + finance link', async () => {
     getCurrentUserMock.mockResolvedValue(admin())
     const { default: HomePage } = await import('./page')

@@ -25,6 +25,9 @@ interface NavStage {
   href: string
   label: string
   department: StageDepartment
+  /** Gate 4.95: paths that should also light up this stage's active
+   *  state when the user is on a stage-tree work page. */
+  activePaths?: string[]
 }
 
 interface TopNavMobileProps {
@@ -34,10 +37,18 @@ interface TopNavMobileProps {
   helpHref: string
 }
 
-function isStageActive(currentPath: string | undefined, stageHref: string): boolean {
+function isStageActive(currentPath: string | undefined, stage: NavStage): boolean {
   if (!currentPath) return false
-  if (currentPath === stageHref) return true
-  return currentPath.startsWith(stageHref + '/')
+  if (currentPath === stage.href) return true
+  if (currentPath.startsWith(stage.href + '/')) return true
+  // Gate 4.95: respect activePaths so the mobile drawer highlights
+  // the Finance / Operations tab when the user is on a stage-tree
+  // page (/finance/payments, /operations/agreements, etc.).
+  for (const extra of stage.activePaths ?? []) {
+    if (currentPath === extra) return true
+    if (currentPath.startsWith(extra + '/')) return true
+  }
+  return false
 }
 
 function shouldShowDeptDot(userDepartment: Department, stageDept: StageDepartment): boolean {
@@ -101,7 +112,7 @@ export function TopNavMobile({
         >
           <ul className="flex flex-col gap-1 px-4 py-4">
             {stages.map((stage) => {
-              const active = isStageActive(currentPath, stage.href)
+              const active = isStageActive(currentPath, stage)
               const accent = accentFor(stage.department)
               const dot = shouldShowDeptDot(userDepartment, stage.department)
               return (

@@ -51,9 +51,13 @@ describe('TopNav: Gate 1 Step 3 workflow-stage nav (Gate 3.5 Step 3 hides Pipeli
     // reachable by direct URL per HIDDEN_ROUTES.md.
     expect(html).not.toContain('href="/sales-pipeline"')
     expect(html).toContain('href="/mous"')
-    expect(html).toContain('href="/dispatch"')
-    expect(html).toContain('href="/finance"')
-    expect(html).toContain('href="/operations"')
+    // Gate 4.95 Step 5: Finance + Operations + Dispatch tabs point to
+    // their respective dashboard / list surfaces. Stage-tree paths
+    // (/finance, /operations, /dispatch) stay reachable via direct URL
+    // and still highlight the tab via activePaths.
+    expect(html).toContain('href="/dispatch/kits"')
+    expect(html).toContain('href="/dashboard/finance"')
+    expect(html).toContain('href="/dashboard/ops"')
     expect(html).toContain('href="/reports"')
     expect(html).toContain('href="/admin"')
   })
@@ -121,6 +125,37 @@ describe('TopNav: active-stage indicator', () => {
   })
 
   it('active stage carries data-stage-active="true"', async () => {
+    getCurrentUserMock.mockResolvedValue(makeUser())
+    const { TopNav } = await import('./TopNav')
+    const html = renderToStaticMarkup(await TopNav({ currentPath: '/dispatch/kits' }))
+    expect(html).toMatch(
+      /data-testid="topnav-stage-dispatch"[^>]*data-stage-active="true"|data-stage-active="true"[^>]*data-testid="topnav-stage-dispatch"/,
+    )
+  })
+
+  it('Gate 4.95: /finance/* highlights the Finance tab via activePaths', async () => {
+    getCurrentUserMock.mockResolvedValue(makeUser())
+    const { TopNav } = await import('./TopNav')
+    const html = renderToStaticMarkup(
+      await TopNav({ currentPath: '/finance/payments' }),
+    )
+    expect(html).toMatch(
+      /data-testid="topnav-stage-finance"[^>]*data-stage-active="true"|data-stage-active="true"[^>]*data-testid="topnav-stage-finance"/,
+    )
+  })
+
+  it('Gate 4.95: /operations/* highlights the Operations tab via activePaths', async () => {
+    getCurrentUserMock.mockResolvedValue(makeUser())
+    const { TopNav } = await import('./TopNav')
+    const html = renderToStaticMarkup(
+      await TopNav({ currentPath: '/operations/agreements' }),
+    )
+    expect(html).toMatch(
+      /data-testid="topnav-stage-operations"[^>]*data-stage-active="true"|data-stage-active="true"[^>]*data-testid="topnav-stage-operations"/,
+    )
+  })
+
+  it('Gate 4.95: /dispatch (no /kits suffix) still highlights the Dispatch tab', async () => {
     getCurrentUserMock.mockResolvedValue(makeUser())
     const { TopNav } = await import('./TopNav')
     const html = renderToStaticMarkup(await TopNav({ currentPath: '/dispatch' }))

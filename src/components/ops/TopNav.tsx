@@ -35,6 +35,12 @@ interface NavStage {
   label: string
   /** Department this stage primarily belongs to; drives the dot indicator. */
   department: StageDepartment
+  /** Extra path prefixes that should also light up this stage's active
+   *  state. Gate 4.95 Step 5 routes Finance + Operations tabs to their
+   *  dashboards but keeps the stage-page tree (`/finance/*`, `/operations/*`)
+   *  highlighted under the same tab so users do not feel the rug pulled
+   *  when they navigate into a work surface. */
+  activePaths?: string[]
 }
 
 export const NAV_STAGES: NavStage[] = [
@@ -46,20 +52,52 @@ export const NAV_STAGES: NavStage[] = [
   // stage reads as the destination for ALL MOU work, not just signed-
   // and-active records. The /mous list page itself surfaces the
   // primary "+ New MOU" affordance.
+  // Gate 4.95 Step 5: Finance + Operations tabs now route to the
+  // department dashboards (rich KPI overview). The stage-tree paths
+  // (/finance/*, /operations/*, /dispatch/*) still light up the tab
+  // via activePaths so the user lands somewhere coherent when they
+  // navigate into a work surface from elsewhere.
   { href: '/mous', label: 'MOUs', department: 'cross-functional' },
-  { href: '/dispatch', label: 'Dispatch', department: 'ops' },
-  { href: '/finance', label: 'Finance', department: 'finance' },
-  { href: '/operations', label: 'Operations', department: 'ops' },
+  {
+    href: '/dispatch/kits',
+    label: 'Dispatch',
+    department: 'ops',
+    activePaths: ['/dispatch'],
+  },
+  {
+    href: '/dashboard/finance',
+    label: 'Finance',
+    department: 'finance',
+    activePaths: ['/finance'],
+  },
+  {
+    href: '/dashboard/ops',
+    label: 'Operations',
+    department: 'ops',
+    activePaths: ['/operations'],
+  },
   { href: '/reports', label: 'Reports', department: 'neutral' },
   { href: '/admin', label: 'Admin', department: 'neutral' },
 ]
 
 const HELP_HREF = '/help'
 
-function isStageActive(currentPath: string | undefined, stageHref: string): boolean {
+function isStageActive(
+  currentPath: string | undefined,
+  stageOrHref: NavStage | string,
+): boolean {
   if (!currentPath) return false
-  if (currentPath === stageHref) return true
-  return currentPath.startsWith(stageHref + '/')
+  if (typeof stageOrHref === 'string') {
+    if (currentPath === stageOrHref) return true
+    return currentPath.startsWith(stageOrHref + '/')
+  }
+  if (currentPath === stageOrHref.href) return true
+  if (currentPath.startsWith(stageOrHref.href + '/')) return true
+  for (const extra of stageOrHref.activePaths ?? []) {
+    if (currentPath === extra) return true
+    if (currentPath.startsWith(extra + '/')) return true
+  }
+  return false
 }
 
 /**
@@ -102,7 +140,7 @@ export async function TopNav({ currentPath }: TopNavProps = {}) {
           {/* Desktop stage list */}
           <ul className="hidden items-stretch overflow-x-auto md:flex">
             {NAV_STAGES.map((stage) => {
-              const active = isStageActive(currentPath, stage.href)
+              const active = isStageActive(currentPath, stage)
               const accent = accentFor(stage.department)
               const dot = shouldShowDeptDot(user, stage.department)
               return (
