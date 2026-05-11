@@ -34,6 +34,9 @@ import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { formatRs } from '@/lib/format'
 import { AuditLogPanel } from '@/components/ops/AuditLogPanel'
+import { StatusTracker } from '@/components/StatusTracker'
+import { computeStage } from '@/lib/statusTracker'
+import { isCriticalAudit } from '@/lib/criticalChanges'
 
 const allSchools = schoolsJson as unknown as School[]
 const allSchoolGroups = schoolGroupsJson as unknown as SchoolGroup[]
@@ -92,6 +95,8 @@ export default async function SchoolDetailPage({ params, searchParams }: PagePro
     typeof sp.tab === 'string' && (TABS.some((t) => t.key === sp.tab))
       ? (sp.tab as TabKey)
       : 'overview'
+  // Gate 4.7 Step 5: Critical-only filter toggle on Activity tab.
+  const criticalOnly = sp.critical === '1' || sp.critical === 'true'
 
   const school = allSchools.find((s) => s.id === schoolId)
   if (!school) notFound()
@@ -258,7 +263,12 @@ export default async function SchoolDetailPage({ params, searchParams }: PagePro
             />
           )}
           {activeTab === 'mous' && (
-            <MousPanel school={school} schoolMous={schoolMous} />
+            <MousPanel
+              school={school}
+              schoolMous={schoolMous}
+              schoolPayments={schoolPayments}
+              schoolKitDispatches={schoolDispatches}
+            />
           )}
           {activeTab === 'payments' && (
             <PaymentsPanel payments={schoolPayments} />
@@ -266,7 +276,9 @@ export default async function SchoolDetailPage({ params, searchParams }: PagePro
           {activeTab === 'dispatches' && (
             <DispatchesPanel dispatches={schoolDispatches} />
           )}
-          {activeTab === 'activity' && <ActivityPanel school={school} />}
+          {activeTab === 'activity' && (
+            <ActivityPanel school={school} criticalOnly={criticalOnly} />
+          )}
         </div>
       </main>
     </>
@@ -327,7 +339,33 @@ function OverviewPanel({
   )
 }
 
-function MousPanel({ school, schoolMous }: { school: School; schoolMous: MOU[] }) {
+function MousPanel({
+  school,
+  schoolMous,
+  schoolPayments,
+  schoolKitDispatches,
+}: {
+  school: School
+  schoolMous: MOU[]
+  schoolPayments: Payment[]
+  schoolKitDispatches: KitDispatch[]
+}) {
+  // Gate 4.7 Step 2: per-MOU mini-tracker (compact mode of the Gate 4
+  // StatusTracker) renders below each MOU row. Pre-compute per-MOU
+  // payment + dispatch slices once so the stage compute scales.
+  const now = new Date()
+  const paymentsByMou = new Map<string, Payment[]>()
+  for (const p of schoolPayments) {
+    const list = paymentsByMou.get(p.mouId) ?? []
+    list.push(p)
+    paymentsByMou.set(p.mouId, list)
+  }
+  const dispatchesByMou = new Map<string, KitDispatch[]>()
+  for (const d of schoolKitDispatches) {
+    const list = dispatchesByMou.get(d.mouId) ?? []
+    list.push(d)
+    dispatchesByMou.set(d.mouId, list)
+  }
   return (
     <section className="rounded-lg border border-border bg-card p-4 sm:p-6" data-testid="panel-mous">
       <div className="mb-3 flex items-center justify-between gap-2">
@@ -346,18 +384,40 @@ function MousPanel({ school, schoolMous }: { school: School; schoolMous: MOU[] }
         <p className="text-sm text-muted-foreground">No MOUs for this school.</p>
       ) : (
         <ul className="divide-y divide-border">
-          {schoolMous.map((m) => (
-            <li key={m.id} className="py-2 text-sm">
-              <Link
-                href={`/mous/${m.id}`}
-                className="text-brand-navy hover:underline focus:outline-none focus:ring-2 focus:ring-brand-navy"
-              >
-                <span className="font-mono text-xs">{m.id}</span>
-                <span className="ml-2">{m.programme}{m.programmeSubType ? ' / ' + m.programmeSubType : ''}</span>
-                <span className="ml-2 rounded-sm bg-muted px-1.5 py-0.5 text-[11px]">{m.status}</span>
-              </Link>
-            </li>
-          ))}
+          {schoolMous.map((m) => {
+            const stage = computeStage({
+              mou: m,
+              payments: paymentsByMou.get(m.id) ?? [],
+              dispatches: dispatchesByMou.get(m.id) ?? [],
+              now,
+            })
+            return (
+              <li key={m.id} className="space-y-2 py-3 text-sm">
+                <Link
+                  href={`/mous/${m.id}`}
+                  className="inline-flex flex-wrap items-baseline gap-2 text-brand-navy hover:underline focus:outline-none focus:ring-2 focus:ring-brand-navy"
+                  data-testid={`school-mou-link-${m.id}`}
+                >
+                  <span className="font-mono text-xs">{m.id}</span>
+                  <span>
+                    {m.programme}
+                    {m.programmeSubType ? ' / ' + m.programmeSubType : ''}
+                  </span>
+                  <span className="rounded-sm bg-muted px-1.5 py-0.5 text-[11px]">
+                    {m.status}
+                  </span>
+                </Link>
+                <div data-testid={`school-mou-tracker-${m.id}`}>
+                  <StatusTracker
+                    current={stage}
+                    compact
+                    mouId={m.id}
+                    testId={`mini-tracker-${m.id}`}
+                  />
+                </div>
+              </li>
+            )
+          })}
         </ul>
       )}
     </section>
@@ -436,13 +496,53 @@ function DispatchesPanel({ dispatches }: { dispatches: KitDispatch[] }) {
   )
 }
 
-function ActivityPanel({ school }: { school: School }) {
+function ActivityPanel({
+  school,
+  criticalOnly,
+}: {
+  school: School
+  criticalOnly: boolean
+}) {
+  const allEntries = school.auditLog ?? []
+  const entries = criticalOnly
+    ? allEntries.filter((e) => isCriticalAudit(e))
+    : allEntries
+  // Toggle URL: flip ?critical=1 on / off while preserving the activity
+  // tab and any other params. Constructed as a plain href so the server
+  // component does not need client-side state.
+  const baseQuery = `?tab=activity${criticalOnly ? '' : '&critical=1'}`
   return (
-    <section className="rounded-lg border border-border bg-card p-4 sm:p-6" data-testid="panel-activity">
-      <h2 className="mb-3 font-heading text-base font-semibold text-brand-navy">
-        Activity
-      </h2>
-      <AuditLogPanel entries={school.auditLog} />
+    <section
+      className="rounded-lg border border-border bg-card p-4 sm:p-6"
+      data-testid="panel-activity"
+    >
+      <header className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
+        <h2 className="font-heading text-base font-semibold text-brand-navy">
+          Activity
+        </h2>
+        <Link
+          href={`/schools/${school.id}${baseQuery}`}
+          data-testid="activity-critical-only-toggle"
+          aria-pressed={criticalOnly}
+          className={
+            'inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs font-medium transition focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy '
+            + (criticalOnly
+              ? 'border-brand-navy bg-brand-navy text-white hover:bg-brand-navy/90'
+              : 'border-border bg-white text-brand-navy hover:bg-slate-50')
+          }
+        >
+          {criticalOnly ? 'Showing critical only' : 'Critical only'}
+        </Link>
+      </header>
+      {entries.length === 0 ? (
+        <p className="text-sm text-slate-600" data-testid="activity-empty">
+          {criticalOnly
+            ? 'No critical changes on this school yet.'
+            : 'No activity recorded yet.'}
+        </p>
+      ) : (
+        <AuditLogPanel entries={entries} />
+      )}
     </section>
   )
 }
