@@ -1,59 +1,26 @@
 /*
- * /dashboard/ops (Gate 1 Step 3 dept dashboard skeleton).
+ * /dashboard/ops (Gate 3.5 Step 6: redirect to /).
  *
- * Ops department lands here on login. Phase 1 ships the layout +
- * dept-aware accent + primary action links. Gate 5 populates KPIs
- * and dept-scoped exception feed.
+ * Pre-Gate-3.5 this was a 59-LOC dashboard skeleton with 4 plain
+ * action-card links. Per Anish-confirmed audit decision (docs/
+ * gate-3.5/CURRENT_STATE.md section 6.1), the canonical Ops dashboard
+ * is `/` (Operations Control Dashboard); the rich KPI tiles + recent
+ * MOU updates + action centre + orders tracker + comm panel already
+ * live there. To remove the route ambiguity, this page now redirects
+ * every authenticated request to `/`. Tests that pointed at this
+ * URL continue to land on the Ops cockpit without code changes.
+ *
+ * Un-redirect path: if a per-department landing experience returns
+ * in a later gate, replace the redirect with a dedicated server
+ * component reading the same `src/lib/dashboard/dashboardData` helpers
+ * that `/` uses.
  */
 
 import { redirect } from 'next/navigation'
 import { getCurrentUser } from '@/lib/auth/session'
-import { TopNav } from '@/components/ops/TopNav'
-import {
-  DepartmentDashboardSkeleton,
-  type PrimaryAction,
-} from '@/components/ops/DepartmentDashboardSkeleton'
 
-const PRIMARY_ACTIONS: PrimaryAction[] = [
-  {
-    label: 'Raise dispatch',
-    href: '/dispatch',
-    description: 'Kit dispatch requests and shipment tracking.',
-  },
-  {
-    label: 'Operations workspace',
-    href: '/operations',
-    description: 'Schools, escalations, VEX, vendors, inventory in one place.',
-  },
-  {
-    label: 'Escalations',
-    href: '/escalations',
-    description: 'Categorise, transition, and transfer tickets.',
-  },
-  {
-    label: 'Active MOUs',
-    href: '/mous',
-    description: 'Read-only access to MOU lifecycle for context.',
-  },
-]
-
-export default async function OpsDashboard() {
+export default async function OpsDashboardRedirect() {
   const user = await getCurrentUser()
-  if (!user) redirect('/login?next=%2Fdashboard%2Fops')
-
-  return (
-    <>
-      <TopNav currentPath="/dashboard/ops" />
-      <main id="main-content">
-        <DepartmentDashboardSkeleton
-          user={user}
-          stageDepartment="ops"
-          title="Operations workspace"
-          subtitle="Drive dispatches, escalations, schools, and inventory through the pipeline."
-          primaryActions={PRIMARY_ACTIONS}
-          recentActivity={[]}
-        />
-      </main>
-    </>
-  )
+  if (!user) redirect('/login?next=%2F')
+  redirect('/')
 }

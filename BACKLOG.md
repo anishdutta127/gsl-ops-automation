@@ -40,6 +40,57 @@ References:
 - `src/lib/pi/parallelBuildLock.ts` (the lock that hides this bug today).
 - `docs/decisions/STEP5_QUESTIONS_resolved.md` background, `STEP6_QUESTIONS.md` Q6 the canonical write-up.
 
+## Dispatch-workflow Kanban view (Gate 3.5 Step 6 follow-up)
+
+Gate 3.5 Step 6 preserved the existing `/` Operations Control Dashboard
+verbatim (per the Ops team request) and redirected `/dashboard/ops` to
+`/`. The existing `/kanban` route remains as the canonical MOU
+lifecycle kanban (9 columns, Pre-Ops to Delivered) and stays linked
+prominently from the `/` header CTA.
+
+The Gate 3.5 brief Step 6 ALSO asked for a separate dispatch-workflow
+Kanban view with 6 columns reflecting the kit-dispatch lifecycle:
+
+1. Awaiting actuals (MOU signed, no grade-wise data captured)
+2. Allocation in progress (Ops working on kit allocation)
+3. Pending Sales approval (waiting on Sales rep)
+4. Ready for dispatch (Sales approved, Finance not yet executed)
+5. In transit (Finance executed, POD not yet uploaded)
+6. Delivered (POD uploaded; collapsed by default since stable)
+
+Each card carries: school + programme, days at current status (amber
+>7d, red >14d), sales rep + ops owner avatars, hover tooltip with last
+activity, click-through to `/dispatch/kits/[mouId]`. Filters: programme,
+region, sales rep, ops owner, date range. Mobile: status-stacked
+accordion.
+
+Implementation shape when this re-activates:
+
+- New route `src/app/operations/kanban/page.tsx` that consumes
+  `src/data/mous.json` + `src/data/kit_dispatches.json` to derive
+  per-card column membership.
+- Per-card status detection lib at
+  `src/lib/dashboard/dispatchKanbanData.ts` (pure compute; testable).
+- Add a "Kanban view" tile or button to `/` (the canonical Ops
+  cockpit) near the existing `Open Kanban Board` header CTA, with a
+  clear label distinguishing the MOU-lifecycle kanban from the
+  dispatch-workflow kanban.
+- Also surface in the Operations side rail when one lands (Gate 5
+  polish backlog item; today the side rail is absent).
+
+Trigger: **after Gate 4 ships (status tracker + notifications), or
+when Anish or Shashank reports the existing `/kanban` does not show
+dispatch-workflow stages they need.** The fix is bounded; estimated
+4-6 hours of build + tests.
+
+References:
+- `docs/gate-3.5/CURRENT_STATE.md` section 6.1 (Anish-confirmed
+  decision to keep `/` as the canonical Ops dashboard).
+- `src/app/kanban/page.tsx` (the existing MOU lifecycle kanban; pattern
+  for the new dispatch kanban).
+- `src/lib/kanban/deriveStage.ts` (analogue for the dispatch lifecycle
+  stage derivation).
+
 ## VEX dispatch status rewind (Gate 2 Step 7 follow-up)
 
 Gate 2 Step 7's dispatch transition route enforces forward-only status
