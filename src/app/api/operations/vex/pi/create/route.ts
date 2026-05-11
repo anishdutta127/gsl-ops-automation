@@ -29,9 +29,11 @@ import { company } from '@/lib/mouSystem/company'
 import type { EntityKey } from '@/lib/mouSystem/company'
 import type { AuditEntry, VexPi, VexPiLineItem } from '@/lib/mouSystem/types'
 import vexProductsJson from '@/data/vex_products.json'
+import vexPisJson from '@/data/vex_pis.json'
 import type { VexProduct } from '@/lib/mouSystem/types'
 
 const vexProducts = vexProductsJson as unknown as VexProduct[]
+const allVexPis = vexPisJson as unknown as VexPi[]
 const GST_PCT = 0.18
 
 interface IncomingLineItem {
@@ -93,6 +95,24 @@ function fiscalYearTag(): string {
 
 function makeVexPiId(entityKey: EntityKey, seq: number): string {
   return `VEXPI-${entityKey}-${fiscalYearTag()}-${String(seq).padStart(3, '0')}`
+}
+
+// VEX PI ids are sequential PER ENTITY across the fiscal year, NOT
+// aligned with the shared programme+VEX counter at pi_counter_map.json.
+// Snapshot evidence: VEXPI-UP-2627-001..004 with piNumbers MTPL/UP/26-27/
+// 0008,0009,0010,0015 -- the gap proves programme PIs filled 0011..0014
+// while VEX seq advanced 003 -> 004. Same scan-existing pattern as
+// nextDispatchSeq below in the dispatch create route.
+function nextVexPiSeq(entityKey: EntityKey): number {
+  const prefix = `VEXPI-${entityKey}-${fiscalYearTag()}-`
+  let highest = 0
+  for (const p of allVexPis) {
+    if (!p.id.startsWith(prefix)) continue
+    const tail = p.id.slice(prefix.length)
+    const n = Number(tail)
+    if (Number.isFinite(n) && n > highest) highest = n
+  }
+  return highest + 1
 }
 
 export async function POST(request: Request) {
@@ -166,13 +186,14 @@ export async function POST(request: Request) {
   }
   const freightCharges = Number(body.freightCharges) || 0
 
-  // (4) Atomic counter advance + PI number mint.
+  // (4) Mint VEX-only id seq from existing PIs, then advance the shared
+  // counter atomically for the piNumber. The id seq is VEX-only per
+  // entity; the piNumber sequence is shared with programme PIs.
+  const vexSeq = nextVexPiSeq(entityKey)
   let piNumber: string
-  let counterSeq: number
   try {
-    const { piNumber: minted, counter } = await issuePiNumberAtomic(entityKey)
+    const { piNumber: minted } = await issuePiNumberAtomic(entityKey)
     piNumber = minted
-    counterSeq = counter.entities[entityKey].next - 1
   } catch (e) {
     return NextResponse.json(
       {
@@ -198,7 +219,7 @@ export async function POST(request: Request) {
     action: 'create',
   }
   const pi: VexPi = {
-    id: makeVexPiId(entityKey, counterSeq),
+    id: makeVexPiId(entityKey, vexSeq),
     piNumber,
     entityKey,
     issueDate: now.slice(0, 10),

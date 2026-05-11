@@ -1,1 +1,170 @@
-[]
+[
+  {
+    "partNumber": "228-7396",
+    "name": "VIQRC Field and Element Kit",
+    "defaultUnitPrice": null,
+    "active": true
+  },
+  {
+    "partNumber": "228-7980",
+    "name": "VEX IQ Competition Kit 2nd Generation",
+    "defaultUnitPrice": null,
+    "active": true
+  },
+  {
+    "partNumber": "228-8060",
+    "name": "VEX IQ Small Classroom Bundle",
+    "defaultUnitPrice": null,
+    "active": true
+  },
+  {
+    "partNumber": "228-8246",
+    "name": "VEX IQ Classroom Bundle",
+    "defaultUnitPrice": null,
+    "active": true
+  },
+  {
+    "partNumber": "228-8247",
+    "name": "VEX IQ Large Classroom Bundle",
+    "defaultUnitPrice": null,
+    "active": true
+  },
+  {
+    "partNumber": "228-8899",
+    "name": "VEX IQ Education Kit 2nd Generation",
+    "defaultUnitPrice": null,
+    "active": true
+  },
+  {
+    "partNumber": "234-9139",
+    "name": "V5 CTE Workcell Kit",
+    "defaultUnitPrice": null,
+    "active": true
+  },
+  {
+    "partNumber": "248-7611",
+    "name": "123 Robot and Coder Bundle ( Red Color)",
+    "defaultUnitPrice": null,
+    "active": true
+  },
+  {
+    "partNumber": "248-7621",
+    "name": "123 Robot and Coder Bundle ( Green Color)",
+    "defaultUnitPrice": null,
+    "active": true
+  },
+  {
+    "partNumber": "248-7631",
+    "name": "123 Robot and Coder Bundle ( Blue Color)",
+    "defaultUnitPrice": null,
+    "active": true
+  },
+  {
+    "partNumber": "248-7661",
+    "name": "VEX 123 Small Classroom Bundle",
+    "defaultUnitPrice": null,
+    "active": true
+  },
+  {
+    "partNumber": "248-7848",
+    "name": "VEX 123 Classroom Bundle",
+    "defaultUnitPrice": null,
+    "active": true
+  },
+  {
+    "partNumber": "248-7849",
+    "name": "VEX 123 Large Classroom Bundle",
+    "defaultUnitPrice": null,
+    "active": true
+  },
+  {
+    "partNumber": "249-8581",
+    "name": "VEX AIM Coding Robot",
+    "defaultUnitPrice": null,
+    "active": true
+  },
+  {
+    "partNumber": "269-6705",
+    "name": "VEX GO Kit with Storage",
+    "defaultUnitPrice": null,
+    "active": true
+  },
+  {
+    "partNumber": "269-7780",
+    "name": "VEX GO Classroom Bundle",
+    "defaultUnitPrice": null,
+    "active": true
+  },
+  {
+    "partNumber": "269-7781",
+    "name": "VEX GO Small Classroom Bundle",
+    "defaultUnitPrice": null,
+    "active": true
+  },
+  {
+    "partNumber": "269-7782",
+    "name": "VEX GO Large Classroom Bundle",
+    "defaultUnitPrice": null,
+    "active": true
+  },
+  {
+    "partNumber": "276-7110",
+    "name": "VEX V5 Classroom Starter Kit",
+    "defaultUnitPrice": null,
+    "active": true
+  },
+  {
+    "partNumber": "276-7120",
+    "name": "VEX V5 Classroom Super Kit",
+    "defaultUnitPrice": null,
+    "active": true
+  },
+  {
+    "partNumber": "276-7130",
+    "name": "VEX V5 Competition Starter Kit",
+    "defaultUnitPrice": null,
+    "active": true
+  },
+  {
+    "partNumber": "276-7140",
+    "name": "VEX V5 Competition Super Kit",
+    "defaultUnitPrice": null,
+    "active": true
+  },
+  {
+    "partNumber": "276-7175",
+    "name": "VRC Anti Static Full Field Tile Kit",
+    "defaultUnitPrice": null,
+    "active": true
+  },
+  {
+    "partNumber": "276-8242",
+    "name": "VRC Portable Competition Field Perimeter",
+    "defaultUnitPrice": null,
+    "active": true
+  },
+  {
+    "partNumber": "280-7735",
+    "name": "VEX EXP Education Kit",
+    "defaultUnitPrice": null,
+    "active": true
+  },
+  {
+    "partNumber": "280-8224",
+    "name": "VEX EXP Small Classroom Bundle",
+    "defaultUnitPrice": null,
+    "active": true
+  },
+  {
+    "partNumber": "280-8293",
+    "name": "VEX EXP Classroom Bundle",
+    "defaultUnitPrice": null,
+    "active": true
+  },
+  {
+    "partNumber": "280-8294",
+    "name": "VEX EXP Large Classroom Bundle",
+    "defaultUnitPrice": null,
+    "active": true
+  }
+]
