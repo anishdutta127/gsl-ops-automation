@@ -34,81 +34,11 @@ import {
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { formatRs, formatDate } from '@/lib/format'
+import { computePendingPi } from '@/lib/finance/computePendingPi'
 
 const allMous = mousJson as unknown as MOU[]
 const allPayments = paymentsJson as unknown as Payment[]
 const allSchools = schoolsJson as unknown as School[]
-
-const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000
-
-export interface PendingPiRow {
-  paymentId: string
-  mouId: string
-  schoolName: string
-  schoolId: string
-  installmentLabel: string
-  dueDateIso: string | null
-  expectedAmount: number
-  status: Payment['status']
-  daysUntilDue: number | null
-  isOverdue: boolean
-  hasBillingBlock: boolean
-  generateHref: string
-}
-
-export function computePendingPi(args: {
-  mous: MOU[]
-  schools: School[]
-  payments: Payment[]
-  now: Date
-}): PendingPiRow[] {
-  const { mous, schools, payments, now } = args
-  const nowMs = now.getTime()
-  const activeMouById = new Map(
-    mous.filter((m) => m.status === 'Active').map((m) => [m.id, m]),
-  )
-  const activeSchoolIds = new Set(
-    schools.filter((s) => s.active).map((s) => s.id),
-  )
-
-  const rows: PendingPiRow[] = []
-  for (const p of payments) {
-    if (p.status === 'Paid' || p.status === 'Received') continue
-    if (p.piGeneratedAt !== null) continue
-    const mou = activeMouById.get(p.mouId)
-    if (!mou) continue
-    if (!activeSchoolIds.has(mou.schoolId)) continue
-
-    const dueMs = p.dueDateIso ? new Date(p.dueDateIso).getTime() : null
-    if (dueMs === null || Number.isNaN(dueMs)) continue
-    const daysUntilDue = Math.round((dueMs - nowMs) / (24 * 60 * 60 * 1000))
-    const isOverdue = dueMs < nowMs
-    const withinWindow = dueMs - nowMs <= THIRTY_DAYS_MS
-    if (!isOverdue && !withinWindow) continue
-
-    rows.push({
-      paymentId: p.id,
-      mouId: p.mouId,
-      schoolName: p.schoolName,
-      schoolId: mou.schoolId,
-      installmentLabel: p.instalmentLabel,
-      dueDateIso: p.dueDateIso,
-      expectedAmount: p.expectedAmount,
-      status: p.status,
-      daysUntilDue,
-      isOverdue,
-      hasBillingBlock: Boolean(mou.billingBlock),
-      generateHref: `/mous/${p.mouId}/installments`,
-    })
-  }
-
-  rows.sort((a, b) => {
-    // Overdue first, then by ascending days-until-due.
-    if (a.isOverdue !== b.isOverdue) return a.isOverdue ? -1 : 1
-    return (a.daysUntilDue ?? 0) - (b.daysUntilDue ?? 0)
-  })
-  return rows
-}
 
 export default async function PendingPiPage() {
   const user = await getCurrentUser()
