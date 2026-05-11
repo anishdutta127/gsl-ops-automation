@@ -46,6 +46,7 @@ import type {
   Escalation,
   Feedback,
   IntakeRecord,
+  KitDispatch,
   MOU,
   Payment,
   School,
@@ -55,6 +56,7 @@ import { formatSkuBreakdown } from '@/lib/dispatch/formatLineItems'
 import mousJson from '@/data/mous.json'
 import schoolsJson from '@/data/schools.json'
 import dispatchesJson from '@/data/dispatches.json'
+import kitDispatchesJson from '@/data/kit_dispatches.json'
 import paymentsJson from '@/data/payments.json'
 import feedbackJson from '@/data/feedback.json'
 import intakeRecordsJson from '@/data/intake_records.json'
@@ -72,6 +74,13 @@ import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { DetailHeaderCard } from '@/components/ops/DetailHeaderCard'
 import { LifecycleProgress } from '@/components/ops/LifecycleProgress'
+import { StatusTracker, MOU_DETAIL_ANCHORS } from '@/components/StatusTracker'
+import { computeStage } from '@/lib/statusTracker'
+import { computeWorkflowState } from '@/lib/workflowState'
+import { collectCriticalChanges, topNCriticalChanges } from '@/lib/criticalChanges'
+import { EditHistoryReveal } from '@/components/audit/EditHistoryReveal'
+import { getResponsiblePartyForMou } from '@/lib/stageResponsibility'
+import { canPerform } from '@/lib/auth/permissions'
 import { AuditLogPanel } from '@/components/ops/AuditLogPanel'
 import { StatusNotesSection } from '@/components/ops/StatusNotesSection'
 import { StatusChip } from '@/components/ops/StatusChip'
@@ -82,6 +91,7 @@ import { mouStatusTone } from '@/lib/ui/mouStatusTone'
 const allMous = mousJson as unknown as MOU[]
 const allSchools = schoolsJson as unknown as School[]
 const allDispatches = dispatchesJson as unknown as Dispatch[]
+const allKitDispatches = kitDispatchesJson as unknown as KitDispatch[]
 const allPayments = paymentsJson as unknown as Payment[]
 const allFeedback = feedbackJson as unknown as Feedback[]
 const allUsers = usersJson as unknown as User[]
@@ -189,6 +199,12 @@ const NOTICE_COPY: Record<string, string> = {
   'pi-finance-only':
     'PI generation is a Finance function. If you need a PI raised, please reach out to accounts.',
   saved: 'Saved. Will reflect everywhere within ~5 minutes.',
+  'reminder-sent':
+    'Reminder sent to the owning department. Will reflect on their notification bell within ~5 minutes.',
+  'reminder-not-eligible':
+    'No reminder needed at this stage. The workflow banner only emits reminders when a handoff is overdue.',
+  'reminder-cooldown':
+    'A reminder was already sent for this stage within the last 24 hours.',
 }
 
 function isVisibleToUser(mou: MOU, user: User | null): boolean {
@@ -211,8 +227,49 @@ export default async function MouDetailPage({ params, searchParams }: PageProps)
   const school = allSchools.find((s) => s.id === mou.schoolId)
   const installments = allPayments.filter((p) => p.mouId === mou.id)
   const installmentDispatches = allDispatches.filter((d) => d.mouId === mou.id)
+  const mouKitDispatches = allKitDispatches.filter((d) => d.mouId === mou.id)
   const mouFeedback = allFeedback.filter((f) => f.mouId === mou.id)
   const mouEscalations = allEscalations.filter((e) => e.mouId === mou.id)
+
+  // Gate 4 Step 1 + 3 + 4: master status tracker stage + workflow banner +
+  // top-5 critical change log surfaced at the head of the detail body so
+  // operators see lifecycle position, next expected action, and recent
+  // material changes without hunting through the audit log.
+  const trackerNow = new Date()
+  const lifecycleStage = computeStage({
+    mou,
+    payments: installments,
+    dispatches: mouKitDispatches,
+    now: trackerNow,
+  })
+  const workflowBanner = computeWorkflowState({
+    mou,
+    payments: installments,
+    dispatches: mouKitDispatches,
+    now: trackerNow,
+  })
+  const criticalChanges = topNCriticalChanges(
+    collectCriticalChanges({
+      entityType: 'mou',
+      entityId: mou.id,
+      entityLabel: mou.schoolName,
+      hrefBase: '/mous',
+      auditLog: mou.auditLog,
+    }),
+    5,
+  )
+
+  // Gate 4.9 Step 4: who currently owns the stage this MOU is at.
+  const responsibility = getResponsiblePartyForMou({
+    mou,
+    payments: installments,
+    dispatches: mouKitDispatches,
+    now: trackerNow,
+  })
+  const responsibleUserName = responsibility.responsibleUserId
+    ? allUsers.find((u) => u.id === responsibility.responsibleUserId)?.name ?? responsibility.responsibleUserId
+    : null
+  const canConfigureResponsibility = user ? canPerform(user, 'stage-responsibility:configure') : false
 
   const i1 = installments.find((p) => p.instalmentSeq === 1)
   const i1Dispatch = installmentDispatches.find((d) => d.installmentSeq === 1)
@@ -361,6 +418,147 @@ export default async function MouDetailPage({ params, searchParams }: PageProps)
           </div>
         </div>
 
+        {/* Gate 4 Step 1 + 3 + 4: master tracker, workflow banner, and
+            critical-change log. Sit above the two-column body so they
+            are the first thing the operator reads after the action bar. */}
+        <div
+          className="mx-auto max-w-screen-xl space-y-3 px-4 pt-6"
+          data-testid="mou-detail-gate4-block"
+        >
+          <section
+            aria-labelledby="status-tracker-heading"
+            className="rounded-lg border border-border bg-card p-4 sm:p-5"
+            data-testid="mou-status-tracker-section"
+          >
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+              <h2
+                id="status-tracker-heading"
+                className="text-xs font-semibold uppercase tracking-wide text-slate-600"
+              >
+                Master status tracker
+              </h2>
+              {/* Gate 4.9 Step 4: "Owned by" pill. Click navigates to
+                  /admin/stage-responsibility when the viewer has the
+                  configure permission; renders inert otherwise. */}
+              {canConfigureResponsibility ? (
+                <Link
+                  href="/admin/stage-responsibility"
+                  data-testid="mou-owned-by-pill"
+                  data-owner-dept={responsibility.responsibleDepartment}
+                  title={`Stage '${responsibility.stage}' is owned by ${responsibleUserName ?? responsibility.responsibleDepartment} per stage responsibility config. Configure at /admin/stage-responsibility.`}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-brand-navy/20 bg-slate-100 px-3 py-1 text-xs font-medium text-brand-navy hover:bg-slate-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
+                >
+                  Owned by{' '}
+                  <span className="font-semibold">
+                    {responsibleUserName ?? responsibility.responsibleDepartment}
+                  </span>
+                </Link>
+              ) : (
+                <span
+                  data-testid="mou-owned-by-pill"
+                  data-owner-dept={responsibility.responsibleDepartment}
+                  title={`Stage '${responsibility.stage}' is owned by ${responsibleUserName ?? responsibility.responsibleDepartment} per stage responsibility config.`}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-brand-navy/20 bg-slate-100 px-3 py-1 text-xs font-medium text-brand-navy"
+                >
+                  Owned by{' '}
+                  <span className="font-semibold">
+                    {responsibleUserName ?? responsibility.responsibleDepartment}
+                  </span>
+                </span>
+              )}
+            </div>
+            <StatusTracker
+              current={lifecycleStage}
+              anchors={MOU_DETAIL_ANCHORS}
+              mouId={mou.id}
+              testId="mou-status-tracker"
+            />
+          </section>
+
+          {workflowBanner ? (
+            <section
+              role="status"
+              aria-labelledby="workflow-banner-heading"
+              data-testid="mou-workflow-banner"
+              data-owner={workflowBanner.owner}
+              className="flex flex-col gap-3 rounded-lg border border-amber-300 bg-amber-50 p-4 sm:flex-row sm:items-center sm:justify-between"
+            >
+              <div className="min-w-0 flex-1">
+                <h3
+                  id="workflow-banner-heading"
+                  className="font-heading text-sm font-semibold text-amber-900"
+                >
+                  {workflowBanner.headline}
+                </h3>
+                <p className="mt-0.5 text-xs text-amber-800">{workflowBanner.body}</p>
+                <p className="mt-1 text-[11px] uppercase tracking-wide text-amber-700">
+                  Owner: {workflowBanner.owner}
+                </p>
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
+                {workflowBanner.cta ? (
+                  <Link
+                    href={workflowBanner.cta.href}
+                    className={opsButtonClass({ variant: 'outline', size: 'sm' })}
+                    data-testid="workflow-banner-cta"
+                  >
+                    {workflowBanner.cta.label}
+                  </Link>
+                ) : null}
+                {workflowBanner.reminderEligible ? (
+                  <form
+                    method="POST"
+                    action="/api/workflow/send-reminder"
+                    className="flex"
+                  >
+                    <input type="hidden" name="mouId" value={mou.id} />
+                    <input
+                      type="hidden"
+                      name="stage"
+                      value={workflowBanner.currentStage}
+                    />
+                    <button
+                      type="submit"
+                      data-testid="workflow-send-reminder"
+                      className={opsButtonClass({ variant: 'primary', size: 'sm' })}
+                    >
+                      Send reminder
+                    </button>
+                  </form>
+                ) : null}
+              </div>
+            </section>
+          ) : null}
+
+          {criticalChanges.length > 0 ? (
+            <section
+              aria-labelledby="critical-changes-heading"
+              data-testid="mou-critical-changes"
+              className="rounded-lg border border-border bg-card p-4"
+            >
+              <h3
+                id="critical-changes-heading"
+                className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-600"
+              >
+                Recent critical changes
+              </h3>
+              <ul className="divide-y divide-border text-xs">
+                {criticalChanges.map((c, i) => (
+                  <li
+                    key={`${c.timestamp}-${i}`}
+                    className="flex items-baseline gap-2 py-1.5"
+                    data-testid={`critical-change-row-${i}`}
+                  >
+                    <span className="text-slate-500">{c.timestamp.slice(0, 10)}</span>
+                    <span className="font-medium text-brand-navy">{c.action}</span>
+                    <span className="truncate text-slate-700">{c.summary}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
+        </div>
+
         {/* Two-column body. md:grid-cols-5 with col-span-3 / col-span-2
             yields 60% / 40%. Mobile collapses to single column. */}
         <div className="mx-auto max-w-screen-xl px-4 py-6">
@@ -406,17 +604,50 @@ export default async function MouDetailPage({ params, searchParams }: PageProps)
                         ? `GROUP (${mou.schoolGroupId})`
                         : 'SINGLE',
                   },
-                  { label: 'Sales person', value: mou.salesPersonId ?? 'unassigned' },
+                  {
+                    label: (
+                      <span className="inline-flex items-baseline gap-1">
+                        Sales person
+                        <EditHistoryReveal
+                          entries={mou.auditLog}
+                          field="salesPersonId"
+                          testIdSlug="mou-sales-person"
+                        />
+                      </span>
+                    ),
+                    value: mou.salesPersonId ?? 'unassigned',
+                  },
                   { label: 'Trainer model', value: mou.trainerModel ?? 'not set' },
                   {
-                    label: 'Students MOU / actual',
+                    label: (
+                      <span className="inline-flex items-baseline gap-1">
+                        Students MOU / actual
+                        <EditHistoryReveal
+                          entries={mou.auditLog}
+                          field={['studentsMou', 'studentsActual']}
+                          testIdSlug="mou-students"
+                        />
+                      </span>
+                    ),
                     value: `${mou.studentsMou.toLocaleString('en-IN')} / ${
                       mou.studentsActual === null
                         ? 'n/a'
                         : mou.studentsActual.toLocaleString('en-IN')
                     }`,
                   },
-                  { label: 'Contract value', value: formatRs(mou.contractValue) },
+                  {
+                    label: (
+                      <span className="inline-flex items-baseline gap-1">
+                        Contract value
+                        <EditHistoryReveal
+                          entries={mou.auditLog}
+                          field={['contractValue', 'spWithTax', 'spWithoutTax']}
+                          testIdSlug="mou-contract-value"
+                        />
+                      </span>
+                    ),
+                    value: formatRs(mou.contractValue),
+                  },
                   { label: 'Received', value: `${formatRs(mou.received)} (${mou.receivedPct}%)` },
                   { label: 'Balance', value: formatRs(mou.balance) },
                   {
