@@ -60,7 +60,7 @@ import {
 } from '@/lib/kanban/deriveStage'
 import { mouStatusTone } from '@/lib/ui/mouStatusTone'
 import Link from 'next/link'
-import { Archive } from 'lucide-react'
+import { Archive, Plus } from 'lucide-react'
 
 const allMous = mousJson as unknown as MOU[]
 const allSchools = schoolsJson as unknown as School[]
@@ -243,7 +243,18 @@ export default async function MousListPage({ searchParams }: PageProps) {
               : `${filtered.length} of ${scoped.length} matching`
           }
         />
-        <div className="mx-auto flex max-w-screen-xl items-center justify-end px-4 pt-2">
+        <div className="mx-auto flex max-w-screen-xl items-center justify-end gap-2 px-4 pt-2">
+          {/* Gate 3.5 Step 4: prominent "+ New MOU" affordance as the
+              primary CTA. Filled brand-teal styling marks it as the
+              dominant action on this surface. */}
+          <Link
+            href="/mous/new"
+            className={opsButtonClass({ variant: 'primary', size: 'sm' })}
+            data-testid="new-mou-link"
+          >
+            <Plus aria-hidden className="size-4" />
+            New MOU
+          </Link>
           <Link
             href="/mous/archive"
             className={opsButtonClass({ variant: 'outline', size: 'sm' })}

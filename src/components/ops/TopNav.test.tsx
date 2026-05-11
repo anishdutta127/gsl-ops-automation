@@ -32,7 +32,10 @@ describe('TopNav: Gate 1 Step 3 workflow-stage nav (Gate 3.5 Step 3 hides Pipeli
     const html = renderToStaticMarkup(await TopNav({ currentPath: '/' }))
     // Pipeline removed from nav per docs/gate-3.5/HIDDEN_ROUTES.md.
     expect(html).not.toContain('>Pipeline<')
-    expect(html).toContain('>Active MOUs<')
+    // Gate 3.5 Step 4: stage label renamed from "Active MOUs" to "MOUs"
+    // so the stage reads as the destination for ALL MOU work.
+    expect(html).toContain('>MOUs<')
+    expect(html).not.toContain('>Active MOUs<')
     expect(html).toContain('>Dispatch<')
     expect(html).toContain('>Finance<')
     expect(html).toContain('>Operations<')
@@ -139,7 +142,7 @@ describe('TopNav: department dot indicator', () => {
   it('Sales user gets no dots (Pipeline stage hidden Gate 3.5; sales is not a stage in any visible nav row)', async () => {
     // Pre-Gate-3.5 this test asserted a dot under the Pipeline stage.
     // With Pipeline hidden, Sales users land without any nav-stage dot;
-    // their cross-functional work surfaces through Active MOUs which has
+    // their cross-functional work surfaces through the MOUs stage which has
     // no department dot (department = 'cross-functional').
     getCurrentUserMock.mockResolvedValue(
       makeUser({ role: 'SalesHead', department: 'sales' }),

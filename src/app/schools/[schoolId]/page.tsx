@@ -127,9 +127,21 @@ export default async function SchoolDetailPage({ params, searchParams }: PagePro
           ) : null}
 
           <section aria-labelledby="mous-heading" className="rounded-lg border border-border bg-card p-4 sm:p-6">
-            <h3 id="mous-heading" className="mb-3 font-heading text-base font-semibold text-brand-navy">
-              MOUs ({schoolMous.length})
-            </h3>
+            <div className="mb-3 flex items-center justify-between gap-2">
+              <h3 id="mous-heading" className="font-heading text-base font-semibold text-brand-navy">
+                MOUs ({schoolMous.length})
+              </h3>
+              {/* Gate 3.5 Step 4: school-scoped MOU drafting entry. Pre-
+                  fills the school via the schoolId query param so the
+                  wizard does not need re-search. */}
+              <Link
+                href={`/mous/new?schoolId=${encodeURIComponent(school.id)}`}
+                className="inline-flex min-h-9 items-center gap-1.5 rounded-md border border-brand-teal bg-brand-teal px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-teal/90 focus:outline-none focus:ring-2 focus:ring-brand-navy"
+                data-testid="school-new-mou-cta"
+              >
+                + Draft new MOU
+              </Link>
+            </div>
             {schoolMous.length === 0 ? (
               <p className="text-sm text-muted-foreground">No MOUs for this school.</p>
             ) : (

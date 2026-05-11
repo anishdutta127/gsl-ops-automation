@@ -42,7 +42,11 @@ export const NAV_STAGES: NavStage[] = [
   // module returns. Routes under /sales-pipeline stay reachable
   // via direct URL for Admin testing; docs/gate-3.5/HIDDEN_ROUTES.md
   // tracks the un-hide path.
-  { href: '/mous', label: 'Active MOUs', department: 'cross-functional' },
+  // Gate 3.5 Step 4: renamed from "Active MOUs" to "MOUs" so the
+  // stage reads as the destination for ALL MOU work, not just signed-
+  // and-active records. The /mous list page itself surfaces the
+  // primary "+ New MOU" affordance.
+  { href: '/mous', label: 'MOUs', department: 'cross-functional' },
   { href: '/dispatch', label: 'Dispatch', department: 'ops' },
   { href: '/finance', label: 'Finance', department: 'finance' },
   { href: '/operations', label: 'Operations', department: 'ops' },

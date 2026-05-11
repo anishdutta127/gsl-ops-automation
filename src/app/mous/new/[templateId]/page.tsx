@@ -31,9 +31,10 @@ export function generateStaticParams() {
 
 interface PageProps {
   params: Promise<{ templateId: string }>
+  searchParams?: Promise<Record<string, string | string[] | undefined>>
 }
 
-export default async function GeneratorPage({ params }: PageProps) {
+export default async function GeneratorPage({ params, searchParams }: PageProps) {
   const { templateId } = await params
   const user = await getCurrentUser()
   if (!user || !canEditMOU(user)) {
@@ -43,6 +44,16 @@ export default async function GeneratorPage({ params }: PageProps) {
   if (!template) notFound()
 
   const minAcceptable = template.placeholders.PRICE_PER_STUDENT?.minAcceptable ?? null
+  // Gate 3.5 Step 4: pre-fill school when the wizard is reached via a
+  // school-scoped CTA. The schoolId query param threads from the
+  // school detail page through the template picker; here we validate
+  // the id exists in the schools file before passing to the wizard.
+  const sp = (await searchParams) ?? {}
+  const schoolIdQuery = typeof sp.schoolId === 'string' ? sp.schoolId : null
+  const initialSchoolId =
+    schoolIdQuery && allSchools.some((s) => s.id === schoolIdQuery)
+      ? schoolIdQuery
+      : null
 
   return (
     <>
@@ -87,6 +98,7 @@ export default async function GeneratorPage({ params }: PageProps) {
             salesTeam={allSalesTeam}
             minAcceptable={minAcceptable}
             rateCardVariant={template.rateCardVariant ?? null}
+            initialSchoolId={initialSchoolId}
           />
         </div>
       </main>

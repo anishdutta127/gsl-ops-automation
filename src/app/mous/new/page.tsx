@@ -20,12 +20,27 @@ import { listTemplates } from '@/lib/mouSystem/templates'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canEditMOU } from '@/lib/access'
 
-export default async function PickTemplatePage() {
+interface PageProps {
+  searchParams?: Promise<Record<string, string | string[] | undefined>>
+}
+
+export default async function PickTemplatePage({ searchParams }: PageProps) {
   const user = await getCurrentUser()
   if (!user || !canEditMOU(user)) {
     notFound()
   }
   const templates = listTemplates()
+  // Gate 3.5 Step 4: when a school-scoped CTA launches the wizard
+  // (e.g. school detail "+ Draft new MOU"), the schoolId arrives as
+  // a query param and threads through to the GeneratorWizard host
+  // page so the school is pre-selected. Other entry points (the
+  // /mous list "+ New MOU" button, dashboard tiles) carry no
+  // schoolId and the wizard opens with the school-select empty.
+  const sp = (await searchParams) ?? {}
+  const schoolIdQuery = typeof sp.schoolId === 'string' ? sp.schoolId : null
+  const templateHrefSuffix = schoolIdQuery
+    ? `?schoolId=${encodeURIComponent(schoolIdQuery)}`
+    : ''
 
   return (
     <>
@@ -46,7 +61,7 @@ export default async function PickTemplatePage() {
               return (
                 <li key={t.id}>
                   <Link
-                    href={`/mous/new/${encodeURIComponent(t.id)}`}
+                    href={`/mous/new/${encodeURIComponent(t.id)}${templateHrefSuffix}`}
                     className="block rounded-lg border border-border bg-card p-5 transition-colors hover:border-brand-teal focus:outline-none focus:ring-2 focus:ring-brand-navy"
                     data-testid={`template-card-${t.id}`}
                   >
