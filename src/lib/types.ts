@@ -508,6 +508,16 @@ export interface MOU {
   yearlyPricing?: import('./mouSystem/types').YearlyPricingRow[] | null
   billingBlock?: import('./mouSystem/types').MouBillingBlock | null
   signedMouPdfPath?: string | null
+  /**
+   * Gate 3 Step 1: kits-dispatch enhancements. See
+   * src/lib/mouSystem/types.ts for the canonical type definitions.
+   * Optional at draft time; Sales can fill on the GeneratorWizard or
+   * later in MOU Pipeline. Existing MOUs carry `undefined`.
+   */
+  productSelection?: import('./mouSystem/types').ProductSelection | null
+  gradewiseDistribution?:
+    | import('./mouSystem/types').GradewiseDistributionRow[]
+    | null
 }
 
 // ============================================================================

@@ -31,13 +31,16 @@ import { SALES_CHANNELS, TRAINER_MODELS } from '@/lib/mouSystem/templates'
 import { formatRs } from '@/lib/format'
 import { monthsForYear, formatMonthLabel } from '@/lib/mouSystem/monthRange'
 import type {
+  GradewiseDistributionRow,
   MouBillingBlock,
+  ProductSelection,
   SalesChannel,
   SalesPerson,
   TrainerModel,
   YearPaymentSchedule,
   YearlyPricingRow,
 } from '@/lib/mouSystem/types'
+import { GradewiseSection } from './GradewiseSection'
 
 export interface GenSchool {
   id: string
@@ -66,6 +69,8 @@ interface Props {
   initialValues?: Record<string, string>
   initialAnnexureHtml?: string | null
   initialSchoolId?: string | null
+  initialProductSelection?: ProductSelection | null
+  initialGradewiseDistribution?: GradewiseDistributionRow[] | null
 }
 
 const EMPTY_BILLING: MouBillingBlock = {
@@ -138,6 +143,8 @@ export function GeneratorWizard({
   initialValues,
   initialAnnexureHtml,
   initialSchoolId,
+  initialProductSelection,
+  initialGradewiseDistribution,
 }: Props) {
   const [schoolId, setSchoolId] = useState<string>(initialSchoolId ?? '')
   const [values, setValues] = useState<Record<string, string>>(() => initialValues ?? {})
@@ -152,6 +159,17 @@ export function GeneratorWizard({
   const [billing, setBilling] = useState<MouBillingBlock>(EMPTY_BILLING)
   const [annexureRaw, setAnnexureRaw] = useState<string>(initialAnnexureHtml ?? '')
   const [draftId, setDraftId] = useState<string | null>(initialDraftId ?? null)
+
+  // Gate 3 Step 1: kits-dispatch enhancements (optional, collapsible).
+  const [productSelection, setProductSelection] = useState<ProductSelection | null>(
+    initialProductSelection ?? null,
+  )
+  const [gradewiseDistribution, setGradewiseDistribution] = useState<
+    GradewiseDistributionRow[] | null
+  >(initialGradewiseDistribution ?? null)
+  const [kitsSectionExpanded, setKitsSectionExpanded] = useState<boolean>(
+    Boolean(initialProductSelection || initialGradewiseDistribution),
+  )
 
   const [saveState, setSaveState] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle')
   const [serverError, setServerError] = useState<string | null>(null)
@@ -393,6 +411,8 @@ export function GeneratorWizard({
           paymentSchedules: schedules,
           yearlyPricing,
           billingBlock: billing,
+          productSelection,
+          gradewiseDistribution,
         }),
       })
       if (!res.ok) {
@@ -421,6 +441,8 @@ export function GeneratorWizard({
     schedules,
     yearlyPricing,
     billing,
+    productSelection,
+    gradewiseDistribution,
     validationError,
     currentUserId,
     currentUserName,
@@ -806,6 +828,15 @@ export function GeneratorWizard({
           <BillingField label="GST No" value={billing.gst} onChange={(v) => setBilling((b) => ({ ...b, gst: v }))} />
         </div>
       </fieldset>
+
+      <GradewiseSection
+        productSelection={productSelection}
+        gradewiseDistribution={gradewiseDistribution}
+        onProductSelectionChange={setProductSelection}
+        onGradewiseDistributionChange={setGradewiseDistribution}
+        expanded={kitsSectionExpanded}
+        onToggle={() => setKitsSectionExpanded((v) => !v)}
+      />
 
       {validationError && (
         <div className="rounded border border-amber-500/40 bg-amber-50 px-4 py-2.5 text-sm text-amber-900">

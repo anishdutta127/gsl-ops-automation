@@ -28,6 +28,7 @@ import type {
   Agreement,
   AgreementType,
   AuditEntry,
+  GradewiseDistributionRow,
   MouBillingBlock,
   MOU,
   MouStatus,
@@ -35,6 +36,7 @@ import type {
   Payment,
   PaymentLog,
   PaymentMode,
+  ProductSelection,
   Programme,
   SalesChannel,
   SalesPerson,
@@ -435,6 +437,9 @@ export interface DraftMouInput {
   paymentSchedules?: YearPaymentSchedule[] | null
   yearlyPricing?: YearlyPricingRow[] | null
   billingBlock?: MouBillingBlock | null
+  // Gate 3 Step 1: kits-dispatch enhancements. Optional at draft time.
+  productSelection?: ProductSelection | null
+  gradewiseDistribution?: GradewiseDistributionRow[] | null
 }
 
 function summarisePaymentSchedules(
@@ -557,6 +562,8 @@ export async function saveDraftMou(
         yearlyPricing: input.yearlyPricing ?? null,
         billingBlock: input.billingBlock ?? null,
         signedMouPdfPath: null,
+        productSelection: input.productSelection ?? null,
+        gradewiseDistribution: input.gradewiseDistribution ?? null,
       }
       let nextList: MOU[]
       if (idx >= 0) {

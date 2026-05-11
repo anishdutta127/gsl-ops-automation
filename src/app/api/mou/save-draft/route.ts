@@ -20,7 +20,9 @@ import { getCurrentUser } from '@/lib/auth/session'
 import { canEditMOU } from '@/lib/access'
 import { saveDraftMou } from '@/lib/mouSystem/entityWriters'
 import type {
+  GradewiseDistributionRow,
   MouBillingBlock,
+  ProductSelection,
   Programme,
   SalesChannel,
   TrainerModel,
@@ -43,6 +45,9 @@ interface Body {
   paymentSchedules?: YearPaymentSchedule[] | null
   yearlyPricing?: YearlyPricingRow[] | null
   billingBlock?: MouBillingBlock | null
+  // Gate 3 Step 1: kits-dispatch enhancements (optional at draft time).
+  productSelection?: ProductSelection | null
+  gradewiseDistribution?: GradewiseDistributionRow[] | null
 }
 
 export async function POST(request: Request) {
@@ -86,6 +91,8 @@ export async function POST(request: Request) {
       paymentSchedules: body.paymentSchedules ?? null,
       yearlyPricing: body.yearlyPricing ?? null,
       billingBlock: body.billingBlock ?? null,
+      productSelection: body.productSelection ?? null,
+      gradewiseDistribution: body.gradewiseDistribution ?? null,
     })
     return NextResponse.json({ draft: { id: result.mou.id }, commitSha: result.commitSha })
   } catch (e) {

@@ -157,6 +157,34 @@ export interface MOU {
   yearlyPricing?: YearlyPricingRow[] | null
   billingBlock?: MouBillingBlock | null
   signedMouPdfPath?: string | null // public/signed-mous/<mou>.pdf once uploaded
+  // Gate 3 Step 1: kits-dispatch enhancements. Optional at draft time.
+  // Per joint spec section 1: Sales picks product line(s) shipped under the
+  // MOU and optionally entries grade-wise student distribution. Grade-wise
+  // data flows downstream to the Kits for Dispatch module (Gate 3 Step 2);
+  // if missing at draft time, Ops fills it in the Step 3 allocation flow.
+  productSelection?: ProductSelection | null
+  gradewiseDistribution?: GradewiseDistributionRow[] | null
+}
+
+/**
+ * Gate 3 Step 1: which product line(s) ship under this MOU. Drives the
+ * downstream Kits for Dispatch allocation dropdowns (Step 3): only
+ * products from the selected line(s) appear when Ops/Sales enters a row.
+ * Null until Sales fills it on the GeneratorWizard or in MOU Pipeline.
+ */
+export type ProductSelection = 'TinkRworks' | 'Cretile' | 'Both'
+
+/**
+ * Gate 3 Step 1: per-grade student count + kit return type. One row per
+ * grade Sales fills in; the total is computed in the UI as sum(students).
+ * Kit type captures whether the kit returns to GSL after the course
+ * (Reusable) or stays with the student (Consumable); null when Sales has
+ * not yet decided.
+ */
+export interface GradewiseDistributionRow {
+  grade: number                    // 1-12
+  students: number
+  kitType: 'Reusable' | 'Consumable' | null
 }
 
 export type AuditAction =
