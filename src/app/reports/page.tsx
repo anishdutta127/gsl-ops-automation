@@ -1,102 +1,114 @@
 /*
- * /reports (Gate 1 Step 3 stage landing page).
+ * /reports landing page (Gate 5A Step 1).
  *
- * Reports stage entry. Cross-functional analytics live here; the
- * Leadership Console for aggregate KPIs ships in Gate 5. For Gate 1
- * the page is a placeholder that points at the existing dashboard
- * exception feed and admin audit surfaces.
+ * Lists the 5 reports as click-through cards. Cards the current user
+ * cannot access are filtered out via visibleReports(); a department
+ * user therefore only sees fy-summary + escalations + their own
+ * department's report.
+ *
+ * Single-<main> rule: the root layout owns the only <main>; this
+ * page wraps in a <section>.
  */
 
-import Link from 'next/link'
 import { redirect } from 'next/navigation'
-import { ArrowRight } from 'lucide-react'
+import {
+  BarChart3,
+  Truck,
+  Users,
+  AlertTriangle,
+  Wallet,
+} from 'lucide-react'
 import { getCurrentUser } from '@/lib/auth/session'
 import { TopNav } from '@/components/ops/TopNav'
-import { accentFor } from '@/lib/departmentAccents'
+import { ReportCard } from '@/components/reports/ReportCard'
+import { visibleReports, type ReportSlug } from '@/lib/reports/access'
 
-const ENTITIES = [
+interface ReportEntry {
+  slug: ReportSlug
+  title: string
+  description: string
+  icon: typeof BarChart3
+}
+
+const ENTRIES: ReportEntry[] = [
   {
-    label: 'Operations Control Dashboard',
-    href: '/',
-    description: 'School onboarding, orders, shipments, inventory at a glance.',
+    slug: 'fy-summary',
+    title: 'FY summary',
+    description:
+      'Headline numbers, programme-wise breakdown, and monthly receipts for the fiscal year.',
+    icon: BarChart3,
   },
   {
-    label: 'Exceptions feed',
-    href: '/dashboard/exceptions',
-    description: 'MOUs that need attention right now.',
+    slug: 'sales-performance',
+    title: 'Sales performance',
+    description:
+      'Per-rep MOU count and contract value, with top 5 and bottom 5 leaderboards.',
+    icon: Users,
   },
   {
-    label: 'Audit log',
-    href: '/admin/audit',
-    description: 'Cross-entity audit trail (lane-scoped per role).',
+    slug: 'dispatch-performance',
+    title: 'Dispatch performance',
+    description:
+      'Turnaround days from MOU sign through delivery, plus a stalled dispatches list.',
+    icon: Truck,
   },
   {
-    label: 'MOU pipeline',
-    href: '/kanban',
-    description: 'Drag-and-drop kanban across the 8-stage lifecycle.',
+    slug: 'payment-aging',
+    title: 'Payment aging',
+    description:
+      'Outstanding amounts bucketed by age, top 10 overdue accounts, and unpaid PIs.',
+    icon: Wallet,
+  },
+  {
+    slug: 'escalations',
+    title: 'Escalations',
+    description:
+      'Open escalations by department and severity, plus category trends.',
+    icon: AlertTriangle,
   },
 ]
 
-export default async function ReportsStagePage() {
+export default async function ReportsIndex() {
   const user = await getCurrentUser()
   if (!user) redirect('/login?next=%2Freports')
-  const accent = accentFor('cross-functional')
+  const allowed = new Set(visibleReports(user))
+  const visible = ENTRIES.filter((e) => allowed.has(e.slug))
 
   return (
     <>
       <TopNav currentPath="/reports" />
-      <main id="main-content">
-        <div className="mx-auto max-w-screen-xl space-y-6 px-4 py-6 sm:px-6">
-          <header
-            className={
-              'rounded-md border border-border border-l-4 bg-card p-6 ' +
-              accent.cardBorderClass
-            }
-          >
-            <span
-              className={
-                'inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wide ' +
-                accent.badgeBgClass +
-                ' ' +
-                accent.badgeTextClass
-              }
-            >
-              Reports stage
-            </span>
-            <h1 className="mt-3 font-heading text-2xl font-bold text-brand-navy">
+      <section data-testid="reports-index">
+        <div className="mx-auto flex max-w-screen-xl flex-col gap-6 px-4 py-6 sm:px-6">
+          <header>
+            <h1 className="font-heading text-2xl font-bold text-brand-navy">
               Reports
             </h1>
-            <p className="mt-1 text-sm text-slate-700">
-              Cross-functional analytics. Leadership Console with aggregate KPIs ships in Gate 5.
+            <p className="mt-1 text-sm text-slate-600">
+              Five report views computed from live data.
             </p>
           </header>
-          <ul className="grid gap-3 sm:grid-cols-2">
-            {ENTITIES.map((entity) => (
-              <li key={entity.href}>
-                <Link
-                  href={entity.href}
-                  className={
-                    'group flex items-center justify-between rounded-md border border-border bg-card p-4 transition-colors hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-brand-navy ' +
-                    'border-l-4 ' +
-                    accent.cardBorderClass
-                  }
-                >
-                  <div>
-                    <div className="font-medium text-brand-navy">{entity.label}</div>
-                    <div className="mt-0.5 text-sm text-slate-600">
-                      {entity.description}
-                    </div>
-                  </div>
-                  <ArrowRight
-                    aria-hidden
-                    className="size-4 shrink-0 text-slate-400 transition-transform group-hover:translate-x-0.5"
+          {visible.length === 0 ? (
+            <div className="rounded-md border border-border bg-card p-6 text-sm text-slate-600">
+              No reports are available for your role. Ask an administrator
+              for access.
+            </div>
+          ) : (
+            <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              {visible.map((entry) => (
+                <li key={entry.slug}>
+                  <ReportCard
+                    href={`/reports/${entry.slug}`}
+                    title={entry.title}
+                    description={entry.description}
+                    icon={entry.icon}
+                    testId={`report-card-${entry.slug}`}
                   />
-                </Link>
-              </li>
-            ))}
-          </ul>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
-      </main>
+      </section>
     </>
   )
 }
