@@ -16,10 +16,16 @@
  * (dispatch route's nextDispatchSeq was already correct in Step 7).
  */
 
-import { describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import vexPisJson from '@/data/vex_pis.json'
 import vexDispatchesJson from '@/data/vex_dispatches.json'
 import type { VexDispatch, VexPi } from '@/lib/mouSystem/types'
+
+vi.mock('@/lib/auth/session', () => ({ getCurrentUser: vi.fn() }))
+vi.mock('@/lib/pendingUpdates', () => ({ enqueueUpdate: vi.fn() }))
+vi.mock('@/lib/mouSystem/piCounterAtomic', () => ({
+  issuePiNumberAtomic: vi.fn(),
+}))
 
 const vexPis = vexPisJson as unknown as VexPi[]
 const vexDispatches = vexDispatchesJson as unknown as VexDispatch[]
@@ -90,5 +96,66 @@ describe('VEX PI id format: VEX-OWN sequential per entity (Gate 2 §V5)', () => 
     expect(src).toContain('function nextVexPiSeq')
     expect(src).toContain('makeVexPiId(entityKey, vexSeq)')
     expect(src).not.toContain('makeVexPiId(entityKey, counterSeq)')
+  })
+})
+
+describe('POST /api/operations/vex/pi/create: parallel-build lock (V5)', () => {
+  const SAVE_LOCK = process.env.PI_PARALLEL_BUILD_LOCK
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  afterEach(() => {
+    if (SAVE_LOCK === undefined) {
+      delete process.env.PI_PARALLEL_BUILD_LOCK
+    } else {
+      process.env.PI_PARALLEL_BUILD_LOCK = SAVE_LOCK
+    }
+  })
+
+  async function callRoute(): Promise<Response> {
+    const { POST } = await import('./route')
+    return POST(
+      new Request('http://localhost/api/operations/vex/pi/create', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ entityKey: 'MH', lineItems: [] }),
+      }),
+    )
+  }
+
+  it('returns 503 with lock copy when env unset (fail-closed default)', async () => {
+    delete process.env.PI_PARALLEL_BUILD_LOCK
+    const res = await callRoute()
+    expect(res.status).toBe(503)
+    const body = await res.json()
+    expect(body.error).toBe('parallel-build-locked')
+    expect(body.message).toContain('PI generation is locked')
+    expect(body.message).toContain('Gate 5 cutover')
+  })
+
+  it("returns 503 when lock env is 'true' (explicit lock-on)", async () => {
+    process.env.PI_PARALLEL_BUILD_LOCK = 'true'
+    const res = await callRoute()
+    expect(res.status).toBe(503)
+  })
+
+  it("activates route at cutover when PI_PARALLEL_BUILD_LOCK=false", async () => {
+    process.env.PI_PARALLEL_BUILD_LOCK = 'false'
+    const { getCurrentUser } = await import('@/lib/auth/session')
+    ;(getCurrentUser as ReturnType<typeof vi.fn>).mockResolvedValue(null)
+    const res = await callRoute()
+    // Lock is OFF: now we get the next gate (auth), which fails with 401.
+    expect(res.status).toBe(401)
+  })
+
+  it('lock check fires BEFORE auth (no session leak via 401 vs 503 timing)', async () => {
+    delete process.env.PI_PARALLEL_BUILD_LOCK
+    const { getCurrentUser } = await import('@/lib/auth/session')
+    ;(getCurrentUser as ReturnType<typeof vi.fn>).mockResolvedValue(null)
+    const res = await callRoute()
+    // 503 lock, NOT 401 auth. Lock is the first gate.
+    expect(res.status).toBe(503)
   })
 })
