@@ -1,185 +1,116 @@
 /*
- * / Operations Control Dashboard (W4-I.5 P2C5 route migration).
+ * / Consolidated landing (Gate 3.6).
  *
- * Pre-W4-I.5 this route was the kanban; P2C5 moved the kanban to
- * /kanban and the new dashboard here. /dashboard and /overview
- * redirect to / for bookmark + audit-link compatibility.
+ * Pre-Gate-3.6 this URL hosted the Operations Control Dashboard.
+ * Gate 3.6 replaces it with a deliberately-designed five-zone
+ * orientation surface: Commercial position, Operational position,
+ * Items requiring attention, Quick actions, drill-down tiles to
+ * the dedicated dept dashboards. The Operations Control Dashboard
+ * moved to /dashboard/ops.
  *
- * Composition (top to bottom): DashboardHeader (title + Open Kanban
- * Board CTA + FY + date range), DashboardFilterRow (programme chips +
- * Apply / Reset), DashboardStatCards (6 cards), Recent MOU Updates +
- * Action Centre (middle row), Orders and Shipment Tracker + Comm
- * Automation (third row), Communication Templates grid, Sales
- * Pipeline summary, footer.
+ * Design intent: orient any user (Leadership, Ops, Finance, Admin)
+ * in five seconds and route them to their workspace in one click.
  *
- * Filters propagate via URL searchParams (parseDashboardFilters);
- * server re-renders against the new params on Apply. No client-side
- * filter state.
+ * Data flow: every zone is computed at request time from the
+ * canonical data files via `src/lib/dashboard/landingData.ts`. No
+ * filter UI on the landing itself: filters belong on the deeper
+ * department dashboards where analysis happens.
  */
 
 import { redirect } from 'next/navigation'
 import type {
-  Dispatch,
-  DispatchRequest,
   Escalation,
-  InventoryItem,
+  KitDispatch,
   MOU,
-  SalesOpportunity,
-  SalesPerson,
+  Payment,
+  PaymentLog,
   School,
 } from '@/lib/types'
 import mousJson from '@/data/mous.json'
+import paymentsJson from '@/data/payments.json'
+import paymentLogsJson from '@/data/payment_logs.json'
 import schoolsJson from '@/data/schools.json'
-import dispatchesJson from '@/data/dispatches.json'
-import dispatchRequestsJson from '@/data/dispatch_requests.json'
 import escalationsJson from '@/data/escalations.json'
-import inventoryItemsJson from '@/data/inventory_items.json'
-import salesOpportunitiesJson from '@/data/sales_opportunities.json'
-import salesTeamJson from '@/data/sales_team.json'
+import kitDispatchesJson from '@/data/kit_dispatches.json'
 import { getCurrentUser } from '@/lib/auth/session'
 import { TopNav } from '@/components/ops/TopNav'
+import { ConsolidatedLanding } from '@/components/dashboard/ConsolidatedLanding'
 import {
-  buildActionCenter,
-  buildOrdersTracker,
-  buildRecentMouUpdates,
-  buildSalesPipelineSummary,
-  buildStatCards,
-  COMMUNICATION_BUTTONS,
-  COMMUNICATION_TEMPLATE_PREVIEWS,
-  computeSlices,
-  fiscalYearOptions,
-  parseDashboardFilters,
-  productOptionsForFilters,
-} from '@/lib/dashboard/dashboardData'
-import { DashboardHeader } from '@/components/ops/dashboard/DashboardHeader'
-import { DashboardFilterRow } from '@/components/ops/dashboard/DashboardFilterRow'
-import { DashboardStatCards } from '@/components/ops/dashboard/DashboardStatCards'
-import { DashboardRecentMous } from '@/components/ops/dashboard/DashboardRecentMous'
-import { DashboardActionCenter } from '@/components/ops/dashboard/DashboardActionCenter'
-import { DashboardOrdersTracker } from '@/components/ops/dashboard/DashboardOrdersTracker'
-import { DashboardCommunicationPanel } from '@/components/ops/dashboard/DashboardCommunicationPanel'
-import { DashboardTemplates } from '@/components/ops/dashboard/DashboardTemplates'
-// Gate 3.5 Step 3: DashboardSalesPipelineSummary import removed. The
-// component file remains for future Sales-module re-introduction; the
-// summary block is hidden from this dashboard until then.
+  computeCommercialPosition,
+  computeLandingAttention,
+  computeOperationalPosition,
+  computeTileSlices,
+  currentFiscalYear,
+} from '@/lib/dashboard/landingData'
 
 const allMous = mousJson as unknown as MOU[]
+const allPayments = paymentsJson as unknown as Payment[]
+const allPaymentLogs = paymentLogsJson as unknown as PaymentLog[]
 const allSchools = schoolsJson as unknown as School[]
-const allDispatches = dispatchesJson as unknown as Dispatch[]
-const allDispatchRequests = dispatchRequestsJson as unknown as DispatchRequest[]
 const allEscalations = escalationsJson as unknown as Escalation[]
-const allInventoryItems = inventoryItemsJson as unknown as InventoryItem[]
-const allOpportunities = salesOpportunitiesJson as unknown as SalesOpportunity[]
-const allSalesTeam = salesTeamJson as unknown as SalesPerson[]
+const allKitDispatches = kitDispatchesJson as unknown as KitDispatch[]
 
-const DATE_DISPLAY = new Intl.DateTimeFormat('en-GB', {
-  day: '2-digit',
-  month: 'short',
-  year: 'numeric',
-})
-
-interface PageProps {
-  searchParams: Promise<Record<string, string | string[] | undefined>>
-}
-
-export default async function HomePage({ searchParams }: PageProps) {
+export default async function HomePage() {
   const user = await getCurrentUser()
   if (!user) redirect('/login?next=%2F')
 
-  const sp = await searchParams
-  const filters = parseDashboardFilters(sp)
   const now = new Date()
-  const todayLabel = DATE_DISPLAY.format(now)
+  const fy = currentFiscalYear(now)
 
-  const slices = computeSlices({
+  const commercial = computeCommercialPosition({
+    mous: allMous,
+    payments: allPayments,
+    fy,
+    now,
+  })
+  const operational = computeOperationalPosition({
+    mous: allMous,
+    dispatches: allKitDispatches,
+  })
+  const attention = computeLandingAttention({
     mous: allMous,
     schools: allSchools,
-    dispatches: allDispatches,
     escalations: allEscalations,
-    filters,
-  })
-  const cards = buildStatCards({
-    slices,
-    schools: allSchools,
-    inventoryItems: allInventoryItems,
+    dispatches: allKitDispatches,
+    payments: allPayments,
     now,
   })
-  const recentMous = buildRecentMouUpdates({ slices, salesTeam: allSalesTeam })
-  const actionCenter = buildActionCenter({
-    slices,
-    dispatchRequests: allDispatchRequests,
-    inventoryItems: allInventoryItems,
-    now,
-  })
-  const orderRows = buildOrdersTracker({
-    slices, schools: allSchools, mous: allMous, now,
-  })
-  // Gate 3.5 Step 3: salesPipelineSummary still computed for any future
-  // re-introduction but not rendered. The build* call kept for type
-  // stability if tests inspect; the unused variable is suppressed.
-  void buildSalesPipelineSummary({ opportunities: allOpportunities, now })
-  const fyOptions = fiscalYearOptions(allMous)
-  const fiscalYearForHeader = filters.fiscalYear ?? 'all'
-  // Gate 3.5 Step 3: showSalesPipelineSummary computation retired; the
-  // summary block is hidden from every user pending the Sales module
-  // return. The Gate 1 MM6 department-conditional rule is preserved
-  // in git history if it is needed for the unhide.
-  // Gate 1 Step 4 (MM7): products filter under "All Programmes".
-  const productOptions = productOptionsForFilters({
-    inventoryItems: allInventoryItems,
-    dispatches: allDispatches,
+  const tiles = computeTileSlices({
+    mous: allMous,
+    payments: allPayments,
+    paymentLogs: allPaymentLogs,
+    escalations: allEscalations,
+    dispatches: allKitDispatches,
+    commercial,
+    operational,
   })
 
+  // Per CLAUDE.md "Single-<main> rule": the root layout owns the only
+  // <main id="main-content">. This page wraps its content in a <div>
+  // so the skip-link target stays valid.
   return (
     <>
       <TopNav currentPath="/" />
-      <main id="main-content">
-        <DashboardHeader
-          title="Operations Control Dashboard"
-          subtitle="Track school onboarding, orders, shipments, inventory, and communication in one place."
-          todayLabel={todayLabel}
-          fiscalYearOptions={fyOptions}
-          fiscalYear={fiscalYearForHeader}
-          fromDate={filters.fromDate ?? ''}
-          toDate={filters.toDate ?? ''}
+      <div className="mx-auto max-w-screen-xl px-4 py-6 sm:px-6" data-testid="landing-root">
+        <header className="mb-5">
+          <h1 className="font-heading text-2xl font-bold text-brand-navy">
+            GSL Ops Platform
+          </h1>
+          <p className="mt-1 text-sm text-slate-600">
+            Welcome, {user.name}. Today&apos;s signal across commercial,
+            operational, and attention.
+          </p>
+        </header>
+        <ConsolidatedLanding
+          commercial={commercial}
+          operational={operational}
+          attention={attention}
+          finance={tiles.finance}
+          ops={tiles.ops}
+          leadership={tiles.leadership}
+          fyLabel={fy}
         />
-        <DashboardFilterRow
-          activeProgramme={filters.programme}
-          basePath="/"
-          productOptions={productOptions}
-          activeProducts={filters.products}
-        />
-        <div className="mx-auto max-w-screen-2xl space-y-6 px-4 py-6 sm:px-6">
-          <DashboardStatCards cards={cards} />
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-            <div className="lg:col-span-2">
-              <DashboardRecentMous
-                rows={recentMous}
-                totalCount={slices.filteredMous.length}
-              />
-            </div>
-            <DashboardActionCenter data={actionCenter} />
-          </div>
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-            <div className="lg:col-span-2">
-              <DashboardOrdersTracker
-                rows={orderRows}
-                totalCount={slices.filteredDispatches.length}
-              />
-            </div>
-            <DashboardCommunicationPanel buttons={COMMUNICATION_BUTTONS} />
-          </div>
-          <DashboardTemplates templates={COMMUNICATION_TEMPLATE_PREVIEWS} />
-        </div>
-        <footer
-          className="border-t border-border bg-card"
-          data-testid="dashboard-footer"
-        >
-          <div className="mx-auto max-w-screen-2xl px-4 py-4 text-xs text-muted-foreground sm:px-6">
-            Operations Control Dashboard <span aria-hidden>&middot;</span> Internal use only
-          </div>
-        </footer>
-      </main>
+      </div>
     </>
   )
 }
