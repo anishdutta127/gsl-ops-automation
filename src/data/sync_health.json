@@ -1,16 +1,5 @@
 [
   {
-    "at": "2026-05-08T16:19:59.025Z",
-    "kind": "sync",
-    "ok": true,
-    "triggeredBy": "github-actions",
-    "importSummary": null,
-    "healthChecks": null,
-    "anomalies": [
-      "drained=0 remaining=0 duration=131ms"
-    ]
-  },
-  {
     "at": "2026-05-08T17:48:08.658Z",
     "kind": "sync",
     "ok": true,
@@ -571,6 +560,17 @@
     "anomalies": [
       "pi_counter.json failed to parse: raw length 0",
       "pending_updates.json failed to parse: raw length 0"
+    ]
+  },
+  {
+    "at": "2026-05-11T07:57:30.990Z",
+    "kind": "sync",
+    "ok": true,
+    "triggeredBy": "github-actions",
+    "importSummary": null,
+    "healthChecks": null,
+    "anomalies": [
+      "drained=0 remaining=0 duration=123ms"
     ]
   }
 ]
