@@ -1,12 +1,16 @@
 /*
- * /dashboard/sales (Gate 1 Step 3 dept dashboard skeleton).
+ * /dashboard/sales (Gate 1 Step 3 dept dashboard; Gate 3.5 Step 3 placeholder).
  *
- * Sales department lands here on login. Phase 1 ships the layout +
- * dept-aware accent + primary action links. Gate 5 populates KPIs
- * and dept-scoped exception feed.
+ * Sales department lands here on login. Gate 3.5 Step 3 hides the
+ * Sales Pipeline tile (per Anish: Sales module returns later). The
+ * placeholder card surfaces the MOU drafting path for now; the
+ * remaining three primary actions (MOUs, Schools, Approve dispatches)
+ * stay so Sales reps can keep doing their non-pipeline work.
  */
 
+import Link from 'next/link'
 import { redirect } from 'next/navigation'
+import { ArrowRight, Info } from 'lucide-react'
 import { getCurrentUser } from '@/lib/auth/session'
 import { TopNav } from '@/components/ops/TopNav'
 import {
@@ -16,14 +20,14 @@ import {
 
 const PRIMARY_ACTIONS: PrimaryAction[] = [
   {
-    label: 'Sales pipeline',
-    href: '/sales-pipeline',
-    description: 'Pre-MOU opportunities, drafts, and signed registry.',
-  },
-  {
     label: 'Active MOUs',
     href: '/mous',
     description: 'Lifecycle hub for every signed MOU.',
+  },
+  {
+    label: 'Draft new MOU',
+    href: '/mous/new',
+    description: 'Start a new MOU from scratch or for an existing school.',
   },
   {
     label: 'Schools',
@@ -45,11 +49,36 @@ export default async function SalesDashboard() {
     <>
       <TopNav currentPath="/dashboard/sales" />
       <main id="main-content">
+        <div className="mx-auto max-w-screen-xl px-4 pt-6 sm:px-6">
+          <div
+            data-testid="sales-pipeline-placeholder"
+            className="rounded-md border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900"
+          >
+            <div className="flex items-start gap-2">
+              <Info aria-hidden className="mt-0.5 size-4 shrink-0" />
+              <div className="flex-1">
+                <p className="font-medium">Sales module coming in next phase.</p>
+                <p className="mt-1 text-amber-800">
+                  Pre-MOU pipeline tracking is paused while we settle the
+                  operations + finance core. For now, use{' '}
+                  <Link
+                    href="/mous/new"
+                    className="font-semibold underline-offset-2 hover:underline"
+                  >
+                    MOU drafting
+                    <ArrowRight aria-hidden className="ml-0.5 inline size-3" />
+                  </Link>{' '}
+                  to record signed MOUs.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
         <DepartmentDashboardSkeleton
           user={user}
           stageDepartment="sales"
           title="Sales workspace"
-          subtitle="Track your pipeline, signed MOUs, school master, and dispatch approvals."
+          subtitle="Active MOUs, schools, and dispatch approvals. Pipeline tracking returns in the next phase."
           primaryActions={PRIMARY_ACTIONS}
           recentActivity={[]}
         />

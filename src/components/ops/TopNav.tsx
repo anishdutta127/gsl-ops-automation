@@ -2,13 +2,14 @@
  * TopNav (DESIGN.md "Surface 1" + cross-cutting nav).
  *
  * Gate 1 Step 3 rewrites the nav from a flat link list into a
- * workflow-stage bar with seven stages: Pipeline, Active MOUs,
- * Dispatch, Finance, Operations, Reports, Admin. The active stage
- * shows a department-coloured underline and bolder weight. Each
- * stage carries a small dot indicator when the current user's
- * primary department maps to that stage (e.g., a Sales user gets
- * a teal dot under Pipeline; an Ops user gets orange dots under
- * Dispatch and Operations).
+ * workflow-stage bar. Gate 3.5 Step 3 hides the Sales Pipeline
+ * stage entirely (routes stay reachable by direct URL; only the
+ * nav surface is removed). Six stages today: Active MOUs, Dispatch,
+ * Finance, Operations, Reports, Admin. The active stage shows a
+ * department-coloured underline and bolder weight. Each stage
+ * carries a small dot indicator when the current user's primary
+ * department maps to that stage (e.g., an Ops user gets orange dots
+ * under Dispatch and Operations).
  *
  * Three visual principles locked here for every subsequent gate:
  *   1. Workflow-stage navigation, not feature-module navigation.
@@ -37,7 +38,10 @@ interface NavStage {
 }
 
 export const NAV_STAGES: NavStage[] = [
-  { href: '/sales-pipeline', label: 'Pipeline', department: 'sales' },
+  // Gate 3.5 Step 3: Sales Pipeline removed from nav until Sales
+  // module returns. Routes under /sales-pipeline stay reachable
+  // via direct URL for Admin testing; docs/gate-3.5/HIDDEN_ROUTES.md
+  // tracks the un-hide path.
   { href: '/mous', label: 'Active MOUs', department: 'cross-functional' },
   { href: '/dispatch', label: 'Dispatch', department: 'ops' },
   { href: '/finance', label: 'Finance', department: 'finance' },

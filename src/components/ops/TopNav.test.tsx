@@ -25,12 +25,13 @@ function makeUser(overrides: Partial<User> = {}): User {
   }
 }
 
-describe('TopNav: Gate 1 Step 3 workflow-stage nav', () => {
-  it('renders the seven workflow stages for any authenticated user', async () => {
+describe('TopNav: Gate 1 Step 3 workflow-stage nav (Gate 3.5 Step 3 hides Pipeline)', () => {
+  it('renders the six workflow stages for any authenticated user (Pipeline hidden Gate 3.5)', async () => {
     getCurrentUserMock.mockResolvedValue(makeUser({ role: 'SalesRep', department: 'sales' }))
     const { TopNav } = await import('./TopNav')
     const html = renderToStaticMarkup(await TopNav({ currentPath: '/' }))
-    expect(html).toContain('>Pipeline<')
+    // Pipeline removed from nav per docs/gate-3.5/HIDDEN_ROUTES.md.
+    expect(html).not.toContain('>Pipeline<')
     expect(html).toContain('>Active MOUs<')
     expect(html).toContain('>Dispatch<')
     expect(html).toContain('>Finance<')
@@ -39,11 +40,13 @@ describe('TopNav: Gate 1 Step 3 workflow-stage nav', () => {
     expect(html).toContain('>Admin<')
   })
 
-  it('every stage points at the documented route', async () => {
+  it('every visible stage points at the documented route', async () => {
     getCurrentUserMock.mockResolvedValue(makeUser())
     const { TopNav } = await import('./TopNav')
     const html = renderToStaticMarkup(await TopNav({ currentPath: '/' }))
-    expect(html).toContain('href="/sales-pipeline"')
+    // sales-pipeline NOT present in nav (Gate 3.5); routes still
+    // reachable by direct URL per HIDDEN_ROUTES.md.
+    expect(html).not.toContain('href="/sales-pipeline"')
     expect(html).toContain('href="/mous"')
     expect(html).toContain('href="/dispatch"')
     expect(html).toContain('href="/finance"')
@@ -133,13 +136,17 @@ describe('TopNav: department dot indicator', () => {
     expect(html).not.toContain(`data-testid="topnav-dept-dot-${stage}"`)
   }
 
-  it('Sales user gets a dot under Pipeline', async () => {
+  it('Sales user gets no dots (Pipeline stage hidden Gate 3.5; sales is not a stage in any visible nav row)', async () => {
+    // Pre-Gate-3.5 this test asserted a dot under the Pipeline stage.
+    // With Pipeline hidden, Sales users land without any nav-stage dot;
+    // their cross-functional work surfaces through Active MOUs which has
+    // no department dot (department = 'cross-functional').
     getCurrentUserMock.mockResolvedValue(
       makeUser({ role: 'SalesHead', department: 'sales' }),
     )
     const { TopNav } = await import('./TopNav')
     const html = renderToStaticMarkup(await TopNav({ currentPath: '/' }))
-    expectDot(html, 'pipeline')
+    expectNoDot(html, 'pipeline')
     expectNoDot(html, 'dispatch')
     expectNoDot(html, 'finance')
     expectNoDot(html, 'operations')

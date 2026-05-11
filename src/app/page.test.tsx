@@ -216,14 +216,15 @@ describe('/ Operations Control Dashboard (W4-I.5 P2C5)', () => {
     expect(html).not.toContain('data-testid="comm-button-welcome-coming-soon"')
   })
 
-  it('renders the Sales Pipeline summary card with View pipeline CTA', async () => {
+  it('Gate 3.5 Step 3: Sales Pipeline summary card is hidden from the dashboard', async () => {
+    // Per Anish, the Sales module returns later; the Pipeline summary
+    // block is removed from this dashboard until then. Component file
+    // preserved for the un-hide path (docs/gate-3.5/HIDDEN_ROUTES.md).
     getCurrentUserMock.mockResolvedValue(admin())
     const { default: DashboardPage } = await import('./page')
     const html = renderToStaticMarkup(await DashboardPage({ searchParams: noSp }))
-    expect(html).toContain('data-testid="dashboard-sales-pipeline-summary"')
-    expect(html).toContain('Sales Pipeline')
-    expect(html).toContain('data-testid="sales-pipeline-summary-cta"')
-    expect(html).toContain('View pipeline')
+    expect(html).not.toContain('data-testid="dashboard-sales-pipeline-summary"')
+    expect(html).not.toContain('data-testid="sales-pipeline-summary-cta"')
   })
 
   it('renders the dashboard footer + the Open Kanban Board CTA in the header', async () => {

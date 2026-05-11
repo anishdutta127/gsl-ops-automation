@@ -59,7 +59,9 @@ import { DashboardActionCenter } from '@/components/ops/dashboard/DashboardActio
 import { DashboardOrdersTracker } from '@/components/ops/dashboard/DashboardOrdersTracker'
 import { DashboardCommunicationPanel } from '@/components/ops/dashboard/DashboardCommunicationPanel'
 import { DashboardTemplates } from '@/components/ops/dashboard/DashboardTemplates'
-import { DashboardSalesPipelineSummary } from '@/components/ops/dashboard/DashboardSalesPipelineSummary'
+// Gate 3.5 Step 3: DashboardSalesPipelineSummary import removed. The
+// component file remains for future Sales-module re-introduction; the
+// summary block is hidden from this dashboard until then.
 
 const allMous = mousJson as unknown as MOU[]
 const allSchools = schoolsJson as unknown as School[]
@@ -112,15 +114,16 @@ export default async function HomePage({ searchParams }: PageProps) {
   const orderRows = buildOrdersTracker({
     slices, schools: allSchools, mous: allMous, now,
   })
-  const salesPipelineSummary = buildSalesPipelineSummary({
-    opportunities: allOpportunities, now,
-  })
+  // Gate 3.5 Step 3: salesPipelineSummary still computed for any future
+  // re-introduction but not rendered. The build* call kept for type
+  // stability if tests inspect; the unused variable is suppressed.
+  void buildSalesPipelineSummary({ opportunities: allOpportunities, now })
   const fyOptions = fiscalYearOptions(allMous)
   const fiscalYearForHeader = filters.fiscalYear ?? 'all'
-  // Gate 1 Step 4 (MM6): hide the Sales pipeline summary for Ops
-  // department users. Sales / Finance / Admin / Leadership see it
-  // (Sales owns the funnel; the rest monitor cross-functionally).
-  const showSalesPipelineSummary = (user.department ?? null) !== 'ops'
+  // Gate 3.5 Step 3: showSalesPipelineSummary computation retired; the
+  // summary block is hidden from every user pending the Sales module
+  // return. The Gate 1 MM6 department-conditional rule is preserved
+  // in git history if it is needed for the unhide.
   // Gate 1 Step 4 (MM7): products filter under "All Programmes".
   const productOptions = productOptionsForFilters({
     inventoryItems: allInventoryItems,
@@ -167,9 +170,6 @@ export default async function HomePage({ searchParams }: PageProps) {
             <DashboardCommunicationPanel buttons={COMMUNICATION_BUTTONS} />
           </div>
           <DashboardTemplates templates={COMMUNICATION_TEMPLATE_PREVIEWS} />
-          {showSalesPipelineSummary ? (
-            <DashboardSalesPipelineSummary data={salesPipelineSummary} />
-          ) : null}
         </div>
         <footer
           className="border-t border-border bg-card"
