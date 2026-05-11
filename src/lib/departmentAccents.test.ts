@@ -31,35 +31,33 @@ describe('departmentAccents: accentFor', () => {
   })
 })
 
-describe('departmentAccents: dashboardPathForDepartment', () => {
-  it('routes sales to /dashboard/sales', () => {
-    expect(dashboardPathForDepartment({ department: 'sales', role: 'Admin' })).toBe(
-      '/dashboard/sales',
-    )
+describe('departmentAccents: dashboardPathForDepartment (Gate 3.6 universal landing)', () => {
+  // Every role + department now routes to / during testing. The
+  // consolidated landing serves Sales / Ops / Finance / Leadership /
+  // Admin from the same surface; drill-down tiles route to the
+  // dedicated dept dashboards one click away.
+  it('routes sales to /', () => {
+    expect(dashboardPathForDepartment({ department: 'sales', role: 'Admin' })).toBe('/')
   })
 
-  it('routes ops to /dashboard/ops', () => {
-    expect(dashboardPathForDepartment({ department: 'ops', role: 'Admin' })).toBe(
-      '/dashboard/ops',
-    )
+  it('routes ops to /', () => {
+    expect(dashboardPathForDepartment({ department: 'ops', role: 'Admin' })).toBe('/')
   })
 
-  it('routes finance to /dashboard/finance', () => {
+  it('routes finance to /', () => {
     expect(
       dashboardPathForDepartment({ department: 'finance', role: 'Admin' }),
-    ).toBe('/dashboard/finance')
+    ).toBe('/')
   })
 
-  it('routes Leadership (department null) to /dashboard/leadership', () => {
+  it('routes Leadership (department null) to /', () => {
     expect(
       dashboardPathForDepartment({ department: null, role: 'Leadership' }),
-    ).toBe('/dashboard/leadership')
+    ).toBe('/')
   })
 
   it('routes Admin (department null) to /', () => {
-    expect(dashboardPathForDepartment({ department: null, role: 'Admin' })).toBe(
-      '/',
-    )
+    expect(dashboardPathForDepartment({ department: null, role: 'Admin' })).toBe('/')
   })
 
   it('routes other roles with department null to /', () => {

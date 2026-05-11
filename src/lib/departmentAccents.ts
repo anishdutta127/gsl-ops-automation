@@ -111,18 +111,23 @@ export function accentFor(
 }
 
 /**
- * Maps a User's department to the dashboard route the login flow
- * should land them on. Sales / Ops / Finance get a dedicated stage
- * dashboard; Admin (department null) lands on the Operations Control
- * Dashboard at `/`; Leadership gets a dedicated read-most surface.
+ * Maps a User's department to the post-login landing route.
+ *
+ * Gate 3.6 collapses every role + department to the consolidated
+ * landing at `/`. The landing's drill-down tiles route each
+ * department to its dedicated workspace one click away; the
+ * per-department dashboard routes (/dashboard/sales,
+ * /dashboard/ops, /dashboard/finance, /dashboard/leadership)
+ * stay reachable for direct navigation. Production lockdown
+ * would restore per-department routing here; the testing-mode
+ * default is universal.
+ *
+ * `args` retained for call-site stability and future un-collapse;
+ * the unused values are intentional during testing mode.
  */
-export function dashboardPathForDepartment(args: {
+export function dashboardPathForDepartment(_args: {
   department: Department
   role: 'Admin' | 'Leadership' | string
 }): string {
-  if (args.department === 'sales') return '/dashboard/sales'
-  if (args.department === 'ops') return '/dashboard/ops'
-  if (args.department === 'finance') return '/dashboard/finance'
-  if (args.role === 'Leadership') return '/dashboard/leadership'
   return '/'
 }
