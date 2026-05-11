@@ -1,16 +1,5 @@
 [
   {
-    "at": "2026-05-08T08:26:31.700Z",
-    "kind": "sync",
-    "ok": true,
-    "triggeredBy": "github-actions",
-    "importSummary": null,
-    "healthChecks": null,
-    "anomalies": [
-      "drained=0 remaining=0 duration=125ms"
-    ]
-  },
-  {
     "at": "2026-05-08T10:03:13.469Z",
     "kind": "sync",
     "ok": true,
@@ -547,6 +536,17 @@
     "healthChecks": null,
     "anomalies": [
       "drained=0 remaining=0 duration=121ms"
+    ]
+  },
+  {
+    "at": "2026-05-11T04:20:53.902Z",
+    "kind": "sync",
+    "ok": true,
+    "triggeredBy": "github-actions",
+    "importSummary": null,
+    "healthChecks": null,
+    "anomalies": [
+      "drained=0 remaining=0 duration=139ms"
     ]
   }
 ]
