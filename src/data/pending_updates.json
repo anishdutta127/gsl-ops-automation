@@ -1098,5 +1098,102 @@
       ]
     },
     "retryCount": 0
+  },
+  {
+    "id": "08289606-56e3-4021-84d4-e4f31bb8c653",
+    "queuedAt": "2026-05-12T13:21:37.815Z",
+    "queuedBy": "misba.m",
+    "entity": "mou",
+    "operation": "update",
+    "payload": {
+      "id": "MOU-STEAM-2627-026",
+      "schoolId": "SCH-B_I_T_GLOBAL_SCHOOL",
+      "schoolName": "B I T Global School",
+      "programme": "STEAM",
+      "programmeSubType": null,
+      "schoolScope": "SINGLE",
+      "schoolGroupId": null,
+      "status": "Active",
+      "academicYear": "2026-27",
+      "startDate": "2026-04-01",
+      "endDate": "2028-03-31",
+      "studentsMou": 700,
+      "studentsActual": 700,
+      "studentsVariance": 0,
+      "studentsVariancePct": 0,
+      "spWithoutTax": 1200,
+      "spWithTax": 1416,
+      "contractValue": 991200,
+      "received": 0,
+      "tds": 0,
+      "balance": 991200,
+      "receivedPct": 0,
+      "paymentSchedule": "50-50 half-yearly",
+      "trainerModel": "TT",
+      "salesPersonId": "sp-tanuj",
+      "templateVersion": null,
+      "generatedAt": null,
+      "notes": "Status: Retained",
+      "daysToExpiry": 710,
+      "auditLog": [
+        {
+          "timestamp": "2026-04-27T12:00:00.000Z",
+          "user": "system",
+          "action": "auto-link-exact-match",
+          "notes": "Imported from gsl-mou-system; auto-linked to school SCH-B_I_T_GLOBAL_SCHOOL."
+        },
+        {
+          "timestamp": "2026-04-27T18:01:00.000Z",
+          "user": "system-w4-a-2",
+          "action": "mou-cohort-status-changed",
+          "before": {
+            "cohortStatus": null
+          },
+          "after": {
+            "cohortStatus": "active"
+          },
+          "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
+        },
+        {
+          "timestamp": "2026-03-02T06:51:22.283Z",
+          "user": "system-w4c-backfill",
+          "action": "intake-captured",
+          "notes": "W4-C.4 backfill from Google Form row 8 timestamped 2026-03-02T06:51:22.283Z. (re-mirrored to correct MOU via W4-C.7)"
+        },
+        {
+          "timestamp": "2026-04-28T10:00:00.000Z",
+          "user": "system-w4c-7",
+          "action": "intake-record-corrected-w4c7",
+          "before": {
+            "mouId": "MOU-STEAM-2627-011",
+            "mappedSchoolName": "The Learning Sanctuary"
+          },
+          "after": {
+            "mouId": "MOU-STEAM-2627-026",
+            "mappedSchoolName": "B I T Global School"
+          },
+          "notes": "BIT Global School -> -026 (B I T Global School) not -011 (The Learning Sanctuary). Form school: BIT GLOBAL SCHOOL. Moved IN to this MOU."
+        },
+        {
+          "timestamp": "2026-05-12T13:21:37.815Z",
+          "user": "misba.m",
+          "action": "actuals-confirmed",
+          "before": {
+            "studentsActual": null,
+            "studentsVariance": null,
+            "studentsVariancePct": null
+          },
+          "after": {
+            "studentsActual": 700,
+            "studentsVariance": 0,
+            "studentsVariancePct": 0
+          },
+          "notes": "NA"
+        }
+      ],
+      "cohortStatus": "active",
+      "delayNotes": null
+    },
+    "retryCount": 0
   }
 ]
