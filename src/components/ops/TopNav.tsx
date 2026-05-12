@@ -28,6 +28,7 @@ import { getCurrentUser } from '@/lib/auth/session'
 import type { Department, User } from '@/lib/types'
 import { accentFor, type StageDepartment } from '@/lib/departmentAccents'
 import { NotificationBell } from './NotificationBell'
+import { QueueFreshnessIndicator } from './QueueFreshnessIndicator'
 import { TopNavMobile } from './TopNavMobile'
 
 interface NavStage {
@@ -193,6 +194,7 @@ export async function TopNav({ currentPath }: TopNavProps = {}) {
             Help
           </Link>
           <span aria-hidden className="hidden h-6 w-px bg-white/20 sm:inline-block" />
+          {user ? <QueueFreshnessIndicator /> : null}
           {user ? <NotificationBell user={user} /> : null}
           {user ? (
             <span className="hidden text-sm text-white/80 sm:inline" aria-label="Signed in as">

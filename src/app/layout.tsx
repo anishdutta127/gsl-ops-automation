@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import "./globals.css"
 import { Montserrat, Open_Sans } from "next/font/google"
 import { TooltipProvider } from "@/components/ui/tooltip"
+import { Toaster } from "@/components/ui/sonner"
 import { cn } from "@/lib/utils"
 
 /*
@@ -44,6 +45,7 @@ export default function RootLayout({
         <TooltipProvider>
           <main id="main-content">{children}</main>
         </TooltipProvider>
+        <Toaster position="top-right" richColors />
       </body>
     </html>
   )
