@@ -17,7 +17,11 @@ import { NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canEditFinanceData, canRaiseDispatch } from '@/lib/access'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
-import type { VexDispatch, VexDispatchStatusV3 } from '@/lib/mouSystem/types'
+import type {
+  AuditEntry,
+  VexDispatch,
+  VexDispatchStatusV3,
+} from '@/lib/mouSystem/types'
 import vexDispatchesJson from '@/data/vex_dispatches.json'
 
 const allDispatches = vexDispatchesJson as unknown as VexDispatch[]
@@ -120,28 +124,33 @@ export async function POST(request: Request, ctx: RouteContext) {
   const warehouseEmailSent = body.warehouseEmailSent === true
   const now = new Date().toISOString()
 
+  // Build the full VexDispatch record with the new status + metadata
+  // + audit entry. The Gate 5A.5 fix replaced the partial-diff payload
+  // (which left payload.id undefined and was silently skipped by the
+  // drain) with the full id-carrying record.
+  const auditEntry: AuditEntry = {
+    timestamp: now,
+    user: user.name,
+    action: 'status_change',
+    before: { status: dispatch.status },
+    after: { status },
+    notes: warehouseEmailSent ? 'warehouse email button clicked' : undefined,
+  }
+  const nextDispatch: VexDispatch = {
+    ...dispatch,
+    status,
+    warehouseEmailSentAt: warehouseEmailSent ? now : dispatch.warehouseEmailSentAt,
+    warehouseEmailSentBy: warehouseEmailSent ? user.name : dispatch.warehouseEmailSentBy,
+    invoicedAt: status === 'Invoiced' ? now : dispatch.invoicedAt,
+    auditLog: [...(dispatch.auditLog ?? []), auditEntry],
+  }
+
   try {
     await enqueueUpdate({
       queuedBy: user.id,
       entity: 'vexDispatch',
       operation: 'update',
-      payload: {
-        vexDispatchId: dispatch.id,
-        status,
-        warehouseEmailSentAt: warehouseEmailSent ? now : undefined,
-        warehouseEmailSentBy: warehouseEmailSent ? user.name : undefined,
-        invoicedAt: status === 'Invoiced' ? now : undefined,
-        audit: {
-          timestamp: now,
-          user: user.name,
-          action: 'status_change',
-          before: { status: dispatch.status },
-          after: { status },
-          notes: warehouseEmailSent
-            ? 'warehouse email button clicked'
-            : undefined,
-        },
-      },
+      payload: nextDispatch as unknown as Record<string, unknown>,
     })
   } catch (e) {
     return NextResponse.json(

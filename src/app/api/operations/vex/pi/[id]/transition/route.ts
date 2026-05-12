@@ -13,7 +13,7 @@ import { NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canEditFinanceData } from '@/lib/access'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
-import type { VexPi, VexPiStatus } from '@/lib/mouSystem/types'
+import type { AuditEntry, VexPi, VexPiStatus } from '@/lib/mouSystem/types'
 import vexPisJson from '@/data/vex_pis.json'
 
 const allPis = vexPisJson as unknown as VexPi[]
@@ -68,22 +68,27 @@ export async function POST(request: Request, ctx: RouteContext) {
   if (status === pi.status) {
     return NextResponse.json({ ok: true, status })
   }
+  // Build the full VexPi record with the new status + audit append.
+  // The drain's applyOneToList replaces by payload.id; we must pass
+  // the full record, not a partial diff (Gate 5A.5 persistence fix).
+  const auditEntry: AuditEntry = {
+    timestamp: new Date().toISOString(),
+    user: user.name,
+    action: 'status_change',
+    before: { status: pi.status },
+    after: { status },
+  }
+  const nextPi: VexPi = {
+    ...pi,
+    status,
+    auditLog: [...(pi.auditLog ?? []), auditEntry],
+  }
   try {
     await enqueueUpdate({
       queuedBy: user.id,
       entity: 'vexPi',
       operation: 'update',
-      payload: {
-        vexPiId: pi.id,
-        status,
-        audit: {
-          timestamp: new Date().toISOString(),
-          user: user.name,
-          action: 'status_change',
-          before: { status: pi.status },
-          after: { status },
-        },
-      },
+      payload: nextPi as unknown as Record<string, unknown>,
     })
   } catch (e) {
     return NextResponse.json(

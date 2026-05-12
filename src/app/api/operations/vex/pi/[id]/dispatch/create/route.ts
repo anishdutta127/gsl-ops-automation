@@ -202,11 +202,15 @@ export async function POST(request: Request, ctx: RouteContext) {
   }
 
   try {
+    // Pass the full VexDispatch record (id-carrying) so the drain's
+    // applyOneToList matches on payload.id. Wrapping inside
+    // { vexDispatch: dispatch } left payload.id undefined and the
+    // drain silently skipped (Gate 5A.5 persistence fix).
     await enqueueUpdate({
       queuedBy: user.id,
       entity: 'vexDispatch',
       operation: 'create',
-      payload: { vexDispatch: dispatch as unknown as Record<string, unknown> },
+      payload: dispatch as unknown as Record<string, unknown>,
     })
   } catch (e) {
     return NextResponse.json(

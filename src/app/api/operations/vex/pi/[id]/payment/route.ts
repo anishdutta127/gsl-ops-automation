@@ -10,11 +10,17 @@
  * logic on apply.
  */
 
+import crypto from 'node:crypto'
 import { NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canEditFinanceData } from '@/lib/access'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
-import type { PaymentMode, VexPi } from '@/lib/mouSystem/types'
+import type {
+  AuditEntry,
+  PaymentMode,
+  VexPi,
+  VexPiStatus,
+} from '@/lib/mouSystem/types'
 import vexPisJson from '@/data/vex_pis.json'
 
 const allPis = vexPisJson as unknown as VexPi[]
@@ -92,23 +98,71 @@ export async function POST(request: Request, ctx: RouteContext) {
     )
   }
 
+  // The Gate 5A.5 fix mutates the parent VexPi (paymentReceivedAmount
+  // + paymentLogIds + auditLog + derived status) and enqueues the
+  // full record. The paymentLog row carries an id so the drain can
+  // apply it to payment_logs.json by id. The pre-fix shape enqueued
+  // a paymentLog payload with no id; the drain silently skipped it
+  // and the parent VexPi balance never updated.
+  const logId = `VEXPL-${crypto.randomUUID().slice(0, 8)}`
+  const loggedAt = new Date().toISOString()
+  const newPaymentReceived = pi.paymentReceivedAmount + total
+  const newStatus: VexPiStatus = (() => {
+    if (newPaymentReceived >= pi.total) {
+      return pi.status === 'Completed' ? pi.status : 'Delivery Pending'
+    }
+    return pi.status === 'Generated' ? 'Payment Pending' : pi.status
+  })()
+  const piAudit: AuditEntry = {
+    timestamp: loggedAt,
+    user: user.name,
+    action: 'update',
+    before: {
+      paymentReceivedAmount: pi.paymentReceivedAmount,
+      status: pi.status,
+    },
+    after: {
+      paymentReceivedAmount: newPaymentReceived,
+      status: newStatus,
+    },
+    notes: `Payment received Rs ${total} (bank ${bankAmount} + TDS ${tdsAmount}) via ${mode}.`,
+  }
+  const nextPi: VexPi = {
+    ...pi,
+    paymentReceivedAmount: Math.round(newPaymentReceived * 100) / 100,
+    paymentLogIds: [...(pi.paymentLogIds ?? []), logId],
+    status: newStatus,
+    auditLog: [...(pi.auditLog ?? []), piAudit],
+  }
+  const paymentLogRecord = {
+    id: logId,
+    scope: 'vex' as const,
+    vexPiId: pi.id,
+    date,
+    bankAmount,
+    tdsAmount,
+    total,
+    mode,
+    reference,
+    loggedBy: user.name,
+    loggedAt,
+  }
+
   try {
+    // Two queue writes: the parent VexPi (so the balance + status
+    // reflect immediately on the next drain) and the paymentLog row
+    // (so /finance/payment-logs surfaces the receipt).
+    await enqueueUpdate({
+      queuedBy: user.id,
+      entity: 'vexPi',
+      operation: 'update',
+      payload: nextPi as unknown as Record<string, unknown>,
+    })
     await enqueueUpdate({
       queuedBy: user.id,
       entity: 'paymentLog',
       operation: 'create',
-      payload: {
-        scope: 'vex',
-        vexPiId: pi.id,
-        date,
-        bankAmount,
-        tdsAmount,
-        total,
-        mode,
-        reference,
-        loggedBy: user.name,
-        loggedAt: new Date().toISOString(),
-      },
+      payload: paymentLogRecord as unknown as Record<string, unknown>,
     })
   } catch (e) {
     return NextResponse.json(

@@ -247,11 +247,16 @@ export async function POST(request: Request) {
   }
 
   try {
+    // Pass the full VexPi record so the drain's applyOneToList can
+    // match on payload.id. Wrapping inside { vexPi: pi } leaves
+    // payload.id undefined and the drain silently skips the entry,
+    // which burned the PI counter without persisting the record
+    // (Gate 5A.5 persistence bug).
     await enqueueUpdate({
       queuedBy: user.id,
       entity: 'vexPi',
       operation: 'create',
-      payload: { vexPi: pi as unknown as Record<string, unknown> },
+      payload: pi as unknown as Record<string, unknown>,
     })
   } catch (e) {
     return NextResponse.json(
