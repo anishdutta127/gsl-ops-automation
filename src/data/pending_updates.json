@@ -537,5 +537,53 @@
       "delayNotes": null
     },
     "retryCount": 0
+  },
+  {
+    "id": "5a65934d-2b5f-4be0-8a81-597efd51439f",
+    "queuedAt": "2026-05-12T13:07:41.312Z",
+    "queuedBy": "misba.m",
+    "entity": "intakeRecord",
+    "operation": "create",
+    "payload": {
+      "id": "3647c2fd-df47-4ca1-9749-5c8a6485c679",
+      "mouId": "MOU-STEAM-2627-048",
+      "completedAt": "2026-05-12T13:07:41.312Z",
+      "completedBy": "misba.m",
+      "salesOwnerId": "sp-prodipto",
+      "location": "Kolkata",
+      "grades": "1 to 5",
+      "recipientName": "Misba PK",
+      "recipientDesignation": "cordinator",
+      "recipientEmail": "pkmisba@gmail.com",
+      "studentsAtIntake": 16,
+      "durationYears": 2,
+      "startDate": "2026-04-01",
+      "endDate": "2028-03-31",
+      "physicalSubmissionStatus": "Pending",
+      "softCopySubmissionStatus": "Pending",
+      "productConfirmed": "STEAM",
+      "gslTrainingMode": "GSL Trainer",
+      "schoolPointOfContactName": "Misba Musthafa PK",
+      "schoolPointOfContactPhone": "+919867695258",
+      "signedMouUrl": "https://maftechnologies-my.sharepoint.com/:x:/g/personal/misba_m_getsetlearn_info/IQD7sD_bM83gTJrWm84cDjlSATeLccpH_IFGmKNQTQw5sR4?e=8XJ7jb",
+      "thankYouEmailSentAt": null,
+      "gradeBreakdown": null,
+      "rechargeableBatteries": null,
+      "auditLog": [
+        {
+          "timestamp": "2026-05-12T13:07:41.312Z",
+          "user": "misba.m",
+          "action": "intake-captured",
+          "after": {
+            "salesOwnerId": "sp-prodipto",
+            "studentsAtIntake": 16,
+            "durationYears": 2,
+            "productConfirmed": "STEAM",
+            "gslTrainingMode": "GSL Trainer"
+          }
+        }
+      ]
+    },
+    "retryCount": 0
   }
 ]
