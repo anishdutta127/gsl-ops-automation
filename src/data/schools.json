@@ -1,7 +1,7 @@
 [
   {
     "id": "SCH-SAGAYA_MATHA_MATRICU",
-    "name": "*Sagaya Matha Matriculation Higher Secondary School",
+    "name": "Sagaya Matha Matriculation Higher Secondary School",
     "legalEntity": null,
     "city": "Chennai",
     "state": "Tamil Nadu",
@@ -22,6 +22,18 @@
         "user": "system",
         "action": "create",
         "notes": "Imported from gsl-mou-system as part of Week 3 backfill."
+      },
+      {
+        "timestamp": "2026-05-12T12:50:21.487Z",
+        "user": "misba.m",
+        "action": "update",
+        "before": {
+          "name": "*Sagaya Matha Matriculation Higher Secondary School"
+        },
+        "after": {
+          "name": "Sagaya Matha Matriculation Higher Secondary School"
+        },
+        "notes": "Edited fields: name."
       }
     ]
   },
