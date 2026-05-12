@@ -13,7 +13,7 @@
 
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, CheckCircle2 } from 'lucide-react'
 import type {
   Adjustment,
   Escalation,
@@ -57,6 +57,7 @@ import { RenewalNeededPanel } from '@/components/dashboard/finance/RenewalNeeded
 import { AmountReceiptSummary } from '@/components/dashboard/finance/AmountReceiptSummary'
 import { VexKitOrdersTile } from '@/components/dashboard/finance/VexKitOrdersTile'
 import { ProgrammeBreakdown } from '@/components/dashboard/finance/ProgrammeBreakdown'
+import { EmptyState } from '@/components/ops/EmptyState'
 
 const allMous = mousJson as unknown as MOU[]
 const allPayments = paymentsJson as unknown as Payment[]
@@ -305,9 +306,11 @@ function PaymentsAttentionCard({
         ))}
       </div>
       {unmatched.length === 0 ? (
-        <p className="mt-3 text-sm text-slate-600">
-          No unmatched bank entries. Reconciliation is current.
-        </p>
+        <EmptyState
+          icon={<CheckCircle2 aria-hidden className="size-5 text-signal-ok" />}
+          title="No unmatched bank entries."
+          description="Reconciliation is current."
+        />
       ) : (
         <ul className="mt-3 divide-y divide-border">
           {unmatched.map((pl) => {

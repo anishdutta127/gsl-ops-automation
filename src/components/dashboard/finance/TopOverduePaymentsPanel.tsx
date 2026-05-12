@@ -13,6 +13,7 @@ import type {
   Programme,
 } from '@/lib/types'
 import type { TopOverdueRow } from '@/lib/dashboard/financeDashboardData'
+import { EmptyState } from '@/components/ops/EmptyState'
 
 interface Props {
   rows: TopOverdueRow[]
@@ -56,10 +57,10 @@ export function TopOverduePaymentsPanel({ rows }: Props) {
         </Link>
       </div>
       {rows.length === 0 ? (
-        <p className="mt-4 flex items-center gap-2 text-sm text-slate-600">
-          <CheckCircle2 aria-hidden className="size-4 text-signal-ok" />
-          No overdue payments.
-        </p>
+        <EmptyState
+          icon={<CheckCircle2 aria-hidden className="size-5 text-signal-ok" />}
+          title="No overdue payments."
+        />
       ) : (
         <ul className="mt-3 flex flex-col gap-2">
           {rows.map((row) => (

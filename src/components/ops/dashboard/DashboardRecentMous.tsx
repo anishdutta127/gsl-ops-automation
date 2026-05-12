@@ -24,6 +24,7 @@ import type { ReactNode } from 'react'
 import type { MOU } from '@/lib/types'
 import type { RecentMouUpdate } from '@/lib/dashboard/dashboardData'
 import { StatusChip, type StatusChipTone } from '@/components/ops/StatusChip'
+import { EmptyState } from '@/components/ops/EmptyState'
 
 const DATE_FMT = new Intl.DateTimeFormat('en-GB', {
   day: '2-digit',
@@ -103,9 +104,10 @@ export function DashboardRecentMous({
         </Link>
       </header>
       {rows.length === 0 ? (
-        <p className="px-4 py-6 text-sm text-muted-foreground">
-          No MOUs match the current filters.
-        </p>
+        <EmptyState
+          title="No MOUs match the current filters."
+          description="Try clearing a filter to widen the view."
+        />
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full min-w-[720px] text-sm">

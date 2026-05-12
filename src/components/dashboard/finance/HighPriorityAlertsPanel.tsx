@@ -10,9 +10,20 @@
 import Link from 'next/link'
 import { ArrowRight, CheckCircle2 } from 'lucide-react'
 import type { HighPriorityAlert } from '@/lib/dashboard/financeDashboardData'
+import { EmptyState } from '@/components/ops/EmptyState'
+import { StatusChip, type StatusChipTone } from '@/components/ops/StatusChip'
 
 interface Props {
   alerts: HighPriorityAlert[]
+}
+
+const SEVERITY_TONE: Record<
+  'critical' | 'high' | 'medium',
+  { tone: StatusChipTone; label: string }
+> = {
+  critical: { tone: 'alert', label: 'Critical' },
+  high: { tone: 'attention', label: 'High' },
+  medium: { tone: 'neutral', label: 'Medium' },
 }
 
 export function HighPriorityAlertsPanel({ alerts }: Props) {
@@ -37,10 +48,11 @@ export function HighPriorityAlertsPanel({ alerts }: Props) {
         </Link>
       </div>
       {alerts.length === 0 ? (
-        <p className="mt-4 flex items-center gap-2 text-sm text-slate-600">
-          <CheckCircle2 aria-hidden className="size-4 text-signal-ok" />
-          No high-priority alerts. The dashboard view is clean.
-        </p>
+        <EmptyState
+          icon={<CheckCircle2 aria-hidden className="size-5 text-signal-ok" />}
+          title="No high-priority alerts."
+          description="The dashboard view is clean."
+        />
       ) : (
         <ul className="mt-4 grid grid-cols-1 gap-3 lg:grid-cols-2">
           {alerts.map((alert) => (
@@ -72,23 +84,6 @@ export function HighPriorityAlertsPanel({ alerts }: Props) {
 }
 
 function SeverityPill({ severity }: { severity: 'critical' | 'high' | 'medium' }) {
-  if (severity === 'critical') {
-    return (
-      <span className="inline-flex items-center rounded-full bg-signal-alert/15 px-2 py-0.5 text-[11px] font-semibold text-signal-alert">
-        Critical
-      </span>
-    )
-  }
-  if (severity === 'high') {
-    return (
-      <span className="inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-semibold text-amber-700">
-        High
-      </span>
-    )
-  }
-  return (
-    <span className="inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-700">
-      Medium
-    </span>
-  )
+  const meta = SEVERITY_TONE[severity]
+  return <StatusChip tone={meta.tone} label={meta.label} withDot={false} />
 }

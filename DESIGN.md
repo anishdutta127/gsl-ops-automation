@@ -455,3 +455,14 @@ When you encounter a third drift form, add the alias entry, document it here in 
 ### First-party scope
 
 `src/components/ui/` contains shadcn primitives copied from the upstream registry; conventions follow upstream and the directory is treated as vendored (similar to `node_modules` for lint and review purposes). First-party Ops conventions in this doc apply only to `src/components/ops/`, `src/app/`, and `src/lib/`. Updates to a `src/components/ui/` primitive happen via `npx shadcn@latest add <component>` re-fetch (with manual review) or via a focused customisation commit that documents the divergence from upstream.
+
+---
+
+## Visual conventions (Gate 5A polish pass)
+
+Consolidation pass `<commit>` standardises the primitives every new surface should reach for first.
+
+- **EmptyState** is the canonical empty-state component: `src/components/ops/EmptyState.tsx`. New "no rows" branches use it rather than ad-hoc `<p>` blocks. Inline copy is appropriate only when the empty state carries imperative next-step instructions (e.g. "Generate a PI on..." with an embedded link).
+- **StatusChip** is the canonical status pill: `src/components/ops/StatusChip.tsx`. Severity, status, and lifecycle pills route through it. Tone vocabulary: `ok | attention | alert | neutral | navy | teal`. Domain-specific mappings live alongside the consuming page (e.g. `src/lib/ui/escalationTones.ts`).
+- **Colour tokens only.** No raw hex in components. The five first-party tokens are `brand-navy`, `brand-teal`, `signal-ok`, `signal-attention`, `signal-alert`, plus the `signal-neutral` slate. Documented exceptions (inline-hex required): the email templates `StatusBlock.tsx` and `feedbackRequest.ts` per email-client compatibility.
+- **min-h-11 on interactive elements.** Buttons and link-buttons targeted by mobile taps carry the class for WCAG AA touch targets. Icon-only chips and inline chip-styled actions are out of scope (decoratively small).

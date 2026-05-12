@@ -10,6 +10,7 @@ import Link from 'next/link'
 import { ArrowRight, CheckCircle2 } from 'lucide-react'
 import { formatDate } from '@/lib/format'
 import { StatusChip, type StatusChipTone } from '@/components/ops/StatusChip'
+import { EmptyState } from '@/components/ops/EmptyState'
 import type { MOU, Programme } from '@/lib/types'
 import type { RenewalRow } from '@/lib/dashboard/financeDashboardData'
 
@@ -78,10 +79,10 @@ export function RenewalNeededPanel({
         </Link>
       </div>
       {rows.length === 0 ? (
-        <p className="mt-4 flex items-center gap-2 text-sm text-slate-600">
-          <CheckCircle2 aria-hidden className="size-4 text-signal-ok" />
-          No MOUs need renewal in the next 30 days.
-        </p>
+        <EmptyState
+          icon={<CheckCircle2 aria-hidden className="size-5 text-signal-ok" />}
+          title="No MOUs need renewal in the next 30 days."
+        />
       ) : (
         <ul className="mt-3 flex flex-col gap-2">
           {rows.map((row) => (
@@ -129,23 +130,17 @@ function ExpiryChip({
   daysToExpiry: number | null
 }) {
   if (daysToExpiry === null) {
-    return (
-      <span className="inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-700">
-        no end date
-      </span>
-    )
+    return <StatusChip tone="neutral" label="no end date" withDot={false} />
   }
   if (isExpired) {
     const ago = Math.abs(daysToExpiry)
-    return (
-      <span className="inline-flex items-center rounded-full bg-signal-alert/15 px-2 py-0.5 text-[11px] font-semibold text-signal-alert">
-        expired {ago}d ago
-      </span>
-    )
+    return <StatusChip tone="alert" label={`expired ${ago}d ago`} withDot={false} />
   }
   return (
-    <span className="inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-semibold text-amber-700">
-      expires in {daysToExpiry}d
-    </span>
+    <StatusChip
+      tone="attention"
+      label={`expires in ${daysToExpiry}d`}
+      withDot={false}
+    />
   )
 }
