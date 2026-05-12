@@ -115,14 +115,14 @@ export function DashboardFilterRow({
           <div className="flex items-center gap-2">
             <button
               type="submit"
-              className="inline-flex min-h-9 items-center rounded-md bg-brand-navy px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-navy/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
+              className="inline-flex min-h-11 items-center rounded-md bg-brand-navy px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-navy/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
               data-testid="dashboard-apply"
             >
               Apply Filters
             </button>
             <Link
               href={basePath}
-              className="inline-flex min-h-9 items-center rounded-md border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground hover:bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
+              className="inline-flex min-h-11 items-center rounded-md border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground hover:bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
               data-testid="dashboard-reset"
             >
               Reset

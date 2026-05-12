@@ -9,6 +9,7 @@
 
 import type { VexProduct } from '@/lib/mouSystem/types'
 import { EmptyState } from '@/components/ops/EmptyState'
+import { StatusChip } from '@/components/ops/StatusChip'
 
 export function VexProductsTable({ products }: { products: VexProduct[] }) {
   if (products.length === 0) {
@@ -46,16 +47,11 @@ export function VexProductsTable({ products }: { products: VexProduct[] }) {
                   : `Rs ${p.defaultUnitPrice.toLocaleString('en-IN')}`}
               </td>
               <td className="px-3 py-2">
-                <span
-                  className={
-                    'inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ' +
-                    (p.active
-                      ? 'bg-emerald-100 text-emerald-700'
-                      : 'bg-slate-100 text-slate-600')
-                  }
-                >
-                  {p.active ? 'Active' : 'Retired'}
-                </span>
+                <StatusChip
+                  tone={p.active ? 'ok' : 'neutral'}
+                  label={p.active ? 'Active' : 'Retired'}
+                  withDot={false}
+                />
               </td>
             </tr>
           ))}

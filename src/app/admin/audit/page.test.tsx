@@ -86,7 +86,7 @@ describe('/admin/audit page wiring (Fix-15a)', () => {
     // returns false for OPS-lane entries; visible-to-role count stays 0.
     expect(html).toContain('0 visible to your role')
     expect(html).toContain('Showing 0 of 0 entries')
-    expect(html).toContain('No audit entries match the current filters.')
+    expect(html).toContain('No audit entries match the current filters')
   })
 
   it('SalesRep viewing the unfiltered audit page still gets zero visible entries', { timeout: 30000 }, async () => {

@@ -239,7 +239,7 @@ export function FilterRail({
             />
             <button
               type="submit"
-              className="w-full rounded-md border border-border bg-card px-2 py-1 text-xs font-medium hover:bg-muted focus:outline-none focus:ring-2 focus:ring-brand-navy"
+              className="inline-flex min-h-11 w-full items-center justify-center rounded-md border border-border bg-card px-2 py-1 text-xs font-medium hover:bg-muted focus:outline-none focus:ring-2 focus:ring-brand-navy"
             >
               Search
             </button>

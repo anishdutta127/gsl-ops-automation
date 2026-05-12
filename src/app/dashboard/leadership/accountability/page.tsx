@@ -34,6 +34,8 @@ import { getCurrentUser } from '@/lib/auth/session'
 import { canPerform } from '@/lib/auth/permissions'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
+import { EmptyState } from '@/components/ops/EmptyState'
+import { StatusChip } from '@/components/ops/StatusChip'
 import {
   getResponsibilityMatrix,
   userOverrideCount,
@@ -306,13 +308,13 @@ export default async function LeadershipAccountabilityPage() {
               Top stalled MOUs ({topStalled.length})
             </h2>
             {topStalled.length === 0 ? (
-              <p
-                data-testid="accountability-stalled-empty"
-                className="flex items-center gap-2 text-sm text-slate-600"
-              >
-                <ClipboardList aria-hidden className="size-4 text-signal-ok" />
-                Nothing is stalled past 7 days. Healthy.
-              </p>
+              <div data-testid="accountability-stalled-empty">
+                <EmptyState
+                  icon={<ClipboardList aria-hidden className="size-6 text-signal-ok" />}
+                  title="Nothing is stalled past 7 days"
+                  description="Healthy. Every stage's MOUs are moving within the 7-day window."
+                />
+              </div>
             ) : (
               <ul className="divide-y divide-border">
                 {topStalled.map((s) => (
@@ -330,9 +332,11 @@ export default async function LeadershipAccountabilityPage() {
                         {s.mouId}
                       </span>
                     </Link>
-                    <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-900">
-                      {s.daysAtStage}d at {STAGE_LABEL[s.stage]}
-                    </span>
+                    <StatusChip
+                      tone="attention"
+                      label={`${s.daysAtStage}d at ${STAGE_LABEL[s.stage]}`}
+                      withDot={false}
+                    />
                     <AlertCircle aria-hidden className="size-4 shrink-0 text-amber-600" />
                   </li>
                 ))}

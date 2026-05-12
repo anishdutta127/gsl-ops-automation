@@ -9,13 +9,14 @@ import Link from 'next/link'
 import type { VexPi } from '@/lib/mouSystem/types'
 import { formatRs, formatDate } from '@/lib/format'
 import { EmptyState } from '@/components/ops/EmptyState'
+import { StatusChip, type StatusChipTone } from '@/components/ops/StatusChip'
 
-const STATUS_TONE: Record<string, string> = {
-  Generated: 'bg-amber-100 text-amber-800',
-  'Payment Pending': 'bg-amber-100 text-amber-800',
-  'Delivery Pending': 'bg-blue-100 text-blue-700',
-  'Partially Dispatched': 'bg-blue-100 text-blue-700',
-  Completed: 'bg-emerald-100 text-emerald-700',
+const STATUS_TONE: Record<string, StatusChipTone> = {
+  Generated: 'attention',
+  'Payment Pending': 'attention',
+  'Delivery Pending': 'navy',
+  'Partially Dispatched': 'navy',
+  Completed: 'ok',
 }
 
 export function VexPiList({ pis }: { pis: VexPi[] }) {
@@ -94,14 +95,11 @@ export function VexPiList({ pis }: { pis: VexPi[] }) {
                   {formatRs(open)}
                 </td>
                 <td className="px-3 py-2">
-                  <span
-                    className={
-                      'inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ' +
-                      (STATUS_TONE[p.status] ?? 'bg-slate-100 text-slate-600')
-                    }
-                  >
-                    {p.status}
-                  </span>
+                  <StatusChip
+                    tone={STATUS_TONE[p.status] ?? 'neutral'}
+                    label={p.status}
+                    withDot={false}
+                  />
                 </td>
                 <td className="px-3 py-2 text-right">
                   <Link

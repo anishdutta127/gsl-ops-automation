@@ -20,7 +20,7 @@
 
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
-import { AlertCircle, ArrowRight } from 'lucide-react'
+import { AlertCircle, ArrowRight, Receipt } from 'lucide-react'
 import type { MOU, Payment, School } from '@/lib/types'
 import mousJson from '@/data/mous.json'
 import paymentsJson from '@/data/payments.json'
@@ -33,6 +33,7 @@ import {
 } from '@/lib/pi/parallelBuildLock'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
+import { EmptyState } from '@/components/ops/EmptyState'
 import { formatRs, formatDate } from '@/lib/format'
 import { computePendingPi } from '@/lib/finance/computePendingPi'
 
@@ -94,13 +95,13 @@ export default async function PendingPiPage() {
           </header>
 
           {rows.length === 0 ? (
-            <p
-              data-testid="pending-pi-empty"
-              className="text-sm text-slate-600"
-            >
-              No installments need a PI right now. Check back when the next
-              installment window opens.
-            </p>
+            <div data-testid="pending-pi-empty">
+              <EmptyState
+                icon={<Receipt aria-hidden className="size-6" />}
+                title="No installments need a PI right now"
+                description="Check back when the next installment window opens."
+              />
+            </div>
           ) : (
             <ul className="divide-y divide-border">
               {rows.map((row) => {

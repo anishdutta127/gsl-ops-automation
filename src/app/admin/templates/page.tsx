@@ -13,7 +13,7 @@
 
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowRight, Plus } from 'lucide-react'
+import { ArrowRight, FileText, Plus } from 'lucide-react'
 import type {
   CommunicationTemplate,
   TemplateUseCase,
@@ -23,6 +23,7 @@ import { getCurrentUser } from '@/lib/auth/session'
 import { canPerform } from '@/lib/auth/permissions'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
+import { EmptyState } from '@/components/ops/EmptyState'
 import { StatusChip } from '@/components/ops/StatusChip'
 
 const allTemplates = templatesJson as unknown as CommunicationTemplate[]
@@ -156,9 +157,13 @@ export default async function TemplatesListPage({ searchParams }: PageProps) {
           </nav>
 
           {rows.length === 0 ? (
-            <p className="rounded-md border border-border bg-card px-4 py-6 text-sm text-muted-foreground">
-              No templates match the current filter.
-            </p>
+            <div className="rounded-md border border-border bg-card">
+              <EmptyState
+                icon={<FileText aria-hidden className="size-6" />}
+                title="No templates match the current filter"
+                description="Clear the use-case filter to see every template."
+              />
+            </div>
           ) : (
             <ul className="divide-y divide-border rounded-lg border border-border bg-card">
               {rows.map((t) => (

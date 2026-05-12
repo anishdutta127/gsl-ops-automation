@@ -220,7 +220,7 @@ export function AuditFilterRail({
         />
         <button
           type="submit"
-          className="mt-1 w-full rounded-md border border-slate-300 bg-white px-2 py-1 text-xs font-medium hover:bg-slate-100"
+          className="mt-1 inline-flex min-h-11 w-full items-center justify-center rounded-md border border-slate-300 bg-white px-2 py-1 text-xs font-medium hover:bg-slate-100"
         >
           Apply user filter
         </button>
@@ -243,7 +243,7 @@ export function AuditFilterRail({
         />
         <button
           type="submit"
-          className="mt-1 w-full rounded-md border border-slate-300 bg-white px-2 py-1 text-xs font-medium hover:bg-slate-100"
+          className="mt-1 inline-flex min-h-11 w-full items-center justify-center rounded-md border border-slate-300 bg-white px-2 py-1 text-xs font-medium hover:bg-slate-100"
         >
           Search
         </button>

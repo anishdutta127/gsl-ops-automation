@@ -18,8 +18,10 @@
 
 import { cookies } from 'next/headers'
 import Link from 'next/link'
+import { Search } from 'lucide-react'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
+import { EmptyState } from '@/components/ops/EmptyState'
 import { SESSION_COOKIE_NAME, verifySessionToken } from '@/lib/crypto/jwt'
 import {
   applyFilters,
@@ -172,9 +174,13 @@ export default async function AuditPage({
         </header>
 
         {pageRows.length === 0 ? (
-          <p className="rounded-md border border-border bg-muted/30 p-6 text-center text-sm text-muted-foreground">
-            No audit entries match the current filters.
-          </p>
+          <div className="rounded-md border border-border bg-muted/30">
+            <EmptyState
+              icon={<Search aria-hidden className="size-6" />}
+              title="No audit entries match the current filters"
+              description="Try widening the date range or clearing entity / action filters."
+            />
+          </div>
         ) : (
           <ul className="border-t border-border">
             {pageRows.map((row, idx) => {

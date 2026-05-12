@@ -17,6 +17,7 @@ import { canEditFinanceData } from '@/lib/access'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { EmptyState } from '@/components/ops/EmptyState'
+import { StatusChip } from '@/components/ops/StatusChip'
 import type { Vendor } from '@/lib/types'
 import vendorsJson from '@/data/vendors.json'
 
@@ -110,16 +111,11 @@ export default async function VendorsPage() {
                         {v.gstNumber ?? '/'}
                       </td>
                       <td className="px-3 py-2 text-xs">
-                        <span
-                          className={
-                            'inline-flex items-center rounded-full px-2 py-0.5 font-medium ' +
-                            (v.active
-                              ? 'bg-emerald-100 text-emerald-700'
-                              : 'bg-slate-100 text-slate-600')
-                          }
-                        >
-                          {v.active ? 'Active' : 'Inactive'}
-                        </span>
+                        <StatusChip
+                          tone={v.active ? 'ok' : 'neutral'}
+                          label={v.active ? 'Active' : 'Inactive'}
+                          withDot={false}
+                        />
                       </td>
                       <td className="px-3 py-2 text-right">
                         <Link

@@ -30,8 +30,11 @@ import kitDispatchesJson from '@/data/kit_dispatches.json'
 import escalationsJson from '@/data/escalations.json'
 import type { Escalation } from '@/lib/types'
 import { getCurrentUser } from '@/lib/auth/session'
+import { FileText, Inbox, Receipt, Truck } from 'lucide-react'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
+import { EmptyState } from '@/components/ops/EmptyState'
+import { StatusChip, type StatusChipTone } from '@/components/ops/StatusChip'
 import { formatRs } from '@/lib/format'
 import { AuditLogPanel } from '@/components/ops/AuditLogPanel'
 import { StatusTracker } from '@/components/StatusTracker'
@@ -75,7 +78,7 @@ function computeSchoolStatus(args: {
   openEscalations: number
   overduePayments: number
   stalledDispatches: number
-}): { label: 'Active' | 'At Risk' | 'Completed'; tone: 'ok' | 'attention' | 'neutral' } {
+}): { label: 'Active' | 'At Risk' | 'Completed'; tone: StatusChipTone } {
   const { schoolMous, openEscalations, overduePayments, stalledDispatches } = args
   if (openEscalations > 0 || overduePayments > 0 || stalledDispatches > 0) {
     return { label: 'At Risk', tone: 'attention' }
@@ -137,20 +140,13 @@ export default async function SchoolDetailPage({ params, searchParams }: PagePro
   const totalBalance = schoolMous.reduce((s, m) => s + (m.balance ?? 0), 0)
 
   const statusBadge = (
-    <span
-      data-testid="school-status-pill"
-      data-status={status.label}
-      className={
-        'inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold ' +
-        (status.tone === 'ok'
-          ? 'border-signal-ok bg-card text-signal-ok'
-          : status.tone === 'attention'
-            ? 'border-signal-alert bg-card text-signal-alert'
-            : 'border-signal-neutral bg-card text-signal-neutral')
-      }
-    >
-      {status.label}
-    </span>
+    <StatusChip
+      tone={status.tone === 'attention' ? 'alert' : status.tone}
+      label={status.label}
+      withDot={false}
+      testId="school-status-pill"
+      className="px-3 py-1 font-semibold"
+    />
   )
 
   return (
@@ -310,7 +306,13 @@ function OverviewPanel({
         Most recent MOU activity
       </h2>
       {recentMous.length === 0 ? (
-        <p className="mt-2 text-sm text-slate-600">No MOUs for this school yet.</p>
+        <div className="mt-2">
+          <EmptyState
+            icon={<FileText aria-hidden className="size-6" />}
+            title="No MOUs for this school yet"
+            description="MOUs appear here once they are drafted against this school."
+          />
+        </div>
       ) : (
         <ul className="mt-3 divide-y divide-border">
           {recentMous.map((m) => (
@@ -374,14 +376,18 @@ function MousPanel({
         </h2>
         <Link
           href={`/mous/new?schoolId=${encodeURIComponent(school.id)}`}
-          className="inline-flex min-h-9 items-center gap-1.5 rounded-md border border-brand-teal bg-brand-teal px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-teal/90 focus:outline-none focus:ring-2 focus:ring-brand-navy"
+          className="inline-flex min-h-11 items-center gap-1.5 rounded-md border border-brand-teal bg-brand-teal px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-teal/90 focus:outline-none focus:ring-2 focus:ring-brand-navy"
           data-testid="school-new-mou-cta"
         >
           + Draft new MOU
         </Link>
       </div>
       {schoolMous.length === 0 ? (
-        <p className="text-sm text-muted-foreground">No MOUs for this school.</p>
+        <EmptyState
+          icon={<FileText aria-hidden className="size-6" />}
+          title="No MOUs for this school"
+          description="Use Draft new MOU to create the first one."
+        />
       ) : (
         <ul className="divide-y divide-border">
           {schoolMous.map((m) => {
@@ -431,7 +437,13 @@ function PaymentsPanel({ payments }: { payments: Payment[] }) {
         Payments &amp; PIs ({payments.length})
       </h2>
       {payments.length === 0 ? (
-        <p className="mt-2 text-sm text-slate-600">No installments yet.</p>
+        <div className="mt-2">
+          <EmptyState
+            icon={<Receipt aria-hidden className="size-6" />}
+            title="No installments yet"
+            description="Installment rows appear once the first MOU is signed."
+          />
+        </div>
       ) : (
         <div className="mt-3 overflow-x-auto">
           <table className="w-full min-w-[480px] text-sm">
@@ -473,7 +485,13 @@ function DispatchesPanel({ dispatches }: { dispatches: KitDispatch[] }) {
         Kit dispatches ({dispatches.length})
       </h2>
       {dispatches.length === 0 ? (
-        <p className="mt-2 text-sm text-slate-600">No kit dispatches yet.</p>
+        <div className="mt-2">
+          <EmptyState
+            icon={<Truck aria-hidden className="size-6" />}
+            title="No kit dispatches yet"
+            description="Dispatches appear here once raised against an MOU."
+          />
+        </div>
       ) : (
         <ul className="mt-3 divide-y divide-border">
           {dispatches.map((d) => (
@@ -535,11 +553,13 @@ function ActivityPanel({
         </Link>
       </header>
       {entries.length === 0 ? (
-        <p className="text-sm text-slate-600" data-testid="activity-empty">
-          {criticalOnly
-            ? 'No critical changes on this school yet.'
-            : 'No activity recorded yet.'}
-        </p>
+        <div data-testid="activity-empty">
+          <EmptyState
+            icon={<Inbox aria-hidden className="size-6" />}
+            title={criticalOnly ? 'No critical changes on this school yet' : 'No activity recorded yet'}
+            description={criticalOnly ? 'Toggle Critical only off to see every audit entry.' : 'Audit entries appear here as actions are taken on this school.'}
+          />
+        </div>
       ) : (
         <AuditLogPanel entries={entries} />
       )}

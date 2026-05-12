@@ -23,6 +23,7 @@ import { getCurrentUser } from '@/lib/auth/session'
 import { canAccessFinance } from '@/lib/access'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
+import { EmptyState } from '@/components/ops/EmptyState'
 import { StatusChip, type StatusChipTone } from '@/components/ops/StatusChip'
 import {
   applyFilters,
@@ -220,15 +221,13 @@ export default async function FinanceRenewalsPage({
           {actionable === 0 && filteredBuckets.beyond.length === 0 ? (
             <section
               data-testid="renewals-empty"
-              className="rounded-lg border border-border bg-card p-6 text-center text-sm text-slate-600"
+              className="rounded-lg border border-border bg-card"
             >
-              <CheckCircle2
-                aria-hidden
-                className="mx-auto size-6 text-signal-ok"
+              <EmptyState
+                icon={<CheckCircle2 aria-hidden className="size-6 text-signal-ok" />}
+                title="No MOUs match the current filters"
+                description="Adjust the filter bar or rep / status selectors to widen the view."
               />
-              <p className="mt-2">
-                No MOUs match the current filters.
-              </p>
             </section>
           ) : null}
 
@@ -584,23 +583,11 @@ function ExpiryChip({
   daysToExpiry: number | null
 }) {
   if (daysToExpiry === null) {
-    return (
-      <span className="inline-flex items-center rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-700">
-        no end date
-      </span>
-    )
+    return <StatusChip tone="neutral" label="no end date" withDot={false} />
   }
   if (isExpired) {
     const ago = Math.abs(daysToExpiry)
-    return (
-      <span className="inline-flex items-center rounded-full bg-signal-alert/15 px-2 py-0.5 text-[11px] font-semibold text-signal-alert">
-        Expired {ago}d ago
-      </span>
-    )
+    return <StatusChip tone="alert" label={`Expired ${ago}d ago`} withDot={false} />
   }
-  return (
-    <span className="inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-semibold text-amber-700">
-      Expires in {daysToExpiry}d
-    </span>
-  )
+  return <StatusChip tone="attention" label={`Expires in ${daysToExpiry}d`} withDot={false} />
 }
