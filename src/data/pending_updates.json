@@ -322,5 +322,143 @@
       "rechargeableBatteries": 12
     },
     "retryCount": 0
+  },
+  {
+    "id": "c5a17312-0f40-4e89-9c94-42b2d0ec1c8d",
+    "queuedAt": "2026-05-12T12:57:43.808Z",
+    "queuedBy": "misba.m",
+    "entity": "intakeRecord",
+    "operation": "update",
+    "payload": {
+      "id": "IR-W4C-018",
+      "mouId": "MOU-STEAM-2627-015",
+      "completedAt": "2026-04-17T06:35:37.795Z",
+      "completedBy": "system-w4c-backfill",
+      "salesOwnerId": "sp-roveena",
+      "location": "Faridabad, Haryana",
+      "grades": "1 to 10",
+      "recipientName": "Ashvin Bhatia, MD",
+      "recipientDesignation": "Principal",
+      "recipientEmail": "ashvin.bhatia9@gmail.com",
+      "studentsAtIntake": 800,
+      "durationYears": 2,
+      "startDate": "2026-04-01",
+      "endDate": "2028-03-31",
+      "physicalSubmissionStatus": "Pending",
+      "softCopySubmissionStatus": "Submitted",
+      "productConfirmed": "STEAM",
+      "gslTrainingMode": "Train The Trainer (TTT)",
+      "schoolPointOfContactName": "School POC",
+      "schoolPointOfContactPhone": "+919953871747",
+      "signedMouUrl": "https://drive.google.com/open?id=1sZPVZAQrB9l3iWUaHjHAQ1tTAy-txdWq",
+      "thankYouEmailSentAt": null,
+      "auditLog": [
+        {
+          "timestamp": "2026-04-17T06:35:37.795Z",
+          "user": "system-w4c-backfill",
+          "action": "intake-captured",
+          "notes": "W4-C.4 backfill from Google Form row 18 timestamped 2026-04-17T06:35:37.795Z. Co-owner case: form owner \"Dr. Sumit Majumdar/Roveena Verma\"; MOU has salesPersonId=sp-roveena. Primary = sp-roveena; co-owner sp-sumit captured in audit notes. Co-owner case: form lists \"Dr. Sumit Majumdar/Roveena Verma\"; primary salesOwner=sp-roveena."
+        },
+        {
+          "timestamp": "2026-05-12T12:57:43.808Z",
+          "user": "misba.m",
+          "action": "intake-edited",
+          "before": {
+            "rechargeableBatteries": null,
+            "gradeBreakdown": null
+          },
+          "after": {
+            "rechargeableBatteries": 12,
+            "gradeBreakdown": [
+              {
+                "grade": 1,
+                "students": 9
+              },
+              {
+                "grade": 2,
+                "students": 9
+              },
+              {
+                "grade": 3,
+                "students": 11
+              },
+              {
+                "grade": 4,
+                "students": 11
+              },
+              {
+                "grade": 5,
+                "students": 9
+              },
+              {
+                "grade": 6,
+                "students": 11
+              },
+              {
+                "grade": 7,
+                "students": 11
+              },
+              {
+                "grade": 8,
+                "students": 9
+              },
+              {
+                "grade": 9,
+                "students": 9
+              },
+              {
+                "grade": 10,
+                "students": 9
+              }
+            ]
+          },
+          "notes": "Edited fields: rechargeableBatteries, gradeBreakdown."
+        }
+      ],
+      "gradeBreakdown": [
+        {
+          "grade": 1,
+          "students": 9
+        },
+        {
+          "grade": 2,
+          "students": 9
+        },
+        {
+          "grade": 3,
+          "students": 11
+        },
+        {
+          "grade": 4,
+          "students": 11
+        },
+        {
+          "grade": 5,
+          "students": 9
+        },
+        {
+          "grade": 6,
+          "students": 11
+        },
+        {
+          "grade": 7,
+          "students": 11
+        },
+        {
+          "grade": 8,
+          "students": 9
+        },
+        {
+          "grade": 9,
+          "students": 9
+        },
+        {
+          "grade": 10,
+          "students": 9
+        }
+      ],
+      "rechargeableBatteries": 12
+    },
+    "retryCount": 0
   }
 ]
