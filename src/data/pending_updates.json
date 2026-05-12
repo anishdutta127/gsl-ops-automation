@@ -938,5 +938,45 @@
       ]
     },
     "retryCount": 0
+  },
+  {
+    "id": "e43bb47a-c051-481e-bd58-cc000bc1355d",
+    "queuedAt": "2026-05-12T13:07:51.721Z",
+    "queuedBy": "misba.m",
+    "entity": "notification",
+    "operation": "create",
+    "payload": {
+      "id": "NTF-3114b507",
+      "recipientUserId": "pranav.b",
+      "senderUserId": "misba.m",
+      "kind": "intake-completed",
+      "title": "Intake completed for Rishi Aurobindo Memorial Academy",
+      "body": "Misba M. captured intake for Rishi Aurobindo Memorial Academy (16 students).",
+      "actionUrl": "/mous/MOU-STEAM-2627-048",
+      "payload": {
+        "intakeRecordId": "3647c2fd-df47-4ca1-9749-5c8a6485c679",
+        "mouId": "MOU-STEAM-2627-048",
+        "schoolName": "Rishi Aurobindo Memorial Academy",
+        "completedByName": "Misba M.",
+        "studentsAtIntake": 16,
+        "hasVariance": false
+      },
+      "createdAt": "2026-05-12T13:07:43.149Z",
+      "readAt": null,
+      "auditLog": [
+        {
+          "timestamp": "2026-05-12T13:07:43.149Z",
+          "user": "misba.m",
+          "action": "create",
+          "after": {
+            "kind": "intake-completed",
+            "recipientUserId": "pranav.b",
+            "relatedEntityId": "3647c2fd-df47-4ca1-9749-5c8a6485c679"
+          },
+          "notes": "Notification intake-completed fan-out to pranav.b (sender=misba.m)."
+        }
+      ]
+    },
+    "retryCount": 0
   }
 ]
