@@ -1,17 +1,25 @@
 'use client'
 
 /*
- * QueueFreshnessIndicatorClient (Gate 5A.5 Step 2).
+ * QueueFreshnessIndicatorClient (Gate 5A.5 Step 2; simplified
+ * post-walkthrough Fix 1).
  *
- * Client half of the top-nav queue indicator. Owns the dropdown
- * open/close state and the Sync-now POST. Server passes the
- * computed bucket + counts so the initial paint is correct without
- * any client roundtrip.
+ * Top-nav surface for triggering an immediate queue drain. Renders
+ * as a plain "Sync now" button without any colour-coded status pill.
  *
- * After a successful Sync-now we refresh the route segment so the
- * server component re-reads sync_health + pending_updates and the
- * badge re-paints with the post-drain state. Sonner toast surfaces
- * the drained count, or a rate-limit / error message.
+ * Walkthrough finding: the original tri-state indicator (green
+ * "Synced Nm ago" / amber "Pending N writes" / red "Sync stalled
+ * Nm") read as a system-health alarm to leadership even when the
+ * platform was working correctly; GitHub Actions cron variance
+ * (see docs/gate-5a.5/SYNC_DIAGNOSTIC.md) routinely produced
+ * 1-3 hour gaps that crossed the red threshold without any actual
+ * problem. The colour-coded display moved to /admin/queue-status,
+ * which is the right surface for Admin debugging.
+ *
+ * Click opens a dropdown that still shows the last-drain timestamp
+ * and pending-write count as neutral diagnostic context, but with
+ * no status colours. The Sync-now action lives both in the
+ * dropdown and as the primary trigger.
  */
 
 import { useState, useRef, useEffect, useTransition } from 'react'
@@ -19,9 +27,6 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import {
   RefreshCcw,
-  CheckCircle2,
-  CircleDashed,
-  AlertTriangle,
   ExternalLink,
 } from 'lucide-react'
 import { toast } from 'sonner'
@@ -31,38 +36,12 @@ import {
 } from '@/lib/sync/freshnessState'
 
 interface Props {
+  /** Kept for parity with the server component; not surfaced visually. */
   bucket: FreshnessBucket
   lastDrainAt: string | null
   ageMinutes: number | null
   queueDepth: number
   oldestPendingMinutes: number | null
-}
-
-const BUCKET_DOT: Record<FreshnessBucket, string> = {
-  synced: 'bg-signal-ok',
-  pending: 'bg-signal-attention',
-  stalled: 'bg-signal-alert',
-}
-
-const BUCKET_ICON_TEXT: Record<FreshnessBucket, string> = {
-  synced: 'text-signal-ok',
-  pending: 'text-signal-attention',
-  stalled: 'text-signal-alert',
-}
-
-function bucketLabel(
-  bucket: FreshnessBucket,
-  ageMinutes: number | null,
-  queueDepth: number,
-): string {
-  if (bucket === 'pending') {
-    return queueDepth === 1 ? 'Pending 1 write' : `Pending ${queueDepth} writes`
-  }
-  if (bucket === 'stalled') {
-    if (ageMinutes === null) return 'Sync never run'
-    return `Sync stalled ${formatAgeMinutes(ageMinutes)}`
-  }
-  return `Synced ${formatAgeMinutes(ageMinutes)}`
 }
 
 export function QueueFreshnessIndicatorClient(props: Props) {
@@ -133,66 +112,48 @@ export function QueueFreshnessIndicatorClient(props: Props) {
     }
   }
 
-  const label = bucketLabel(props.bucket, props.ageMinutes, props.queueDepth)
   const lastDrainLabel =
     props.lastDrainAt === null
       ? 'No sync recorded yet'
       : `Last drain: ${props.lastDrainAt.slice(0, 16).replace('T', ' ')} UTC`
-  const StatusIcon =
-    props.bucket === 'synced'
-      ? CheckCircle2
-      : props.bucket === 'pending'
-        ? CircleDashed
-        : AlertTriangle
 
   return (
     <div ref={wrapperRef} className="relative" data-testid="queue-freshness-wrapper">
       <button
         type="button"
-        aria-label={`Sync status: ${label}`}
+        aria-label="Sync now"
         aria-expanded={open}
         aria-haspopup="menu"
         data-testid="queue-freshness-button"
-        data-bucket={props.bucket}
         onClick={() => setOpen((o) => !o)}
-        className="hidden min-h-11 items-center gap-2 rounded-md px-2 text-xs font-medium text-white hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-brand-teal sm:flex"
+        className="hidden min-h-11 items-center gap-1.5 rounded-md px-2 text-xs font-medium text-white hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-brand-teal sm:flex"
       >
-        <span
-          aria-hidden
-          className={'inline-block size-2 rounded-full ' + BUCKET_DOT[props.bucket]}
-        />
-        <span className="hidden md:inline">{label}</span>
-        <span className="md:hidden">Sync</span>
+        <RefreshCcw aria-hidden className="size-4" />
+        <span className="hidden md:inline">Sync now</span>
       </button>
 
       {open ? (
         <div
           role="menu"
-          aria-label="Sync queue status"
+          aria-label="Sync queue actions"
           data-testid="queue-freshness-dropdown"
           className="absolute right-0 top-full z-50 mt-1 w-80 max-w-[90vw] rounded-md border border-slate-200 bg-white text-slate-900 shadow-lg"
         >
           <div className="border-b border-slate-200 px-3 py-2">
-            <div className="flex items-center gap-2">
-              <StatusIcon
-                aria-hidden
-                className={'size-4 ' + BUCKET_ICON_TEXT[props.bucket]}
-              />
-              <span className="text-sm font-semibold text-brand-navy">
-                {label}
-              </span>
-            </div>
-            <p className="mt-1 text-xs text-slate-600">{lastDrainLabel}</p>
+            <p className="text-xs text-slate-600">{lastDrainLabel}</p>
             {props.queueDepth > 0 ? (
               <p className="mt-0.5 text-xs text-slate-600">
-                Oldest pending: {formatAgeMinutes(props.oldestPendingMinutes)}
+                {props.queueDepth === 1 ? '1 write pending' : `${props.queueDepth} writes pending`}
+                {props.oldestPendingMinutes !== null
+                  ? ` (oldest ${formatAgeMinutes(props.oldestPendingMinutes)})`
+                  : ''}
               </p>
             ) : null}
           </div>
 
           <div className="px-3 py-2">
             <p className="mb-2 text-xs text-slate-600">
-              The cron drains the queue every 5 minutes. Click below to force an immediate drain.
+              The cron drains the queue automatically. Click below to force an immediate drain.
             </p>
             <button
               type="button"

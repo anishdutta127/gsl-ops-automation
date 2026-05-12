@@ -55,14 +55,28 @@ describe('computeFreshnessState', () => {
     expect(state.oldestPendingMinutes).toBe(2)
   })
 
-  it('returns stalled when last sync older than 15 min and queue empty', () => {
+  it('returns synced when last sync is within the 180-min threshold (raised post-walkthrough Fix 2)', () => {
+    // Pre-Fix-2 this scenario was 'stalled' on the old 15-min threshold.
+    // GitHub Actions free-tier cron routinely shows 2-3 hour gaps; the
+    // threshold was raised to 180 min so the bucket reflects genuine
+    // outages rather than scheduler variance.
     const state = computeFreshnessState({
       pending: [],
-      history: [syncEntry('2026-05-12T11:30:00.000Z')],
+      history: [syncEntry('2026-05-12T09:30:00.000Z')], // 2h30m ago
+      now: NOW,
+    })
+    expect(state.bucket).toBe('synced')
+    expect(state.ageMinutes).toBe(150)
+  })
+
+  it('returns stalled when last sync older than 180 min and queue empty', () => {
+    const state = computeFreshnessState({
+      pending: [],
+      history: [syncEntry('2026-05-12T08:30:00.000Z')], // 3h30m ago
       now: NOW,
     })
     expect(state.bucket).toBe('stalled')
-    expect(state.ageMinutes).toBe(30)
+    expect(state.ageMinutes).toBe(210)
   })
 
   it('returns stalled when no sync history at all', () => {

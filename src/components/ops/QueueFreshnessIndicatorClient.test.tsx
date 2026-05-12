@@ -1,10 +1,13 @@
 /*
- * QueueFreshnessIndicatorClient tests (Gate 5A.5 Step 2).
+ * QueueFreshnessIndicatorClient tests (Gate 5A.5 Step 2; simplified
+ * post-walkthrough Fix 1).
  *
- * Vitest does not bridge use-client interactivity through
- * renderToStaticMarkup, so the suite covers the initial render only
- * (button label per bucket, status dot colour, aria-label shape).
- * Click-to-sync behaviour is verified manually + via the e2e harness.
+ * The top-nav surface is a plain "Sync now" button without colour-
+ * coded status. The dropdown shows neutral diagnostic info (last
+ * drain timestamp, pending-write count) but never a red/amber/green
+ * status indicator. Click-to-sync behaviour is verified manually +
+ * via the e2e harness; renderToStaticMarkup cannot exercise the
+ * interactive POST path.
  */
 
 import { describe, expect, it, vi } from 'vitest'
@@ -16,8 +19,8 @@ vi.mock('next/navigation', () => ({
 
 import { QueueFreshnessIndicatorClient } from './QueueFreshnessIndicatorClient'
 
-describe('QueueFreshnessIndicatorClient', () => {
-  it('renders synced state with green dot and recent age', () => {
+describe('QueueFreshnessIndicatorClient (post-walkthrough Fix 1)', () => {
+  it('renders the top-nav button with "Sync now" label and no status dot', () => {
     const html = renderToStaticMarkup(
       <QueueFreshnessIndicatorClient
         bucket="synced"
@@ -27,78 +30,49 @@ describe('QueueFreshnessIndicatorClient', () => {
         oldestPendingMinutes={null}
       />,
     )
-    expect(html).toContain('data-bucket="synced"')
-    expect(html).toContain('bg-signal-ok')
-    expect(html).toContain('Synced 5 min ago')
+    expect(html).toContain('data-testid="queue-freshness-button"')
+    expect(html).toContain('Sync now')
+    // Colour-coded indicators no longer surface on the top nav.
+    expect(html).not.toContain('bg-signal-ok')
+    expect(html).not.toContain('bg-signal-attention')
+    expect(html).not.toContain('bg-signal-alert')
+    expect(html).not.toContain('Synced 5 min ago')
+    expect(html).not.toContain('Sync stalled')
+    expect(html).not.toContain('Pending')
   })
 
-  it('renders pending state with amber dot and write count', () => {
-    const html = renderToStaticMarkup(
-      <QueueFreshnessIndicatorClient
-        bucket="pending"
-        lastDrainAt="2026-05-12T11:55:00.000Z"
-        ageMinutes={3}
-        queueDepth={4}
-        oldestPendingMinutes={2}
-      />,
-    )
-    expect(html).toContain('data-bucket="pending"')
-    expect(html).toContain('bg-signal-attention')
-    expect(html).toContain('Pending 4 writes')
+  it('exposes a neutral aria-label regardless of bucket state', () => {
+    for (const bucket of ['synced', 'pending', 'stalled'] as const) {
+      const html = renderToStaticMarkup(
+        <QueueFreshnessIndicatorClient
+          bucket={bucket}
+          lastDrainAt="2026-05-12T11:55:00.000Z"
+          ageMinutes={bucket === 'stalled' ? 200 : 5}
+          queueDepth={bucket === 'pending' ? 3 : 0}
+          oldestPendingMinutes={bucket === 'pending' ? 2 : null}
+        />,
+      )
+      expect(html).toMatch(/aria-label="Sync now"/)
+    }
   })
 
-  it('singularises pending label for one write', () => {
-    const html = renderToStaticMarkup(
-      <QueueFreshnessIndicatorClient
-        bucket="pending"
-        lastDrainAt={null}
-        ageMinutes={null}
-        queueDepth={1}
-        oldestPendingMinutes={2}
-      />,
-    )
-    expect(html).toContain('Pending 1 write')
-    expect(html).not.toContain('Pending 1 writes')
-  })
-
-  it('renders stalled state with red dot and stalled age', () => {
-    const html = renderToStaticMarkup(
-      <QueueFreshnessIndicatorClient
-        bucket="stalled"
-        lastDrainAt="2026-05-12T10:30:00.000Z"
-        ageMinutes={90}
-        queueDepth={0}
-        oldestPendingMinutes={null}
-      />,
-    )
-    expect(html).toContain('data-bucket="stalled"')
-    expect(html).toContain('bg-signal-alert')
-    expect(html).toContain('Sync stalled')
-  })
-
-  it('renders stalled with "never" when no drain has been recorded', () => {
-    const html = renderToStaticMarkup(
-      <QueueFreshnessIndicatorClient
-        bucket="stalled"
-        lastDrainAt={null}
-        ageMinutes={null}
-        queueDepth={0}
-        oldestPendingMinutes={null}
-      />,
-    )
-    expect(html).toContain('Sync never run')
-  })
-
-  it('exposes a screen-reader-friendly aria-label', () => {
-    const html = renderToStaticMarkup(
-      <QueueFreshnessIndicatorClient
-        bucket="synced"
-        lastDrainAt="2026-05-12T11:55:00.000Z"
-        ageMinutes={5}
-        queueDepth={0}
-        oldestPendingMinutes={null}
-      />,
-    )
-    expect(html).toMatch(/aria-label="Sync status: Synced 5 min ago"/)
+  it('uses identical button markup across all three bucket inputs', () => {
+    function buttonMarkup(bucket: 'synced' | 'pending' | 'stalled') {
+      const html = renderToStaticMarkup(
+        <QueueFreshnessIndicatorClient
+          bucket={bucket}
+          lastDrainAt="2026-05-12T11:55:00.000Z"
+          ageMinutes={5}
+          queueDepth={0}
+          oldestPendingMinutes={null}
+        />,
+      )
+      const match = html.match(
+        /<button[^>]*data-testid="queue-freshness-button"[^>]*>[\s\S]*?<\/button>/,
+      )
+      return match?.[0]
+    }
+    expect(buttonMarkup('synced')).toBe(buttonMarkup('pending'))
+    expect(buttonMarkup('pending')).toBe(buttonMarkup('stalled'))
   })
 })

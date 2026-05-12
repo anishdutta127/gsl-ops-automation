@@ -1,27 +1,35 @@
 /*
- * Queue freshness state classification (Gate 5A.5 Step 2).
+ * Queue freshness state classification (Gate 5A.5 Step 2; threshold
+ * tuned post-walkthrough Fix 2).
  *
  * Reads pending_updates.json + sync_health.json snapshots and
- * produces a tri-state bucket for the top-nav freshness indicator
- * and the /admin/queue-status detail page. Pure function so both
- * surfaces compute identically and stay testable.
+ * produces a tri-state bucket consumed by /admin/queue-status. The
+ * top-nav indicator no longer surfaces these buckets visually (see
+ * QueueFreshnessIndicatorClient and walkthrough Fix 1); the bucket
+ * is still classified here so the Admin debugging surface can
+ * highlight a genuinely stalled drain.
  *
  * Buckets:
- *   - 'synced'  -> last drain succeeded within 15 minutes AND queue is empty
+ *   - 'synced'  -> last drain succeeded within STALL_THRESHOLD_MINUTES AND queue is empty
  *   - 'pending' -> queue has at least one unprocessed write
- *   - 'stalled' -> last drain older than 15 minutes (cron not firing
- *                  OR cron firing with persistent anomalies)
+ *   - 'stalled' -> last drain older than STALL_THRESHOLD_MINUTES (cron
+ *                  not firing OR cron firing with persistent anomalies)
  *
- * Edge case: queue is empty AND last drain is older than 15 minutes
- * is still 'stalled' because the cron should be firing every 5 min
- * regardless of queue contents. The presence of recent sync_health
- * entries is the heartbeat signal.
+ * Threshold rationale (docs/gate-5a.5/SYNC_DIAGNOSTIC.md): cron is
+ * configured for every-5-minutes but GitHub Actions free-tier delivery
+ * routinely shows 2-3 hour gaps under load. A 15-minute threshold
+ * (the W3-B initial value) cried wolf on routine scheduler variance.
+ * 180 minutes flags genuine multi-hour outages without false alarms.
+ *
+ * Edge case: queue is empty AND last drain is older than the threshold
+ * is still 'stalled' because the heartbeat signal is the presence of
+ * recent sync_health entries, not the queue contents.
  */
 
 import type { PendingUpdate } from '@/lib/types'
 import type { SyncHealthEntry } from '@/lib/syncHealth/appendEntry'
 
-export const STALL_THRESHOLD_MINUTES = 15
+export const STALL_THRESHOLD_MINUTES = 180
 
 export type FreshnessBucket = 'synced' | 'pending' | 'stalled'
 
