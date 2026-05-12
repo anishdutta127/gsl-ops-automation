@@ -12,9 +12,7 @@
  * authors directly via the [id] page after queue-creating a stub).
  */
 
-import Link from 'next/link'
 import { redirect } from 'next/navigation'
-import { Plus } from 'lucide-react'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canEditFinanceData } from '@/lib/access'
 import { TopNav } from '@/components/ops/TopNav'
@@ -43,13 +41,20 @@ export default async function AgreementsPage() {
             { label: 'Agreements' },
           ]}
           actions={
+            // Add agreement is a Phase 1.1 deferral. The create flow
+            // is not wired and the route does not exist; rendering an
+            // enabled CTA would 404 on click. Render the affordance
+            // as a disabled badge so Finance can see it's coming
+            // without hitting a dead link (Gate 5A.5 audit fix B9).
             canEdit ? (
-              <Link
-                href="/operations/agreements/new"
-                className="inline-flex min-h-11 items-center gap-1.5 rounded-md bg-brand-navy px-3 py-2 text-sm font-semibold text-white hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-brand-teal"
+              <span
+                title="Agreement create lands in Phase 1.1. For now, ask Anish to seed the row; edit fields land via Edit on the detail page."
+                aria-disabled="true"
+                className="inline-flex min-h-11 cursor-not-allowed items-center gap-1.5 rounded-md border border-dashed border-border bg-muted px-3 py-2 text-sm font-medium text-muted-foreground"
+                data-testid="agreement-add-disabled"
               >
-                <Plus aria-hidden className="size-4" /> Add agreement
-              </Link>
+                Add agreement (Phase 1.1)
+              </span>
             ) : null
           }
         />
@@ -59,7 +64,7 @@ export default async function AgreementsPage() {
               title="No agreements yet"
               description={
                 canEdit
-                  ? 'Use Add agreement to record a vendor contract or NDA.'
+                  ? 'Agreement create lands in Phase 1.1. Ask Anish to seed the first row; field edits land via the per-row detail page.'
                   : 'Agreements will appear here once Finance adds them.'
               }
             />
