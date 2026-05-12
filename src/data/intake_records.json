@@ -704,10 +704,106 @@
         "user": "system-w4c-backfill",
         "action": "intake-captured",
         "notes": "W4-C.4 backfill from Google Form row 18 timestamped 2026-04-17T06:35:37.795Z. Co-owner case: form owner \"Dr. Sumit Majumdar/Roveena Verma\"; MOU has salesPersonId=sp-roveena. Primary = sp-roveena; co-owner sp-sumit captured in audit notes. Co-owner case: form lists \"Dr. Sumit Majumdar/Roveena Verma\"; primary salesOwner=sp-roveena."
+      },
+      {
+        "timestamp": "2026-05-12T12:57:43.808Z",
+        "user": "misba.m",
+        "action": "intake-edited",
+        "before": {
+          "rechargeableBatteries": null,
+          "gradeBreakdown": null
+        },
+        "after": {
+          "rechargeableBatteries": 12,
+          "gradeBreakdown": [
+            {
+              "grade": 1,
+              "students": 9
+            },
+            {
+              "grade": 2,
+              "students": 9
+            },
+            {
+              "grade": 3,
+              "students": 11
+            },
+            {
+              "grade": 4,
+              "students": 11
+            },
+            {
+              "grade": 5,
+              "students": 9
+            },
+            {
+              "grade": 6,
+              "students": 11
+            },
+            {
+              "grade": 7,
+              "students": 11
+            },
+            {
+              "grade": 8,
+              "students": 9
+            },
+            {
+              "grade": 9,
+              "students": 9
+            },
+            {
+              "grade": 10,
+              "students": 9
+            }
+          ]
+        },
+        "notes": "Edited fields: rechargeableBatteries, gradeBreakdown."
       }
     ],
-    "gradeBreakdown": null,
-    "rechargeableBatteries": null
+    "gradeBreakdown": [
+      {
+        "grade": 1,
+        "students": 9
+      },
+      {
+        "grade": 2,
+        "students": 9
+      },
+      {
+        "grade": 3,
+        "students": 11
+      },
+      {
+        "grade": 4,
+        "students": 11
+      },
+      {
+        "grade": 5,
+        "students": 9
+      },
+      {
+        "grade": 6,
+        "students": 11
+      },
+      {
+        "grade": 7,
+        "students": 11
+      },
+      {
+        "grade": 8,
+        "students": 9
+      },
+      {
+        "grade": 9,
+        "students": 9
+      },
+      {
+        "grade": 10,
+        "students": 9
+      }
+    ],
+    "rechargeableBatteries": 12
   },
   {
     "id": "IR-W4C-019",
@@ -934,5 +1030,45 @@
     ],
     "gradeBreakdown": null,
     "rechargeableBatteries": null
+  },
+  {
+    "id": "3647c2fd-df47-4ca1-9749-5c8a6485c679",
+    "mouId": "MOU-STEAM-2627-048",
+    "completedAt": "2026-05-12T13:07:41.312Z",
+    "completedBy": "misba.m",
+    "salesOwnerId": "sp-prodipto",
+    "location": "Kolkata",
+    "grades": "1 to 5",
+    "recipientName": "Misba PK",
+    "recipientDesignation": "cordinator",
+    "recipientEmail": "pkmisba@gmail.com",
+    "studentsAtIntake": 16,
+    "durationYears": 2,
+    "startDate": "2026-04-01",
+    "endDate": "2028-03-31",
+    "physicalSubmissionStatus": "Pending",
+    "softCopySubmissionStatus": "Pending",
+    "productConfirmed": "STEAM",
+    "gslTrainingMode": "GSL Trainer",
+    "schoolPointOfContactName": "Misba Musthafa PK",
+    "schoolPointOfContactPhone": "+919867695258",
+    "signedMouUrl": "https://maftechnologies-my.sharepoint.com/:x:/g/personal/misba_m_getsetlearn_info/IQD7sD_bM83gTJrWm84cDjlSATeLccpH_IFGmKNQTQw5sR4?e=8XJ7jb",
+    "thankYouEmailSentAt": null,
+    "gradeBreakdown": null,
+    "rechargeableBatteries": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-12T13:07:41.312Z",
+        "user": "misba.m",
+        "action": "intake-captured",
+        "after": {
+          "salesOwnerId": "sp-prodipto",
+          "studentsAtIntake": 16,
+          "durationYears": 2,
+          "productConfirmed": "STEAM",
+          "gslTrainingMode": "GSL Trainer"
+        }
+      }
+    ]
   }
 ]
