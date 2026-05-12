@@ -5070,9 +5070,9 @@
     "startDate": "2026-04-01",
     "endDate": "2028-03-31",
     "studentsMou": 500,
-    "studentsActual": 0,
-    "studentsVariance": -500,
-    "studentsVariancePct": -1,
+    "studentsActual": 400,
+    "studentsVariance": -100,
+    "studentsVariancePct": -0.2,
     "spWithoutTax": 677.966101694915,
     "spWithTax": 800,
     "contractValue": 400000,
@@ -5123,6 +5123,21 @@
           "stage": "kit-dispatched"
         },
         "notes": "testttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt"
+      },
+      {
+        "timestamp": "2026-05-12T13:54:32.573Z",
+        "user": "misba.m",
+        "action": "actuals-confirmed",
+        "before": {
+          "studentsActual": 0,
+          "studentsVariance": -500,
+          "studentsVariancePct": -1
+        },
+        "after": {
+          "studentsActual": 400,
+          "studentsVariance": -100,
+          "studentsVariancePct": -0.2
+        }
       }
     ],
     "cohortStatus": "active",
@@ -6735,9 +6750,9 @@
     "startDate": "2026-04-01",
     "endDate": "2028-03-31",
     "studentsMou": 700,
-    "studentsActual": null,
-    "studentsVariance": null,
-    "studentsVariancePct": null,
+    "studentsActual": 700,
+    "studentsVariance": 0,
+    "studentsVariancePct": 0,
     "spWithoutTax": 1200,
     "spWithTax": 1416,
     "contractValue": 991200,
@@ -6790,6 +6805,22 @@
           "mappedSchoolName": "B I T Global School"
         },
         "notes": "BIT Global School -> -026 (B I T Global School) not -011 (The Learning Sanctuary). Form school: BIT GLOBAL SCHOOL. Moved IN to this MOU."
+      },
+      {
+        "timestamp": "2026-05-12T13:21:37.815Z",
+        "user": "misba.m",
+        "action": "actuals-confirmed",
+        "before": {
+          "studentsActual": null,
+          "studentsVariance": null,
+          "studentsVariancePct": null
+        },
+        "after": {
+          "studentsActual": 700,
+          "studentsVariance": 0,
+          "studentsVariancePct": 0
+        },
+        "notes": "NA"
       }
     ],
     "cohortStatus": "active",
@@ -8062,6 +8093,18 @@
           "cohortStatus": "active"
         },
         "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
+      },
+      {
+        "timestamp": "2026-05-12T13:07:41.312Z",
+        "user": "misba.m",
+        "action": "intake-captured",
+        "after": {
+          "salesOwnerId": "sp-prodipto",
+          "studentsAtIntake": 16,
+          "durationYears": 2,
+          "productConfirmed": "STEAM",
+          "gslTrainingMode": "GSL Trainer"
+        }
       }
     ],
     "cohortStatus": "active",
