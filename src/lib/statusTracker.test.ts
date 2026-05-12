@@ -280,6 +280,121 @@ describe('computeStage', () => {
       }),
     ).toBe('active')
   })
+
+  it('Gate 5A.5 Step 4: approved dispatch override skips payment-pending', () => {
+    expect(
+      computeStage({
+        mou: mou({
+          studentsActual: 95,
+          dispatchOverride: {
+            status: 'approved',
+            requestedBy: 'misba.m',
+            requestedAt: '2026-05-01T00:00:00Z',
+            requestReason: 'Pilot batch',
+            approvedBy: 'shashank.s',
+            approvedAt: '2026-05-02T00:00:00Z',
+            approvalNotes: null,
+            rejectedBy: null,
+            rejectedAt: null,
+            rejectionReason: null,
+          },
+        }),
+        payments: [payment({ dueDateIso: '2026-05-25' })],
+        dispatches: [],
+        now: NOW,
+      }),
+    ).toBe('active')
+  })
+
+  it('Gate 5A.5 Step 4: approved dispatch override skips installment-1-received', () => {
+    expect(
+      computeStage({
+        mou: mou({
+          studentsActual: 95,
+          dispatchOverride: {
+            status: 'approved',
+            requestedBy: 'misba.m',
+            requestedAt: '2026-05-01T00:00:00Z',
+            requestReason: 'Pilot batch',
+            approvedBy: 'shashank.s',
+            approvedAt: '2026-05-02T00:00:00Z',
+            approvalNotes: null,
+            rejectedBy: null,
+            rejectedAt: null,
+            rejectionReason: null,
+          },
+        }),
+        payments: [
+          payment({
+            instalmentSeq: 1,
+            status: 'Paid',
+            receivedAmount: 125000,
+            receivedDate: '2026-05-01',
+          }),
+        ],
+        dispatches: [],
+        now: NOW,
+      }),
+    ).toBe('active')
+  })
+
+  it('Gate 5A.5 Step 4: approved override still recognises later stages (PI / dispatch / shipment / delivered)', () => {
+    // Override does not gate dispatch stages; only skips the payment chain.
+    expect(
+      computeStage({
+        mou: mou({
+          studentsActual: 95,
+          dispatchOverride: {
+            status: 'approved',
+            requestedBy: 'misba.m',
+            requestedAt: '2026-05-01T00:00:00Z',
+            requestReason: 'Pilot batch',
+            approvedBy: 'shashank.s',
+            approvedAt: '2026-05-02T00:00:00Z',
+            approvalNotes: null,
+            rejectedBy: null,
+            rejectedAt: null,
+            rejectionReason: null,
+          },
+        }),
+        payments: [],
+        dispatches: [
+          kit({
+            dispatchStatus: 'In Transit',
+            allocations: [
+              { grade: 5, students: 30, kitsQty: 30, kitType: 'Reusable', productName: 'Tinkrpython' },
+            ],
+          }),
+        ],
+        now: NOW,
+      }),
+    ).toBe('shipment-in-progress')
+  })
+
+  it('Gate 5A.5 Step 4: requested (not approved) override does NOT skip stages', () => {
+    expect(
+      computeStage({
+        mou: mou({
+          studentsActual: 95,
+          dispatchOverride: {
+            status: 'requested',
+            requestedBy: 'misba.m',
+            requestedAt: '2026-05-10T00:00:00Z',
+            requestReason: 'Pilot batch',
+            approvedBy: null,
+            approvedAt: null,
+            approvalNotes: null,
+            rejectedBy: null,
+            rejectedAt: null,
+            rejectionReason: null,
+          },
+        }),
+        payments: [payment({ dueDateIso: '2026-05-25' })],
+        dispatches: [],
+        now: NOW,
+      }),
+    ).toBe('payment-pending')
+  })
 })
 
 describe('buildStageBadges', () => {

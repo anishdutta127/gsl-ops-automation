@@ -266,6 +266,38 @@ export function canManageEscalations(user: User): boolean {
 }
 
 /**
+ * Gate 5A.5 Step 4: request a dispatch override that bypasses the
+ * payment gate. Sales + Ops + Admin wildcard. Finance cannot request
+ * (it would short-circuit their own gate) but can see the request via
+ * critical changes once it lands.
+ */
+export function canRequestDispatchOverride(user: User): boolean {
+  return editGate(user, ['sales', 'ops'])
+}
+
+/**
+ * Gate 5A.5 Step 4: approve or reject a dispatch override request.
+ * Granted to (a) the user matching the configured override-approver
+ * userId (default Shashank per stage responsibility config), or
+ * (b) any Admin with null department (cross-functional wildcard).
+ *
+ * The configured approver may be department-scoped (e.g., Shashank
+ * has department null and Admin role); the wildcard check covers him
+ * regardless. The userId check covers any future override approver
+ * whose department might restrict their normal editGate.
+ */
+export function canApproveDispatchOverride(
+  user: User,
+  approverUserId: string,
+): boolean {
+  if (!activeOrFalse(user)) return false
+  if (user.id === approverUserId) return true
+  const dept = getDepartment(user)
+  if (user.role === 'Admin' && dept === null) return true
+  return false
+}
+
+/**
  * View all audit-log entries across every department. Leadership +
  * Admin. Existing audit-route lane scoping in
  * lib/auth/permissions.ts canViewAuditEntry remains the per-entry

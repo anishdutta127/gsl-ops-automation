@@ -260,6 +260,16 @@ export type AuditAction =
   // from the log. A subsequent 'status_change' to 'Renewed' supersedes
   // a prior decline (operators may change their mind).
   | 'mou-renewal-declined'
+  // Gate 5A.5 Step 4 (dispatch override flow): payment gates can be
+  // bypassed on trial / pilot / urgent-partnership MOUs through a
+  // request to the configured override approver (default Shashank).
+  // before / after capture the dispatchOverride state transition;
+  // notes carries the reason / approval notes / rejection reason
+  // depending on the action. All three are classified as critical
+  // changes per criticalChanges.ts.
+  | 'dispatch-override-requested'
+  | 'dispatch-override-approved'
+  | 'dispatch-override-rejected'
 
 export interface AuditEntry {
   timestamp: string                // ISO
@@ -542,6 +552,35 @@ export interface MOU {
    * import.
    */
   importNotes?: string | null
+  /**
+   * Gate 5A.5 Step 4: dispatch override flow. Some MOUs (trials, pilots,
+   * urgent partnerships) need to dispatch kits before payment lands.
+   * Sales or Ops requests an override with a reason; the configured
+   * override approver (default Shashank, configurable via stage
+   * responsibility) approves or rejects. When approved, the master
+   * status tracker skips payment-pending and installment-1-received.
+   *
+   * Undefined on MOUs that never went through the flow; defaulted to
+   * `{ status: 'none', ... }` when first accessed via the helper.
+   */
+  dispatchOverride?: MouDispatchOverride
+}
+
+/**
+ * Gate 5A.5 Step 4: per-MOU dispatch override request lifecycle. See
+ * MOU.dispatchOverride for context.
+ */
+export interface MouDispatchOverride {
+  status: 'none' | 'requested' | 'approved' | 'rejected'
+  requestedBy: string | null              // User.id
+  requestedAt: string | null              // ISO
+  requestReason: string | null
+  approvedBy: string | null               // User.id
+  approvedAt: string | null               // ISO
+  approvalNotes: string | null
+  rejectedBy: string | null               // User.id
+  rejectedAt: string | null               // ISO
+  rejectionReason: string | null
 }
 
 // ============================================================================

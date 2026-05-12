@@ -36,6 +36,10 @@ const CRITICAL_ACTIONS: ReadonlySet<string> = new Set<string>([
   'mou-cohort-status-changed',
   'status_change',
   'auto-create-from-feedback',
+  // Gate 5A.5 Step 4: dispatch override lifecycle.
+  'dispatch-override-requested',
+  'dispatch-override-approved',
+  'dispatch-override-rejected',
 ])
 
 /**

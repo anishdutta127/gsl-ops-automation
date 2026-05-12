@@ -67,7 +67,14 @@ import adjustmentsJson from '@/data/adjustments.json'
 import { RecalcSummary } from '@/components/mou-system/RecalcSummary'
 import { canEditMOU } from '@/lib/access'
 import { getCurrentUser } from '@/lib/auth/session'
-import { canGeneratePI } from '@/lib/access'
+import {
+  canApproveDispatchOverride,
+  canGeneratePI,
+  canRequestDispatchOverride,
+} from '@/lib/access'
+import { readOverride } from '@/lib/mou/dispatchOverride'
+import { getDispatchOverrideApproverUserId } from '@/lib/mou/overrideApprover'
+import { DispatchOverrideSection } from '@/components/ops/DispatchOverrideSection'
 import { computeLifecycle } from '@/lib/portal/lifecycleProgress'
 import { formatRs, formatDate } from '@/lib/format'
 import { TopNav } from '@/components/ops/TopNav'
@@ -205,6 +212,29 @@ const NOTICE_COPY: Record<string, string> = {
     'No reminder needed at this stage. The workflow banner only emits reminders when a handoff is overdue.',
   'reminder-cooldown':
     'A reminder was already sent for this stage within the last 24 hours.',
+  // Gate 5A.5 Step 4 (dispatch override flow).
+  'override-requested':
+    'Dispatch override request submitted. Will reflect on the approver’s bell within ~5 minutes.',
+  'override-already-requested':
+    'A dispatch override request was already in flight for this MOU; no change.',
+  'override-approved':
+    'Dispatch override approved. The status tracker now bypasses the payment-pending and instalment-1-received stages.',
+  'override-already-approved':
+    'Dispatch override was already approved; no change.',
+  'override-rejected':
+    'Dispatch override rejected. Reason has been recorded; Sales / Ops may submit a new request.',
+  'override-already-rejected':
+    'Dispatch override was already rejected; no change.',
+}
+
+const ERROR_COPY: Record<string, string> = {
+  'override-permission':
+    'You do not have permission to perform that override action.',
+  'override-empty-reason':
+    'The override reason cannot be empty. Please add context and resubmit.',
+  'override-invalid-state':
+    'The override is not in a state that allows that action. Refresh the page to see the current status.',
+  'mou-not-found': 'That MOU could not be found.',
 }
 
 function isVisibleToUser(mou: MOU, user: User | null): boolean {
@@ -218,6 +248,8 @@ export default async function MouDetailPage({ params, searchParams }: PageProps)
   const sp = (await searchParams) ?? {}
   const noticeKey = typeof sp.notice === 'string' ? sp.notice : null
   const noticeMessage = noticeKey ? NOTICE_COPY[noticeKey] ?? null : null
+  const errorKey = typeof sp.error === 'string' ? sp.error : null
+  const errorMessage = errorKey ? ERROR_COPY[errorKey] ?? null : null
   const user = await getCurrentUser()
   const mou = allMous.find((m) => m.id === mouId)
   if (!mou || !isVisibleToUser(mou, user)) {
@@ -258,6 +290,27 @@ export default async function MouDetailPage({ params, searchParams }: PageProps)
     }),
     5,
   )
+
+  // Gate 5A.5 Step 4: dispatch override state + permission gates.
+  const overrideState = readOverride(mou)
+  const overrideApproverUserId = getDispatchOverrideApproverUserId()
+  const overrideApproverUser = allUsers.find(
+    (u) => u.id === overrideApproverUserId,
+  )
+  const overrideApproverDisplayName =
+    overrideApproverUser?.name ?? overrideApproverUserId
+  const overrideRequester = overrideState.requestedBy
+    ? allUsers.find((u) => u.id === overrideState.requestedBy) ?? null
+    : null
+  const overrideResponderId =
+    overrideState.approvedBy ?? overrideState.rejectedBy
+  const overrideResponder = overrideResponderId
+    ? allUsers.find((u) => u.id === overrideResponderId) ?? null
+    : null
+  const canRequestOverride = user ? canRequestDispatchOverride(user) : false
+  const canApproveOverride = user
+    ? canApproveDispatchOverride(user, overrideApproverUserId)
+    : false
 
   // Gate 4.9 Step 4: who currently owns the stage this MOU is at.
   const responsibility = getResponsiblePartyForMou({
@@ -338,6 +391,19 @@ export default async function MouDetailPage({ params, searchParams }: PageProps)
             >
               <Info aria-hidden className="size-4 shrink-0 text-amber-700" />
               <span>{noticeMessage}</span>
+            </div>
+          </div>
+        ) : null}
+        {errorMessage ? (
+          <div className="border-b border-border bg-red-50">
+            <div
+              className="mx-auto flex max-w-screen-xl items-start gap-2 px-4 py-3 text-sm text-red-900"
+              role="alert"
+              data-testid="mou-detail-error"
+              data-error={errorKey}
+            >
+              <AlertCircle aria-hidden className="size-4 shrink-0 text-red-700" />
+              <span>{errorMessage}</span>
             </div>
           </div>
         ) : null}
@@ -474,6 +540,17 @@ export default async function MouDetailPage({ params, searchParams }: PageProps)
               testId="mou-status-tracker"
             />
           </section>
+
+          <DispatchOverrideSection
+            mouId={mou.id}
+            override={overrideState}
+            approverUserId={overrideApproverUserId}
+            approverDisplayName={overrideApproverDisplayName}
+            requesterDisplayName={overrideRequester?.name ?? null}
+            responderDisplayName={overrideResponder?.name ?? null}
+            canRequest={canRequestOverride}
+            canApprove={canApproveOverride}
+          />
 
           {workflowBanner ? (
             <section

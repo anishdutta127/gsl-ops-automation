@@ -86,10 +86,17 @@ export interface ComputeStageArgs {
  * Returns the FURTHEST lifecycle stage the MOU has reached. The caller
  * is responsible for joining the right slice of Payments + KitDispatch
  * records (filter by mouId before calling).
+ *
+ * Gate 5A.5 Step 4: when `mou.dispatchOverride.status === 'approved'`
+ * the payment-pending + installment-1-received stages are skipped. An
+ * approved override means dispatch is authorised without payment
+ * having to land; the tracker reflects that by jumping from `active`
+ * straight into the dispatch chain.
  */
 export function computeStage(args: ComputeStageArgs): LifecycleStage {
   const { mou, payments, dispatches, now } = args
   const nowMs = now.getTime()
+  const overrideApproved = mou.dispatchOverride?.status === 'approved'
 
   // Stage 1: pipeline (MOU still drafting).
   if (mou.status === 'Draft' || mou.status === 'Pending Signature') {
@@ -139,26 +146,31 @@ export function computeStage(args: ComputeStageArgs): LifecycleStage {
     return 'pi-generated'
   }
 
-  // Stage 5: 1st instalment received.
-  const firstInstalment = payments.find((p) => p.instalmentSeq === 1)
-  if (
-    firstInstalment
-    && (firstInstalment.status === 'Paid' || firstInstalment.status === 'Received')
-  ) {
-    return 'installment-1-received'
+  // Stage 5: 1st instalment received. Skipped when override approved.
+  if (!overrideApproved) {
+    const firstInstalment = payments.find((p) => p.instalmentSeq === 1)
+    if (
+      firstInstalment
+      && (firstInstalment.status === 'Paid' || firstInstalment.status === 'Received')
+    ) {
+      return 'installment-1-received'
+    }
   }
 
   // Stage 4: payment pending (an installment due in 30d OR overdue + no PI).
-  const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000
-  const paymentPending = payments.some((p) => {
-    if (p.status === 'Paid' || p.status === 'Received') return false
-    if (!p.dueDateIso) return false
-    const dueMs = new Date(p.dueDateIso).getTime()
-    if (Number.isNaN(dueMs)) return false
-    return dueMs - nowMs <= THIRTY_DAYS_MS // includes overdue
-  })
-  if (paymentPending) {
-    return 'payment-pending'
+  // Skipped when override approved.
+  if (!overrideApproved) {
+    const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000
+    const paymentPending = payments.some((p) => {
+      if (p.status === 'Paid' || p.status === 'Received') return false
+      if (!p.dueDateIso) return false
+      const dueMs = new Date(p.dueDateIso).getTime()
+      if (Number.isNaN(dueMs)) return false
+      return dueMs - nowMs <= THIRTY_DAYS_MS // includes overdue
+    })
+    if (paymentPending) {
+      return 'payment-pending'
+    }
   }
 
   // Stage 3: active (actuals captured).
