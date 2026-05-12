@@ -142,5 +142,17 @@
     "passwordHash": "REPLACE_WITH_BCRYPT_HASH",
     "createdAt": "2026-04-29T00:00:00Z",
     "auditLog": []
+  },
+  {
+    "id": "ajith.n",
+    "name": "Ajith N.",
+    "email": "ajith.n@getsetlearn.info",
+    "role": "Admin",
+    "department": null,
+    "testingOverride": false,
+    "active": true,
+    "passwordHash": "REPLACE_WITH_BCRYPT_HASH",
+    "createdAt": "2026-05-12T00:00:00Z",
+    "auditLog": []
   }
 ]

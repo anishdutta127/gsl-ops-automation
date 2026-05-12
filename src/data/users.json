@@ -187,5 +187,24 @@
     "passwordHash": "$2b$12$8A8t6dWja3tJ/GRxzxiwL.4XL2k2AJHJriJEIMcsR./Zz4DmDVQqa",
     "createdAt": "2026-04-29T00:00:00Z",
     "auditLog": []
+  },
+  {
+    "id": "ajith.n",
+    "name": "Ajith N.",
+    "email": "ajith.n@getsetlearn.info",
+    "role": "Admin",
+    "department": null,
+    "testingOverride": false,
+    "active": true,
+    "passwordHash": "$2b$12$dopDmbbkD8KVDFVU7NICW.7xFQtgHgI76pGrToPIilaU2L7DHD4LK",
+    "createdAt": "2026-05-12T00:00:00Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-05-12T00:00:00Z",
+        "user": "anish.d",
+        "action": "create",
+        "notes": "Added per Gate 5A.5 Step 5; cross-functional Admin (department null wildcard) for Phase 1 testing window."
+      }
+    ]
   }
 ]
