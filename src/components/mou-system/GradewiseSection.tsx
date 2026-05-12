@@ -110,9 +110,11 @@ export function GradewiseSection({
       {expanded && (
         <div id="gradewise-section-body" className="border-t border-border px-4 py-4 space-y-6">
           <div>
-            <div className="text-sm font-medium text-brand-navy">Product Selection</div>
+            <div className="text-sm font-medium text-brand-navy">
+              Product line (TinkRworks / Cretile)
+            </div>
             <p className="mt-0.5 text-xs text-slate-600">
-              Drives the allocation dropdowns at the Kits for Dispatch stage.
+              The product line shipped under this MOU. Drives the SKU dropdown at the Kits for Dispatch allocation stage.
             </p>
             <div className="mt-2 flex flex-wrap gap-3">
               {PRODUCT_OPTIONS.map((opt) => (
@@ -157,7 +159,12 @@ export function GradewiseSection({
                   <tr className="border-b border-border text-left text-xs uppercase tracking-wide text-slate-600">
                     <th className="py-2 pr-3 font-medium">Grade</th>
                     <th className="py-2 pr-3 font-medium">No. of Students</th>
-                    <th className="py-2 pr-3 font-medium">Kit Type</th>
+                    <th className="py-2 pr-3 font-medium">
+                      Kit type
+                      <span className="ml-1 font-normal normal-case text-[10px] text-slate-500">
+                        (Reusable / Consumable)
+                      </span>
+                    </th>
                   </tr>
                 </thead>
                 <tbody>

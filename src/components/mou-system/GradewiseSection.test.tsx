@@ -132,6 +132,25 @@ describe('GradewiseSection (Gate 3 Step 1)', () => {
     expect(html).toMatch(/data-testid="gradewise-total"[^>]*>0</)
   })
 
+  it('shows the product-line label including TinkRworks / Cretile clarification', () => {
+    // Gate 5A.5 Step 3: Misba reported the dropdown context was
+    // unclear ("kit type" was being confused with "product line").
+    // Header text now includes the enum values inline.
+    const html = renderToStaticMarkup(
+      <GradewiseSection
+        productSelection={null}
+        gradewiseDistribution={null}
+        onProductSelectionChange={NOOP}
+        onGradewiseDistributionChange={NOOP}
+        expanded={true}
+        onToggle={NOOP}
+      />,
+    )
+    expect(html).toContain('Product line (TinkRworks / Cretile)')
+    expect(html).toContain('Kit type')
+    expect(html).toContain('(Reusable / Consumable)')
+  })
+
   it('pre-fills students input for grades that carry data', () => {
     const rows: GradewiseDistributionRow[] = [
       { grade: 3, students: 22, kitType: 'Reusable' },

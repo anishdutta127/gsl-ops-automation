@@ -206,8 +206,18 @@ export function AllocationForm({
               <th className="py-2 pr-3 font-medium">Grade</th>
               <th className="py-2 pr-3 font-medium">Students</th>
               <th className="py-2 pr-3 font-medium">Kits Qty</th>
-              <th className="py-2 pr-3 font-medium">Type</th>
-              <th className="py-2 pr-3 font-medium">Product</th>
+              <th className="py-2 pr-3 font-medium">
+                Kit type
+                <span className="ml-1 font-normal normal-case text-[10px] text-slate-500">
+                  (Reusable / Consumable)
+                </span>
+              </th>
+              <th className="py-2 pr-3 font-medium">
+                Product
+                <span className="ml-1 font-normal normal-case text-[10px] text-slate-500">
+                  (TinkRworks / Cretile SKU)
+                </span>
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -350,7 +360,7 @@ function AllocationReadonly({ rows }: { rows: RowState[] }) {
             <th className="py-2 pr-3 font-medium">Grade</th>
             <th className="py-2 pr-3 font-medium">Students</th>
             <th className="py-2 pr-3 font-medium">Kits Qty</th>
-            <th className="py-2 pr-3 font-medium">Type</th>
+            <th className="py-2 pr-3 font-medium">Kit type</th>
             <th className="py-2 pr-3 font-medium">Product</th>
           </tr>
         </thead>
