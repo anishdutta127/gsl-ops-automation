@@ -10,7 +10,7 @@ import { NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canEditFinanceData } from '@/lib/access'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
-import type { Vendor } from '@/lib/types'
+import type { AuditEntry, Vendor } from '@/lib/types'
 import vendorsJson from '@/data/vendors.json'
 
 const allVendors = vendorsJson as unknown as Vendor[]
@@ -55,7 +55,12 @@ export async function POST(request: Request, ctx: RouteContext) {
     )
   }
 
-  const next: Vendor = {
+  // Build the full Vendor record (including id + audit append) so the
+  // drain's applyOneToList can match on payload.id and replace the row.
+  // Wrapping inside { vendorId, vendor, audit } would leave payload.id
+  // undefined and the drain would silently skip the entry (Gate 5A.5
+  // persistence bug).
+  const nextWithoutAudit: Vendor = {
     ...existing,
     name,
     legalEntity: asStringOrNull(body.legalEntity),
@@ -70,6 +75,19 @@ export async function POST(request: Request, ctx: RouteContext) {
     ifsc: asStringOrNull(body.ifsc),
     notes: typeof body.notes === 'string' ? body.notes : null,
     active: body.active !== false,
+    auditLog: existing.auditLog ?? [],
+  }
+  const auditEntry: AuditEntry = {
+    timestamp: new Date().toISOString(),
+    user: user.id,
+    action: 'update',
+    before: existing as unknown as Record<string, unknown>,
+    after: nextWithoutAudit as unknown as Record<string, unknown>,
+    notes: `Vendor ${existing.id} updated.`,
+  }
+  const next: Vendor = {
+    ...nextWithoutAudit,
+    auditLog: [...nextWithoutAudit.auditLog, auditEntry],
   }
 
   try {
@@ -77,17 +95,7 @@ export async function POST(request: Request, ctx: RouteContext) {
       queuedBy: user.id,
       entity: 'vendor',
       operation: 'update',
-      payload: {
-        vendorId: existing.id,
-        vendor: next as unknown as Record<string, unknown>,
-        audit: {
-          timestamp: new Date().toISOString(),
-          user: user.name,
-          action: 'update',
-          before: existing as unknown as Record<string, unknown>,
-          after: next as unknown as Record<string, unknown>,
-        },
-      },
+      payload: next as unknown as Record<string, unknown>,
     })
   } catch (e) {
     return NextResponse.json(

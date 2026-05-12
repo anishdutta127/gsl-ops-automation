@@ -16,6 +16,7 @@ import type {
   Agreement,
   AgreementCustody,
   AgreementType,
+  AuditEntry,
 } from '@/lib/types'
 import agreementsJson from '@/data/agreements.json'
 
@@ -89,7 +90,11 @@ export async function POST(request: Request, ctx: RouteContext) {
   }
 
   const endDate = asStringOrNull(body.endDate)
-  const next: Agreement = {
+  // Full Agreement record (including id) so the drain's
+  // applyOneToList replaces by id. The Gate 5A.5 fix moved away from
+  // the { agreementId, agreement, audit } wrapper which left payload.id
+  // undefined and silently dropped the write.
+  const nextWithoutAudit: Agreement = {
     ...existing,
     type,
     partyName,
@@ -106,6 +111,19 @@ export async function POST(request: Request, ctx: RouteContext) {
     physicalCustody: parseCustody(body.physicalCustody),
     documentUrl: asStringOrNull(body.documentUrl),
     // daysToExpiry left to the drain; recomputed on apply.
+    auditLog: existing.auditLog ?? [],
+  }
+  const auditEntry: AuditEntry = {
+    timestamp: new Date().toISOString(),
+    user: user.id,
+    action: 'update',
+    before: existing as unknown as Record<string, unknown>,
+    after: nextWithoutAudit as unknown as Record<string, unknown>,
+    notes: `Agreement ${existing.id} updated.`,
+  }
+  const next: Agreement = {
+    ...nextWithoutAudit,
+    auditLog: [...nextWithoutAudit.auditLog, auditEntry],
   }
 
   try {
@@ -113,17 +131,7 @@ export async function POST(request: Request, ctx: RouteContext) {
       queuedBy: user.id,
       entity: 'agreement',
       operation: 'update',
-      payload: {
-        agreementId: existing.id,
-        agreement: next as unknown as Record<string, unknown>,
-        audit: {
-          timestamp: new Date().toISOString(),
-          user: user.name,
-          action: 'update',
-          before: existing as unknown as Record<string, unknown>,
-          after: next as unknown as Record<string, unknown>,
-        },
-      },
+      payload: next as unknown as Record<string, unknown>,
     })
   } catch (e) {
     return NextResponse.json(
