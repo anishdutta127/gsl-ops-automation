@@ -460,5 +460,82 @@
       "rechargeableBatteries": 12
     },
     "retryCount": 0
+  },
+  {
+    "id": "f9500057-bbc5-432c-b92a-06859d441a91",
+    "queuedAt": "2026-05-12T13:05:58.610Z",
+    "queuedBy": "misba.m",
+    "entity": "mou",
+    "operation": "update",
+    "payload": {
+      "id": "MOU-STEAM-2627-048",
+      "schoolId": "SCH-RISHI_AUROBINDO_MEMO",
+      "schoolName": "Rishi Aurobindo Memorial Academy",
+      "programme": "STEAM",
+      "programmeSubType": null,
+      "schoolScope": "SINGLE",
+      "schoolGroupId": null,
+      "status": "Active",
+      "academicYear": "2026-27",
+      "startDate": "2025-08-01",
+      "endDate": "2026-03-31",
+      "studentsMou": 16,
+      "studentsActual": 16,
+      "studentsVariance": 0,
+      "studentsVariancePct": 0,
+      "spWithoutTax": 2000,
+      "spWithTax": 2360,
+      "contractValue": 37760,
+      "received": 0,
+      "tds": 0,
+      "balance": 37760,
+      "receivedPct": 0,
+      "paymentSchedule": "50-50 half-yearly",
+      "trainerModel": null,
+      "salesPersonId": "sp-prodipto",
+      "templateVersion": null,
+      "generatedAt": null,
+      "notes": "Status: Retained",
+      "daysToExpiry": -21,
+      "auditLog": [
+        {
+          "timestamp": "2026-04-27T12:00:00.000Z",
+          "user": "system",
+          "action": "auto-link-exact-match",
+          "notes": "Imported from gsl-mou-system; auto-linked to school SCH-RISHI_AUROBINDO_MEMO."
+        },
+        {
+          "timestamp": "2026-04-27T18:01:00.000Z",
+          "user": "system-w4-a-2",
+          "action": "mou-cohort-status-changed",
+          "before": {
+            "cohortStatus": null
+          },
+          "after": {
+            "cohortStatus": "active"
+          },
+          "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
+        },
+        {
+          "timestamp": "2026-05-12T13:05:58.609Z",
+          "user": "misba.m",
+          "action": "actuals-confirmed",
+          "before": {
+            "studentsActual": null,
+            "studentsVariance": null,
+            "studentsVariancePct": null
+          },
+          "after": {
+            "studentsActual": 16,
+            "studentsVariance": 0,
+            "studentsVariancePct": 0
+          },
+          "notes": "NA"
+        }
+      ],
+      "cohortStatus": "active",
+      "delayNotes": null
+    },
+    "retryCount": 0
   }
 ]
