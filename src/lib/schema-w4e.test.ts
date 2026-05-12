@@ -76,10 +76,18 @@ describe('W4-E.1 SchoolSPOC schema', () => {
 })
 
 describe('W4-E.1 Notification schema', () => {
-  it('notifications.json seeds as an empty array; W4-E.5 trigger wiring populates it', () => {
+  it('notifications.json holds a valid Notification[] array (may be populated by drain)', () => {
     const rows = notificationsJson as unknown as Notification[]
     expect(Array.isArray(rows)).toBe(true)
-    expect(rows.length).toBe(0)
+    // The original W4-E.1 seed was an empty array. Post W4-E.5 + auto-
+    // sync activation (Gate 5A.5), the cron drain may have landed real
+    // notification rows into the JSON file. The schema assertion is
+    // that every row has the required fields, not that the count is 0.
+    for (const row of rows) {
+      expect(typeof row.id).toBe('string')
+      expect(typeof row.recipientUserId).toBe('string')
+      expect(VALID_NOTIFICATION_KINDS.has(row.kind)).toBe(true)
+    }
   })
 
   it('NotificationKind covers the 6 Phase 1 trigger sources', () => {

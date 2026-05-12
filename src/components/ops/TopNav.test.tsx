@@ -7,6 +7,16 @@ import type { Department, User } from '@/lib/types'
 // to restore the real implementation.
 vi.unmock('@/components/ops/TopNav')
 
+// Gate 5A.5 Step 2: TopNav now embeds QueueFreshnessIndicator (an async
+// Server Component that reads sync_health.json + pending_updates.json
+// at request time). renderToStaticMarkup cannot resolve nested async
+// Server Components, so we stub it to a synchronous no-op for this
+// suite. The indicator has its own dedicated test file covering the
+// dropdown / Sync-now behaviour.
+vi.mock('@/components/ops/QueueFreshnessIndicator', () => ({
+  QueueFreshnessIndicator: () => null,
+}))
+
 const getCurrentUserMock = vi.fn()
 
 vi.mock('@/lib/auth/session', () => ({
