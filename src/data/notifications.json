@@ -16,7 +16,7 @@
       "hasVariance": false
     },
     "createdAt": "2026-05-12T13:07:43.149Z",
-    "readAt": null,
+    "readAt": "2026-05-12T16:34:41.199Z",
     "auditLog": [
       {
         "timestamp": "2026-05-12T13:07:43.149Z",
@@ -28,6 +28,18 @@
           "relatedEntityId": "3647c2fd-df47-4ca1-9749-5c8a6485c679"
         },
         "notes": "Notification intake-completed fan-out to anish.d (sender=misba.m)."
+      },
+      {
+        "timestamp": "2026-05-12T16:34:41.199Z",
+        "user": "anish.d",
+        "action": "notification-marked-read",
+        "before": {
+          "readAt": null
+        },
+        "after": {
+          "readAt": "2026-05-12T16:34:41.199Z"
+        },
+        "notes": "Recipient marked notification as read."
       }
     ]
   },
