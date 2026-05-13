@@ -58,6 +58,8 @@ const STATUS_TONE: Record<Payment['status'], StatusChipTone> = {
   'Due Soon': 'attention',
   Pending: 'neutral',
   Overdue: 'alert',
+  Cancelled: 'neutral',
+  Skipped: 'neutral',
 }
 
 const ERROR_COPY: Record<string, string> = {
@@ -200,6 +202,37 @@ export default async function FinancePiViewPage({ params, searchParams }: PagePr
                 <Download aria-hidden className="size-4" />
                 Download .docx
               </a>
+              {/*
+               * Gate 5A.6 Step 14: Resend PI to school via mailto: link.
+               * Opens the operator's default mail client with the school's
+               * primary email pre-filled. SMTP integration is Phase 1.1;
+               * for now this is a compose-and-copy flow that closes the
+               * loop without an outbound mail service.
+               */}
+              {school?.email ? (
+                <a
+                  href={(() => {
+                    const subject = `Proforma Invoice ${payment.piNumber ?? payment.id} - ${payment.schoolName}`
+                    const body = [
+                      `Dear ${school.contactPerson ?? 'Sir / Madam'},`,
+                      '',
+                      `Please find attached the proforma invoice ${payment.piNumber ?? '(no PI number)'} for ${payment.schoolName} (${payment.instalmentLabel}).`,
+                      '',
+                      `Expected amount: Rs ${payment.expectedAmount.toLocaleString('en-IN')}.`,
+                      '',
+                      'Kindly process the payment at your earliest convenience.',
+                      '',
+                      'Regards,',
+                      'GetSetLearn Finance Team',
+                    ].join('\n')
+                    return `mailto:${school.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
+                  })()}
+                  data-testid="pi-resend-cta"
+                  className="ml-2 mt-3 inline-flex min-h-11 items-center gap-2 rounded-md border border-brand-navy bg-card px-4 py-2 text-sm font-semibold text-brand-navy hover:bg-brand-navy/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
+                >
+                  Resend to school (mailto)
+                </a>
+              ) : null}
             </section>
           ) : null}
 
@@ -234,8 +267,64 @@ export default async function FinancePiViewPage({ params, searchParams }: PagePr
                 Re-issue is restricted to Finance + Admin. View-only access is fine.
               </p>
             ) : (
-              <div className="mt-3">
+              <div className="mt-3 space-y-3">
                 <ReissueButton paymentId={payment.id} oldPiNumber={payment.piNumber} />
+                {/*
+                 * Gate 5A.6 Step 13: Void PI action. Admin wildcard only.
+                 * Counter stays intact (Gate 2 §3); the void is captured
+                 * in piVoidedAt + piVoidReason. An Adjustment row for
+                 * -expectedAmount is emitted so the next PI surfaces the
+                 * credit.
+                 */}
+                {user.role === 'Admin' && (user.department ?? null) === null &&
+                payment.piNumber !== null &&
+                (payment.piVoidedAt ?? null) === null ? (
+                  <form
+                    method="POST"
+                    action={`/api/finance/pi/${payment.id}/void`}
+                    className="rounded-md border border-signal-alert/40 bg-card p-3 space-y-2"
+                    data-testid="void-pi-form"
+                  >
+                    <p className="text-xs text-foreground">
+                      <strong className="text-signal-alert">Void this PI.</strong>{' '}
+                      The PI number is preserved in the audit trail and no longer
+                      counts toward outstanding. An adjustment for the voided
+                      amount will be created. Counter is NOT rolled back.
+                    </p>
+                    <label
+                      htmlFor="voidReason"
+                      className="block text-xs font-medium text-brand-navy"
+                    >
+                      Reason (required, min 10 characters)
+                    </label>
+                    <input
+                      id="voidReason"
+                      name="reason"
+                      type="text"
+                      required
+                      minLength={10}
+                      className="block w-full rounded-md border border-input bg-card px-3 py-2 text-sm text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
+                      data-testid="void-reason-input"
+                    />
+                    <button
+                      type="submit"
+                      className="inline-flex min-h-11 items-center rounded-md bg-signal-alert px-4 py-2 text-sm font-semibold text-white hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
+                      data-testid="void-pi-submit"
+                    >
+                      Void PI
+                    </button>
+                  </form>
+                ) : (payment.piVoidedAt ?? null) !== null ? (
+                  <p
+                    role="status"
+                    className="rounded-md border border-signal-alert/40 bg-card p-3 text-xs text-signal-alert"
+                    data-testid="pi-voided-banner"
+                  >
+                    This PI was voided on{' '}
+                    <span className="font-mono">{payment.piVoidedAt}</span>.{' '}
+                    {payment.piVoidReason ? `Reason: ${payment.piVoidReason}` : ''}
+                  </p>
+                ) : null}
               </div>
             )}
           </section>

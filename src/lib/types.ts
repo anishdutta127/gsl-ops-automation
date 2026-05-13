@@ -1034,6 +1034,20 @@ export interface Escalation {
   resolvedAt: string | null
   resolvedBy: string | null
   auditLog: AuditEntry[]
+  /**
+   * Gate 5A.6 Step 15: comment thread. Immutable per-comment (no edit
+   * after post; deletion is Admin-only). Each post writes a parallel
+   * audit entry on auditLog so the discussion is queryable across
+   * surfaces.
+   */
+  comments?: EscalationComment[]
+}
+
+export interface EscalationComment {
+  id: string
+  timestamp: string                 // ISO
+  authorUserId: string
+  body: string
 }
 
 // ============================================================================
@@ -1343,6 +1357,17 @@ export type PaymentStatus =
   | 'Due Soon'
   | 'PI Sent'
   | 'Paid'
+  // Gate 5A.6 Step 10: Admin soft-delete of a payment. The record stays
+  // in payments.json with the full audit trail; UI filters out Cancelled
+  // rows on the open lists. Re-activating a cancelled payment is a Phase
+  // 1.1 follow-up; today the only way back is a JSON edit.
+  | 'Cancelled'
+  // Gate 5A.6 Step 13: Finance / Admin skip a future instalment when a
+  // school drops a course mid-year. Skipped rows surface with a
+  // strikethrough state; balance is excluded from outstanding totals;
+  // PI generation is blocked. The audit captures the operator-supplied
+  // reason.
+  | 'Skipped'
 
 export interface PartialPaymentEntry {
   date: string                     // ISO yyyy-mm-dd
@@ -1379,6 +1404,16 @@ export interface Payment {
   studentCountActual: number | null
   partialPayments: PartialPaymentEntry[] | null
   auditLog: AuditEntry[] | null
+  /**
+   * Gate 5A.6 Step 13: PI void support. piNumber is preserved as the
+   * counter-integrity record per Gate 2 §3 (no counter rollback). When
+   * piVoidedAt is set the row renders as VOID and the PI no longer
+   * counts toward outstanding. Adjustment for the voided amount is
+   * created separately. piVoidedAt / piVoidReason are nullable for
+   * backwards compatibility with existing records.
+   */
+  piVoidedAt?: string | null
+  piVoidReason?: string | null
 }
 
 export interface PaymentLog {

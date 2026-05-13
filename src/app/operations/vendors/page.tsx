@@ -11,12 +11,14 @@
 
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
+import { Plus } from 'lucide-react'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canEditFinanceData } from '@/lib/access'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { EmptyState } from '@/components/ops/EmptyState'
 import { StatusChip } from '@/components/ops/StatusChip'
+import { opsButtonClass } from '@/components/ops/OpsButton'
 import type { Vendor } from '@/lib/types'
 import vendorsJson from '@/data/vendors.json'
 
@@ -43,20 +45,16 @@ export default async function VendorsPage() {
             { label: 'Vendors' },
           ]}
           actions={
-            // Add vendor is a Phase 1.1 deferral. The create flow is
-            // not wired and the route does not exist; rendering an
-            // enabled CTA would 404 on click. Render the affordance
-            // as a disabled badge so Finance can see it's coming
-            // without hitting a dead link (Gate 5A.5 audit fix B8).
+            // Gate 5A.6 Step 12: vendor create is now live; the Phase 1.1
+            // disabled-badge has been promoted to a real link.
             canEdit ? (
-              <span
-                title="Vendor create lands in Phase 1.1. For now, ask Anish to seed the row; edit fields land via Edit on the detail page."
-                aria-disabled="true"
-                className="inline-flex min-h-11 cursor-not-allowed items-center gap-1.5 rounded-md border border-dashed border-border bg-muted px-3 py-2 text-sm font-medium text-muted-foreground"
-                data-testid="vendor-add-disabled"
+              <Link
+                href="/operations/vendors/new"
+                className={opsButtonClass({ variant: 'action', size: 'md' })}
+                data-testid="vendor-new-cta"
               >
-                Add vendor (Phase 1.1)
-              </span>
+                <Plus aria-hidden className="size-4" /> New vendor
+              </Link>
             ) : null
           }
         />
@@ -66,7 +64,7 @@ export default async function VendorsPage() {
               title="No vendors yet"
               description={
                 canEdit
-                  ? 'Vendor create lands in Phase 1.1. Ask Anish to seed the first vendor row; field edits land via the per-row detail page.'
+                  ? 'Add the first vendor via the "+ New vendor" button above.'
                   : 'Vendors will appear here once Finance adds them.'
               }
             />

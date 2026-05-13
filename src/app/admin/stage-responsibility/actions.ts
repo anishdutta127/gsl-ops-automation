@@ -97,3 +97,45 @@ export async function saveStageResponsibilityAction(
   }
   redirect(`/admin/stage-responsibility?saved=${savedCount}`)
 }
+
+/*
+ * Gate 5A.6 Step 15: reset the entire matrix to the Gate 4.9 defaults.
+ * Walks every stage and submits the DEFAULT_RESPONSIBILITY values plus
+ * a null responsibleUserId. Each per-stage update logs an audit entry
+ * with the operator-supplied reason in changeNotes; existing
+ * customisations stay in each stage's audit array.
+ */
+export async function resetStageResponsibilityAction(
+  formData: FormData,
+): Promise<void> {
+  const user = await getCurrentUser()
+  if (!user) redirect('/login?next=%2Fadmin%2Fstage-responsibility')
+  if (!canPerform(user, 'stage-responsibility:configure')) {
+    redirect('/admin/stage-responsibility?error=permission')
+  }
+  const reasonRaw = String(formData.get('reason') ?? '').trim()
+  const reason = reasonRaw === '' ? 'Operator triggered Reset to defaults.' : reasonRaw
+
+  // Lazily import the default mapping to keep the file purely server-side
+  // and avoid circular issues during cold start.
+  const { __testing__ } = await import('@/lib/stageResponsibility')
+  const defaults = __testing__.DEFAULT_RESPONSIBILITY
+
+  let resetCount = 0
+  for (const stage of STAGE_ORDER) {
+    const seed = defaults[stage as LifecycleStage]
+    const result = await updateStageResponsibility({
+      stage: stage as LifecycleStage,
+      patch: {
+        responsibleDepartment: seed.responsibleDepartment,
+        responsibleUserId: null,
+        escalationDepartment: seed.escalationDepartment,
+        notes: seed.notes,
+      },
+      actorUserId: user.id,
+      changeNotes: `Reset to Gate 4.9 defaults via /admin/stage-responsibility. ${reason}`,
+    })
+    if (result.ok) resetCount += 1
+  }
+  redirect(`/admin/stage-responsibility?reset=${resetCount}`)
+}

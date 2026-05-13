@@ -23,7 +23,7 @@ import { OpsButton } from '@/components/ops/OpsButton'
 import { getResponsibilityMatrix } from '@/lib/stageResponsibility'
 import { STAGE_LABEL, STAGE_ORDER } from '@/lib/statusTracker'
 import type { ResponsibilityDepartment } from '@/lib/types'
-import { saveStageResponsibilityAction } from './actions'
+import { saveStageResponsibilityAction, resetStageResponsibilityAction } from './actions'
 
 const allUsers = usersJson as unknown as User[]
 
@@ -212,6 +212,53 @@ export default async function StageResponsibilityPage({ searchParams }: PageProp
               >
                 Save changes
               </OpsButton>
+            </div>
+          </form>
+
+          {/*
+           * Gate 5A.6 Step 15: Reset all stages to the Gate 4.9 defaults
+           * (DEFAULT_RESPONSIBILITY in src/lib/stageResponsibility.ts).
+           * Each per-stage audit array preserves the operator's prior
+           * customisations.
+           */}
+          <form
+            action={resetStageResponsibilityAction}
+            method="POST"
+            data-testid="stage-resp-reset-form"
+            className="mt-8 rounded-md border border-signal-attention bg-card p-4 space-y-3"
+          >
+            <div>
+              <h2 className="font-heading text-sm font-semibold text-brand-navy">
+                Reset to defaults
+              </h2>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Restores the original 10-stage default mapping (per
+                docs/MERGE_PLAN.md §6). Audit log preserves your customisations.
+              </p>
+            </div>
+            <div>
+              <label
+                htmlFor="resetReason"
+                className="block text-xs font-medium text-brand-navy mb-1"
+              >
+                Reason (optional)
+              </label>
+              <input
+                id="resetReason"
+                name="reason"
+                type="text"
+                className="block w-full rounded-md border border-input bg-card px-3 py-2 text-sm text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
+                data-testid="stage-resp-reset-reason"
+              />
+            </div>
+            <div>
+              <button
+                type="submit"
+                className="inline-flex min-h-11 items-center rounded-md border border-signal-attention bg-card px-3 py-2 text-sm font-semibold text-signal-attention hover:bg-signal-attention/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
+                data-testid="stage-resp-reset-submit"
+              >
+                Reset all stages to defaults
+              </button>
             </div>
           </form>
         </div>

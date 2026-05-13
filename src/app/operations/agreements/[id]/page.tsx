@@ -47,13 +47,37 @@ export default async function AgreementDetailPage({ params }: PageProps) {
           ]}
         />
         <div className="mx-auto max-w-screen-xl space-y-6 px-4 py-6 sm:px-6">
-          <div>
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <Link
               href="/operations/agreements"
               className="text-sm text-muted-foreground hover:text-brand-navy"
             >
               Back to agreements
             </Link>
+            {canEdit ? (
+              <div className="flex flex-wrap gap-2">
+                <Link
+                  href={`/operations/agreements/new?renewedFrom=${encodeURIComponent(agreement.id)}`}
+                  className="inline-flex min-h-9 items-center gap-1.5 rounded-md border border-border bg-card px-3 py-1.5 text-xs font-semibold text-brand-navy hover:bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
+                  data-testid="agreement-renew-cta"
+                >
+                  Renew agreement
+                </Link>
+                <form
+                  action={`/api/operations/agreements/${encodeURIComponent(agreement.id)}/terminate`}
+                  method="POST"
+                  className="inline"
+                >
+                  <button
+                    type="submit"
+                    className="inline-flex min-h-9 items-center gap-1.5 rounded-md border border-signal-alert bg-card px-3 py-1.5 text-xs font-semibold text-signal-alert hover:bg-signal-alert/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-signal-alert"
+                    data-testid="agreement-terminate-cta"
+                  >
+                    Mark terminated
+                  </button>
+                </form>
+              </div>
+            ) : null}
           </div>
 
           <AgreementEditForm

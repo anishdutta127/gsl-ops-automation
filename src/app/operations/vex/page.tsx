@@ -24,7 +24,7 @@ import { getCurrentUser } from '@/lib/auth/session'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { accentFor } from '@/lib/departmentAccents'
-import { canEditFinanceData } from '@/lib/access'
+import { canEditFinanceData, canManageInventory } from '@/lib/access'
 import { vexFunnelCounts } from '@/lib/mouSystem/vex'
 import type {
   VexDispatch,
@@ -51,6 +51,7 @@ export default async function OperationsVexPage() {
   if (!user) redirect('/login?next=%2Foperations%2Fvex')
   const accent = accentFor('ops')
   const canCreatePi = canEditFinanceData(user)
+  const canEditProducts = canManageInventory(user)
 
   // VEX PI rollups (Round 3 Step 10a/10c semantics).
   const totalReceived = vexPis.reduce(
@@ -193,10 +194,21 @@ export default async function OperationsVexPage() {
           <section aria-label="VEX SKU master">
             <SectionHeading
               title="SKU master"
-              hint={`${vexProducts.length} VEX products. Read-only in Phase 1.`}
+              hint={`${vexProducts.length} VEX products.`}
               id="vex-skus"
+              action={
+                canEditProducts ? (
+                  <Link
+                    href="/operations/vex/products/new"
+                    className="inline-flex min-h-9 items-center gap-1.5 rounded-md border border-border bg-card px-2.5 py-1 text-xs font-semibold text-brand-navy hover:bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
+                    data-testid="vex-product-new-cta"
+                  >
+                    <Plus aria-hidden className="size-3.5" /> New product
+                  </Link>
+                ) : null
+              }
             />
-            <VexProductsTable products={vexProducts} />
+            <VexProductsTable products={vexProducts} canEdit={canEditProducts} />
           </section>
 
           <section aria-label="VEX dispatches">
@@ -276,22 +288,27 @@ function SectionHeading({
   title,
   hint,
   id,
+  action,
 }: {
   title: string
   hint?: string
   id?: string
+  action?: React.ReactNode
 }) {
   return (
-    <div className="mb-2 flex items-baseline justify-between gap-3">
+    <div className="mb-2 flex flex-wrap items-baseline justify-between gap-3">
       <h2
         id={id}
         className="font-heading text-base font-semibold text-brand-navy"
       >
         {title}
       </h2>
-      {hint ? (
-        <span className="text-xs text-muted-foreground">{hint}</span>
-      ) : null}
+      <div className="flex items-center gap-2">
+        {hint ? (
+          <span className="text-xs text-muted-foreground">{hint}</span>
+        ) : null}
+        {action}
+      </div>
     </div>
   )
 }

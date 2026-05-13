@@ -326,3 +326,67 @@ References:
   flow, port the major-metro mapping from the original Phase X
   brief into `src/lib/regions.ts` as `inferRegionFromCity(city)` and
   wire to the form's onChange.
+
+## Gate 5A.6 deferrals (added 2026-05-13)
+
+Items intentionally not built in Gate 5A.6 because a manual path exists.
+
+- **In-app PI email send.** Step 14 ships a `mailto:` deep-link from
+  `/finance/pi/[paymentId]` that opens the operator's mail client with a
+  pre-filled subject + body. SMTP integration stays Phase 1.1. Trigger:
+  Pranav reports more than three school recipients missed a PI because
+  the operator forgot to attach the `.docx`, OR mailto-client friction
+  shows up in daily flow.
+- **Signed-MOU PDF on durable storage.** `/api/mou/[id]/signed-mou/upload`
+  writes to `public/signed-mous/` which is ephemeral on Vercel (mirrors
+  the delivery-challan pattern). Trigger: any production deploy where a
+  signed PDF needs to survive a Vercel redeploy. Swap to Vercel Blob or
+  S3 + CDN.
+- **Standalone SchoolGroup create UI.** Admin can hand-edit
+  `src/data/school_groups.json`; chain reconciliation handles 99% of
+  cases. Trigger: sales rep wants to create a chain umbrella without
+  Admin help.
+- **Edit SchoolGroup details.** Manual JSON edit during pilot. Trigger:
+  in-app rename of an existing chain becomes daily.
+- **Cancel a dispatch.** Admin can flip `dispatchStatus` via JSON; rare
+  event. Trigger: Misba reports dispatch-creation mistakes more than
+  once a week.
+- **Edit allocation after Sales approval.** Documented path is reject +
+  re-allocate. Trigger: trainer batches reject more than once a week
+  because of trivial allocation typos.
+- **Bulk operations beyond MOU reassignment.** Per-entity actions cover
+  round-1 scenarios. Trigger: Pranav or Shashank needs multi-select on
+  dispatches, escalations, or payments more than once a week.
+- **Bulk import UI.** Admin still uses CLI scripts. Trigger: a sales
+  head or finance head needs to bulk-import without Admin help.
+- **Standalone manual inventory adjustment.** Step 11 ships inward /
+  outward / adjust forms; the dedicated delta-only form is documented
+  as "use inward with negative qty" until Phase 1.1. Trigger: Misba
+  surfaces enough qty-correction events that the inline workflow
+  becomes painful.
+- **Password reset.** No self-serve password reset surface; Admin can
+  flip `passwordHash` via JSON edit. Trigger: tester locks themselves
+  out during the pilot and a 5-min Admin assist is not viable.
+- **Delete escalation.** Admin can deactivate via status; hard delete
+  is not supported. Trigger: GDPR / audit need to purge an escalation
+  row.
+- **Delete adjustment.** Documented path is reverse + create new
+  (canonical Pranav flow). Trigger: Pranav reports that the reverse
+  flow obscures the audit trail in practice.
+- **Add / remove rows in override mode (schedule editor).** Override
+  flow at `/mous/[id]/installments/schedule-edit` requires a fixed row
+  count once PIs are issued; only percentage / due-date / notes are
+  re-allocatable. Trigger: any post-PI scenario where the school
+  consolidates or splits the remaining instalment plan.
+- **User deactivation + invite flow.** No `/admin/users` surface today.
+  Admin flips `user.active` via JSON edit; sales reps deactivate via
+  `/admin/sales-team/<repId>` (no in-app form). Bulk reassignment
+  surface at `/admin/sales-team/reassign` handles the MOU-move part
+  of offboarding. Trigger: round-2 testers report onboarding /
+  offboarding friction.
+- **Dispatch rewind capability.** VEX dispatch lifecycle is forward-
+  only at the API. Trigger: more than one dispatch-status mis-step per
+  week during the pilot.
+- **PI counter rollback after void.** Step 13 voids the PI but
+  preserves the counter (Gate 2 §3 integrity invariant). Trigger: never;
+  this is a design decision, not a deferral.

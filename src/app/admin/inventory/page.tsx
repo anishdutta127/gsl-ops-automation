@@ -13,10 +13,12 @@
 
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import { Plus, Sliders } from 'lucide-react'
 import type { InventoryCategory, InventoryItem } from '@/lib/types'
 import inventoryItemsJson from '@/data/inventory_items.json'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canPerform } from '@/lib/auth/permissions'
+import { canManageInventory } from '@/lib/access'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { EmptyState } from '@/components/ops/EmptyState'
@@ -57,6 +59,7 @@ export default async function InventoryListPage({ searchParams }: PageProps) {
   if (!user) redirect('/login?next=%2Fadmin%2Finventory')
 
   const canEdit = canPerform(user, 'inventory:edit')
+  const canManage = canManageInventory(user)
 
   const categoryParam = typeof sp.category === 'string' ? sp.category : 'all'
   const statusParam = typeof sp.status === 'string' ? sp.status : 'active'
@@ -94,6 +97,17 @@ export default async function InventoryListPage({ searchParams }: PageProps) {
             { label: 'Admin', href: '/admin' },
             { label: 'Inventory' },
           ]}
+          actions={
+            canManage ? (
+              <Link
+                href="/admin/inventory/new"
+                className={opsButtonClass({ variant: 'action', size: 'md' })}
+                data-testid="inventory-new-cta"
+              >
+                <Plus aria-hidden className="size-4" /> New inventory item
+              </Link>
+            ) : null
+          }
         />
         <div className="mx-auto max-w-screen-lg space-y-4 px-4 py-6">
           <form
@@ -191,6 +205,16 @@ export default async function InventoryListPage({ searchParams }: PageProps) {
                     >
                       {canEdit ? 'Edit' : 'View'}
                     </Link>
+                    {canManage ? (
+                      <Link
+                        href={`/admin/inventory/${encodeURIComponent(it.id)}/adjust`}
+                        className="flex min-h-11 items-center gap-1 border-l border-border px-3 text-xs font-medium text-brand-navy hover:bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
+                        data-testid={`inventory-adjust-${it.id}`}
+                        aria-label={`Adjust stock for ${it.skuName}`}
+                      >
+                        <Sliders aria-hidden className="size-3.5" /> Adjust
+                      </Link>
+                    ) : null}
                   </li>
                 )
               })}

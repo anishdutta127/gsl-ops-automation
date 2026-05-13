@@ -61,6 +61,8 @@ const PAYMENT_STATUS_TONE: Record<PaymentStatus, StatusChipTone> = {
   Partial: 'attention',
   'Due Soon': 'attention',
   'PI Sent': 'navy',
+  Cancelled: 'neutral',
+  Skipped: 'neutral',
 }
 
 function readParam(
