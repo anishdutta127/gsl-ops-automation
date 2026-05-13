@@ -1,26 +1,18 @@
 /*
- * /kanban (W4-I.5 P2C5 route migration).
+ * /kanban (Gate 5A.7 Step 2 unification).
  *
- * Pre-W4-I.5 this content lived at /. P2C5 moved the new Operations
- * Control Dashboard to / and the kanban here. All functionality is
- * preserved verbatim; only the route URL and TopNav currentPath
- * change at this commit. The Kanban / Overview tab strip is removed
- * (the global TopNav now exposes Dashboard + Kanban directly).
+ * Single canonical Kanban route hosting two views via a top pill toggle:
+ *   - 'lifecycle' (default): 10-column MOU lifecycle pipeline with
+ *     drag-to-advance. Surface A pre-unification, formerly the only view.
+ *   - 'operations': 6-column KitDispatch workflow Kanban, read-only.
+ *     Surface B pre-unification, formerly at /dashboard/ops/kanban.
  *
- * 9 columns: 8 lifecycle stages + Pre-Ops Legacy holding bay. Every
- * Active MOU lands in exactly one column; Pre-Ops cards render
- * one-way exit per the W3-C design (drag in C2 will block drop into
- * Pre-Ops).
- *
- * W4-A.3: filter cohortStatus === 'active' before bucketing. The
- * kanban is operationally driven; archived MOUs (prior-AY cohorts)
- * would distract from the current pursuit. Operators reach the
- * archive via /mous/archive (read + reactivate) or
- * /admin/mou-status (Admin bulk-edit).
+ * View is parsed from `?view=`; missing or any other value falls back
+ * to 'lifecycle'. /dashboard/ops/kanban is a permanent redirect to
+ * /kanban?view=operations so deep links survive.
  *
  * Server Component. Reads src/data/*.json at request time. Per-MOU
- * stage derivation is pure (deriveStage). The page itself is
- * deterministic across runs given identical fixture state.
+ * stage derivation is pure (bucketByLifecycle / bucketByOperations).
  *
  * UI gating: per W3-B every authenticated user sees this page; the
  * middleware handles unauthenticated -> /login. No role redirects.
@@ -32,10 +24,13 @@ import type {
   Dispatch,
   Feedback,
   IntakeRecord,
+  KitDispatch,
   MOU,
   Payment,
   SalesPerson,
   School,
+  StageResponsibility,
+  User,
 } from '@/lib/types'
 import mousJson from '@/data/mous.json'
 import dispatchesJson from '@/data/dispatches.json'
@@ -45,15 +40,31 @@ import feedbackJson from '@/data/feedback.json'
 import intakeRecordsJson from '@/data/intake_records.json'
 import schoolsJson from '@/data/schools.json'
 import salesTeamJson from '@/data/sales_team.json'
+import kitDispatchesJson from '@/data/kit_dispatches.json'
+import usersJson from '@/data/users.json'
+import stageResponsibilityJson from '@/data/stage_responsibility.json'
 import { getCurrentUser } from '@/lib/auth/session'
-import { deriveStage, KANBAN_COLUMNS, type KanbanStageKey } from '@/lib/kanban/deriveStage'
+import { KANBAN_COLUMNS, type KanbanStageKey } from '@/lib/kanban/deriveStage'
+import { bucketByLifecycle } from '@/lib/kanban/columnBuckets'
 import { stageEnteredDate, daysSince } from '@/lib/kanban/stageEnteredDate'
 import { isOverdue } from '@/lib/kanban/stageDurations'
+import {
+  buildOpsWorkflowKanban,
+  parseKanbanFilters,
+} from '@/lib/kanban/opsWorkflowKanban'
+import {
+  buildOpsOwnerOptions,
+  buildSalesRepOptions,
+  parseOpsAugmentFilters,
+} from '@/lib/dashboard/opsAugmentData'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { KanbanBoard, type KanbanCardMeta } from '@/components/ops/KanbanBoard'
 import { FilterRail, type FilterDimension } from '@/components/ops/FilterRail'
 import { EmptyState } from '@/components/ops/EmptyState'
+import { KanbanViewToggle, type KanbanViewMode } from '@/components/ops/KanbanViewToggle'
+import { OpsKanbanFilterRail } from '@/components/dashboard/ops/OpsKanbanFilterRail'
+import { OpsWorkflowKanbanBoard } from '@/components/dashboard/ops/OpsWorkflowKanbanBoard'
 import {
   applyDimensionFilters,
   parseDimensions,
@@ -68,6 +79,9 @@ const allFeedback = feedbackJson as unknown as Feedback[]
 const allIntakeRecords = intakeRecordsJson as unknown as IntakeRecord[]
 const allSchools = schoolsJson as unknown as School[]
 const allSalesTeam = salesTeamJson as unknown as SalesPerson[]
+const allKitDispatches = kitDispatchesJson as unknown as KitDispatch[]
+const allUsers = usersJson as unknown as User[]
+const allStageResponsibility = stageResponsibilityJson as unknown as StageResponsibility[]
 
 const DIMENSION_KEYS = ['region', 'programme', 'salesRep', 'status'] as const
 
@@ -75,11 +89,45 @@ interface PageProps {
   searchParams: Promise<Record<string, string | string[] | undefined>>
 }
 
+function parseView(sp: Record<string, string | string[] | undefined>): KanbanViewMode {
+  const raw = sp.view
+  const value = Array.isArray(raw) ? raw[0] : raw
+  return value === 'operations' ? 'operations' : 'lifecycle'
+}
+
+function serializeQueryString(
+  sp: Record<string, string | string[] | undefined>,
+): string {
+  const params = new URLSearchParams()
+  for (const [k, v] of Object.entries(sp)) {
+    if (v === undefined) continue
+    if (Array.isArray(v)) {
+      for (const item of v) params.append(k, item)
+    } else {
+      params.set(k, v)
+    }
+  }
+  return params.toString()
+}
+
 export default async function KanbanPage({ searchParams }: PageProps) {
   const user = await getCurrentUser()
   if (!user) redirect('/login?next=%2Fkanban')
 
   const sp = await searchParams
+  const view = parseView(sp)
+
+  if (view === 'operations') {
+    return renderOperationsView(sp)
+  }
+  return renderLifecycleView(sp)
+}
+
+// ===========================================================================
+// Lifecycle view (formerly the only /kanban view)
+// ===========================================================================
+
+function renderLifecycleView(sp: Record<string, string | string[] | undefined>) {
   const active = parseDimensions(sp, DIMENSION_KEYS as unknown as string[])
 
   const deps = {
@@ -93,16 +141,6 @@ export default async function KanbanPage({ searchParams }: PageProps) {
   const schoolById = new Map(allSchools.map((s) => [s.id, s]))
   const activeMous = allMous.filter((m) => m.cohortStatus === 'active')
 
-  // Phase X: filter the active cohort by Region (school-derived) /
-  // Programme / Sales Rep / Status before bucketing. AND across
-  // dimensions; OR within. Status mirrors the /mous list page (drops
-  // 'Draft' from the chip set per W4-B.4).
-  //
-  // W4-I.5 P4C5.5b: reverts P4C4's reduction to NE / SW super-regions.
-  // The region accessor returns the primary value as it appears on
-  // school.region (East / North / South-West). The chip row below
-  // mirrors the /mous list page: 3 primary chips plus the NE / SW
-  // super-region shortcuts.
   const filteredMous = applyDimensionFilters(activeMous, active, {
     region: (m) => schoolById.get(m.schoolId)?.region ?? null,
     programme: (m) => m.programme,
@@ -125,13 +163,7 @@ export default async function KanbanPage({ searchParams }: PageProps) {
   const cardMeta: Record<string, KanbanCardMeta> = {}
   const now = new Date()
   for (const mou of filteredMous) {
-    const stage = deriveStage(mou, deps)
-    // W4-B.1 defensive check: cross-verification is auto-skipped by
-    // deriveStage's first-non-null-wins logic (cross-verification's
-    // enteredDate inherits from actuals-confirmed). If a card lands
-    // here, the auto-skip regressed and operators see the placeholder
-    // next-step text. Surface a non-prod-only warn so the failing
-    // record can be investigated without polluting production logs.
+    const stage = bucketByLifecycle(mou, deps)
     if (stage === 'cross-verification' && process.env.NODE_ENV !== 'production') {
       // eslint-disable-next-line no-console
       console.warn(`[kanban] MOU ${mou.id} derived to 'cross-verification'; expected auto-skip via inheritance. Investigate stageEnteredDate for this record.`)
@@ -154,10 +186,6 @@ export default async function KanbanPage({ searchParams }: PageProps) {
     {
       key: 'region',
       label: 'Region',
-      // W4-I.5 P4C5.5b: reverts P4C4's NE / SW-only chip row. Three
-      // primary chips reflect the region values present on schools
-      // today; the NE / SW shortcuts are kept for one-tap multi-region
-      // selection (mirrors the /mous list dimension shape).
       shortcuts: [
         { key: 'NE', label: 'NE', values: SUPER_REGION_MEMBERS.NE },
         { key: 'SW', label: 'SW', values: SUPER_REGION_MEMBERS.SW },
@@ -182,8 +210,6 @@ export default async function KanbanPage({ searchParams }: PageProps) {
     {
       key: 'status',
       label: 'Status',
-      // 'Draft' dropped per W4-B.4 (zero MOUs carry that status in the
-      // imported cohort). Mirrors the /mous list chip set.
       options: ['Active', 'Pending Signature', 'Completed', 'Expired', 'Renewed'].map((v) => ({
         value: v,
         label: v,
@@ -203,6 +229,7 @@ export default async function KanbanPage({ searchParams }: PageProps) {
             active={active}
           />
           <div className="min-w-0 flex-1 space-y-4">
+            <KanbanViewToggle view="lifecycle" searchParams={sp} />
             <p
               className="text-sm text-muted-foreground"
               data-testid="kanban-interaction-hint"
@@ -219,6 +246,79 @@ export default async function KanbanPage({ searchParams }: PageProps) {
             ) : (
               <KanbanBoard initialBuckets={initialBuckets} cardMeta={cardMeta} />
             )}
+          </div>
+        </div>
+      </main>
+    </>
+  )
+}
+
+// ===========================================================================
+// Operations view (formerly /dashboard/ops/kanban)
+// ===========================================================================
+
+function renderOperationsView(sp: Record<string, string | string[] | undefined>) {
+  const augmentFilters = parseOpsAugmentFilters(sp)
+  const kanbanFilters = parseKanbanFilters(sp)
+  const now = new Date()
+
+  const { buckets, totalCards, filterActive } = buildOpsWorkflowKanban({
+    mous: allMous,
+    payments: allPayments,
+    dispatches: allKitDispatches,
+    users: allUsers,
+    salesTeam: allSalesTeam,
+    stageResponsibility: allStageResponsibility,
+    schools: allSchools,
+    augmentFilters,
+    kanbanFilters,
+    now,
+  })
+
+  const salesRepOptions = buildSalesRepOptions(allSalesTeam)
+  const opsOwnerOptions = buildOpsOwnerOptions(allUsers)
+  const queryString = serializeQueryString(sp)
+
+  const subtitle = filterActive
+    ? `${totalCards} active MOUs match the current filters.`
+    : `${totalCards} active MOUs across six workflow stages.`
+
+  return (
+    <>
+      <TopNav currentPath="/kanban" />
+      <main id="main-content">
+        <div data-testid="ops-kanban-page">
+          <header className="border-b border-border bg-card">
+            <div className="mx-auto max-w-screen-2xl px-4 py-5 sm:px-6">
+              <h1 className="font-heading text-2xl font-semibold text-brand-navy">
+                Active operations
+              </h1>
+              <p className="mt-1 text-sm text-slate-600">
+                Track active dispatches by stage.
+              </p>
+              <p className="mt-2 text-xs text-muted-foreground" data-testid="ops-kanban-subtitle">
+                {subtitle}
+              </p>
+            </div>
+          </header>
+          <div className="mx-auto flex max-w-screen-2xl flex-col gap-4 px-4 py-6 sm:px-6">
+            <KanbanViewToggle view="operations" searchParams={sp} />
+            <OpsKanbanFilterRail
+              initialProgrammes={kanbanFilters.programmes}
+              initialRegions={augmentFilters.regions}
+              initialSuperRegions={augmentFilters.superRegions}
+              initialSalesRepIds={augmentFilters.salesRepIds}
+              initialOpsOwnerIds={augmentFilters.opsOwnerIds}
+              initialFromDate={kanbanFilters.fromDate}
+              initialToDate={kanbanFilters.toDate}
+              salesRepOptions={salesRepOptions}
+              opsOwnerOptions={opsOwnerOptions}
+            />
+            <OpsWorkflowKanbanBoard
+              columns={buckets}
+              filterActive={filterActive}
+              currentQueryString={queryString}
+            />
           </div>
         </div>
       </main>

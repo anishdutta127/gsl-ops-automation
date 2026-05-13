@@ -2,9 +2,11 @@
  * OpsKanbanTile (Gate 4.95 Session 3 Step 3).
  *
  * Prominent CTA card linking to the workflow-stage Kanban view at
- * /dashboard/ops/kanban. Distinct from the existing /kanban (the MOU
- * lifecycle pipeline shipped in W4-I.5); this one is the 6-column
- * dispatch workflow Kanban built in Session 3 Step 6.
+ * /kanban?view=operations. Distinct framing from the default /kanban
+ * lifecycle view (W4-I.5); this one is the 6-column dispatch workflow
+ * Kanban built in Session 3 Step 6. Gate 5A.7 Step 2 unified both
+ * surfaces under /kanban with a view toggle; the tile keeps the
+ * operations-first framing.
  *
  * Visual: full-width card with a brand-teal accent stripe on the left
  * + Columns3 icon + label + descriptor + a chevron CTA. Designed to
@@ -22,7 +24,7 @@ interface OpsKanbanTileProps {
 export function OpsKanbanTile({ totalActiveCards }: OpsKanbanTileProps) {
   return (
     <Link
-      href="/dashboard/ops/kanban"
+      href="/kanban?view=operations"
       data-testid="ops-kanban-tile"
       className="group flex items-center gap-4 rounded-lg border border-border bg-card p-4 transition hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-teal sm:p-5"
     >

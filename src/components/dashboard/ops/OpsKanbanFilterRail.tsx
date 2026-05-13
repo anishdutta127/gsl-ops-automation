@@ -3,7 +3,7 @@
 /*
  * OpsKanbanFilterRail (Gate 4.95 Session 3 Step 6).
  *
- * Client-side filter rail for /dashboard/ops/kanban. Hosts the Kanban's
+ * Client-side filter rail for /kanban?view=operations. Hosts the Kanban's
  * own filter dimensions: programme chips, region chips (with NE / SW
  * super-region shortcuts), sales rep + ops owner multi-selects, and
  * from / to date inputs. URL-mirrored via router.push so deep links
@@ -75,6 +75,7 @@ export function OpsKanbanFilterRail({
 
   function buildHref(): string {
     const params = new URLSearchParams()
+    params.set('view', 'operations')
     if (programmes.length > 0) params.set('p', programmes.join(','))
     if (regions.length > 0) params.set('region', regions.join(','))
     if (superRegions.length > 0) params.set('sr', superRegions.join(','))
@@ -82,8 +83,7 @@ export function OpsKanbanFilterRail({
     if (opsOwnerIds.length > 0) params.set('owner', opsOwnerIds.join(','))
     if (fromDate) params.set('from', fromDate)
     if (toDate) params.set('to', toDate)
-    const qs = params.toString()
-    return qs ? `/dashboard/ops/kanban?${qs}` : '/dashboard/ops/kanban'
+    return `/kanban?${params.toString()}`
   }
 
   function apply() {
@@ -98,7 +98,7 @@ export function OpsKanbanFilterRail({
     setOpsOwnerIds([])
     setFromDate('')
     setToDate('')
-    router.push('/dashboard/ops/kanban')
+    router.push('/kanban?view=operations')
   }
 
   // Suppress unused warning when no extra search params surface; the

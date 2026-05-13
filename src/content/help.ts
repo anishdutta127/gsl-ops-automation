@@ -97,7 +97,7 @@ export const HELP_ROLES: RoleOrientation[] = [
 // ----------------------------------------------------------------------------
 
 export const HELP_LIFECYCLE_INTRO =
-  'Every MOU passes through 9 stages, displayed as columns on the MOU Pipeline (/kanban). Cards drag forward as work happens; cards sit in place when blocked. Pre-Ops Legacy (the muted column on the left) is a holding bay for MOUs imported in Pending Signature status; cards leave it but never return.'
+  'Every MOU passes through 9 stages, displayed as columns on the MOU Pipeline (the default Full lifecycle view at /kanban). Cards drag forward as work happens; cards sit in place when blocked. Pre-Ops Legacy (the muted column on the left) is a holding bay for MOUs imported in Pending Signature status; cards leave it but never return. The same /kanban route also hosts an Active operations view (/kanban?view=operations) that re-buckets the same MOUs by KitDispatch workflow state for the day-to-day "who owns the next move" lens.'
 
 export const HELP_LIFECYCLE_STAGES: LifecycleStageEntry[] = [
   {
@@ -285,7 +285,7 @@ export const HELP_GLOSSARY: GlossaryItem[] = [
   },
   {
     term: 'MOU Pipeline',
-    definition: 'The MOU Pipeline at /kanban (also called the Kanban; an internal term still used in dev docs and the URL). Shows every MOU as a card sorted into 9 columns (8 lifecycle stages plus Pre-Ops Legacy). Drag a card to the next column to advance the lifecycle. Each forward-by-one drag opens the existing per-stage form; skip and reverse drags require a reason logged in the audit.',
+    definition: 'The MOU Pipeline at /kanban (also called the Kanban; an internal term still used in dev docs and the URL). The default Full lifecycle view shows every MOU as a card sorted into 9 columns (8 lifecycle stages plus Pre-Ops Legacy). Drag a card to the next column to advance the lifecycle. Each forward-by-one drag opens the existing per-stage form; skip and reverse drags require a reason logged in the audit. A pill toggle at the top swaps to the Active operations view, a 6-column read-only re-bucketing of the same MOUs by KitDispatch workflow state.',
   },
   {
     term: 'Kit',

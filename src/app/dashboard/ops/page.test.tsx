@@ -276,13 +276,13 @@ describe('/dashboard/ops Gate 4.95 Session 3 augmentations', () => {
     expect(html).toContain('data-testid="ops-augment-reset"')
   })
 
-  it('renders the prominent Workflow Kanban tile linking to /dashboard/ops/kanban', async () => {
+  it('renders the prominent Workflow Kanban tile linking to /kanban?view=operations', async () => {
     getCurrentUserMock.mockResolvedValue(admin())
     const { default: DashboardPage } = await import('./page')
     const html = renderToStaticMarkup(await DashboardPage({ searchParams: noSp }))
     expect(html).toContain('data-testid="ops-kanban-tile"')
     expect(html).toMatch(
-      /data-testid="ops-kanban-tile"[^>]*href="\/dashboard\/ops\/kanban"|href="\/dashboard\/ops\/kanban"[^>]*data-testid="ops-kanban-tile"/,
+      /data-testid="ops-kanban-tile"[^>]*href="\/kanban\?view=operations"|href="\/kanban\?view=operations"[^>]*data-testid="ops-kanban-tile"/,
     )
     expect(html).toContain('Workflow Kanban view')
   })

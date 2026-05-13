@@ -10,6 +10,8 @@ vi.mock('@/lib/auth/session', () => ({
 vi.mock('next/navigation', () => ({
   redirect: vi.fn((url: string) => { throw new Error(`REDIRECT:${url}`) }),
   useRouter: () => ({ push: vi.fn(), refresh: vi.fn(), replace: vi.fn() }),
+  useSearchParams: vi.fn(() => new URLSearchParams()),
+  usePathname: vi.fn(() => '/kanban'),
 }))
 vi.mock('@/components/ops/TopNav', () => ({ TopNav: () => null }))
 
@@ -31,7 +33,7 @@ function salesRep(): User {
   }
 }
 
-describe('/kanban (W4-I.5 P2C5 route)', () => {
+describe('/kanban lifecycle view (default)', () => {
   it('renders 9 stage columns with the Pre-Ops Legacy column first', async () => {
     getCurrentUserMock.mockResolvedValue(admin())
     const { default: HomePage } = await import('./page')
@@ -60,7 +62,6 @@ describe('/kanban (W4-I.5 P2C5 route)', () => {
     const { default: HomePage } = await import('./page')
     const html = renderToStaticMarkup(await HomePage({ searchParams: Promise.resolve({}) }))
     expect(html).toContain('data-testid="mou-card"')
-    // Real fixture has MOU-STEAM-2627-001 at "Mutahhary Public School Baroo".
     expect(html).toContain('MOU-STEAM-2627-001')
   })
 
@@ -88,19 +89,13 @@ describe('/kanban (W4-I.5 P2C5 route)', () => {
     getCurrentUserMock.mockResolvedValue(admin())
     const { default: HomePage } = await import('./page')
     const html = renderToStaticMarkup(await HomePage({ searchParams: Promise.resolve({}) }))
-    // Title shows "<n> active MOUs across 10 stages" post-W4-C.1
-    // (post-signing-intake added at column position 3); the count is the
-    // active-cohort filter result (51 in the W4-A.2 fixture).
     expect(html).toMatch(/\d+ active MOUs across 10 stages/)
   })
 
-  it('W4-I.5 P2C5: kanban-overview tab strip is no longer rendered', async () => {
+  it('kanban-overview tab strip is no longer rendered', async () => {
     getCurrentUserMock.mockResolvedValue(admin())
     const { default: HomePage } = await import('./page')
     const html = renderToStaticMarkup(await HomePage({ searchParams: Promise.resolve({}) }))
-    // Pre-W4-I.5 the kanban + overview lived under one route with a tab
-    // strip swap. Post-P2C5 the dashboard moved to / and the kanban here;
-    // the tab strip is dropped because the global TopNav exposes both.
     expect(html).not.toContain('data-testid="kanban-overview-tabs"')
   })
 
@@ -109,21 +104,13 @@ describe('/kanban (W4-I.5 P2C5 route)', () => {
     const { default: HomePage } = await import('./page')
     const html = renderToStaticMarkup(await HomePage({ searchParams: Promise.resolve({}) }))
     expect(html).toContain('data-testid="kanban-interaction-hint"')
-    // W4-B.4 tightened the hint to a single short sentence.
     expect(html).toContain('Click to open. Drag the grip to move.')
   })
 
-  // W4-B.1 defensive check: cross-verification is auto-skipped by
-  // deriveStage's first-non-null-wins logic, so no card in the active
-  // cohort should land in that column. If this test fails, deriveStage
-  // (or stageEnteredDate) regressed.
   it('no card lands in the cross-verification column (auto-skip preserved)', async () => {
     getCurrentUserMock.mockResolvedValue(admin())
     const { default: HomePage } = await import('./page')
     const html = renderToStaticMarkup(await HomePage({ searchParams: Promise.resolve({}) }))
-    // The column header itself still renders (KANBAN_COLUMNS lists 9
-    // columns including cross-verification); we assert the column is
-    // empty by checking the count chip and the empty-state copy.
     const sectionMatch = html.match(
       /data-testid="droppable-cross-verification"[\s\S]*?data-testid="droppable-/,
     ) ?? html.match(/data-testid="droppable-cross-verification"[\s\S]*$/)
@@ -131,7 +118,6 @@ describe('/kanban (W4-I.5 P2C5 route)', () => {
     if (sectionMatch !== null) {
       const section = sectionMatch[0]
       expect(section).toContain('Empty.')
-      // No mou-card should be inside this column.
       expect(section.match(/data-testid="mou-card"/g) ?? []).toHaveLength(0)
     }
   })
@@ -140,14 +126,179 @@ describe('/kanban (W4-I.5 P2C5 route)', () => {
     getCurrentUserMock.mockResolvedValue(admin())
     const { default: HomePage } = await import('./page')
     const html = renderToStaticMarkup(await HomePage({ searchParams: Promise.resolve({}) }))
-    // W4-C.1: pre-backfill, the active 51 MOUs without IntakeRecords sit
-    // at post-signing-intake. Their next-step label is "Confirm actuals".
-    // Post-backfill (W4-C.4) ~17 cards will gain intake records and
-    // advance; this assertion stays valid because plenty of active MOUs
-    // remain in post-signing-intake.
     expect(html).toContain('Next: Confirm actuals')
-    // Defensive: the cross-verification placeholder text never reaches
-    // the rendered HTML.
     expect(html).not.toContain('Auto-skipped')
+  })
+
+  it('?view=lifecycle explicitly renders the lifecycle columns (parity with default)', async () => {
+    getCurrentUserMock.mockResolvedValue(admin())
+    const { default: HomePage } = await import('./page')
+    const html = renderToStaticMarkup(await HomePage({ searchParams: Promise.resolve({ view: 'lifecycle' }) }))
+    expect(html).toContain('data-testid="stage-column-pre-ops"')
+    expect(html).toContain('data-testid="stage-column-feedback-submitted"')
+  })
+
+  it('unknown ?view= value falls back to the lifecycle view', async () => {
+    getCurrentUserMock.mockResolvedValue(admin())
+    const { default: HomePage } = await import('./page')
+    const html = renderToStaticMarkup(await HomePage({ searchParams: Promise.resolve({ view: 'nonsense' }) }))
+    expect(html).toContain('data-testid="kanban-board"')
+    expect(html).toContain('data-testid="stage-column-mou-signed"')
+  })
+})
+
+describe('/kanban operations view (?view=operations)', () => {
+  it('renders the operations page header copy', async () => {
+    getCurrentUserMock.mockResolvedValue(admin())
+    const { default: Page } = await import('./page')
+    const html = renderToStaticMarkup(await Page({ searchParams: Promise.resolve({ view: 'operations' }) }))
+    expect(html).toContain('Active operations')
+    expect(html).toContain('Track active dispatches by stage.')
+    expect(html).toContain('data-testid="ops-kanban-page"')
+    expect(html).toContain('data-testid="ops-kanban-subtitle"')
+  })
+
+  it('renders all 6 column testids in canonical order', async () => {
+    getCurrentUserMock.mockResolvedValue(admin())
+    const { default: Page } = await import('./page')
+    const html = renderToStaticMarkup(await Page({ searchParams: Promise.resolve({ view: 'operations' }) }))
+    expect(html).toContain('data-testid="kanban-column-awaiting-actuals"')
+    expect(html).toContain('data-testid="kanban-column-allocation-in-progress"')
+    expect(html).toContain('data-testid="kanban-column-pending-sales-approval"')
+    expect(html).toContain('data-testid="kanban-column-ready-for-dispatch"')
+    expect(html).toContain('data-testid="kanban-column-in-transit"')
+    expect(html).toContain('data-testid="kanban-column-delivered"')
+    const idxAwaiting = html.indexOf('kanban-column-awaiting-actuals')
+    const idxDelivered = html.indexOf('kanban-column-delivered')
+    expect(idxAwaiting).toBeLessThan(idxDelivered)
+  })
+
+  it('renders the filter rail + Apply + Reset + programme chips', async () => {
+    getCurrentUserMock.mockResolvedValue(admin())
+    const { default: Page } = await import('./page')
+    const html = renderToStaticMarkup(await Page({ searchParams: Promise.resolve({ view: 'operations' }) }))
+    expect(html).toContain('data-testid="ops-kanban-filter-rail"')
+    expect(html).toContain('data-testid="kanban-filter-apply"')
+    expect(html).toContain('data-testid="kanban-filter-reset"')
+    expect(html).toContain('data-testid="kanban-chip-programme-STEAM"')
+    expect(html).toContain('data-testid="kanban-chip-programme-Young Pioneers"')
+    expect(html).toContain('data-testid="kanban-chip-programme-Harvard HBPE"')
+    expect(html).toContain('data-testid="kanban-chip-programme-Robotics"')
+    expect(html).toContain('data-testid="kanban-chip-super-NE"')
+    expect(html).toContain('data-testid="kanban-chip-super-SW"')
+    expect(html).toContain('data-testid="kanban-chip-region-East"')
+    expect(html).toContain('data-testid="kanban-input-from"')
+    expect(html).toContain('data-testid="kanban-input-to"')
+    expect(html).toContain('data-testid="kanban-select-sales-rep"')
+    expect(html).toContain('data-testid="kanban-select-ops-owner"')
+  })
+
+  it('renders the mobile accordion structure', async () => {
+    getCurrentUserMock.mockResolvedValue(admin())
+    const { default: Page } = await import('./page')
+    const html = renderToStaticMarkup(await Page({ searchParams: Promise.resolve({ view: 'operations' }) }))
+    expect(html).toContain('data-testid="kanban-accordion-awaiting-actuals"')
+    expect(html).toContain('data-testid="kanban-accordion-delivered"')
+  })
+
+  it('renders at least one kanban card from the fixture set', async () => {
+    getCurrentUserMock.mockResolvedValue(admin())
+    const { default: Page } = await import('./page')
+    const html = renderToStaticMarkup(await Page({ searchParams: Promise.resolve({ view: 'operations' }) }))
+    expect(html).toMatch(/data-testid="kanban-card-/)
+  })
+
+  it('?p=Robotics narrows the rendered cards to zero (no Robotics in fixture)', async () => {
+    getCurrentUserMock.mockResolvedValue(admin())
+    const { default: Page } = await import('./page')
+    const allHtml = renderToStaticMarkup(await Page({ searchParams: Promise.resolve({ view: 'operations' }) }))
+    const filteredHtml = renderToStaticMarkup(
+      await Page({ searchParams: Promise.resolve({ view: 'operations', p: 'Robotics' }) }),
+    )
+    const allCount = (allHtml.match(/data-testid="kanban-card-/g) ?? []).length
+    const filteredCount = (filteredHtml.match(/data-testid="kanban-card-/g) ?? []).length
+    expect(allCount).toBeGreaterThan(0)
+    expect(filteredCount).toBe(0)
+  })
+
+  it('?p=STEAM marks the STEAM programme chip as pressed', async () => {
+    getCurrentUserMock.mockResolvedValue(admin())
+    const { default: Page } = await import('./page')
+    const html = renderToStaticMarkup(
+      await Page({ searchParams: Promise.resolve({ view: 'operations', p: 'STEAM' }) }),
+    )
+    expect(html).toMatch(
+      /data-testid="kanban-chip-programme-STEAM"[^>]*aria-pressed="true"|aria-pressed="true"[^>]*data-testid="kanban-chip-programme-STEAM"/,
+    )
+  })
+
+  it('contains no em-dash characters (British English copy)', async () => {
+    getCurrentUserMock.mockResolvedValue(admin())
+    const { default: Page } = await import('./page')
+    const html = renderToStaticMarkup(await Page({ searchParams: Promise.resolve({ view: 'operations' }) }))
+    expect(html).not.toContain(String.fromCharCode(0x2014))
+  })
+
+  it('contains no raw hex codes (token discipline)', async () => {
+    getCurrentUserMock.mockResolvedValue(admin())
+    const { default: Page } = await import('./page')
+    const html = renderToStaticMarkup(await Page({ searchParams: Promise.resolve({ view: 'operations' }) }))
+    expect(html).not.toMatch(/#[0-9a-fA-F]{3,6}/)
+  })
+
+  it('does NOT add a second <main> element beyond the page-owned one (single <main> rule)', async () => {
+    getCurrentUserMock.mockResolvedValue(admin())
+    const { default: Page } = await import('./page')
+    const html = renderToStaticMarkup(await Page({ searchParams: Promise.resolve({ view: 'operations' }) }))
+    // The page itself owns the only <main id="main-content"> on this route
+    // (the root layout's <main> is not in this rendered fragment because
+    // we render the page in isolation). Assert exactly one <main> tag.
+    const mainOpenTags = html.match(/<main[\s>]/g) ?? []
+    expect(mainOpenTags).toHaveLength(1)
+  })
+})
+
+describe('/kanban view toggle', () => {
+  it('renders both toggle buttons on the lifecycle view; lifecycle is active', async () => {
+    getCurrentUserMock.mockResolvedValue(admin())
+    const { default: Page } = await import('./page')
+    const html = renderToStaticMarkup(await Page({ searchParams: Promise.resolve({}) }))
+    expect(html).toContain('data-testid="kanban-view-toggle"')
+    expect(html).toContain('data-testid="kanban-view-toggle-lifecycle"')
+    expect(html).toContain('data-testid="kanban-view-toggle-operations"')
+    expect(html).toMatch(
+      /data-testid="kanban-view-toggle-lifecycle"[^>]*aria-pressed="true"|aria-pressed="true"[^>]*data-testid="kanban-view-toggle-lifecycle"/,
+    )
+  })
+
+  it('marks the operations button as pressed on ?view=operations', async () => {
+    getCurrentUserMock.mockResolvedValue(admin())
+    const { default: Page } = await import('./page')
+    const html = renderToStaticMarkup(await Page({ searchParams: Promise.resolve({ view: 'operations' }) }))
+    expect(html).toMatch(
+      /data-testid="kanban-view-toggle-operations"[^>]*aria-pressed="true"|aria-pressed="true"[^>]*data-testid="kanban-view-toggle-operations"/,
+    )
+  })
+
+  it('preserves other search params when switching views (operations -> lifecycle)', async () => {
+    getCurrentUserMock.mockResolvedValue(admin())
+    const { default: Page } = await import('./page')
+    const html = renderToStaticMarkup(await Page({ searchParams: Promise.resolve({ view: 'operations', p: 'STEAM' }) }))
+    // The lifecycle toggle href on the operations view should carry p=STEAM
+    // and drop the view= param (lifecycle is the default; canonical URL is param-free).
+    expect(html).toMatch(
+      /data-testid="kanban-view-toggle-lifecycle"[^>]*href="\/kanban\?p=STEAM"|href="\/kanban\?p=STEAM"[^>]*data-testid="kanban-view-toggle-lifecycle"/,
+    )
+  })
+
+  it('preserves other search params when switching views (lifecycle -> operations)', async () => {
+    getCurrentUserMock.mockResolvedValue(admin())
+    const { default: Page } = await import('./page')
+    const html = renderToStaticMarkup(await Page({ searchParams: Promise.resolve({ programme: 'STEAM' }) }))
+    // The operations toggle href on the lifecycle view should carry programme=STEAM
+    // and add view=operations.
+    expect(html).toMatch(
+      /data-testid="kanban-view-toggle-operations"[^>]*href="\/kanban\?programme=STEAM&amp;view=operations"|href="\/kanban\?programme=STEAM&amp;view=operations"[^>]*data-testid="kanban-view-toggle-operations"/,
+    )
   })
 })
