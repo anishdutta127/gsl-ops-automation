@@ -64,7 +64,27 @@ export default async function FinancePaymentsPage({ searchParams }: PageProps) {
 
   const canLog = canEditFinanceData(user)
   const loggedId = typeof sp.logged === 'string' ? sp.logged : null
-  const parkedId = typeof sp.parked === 'string' ? sp.parked : null
+  const parkedRaw = typeof sp.parked === 'string' ? sp.parked : null
+  // `parked=PL-XXXX` (single-log park) vs `imported=N&...&parked=K` (bulk).
+  // The bulk path always carries `imported`; we branch on its presence.
+  const importedRaw = typeof sp.imported === 'string' ? sp.imported : null
+  const importedCount =
+    importedRaw !== null && Number.isFinite(Number(importedRaw))
+      ? Number(importedRaw)
+      : null
+  const parkedId = importedCount === null ? parkedRaw : null
+  const matchedCount =
+    typeof sp.matched === 'string' && Number.isFinite(Number(sp.matched))
+      ? Number(sp.matched)
+      : 0
+  const bulkParkedCount =
+    importedCount !== null && parkedRaw !== null && Number.isFinite(Number(parkedRaw))
+      ? Number(parkedRaw)
+      : 0
+  const skippedCount =
+    typeof sp.skipped === 'string' && Number.isFinite(Number(sp.skipped))
+      ? Number(sp.skipped)
+      : 0
   const flashSchool = typeof sp.school === 'string' ? sp.school : null
 
   const unmatchedCount = allLogs.filter((l) => l.unmatched).length
@@ -124,6 +144,16 @@ export default async function FinancePaymentsPage({ searchParams }: PageProps) {
               data-testid="payment-parked-flash"
             >
               Payment logged for {flashSchool ?? 'this school'}. Will reflect everywhere within ~5 minutes. The entry parked for manual matching against the school&rsquo;s open instalments.
+            </p>
+          ) : null}
+          {importedCount !== null ? (
+            <p
+              role="status"
+              className="rounded-md border border-signal-ok bg-card p-3 text-sm text-foreground"
+              data-testid="payment-bulk-imported-flash"
+            >
+              Imported {importedCount} payments. {matchedCount} auto-matched. {bulkParkedCount} need manual matching.
+              {skippedCount > 0 ? ` ${skippedCount} skipped (duplicate bank ref or invalid row).` : ''} Will reflect everywhere within ~5 minutes.
             </p>
           ) : null}
           <PaymentMatcher
