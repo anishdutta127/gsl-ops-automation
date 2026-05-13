@@ -45,13 +45,13 @@ export function VexKitOrdersTile({ data, windowLabel }: Props) {
           testId="vex-schools"
         />
         <VexCard
-          label="Total Pipeline"
+          label="Pipeline value"
           value={formatRs(data.totalPipeline, { compact: true })}
           hint="sum of all VEX PI values"
           testId="vex-pipeline"
         />
         <VexCard
-          label="Pending to dispatch"
+          label="Awaiting dispatch"
           value={`${data.pendingDispatch}`}
           hint="payment received, kits not dispatched"
           testId="vex-pending-dispatch"

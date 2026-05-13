@@ -2,7 +2,7 @@
  * /dashboard/finance (Gate 4.95 Session 2 rebuild).
  *
  * Rich Finance workspace combining the legacy two-card layout
- * (Payments needing attention + PIs awaiting payment) with the
+ * (Unmatched bank entries + PIs awaiting payment) with the
  * Gate 4.95 sections: KPI strip, high-priority alerts, top overdue
  * payments + renewal needed, amount receipt summary, VEX kit orders,
  * programme breakdown. Filters live in a URL-mirrored bar at the top.
@@ -294,7 +294,7 @@ function PaymentsAttentionCard({
     >
       <div className="flex items-center justify-between">
         <h2 className="font-heading text-base font-semibold text-brand-navy">
-          Payments needing attention
+          Unmatched bank entries
         </h2>
         <span className="text-xs text-slate-600">{unmatched.length} unmatched</span>
       </div>
