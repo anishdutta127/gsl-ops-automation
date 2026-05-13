@@ -76,13 +76,25 @@ describe('FinanceDashboard rebuild (Gate 4.95 Session 2)', () => {
     expect(html).toContain('data-testid="finance-filter-bar"')
   })
 
-  it('renders the KPI strip with 4 testids', async () => {
+  it('renders the KPI strip with the four headline testids', async () => {
     const { default: FinanceDashboard } = await import('./page')
     const html = renderToStaticMarkup(await FinanceDashboard({ searchParams: {} }))
-    expect(html).toContain('data-testid="kpi-active-mous"')
     expect(html).toContain('data-testid="kpi-contract-value"')
     expect(html).toContain('data-testid="kpi-collected"')
-    expect(html).toContain('data-testid="kpi-open-alerts"')
+    expect(html).toContain('data-testid="kpi-outstanding"')
+    expect(html).toContain('data-testid="kpi-needs-attention"')
+    // Active MOUs + Open alerts dropped from the headline in Gate 5A.7.
+    expect(html).not.toContain('data-testid="kpi-active-mous"')
+    expect(html).not.toContain('data-testid="kpi-open-alerts"')
+  })
+
+  it('the needs-attention card links to the in-page overdue anchor', async () => {
+    const { default: FinanceDashboard } = await import('./page')
+    const html = renderToStaticMarkup(await FinanceDashboard({ searchParams: {} }))
+    expect(html).toContain('id="top-overdue-payments"')
+    expect(html).toMatch(
+      /data-testid="kpi-needs-attention"[^>]*href="\/dashboard\/finance#top-overdue-payments"|href="\/dashboard\/finance#top-overdue-payments"[^>]*data-testid="kpi-needs-attention"/,
+    )
   })
 
   it('renders the high-priority alerts panel', async () => {

@@ -119,8 +119,8 @@ export default async function FinanceDashboard({
   const kpiStrip = computeKpiStrip({
     filteredMous,
     filteredPayments,
-    escalations: allEscalations,
     filteredMouIds,
+    now,
   })
   const highPriorityAlerts = computeHighPriorityAlerts({
     escalations: allEscalations,
@@ -143,9 +143,6 @@ export default async function FinanceDashboard({
   const programmeBreakdown = computeProgrammeBreakdown(filteredMous)
 
   const qs = serializeFilters(filters)
-  const schoolsHref = qs
-    ? `/finance/schools-receipts?${qs}`
-    : '/finance/schools-receipts'
   const receiptsHref = qs ? `/finance/receipts?${qs}` : '/finance/receipts'
   const wLabel = windowLabel(filters)
   const filterActive =
@@ -216,7 +213,11 @@ export default async function FinanceDashboard({
 
           <FinanceFilterBar initialFilters={filters} fyOptions={fyOptions} />
 
-          <KpiStrip data={kpiStrip} schoolsHref={schoolsHref} />
+          <KpiStrip
+            data={kpiStrip}
+            needsAttentionHref="/dashboard/finance#top-overdue-payments"
+            scopeLabel={filters.fy ? `FY ${filters.fy}` : undefined}
+          />
 
           <HighPriorityAlertsPanel alerts={highPriorityAlerts} />
 
@@ -229,7 +230,10 @@ export default async function FinanceDashboard({
             <PisAwaitingCard payments={awaiting} now={now} />
           </div>
 
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+          <div
+            id="top-overdue-payments"
+            className="grid scroll-mt-20 grid-cols-1 gap-4 lg:grid-cols-2"
+          >
             <TopOverduePaymentsPanel rows={topOverdue} />
             <RenewalNeededPanel
               rows={renewal.rows}

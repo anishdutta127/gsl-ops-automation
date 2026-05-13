@@ -246,39 +246,53 @@ export function applyFilters(args: {
 // Row 1: KPI strip
 // ===========================================================================
 
-const PIPELINE_STATUSES: ReadonlyArray<MOU['status']> = [
-  'Draft',
-  'Pending Signature',
-]
-
+/**
+ * Headline KPI strip data (Gate 5A.7 Step 4 rebuild).
+ *
+ * Ameet's "overall first, action second" framing: lead with the commercial
+ * position (contract value), then progress (collected), then commitment
+ * (outstanding), then the operator's queue (needs attention).
+ *
+ * Active MOUs and Open Alerts were on the headline strip before Gate 5A.7
+ * and have been dropped. Both remain visible elsewhere on the dashboard
+ * (Active MOUs in the programme breakdown row count; Open Alerts in the
+ * HighPriorityAlertsPanel section below the strip).
+ */
 export interface KpiStripData {
-  activeMous: number
-  pipelineMous: number
-  schoolsCount: number
+  /** Total contract value (Rs) across the filtered MOU set. */
   contractValue: number
+  /** Distinct schools backing the contract value figure. */
+  schoolsCount: number
+  /** Sum of receivedAmount across filtered payments. */
   collectedAmount: number
+  /** collectedAmount / contractValue * 100 (0 when contractValue is 0). */
   collectedPct: number
+  /** max(0, contractValue - collectedAmount). */
   outstandingAmount: number
-  openAlerts: number
-  highAlerts: number
-  mediumAlerts: number
+  /** Distinct schools whose total contract value exceeds total collected. */
+  outstandingSchoolsCount: number
+  /** Distinct payments that are overdue or have a stalled PI (each item
+   *  counts at most once even if it triggers both rules). */
+  needsAttentionCount: number
+  /** Payments past dueDateIso with balance > 0 (independent count; can
+   *  overlap with stalledPiCount). */
+  overduePaymentsCount: number
+  /** PIs raised > 30 days ago, payment not received (independent count;
+   *  can overlap with overduePaymentsCount). */
+  stalledPiCount: number
 }
+
+const STALLED_PI_DAYS = 30
 
 export function computeKpiStrip(args: {
   filteredMous: MOU[]
   filteredPayments: Payment[]
-  escalations: Escalation[]
   filteredMouIds: Set<string>
+  now: Date
 }): KpiStripData {
-  const { filteredMous, filteredPayments, escalations, filteredMouIds } = args
-
-  const activeMous = filteredMous.filter((m) => m.status === 'Active').length
-  const pipelineMous = filteredMous.filter((m) =>
-    PIPELINE_STATUSES.includes(m.status),
-  ).length
+  const { filteredMous, filteredPayments, now } = args
 
   const schoolsCount = new Set(filteredMous.map((m) => m.schoolId)).size
-
   const contractValue = filteredMous.reduce(
     (s, m) => s + (m.contractValue ?? 0),
     0,
@@ -291,31 +305,81 @@ export function computeKpiStrip(args: {
     contractValue > 0 ? (collectedAmount / contractValue) * 100 : 0
   const outstandingAmount = Math.max(0, contractValue - collectedAmount)
 
-  // Open alerts: escalations scoped to MOUs in the filter set + not closed.
-  // High = critical, medium = high (Ops vocab; "high" surfaces as P1 medium
-  // on the dashboard's lay reading). Low/other not surfaced in the KPI.
-  let openAlerts = 0
-  let highAlerts = 0
-  let mediumAlerts = 0
-  for (const e of escalations) {
-    if (e.status === 'Closed') continue
-    if (e.mouId && !filteredMouIds.has(e.mouId)) continue
-    openAlerts += 1
-    if (e.severity === 'critical') highAlerts += 1
-    else if (e.severity === 'high') mediumAlerts += 1
+  // Schools with balance: sum contract value vs sum collected per school.
+  const perSchoolContract = new Map<string, number>()
+  for (const m of filteredMous) {
+    perSchoolContract.set(
+      m.schoolId,
+      (perSchoolContract.get(m.schoolId) ?? 0) + (m.contractValue ?? 0),
+    )
+  }
+  const schoolIdByMouId = new Map(filteredMous.map((m) => [m.id, m.schoolId]))
+  const perSchoolCollected = new Map<string, number>()
+  for (const p of filteredPayments) {
+    const sid = schoolIdByMouId.get(p.mouId)
+    if (!sid) continue
+    perSchoolCollected.set(
+      sid,
+      (perSchoolCollected.get(sid) ?? 0) + (p.receivedAmount ?? 0),
+    )
+  }
+  let outstandingSchoolsCount = 0
+  for (const [sid, contract] of Array.from(perSchoolContract.entries())) {
+    const collected = perSchoolCollected.get(sid) ?? 0
+    if (contract > collected) outstandingSchoolsCount += 1
+  }
+
+  // Needs attention: payments that are overdue OR have a PI raised more than
+  // 30 days ago without payment. Each payment is counted at most once in
+  // needsAttentionCount (a payment that's both overdue + stalled is still
+  // one item on the operator's queue); the per-bucket subcounts are
+  // independent and may overlap.
+  const nowMs = now.getTime()
+  let overduePaymentsCount = 0
+  let stalledPiCount = 0
+  let needsAttentionCount = 0
+  for (const p of filteredPayments) {
+    const balance = (p.expectedAmount ?? 0) - (p.receivedAmount ?? 0)
+    const isReceived = p.status === 'Paid' || p.status === 'Received'
+
+    let isOverdue = false
+    if (!isReceived && balance > 0 && p.dueDateIso) {
+      const dueMs = new Date(p.dueDateIso).getTime()
+      if (!Number.isNaN(dueMs) && dueMs < nowMs) {
+        isOverdue = true
+        overduePaymentsCount += 1
+      }
+    }
+
+    let isStalled = false
+    if (
+      !isReceived
+      && p.piGeneratedAt
+      && p.receivedDate === null
+    ) {
+      const piMs = new Date(p.piGeneratedAt).getTime()
+      if (!Number.isNaN(piMs)) {
+        const daysSincePi = (nowMs - piMs) / (1000 * 60 * 60 * 24)
+        if (daysSincePi >= STALLED_PI_DAYS) {
+          isStalled = true
+          stalledPiCount += 1
+        }
+      }
+    }
+
+    if (isOverdue || isStalled) needsAttentionCount += 1
   }
 
   return {
-    activeMous,
-    pipelineMous,
-    schoolsCount,
     contractValue,
+    schoolsCount,
     collectedAmount,
     collectedPct,
     outstandingAmount,
-    openAlerts,
-    highAlerts,
-    mediumAlerts,
+    outstandingSchoolsCount,
+    needsAttentionCount,
+    overduePaymentsCount,
+    stalledPiCount,
   }
 }
 

@@ -376,6 +376,8 @@ describe('applyFilters', () => {
 // ---------------------------------------------------------------------------
 
 describe('computeKpiStrip', () => {
+  const NOW = new Date('2026-05-13T00:00:00Z')
+
   it('sums contract value across the filtered set and counts schools distinctly', () => {
     const mous = [
       mou({ id: 'a', schoolId: 'S1', contractValue: 100 }),
@@ -385,8 +387,8 @@ describe('computeKpiStrip', () => {
     const data = computeKpiStrip({
       filteredMous: mous,
       filteredPayments: [],
-      escalations: [],
       filteredMouIds: new Set(['a', 'b', 'c']),
+      now: NOW,
     })
     expect(data.contractValue).toBe(350)
     expect(data.schoolsCount).toBe(2)
@@ -398,48 +400,111 @@ describe('computeKpiStrip', () => {
     const data = computeKpiStrip({
       filteredMous: mous,
       filteredPayments: payments,
-      escalations: [],
       filteredMouIds: new Set(['MOU-STEAM-2627-001']),
+      now: NOW,
     })
     expect(data.collectedAmount).toBe(250)
     expect(data.collectedPct).toBe(25)
     expect(data.outstandingAmount).toBe(750)
   })
 
-  it('counts open critical + high escalations scoped to the filtered MOU set', () => {
-    const mous = [mou({ id: 'a' })]
-    const escalations = [
-      escalation({ id: 'e1', mouId: 'a', severity: 'critical' }),
-      escalation({ id: 'e2', mouId: 'a', severity: 'high' }),
-      escalation({ id: 'e3', mouId: 'b', severity: 'critical' }), // out of set
-      escalation({ id: 'e4', mouId: 'a', severity: 'critical', status: 'Closed' }),
+  it('outstandingSchoolsCount counts distinct schools whose contract value exceeds collected', () => {
+    const mous = [
+      mou({ id: 'a', schoolId: 'S1', contractValue: 100 }),
+      mou({ id: 'b', schoolId: 'S2', contractValue: 200 }),
+      mou({ id: 'c', schoolId: 'S3', contractValue: 300 }),
+    ]
+    const payments = [
+      payment({ mouId: 'a', receivedAmount: 100 }), // S1 settled
+      payment({ mouId: 'b', receivedAmount: 50 }), // S2 has balance
+      // S3: no payment, full balance
     ]
     const data = computeKpiStrip({
       filteredMous: mous,
-      filteredPayments: [],
-      escalations,
-      filteredMouIds: new Set(['a']),
+      filteredPayments: payments,
+      filteredMouIds: new Set(['a', 'b', 'c']),
+      now: NOW,
     })
-    expect(data.openAlerts).toBe(2)
-    expect(data.highAlerts).toBe(1)
-    expect(data.mediumAlerts).toBe(1)
+    expect(data.outstandingSchoolsCount).toBe(2)
   })
 
-  it('counts pipeline + active MOUs separately', () => {
-    const mous = [
-      mou({ id: 'a', status: 'Active' }),
-      mou({ id: 'b', status: 'Active' }),
-      mou({ id: 'c', status: 'Draft' }),
-      mou({ id: 'd', status: 'Pending Signature' }),
+  it('overduePaymentsCount counts past-due unpaid payments with positive balance', () => {
+    const mous = [mou({ id: 'a' })]
+    const payments = [
+      payment({ id: 'p1', mouId: 'a', dueDateIso: '2026-04-01', expectedAmount: 1000 }), // overdue
+      payment({ id: 'p2', mouId: 'a', dueDateIso: '2026-06-01', expectedAmount: 1000 }), // future
+      payment({ id: 'p3', mouId: 'a', dueDateIso: '2026-04-01', expectedAmount: 1000, receivedAmount: 1000, status: 'Received' }), // settled
     ]
     const data = computeKpiStrip({
       filteredMous: mous,
-      filteredPayments: [],
-      escalations: [],
-      filteredMouIds: new Set(['a', 'b', 'c', 'd']),
+      filteredPayments: payments,
+      filteredMouIds: new Set(['a']),
+      now: NOW,
     })
-    expect(data.activeMous).toBe(2)
-    expect(data.pipelineMous).toBe(2)
+    expect(data.overduePaymentsCount).toBe(1)
+  })
+
+  it('stalledPiCount counts PIs raised more than 30 days ago without payment', () => {
+    const mous = [mou({ id: 'a' })]
+    // Pull due dates into the future so the overdue rule does not fire and
+    // muddy the stalled-PI assertion.
+    const payments = [
+      payment({ id: 'p1', mouId: 'a', dueDateIso: '2026-08-01', piGeneratedAt: '2026-04-01T00:00:00Z', receivedDate: null }), // > 30 days
+      payment({ id: 'p2', mouId: 'a', dueDateIso: '2026-08-01', piGeneratedAt: '2026-05-10T00:00:00Z', receivedDate: null }), // < 30 days
+      payment({ id: 'p3', mouId: 'a', dueDateIso: '2026-08-01', piGeneratedAt: '2026-04-01T00:00:00Z', receivedDate: '2026-04-15', status: 'Received' }), // paid
+    ]
+    const data = computeKpiStrip({
+      filteredMous: mous,
+      filteredPayments: payments,
+      filteredMouIds: new Set(['a']),
+      now: NOW,
+    })
+    expect(data.stalledPiCount).toBe(1)
+  })
+
+  it('needsAttentionCount counts each payment at most once even when both overdue and stalled', () => {
+    const mous = [mou({ id: 'a' })]
+    const payments = [
+      // Overdue only (no PI raised yet).
+      payment({
+        id: 'p1', mouId: 'a',
+        dueDateIso: '2026-04-01', expectedAmount: 1000,
+        piGeneratedAt: null,
+      }),
+      // Stalled-PI only (due in the future so not overdue).
+      payment({
+        id: 'p2', mouId: 'a',
+        dueDateIso: '2026-08-01', expectedAmount: 1000,
+        piGeneratedAt: '2026-04-01T00:00:00Z', receivedDate: null,
+      }),
+      // Both overdue AND stalled: should count once in needsAttentionCount
+      // but increment both subcounts.
+      payment({
+        id: 'p3', mouId: 'a',
+        dueDateIso: '2026-04-01', expectedAmount: 1000,
+        piGeneratedAt: '2026-04-01T00:00:00Z', receivedDate: null,
+      }),
+    ]
+    const data = computeKpiStrip({
+      filteredMous: mous,
+      filteredPayments: payments,
+      filteredMouIds: new Set(['a']),
+      now: NOW,
+    })
+    expect(data.overduePaymentsCount).toBe(2) // p1 + p3
+    expect(data.stalledPiCount).toBe(2) // p2 + p3
+    expect(data.needsAttentionCount).toBe(3) // p1 + p2 + p3 (p3 once)
+  })
+
+  it('zero contract value yields collectedPct = 0', () => {
+    const mous = [mou({ contractValue: 0 })]
+    const data = computeKpiStrip({
+      filteredMous: mous,
+      filteredPayments: [payment({ receivedAmount: 100 })],
+      filteredMouIds: new Set(['MOU-STEAM-2627-001']),
+      now: NOW,
+    })
+    expect(data.collectedPct).toBe(0)
   })
 })
 

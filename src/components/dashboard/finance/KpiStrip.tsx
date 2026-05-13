@@ -1,8 +1,11 @@
 /*
- * KpiStrip (Gate 4.95 Session 2, Row 1 of /dashboard/finance).
+ * KpiStrip: 4 headline cards on /dashboard/finance.
  *
- * 4 KPI cards: Active MOUs, Contract value, Collected %, Open alerts.
- * Stack 2-up on mobile, 4-up on sm+.
+ * Order is overall-first, action-second:
+ *   1. Total contract value   2. Collected   3. Outstanding   4. Needs attention
+ *
+ * Mobile: 2x2. sm+: 4-up. Cards 1-3 are read-only; card 4 is a Link to the
+ * actionable list (overdue payments + stalled PIs surfaced below the strip).
  */
 
 import Link from 'next/link'
@@ -12,51 +15,58 @@ import type { KpiStripData } from '@/lib/dashboard/financeDashboardData'
 
 interface Props {
   data: KpiStripData
-  schoolsHref: string
+  /** Drilldown link for the Needs attention card (e.g. /dashboard/finance#top-overdue-payments). */
+  needsAttentionHref: string
+  /** Optional scope label for the contract-value subtitle (e.g. "FY 2026-27"). */
+  scopeLabel?: string
 }
 
-export function KpiStrip({ data, schoolsHref }: Props) {
+export function KpiStrip({ data, needsAttentionHref, scopeLabel }: Props) {
+  const contractScope = scopeLabel
+    ? `across ${data.schoolsCount} schools in ${scopeLabel}`
+    : `across ${data.schoolsCount} active schools`
+
+  const collectedPctLabel = data.contractValue > 0
+    ? `${data.collectedPct.toFixed(1)}% of total contract value`
+    : 'No contract value to collect against yet'
+
+  const outstandingSubtitle = data.outstandingSchoolsCount > 0
+    ? `across ${data.outstandingSchoolsCount} schools with balance`
+    : 'Every school has settled'
+
+  const attentionParts: string[] = []
+  if (data.overduePaymentsCount > 0) {
+    attentionParts.push(
+      `${data.overduePaymentsCount} overdue ${data.overduePaymentsCount === 1 ? 'payment' : 'payments'}`,
+    )
+  }
+  if (data.stalledPiCount > 0) {
+    attentionParts.push(
+      `${data.stalledPiCount} stalled ${data.stalledPiCount === 1 ? 'PI' : 'PIs'}`,
+    )
+  }
+  const attentionSubtitle =
+    attentionParts.length > 0
+      ? attentionParts.join(' · ')
+      : 'No overdue payments or stalled PIs'
+
   return (
     <section
-      aria-label="Finance KPI summary"
+      aria-label="Finance headline summary"
       className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4"
     >
       <div
-        data-testid="kpi-active-mous"
+        data-testid="kpi-contract-value"
         className="rounded-lg border border-border bg-card p-4"
       >
         <div className="text-[11px] uppercase tracking-wide text-slate-600">
-          Active MOUs
-        </div>
-        <div className="mt-1 font-heading text-2xl font-bold text-violet-700">
-          {data.activeMous}
-        </div>
-        <div className="mt-1 text-xs text-slate-600">
-          {data.pipelineMous} in pipeline
-        </div>
-      </div>
-
-      <Link
-        href={schoolsHref}
-        data-testid="kpi-contract-value"
-        className="group rounded-lg border border-border bg-card p-4 transition-shadow hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-teal"
-      >
-        <div className="flex items-center justify-between gap-2">
-          <span className="text-[11px] uppercase tracking-wide text-slate-600">
-            Contract value
-          </span>
-          <ArrowRight
-            aria-hidden
-            className="size-3 text-slate-400 transition-transform group-hover:translate-x-0.5"
-          />
+          Total contract value
         </div>
         <div className="mt-1 font-heading text-2xl font-bold text-brand-navy">
           {formatRs(data.contractValue, { compact: true })}
         </div>
-        <div className="mt-1 text-xs text-slate-600">
-          across {data.schoolsCount} schools · click to view
-        </div>
-      </Link>
+        <div className="mt-1 text-xs text-slate-600">{contractScope}</div>
+      </div>
 
       <div
         data-testid="kpi-collected"
@@ -66,31 +76,48 @@ export function KpiStrip({ data, schoolsHref }: Props) {
           Collected
         </div>
         <div className="mt-1 font-heading text-2xl font-bold text-signal-ok">
-          {data.collectedPct.toFixed(1)}%
+          {formatRs(data.collectedAmount, { compact: true })}
         </div>
-        <div className="mt-1 text-xs text-slate-600">
-          {formatRs(data.collectedAmount, { compact: true })} of{' '}
-          {formatRs(data.contractValue, { compact: true })}
-        </div>
-        <div className="mt-0.5 text-xs text-slate-500">
-          {formatRs(data.outstandingAmount, { compact: true })} open
-        </div>
+        <div className="mt-1 text-xs text-slate-600">{collectedPctLabel}</div>
       </div>
 
       <div
-        data-testid="kpi-open-alerts"
+        data-testid="kpi-outstanding"
         className="rounded-lg border border-border bg-card p-4"
       >
         <div className="text-[11px] uppercase tracking-wide text-slate-600">
-          Open alerts
+          Outstanding
         </div>
-        <div className="mt-1 font-heading text-2xl font-bold text-amber-600">
-          {data.openAlerts}
+        <div className="mt-1 font-heading text-2xl font-bold text-brand-navy">
+          {formatRs(data.outstandingAmount, { compact: true })}
         </div>
-        <div className="mt-1 text-xs text-slate-600">
-          {data.highAlerts} high · {data.mediumAlerts} medium
-        </div>
+        <div className="mt-1 text-xs text-slate-600">{outstandingSubtitle}</div>
       </div>
+
+      <Link
+        href={needsAttentionHref}
+        data-testid="kpi-needs-attention"
+        className="group rounded-lg border border-border bg-card p-4 transition-shadow hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-teal"
+      >
+        <div className="flex items-center justify-between gap-2">
+          <span className="text-[11px] uppercase tracking-wide text-slate-600">
+            Needs attention
+          </span>
+          <ArrowRight
+            aria-hidden
+            className="size-3 text-slate-400 transition-transform group-hover:translate-x-0.5"
+          />
+        </div>
+        <div
+          className={
+            'mt-1 font-heading text-2xl font-bold ' +
+            (data.needsAttentionCount > 0 ? 'text-amber-600' : 'text-signal-ok')
+          }
+        >
+          {data.needsAttentionCount}
+        </div>
+        <div className="mt-1 text-xs text-slate-600">{attentionSubtitle}</div>
+      </Link>
     </section>
   )
 }

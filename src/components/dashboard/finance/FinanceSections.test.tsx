@@ -22,39 +22,102 @@ import type {
 } from '@/lib/dashboard/financeDashboardData'
 
 const KPI: KpiStripData = {
-  activeMous: 12,
-  pipelineMous: 4,
-  schoolsCount: 9,
   contractValue: 12500000,
+  schoolsCount: 9,
   collectedAmount: 5000000,
   collectedPct: 40,
   outstandingAmount: 7500000,
-  openAlerts: 6,
-  highAlerts: 2,
-  mediumAlerts: 4,
+  outstandingSchoolsCount: 6,
+  needsAttentionCount: 5,
+  overduePaymentsCount: 3,
+  stalledPiCount: 2,
 }
 
 describe('KpiStrip', () => {
-  it('renders all four KPI testids + numbers', () => {
+  it('renders the four headline testids in order: contract value, collected, outstanding, needs attention', () => {
     const html = renderToStaticMarkup(
-      <KpiStrip data={KPI} schoolsHref="/finance/schools-receipts" />,
+      <KpiStrip data={KPI} needsAttentionHref="/dashboard/finance#top-overdue-payments" />,
     )
-    expect(html).toContain('data-testid="kpi-active-mous"')
     expect(html).toContain('data-testid="kpi-contract-value"')
     expect(html).toContain('data-testid="kpi-collected"')
-    expect(html).toContain('data-testid="kpi-open-alerts"')
-    expect(html).toContain('12')
-    expect(html).toContain('40.0%')
-    expect(html).toContain('2 high · 4 medium')
+    expect(html).toContain('data-testid="kpi-outstanding"')
+    expect(html).toContain('data-testid="kpi-needs-attention"')
+    expect(html.indexOf('kpi-contract-value')).toBeLessThan(
+      html.indexOf('kpi-collected'),
+    )
+    expect(html.indexOf('kpi-collected')).toBeLessThan(
+      html.indexOf('kpi-outstanding'),
+    )
+    expect(html.indexOf('kpi-outstanding')).toBeLessThan(
+      html.indexOf('kpi-needs-attention'),
+    )
   })
 
-  it('contract-value card links to the schools href', () => {
+  it('shows the contract-value subtitle "across N active schools" by default', () => {
     const html = renderToStaticMarkup(
-      <KpiStrip data={KPI} schoolsHref="/finance/schools-receipts?fy=2026-27" />,
+      <KpiStrip data={KPI} needsAttentionHref="/dashboard/finance#top-overdue-payments" />,
+    )
+    expect(html).toContain('across 9 active schools')
+  })
+
+  it('shows "across N schools in FY 2026-27" when scopeLabel is set', () => {
+    const html = renderToStaticMarkup(
+      <KpiStrip
+        data={KPI}
+        needsAttentionHref="/dashboard/finance#top-overdue-payments"
+        scopeLabel="FY 2026-27"
+      />,
+    )
+    expect(html).toContain('across 9 schools in FY 2026-27')
+  })
+
+  it('collected subtitle reads "X% of total contract value"', () => {
+    const html = renderToStaticMarkup(
+      <KpiStrip data={KPI} needsAttentionHref="/dashboard/finance#top-overdue-payments" />,
+    )
+    expect(html).toContain('40.0% of total contract value')
+  })
+
+  it('outstanding subtitle reads "across N schools with balance"', () => {
+    const html = renderToStaticMarkup(
+      <KpiStrip data={KPI} needsAttentionHref="/dashboard/finance#top-overdue-payments" />,
+    )
+    expect(html).toContain('across 6 schools with balance')
+  })
+
+  it('needs-attention card links to the drilldown href and breaks down overdue + stalled', () => {
+    const html = renderToStaticMarkup(
+      <KpiStrip data={KPI} needsAttentionHref="/dashboard/finance#top-overdue-payments" />,
     )
     expect(html).toMatch(
-      /data-testid="kpi-contract-value"[^>]*href="\/finance\/schools-receipts\?fy=2026-27"|href="\/finance\/schools-receipts\?fy=2026-27"[^>]*data-testid="kpi-contract-value"/,
+      /data-testid="kpi-needs-attention"[^>]*href="\/dashboard\/finance#top-overdue-payments"|href="\/dashboard\/finance#top-overdue-payments"[^>]*data-testid="kpi-needs-attention"/,
     )
+    expect(html).toContain('3 overdue payments')
+    expect(html).toContain('2 stalled PIs')
+  })
+
+  it('shows the empty-state subtitle when nothing needs attention', () => {
+    const calmKpi: KpiStripData = {
+      ...KPI,
+      needsAttentionCount: 0,
+      overduePaymentsCount: 0,
+      stalledPiCount: 0,
+    }
+    const html = renderToStaticMarkup(
+      <KpiStrip data={calmKpi} needsAttentionHref="/dashboard/finance#top-overdue-payments" />,
+    )
+    expect(html).toContain('No overdue payments or stalled PIs')
+  })
+
+  it('shows "Every school has settled" when outstandingSchoolsCount is zero', () => {
+    const settled: KpiStripData = {
+      ...KPI,
+      outstandingSchoolsCount: 0,
+    }
+    const html = renderToStaticMarkup(
+      <KpiStrip data={settled} needsAttentionHref="/dashboard/finance#top-overdue-payments" />,
+    )
+    expect(html).toContain('Every school has settled')
   })
 })
 
