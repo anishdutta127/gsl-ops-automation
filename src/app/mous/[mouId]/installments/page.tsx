@@ -19,7 +19,7 @@
 
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { CheckCircle2, FileText, IndianRupee, Send, Users } from 'lucide-react'
+import { CheckCircle2, FileText, IndianRupee, ListPlus, Pencil, Send, Users } from 'lucide-react'
 import type { MOU, Payment, User } from '@/lib/types'
 import mousJson from '@/data/mous.json'
 import paymentsJson from '@/data/payments.json'
@@ -37,6 +37,7 @@ const allPayments = paymentsJson as unknown as Payment[]
 
 interface PageProps {
   params: Promise<{ mouId: string }>
+  searchParams?: Promise<Record<string, string | string[] | undefined>>
 }
 
 function isVisibleToUser(mou: MOU, user: User | null): boolean {
@@ -65,8 +66,20 @@ function paymentStatusTone(s: Payment['status']): 'ok' | 'attention' | 'alert' |
   }
 }
 
-export default async function InstallmentsPage({ params }: PageProps) {
+export default async function InstallmentsPage({ params, searchParams }: PageProps) {
   const { mouId } = await params
+  const sp = (await searchParams) ?? {}
+  const markedPaid = typeof sp['marked-paid'] === 'string' ? sp['marked-paid'] : null
+  const markedPartial = typeof sp['marked-partial'] === 'string' ? sp['marked-partial'] : null
+  const edited = typeof sp.edited === 'string' ? sp.edited : null
+  const flashAction = markedPaid !== null
+    ? 'Mark Paid'
+    : markedPartial !== null
+      ? 'Partial'
+      : edited !== null
+        ? 'Edit'
+        : null
+  const flashId = markedPaid ?? markedPartial ?? edited
   const user = await getCurrentUser()
   const mou = allMous.find((m) => m.id === mouId)
   if (!mou || !isVisibleToUser(mou, user)) notFound()
@@ -96,6 +109,15 @@ export default async function InstallmentsPage({ params }: PageProps) {
           ]}
         />
         <div className="mx-auto flex max-w-screen-xl flex-col gap-4 px-4 py-6">
+          {flashAction && flashId ? (
+            <p
+              role="status"
+              className="rounded-md border border-signal-ok bg-card p-3 text-sm text-foreground"
+              data-testid="installment-action-flash"
+            >
+              {flashAction} recorded for instalment <strong>{flashId}</strong>. Will reflect everywhere within ~5 minutes.
+            </p>
+          ) : null}
           <DetailHeaderCard
             title={mou.id}
             subtitle={`${mou.programme}${mou.programmeSubType ? ' / ' + mou.programmeSubType : ''} · ${installments.length} instalments`}
@@ -206,22 +228,40 @@ export default async function InstallmentsPage({ params }: PageProps) {
                             {canRecordReceipt ? (
                               <>
                                 <Link
-                                  href={`/mous/${mou.id}/payment-receipt?paymentId=${encodeURIComponent(p.id)}`}
-                                  title="Log payment"
-                                  aria-label="Log payment"
+                                  href={`/mous/${mou.id}/installments/${encodeURIComponent(p.id)}/mark-paid`}
+                                  title="Mark as Paid"
+                                  aria-label="Mark as Paid"
                                   className="inline-flex min-h-9 min-w-9 items-center justify-center rounded-md border border-border bg-card px-1.5 py-0.5 text-foreground hover:border-brand-navy hover:text-brand-navy"
-                                  data-testid={`action-log-payment-${p.id}`}
+                                  data-testid={`action-mark-paid-${p.id}`}
                                 >
                                   <CheckCircle2 aria-hidden className="size-4" />
                                 </Link>
                                 <Link
-                                  href={`/mous/${mou.id}/payment-receipt?paymentId=${encodeURIComponent(p.id)}&partial=1`}
-                                  title="Log partial payment"
-                                  aria-label="Log partial payment"
+                                  href={`/mous/${mou.id}/installments/${encodeURIComponent(p.id)}/mark-partial`}
+                                  title="Mark as Partial Paid"
+                                  aria-label="Mark as Partial Paid"
                                   className="inline-flex min-h-9 min-w-9 items-center justify-center rounded-md border border-border bg-card px-1.5 py-0.5 text-foreground hover:border-brand-navy hover:text-brand-navy"
-                                  data-testid={`action-log-partial-${p.id}`}
+                                  data-testid={`action-mark-partial-${p.id}`}
                                 >
                                   <IndianRupee aria-hidden className="size-4" />
+                                </Link>
+                                <Link
+                                  href={`/mous/${mou.id}/installments/${encodeURIComponent(p.id)}/edit`}
+                                  title="Edit instalment"
+                                  aria-label="Edit instalment"
+                                  className="inline-flex min-h-9 min-w-9 items-center justify-center rounded-md border border-border bg-card px-1.5 py-0.5 text-foreground hover:border-brand-navy hover:text-brand-navy"
+                                  data-testid={`action-edit-installment-${p.id}`}
+                                >
+                                  <Pencil aria-hidden className="size-4" />
+                                </Link>
+                                <Link
+                                  href={`/finance/payments/new?schoolId=${encodeURIComponent(mou.schoolId)}&mouId=${encodeURIComponent(mou.id)}&paymentId=${encodeURIComponent(p.id)}`}
+                                  title="Log payment against this instalment"
+                                  aria-label="Log payment against this instalment"
+                                  className="inline-flex min-h-9 min-w-9 items-center justify-center rounded-md border border-border bg-card px-1.5 py-0.5 text-foreground hover:border-brand-navy hover:text-brand-navy"
+                                  data-testid={`action-log-via-finance-${p.id}`}
+                                >
+                                  <ListPlus aria-hidden className="size-4" />
                                 </Link>
                               </>
                             ) : null}
