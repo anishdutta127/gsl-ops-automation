@@ -22,6 +22,7 @@
 
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
+import { Plus, Upload } from 'lucide-react'
 import type {
   MOU,
   Payment,
@@ -31,10 +32,11 @@ import mousJson from '@/data/mous.json'
 import paymentsJson from '@/data/payments.json'
 import paymentLogsJson from '@/data/payment_logs.json'
 import { getCurrentUser } from '@/lib/auth/session'
-import { canAccessFinance } from '@/lib/access'
+import { canAccessFinance, canEditFinanceData } from '@/lib/access'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { formatRs, formatDate } from '@/lib/format'
+import { opsButtonClass } from '@/components/ops/OpsButton'
 import { PaymentMatcher } from './PaymentMatcher'
 
 const allMous = mousJson as unknown as MOU[]
@@ -60,6 +62,11 @@ export default async function FinancePaymentsPage({ searchParams }: PageProps) {
   const hasPrefill =
     prefill.amount !== '' || prefill.date !== '' || prefill.reference !== '' || prefill.narration !== ''
 
+  const canLog = canEditFinanceData(user)
+  const loggedId = typeof sp.logged === 'string' ? sp.logged : null
+  const parkedId = typeof sp.parked === 'string' ? sp.parked : null
+  const flashSchool = typeof sp.school === 'string' ? sp.school : null
+
   const unmatchedCount = allLogs.filter((l) => l.unmatched).length
   const recentMatched = allLogs
     .filter((l) => !l.unmatched)
@@ -79,8 +86,46 @@ export default async function FinancePaymentsPage({ searchParams }: PageProps) {
             { label: 'Finance', href: '/finance' },
             { label: 'Payments' },
           ]}
+          actions={
+            canLog ? (
+              <>
+                <Link
+                  href="/finance/payments/new"
+                  className={opsButtonClass({ variant: 'action', size: 'md' })}
+                  data-testid="payment-log-new-cta"
+                >
+                  <Plus aria-hidden className="size-4" /> Log payment
+                </Link>
+                <Link
+                  href="/finance/payments/bulk"
+                  className={opsButtonClass({ variant: 'outline', size: 'md' })}
+                  data-testid="payment-bulk-cta"
+                >
+                  <Upload aria-hidden className="size-4" /> Bulk upload
+                </Link>
+              </>
+            ) : null
+          }
         />
         <div className="mx-auto max-w-screen-xl space-y-6 px-4 py-6">
+          {loggedId ? (
+            <p
+              role="status"
+              className="rounded-md border border-signal-ok bg-card p-3 text-sm text-foreground"
+              data-testid="payment-logged-flash"
+            >
+              Payment logged for {flashSchool ?? 'this school'}. Will reflect everywhere within ~5 minutes.
+            </p>
+          ) : null}
+          {parkedId ? (
+            <p
+              role="status"
+              className="rounded-md border border-signal-attention bg-card p-3 text-sm text-foreground"
+              data-testid="payment-parked-flash"
+            >
+              Payment logged for {flashSchool ?? 'this school'}. Will reflect everywhere within ~5 minutes. The entry parked for manual matching against the school&rsquo;s open instalments.
+            </p>
+          ) : null}
           <PaymentMatcher
             payments={allPayments}
             mous={allMous}

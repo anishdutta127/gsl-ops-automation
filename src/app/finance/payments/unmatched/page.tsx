@@ -15,11 +15,12 @@
 
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
+import { Plus } from 'lucide-react'
 import type { PaymentLog, SalesPerson } from '@/lib/types'
 import paymentLogsJson from '@/data/payment_logs.json'
 import salesTeamJson from '@/data/sales_team.json'
 import { getCurrentUser } from '@/lib/auth/session'
-import { canAccessFinance } from '@/lib/access'
+import { canAccessFinance, canEditFinanceData } from '@/lib/access'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { EmptyState } from '@/components/ops/EmptyState'
@@ -73,6 +74,9 @@ export default async function UnmatchedPaymentsPage({ searchParams }: PageProps)
 
   const sp = await searchParams
   const sort = pickSort(typeof sp.sort === 'string' ? sp.sort : undefined)
+  const canLog = canEditFinanceData(user)
+  const parkedId = typeof sp.parked === 'string' ? sp.parked : null
+  const flashSchool = typeof sp.school === 'string' ? sp.school : null
 
   const unmatched = sortLogs(allLogs.filter((l) => l.unmatched), sort)
   const salesById = new Map(allSalesTeam.map((s) => [s.id, s]))
@@ -91,12 +95,32 @@ export default async function UnmatchedPaymentsPage({ searchParams }: PageProps)
             { label: 'Unmatched' },
           ]}
           actions={
-            <Link href="/finance/payments" className={opsButtonClass({ variant: 'outline', size: 'md' })}>
-              Match a payment
-            </Link>
+            <>
+              {canLog ? (
+                <Link
+                  href="/finance/payments/new"
+                  className={opsButtonClass({ variant: 'action', size: 'md' })}
+                  data-testid="payment-log-new-cta"
+                >
+                  <Plus aria-hidden className="size-4" /> Log payment
+                </Link>
+              ) : null}
+              <Link href="/finance/payments" className={opsButtonClass({ variant: 'outline', size: 'md' })}>
+                Match a payment
+              </Link>
+            </>
           }
         />
         <div className="mx-auto max-w-screen-xl space-y-4 px-4 py-6">
+          {parkedId ? (
+            <p
+              role="status"
+              className="rounded-md border border-signal-attention bg-card p-3 text-sm text-foreground"
+              data-testid="payment-parked-flash"
+            >
+              Payment logged for {flashSchool ?? 'this school'}. Will reflect everywhere within ~5 minutes.
+            </p>
+          ) : null}
           <form
             method="GET"
             className="flex flex-wrap items-end gap-3 rounded-md border border-border bg-card p-3"
