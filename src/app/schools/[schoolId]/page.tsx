@@ -214,8 +214,17 @@ export default async function SchoolDetailPage({ params, searchParams }: PagePro
             ) : null}
           </section>
 
-          {/* GSTIN missing alert (preserved from pre-Gate-3.5 layout). */}
-          {school.gstNumber === null ? (
+          {/*
+           * GSTIN missing alert. Renders only on individual school detail
+           * pages where PI generation against this school record is actually
+           * possible. Suppressed on chain umbrella records (e.g.
+           * SCH-NARAYANA_SCHOOL with city "9 Different Locations" sitting
+           * as the sole member of a SchoolGroup): those carry no MOUs of
+           * their own and the GROUP-scope MOUs surface GSTIN on the chain
+           * parent view, not here. Misba's Gate 5A.6 audit (Step 7 Fix A).
+           */}
+          {school.gstNumber === null &&
+          schoolMous.some((m) => m.schoolScope !== 'GROUP') ? (
             <div
               role="alert"
               className="rounded-md border border-signal-alert/40 bg-red-50 px-4 py-2 text-sm text-signal-alert"

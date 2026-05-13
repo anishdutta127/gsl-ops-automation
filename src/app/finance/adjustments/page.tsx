@@ -94,6 +94,7 @@ export default async function AdjustmentsPage({ searchParams }: PageProps) {
   const canEdit = canEditFinanceData(user)
 
   const reversedId = typeof sp.reversed === 'string' ? sp.reversed : null
+  const createdId = typeof sp.created === 'string' ? sp.created : null
   const expandId = typeof sp.expand === 'string' ? sp.expand : null
   const errorKey = typeof sp.error === 'string' ? sp.error : null
   const errorMessage = errorKey ? ERROR_COPY[errorKey] ?? `Failed: ${errorKey}` : null
@@ -118,6 +119,17 @@ export default async function AdjustmentsPage({ searchParams }: PageProps) {
             { label: 'Finance', href: '/finance' },
             { label: 'Adjustments' },
           ]}
+          actions={
+            canEdit ? (
+              <Link
+                href="/finance/adjustments/new"
+                className={opsButtonClass({ variant: 'primary', size: 'md' })}
+                data-testid="new-adjustment-button"
+              >
+                + New adjustment
+              </Link>
+            ) : null
+          }
         />
         <div className="mx-auto max-w-screen-xl space-y-4 px-4 py-6">
           {reversedId ? (
@@ -128,6 +140,20 @@ export default async function AdjustmentsPage({ searchParams }: PageProps) {
             >
               <Info aria-hidden className="size-4 shrink-0" />
               <span>Reversed. Will reflect everywhere within ~5 minutes.</span>
+            </p>
+          ) : null}
+
+          {createdId ? (
+            <p
+              role="status"
+              data-testid="adjustment-created-flash"
+              className="flex items-start gap-2 rounded-md border border-signal-ok bg-signal-ok/10 p-3 text-sm text-signal-ok"
+            >
+              <Info aria-hidden className="size-4 shrink-0" />
+              <span>
+                Adjustment <strong>{createdId}</strong> created. Will reflect
+                everywhere within ~5 minutes.
+              </span>
             </p>
           ) : null}
 

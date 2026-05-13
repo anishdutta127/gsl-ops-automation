@@ -79,10 +79,10 @@ export function computeWorkflowState(args: ComputeWorkflowArgs): WorkflowBanner 
     return {
       currentStage: stage,
       headline: 'Awaiting installment schedule activity',
-      body: 'Finance should pick up the next installment for PI generation.',
+      body: 'Finance: open instalments to generate the next PI, mark a paid instalment, or edit the schedule.',
       owner: 'finance',
       ownerLabel: null,
-      cta: { label: 'Open installments', href: `/mous/${mou.id}/installments` },
+      cta: { label: 'Open instalments', href: `/mous/${mou.id}/installments` },
       reminderEligible: false,
       reminderTemplate: null,
     }
