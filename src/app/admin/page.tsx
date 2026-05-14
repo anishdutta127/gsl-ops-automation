@@ -98,6 +98,7 @@ interface PlainTile {
   description: string
   iconKey: 'audit' | 'cc-rules' | 'lifecycle' | 'cohort' | 'pi-counter'
     | 'schools' | 'spocs' | 'sales-team' | 'groups' | 'stage-responsibility'
+    | 'pranav-import'
   status?: 'placeholder'
 }
 
@@ -120,6 +121,7 @@ const PLAIN_ICON: Record<PlainTile['iconKey'], LucideIcon> = {
   spocs: Users,
   'sales-team': Users,
   groups: Users,
+  'pranav-import': FileBox,
 }
 
 const SYNC_FLASH: Record<string, { tone: 'ok' | 'anomaly'; text: string }> = {
@@ -274,6 +276,12 @@ export default async function AdminIndexPage({ searchParams }: PageProps) {
       description: 'Chain-MOU group memberships.',
       iconKey: 'groups',
       status: 'placeholder',
+    },
+    {
+      href: '/admin/imports/pranav-refresh',
+      label: 'Pranav refresh import',
+      description: 'Upload, diff and apply Pranav MOU refresh files.',
+      iconKey: 'pranav-import',
     },
   ]
 
