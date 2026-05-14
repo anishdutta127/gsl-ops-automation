@@ -1,0 +1,4603 @@
+{
+  "parsedAt": "2026-05-14T02:15:34.922Z",
+  "source": "C:/Users/anish/Projects/gsl-ops-automation/import-data/2026-05-pranav-refresh/pranav-refresh-2026-05-13.xlsx",
+  "rows": [
+    {
+      "rowNum": 7,
+      "srNo": 1,
+      "schoolName": "Mutahhary Public School Baroo",
+      "schoolSlug": "mutahhary-public-school-baroo",
+      "acquisitionStatus": "New",
+      "salesRepName": "Roveena",
+      "physicalCopyScanned": false,
+      "mouSigned": true,
+      "kitsSent": null,
+      "modelRaw": "TT",
+      "trainerModel": "TT",
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2028-03-31",
+        "fallback": false
+      },
+      "city": "Kargil",
+      "state": "Union Territory of Ladakh",
+      "studentsMou": 500,
+      "contractValue": 400000,
+      "studentsActual": 0,
+      "spWithoutTax": 677.9661016949152,
+      "spWithTax": 800,
+      "received": 40000,
+      "tds": 0,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.1,
+          "amount": 0,
+          "monthRaw": "2026-02-28T18:29:50.000Z",
+          "monthIso": "2026-02-28",
+          "paymentReceivedRaw": "partial payment",
+          "isReceived": false
+        },
+        {
+          "seq": 2,
+          "pct": 0.3,
+          "amount": 0.03,
+          "monthRaw": "2026-03-31T18:29:50.000Z",
+          "monthIso": "2026-03-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 3,
+          "pct": 0.3,
+          "amount": 0.03,
+          "monthRaw": "2026-05-31T18:29:50.000Z",
+          "monthIso": "2026-05-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 4,
+          "pct": 0.3,
+          "amount": 0.03,
+          "monthRaw": "2026-08-31T18:29:50.000Z",
+          "monthIso": "2026-08-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "TT|500|400000",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 8,
+      "srNo": 2,
+      "schoolName": "Jnana Bharathi English School",
+      "schoolSlug": "jnana-bharathi-english-school",
+      "acquisitionStatus": "New",
+      "salesRepName": "Balachandra",
+      "physicalCopyScanned": false,
+      "mouSigned": false,
+      "kitsSent": null,
+      "modelRaw": null,
+      "trainerModel": null,
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2027-03-31",
+        "fallback": false
+      },
+      "city": "Bengaluru",
+      "state": "Karanataka",
+      "studentsMou": 200,
+      "contractValue": 0,
+      "studentsActual": null,
+      "spWithoutTax": null,
+      "spWithTax": null,
+      "received": 15000,
+      "tds": 0,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": null,
+          "amount": null,
+          "monthRaw": null,
+          "monthIso": null,
+          "paymentReceivedRaw": "partial payment",
+          "isReceived": false
+        }
+      ],
+      "needsReview": true,
+      "isContinuationRow": false,
+      "productLineKey": "unknown|200|0",
+      "rowWarnings": [
+        "sale amount is 0 but kits-sent or received present, flag for review"
+      ]
+    },
+    {
+      "rowNum": 9,
+      "srNo": 3,
+      "schoolName": "Vijaya English Primary School",
+      "schoolSlug": "vijaya-english-primary-school",
+      "acquisitionStatus": "New",
+      "salesRepName": "Balachandra",
+      "physicalCopyScanned": false,
+      "mouSigned": false,
+      "kitsSent": null,
+      "modelRaw": "GSL-T",
+      "trainerModel": "GSL-T",
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2027-03-31",
+        "fallback": false
+      },
+      "city": "Bengaluru",
+      "state": "Karanataka",
+      "studentsMou": 250,
+      "contractValue": 375000,
+      "studentsActual": null,
+      "spWithoutTax": 1271.1864406779662,
+      "spWithTax": 1500,
+      "received": null,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.5,
+          "amount": null,
+          "monthRaw": "2026-05-31T18:29:50.000Z",
+          "monthIso": "2026-05-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 2,
+          "pct": 0.5,
+          "amount": null,
+          "monthRaw": "2026-07-31T18:29:50.000Z",
+          "monthIso": "2026-07-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "GSL-T|250|375000",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 10,
+      "srNo": 4,
+      "schoolName": "Frank Public School",
+      "schoolSlug": "frank-public-school",
+      "acquisitionStatus": "Retained",
+      "salesRepName": "Balachandra",
+      "physicalCopyScanned": false,
+      "mouSigned": false,
+      "kitsSent": null,
+      "modelRaw": "GSL-T",
+      "trainerModel": "GSL-T",
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2027-03-31",
+        "fallback": false
+      },
+      "city": "Bengaluru",
+      "state": "Karanataka",
+      "studentsMou": 180,
+      "contractValue": 216000,
+      "studentsActual": null,
+      "spWithoutTax": 1016.9491525423729,
+      "spWithTax": 1200,
+      "received": null,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.35,
+          "amount": null,
+          "monthRaw": "2026-05-31T18:29:50.000Z",
+          "monthIso": "2026-05-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 2,
+          "pct": 0.3,
+          "amount": null,
+          "monthRaw": "2026-08-31T18:29:50.000Z",
+          "monthIso": "2026-08-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 3,
+          "pct": 0.35,
+          "amount": null,
+          "monthRaw": "2026-11-30T18:29:50.000Z",
+          "monthIso": "2026-11-30",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "GSL-T|180|216000",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 11,
+      "srNo": 5,
+      "schoolName": "Christ King Public School",
+      "schoolSlug": "christ-king-public-school",
+      "acquisitionStatus": "New",
+      "salesRepName": "Balachandra",
+      "physicalCopyScanned": false,
+      "mouSigned": false,
+      "kitsSent": null,
+      "modelRaw": "TT",
+      "trainerModel": "TT",
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2027-03-31",
+        "fallback": false
+      },
+      "city": "Bengaluru",
+      "state": "Karanataka",
+      "studentsMou": 600,
+      "contractValue": 600000,
+      "studentsActual": null,
+      "spWithoutTax": 847.457627118644,
+      "spWithTax": 1000,
+      "received": null,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.35,
+          "amount": null,
+          "monthRaw": "2026-05-31T18:29:50.000Z",
+          "monthIso": "2026-05-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 2,
+          "pct": 0.3,
+          "amount": null,
+          "monthRaw": "2026-08-31T18:29:50.000Z",
+          "monthIso": "2026-08-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 3,
+          "pct": 0.35,
+          "amount": null,
+          "monthRaw": "2026-11-30T18:29:50.000Z",
+          "monthIso": "2026-11-30",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "TT|600|600000",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 12,
+      "srNo": 6,
+      "schoolName": "Agragami Vidya Kendar",
+      "schoolSlug": "agragami-vidya-kendar",
+      "acquisitionStatus": "New",
+      "salesRepName": "Balachandra",
+      "physicalCopyScanned": false,
+      "mouSigned": false,
+      "kitsSent": null,
+      "modelRaw": "TT",
+      "trainerModel": "TT",
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2027-03-31",
+        "fallback": false
+      },
+      "city": "Bengaluru",
+      "state": "Karanataka",
+      "studentsMou": 800,
+      "contractValue": 800000,
+      "studentsActual": null,
+      "spWithoutTax": 847.457627118644,
+      "spWithTax": 1000,
+      "received": null,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.35,
+          "amount": null,
+          "monthRaw": "2026-05-31T18:29:50.000Z",
+          "monthIso": "2026-05-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 2,
+          "pct": 0.3,
+          "amount": null,
+          "monthRaw": "2026-08-31T18:29:50.000Z",
+          "monthIso": "2026-08-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 3,
+          "pct": 0.35,
+          "amount": null,
+          "monthRaw": "2026-11-30T18:29:50.000Z",
+          "monthIso": "2026-11-30",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "TT|800|800000",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 13,
+      "srNo": 7,
+      "schoolName": "Sri Ramavidyalay",
+      "schoolSlug": "sri-ramavidyalay",
+      "acquisitionStatus": "New",
+      "salesRepName": "Balachandra",
+      "physicalCopyScanned": false,
+      "mouSigned": false,
+      "kitsSent": null,
+      "modelRaw": "TT",
+      "trainerModel": "TT",
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2027-03-31",
+        "fallback": false
+      },
+      "city": "Bengaluru",
+      "state": "Karanataka",
+      "studentsMou": 800,
+      "contractValue": 800000,
+      "studentsActual": null,
+      "spWithoutTax": 847.457627118644,
+      "spWithTax": 1000,
+      "received": null,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.35,
+          "amount": null,
+          "monthRaw": "2026-05-31T18:29:50.000Z",
+          "monthIso": "2026-05-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 2,
+          "pct": 0.3,
+          "amount": null,
+          "monthRaw": "2026-08-31T18:29:50.000Z",
+          "monthIso": "2026-08-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 3,
+          "pct": 0.35,
+          "amount": null,
+          "monthRaw": "2026-11-30T18:29:50.000Z",
+          "monthIso": "2026-11-30",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "TT|800|800000",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 14,
+      "srNo": 8,
+      "schoolName": "RT Nagar Public School",
+      "schoolSlug": "rt-nagar-public-school",
+      "acquisitionStatus": "New",
+      "salesRepName": "Balachandra",
+      "physicalCopyScanned": false,
+      "mouSigned": false,
+      "kitsSent": null,
+      "modelRaw": "TT",
+      "trainerModel": "TT",
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2027-03-31",
+        "fallback": false
+      },
+      "city": "Bengaluru",
+      "state": "Karanataka",
+      "studentsMou": 1300,
+      "contractValue": 1300000,
+      "studentsActual": null,
+      "spWithoutTax": 847.457627118644,
+      "spWithTax": 1000,
+      "received": null,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.35,
+          "amount": null,
+          "monthRaw": "2026-05-31T18:29:50.000Z",
+          "monthIso": "2026-05-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 2,
+          "pct": 0.3,
+          "amount": null,
+          "monthRaw": "2026-08-31T18:29:50.000Z",
+          "monthIso": "2026-08-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 3,
+          "pct": 0.35,
+          "amount": null,
+          "monthRaw": "2026-11-30T18:29:50.000Z",
+          "monthIso": "2026-11-30",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "TT|1300|1300000",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 15,
+      "srNo": 9,
+      "schoolName": "Shrishail Vidya Sansthe",
+      "schoolSlug": "shrishail-vidya-sansthe",
+      "acquisitionStatus": "New",
+      "salesRepName": "Balachandra",
+      "physicalCopyScanned": false,
+      "mouSigned": false,
+      "kitsSent": null,
+      "modelRaw": "GSL-T",
+      "trainerModel": "GSL-T",
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2027-03-31",
+        "fallback": false
+      },
+      "city": "Bengaluru",
+      "state": "Karanataka",
+      "studentsMou": 200,
+      "contractValue": 300000,
+      "studentsActual": null,
+      "spWithoutTax": 1271.1864406779662,
+      "spWithTax": 1500,
+      "received": null,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.35,
+          "amount": null,
+          "monthRaw": "2026-05-31T18:29:50.000Z",
+          "monthIso": "2026-05-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 2,
+          "pct": 0.3,
+          "amount": null,
+          "monthRaw": "2026-08-31T18:29:50.000Z",
+          "monthIso": "2026-08-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 3,
+          "pct": 0.35,
+          "amount": null,
+          "monthRaw": "2026-11-30T18:29:50.000Z",
+          "monthIso": "2026-11-30",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "GSL-T|200|300000",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 16,
+      "srNo": 10,
+      "schoolName": "Mahrishi Dayanand School",
+      "schoolSlug": "mahrishi-dayanand-school",
+      "acquisitionStatus": "New",
+      "salesRepName": "Sahil",
+      "physicalCopyScanned": false,
+      "mouSigned": false,
+      "kitsSent": "Yes",
+      "modelRaw": null,
+      "trainerModel": null,
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2027-03-31",
+        "fallback": false
+      },
+      "city": "Haryana",
+      "state": "Haryana",
+      "studentsMou": 144,
+      "contractValue": 0,
+      "studentsActual": 144,
+      "spWithoutTax": null,
+      "spWithTax": null,
+      "received": 10000,
+      "tds": 0,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": null,
+          "amount": null,
+          "monthRaw": null,
+          "monthIso": null,
+          "paymentReceivedRaw": "partial payment",
+          "isReceived": false
+        }
+      ],
+      "needsReview": true,
+      "isContinuationRow": false,
+      "productLineKey": "unknown|144|0",
+      "rowWarnings": [
+        "sale amount is 0 but kits-sent or received present, flag for review"
+      ]
+    },
+    {
+      "rowNum": 17,
+      "srNo": 11,
+      "schoolName": "Techno India Group Public School Kalyani",
+      "schoolSlug": "techno-india-group-public-school-kalyani",
+      "acquisitionStatus": "New",
+      "salesRepName": "Ranotosh",
+      "physicalCopyScanned": true,
+      "mouSigned": true,
+      "kitsSent": null,
+      "modelRaw": "TT",
+      "trainerModel": "TT",
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2028-03-31",
+        "fallback": false
+      },
+      "city": "Kolkata",
+      "state": "West Bengal",
+      "studentsMou": 100,
+      "contractValue": 100000,
+      "studentsActual": null,
+      "spWithoutTax": 847.457627118644,
+      "spWithTax": 1000,
+      "received": null,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.5,
+          "amount": 0,
+          "monthRaw": null,
+          "monthIso": null,
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 2,
+          "pct": 0.5,
+          "amount": 0,
+          "monthRaw": null,
+          "monthIso": null,
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "TT|100|100000",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 18,
+      "srNo": 12,
+      "schoolName": "Techno India Group Public School Asansol",
+      "schoolSlug": "techno-india-group-public-school-asansol",
+      "acquisitionStatus": "New",
+      "salesRepName": "Ranotosh",
+      "physicalCopyScanned": true,
+      "mouSigned": true,
+      "kitsSent": null,
+      "modelRaw": "TT",
+      "trainerModel": "TT",
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2028-03-31",
+        "fallback": false
+      },
+      "city": "Kolkata",
+      "state": "West Bengal",
+      "studentsMou": 40,
+      "contractValue": 40000,
+      "studentsActual": null,
+      "spWithoutTax": 847.457627118644,
+      "spWithTax": 1000,
+      "received": null,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.5,
+          "amount": 0,
+          "monthRaw": null,
+          "monthIso": null,
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 2,
+          "pct": 0.5,
+          "amount": 0,
+          "monthRaw": null,
+          "monthIso": null,
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "TT|40|40000",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 19,
+      "srNo": 13,
+      "schoolName": "Techno India Group Public School Panagarh",
+      "schoolSlug": "techno-india-group-public-school-panagarh",
+      "acquisitionStatus": "New",
+      "salesRepName": "Ranotosh",
+      "physicalCopyScanned": true,
+      "mouSigned": true,
+      "kitsSent": null,
+      "modelRaw": "TT",
+      "trainerModel": "TT",
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2028-03-31",
+        "fallback": false
+      },
+      "city": "Kolkata",
+      "state": "West Bengal",
+      "studentsMou": 100,
+      "contractValue": 100000,
+      "studentsActual": null,
+      "spWithoutTax": 847.457627118644,
+      "spWithTax": 1000,
+      "received": null,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.5,
+          "amount": 0,
+          "monthRaw": null,
+          "monthIso": null,
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 2,
+          "pct": 0.5,
+          "amount": 0,
+          "monthRaw": null,
+          "monthIso": null,
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "TT|100|100000",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 20,
+      "srNo": 14,
+      "schoolName": "St. Mary Convent School",
+      "schoolSlug": "st-mary-convent-school",
+      "acquisitionStatus": "New",
+      "salesRepName": "Ranotosh",
+      "physicalCopyScanned": true,
+      "mouSigned": true,
+      "kitsSent": null,
+      "modelRaw": "TT",
+      "trainerModel": "TT",
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2028-03-31",
+        "fallback": false
+      },
+      "city": "Kolkata",
+      "state": "West Bengal",
+      "studentsMou": 200,
+      "contractValue": 200000,
+      "studentsActual": null,
+      "spWithoutTax": 847.457627118644,
+      "spWithTax": 1000,
+      "received": null,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.5,
+          "amount": 0,
+          "monthRaw": "2026-08-31T18:29:50.000Z",
+          "monthIso": "2026-08-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 2,
+          "pct": 0.5,
+          "amount": 0,
+          "monthRaw": "2027-02-28T18:29:50.000Z",
+          "monthIso": "2027-02-28",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "TT|200|200000",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 21,
+      "srNo": 15,
+      "schoolName": "Loreto Day School BB",
+      "schoolSlug": "loreto-day-school-bb",
+      "acquisitionStatus": "Retained",
+      "salesRepName": "Prodipto",
+      "physicalCopyScanned": false,
+      "mouSigned": true,
+      "kitsSent": null,
+      "modelRaw": null,
+      "trainerModel": null,
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2027-03-31",
+        "fallback": false
+      },
+      "city": "Kolkata",
+      "state": "West Bengal",
+      "studentsMou": 640,
+      "contractValue": 1585920,
+      "studentsActual": 559,
+      "spWithoutTax": 2100,
+      "spWithTax": 2478,
+      "received": null,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.25,
+          "amount": 346300.5,
+          "monthRaw": "Apr-26",
+          "monthIso": "2026-04-01",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 2,
+          "pct": 0.25,
+          "amount": 346300.5,
+          "monthRaw": "2026-06-30T18:29:50.000Z",
+          "monthIso": "2026-06-30",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 3,
+          "pct": 0.25,
+          "amount": 346300.5,
+          "monthRaw": "2026-09-30T18:29:50.000Z",
+          "monthIso": "2026-09-30",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 4,
+          "pct": 0.25,
+          "amount": 346300.5,
+          "monthRaw": "2026-12-31T18:29:50.000Z",
+          "monthIso": "2026-12-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "unknown|640|1585920",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 22,
+      "srNo": 16,
+      "schoolName": "Kavyapta Global School",
+      "schoolSlug": "kavyapta-global-school",
+      "acquisitionStatus": "New",
+      "salesRepName": "Anshuman",
+      "physicalCopyScanned": true,
+      "mouSigned": true,
+      "kitsSent": null,
+      "modelRaw": "TT",
+      "trainerModel": "TT",
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2029-03-31",
+        "fallback": false
+      },
+      "city": "Jamshedpur",
+      "state": "Jharkhand",
+      "studentsMou": 180,
+      "contractValue": 149999.9994,
+      "studentsActual": 180,
+      "spWithoutTax": 706.214686440678,
+      "spWithTax": 833.33333,
+      "received": 67500,
+      "tds": 7500,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.5,
+          "amount": 75000,
+          "monthRaw": "2026-02-28T18:29:50.000Z",
+          "monthIso": "2026-02-28",
+          "paymentReceivedRaw": "yes",
+          "isReceived": true
+        },
+        {
+          "seq": 2,
+          "pct": 0.5,
+          "amount": 74999.9997,
+          "monthRaw": "2026-08-31T18:29:50.000Z",
+          "monthIso": "2026-08-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "TT|180|149999.9994",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 23,
+      "srNo": 17,
+      "schoolName": "Embee Rosebud Hr. Sec. School",
+      "schoolSlug": "embee-rosebud-hr-sec-school",
+      "acquisitionStatus": "New",
+      "salesRepName": "Hirak",
+      "physicalCopyScanned": true,
+      "mouSigned": true,
+      "kitsSent": "Yes",
+      "modelRaw": null,
+      "trainerModel": null,
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2027-03-31",
+        "fallback": false
+      },
+      "city": "Tura",
+      "state": "Meghalaya",
+      "studentsMou": 125,
+      "contractValue": 275000,
+      "studentsActual": 125,
+      "spWithoutTax": 1864.406779661017,
+      "spWithTax": 2200,
+      "received": 65000,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.5,
+          "amount": 137500,
+          "monthRaw": "2026-01-31T18:29:50.000Z",
+          "monthIso": "2026-01-31",
+          "paymentReceivedRaw": "partial payment",
+          "isReceived": false
+        },
+        {
+          "seq": 2,
+          "pct": 0.5,
+          "amount": 137500,
+          "monthRaw": "2026-06-30T18:29:50.000Z",
+          "monthIso": "2026-06-30",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "unknown|125|275000",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 24,
+      "srNo": 18,
+      "schoolName": "The Learning Sanctuary",
+      "schoolSlug": "the-learning-sanctuary",
+      "acquisitionStatus": "New",
+      "salesRepName": "Hirak",
+      "physicalCopyScanned": true,
+      "mouSigned": true,
+      "kitsSent": "Yes",
+      "modelRaw": null,
+      "trainerModel": null,
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2027-03-31",
+        "fallback": false
+      },
+      "city": "Tura",
+      "state": "Meghalaya",
+      "studentsMou": 160,
+      "contractValue": 288000,
+      "studentsActual": 170,
+      "spWithoutTax": 1525.4237288135594,
+      "spWithTax": 1800,
+      "received": null,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.5,
+          "amount": 153000,
+          "monthRaw": "2026-01-31T18:29:50.000Z",
+          "monthIso": "2026-01-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 2,
+          "pct": 0.5,
+          "amount": 153000,
+          "monthRaw": "2026-06-30T18:29:50.000Z",
+          "monthIso": "2026-06-30",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "unknown|160|288000",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 25,
+      "srNo": 19,
+      "schoolName": "Rootland Sec. School",
+      "schoolSlug": "rootland-sec-school",
+      "acquisitionStatus": "New",
+      "salesRepName": "Hirak",
+      "physicalCopyScanned": true,
+      "mouSigned": true,
+      "kitsSent": "Yes",
+      "modelRaw": null,
+      "trainerModel": null,
+      "duration": {
+        "start": "2026-01-27",
+        "end": "2026-11-30",
+        "fallback": false
+      },
+      "city": "Tura",
+      "state": "Meghalaya",
+      "studentsMou": 263,
+      "contractValue": 473400,
+      "studentsActual": 263,
+      "spWithoutTax": 1525.4237288135594,
+      "spWithTax": 1800,
+      "received": 30000,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": null,
+          "amount": 350000,
+          "monthRaw": "2026-01-31T18:29:50.000Z",
+          "monthIso": "2026-01-31",
+          "paymentReceivedRaw": "partial payment",
+          "isReceived": false
+        },
+        {
+          "seq": 2,
+          "pct": null,
+          "amount": 123400,
+          "monthRaw": "2026-06-30T18:29:50.000Z",
+          "monthIso": "2026-06-30",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "unknown|263|473400",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 26,
+      "srNo": 20,
+      "schoolName": "K.E Carmel School - Amtala",
+      "schoolSlug": "k-e-carmel-school-amtala",
+      "acquisitionStatus": "New",
+      "salesRepName": "Ranotosh",
+      "physicalCopyScanned": true,
+      "mouSigned": true,
+      "kitsSent": null,
+      "modelRaw": "TT",
+      "trainerModel": "TT",
+      "duration": {
+        "start": "2026-03-01",
+        "end": "2027-01-31",
+        "fallback": false
+      },
+      "city": "Amtala",
+      "state": "West Bengal",
+      "studentsMou": 450,
+      "contractValue": 180000,
+      "studentsActual": null,
+      "spWithoutTax": null,
+      "spWithTax": null,
+      "received": 45000,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.25,
+          "amount": 45000,
+          "monthRaw": "2026-02-28T18:29:50.000Z",
+          "monthIso": "2026-02-28",
+          "paymentReceivedRaw": "yes",
+          "isReceived": true
+        },
+        {
+          "seq": 2,
+          "pct": 0.25,
+          "amount": 45000,
+          "monthRaw": "2026-07-31T18:29:50.000Z",
+          "monthIso": "2026-07-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 3,
+          "pct": 0.25,
+          "amount": 45000,
+          "monthRaw": "2026-09-30T18:29:50.000Z",
+          "monthIso": "2026-09-30",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 4,
+          "pct": 0.25,
+          "amount": 45000,
+          "monthRaw": "2026-12-31T18:29:50.000Z",
+          "monthIso": "2026-12-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "TT|450|180000",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 27,
+      "srNo": 21,
+      "schoolName": "K.E Carmel School - Suri",
+      "schoolSlug": "k-e-carmel-school-suri",
+      "acquisitionStatus": "New",
+      "salesRepName": "Sabyasachi",
+      "physicalCopyScanned": false,
+      "mouSigned": true,
+      "kitsSent": null,
+      "modelRaw": "TT",
+      "trainerModel": "TT",
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2028-03-31",
+        "fallback": false
+      },
+      "city": "Suri",
+      "state": "West Bengal",
+      "studentsMou": 497,
+      "contractValue": 293230,
+      "studentsActual": null,
+      "spWithoutTax": 500,
+      "spWithTax": 590,
+      "received": 50000,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.25,
+          "amount": 0,
+          "monthRaw": "2026-03-31T18:29:50.000Z",
+          "monthIso": "2026-03-31",
+          "paymentReceivedRaw": "partial payment",
+          "isReceived": false
+        },
+        {
+          "seq": 2,
+          "pct": 0.25,
+          "amount": 0,
+          "monthRaw": "2026-05-31T18:29:50.000Z",
+          "monthIso": "2026-05-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 3,
+          "pct": 0.25,
+          "amount": 0,
+          "monthRaw": "2026-08-31T18:29:50.000Z",
+          "monthIso": "2026-08-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 4,
+          "pct": 0.25,
+          "amount": 0,
+          "monthRaw": "2026-11-30T18:29:50.000Z",
+          "monthIso": "2026-11-30",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "TT|497|293230",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 28,
+      "srNo": 22,
+      "schoolName": "Blue Angels Global School",
+      "schoolSlug": "blue-angels-global-school",
+      "acquisitionStatus": "New",
+      "salesRepName": "Sumit",
+      "physicalCopyScanned": false,
+      "mouSigned": true,
+      "kitsSent": "Yes",
+      "modelRaw": "TT",
+      "trainerModel": "TT",
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2028-03-31",
+        "fallback": false
+      },
+      "city": "Faridabad",
+      "state": "Haryana",
+      "studentsMou": 800,
+      "contractValue": 720000,
+      "studentsActual": 800,
+      "spWithoutTax": 762.7118644067797,
+      "spWithTax": 900,
+      "received": 208000,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.25,
+          "amount": 180000,
+          "monthRaw": "2026-03-31T18:29:50.000Z",
+          "monthIso": "2026-03-31",
+          "paymentReceivedRaw": "yes",
+          "isReceived": true
+        },
+        {
+          "seq": 2,
+          "pct": 0.25,
+          "amount": 180000,
+          "monthRaw": "2026-06-30T18:29:50.000Z",
+          "monthIso": "2026-06-30",
+          "paymentReceivedRaw": "partial Payment",
+          "isReceived": false
+        },
+        {
+          "seq": 3,
+          "pct": 0.25,
+          "amount": 180000,
+          "monthRaw": "2026-09-30T18:29:50.000Z",
+          "monthIso": "2026-09-30",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 4,
+          "pct": 0.25,
+          "amount": 180000,
+          "monthRaw": "2026-12-31T18:29:50.000Z",
+          "monthIso": "2026-12-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "TT|800|720000",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 29,
+      "srNo": 23,
+      "schoolName": "Tathastu Innovations (LAB ) Meerut",
+      "schoolSlug": "tathastu-innovations-lab-meerut",
+      "acquisitionStatus": "New",
+      "salesRepName": "Tanuj",
+      "physicalCopyScanned": true,
+      "mouSigned": true,
+      "kitsSent": null,
+      "modelRaw": "TT",
+      "trainerModel": "TT",
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2028-03-31",
+        "fallback": false
+      },
+      "city": "Meerut",
+      "state": "Uttar Pradesh",
+      "studentsMou": 2000,
+      "contractValue": 2478000,
+      "studentsActual": null,
+      "spWithoutTax": 1050,
+      "spWithTax": 1239,
+      "received": null,
+      "tds": null,
+      "installments": [],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "TT|2000|2478000",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 30,
+      "srNo": 24,
+      "schoolName": "Holy Child English Academy, Malda",
+      "schoolSlug": "holy-child-english-academy-malda",
+      "acquisitionStatus": "New",
+      "salesRepName": "Hirak",
+      "physicalCopyScanned": false,
+      "mouSigned": true,
+      "kitsSent": "Yes",
+      "modelRaw": "GSL-T",
+      "trainerModel": "GSL-T",
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2029-03-31",
+        "fallback": false
+      },
+      "city": "Malda",
+      "state": "West Bengal",
+      "studentsMou": 523,
+      "contractValue": 1359800,
+      "studentsActual": 523,
+      "spWithoutTax": 2203.3898305084745,
+      "spWithTax": 2600,
+      "received": 50000,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": null,
+          "amount": 50000,
+          "monthRaw": "2026-02-28T18:29:50.000Z",
+          "monthIso": "2026-02-28",
+          "paymentReceivedRaw": "yes",
+          "isReceived": true
+        },
+        {
+          "seq": 2,
+          "pct": 0.25,
+          "amount": 327450,
+          "monthRaw": "2026-05-31T18:29:50.000Z",
+          "monthIso": "2026-05-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 3,
+          "pct": 0.25,
+          "amount": 327450,
+          "monthRaw": "2026-08-31T18:29:50.000Z",
+          "monthIso": "2026-08-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 4,
+          "pct": 0.25,
+          "amount": 327450,
+          "monthRaw": "2026-11-30T18:29:50.000Z",
+          "monthIso": "2026-11-30",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "GSL-T|523|1359800",
+      "rowWarnings": [
+        "installment % sum 0.750 != 1.0"
+      ]
+    },
+    {
+      "rowNum": 31,
+      "srNo": 25,
+      "schoolName": "SD Senior Secondary School",
+      "schoolSlug": "sd-senior-secondary-school",
+      "acquisitionStatus": "New",
+      "salesRepName": "Sahil",
+      "physicalCopyScanned": true,
+      "mouSigned": true,
+      "kitsSent": null,
+      "modelRaw": "TT",
+      "trainerModel": "TT",
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2028-03-31",
+        "fallback": false
+      },
+      "city": "Mahendragarh",
+      "state": "Haryana",
+      "studentsMou": 1700,
+      "contractValue": 3400000,
+      "studentsActual": null,
+      "spWithoutTax": 1694.915254237288,
+      "spWithTax": 2000,
+      "received": 7000,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.05,
+          "amount": 0,
+          "monthRaw": "advance",
+          "monthIso": null,
+          "paymentReceivedRaw": "partial payment",
+          "isReceived": false
+        },
+        {
+          "seq": 2,
+          "pct": 0.95,
+          "amount": -6650,
+          "monthRaw": "before commencement",
+          "monthIso": null,
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": true,
+      "isContinuationRow": false,
+      "productLineKey": "TT|1700|3400000",
+      "rowWarnings": [
+        "installment 1 month not ISO-parseable: \"advance\"",
+        "installment 2 month not ISO-parseable: \"before commencement\""
+      ]
+    },
+    {
+      "rowNum": 32,
+      "srNo": 26,
+      "schoolName": "Christ Mission School",
+      "schoolSlug": "christ-mission-school",
+      "acquisitionStatus": "New",
+      "salesRepName": "Brij Singh",
+      "physicalCopyScanned": true,
+      "mouSigned": true,
+      "kitsSent": null,
+      "modelRaw": "TT",
+      "trainerModel": "TT",
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2028-03-31",
+        "fallback": false
+      },
+      "city": "Patna",
+      "state": "Bihar",
+      "studentsMou": 152,
+      "contractValue": 182400,
+      "studentsActual": 152,
+      "spWithoutTax": 1016.9491525423729,
+      "spWithTax": 1200,
+      "received": 45600,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.25,
+          "amount": 45600,
+          "monthRaw": "2026-02-28T18:29:50.000Z",
+          "monthIso": "2026-02-28",
+          "paymentReceivedRaw": "yes",
+          "isReceived": true
+        },
+        {
+          "seq": 2,
+          "pct": 0.25,
+          "amount": 45600,
+          "monthRaw": "2026-05-31T18:29:50.000Z",
+          "monthIso": "2026-05-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 3,
+          "pct": 0.25,
+          "amount": 45600,
+          "monthRaw": "2026-08-31T18:29:50.000Z",
+          "monthIso": "2026-08-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 4,
+          "pct": 0.25,
+          "amount": 45600,
+          "monthRaw": "2026-11-30T18:29:50.000Z",
+          "monthIso": "2026-11-30",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "TT|152|182400",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 33,
+      "srNo": 27,
+      "schoolName": "Delhi World Public School, Barasat",
+      "schoolSlug": "delhi-world-public-school-barasat",
+      "acquisitionStatus": "New",
+      "salesRepName": "Prodipto",
+      "physicalCopyScanned": true,
+      "mouSigned": true,
+      "kitsSent": null,
+      "modelRaw": "GSL-T",
+      "trainerModel": "GSL-T",
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2029-03-31",
+        "fallback": false
+      },
+      "city": "Parganas",
+      "state": "West Bengal",
+      "studentsMou": 187,
+      "contractValue": 198594,
+      "studentsActual": 187,
+      "spWithoutTax": 900,
+      "spWithTax": 1062,
+      "received": 45440,
+      "tds": 4209,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.25,
+          "amount": 49648.5,
+          "monthRaw": "2026-02-28T18:29:50.000Z",
+          "monthIso": "2026-02-28",
+          "paymentReceivedRaw": "yes",
+          "isReceived": true
+        },
+        {
+          "seq": 2,
+          "pct": 0.375,
+          "amount": 74472.75,
+          "monthRaw": "2026-05-31T18:29:50.000Z",
+          "monthIso": "2026-05-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 3,
+          "pct": 0.375,
+          "amount": 74472.75,
+          "monthRaw": "2026-11-30T18:29:50.000Z",
+          "monthIso": "2026-11-30",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "GSL-T|187|198594",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 34,
+      "srNo": 28,
+      "schoolName": "Meridian Matriculation School",
+      "schoolSlug": "meridian-matriculation-school",
+      "acquisitionStatus": "New",
+      "salesRepName": "Balu R",
+      "physicalCopyScanned": true,
+      "mouSigned": true,
+      "kitsSent": null,
+      "modelRaw": "TT",
+      "trainerModel": "TT",
+      "duration": {
+        "start": "2026-06-01",
+        "end": "2028-05-31",
+        "fallback": false
+      },
+      "city": "Vellore",
+      "state": "Tamil Nadu",
+      "studentsMou": 400,
+      "contractValue": 400000,
+      "studentsActual": null,
+      "spWithoutTax": 847.457627118644,
+      "spWithTax": 1000,
+      "received": null,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.25,
+          "amount": 0,
+          "monthRaw": "2026-04-30T18:29:50.000Z",
+          "monthIso": "2026-04-30",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 2,
+          "pct": 0.25,
+          "amount": 0,
+          "monthRaw": "2026-05-31T18:29:50.000Z",
+          "monthIso": "2026-05-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 3,
+          "pct": 0.25,
+          "amount": 0,
+          "monthRaw": "2026-08-31T18:29:50.000Z",
+          "monthIso": "2026-08-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 4,
+          "pct": 0.25,
+          "amount": 0,
+          "monthRaw": "2026-11-30T18:29:50.000Z",
+          "monthIso": "2026-11-30",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "TT|400|400000",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 35,
+      "srNo": 29,
+      "schoolName": "Musthafa Matric Higher Secondary School",
+      "schoolSlug": "musthafa-matric-higher-secondary-school",
+      "acquisitionStatus": "Retained",
+      "salesRepName": "Balu R",
+      "physicalCopyScanned": true,
+      "mouSigned": true,
+      "kitsSent": null,
+      "modelRaw": "TT",
+      "trainerModel": "TT",
+      "duration": {
+        "start": "2026-06-01",
+        "end": "2027-05-31",
+        "fallback": false
+      },
+      "city": "Chidambaram",
+      "state": "Tamil Nadu",
+      "studentsMou": 450,
+      "contractValue": 360000,
+      "studentsActual": null,
+      "spWithoutTax": 677.9661016949152,
+      "spWithTax": 800,
+      "received": null,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.25,
+          "amount": 0,
+          "monthRaw": "2026-04-30T18:29:50.000Z",
+          "monthIso": "2026-04-30",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 2,
+          "pct": 0.25,
+          "amount": 0,
+          "monthRaw": "2026-05-31T18:29:50.000Z",
+          "monthIso": "2026-05-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 3,
+          "pct": 0.25,
+          "amount": 0,
+          "monthRaw": "2026-08-31T18:29:50.000Z",
+          "monthIso": "2026-08-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 4,
+          "pct": 0.25,
+          "amount": 0,
+          "monthRaw": "2026-11-30T18:29:50.000Z",
+          "monthIso": "2026-11-30",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "TT|450|360000",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 36,
+      "srNo": 30,
+      "schoolName": "Sagaya Matha Matrics Higher Secondary School",
+      "schoolSlug": "sagaya-matha-matrics-higher-secondary-school",
+      "acquisitionStatus": "Retained",
+      "salesRepName": "Balu R",
+      "physicalCopyScanned": true,
+      "mouSigned": true,
+      "kitsSent": null,
+      "modelRaw": "TT",
+      "trainerModel": "TT",
+      "duration": {
+        "start": "2026-06-01",
+        "end": "2027-05-31",
+        "fallback": false
+      },
+      "city": "Chennai",
+      "state": "Tamil Nadu",
+      "studentsMou": 650,
+      "contractValue": 585000,
+      "studentsActual": null,
+      "spWithoutTax": 762.7118644067797,
+      "spWithTax": 900,
+      "received": null,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.25,
+          "amount": 0,
+          "monthRaw": "2026-04-30T18:29:50.000Z",
+          "monthIso": "2026-04-30",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 2,
+          "pct": 0.25,
+          "amount": 0,
+          "monthRaw": "2026-05-31T18:29:50.000Z",
+          "monthIso": "2026-05-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 3,
+          "pct": 0.25,
+          "amount": 0,
+          "monthRaw": "2026-08-31T18:29:50.000Z",
+          "monthIso": "2026-08-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 4,
+          "pct": 0.25,
+          "amount": 0,
+          "monthRaw": "2026-11-30T18:29:50.000Z",
+          "monthIso": "2026-11-30",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "TT|650|585000",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 37,
+      "srNo": 31,
+      "schoolName": "Takshilah Global School",
+      "schoolSlug": "takshilah-global-school",
+      "acquisitionStatus": "New",
+      "salesRepName": "Balu R",
+      "physicalCopyScanned": true,
+      "mouSigned": true,
+      "kitsSent": null,
+      "modelRaw": "TT",
+      "trainerModel": "TT",
+      "duration": {
+        "start": "2026-06-01",
+        "end": "2028-05-31",
+        "fallback": false
+      },
+      "city": "Vellore",
+      "state": "Tamil Nadu",
+      "studentsMou": 700,
+      "contractValue": 660800,
+      "studentsActual": null,
+      "spWithoutTax": 800,
+      "spWithTax": 944,
+      "received": null,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.25,
+          "amount": 0,
+          "monthRaw": "2026-04-30T18:29:50.000Z",
+          "monthIso": "2026-04-30",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 2,
+          "pct": 0.25,
+          "amount": 0,
+          "monthRaw": "2026-05-31T18:29:50.000Z",
+          "monthIso": "2026-05-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 3,
+          "pct": 0.25,
+          "amount": 0,
+          "monthRaw": "2026-08-31T18:29:50.000Z",
+          "monthIso": "2026-08-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 4,
+          "pct": 0.25,
+          "amount": 0,
+          "monthRaw": "2026-11-30T18:29:50.000Z",
+          "monthIso": "2026-11-30",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "TT|700|660800",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 38,
+      "srNo": 32,
+      "schoolName": "PGS CBSE School",
+      "schoolSlug": "pgs-cbse-school",
+      "acquisitionStatus": "Retained",
+      "salesRepName": "Balu R",
+      "physicalCopyScanned": true,
+      "mouSigned": true,
+      "kitsSent": null,
+      "modelRaw": "GSL-T",
+      "trainerModel": "GSL-T",
+      "duration": {
+        "start": "2026-06-01",
+        "end": "2027-05-31",
+        "fallback": false
+      },
+      "city": "Chennai",
+      "state": "Tamil Nadu",
+      "studentsMou": 250,
+      "contractValue": 300000,
+      "studentsActual": null,
+      "spWithoutTax": 1016.9491525423729,
+      "spWithTax": 1200,
+      "received": null,
+      "tds": null,
+      "installments": [],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "GSL-T|250|300000",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 39,
+      "srNo": 33,
+      "schoolName": "Nabi Crescent School",
+      "schoolSlug": "nabi-crescent-school",
+      "acquisitionStatus": "Retained",
+      "salesRepName": "Balu R",
+      "physicalCopyScanned": true,
+      "mouSigned": true,
+      "kitsSent": null,
+      "modelRaw": "GSL-T",
+      "trainerModel": "GSL-T",
+      "duration": {
+        "start": "2026-06-01",
+        "end": "2027-05-31",
+        "fallback": false
+      },
+      "city": "Chennai",
+      "state": "Tamil Nadu",
+      "studentsMou": 150,
+      "contractValue": 180000,
+      "studentsActual": null,
+      "spWithoutTax": 1016.9491525423729,
+      "spWithTax": 1200,
+      "received": null,
+      "tds": null,
+      "installments": [],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "GSL-T|150|180000",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 40,
+      "srNo": 34,
+      "schoolName": "Petit Seminaire CBSE School",
+      "schoolSlug": "petit-seminaire-cbse-school",
+      "acquisitionStatus": "New",
+      "salesRepName": "Balu R",
+      "physicalCopyScanned": false,
+      "mouSigned": false,
+      "kitsSent": null,
+      "modelRaw": "TT",
+      "trainerModel": "TT",
+      "duration": {
+        "start": "2026-06-01",
+        "end": "2027-05-31",
+        "fallback": false
+      },
+      "city": "Puducherry",
+      "state": "Tamil Nadu",
+      "studentsMou": 2200,
+      "contractValue": 880000,
+      "studentsActual": null,
+      "spWithoutTax": 338.9830508474576,
+      "spWithTax": 400,
+      "received": null,
+      "tds": null,
+      "installments": [],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "TT|2200|880000",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 41,
+      "srNo": 35,
+      "schoolName": "Jaffaria Academy of Modern Education - Kargil",
+      "schoolSlug": "jaffaria-academy-of-modern-education-kargil",
+      "acquisitionStatus": "New",
+      "salesRepName": "Roveena",
+      "physicalCopyScanned": false,
+      "mouSigned": true,
+      "kitsSent": null,
+      "modelRaw": "TT",
+      "trainerModel": "TT",
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2028-03-31",
+        "fallback": false
+      },
+      "city": "Kargil",
+      "state": "Kashmir",
+      "studentsMou": 700,
+      "contractValue": 560000,
+      "studentsActual": 757,
+      "spWithoutTax": 677.9661016949152,
+      "spWithTax": 800,
+      "received": 121120,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.2,
+          "amount": 121120,
+          "monthRaw": "2026-03-31T18:29:50.000Z",
+          "monthIso": "2026-03-31",
+          "paymentReceivedRaw": "yes",
+          "isReceived": true
+        },
+        {
+          "seq": 2,
+          "pct": 0.4,
+          "amount": 242240,
+          "monthRaw": "2026-05-31T18:29:50.000Z",
+          "monthIso": "2026-05-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 3,
+          "pct": 0.4,
+          "amount": 242240,
+          "monthRaw": "2026-08-31T18:29:50.000Z",
+          "monthIso": "2026-08-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "TT|700|560000",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 42,
+      "srNo": 36,
+      "schoolName": "Sri Vidhya Niketan Matriculation School",
+      "schoolSlug": "sri-vidhya-niketan-matriculation-school",
+      "acquisitionStatus": "Retained",
+      "salesRepName": "Balu R",
+      "physicalCopyScanned": true,
+      "mouSigned": true,
+      "kitsSent": null,
+      "modelRaw": "TT",
+      "trainerModel": "TT",
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2027-05-31",
+        "fallback": false
+      },
+      "city": "Chennai",
+      "state": "Tamil Nadu",
+      "studentsMou": 250,
+      "contractValue": 175000,
+      "studentsActual": null,
+      "spWithoutTax": 593.2203389830509,
+      "spWithTax": 700,
+      "received": null,
+      "tds": null,
+      "installments": [],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "TT|250|175000",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 43,
+      "srNo": 37,
+      "schoolName": "B.D Memorial Jr. School",
+      "schoolSlug": "b-d-memorial-jr-school",
+      "acquisitionStatus": "New",
+      "salesRepName": "Prodipto",
+      "physicalCopyScanned": false,
+      "mouSigned": true,
+      "kitsSent": null,
+      "modelRaw": "TT",
+      "trainerModel": "TT",
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2028-03-31",
+        "fallback": false
+      },
+      "city": "Kolkata",
+      "state": "West Bengal",
+      "studentsMou": 280,
+      "contractValue": 165200,
+      "studentsActual": 280,
+      "spWithoutTax": 500,
+      "spWithTax": 590,
+      "received": 162400,
+      "tds": 2800,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 1,
+          "amount": 165200,
+          "monthRaw": "2026-03-31T18:29:50.000Z",
+          "monthIso": "2026-03-31",
+          "paymentReceivedRaw": "yes",
+          "isReceived": true
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "TT|280|165200",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 44,
+      "srNo": 38,
+      "schoolName": "TJS Public School (CBSE)",
+      "schoolSlug": "tjs-public-school-cbse",
+      "acquisitionStatus": "New",
+      "salesRepName": "Balu R",
+      "physicalCopyScanned": false,
+      "mouSigned": true,
+      "kitsSent": null,
+      "modelRaw": "GSL-T",
+      "trainerModel": "GSL-T",
+      "duration": {
+        "start": "2026-06-01",
+        "end": "2028-05-31",
+        "fallback": false
+      },
+      "city": "Thiruvallur",
+      "state": "Tamil Nadu",
+      "studentsMou": 510,
+      "contractValue": 541620,
+      "studentsActual": null,
+      "spWithoutTax": 900,
+      "spWithTax": 1062,
+      "received": null,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.25,
+          "amount": 0,
+          "monthRaw": "2026-03-31T18:29:50.000Z",
+          "monthIso": "2026-03-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 2,
+          "pct": 0.25,
+          "amount": 0,
+          "monthRaw": "Jun-26",
+          "monthIso": "2026-06-01",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 3,
+          "pct": 0.25,
+          "amount": 0,
+          "monthRaw": "2026-08-31T18:29:50.000Z",
+          "monthIso": "2026-08-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 4,
+          "pct": 0.25,
+          "amount": 0,
+          "monthRaw": "2026-11-30T18:29:50.000Z",
+          "monthIso": "2026-11-30",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "GSL-T|510|541620",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 45,
+      "srNo": 39,
+      "schoolName": "Abhyasa Public School",
+      "schoolSlug": "abhyasa-public-school",
+      "acquisitionStatus": "New",
+      "salesRepName": "Suresh",
+      "physicalCopyScanned": false,
+      "mouSigned": true,
+      "kitsSent": null,
+      "modelRaw": "GSL-T",
+      "trainerModel": "GSL-T",
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2027-03-31",
+        "fallback": false
+      },
+      "city": "Pune",
+      "state": "Maharashtra",
+      "studentsMou": 210,
+      "contractValue": 189000,
+      "studentsActual": null,
+      "spWithoutTax": 762.7118644067797,
+      "spWithTax": 900,
+      "received": null,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.25,
+          "amount": 0,
+          "monthRaw": "2026-03-31T18:29:50.000Z",
+          "monthIso": "2026-03-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 2,
+          "pct": 0.25,
+          "amount": 0,
+          "monthRaw": "Jun-26",
+          "monthIso": "2026-06-01",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 3,
+          "pct": 0.25,
+          "amount": 0,
+          "monthRaw": "2026-08-31T18:29:50.000Z",
+          "monthIso": "2026-08-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 4,
+          "pct": 0.25,
+          "amount": 0,
+          "monthRaw": "2026-11-30T18:29:50.000Z",
+          "monthIso": "2026-11-30",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "GSL-T|210|189000",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 46,
+      "srNo": 40,
+      "schoolName": "Loreto Convent Entally",
+      "schoolSlug": "loreto-convent-entally",
+      "acquisitionStatus": "New",
+      "salesRepName": "Prodipto",
+      "physicalCopyScanned": false,
+      "mouSigned": true,
+      "kitsSent": null,
+      "modelRaw": "TT",
+      "trainerModel": "TT",
+      "duration": {
+        "start": "2026-05-08",
+        "end": "2028-03-31",
+        "fallback": false
+      },
+      "city": "Kolkata",
+      "state": "West Bengal",
+      "studentsMou": 505,
+      "contractValue": 1489750,
+      "studentsActual": 505,
+      "spWithoutTax": 2500,
+      "spWithTax": 2950,
+      "received": null,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.25,
+          "amount": 372437.5,
+          "monthRaw": "Jun-26",
+          "monthIso": "2026-06-01",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 2,
+          "pct": 0.25,
+          "amount": 372437.5,
+          "monthRaw": "2026-08-31T18:29:50.000Z",
+          "monthIso": "2026-08-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 3,
+          "pct": 0.25,
+          "amount": 372437.5,
+          "monthRaw": "2026-11-30T18:29:50.000Z",
+          "monthIso": "2026-11-30",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 4,
+          "pct": 0.25,
+          "amount": 372437.5,
+          "monthRaw": "2027-01-31T18:29:50.000Z",
+          "monthIso": "2027-01-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "TT|505|1489750",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 47,
+      "srNo": 41,
+      "schoolName": "GNIMS Business School",
+      "schoolSlug": "gnims-business-school",
+      "acquisitionStatus": "New",
+      "salesRepName": "Sumit",
+      "physicalCopyScanned": true,
+      "mouSigned": true,
+      "kitsSent": null,
+      "modelRaw": "Bootcamp",
+      "trainerModel": "Bootcamp",
+      "duration": {
+        "start": "2026-03-05",
+        "end": "2028-07-31",
+        "fallback": false
+      },
+      "city": "Mumbai",
+      "state": "Maharashtra",
+      "studentsMou": 1000,
+      "contractValue": 0,
+      "studentsActual": null,
+      "spWithoutTax": null,
+      "spWithTax": null,
+      "received": null,
+      "tds": null,
+      "installments": [],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "Bootcamp|1000|0",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 48,
+      "srNo": 42,
+      "schoolName": "Guru Nanak Institute of Management Studies",
+      "schoolSlug": "guru-nanak-institute-of-management-studies",
+      "acquisitionStatus": "New",
+      "salesRepName": "Sumit",
+      "physicalCopyScanned": true,
+      "mouSigned": true,
+      "kitsSent": null,
+      "modelRaw": "Bootcamp",
+      "trainerModel": "Bootcamp",
+      "duration": {
+        "start": "2026-02-18",
+        "end": "2028-07-31",
+        "fallback": false
+      },
+      "city": "Mumbai",
+      "state": "Maharashtra",
+      "studentsMou": 500,
+      "contractValue": 0,
+      "studentsActual": null,
+      "spWithoutTax": null,
+      "spWithTax": null,
+      "received": null,
+      "tds": null,
+      "installments": [],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "Bootcamp|500|0",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 49,
+      "srNo": 43,
+      "schoolName": "B.K. Birla Public School - Kalyan",
+      "schoolSlug": "b-k-birla-public-school-kalyan",
+      "acquisitionStatus": "New",
+      "salesRepName": "Sumit",
+      "physicalCopyScanned": false,
+      "mouSigned": false,
+      "kitsSent": null,
+      "modelRaw": "Bootcamp",
+      "trainerModel": "Bootcamp",
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2027-03-31",
+        "fallback": true
+      },
+      "city": "Kalyan",
+      "state": "Maharashtra",
+      "studentsMou": 41,
+      "contractValue": 24600,
+      "studentsActual": 41,
+      "spWithoutTax": 508.47457627118644,
+      "spWithTax": 600,
+      "received": 24600,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 1,
+          "amount": 24600,
+          "monthRaw": "2026-03-31T18:29:50.000Z",
+          "monthIso": "2026-03-31",
+          "paymentReceivedRaw": "yes",
+          "isReceived": true
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "Bootcamp|41|24600",
+      "rowWarnings": [
+        "duration unparseable, using FY default 2026-04-01..2027-03-31"
+      ]
+    },
+    {
+      "rowNum": 50,
+      "srNo": 44,
+      "schoolName": "Empyrean School",
+      "schoolSlug": "empyrean-school",
+      "acquisitionStatus": "New",
+      "salesRepName": "Sumit",
+      "physicalCopyScanned": false,
+      "mouSigned": false,
+      "kitsSent": null,
+      "modelRaw": "Bootcamp",
+      "trainerModel": "Bootcamp",
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2027-03-31",
+        "fallback": true
+      },
+      "city": "Mumbai",
+      "state": "Maharashtra",
+      "studentsMou": 9,
+      "contractValue": 10800,
+      "studentsActual": 9,
+      "spWithoutTax": 1016.9491525423729,
+      "spWithTax": 1200,
+      "received": 10800,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 1,
+          "amount": 10800,
+          "monthRaw": "2026-03-31T18:29:50.000Z",
+          "monthIso": "2026-03-31",
+          "paymentReceivedRaw": "yes",
+          "isReceived": true
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "Bootcamp|9|10800",
+      "rowWarnings": [
+        "duration unparseable, using FY default 2026-04-01..2027-03-31"
+      ]
+    },
+    {
+      "rowNum": 51,
+      "srNo": null,
+      "schoolName": "Empyrean School",
+      "schoolSlug": "empyrean-school",
+      "acquisitionStatus": "New",
+      "salesRepName": "Sumit",
+      "physicalCopyScanned": false,
+      "mouSigned": false,
+      "kitsSent": null,
+      "modelRaw": "Bootcamp",
+      "trainerModel": "Bootcamp",
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2027-03-31",
+        "fallback": true
+      },
+      "city": "Mumbai",
+      "state": "Maharashtra",
+      "studentsMou": 19,
+      "contractValue": 47500,
+      "studentsActual": 19,
+      "spWithoutTax": 2118.64406779661,
+      "spWithTax": 2500,
+      "received": 47500,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 1,
+          "amount": 47500,
+          "monthRaw": "2026-03-31T18:29:50.000Z",
+          "monthIso": "2026-03-31",
+          "paymentReceivedRaw": "yes",
+          "isReceived": true
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": true,
+      "productLineKey": "Bootcamp|19|47500",
+      "rowWarnings": [
+        "duration unparseable, using FY default 2026-04-01..2027-03-31"
+      ]
+    },
+    {
+      "rowNum": 52,
+      "srNo": 45,
+      "schoolName": "St. Johns High School - RKP",
+      "schoolSlug": "st-johns-high-school-rkp",
+      "acquisitionStatus": "New",
+      "salesRepName": "Prodipto",
+      "physicalCopyScanned": false,
+      "mouSigned": true,
+      "kitsSent": null,
+      "modelRaw": "GSL-T",
+      "trainerModel": "GSL-T",
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2027-03-31",
+        "fallback": false
+      },
+      "city": "Howrah",
+      "state": "West Bengal",
+      "studentsMou": 195,
+      "contractValue": 585000,
+      "studentsActual": 195,
+      "spWithoutTax": 2542.3728813559323,
+      "spWithTax": 3000,
+      "received": null,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.5,
+          "amount": 292500,
+          "monthRaw": "2026-03-31T18:29:50.000Z",
+          "monthIso": "2026-03-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 2,
+          "pct": 0.5,
+          "amount": 292500,
+          "monthRaw": "2026-09-30T18:29:50.000Z",
+          "monthIso": "2026-09-30",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "GSL-T|195|585000",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 53,
+      "srNo": 46,
+      "schoolName": "Cardinal Warriors School",
+      "schoolSlug": "cardinal-warriors-school",
+      "acquisitionStatus": "New",
+      "salesRepName": "Sumit",
+      "physicalCopyScanned": false,
+      "mouSigned": true,
+      "kitsSent": null,
+      "modelRaw": "TT",
+      "trainerModel": "TT",
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2029-03-31",
+        "fallback": false
+      },
+      "city": "Nimora",
+      "state": "Chhattisgarh",
+      "studentsMou": 182,
+      "contractValue": 128856,
+      "studentsActual": 182,
+      "spWithoutTax": 600,
+      "spWithTax": 708,
+      "received": null,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.2,
+          "amount": 25771.2,
+          "monthRaw": "2026-03-31T18:29:50.000Z",
+          "monthIso": "2026-03-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 2,
+          "pct": 0.4,
+          "amount": 51542.4,
+          "monthRaw": "Jun-26",
+          "monthIso": "2026-06-01",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 3,
+          "pct": 0.4,
+          "amount": 51542.4,
+          "monthRaw": "2026-08-31T18:29:50.000Z",
+          "monthIso": "2026-08-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "TT|182|128856",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 54,
+      "srNo": 47,
+      "schoolName": "Radcliffe Education Private Limited",
+      "schoolSlug": "radcliffe-education-private-limited",
+      "acquisitionStatus": "New",
+      "salesRepName": "Sumit",
+      "physicalCopyScanned": false,
+      "mouSigned": true,
+      "kitsSent": null,
+      "modelRaw": "Bootcamp",
+      "trainerModel": "Bootcamp",
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2027-03-31",
+        "fallback": false
+      },
+      "city": "Mumbai",
+      "state": "Maharashtra",
+      "studentsMou": 2000,
+      "contractValue": 2000000,
+      "studentsActual": 56,
+      "spWithoutTax": 847.457627118644,
+      "spWithTax": 1000,
+      "received": null,
+      "tds": null,
+      "installments": [],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "Bootcamp|2000|2000000",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 55,
+      "srNo": 48,
+      "schoolName": "Lions Calcutta Greater Vidya Mandir",
+      "schoolSlug": "lions-calcutta-greater-vidya-mandir",
+      "acquisitionStatus": "Retained",
+      "salesRepName": "Prodipto",
+      "physicalCopyScanned": true,
+      "mouSigned": true,
+      "kitsSent": null,
+      "modelRaw": "TT",
+      "trainerModel": "TT",
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2027-03-31",
+        "fallback": false
+      },
+      "city": "Kolkata",
+      "state": "West Bengal",
+      "studentsMou": 800,
+      "contractValue": 960000,
+      "studentsActual": 873,
+      "spWithoutTax": 1016.9491525423729,
+      "spWithTax": 1200,
+      "received": null,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.3333333,
+          "amount": 349199.96508,
+          "monthRaw": "2026-03-31T18:29:50.000Z",
+          "monthIso": "2026-03-31",
+          "paymentReceivedRaw": "No",
+          "isReceived": false
+        },
+        {
+          "seq": 2,
+          "pct": 0.3333333,
+          "amount": 349199.96508,
+          "monthRaw": "2026-06-30T18:29:50.000Z",
+          "monthIso": "2026-06-30",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 3,
+          "pct": 0.3333333,
+          "amount": 349199.96508,
+          "monthRaw": "2026-09-30T18:29:50.000Z",
+          "monthIso": "2026-09-30",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "TT|800|960000",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 56,
+      "srNo": 49,
+      "schoolName": "B I T Global School",
+      "schoolSlug": "b-i-t-global-school",
+      "acquisitionStatus": "Retained",
+      "salesRepName": "Tanuj",
+      "physicalCopyScanned": true,
+      "mouSigned": true,
+      "kitsSent": null,
+      "modelRaw": "TT",
+      "trainerModel": "TT",
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2028-03-31",
+        "fallback": false
+      },
+      "city": "Meerut",
+      "state": "Uttar Pradesh",
+      "studentsMou": 658,
+      "contractValue": 931728,
+      "studentsActual": 658,
+      "spWithoutTax": 1200,
+      "spWithTax": 1416,
+      "received": null,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.25,
+          "amount": 232932,
+          "monthRaw": "2026-03-31T18:29:50.000Z",
+          "monthIso": "2026-03-31",
+          "paymentReceivedRaw": "No",
+          "isReceived": false
+        },
+        {
+          "seq": 2,
+          "pct": 0.25,
+          "amount": 232932,
+          "monthRaw": "2026-06-30T18:29:50.000Z",
+          "monthIso": "2026-06-30",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 3,
+          "pct": 0.25,
+          "amount": 232932,
+          "monthRaw": "2026-09-30T18:29:50.000Z",
+          "monthIso": "2026-09-30",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 4,
+          "pct": 0.25,
+          "amount": 232932,
+          "monthRaw": "2026-12-31T18:29:50.000Z",
+          "monthIso": "2026-12-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "TT|658|931728",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 57,
+      "srNo": 50,
+      "schoolName": "Don Bonsco Krishnanagar",
+      "schoolSlug": "don-bonsco-krishnanagar",
+      "acquisitionStatus": "New",
+      "salesRepName": "Sabyasachi",
+      "physicalCopyScanned": true,
+      "mouSigned": true,
+      "kitsSent": "no",
+      "modelRaw": "TT",
+      "trainerModel": "TT",
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2029-03-31",
+        "fallback": false
+      },
+      "city": "Krishnanagar",
+      "state": "West Bengal",
+      "studentsMou": 350,
+      "contractValue": 420000,
+      "studentsActual": null,
+      "spWithoutTax": 1016.9491525423729,
+      "spWithTax": 1200,
+      "received": null,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.5,
+          "amount": 0,
+          "monthRaw": "2026-08-31T18:29:50.000Z",
+          "monthIso": "2026-08-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 2,
+          "pct": 0.5,
+          "amount": 0,
+          "monthRaw": "2027-02-28T18:29:50.000Z",
+          "monthIso": "2027-02-28",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "TT|350|420000",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 58,
+      "srNo": 51,
+      "schoolName": "Doon Scholars School",
+      "schoolSlug": "doon-scholars-school",
+      "acquisitionStatus": "Retained",
+      "salesRepName": "Tanuj",
+      "physicalCopyScanned": false,
+      "mouSigned": false,
+      "kitsSent": null,
+      "modelRaw": null,
+      "trainerModel": null,
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2027-03-31",
+        "fallback": false
+      },
+      "city": "Dehradun",
+      "state": "Uttarakhand",
+      "studentsMou": 432,
+      "contractValue": 622080,
+      "studentsActual": 432,
+      "spWithoutTax": 1220.3389830508474,
+      "spWithTax": 1440,
+      "received": null,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.25,
+          "amount": 155520,
+          "monthRaw": "2026-06-30T18:29:50.000Z",
+          "monthIso": "2026-06-30",
+          "paymentReceivedRaw": "No",
+          "isReceived": false
+        },
+        {
+          "seq": 2,
+          "pct": 0.25,
+          "amount": 155520,
+          "monthRaw": "2026-07-31T18:29:50.000Z",
+          "monthIso": "2026-07-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 3,
+          "pct": 0.25,
+          "amount": 155520,
+          "monthRaw": "2026-11-30T18:29:50.000Z",
+          "monthIso": "2026-11-30",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 4,
+          "pct": 0.25,
+          "amount": 155520,
+          "monthRaw": "2026-12-31T18:29:50.000Z",
+          "monthIso": "2026-12-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "unknown|432|622080",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 59,
+      "srNo": 52,
+      "schoolName": "Loreto House School Kolkata",
+      "schoolSlug": "loreto-house-school-kolkata",
+      "acquisitionStatus": "Retained",
+      "salesRepName": "Prodipto",
+      "physicalCopyScanned": true,
+      "mouSigned": true,
+      "kitsSent": null,
+      "modelRaw": null,
+      "trainerModel": null,
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2027-03-31",
+        "fallback": false
+      },
+      "city": "Kolkata",
+      "state": "West Bengal",
+      "studentsMou": 608,
+      "contractValue": 1506624,
+      "studentsActual": 608,
+      "spWithoutTax": 2100,
+      "spWithTax": 2478,
+      "received": null,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.25,
+          "amount": 376656,
+          "monthRaw": "May-25",
+          "monthIso": "2025-05-01",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 2,
+          "pct": 0.25,
+          "amount": 376656,
+          "monthRaw": "2026-07-31T18:29:50.000Z",
+          "monthIso": "2026-07-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 3,
+          "pct": 0.25,
+          "amount": 376656,
+          "monthRaw": "2026-09-30T18:29:50.000Z",
+          "monthIso": "2026-09-30",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 4,
+          "pct": 0.25,
+          "amount": 376656,
+          "monthRaw": "2026-12-31T18:29:50.000Z",
+          "monthIso": "2026-12-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "unknown|608|1506624",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 60,
+      "srNo": 53,
+      "schoolName": "Carmel Convent High School, Durgapur",
+      "schoolSlug": "carmel-convent-high-school-durgapur",
+      "acquisitionStatus": "Retained",
+      "salesRepName": "Prodipto",
+      "physicalCopyScanned": true,
+      "mouSigned": true,
+      "kitsSent": null,
+      "modelRaw": null,
+      "trainerModel": null,
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2027-03-31",
+        "fallback": false
+      },
+      "city": "Durgapur, West bengal",
+      "state": "West Bengal",
+      "studentsMou": 1000,
+      "contractValue": 2089000,
+      "studentsActual": 1048,
+      "spWithoutTax": 1770.3389830508474,
+      "spWithTax": 2089,
+      "received": null,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.05,
+          "amount": 109463.6,
+          "monthRaw": "2026-01-31T18:29:50.000Z",
+          "monthIso": "2026-01-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 2,
+          "pct": 0.95,
+          "amount": 2079808.4,
+          "monthRaw": "2026-03-31T18:29:50.000Z",
+          "monthIso": "2026-03-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "unknown|1000|2089000",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 61,
+      "srNo": 54,
+      "schoolName": "Carmel School, Durgapur",
+      "schoolSlug": "carmel-school-durgapur",
+      "acquisitionStatus": "Retained",
+      "salesRepName": "Ranotosh",
+      "physicalCopyScanned": true,
+      "mouSigned": true,
+      "kitsSent": null,
+      "modelRaw": null,
+      "trainerModel": null,
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2027-03-31",
+        "fallback": false
+      },
+      "city": "Durgapur, West bengal",
+      "state": "West Bengal",
+      "studentsMou": 900,
+      "contractValue": 1593000,
+      "studentsActual": 940,
+      "spWithoutTax": 1500,
+      "spWithTax": 1770,
+      "received": null,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.25,
+          "amount": 415950,
+          "monthRaw": "2026-06-30T18:29:50.000Z",
+          "monthIso": "2026-06-30",
+          "paymentReceivedRaw": "No",
+          "isReceived": false
+        },
+        {
+          "seq": 2,
+          "pct": 0.25,
+          "amount": 415950,
+          "monthRaw": "2026-08-31T18:29:50.000Z",
+          "monthIso": "2026-08-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 3,
+          "pct": 0.25,
+          "amount": 415950,
+          "monthRaw": "2026-11-30T18:29:50.000Z",
+          "monthIso": "2026-11-30",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 4,
+          "pct": 0.25,
+          "amount": 415950,
+          "monthRaw": "2027-01-31T18:29:50.000Z",
+          "monthIso": "2027-01-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "unknown|900|1593000",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 62,
+      "srNo": 55,
+      "schoolName": "St. Montfort's Sr. Secondary School, Baruipur",
+      "schoolSlug": "st-montfort-s-sr-secondary-school-baruipur",
+      "acquisitionStatus": "Retained",
+      "salesRepName": "Prodipto",
+      "physicalCopyScanned": true,
+      "mouSigned": true,
+      "kitsSent": null,
+      "modelRaw": null,
+      "trainerModel": null,
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2027-03-31",
+        "fallback": false
+      },
+      "city": "Kolkata",
+      "state": "West Bengal",
+      "studentsMou": 500,
+      "contractValue": 660000,
+      "studentsActual": 514,
+      "spWithoutTax": 1118.6440677966102,
+      "spWithTax": 1320,
+      "received": null,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.25,
+          "amount": 169620,
+          "monthRaw": "2026-03-31T18:29:50.000Z",
+          "monthIso": "2026-03-31",
+          "paymentReceivedRaw": "No",
+          "isReceived": false
+        },
+        {
+          "seq": 2,
+          "pct": 0.25,
+          "amount": 169620,
+          "monthRaw": "2026-06-30T18:29:50.000Z",
+          "monthIso": "2026-06-30",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 3,
+          "pct": 0.25,
+          "amount": 169620,
+          "monthRaw": "2026-09-30T18:29:50.000Z",
+          "monthIso": "2026-09-30",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 4,
+          "pct": 0.25,
+          "amount": 169620,
+          "monthRaw": "2026-12-31T18:29:50.000Z",
+          "monthIso": "2026-12-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "unknown|500|660000",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 63,
+      "srNo": 56,
+      "schoolName": "Laxmipat Singhania Academy",
+      "schoolSlug": "laxmipat-singhania-academy",
+      "acquisitionStatus": "Retained",
+      "salesRepName": "Prodipto",
+      "physicalCopyScanned": false,
+      "mouSigned": false,
+      "kitsSent": null,
+      "modelRaw": null,
+      "trainerModel": null,
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2027-03-31",
+        "fallback": false
+      },
+      "city": "Kolkata",
+      "state": "West Bengal",
+      "studentsMou": 420,
+      "contractValue": 991200,
+      "studentsActual": 420,
+      "spWithoutTax": 2000,
+      "spWithTax": 2360,
+      "received": 352116,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.5,
+          "amount": 495600,
+          "monthRaw": "2026-05-31T18:29:50.000Z",
+          "monthIso": "2026-05-31",
+          "paymentReceivedRaw": "partial Payment",
+          "isReceived": false
+        },
+        {
+          "seq": 2,
+          "pct": 0.5,
+          "amount": 495600,
+          "monthRaw": "2026-08-31T18:29:50.000Z",
+          "monthIso": "2026-08-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "unknown|420|991200",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 64,
+      "srNo": 57,
+      "schoolName": "Julien Educational Trust, Eglin Road",
+      "schoolSlug": "julien-educational-trust-eglin-road",
+      "acquisitionStatus": "Retained",
+      "salesRepName": "Krishnamurthy",
+      "physicalCopyScanned": true,
+      "mouSigned": true,
+      "kitsSent": null,
+      "modelRaw": null,
+      "trainerModel": null,
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2027-03-31",
+        "fallback": false
+      },
+      "city": "Kolkata",
+      "state": "West Bengal",
+      "studentsMou": 270,
+      "contractValue": 477900,
+      "studentsActual": 270,
+      "spWithoutTax": 1500,
+      "spWithTax": 1770,
+      "received": null,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.05,
+          "amount": 23895,
+          "monthRaw": "2026-01-31T18:29:50.000Z",
+          "monthIso": "2026-01-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 2,
+          "pct": 0.95,
+          "amount": 454005,
+          "monthRaw": "2026-03-31T18:29:50.000Z",
+          "monthIso": "2026-03-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "unknown|270|477900",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 65,
+      "srNo": 58,
+      "schoolName": "Julien Educational Trust, Kalyani",
+      "schoolSlug": "julien-educational-trust-kalyani",
+      "acquisitionStatus": "Retained",
+      "salesRepName": "Krishnamurthy",
+      "physicalCopyScanned": true,
+      "mouSigned": true,
+      "kitsSent": null,
+      "modelRaw": null,
+      "trainerModel": null,
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2027-03-31",
+        "fallback": false
+      },
+      "city": "Kalyani",
+      "state": "West Bengal",
+      "studentsMou": 474,
+      "contractValue": 838980,
+      "studentsActual": 474,
+      "spWithoutTax": 1500,
+      "spWithTax": 1770,
+      "received": null,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.05,
+          "amount": 41949,
+          "monthRaw": "2026-01-31T18:29:50.000Z",
+          "monthIso": "2026-01-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 2,
+          "pct": 0.95,
+          "amount": 797031,
+          "monthRaw": "2026-03-31T18:29:50.000Z",
+          "monthIso": "2026-03-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "unknown|474|838980",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 66,
+      "srNo": 59,
+      "schoolName": "Julien Educational Trust, Ganganagar",
+      "schoolSlug": "julien-educational-trust-ganganagar",
+      "acquisitionStatus": "Retained",
+      "salesRepName": "Krishnamurthy",
+      "physicalCopyScanned": true,
+      "mouSigned": true,
+      "kitsSent": null,
+      "modelRaw": null,
+      "trainerModel": null,
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2027-03-31",
+        "fallback": false
+      },
+      "city": "Ganganagar",
+      "state": "West Bengal",
+      "studentsMou": 589,
+      "contractValue": 1042530,
+      "studentsActual": 589,
+      "spWithoutTax": 1500,
+      "spWithTax": 1770,
+      "received": null,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.05,
+          "amount": 52126.5,
+          "monthRaw": "2026-01-31T18:29:50.000Z",
+          "monthIso": "2026-01-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 2,
+          "pct": 0.95,
+          "amount": 990403.5,
+          "monthRaw": "2026-03-31T18:29:50.000Z",
+          "monthIso": "2026-03-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "unknown|589|1042530",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 67,
+      "srNo": 60,
+      "schoolName": "Julien Educational Trust, Howrah",
+      "schoolSlug": "julien-educational-trust-howrah",
+      "acquisitionStatus": "Retained",
+      "salesRepName": "Krishnamurthy",
+      "physicalCopyScanned": true,
+      "mouSigned": true,
+      "kitsSent": null,
+      "modelRaw": null,
+      "trainerModel": null,
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2027-03-31",
+        "fallback": false
+      },
+      "city": "Howrah",
+      "state": "West Bengal",
+      "studentsMou": 239,
+      "contractValue": 423030,
+      "studentsActual": 239,
+      "spWithoutTax": 1500,
+      "spWithTax": 1770,
+      "received": null,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.05,
+          "amount": 21151.5,
+          "monthRaw": "2026-01-31T18:29:50.000Z",
+          "monthIso": "2026-01-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 2,
+          "pct": 0.95,
+          "amount": 401878.5,
+          "monthRaw": "2026-03-31T18:29:50.000Z",
+          "monthIso": "2026-03-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "unknown|239|423030",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 68,
+      "srNo": 61,
+      "schoolName": "Contai Public School",
+      "schoolSlug": "contai-public-school",
+      "acquisitionStatus": "Retained",
+      "salesRepName": "Prodipto",
+      "physicalCopyScanned": false,
+      "mouSigned": true,
+      "kitsSent": null,
+      "modelRaw": "GSL-T",
+      "trainerModel": "GSL-T",
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2028-02-28",
+        "fallback": false
+      },
+      "city": "Kolkata",
+      "state": "West Bengal",
+      "studentsMou": 450,
+      "contractValue": 1099350,
+      "studentsActual": 450,
+      "spWithoutTax": 2070.3389830508477,
+      "spWithTax": 2443,
+      "received": null,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.25,
+          "amount": 274837.5,
+          "monthRaw": "2026-03-31T18:29:50.000Z",
+          "monthIso": "2026-03-31",
+          "paymentReceivedRaw": "No",
+          "isReceived": false
+        },
+        {
+          "seq": 2,
+          "pct": 0.25,
+          "amount": 274837.5,
+          "monthRaw": "2026-06-30T18:29:50.000Z",
+          "monthIso": "2026-06-30",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 3,
+          "pct": 0.25,
+          "amount": 274837.5,
+          "monthRaw": "Sep-26",
+          "monthIso": "2026-09-01",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 4,
+          "pct": 0.25,
+          "amount": 274837.5,
+          "monthRaw": "Dec-26",
+          "monthIso": "2026-12-01",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "GSL-T|450|1099350",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 69,
+      "srNo": null,
+      "schoolName": "Contai Public School",
+      "schoolSlug": "contai-public-school",
+      "acquisitionStatus": "Retained",
+      "salesRepName": "Prodipto",
+      "physicalCopyScanned": false,
+      "mouSigned": true,
+      "kitsSent": null,
+      "modelRaw": "GSL-T",
+      "trainerModel": "GSL-T",
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2028-02-28",
+        "fallback": false
+      },
+      "city": "Kolkata",
+      "state": "West Bengal",
+      "studentsMou": 150,
+      "contractValue": 318600,
+      "studentsActual": 150,
+      "spWithoutTax": 1800,
+      "spWithTax": 2124,
+      "received": null,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.25,
+          "amount": 79650,
+          "monthRaw": "2026-03-31T18:29:50.000Z",
+          "monthIso": "2026-03-31",
+          "paymentReceivedRaw": "No",
+          "isReceived": false
+        },
+        {
+          "seq": 2,
+          "pct": 0.25,
+          "amount": 79650,
+          "monthRaw": "2026-06-30T18:29:50.000Z",
+          "monthIso": "2026-06-30",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 3,
+          "pct": 0.25,
+          "amount": 79650,
+          "monthRaw": "Sep-26",
+          "monthIso": "2026-09-01",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 4,
+          "pct": 0.25,
+          "amount": 79650,
+          "monthRaw": "Dec-26",
+          "monthIso": "2026-12-01",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": true,
+      "productLineKey": "GSL-T|150|318600",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 70,
+      "srNo": 62,
+      "schoolName": "Swarnim International School",
+      "schoolSlug": "swarnim-international-school",
+      "acquisitionStatus": "Retained",
+      "salesRepName": "Prodipto",
+      "physicalCopyScanned": false,
+      "mouSigned": false,
+      "kitsSent": "Yes",
+      "modelRaw": null,
+      "trainerModel": null,
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2027-03-31",
+        "fallback": false
+      },
+      "city": "Sonarpur",
+      "state": "West Bengal",
+      "studentsMou": 250,
+      "contractValue": 531000,
+      "studentsActual": 243,
+      "spWithoutTax": 1800,
+      "spWithTax": 2124,
+      "received": 50738,
+      "tds": 874.8,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.1,
+          "amount": 51613.200000000004,
+          "monthRaw": "2026-03-31T18:29:50.000Z",
+          "monthIso": "2026-03-31",
+          "paymentReceivedRaw": "yes",
+          "isReceived": true
+        },
+        {
+          "seq": 2,
+          "pct": 0.4,
+          "amount": 206452.80000000002,
+          "monthRaw": "2026-06-30T18:29:50.000Z",
+          "monthIso": "2026-06-30",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 3,
+          "pct": 0.5,
+          "amount": 258066,
+          "monthRaw": "2026-09-30T18:29:50.000Z",
+          "monthIso": "2026-09-30",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "unknown|250|531000",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 71,
+      "srNo": null,
+      "schoolName": "Swarnim International School",
+      "schoolSlug": "swarnim-international-school",
+      "acquisitionStatus": "Retained",
+      "salesRepName": "Prodipto",
+      "physicalCopyScanned": false,
+      "mouSigned": false,
+      "kitsSent": "Yes",
+      "modelRaw": "AIQ",
+      "trainerModel": "AIQ",
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2027-03-31",
+        "fallback": false
+      },
+      "city": "Sonarpur",
+      "state": "West Bengal",
+      "studentsMou": 250,
+      "contractValue": 413000,
+      "studentsActual": 181,
+      "spWithoutTax": 1400,
+      "spWithTax": 1652,
+      "received": 29394.2,
+      "tds": 506.8,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.1,
+          "amount": 29901.2,
+          "monthRaw": "2026-03-31T18:29:50.000Z",
+          "monthIso": "2026-03-31",
+          "paymentReceivedRaw": "yes",
+          "isReceived": true
+        },
+        {
+          "seq": 2,
+          "pct": 0.4,
+          "amount": 119604.8,
+          "monthRaw": "2026-06-30T18:29:50.000Z",
+          "monthIso": "2026-06-30",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 3,
+          "pct": 0.5,
+          "amount": 149506,
+          "monthRaw": "2026-09-30T18:29:50.000Z",
+          "monthIso": "2026-09-30",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": true,
+      "productLineKey": "AIQ|250|413000",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 72,
+      "srNo": 63,
+      "schoolName": "Wisdom International School",
+      "schoolSlug": "wisdom-international-school",
+      "acquisitionStatus": "new",
+      "salesRepName": "Sumit",
+      "physicalCopyScanned": false,
+      "mouSigned": true,
+      "kitsSent": null,
+      "modelRaw": "AIQ",
+      "trainerModel": "AIQ",
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2028-03-31",
+        "fallback": false
+      },
+      "city": "Nashik",
+      "state": "Maharashtra",
+      "studentsMou": 600,
+      "contractValue": 1132800,
+      "studentsActual": null,
+      "spWithoutTax": 1600,
+      "spWithTax": 1888,
+      "received": null,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.2,
+          "amount": null,
+          "monthRaw": "2025-04-30T18:29:50.000Z",
+          "monthIso": "2025-04-30",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 2,
+          "pct": 0.4,
+          "amount": 0,
+          "monthRaw": "2026-05-31T18:29:50.000Z",
+          "monthIso": "2026-05-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 3,
+          "pct": 0.4,
+          "amount": 0,
+          "monthRaw": "2026-08-31T18:29:50.000Z",
+          "monthIso": "2026-08-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "AIQ|600|1132800",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 73,
+      "srNo": 64,
+      "schoolName": "St. Paul’s Mission School",
+      "schoolSlug": "st-paul-s-mission-school",
+      "acquisitionStatus": "Retained",
+      "salesRepName": "Prodipto",
+      "physicalCopyScanned": false,
+      "mouSigned": true,
+      "kitsSent": null,
+      "modelRaw": null,
+      "trainerModel": null,
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2027-03-31",
+        "fallback": false
+      },
+      "city": "Kolkata",
+      "state": "West Bengal",
+      "studentsMou": 400,
+      "contractValue": 800000,
+      "studentsActual": 450,
+      "spWithoutTax": 1694.915254237288,
+      "spWithTax": 2000,
+      "received": null,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.5,
+          "amount": 450000,
+          "monthRaw": "2026-03-31T18:29:50.000Z",
+          "monthIso": "2026-03-31",
+          "paymentReceivedRaw": "No",
+          "isReceived": false
+        },
+        {
+          "seq": 2,
+          "pct": 0.5,
+          "amount": 450000,
+          "monthRaw": "2026-09-30T18:29:50.000Z",
+          "monthIso": "2026-09-30",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "unknown|400|800000",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 74,
+      "srNo": 65,
+      "schoolName": "St. Paul's Boarding And Day School",
+      "schoolSlug": "st-paul-s-boarding-and-day-school",
+      "acquisitionStatus": "Retained",
+      "salesRepName": "Prodipto",
+      "physicalCopyScanned": false,
+      "mouSigned": true,
+      "kitsSent": "Yes",
+      "modelRaw": "GSL-T",
+      "trainerModel": "GSL-T",
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2028-03-31",
+        "fallback": false
+      },
+      "city": "Kolkata",
+      "state": "West Bengal",
+      "studentsMou": 900,
+      "contractValue": 2124000,
+      "studentsActual": 841,
+      "spWithoutTax": 2000,
+      "spWithTax": 2360,
+      "received": null,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.25,
+          "amount": 496190,
+          "monthRaw": "2026-03-31T18:29:50.000Z",
+          "monthIso": "2026-03-31",
+          "paymentReceivedRaw": "No",
+          "isReceived": false
+        },
+        {
+          "seq": 2,
+          "pct": 0.25,
+          "amount": 496190,
+          "monthRaw": "Jun-26",
+          "monthIso": "2026-06-01",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 3,
+          "pct": 0.25,
+          "amount": 496190,
+          "monthRaw": "Sep-26",
+          "monthIso": "2026-09-01",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 4,
+          "pct": 0.25,
+          "amount": 496190,
+          "monthRaw": "Dec-26",
+          "monthIso": "2026-12-01",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "GSL-T|900|2124000",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 75,
+      "srNo": 66,
+      "schoolName": "Berhampore City Public School",
+      "schoolSlug": "berhampore-city-public-school",
+      "acquisitionStatus": "Retained",
+      "salesRepName": "Sabyasachi",
+      "physicalCopyScanned": true,
+      "mouSigned": true,
+      "kitsSent": null,
+      "modelRaw": null,
+      "trainerModel": null,
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2027-03-31",
+        "fallback": false
+      },
+      "city": "Berhampore",
+      "state": "West Bengal",
+      "studentsMou": 183,
+      "contractValue": 219600,
+      "studentsActual": null,
+      "spWithoutTax": 1016.9491525423729,
+      "spWithTax": 1200,
+      "received": null,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.5,
+          "amount": 0,
+          "monthRaw": "2026-03-31T18:29:50.000Z",
+          "monthIso": "2026-03-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 2,
+          "pct": 0.25,
+          "amount": 0,
+          "monthRaw": "2026-09-30T18:29:50.000Z",
+          "monthIso": "2026-09-30",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "unknown|183|219600",
+      "rowWarnings": [
+        "installment % sum 0.750 != 1.0"
+      ]
+    },
+    {
+      "rowNum": 76,
+      "srNo": 67,
+      "schoolName": "Shaw Public School",
+      "schoolSlug": "shaw-public-school",
+      "acquisitionStatus": "Retained",
+      "salesRepName": "Prodipto",
+      "physicalCopyScanned": false,
+      "mouSigned": false,
+      "kitsSent": null,
+      "modelRaw": null,
+      "trainerModel": null,
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2027-03-31",
+        "fallback": false
+      },
+      "city": "Kolkata",
+      "state": "West Bengal",
+      "studentsMou": 41,
+      "contractValue": 122999.86059999999,
+      "studentsActual": null,
+      "spWithoutTax": 2542.37,
+      "spWithTax": 2999.9965999999995,
+      "received": null,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 1,
+          "amount": 0,
+          "monthRaw": "2026-03-31T18:29:50.000Z",
+          "monthIso": "2026-03-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "unknown|41|122999.86059999999",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 77,
+      "srNo": 68,
+      "schoolName": "Sri R. N. Singh Memorial High School",
+      "schoolSlug": "sri-r-n-singh-memorial-high-school",
+      "acquisitionStatus": "Retained",
+      "salesRepName": "Prodipto",
+      "physicalCopyScanned": false,
+      "mouSigned": false,
+      "kitsSent": null,
+      "modelRaw": null,
+      "trainerModel": null,
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2027-03-31",
+        "fallback": false
+      },
+      "city": "Kolkata",
+      "state": "West Bengal",
+      "studentsMou": 67,
+      "contractValue": 113900,
+      "studentsActual": 57,
+      "spWithoutTax": 1440.677966101695,
+      "spWithTax": 1700,
+      "received": 96900,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 1,
+          "amount": 96900,
+          "monthRaw": "2026-04-30T18:29:50.000Z",
+          "monthIso": "2026-04-30",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "unknown|67|113900",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 78,
+      "srNo": 69,
+      "schoolName": "Sumana Dutta Memorial Vivekananda International School",
+      "schoolSlug": "sumana-dutta-memorial-vivekananda-international-school",
+      "acquisitionStatus": "Retained",
+      "salesRepName": "Anshuman",
+      "physicalCopyScanned": true,
+      "mouSigned": true,
+      "kitsSent": null,
+      "modelRaw": null,
+      "trainerModel": null,
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2027-03-31",
+        "fallback": false
+      },
+      "city": "Singhbhum",
+      "state": "Jharkhand",
+      "studentsMou": 31,
+      "contractValue": 37200,
+      "studentsActual": null,
+      "spWithoutTax": 1016.9491525423729,
+      "spWithTax": 1200,
+      "received": null,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.5,
+          "amount": 0,
+          "monthRaw": "2026-06-30T18:29:50.000Z",
+          "monthIso": "2026-06-30",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 2,
+          "pct": 0.5,
+          "amount": 0,
+          "monthRaw": "2026-07-31T18:29:50.000Z",
+          "monthIso": "2026-07-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "unknown|31|37200",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 79,
+      "srNo": 70,
+      "schoolName": "Hariyana International Academy - Class 2 - 7",
+      "schoolSlug": "hariyana-international-academy-class-2-7",
+      "acquisitionStatus": "Retained",
+      "salesRepName": "Prodipto",
+      "physicalCopyScanned": true,
+      "mouSigned": true,
+      "kitsSent": null,
+      "modelRaw": null,
+      "trainerModel": null,
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2027-03-31",
+        "fallback": false
+      },
+      "city": "Kalaberia",
+      "state": "West Bengal",
+      "studentsMou": 10,
+      "contractValue": 27000,
+      "studentsActual": null,
+      "spWithoutTax": 2288.135593220339,
+      "spWithTax": 2700,
+      "received": null,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 1,
+          "amount": 0,
+          "monthRaw": null,
+          "monthIso": null,
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "unknown|10|27000",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 80,
+      "srNo": 71,
+      "schoolName": "The Scottish Church Collegiate School",
+      "schoolSlug": "the-scottish-church-collegiate-school",
+      "acquisitionStatus": "Retained",
+      "salesRepName": "Somnath",
+      "physicalCopyScanned": true,
+      "mouSigned": true,
+      "kitsSent": null,
+      "modelRaw": null,
+      "trainerModel": null,
+      "duration": {
+        "start": "2026-01-01",
+        "end": "2026-12-31",
+        "fallback": false
+      },
+      "city": "Kolkata",
+      "state": "West Bengal",
+      "studentsMou": 100,
+      "contractValue": 200000,
+      "studentsActual": 100,
+      "spWithoutTax": 1694.915254237288,
+      "spWithTax": 2000,
+      "received": null,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.5,
+          "amount": 100000,
+          "monthRaw": "2026-07-31T18:29:50.000Z",
+          "monthIso": "2026-07-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 2,
+          "pct": 0.5,
+          "amount": 100000,
+          "monthRaw": "2026-07-31T18:29:50.000Z",
+          "monthIso": "2026-07-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "unknown|100|200000",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 81,
+      "srNo": 72,
+      "schoolName": "St. Johns High School",
+      "schoolSlug": "st-johns-high-school",
+      "acquisitionStatus": "Retained",
+      "salesRepName": "Prodipto",
+      "physicalCopyScanned": false,
+      "mouSigned": false,
+      "kitsSent": "Yes",
+      "modelRaw": "GSL-T",
+      "trainerModel": "GSL-T",
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2027-03-31",
+        "fallback": false
+      },
+      "city": "Kolkata",
+      "state": "West Bengal",
+      "studentsMou": 600,
+      "contractValue": 1274400,
+      "studentsActual": 443,
+      "spWithoutTax": 1800,
+      "spWithTax": 2124,
+      "received": null,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.5,
+          "amount": 470466,
+          "monthRaw": "2026-03-31T18:29:50.000Z",
+          "monthIso": "2026-03-31",
+          "paymentReceivedRaw": "No",
+          "isReceived": false
+        },
+        {
+          "seq": 2,
+          "pct": 0.25,
+          "amount": 235233,
+          "monthRaw": "2026-09-30T18:29:50.000Z",
+          "monthIso": "2026-09-30",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "GSL-T|600|1274400",
+      "rowWarnings": [
+        "installment % sum 0.750 != 1.0"
+      ]
+    },
+    {
+      "rowNum": 82,
+      "srNo": 73,
+      "schoolName": "Rishi Aurobindo Memorial Academy",
+      "schoolSlug": "rishi-aurobindo-memorial-academy",
+      "acquisitionStatus": "Retained",
+      "salesRepName": "Prodipto",
+      "physicalCopyScanned": true,
+      "mouSigned": true,
+      "kitsSent": null,
+      "modelRaw": null,
+      "trainerModel": null,
+      "duration": {
+        "start": "2025-08-01",
+        "end": "2026-03-31",
+        "fallback": false
+      },
+      "city": "Kolkata",
+      "state": "West Bengal",
+      "studentsMou": 16,
+      "contractValue": 37760,
+      "studentsActual": null,
+      "spWithoutTax": 2000,
+      "spWithTax": 2360,
+      "received": null,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.5,
+          "amount": 0,
+          "monthRaw": "2026-07-31T18:29:50.000Z",
+          "monthIso": "2026-07-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 2,
+          "pct": 0.5,
+          "amount": 0,
+          "monthRaw": "2026-09-30T18:29:50.000Z",
+          "monthIso": "2026-09-30",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "unknown|16|37760",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 83,
+      "srNo": 74,
+      "schoolName": "Darshan Academy, Devlali",
+      "schoolSlug": "darshan-academy-devlali",
+      "acquisitionStatus": "Retained",
+      "salesRepName": "Suresh",
+      "physicalCopyScanned": false,
+      "mouSigned": true,
+      "kitsSent": "Yes",
+      "modelRaw": "GSL-T",
+      "trainerModel": "GSL-T",
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2027-03-31",
+        "fallback": false
+      },
+      "city": "Nashik",
+      "state": "Maharashtra",
+      "studentsMou": 245,
+      "contractValue": 367500,
+      "studentsActual": 234,
+      "spWithoutTax": 1271.1864406779662,
+      "spWithTax": 1500,
+      "received": null,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.25,
+          "amount": 87750,
+          "monthRaw": "2026-03-31T18:29:50.000Z",
+          "monthIso": "2026-03-31",
+          "paymentReceivedRaw": "No",
+          "isReceived": false
+        },
+        {
+          "seq": 2,
+          "pct": 0.25,
+          "amount": 87750,
+          "monthRaw": "2026-05-31T18:29:50.000Z",
+          "monthIso": "2026-05-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 3,
+          "pct": 0.25,
+          "amount": 87750,
+          "monthRaw": "2026-08-31T18:29:50.000Z",
+          "monthIso": "2026-08-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 4,
+          "pct": 0.25,
+          "amount": 87750,
+          "monthRaw": "2026-11-30T18:29:50.000Z",
+          "monthIso": "2026-11-30",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "GSL-T|245|367500",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 84,
+      "srNo": 75,
+      "schoolName": "Young Horizons School",
+      "schoolSlug": "young-horizons-school",
+      "acquisitionStatus": "Retained",
+      "salesRepName": "Prodipto",
+      "physicalCopyScanned": false,
+      "mouSigned": false,
+      "kitsSent": null,
+      "modelRaw": null,
+      "trainerModel": null,
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2027-03-31",
+        "fallback": false
+      },
+      "city": "Medinpur",
+      "state": "West Bengal",
+      "studentsMou": 300,
+      "contractValue": 637200,
+      "studentsActual": 290,
+      "spWithoutTax": 1800,
+      "spWithTax": 2124,
+      "received": null,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.5,
+          "amount": 307980,
+          "monthRaw": "2026-03-31T18:29:50.000Z",
+          "monthIso": "2026-03-31",
+          "paymentReceivedRaw": "No",
+          "isReceived": false
+        },
+        {
+          "seq": 2,
+          "pct": 0.5,
+          "amount": 307980,
+          "monthRaw": "2026-08-31T18:29:50.000Z",
+          "monthIso": "2026-08-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "unknown|300|637200",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 85,
+      "srNo": 76,
+      "schoolName": "Ramanarayana Education Trust",
+      "schoolSlug": "ramanarayana-education-trust",
+      "acquisitionStatus": "Retained",
+      "salesRepName": "Prodipto",
+      "physicalCopyScanned": false,
+      "mouSigned": true,
+      "kitsSent": null,
+      "modelRaw": null,
+      "trainerModel": null,
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2027-03-31",
+        "fallback": false
+      },
+      "city": "Kolkata",
+      "state": "West Bengal",
+      "studentsMou": 7950,
+      "contractValue": 6439500,
+      "studentsActual": null,
+      "spWithoutTax": 686.4406779661017,
+      "spWithTax": 810,
+      "received": null,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.25,
+          "amount": 0,
+          "monthRaw": null,
+          "monthIso": null,
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 2,
+          "pct": 0.25,
+          "amount": 0,
+          "monthRaw": null,
+          "monthIso": null,
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 3,
+          "pct": 0.25,
+          "amount": 0,
+          "monthRaw": null,
+          "monthIso": null,
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 4,
+          "pct": 0.25,
+          "amount": 0,
+          "monthRaw": null,
+          "monthIso": null,
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "unknown|7950|6439500",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 86,
+      "srNo": 77,
+      "schoolName": "GMR International School",
+      "schoolSlug": "gmr-international-school",
+      "acquisitionStatus": "New",
+      "salesRepName": "Sumit",
+      "physicalCopyScanned": true,
+      "mouSigned": true,
+      "kitsSent": "no",
+      "modelRaw": "TT",
+      "trainerModel": "TT",
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2028-03-31",
+        "fallback": false
+      },
+      "city": "Siddipet",
+      "state": "Telangana",
+      "studentsMou": 100,
+      "contractValue": 150000,
+      "studentsActual": 100,
+      "spWithoutTax": 1271.1864406779662,
+      "spWithTax": 1500,
+      "received": 30000,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.2,
+          "amount": 30000,
+          "monthRaw": "2026-05-31T18:29:50.000Z",
+          "monthIso": "2026-05-31",
+          "paymentReceivedRaw": "yes",
+          "isReceived": true
+        },
+        {
+          "seq": 2,
+          "pct": 0.4,
+          "amount": 60000,
+          "monthRaw": "2026-05-31T18:29:50.000Z",
+          "monthIso": "2026-05-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        },
+        {
+          "seq": 3,
+          "pct": 0.4,
+          "amount": 60000,
+          "monthRaw": "2026-08-31T18:29:50.000Z",
+          "monthIso": "2026-08-31",
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": false,
+      "isContinuationRow": false,
+      "productLineKey": "TT|100|150000",
+      "rowWarnings": []
+    },
+    {
+      "rowNum": 87,
+      "srNo": 78,
+      "schoolName": "Discovery Oaks School",
+      "schoolSlug": "discovery-oaks-school",
+      "acquisitionStatus": "Retained",
+      "salesRepName": "Kranthi",
+      "physicalCopyScanned": false,
+      "mouSigned": false,
+      "kitsSent": "no",
+      "modelRaw": null,
+      "trainerModel": null,
+      "duration": {
+        "start": "2026-04-01",
+        "end": "2027-03-31",
+        "fallback": false
+      },
+      "city": "Abdullapurmet",
+      "state": "Telangana",
+      "studentsMou": 200,
+      "contractValue": 340000,
+      "studentsActual": null,
+      "spWithoutTax": 1440.677966101695,
+      "spWithTax": 1700,
+      "received": null,
+      "tds": null,
+      "installments": [
+        {
+          "seq": 1,
+          "pct": 0.5,
+          "amount": 0,
+          "monthRaw": "2026-04-30T18:29:50.000Z",
+          "monthIso": "2026-04-30",
+          "paymentReceivedRaw": "yes",
+          "isReceived": true
+        },
+        {
+          "seq": 2,
+          "pct": 0.5,
+          "amount": 0,
+          "monthRaw": "after commencement",
+          "monthIso": null,
+          "paymentReceivedRaw": null,
+          "isReceived": false
+        }
+      ],
+      "needsReview": true,
+      "isContinuationRow": false,
+      "productLineKey": "unknown|200|340000",
+      "rowWarnings": [
+        "installment 2 month not ISO-parseable: \"after commencement\""
+      ]
+    }
+  ],
+  "warnings": [
+    {
+      "row": 8,
+      "message": "sale amount is 0 but kits-sent or received present, flag for review"
+    },
+    {
+      "row": 16,
+      "message": "sale amount is 0 but kits-sent or received present, flag for review"
+    },
+    {
+      "row": 30,
+      "message": "installment % sum 0.750 != 1.0"
+    },
+    {
+      "row": 31,
+      "message": "installment 1 month not ISO-parseable: \"advance\""
+    },
+    {
+      "row": 31,
+      "message": "installment 2 month not ISO-parseable: \"before commencement\""
+    },
+    {
+      "row": 49,
+      "message": "duration unparseable, using FY default 2026-04-01..2027-03-31"
+    },
+    {
+      "row": 50,
+      "message": "duration unparseable, using FY default 2026-04-01..2027-03-31"
+    },
+    {
+      "row": 51,
+      "message": "duration unparseable, using FY default 2026-04-01..2027-03-31"
+    },
+    {
+      "row": 75,
+      "message": "installment % sum 0.750 != 1.0"
+    },
+    {
+      "row": 81,
+      "message": "installment % sum 0.750 != 1.0"
+    },
+    {
+      "row": 87,
+      "message": "installment 2 month not ISO-parseable: \"after commencement\""
+    }
+  ],
+  "errors": [],
+  "skipped": [
+    {
+      "row": 88,
+      "reason": "school name blank but row has values"
+    },
+    {
+      "row": 89,
+      "reason": "school name blank but row has values"
+    },
+    {
+      "row": 90,
+      "reason": "empty row"
+    },
+    {
+      "row": 91,
+      "reason": "empty row"
+    },
+    {
+      "row": 92,
+      "reason": "empty row"
+    },
+    {
+      "row": 93,
+      "reason": "empty row"
+    },
+    {
+      "row": 94,
+      "reason": "empty row"
+    },
+    {
+      "row": 95,
+      "reason": "empty row"
+    },
+    {
+      "row": 96,
+      "reason": "empty row"
+    }
+  ],
+  "summary": {
+    "totalRowsScanned": 90,
+    "parsed": 81,
+    "needsReview": 4,
+    "continuationRows": 3,
+    "multiProductSchools": [
+      {
+        "name": "Empyrean School",
+        "rowNums": [
+          50,
+          51
+        ]
+      },
+      {
+        "name": "Contai Public School",
+        "rowNums": [
+          68,
+          69
+        ]
+      },
+      {
+        "name": "Swarnim International School",
+        "rowNums": [
+          70,
+          71
+        ]
+      }
+    ]
+  },
+  "sourceMeta": {
+    "sheetName": "2026-27PD ",
+    "headerRow": 6,
+    "dataStartRow": 7,
+    "dataEndRow": 96
+  }
+}
