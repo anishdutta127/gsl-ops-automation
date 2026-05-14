@@ -5263,10 +5263,21 @@
           "studentsMou": 200
         },
         "notes": "source: pranav-refresh-2026-05-13"
+      },
+      {
+        "timestamp": "2026-05-14T09:53:27.383Z",
+        "user": "anish.d",
+        "action": "mou-delay-notes-updated",
+        "before": {
+          "delayNotes": null
+        },
+        "after": {
+          "delayNotes": "hi"
+        }
       }
     ],
     "cohortStatus": "active",
-    "delayNotes": null
+    "delayNotes": "hi"
   },
   {
     "id": "MOU-STEAM-2627-003",
