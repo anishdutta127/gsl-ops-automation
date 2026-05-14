@@ -248,6 +248,60 @@ describe('applyPranavRefresh', () => {
     expect(log[log.length - 1]!.notes).toContain('pranav-refresh-2026-05-13')
   })
 
+  it('captures a row-level throw as an error outcome without aborting the batch', () => {
+    // First row's refreshRow is deliberately malformed: schoolSlug is the
+    // empty string, which upsertSchool would happily accept (schoolId
+    // becomes "sch-"), but we force the throw by making the writer hit a
+    // null where it expects a value. The simplest reproduction is to
+    // hand-craft a classified row whose schoolName accessor throws when
+    // touched.
+    const goodRow = classifyNew()
+    const badRow: ClassifiedRow = {
+      classification: 'NEW',
+      // refreshRow exposes a getter that throws when the writer reads
+      // schoolSlug. The apply core touches schoolSlug inside upsertSchool.
+      refreshRow: new Proxy(goodRow.refreshRow, {
+        get(target, prop, receiver) {
+          if (prop === 'schoolSlug') throw new Error('boom: synthetic row failure')
+          return Reflect.get(target, prop, receiver)
+        },
+      }) as typeof goodRow.refreshRow,
+      matchedMouId: null,
+      candidateMatchIds: [],
+      mouDiffs: [],
+      installmentDiffs: [],
+    }
+    // Force a unique rowNum on the bad proxy by reading rowNum through it.
+    const badRowNum = badRow.refreshRow.rowNum + 100
+    const badRowFinal: ClassifiedRow = {
+      ...badRow,
+      refreshRow: new Proxy(goodRow.refreshRow, {
+        get(target, prop, receiver) {
+          if (prop === 'rowNum') return badRowNum
+          if (prop === 'schoolSlug') throw new Error('boom: synthetic row failure')
+          return Reflect.get(target, prop, receiver)
+        },
+      }) as typeof goodRow.refreshRow,
+    }
+
+    const result = applyPranavRefresh({
+      refreshTag: 'pranav-refresh-2026-05-13',
+      appliedBy: 'usr-test',
+      classified: [badRowFinal, goodRow],
+      decisions: new Map<number, RowDecision>([
+        [badRowNum, { rowNum: badRowNum, decision: 'apply' }],
+        [goodRow.refreshRow.rowNum, { rowNum: goodRow.refreshRow.rowNum, decision: 'apply' }],
+      ]),
+      currentState: emptyState(),
+    })
+
+    expect(result.summary.errored).toBe(1)
+    expect(result.summary.created).toBe(1)
+    expect(result.outcomes.find((o) => o.rowNum === badRowNum)?.result).toBe('error')
+    expect(result.outcomes.find((o) => o.rowNum === badRowNum)?.message).toMatch(/boom/)
+    expect(result.outcomes.find((o) => o.rowNum === goodRow.refreshRow.rowNum)?.result).toBe('created')
+  })
+
   it('is idempotent: re-applying same plan after an apply produces zero changes', () => {
     const cls = classifyNew()
     const decisions = new Map<number, RowDecision>([

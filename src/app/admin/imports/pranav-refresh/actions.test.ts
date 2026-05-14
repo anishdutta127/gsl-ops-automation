@@ -223,6 +223,81 @@ describe('applyRefreshAction', () => {
     expect(schools).toHaveLength(0)
   })
 
+  it('does not attempt to write src/data files when the apply produces zero state changes (Vercel EROFS regression)', async () => {
+    // Reproduces the production crash: live state already contains the
+    // refresh data, so re-classifying produces all UNCHANGED, no rows
+    // need to be written. Before the hotfix, the action wrote the JSON
+    // files anyway and threw EROFS on Vercel. After the hotfix, the
+    // action short-circuits writes. We simulate Vercel by replacing
+    // mous.json with a sentinel value and asserting it is left untouched.
+    await seedDiff()
+    const sentinel = '[{"id":"SENTINEL","schoolName":"do-not-overwrite"}]\n'
+    await writeFile(path.join(tempRoot, 'src/data/mous.json'), sentinel, 'utf-8')
+
+    const formData = new FormData()
+    formData.append('refreshTag', 'pranav-refresh-2026-05-14')
+    formData.append('apply-7', 'true')
+    // The sentinel MOU does not match the refresh slug, so the row still
+    // classifies as NEW and would normally write. Override by switching
+    // the school name to match.
+    const sentinelMatch = JSON.stringify([{
+      id: 'MOU-STEAM-2627-001',
+      schoolId: 'sch-brand-new-school',
+      schoolName: 'Brand New School',
+      programme: 'STEAM', programmeSubType: null,
+      schoolScope: 'SINGLE', schoolGroupId: null,
+      status: 'Active', cohortStatus: 'active', academicYear: '2026-27',
+      startDate: '2026-04-01', endDate: '2027-03-31',
+      studentsMou: 100, studentsActual: null,
+      studentsVariance: null, studentsVariancePct: null,
+      spWithoutTax: 850, spWithTax: 1000,
+      contractValue: 100000, received: 0, tds: 0,
+      balance: 100000, receivedPct: 0,
+      paymentSchedule: '', trainerModel: 'TT',
+      salesPersonId: null, templateVersion: null, generatedAt: null,
+      notes: null, delayNotes: null, daysToExpiry: null,
+      auditLog: [],
+    }]) + '\n'
+    await writeFile(path.join(tempRoot, 'src/data/mous.json'), sentinelMatch, 'utf-8')
+    await writeFile(path.join(tempRoot, 'src/data/schools.json'), JSON.stringify([{
+      id: 'sch-brand-new-school',
+      name: 'Brand New School',
+      city: 'CityX', state: 'StateX',
+      auditLog: [],
+    }]) + '\n', 'utf-8')
+
+    // Capture pre-action mtime/contents to assert no write attempt.
+    const beforeMous = await readFile(path.join(tempRoot, 'src/data/mous.json'), 'utf-8')
+    const beforeSchools = await readFile(path.join(tempRoot, 'src/data/schools.json'), 'utf-8')
+
+    await expect(applyRefreshAction(formData)).rejects.toThrow(/REDIRECT:\/admin\/imports\/pranav-refresh\?.*applied=1/)
+
+    const afterMous = await readFile(path.join(tempRoot, 'src/data/mous.json'), 'utf-8')
+    const afterSchools = await readFile(path.join(tempRoot, 'src/data/schools.json'), 'utf-8')
+    expect(afterMous).toBe(beforeMous)
+    expect(afterSchools).toBe(beforeSchools)
+  })
+
+  it('surfaces a write failure as ?error=write-failed in the redirect, not a server-side exception', async () => {
+    await seedDiff()
+    const formData = new FormData()
+    formData.append('refreshTag', 'pranav-refresh-2026-05-14')
+    formData.append('apply-7', 'true')
+
+    // Force a write failure: delete the src/data directory so writeFile
+    // rejects with ENOENT. This stands in for Vercel's EROFS.
+    await rm(path.join(tempRoot, 'src/data'), { recursive: true, force: true })
+
+    let redirected: string | null = null
+    try {
+      await applyRefreshAction(formData)
+    } catch (e) {
+      redirected = e instanceof Error ? e.message : String(e)
+    }
+    expect(redirected).toMatch(/REDIRECT:.*error=write-failed/)
+    expect(redirected).toMatch(/applied=1/)
+  })
+
   it('is idempotent: applying the same decisions twice produces a no-op on the second run', async () => {
     await seedDiff()
 

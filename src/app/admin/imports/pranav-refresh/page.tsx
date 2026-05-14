@@ -161,7 +161,7 @@ export default async function PranavRefreshPage({
               Apply complete. {sp.created ?? '0'} created, {sp.updated ?? '0'} updated,
               {' '}{sp.unchanged ?? '0'} unchanged, {sp.skipped ?? '0'} skipped,
               {' '}{sp.keptCurrent ?? '0'} kept current, {sp.keptBoth ?? '0'} kept both,
-              {' '}{sp.errored ?? '0'} errored.
+              {' '}{sp.failed ?? sp.errored ?? '0'} failed.
             </p>
           ) : null}
           {errorCode ? (
@@ -175,7 +175,11 @@ export default async function PranavRefreshPage({
                   ? 'Diff report missing for this tag; upload a fresh file.'
                   : errorCode === 'missing-tag'
                     ? 'Refresh tag missing from the apply form.'
-                    : `Failed: ${errorCode}`}
+                    : errorCode === 'write-failed'
+                      ? `Apply ran but writes could not be persisted (read-only filesystem). Detail: ${typeof sp.detail === 'string' ? sp.detail : 'unknown'}. Run scripts/apply-pranav-refresh.mjs locally to persist.`
+                      : errorCode === 'apply-failed'
+                        ? `Apply core threw: ${typeof sp.detail === 'string' ? sp.detail : 'unknown'}`
+                        : `Failed: ${errorCode}`}
             </p>
           ) : null}
 

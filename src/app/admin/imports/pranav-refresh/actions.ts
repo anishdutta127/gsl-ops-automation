@@ -284,28 +284,49 @@ export async function applyRefreshAction(formData: FormData): Promise<void> {
 
   const decisions = parseDecisions(formData, liveClassified)
 
-  const result = applyPranavRefresh({
-    refreshTag,
-    appliedBy: user.id,
-    classified: liveClassified,
-    decisions,
-    currentState: { mous, payments, schools, salesTeam },
-  })
+  let result
+  try {
+    result = applyPranavRefresh({
+      refreshTag,
+      appliedBy: user.id,
+      classified: liveClassified,
+      decisions,
+      currentState: { mous, payments, schools, salesTeam },
+    })
+  } catch (err) {
+    const detail = encodeURIComponent(err instanceof Error ? err.message : String(err))
+    redirect(`${PAGE_PATH}?tag=${encodeURIComponent(refreshTag)}&error=apply-failed&detail=${detail}`)
+    return
+  }
 
-  await Promise.all([
-    writeJson(path.join(dataDir, 'mous.json'), result.newState.mous),
-    writeJson(path.join(dataDir, 'payments.json'), result.newState.payments),
-    writeJson(path.join(dataDir, 'schools.json'), result.newState.schools),
-    writeJson(path.join(dataDir, 'sales_team.json'), result.newState.salesTeam),
-  ])
+  const mutating = result.summary.created + result.summary.updated + result.summary.keptBoth
+  let writeError: string | null = null
+  if (mutating > 0) {
+    try {
+      await Promise.all([
+        writeJson(path.join(dataDir, 'mous.json'), result.newState.mous),
+        writeJson(path.join(dataDir, 'payments.json'), result.newState.payments),
+        writeJson(path.join(dataDir, 'schools.json'), result.newState.schools),
+        writeJson(path.join(dataDir, 'sales_team.json'), result.newState.salesTeam),
+      ])
+    } catch (err) {
+      writeError = err instanceof Error ? err.message : String(err)
+    }
+  }
 
-  await appendImportRun({
-    refreshTag,
-    kind: 'apply',
-    at: new Date().toISOString(),
-    user: user.id,
-    applySummary: result.summary,
-  })
+  // Best-effort audit log; ignore EROFS on Vercel so a successful or
+  // no-op apply does not regress to a 500.
+  try {
+    await appendImportRun({
+      refreshTag,
+      kind: 'apply',
+      at: new Date().toISOString(),
+      user: user.id,
+      applySummary: { ...result.summary, writeError: writeError ?? undefined },
+    })
+  } catch {
+    // ignore
+  }
 
   revalidatePath(PAGE_PATH)
   const params = new URLSearchParams({
@@ -318,6 +339,11 @@ export async function applyRefreshAction(formData: FormData): Promise<void> {
     keptCurrent: String(result.summary.keptCurrent),
     keptBoth: String(result.summary.keptBoth),
     errored: String(result.summary.errored),
+    failed: String(result.summary.errored),
   })
+  if (writeError) {
+    params.set('error', 'write-failed')
+    params.set('detail', writeError.slice(0, 240))
+  }
   redirect(`${PAGE_PATH}?${params.toString()}`)
 }

@@ -405,44 +405,51 @@ for (const [slug, rows] of cachedBySlug) {
 
 const outcomes = []
 for (const cls of liveClassified) {
-  const d = decisions.get(cls.refreshRow.rowNum)
-  if (!d || d.decision === 'skip') {
-    outcomes.push({ rowNum: cls.refreshRow.rowNum, schoolName: cls.refreshRow.schoolName, classification: cls.classification, result: 'skipped', changes: [] })
-    continue
-  }
-  if (cls.classification === 'UNCHANGED') {
-    outcomes.push({ rowNum: cls.refreshRow.rowNum, schoolName: cls.refreshRow.schoolName, classification: cls.classification, result: 'unchanged', changes: [] })
-    continue
-  }
+  // Per-row try/catch mirrors src/lib/imports/pranavApply.ts so a bad row
+  // is captured as result: 'error' instead of aborting the batch.
+  try {
+    const d = decisions.get(cls.refreshRow.rowNum)
+    if (!d || d.decision === 'skip') {
+      outcomes.push({ rowNum: cls.refreshRow.rowNum, schoolName: cls.refreshRow.schoolName, classification: cls.classification, result: 'skipped', changes: [] })
+      continue
+    }
+    if (cls.classification === 'UNCHANGED') {
+      outcomes.push({ rowNum: cls.refreshRow.rowNum, schoolName: cls.refreshRow.schoolName, classification: cls.classification, result: 'unchanged', changes: [] })
+      continue
+    }
 
-  const { schoolId, isNew: schoolIsNew } = upsertSchool(state, cls.refreshRow, REFRESH_TAG, APPLIED_BY)
-  const salesId = upsertSalesRep(state, cls.refreshRow.salesRepName, REFRESH_TAG)
+    const { schoolId, isNew: schoolIsNew } = upsertSchool(state, cls.refreshRow, REFRESH_TAG, APPLIED_BY)
+    const salesId = upsertSalesRep(state, cls.refreshRow.salesRepName, REFRESH_TAG)
 
-  if (cls.classification === 'NEW') {
-    const mou = createMou(state, cls.refreshRow, schoolId, salesId, REFRESH_TAG, APPLIED_BY)
-    const ic = applyInstallments(state, mou.id, cls.refreshRow, REFRESH_TAG, APPLIED_BY, true)
-    outcomes.push({ rowNum: cls.refreshRow.rowNum, schoolName: cls.refreshRow.schoolName, classification: cls.classification, result: 'created', newMouId: mou.id, changes: ic, schoolCreated: schoolIsNew })
-    continue
+    if (cls.classification === 'NEW') {
+      const mou = createMou(state, cls.refreshRow, schoolId, salesId, REFRESH_TAG, APPLIED_BY)
+      const ic = applyInstallments(state, mou.id, cls.refreshRow, REFRESH_TAG, APPLIED_BY, true)
+      outcomes.push({ rowNum: cls.refreshRow.rowNum, schoolName: cls.refreshRow.schoolName, classification: cls.classification, result: 'created', newMouId: mou.id, changes: ic, schoolCreated: schoolIsNew })
+      continue
+    }
+    if (cls.classification === 'CONFLICT' && d.conflictResolution === 'keep-current') {
+      outcomes.push({ rowNum: cls.refreshRow.rowNum, schoolName: cls.refreshRow.schoolName, classification: cls.classification, result: 'kept-current', changes: [] })
+      continue
+    }
+    if (cls.classification === 'CONFLICT' && d.conflictResolution === 'keep-both') {
+      const mou = createMou(state, cls.refreshRow, schoolId, salesId, REFRESH_TAG, APPLIED_BY)
+      const ic = applyInstallments(state, mou.id, cls.refreshRow, REFRESH_TAG, APPLIED_BY, true)
+      outcomes.push({ rowNum: cls.refreshRow.rowNum, schoolName: cls.refreshRow.schoolName, classification: cls.classification, result: 'kept-both', newMouId: mou.id, changes: ic })
+      continue
+    }
+    const matchedId = d.ambiguousMatchId ?? cls.matchedMouId
+    const mou = state.mous.find((m) => m.id === matchedId)
+    if (!mou) {
+      outcomes.push({ rowNum: cls.refreshRow.rowNum, schoolName: cls.refreshRow.schoolName, classification: cls.classification, result: 'error', message: `Matched MOU ${matchedId} missing`, changes: [] })
+      continue
+    }
+    const mc = updateMouFields(mou, cls.mouDiffs, d.conflictResolution, REFRESH_TAG, APPLIED_BY)
+    const ic = applyInstallments(state, mou.id, cls.refreshRow, REFRESH_TAG, APPLIED_BY, false)
+    outcomes.push({ rowNum: cls.refreshRow.rowNum, schoolName: cls.refreshRow.schoolName, classification: cls.classification, result: mc.length + ic.length > 0 ? 'updated' : 'unchanged', changes: [...mc, ...ic] })
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err)
+    outcomes.push({ rowNum: cls.refreshRow.rowNum, schoolName: cls.refreshRow.schoolName, classification: cls.classification, result: 'error', message: `Row threw during apply: ${message}`, changes: [] })
   }
-  if (cls.classification === 'CONFLICT' && d.conflictResolution === 'keep-current') {
-    outcomes.push({ rowNum: cls.refreshRow.rowNum, schoolName: cls.refreshRow.schoolName, classification: cls.classification, result: 'kept-current', changes: [] })
-    continue
-  }
-  if (cls.classification === 'CONFLICT' && d.conflictResolution === 'keep-both') {
-    const mou = createMou(state, cls.refreshRow, schoolId, salesId, REFRESH_TAG, APPLIED_BY)
-    const ic = applyInstallments(state, mou.id, cls.refreshRow, REFRESH_TAG, APPLIED_BY, true)
-    outcomes.push({ rowNum: cls.refreshRow.rowNum, schoolName: cls.refreshRow.schoolName, classification: cls.classification, result: 'kept-both', newMouId: mou.id, changes: ic })
-    continue
-  }
-  const matchedId = d.ambiguousMatchId ?? cls.matchedMouId
-  const mou = state.mous.find((m) => m.id === matchedId)
-  if (!mou) {
-    outcomes.push({ rowNum: cls.refreshRow.rowNum, schoolName: cls.refreshRow.schoolName, classification: cls.classification, result: 'error', message: `Matched MOU ${matchedId} missing`, changes: [] })
-    continue
-  }
-  const mc = updateMouFields(mou, cls.mouDiffs, d.conflictResolution, REFRESH_TAG, APPLIED_BY)
-  const ic = applyInstallments(state, mou.id, cls.refreshRow, REFRESH_TAG, APPLIED_BY, false)
-  outcomes.push({ rowNum: cls.refreshRow.rowNum, schoolName: cls.refreshRow.schoolName, classification: cls.classification, result: mc.length + ic.length > 0 ? 'updated' : 'unchanged', changes: [...mc, ...ic] })
 }
 
 const summary = {

@@ -428,98 +428,138 @@ export function applyPranavRefresh(input: ApplyInput): ApplyResult {
 
   const outcomes: RowOutcome[] = []
   for (const cls of input.classified) {
-    const decision = input.decisions.get(cls.refreshRow.rowNum)
-    if (!decision || decision.decision === 'skip') {
-      outcomes.push({
-        rowNum: cls.refreshRow.rowNum,
-        schoolName: cls.refreshRow.schoolName,
-        classification: cls.classification,
-        decision: 'skip',
-        result: 'skipped',
-        changes: [],
-        message: !decision ? 'No decision supplied; skipped' : undefined,
-      })
-      continue
-    }
+    // Per-row try/catch so an unexpected throw in one row (bad fixture,
+    // null where the writer assumed a value) becomes a row-level error
+    // outcome rather than aborting the entire batch.
+    try {
+      const decision = input.decisions.get(cls.refreshRow.rowNum)
+      if (!decision || decision.decision === 'skip') {
+        outcomes.push({
+          rowNum: cls.refreshRow.rowNum,
+          schoolName: cls.refreshRow.schoolName,
+          classification: cls.classification,
+          decision: 'skip',
+          result: 'skipped',
+          changes: [],
+          message: !decision ? 'No decision supplied; skipped' : undefined,
+        })
+        continue
+      }
 
-    if (cls.classification === 'UNCHANGED') {
+      if (cls.classification === 'UNCHANGED') {
+        outcomes.push({
+          rowNum: cls.refreshRow.rowNum,
+          schoolName: cls.refreshRow.schoolName,
+          classification: cls.classification,
+          decision: 'apply',
+          result: 'unchanged',
+          changes: [],
+        })
+        continue
+      }
+
+      const { schoolId } = upsertSchool(state, cls.refreshRow, input.refreshTag, input.appliedBy)
+      const salesId = upsertSalesRep(state, cls.refreshRow.salesRepName, input.refreshTag)
+
+      if (cls.classification === 'NEW') {
+        const { mou, changes } = createMou(
+          state,
+          cls.refreshRow,
+          schoolId,
+          salesId,
+          input.refreshTag,
+          input.appliedBy,
+          null,
+        )
+        const instChanges = applyInstallmentChanges(state, mou.id, cls.refreshRow, input.refreshTag, input.appliedBy, true)
+        outcomes.push({
+          rowNum: cls.refreshRow.rowNum,
+          schoolName: cls.refreshRow.schoolName,
+          classification: cls.classification,
+          decision: 'apply',
+          result: 'created',
+          changes: [...changes, ...instChanges],
+          newMouId: mou.id,
+        })
+        continue
+      }
+
+      if (cls.classification === 'CONFLICT' && decision.conflictResolution === 'keep-current') {
+        outcomes.push({
+          rowNum: cls.refreshRow.rowNum,
+          schoolName: cls.refreshRow.schoolName,
+          classification: cls.classification,
+          decision: 'apply',
+          result: 'kept-current',
+          changes: [],
+          message: 'Kept current values; no changes applied',
+        })
+        continue
+      }
+
+      if (cls.classification === 'CONFLICT' && decision.conflictResolution === 'keep-both') {
+        const { mou, changes } = createMou(
+          state,
+          cls.refreshRow,
+          schoolId,
+          salesId,
+          input.refreshTag,
+          input.appliedBy,
+          null,
+        )
+        const instChanges = applyInstallmentChanges(state, mou.id, cls.refreshRow, input.refreshTag, input.appliedBy, true)
+        outcomes.push({
+          rowNum: cls.refreshRow.rowNum,
+          schoolName: cls.refreshRow.schoolName,
+          classification: cls.classification,
+          decision: 'apply',
+          result: 'kept-both',
+          changes: [...changes, ...instChanges],
+          newMouId: mou.id,
+          message: `Refresh stored as new MOU ${mou.id}; original kept as ${cls.matchedMouId}`,
+        })
+        continue
+      }
+
+      // UPDATE or CONFLICT/apply-refresh: mutate the matched MOU.
+      const matchedId = decision.ambiguousMatchId ?? cls.matchedMouId
+      if (!matchedId) {
+        outcomes.push({
+          rowNum: cls.refreshRow.rowNum,
+          schoolName: cls.refreshRow.schoolName,
+          classification: cls.classification,
+          decision: 'apply',
+          result: 'error',
+          changes: [],
+          message: 'No matched MOU id available for update',
+        })
+        continue
+      }
+      const mou = state.mous.find((m) => m.id === matchedId)
+      if (!mou) {
+        outcomes.push({
+          rowNum: cls.refreshRow.rowNum,
+          schoolName: cls.refreshRow.schoolName,
+          classification: cls.classification,
+          decision: 'apply',
+          result: 'error',
+          changes: [],
+          message: `Matched MOU ${matchedId} not found in state`,
+        })
+        continue
+      }
+      const mouChanges = updateMouFields(mou, cls.refreshRow, cls.mouDiffs, decision.conflictResolution, input.refreshTag, input.appliedBy)
+      const instChanges = applyInstallmentChanges(state, mou.id, cls.refreshRow, input.refreshTag, input.appliedBy, false)
       outcomes.push({
         rowNum: cls.refreshRow.rowNum,
         schoolName: cls.refreshRow.schoolName,
         classification: cls.classification,
         decision: 'apply',
-        result: 'unchanged',
-        changes: [],
+        result: mouChanges.length + instChanges.length > 0 ? 'updated' : 'unchanged',
+        changes: [...mouChanges, ...instChanges],
       })
-      continue
-    }
-
-    const { schoolId } = upsertSchool(state, cls.refreshRow, input.refreshTag, input.appliedBy)
-    const salesId = upsertSalesRep(state, cls.refreshRow.salesRepName, input.refreshTag)
-
-    if (cls.classification === 'NEW') {
-      const { mou, changes } = createMou(
-        state,
-        cls.refreshRow,
-        schoolId,
-        salesId,
-        input.refreshTag,
-        input.appliedBy,
-        null,
-      )
-      const instChanges = applyInstallmentChanges(state, mou.id, cls.refreshRow, input.refreshTag, input.appliedBy, true)
-      outcomes.push({
-        rowNum: cls.refreshRow.rowNum,
-        schoolName: cls.refreshRow.schoolName,
-        classification: cls.classification,
-        decision: 'apply',
-        result: 'created',
-        changes: [...changes, ...instChanges],
-        newMouId: mou.id,
-      })
-      continue
-    }
-
-    if (cls.classification === 'CONFLICT' && decision.conflictResolution === 'keep-current') {
-      outcomes.push({
-        rowNum: cls.refreshRow.rowNum,
-        schoolName: cls.refreshRow.schoolName,
-        classification: cls.classification,
-        decision: 'apply',
-        result: 'kept-current',
-        changes: [],
-        message: 'Kept current values; no changes applied',
-      })
-      continue
-    }
-
-    if (cls.classification === 'CONFLICT' && decision.conflictResolution === 'keep-both') {
-      const { mou, changes } = createMou(
-        state,
-        cls.refreshRow,
-        schoolId,
-        salesId,
-        input.refreshTag,
-        input.appliedBy,
-        null,
-      )
-      const instChanges = applyInstallmentChanges(state, mou.id, cls.refreshRow, input.refreshTag, input.appliedBy, true)
-      outcomes.push({
-        rowNum: cls.refreshRow.rowNum,
-        schoolName: cls.refreshRow.schoolName,
-        classification: cls.classification,
-        decision: 'apply',
-        result: 'kept-both',
-        changes: [...changes, ...instChanges],
-        newMouId: mou.id,
-        message: `Refresh stored as new MOU ${mou.id}; original kept as ${cls.matchedMouId}`,
-      })
-      continue
-    }
-
-    // UPDATE or CONFLICT/apply-refresh: mutate the matched MOU.
-    const matchedId = decision.ambiguousMatchId ?? cls.matchedMouId
-    if (!matchedId) {
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err)
       outcomes.push({
         rowNum: cls.refreshRow.rowNum,
         schoolName: cls.refreshRow.schoolName,
@@ -527,33 +567,9 @@ export function applyPranavRefresh(input: ApplyInput): ApplyResult {
         decision: 'apply',
         result: 'error',
         changes: [],
-        message: 'No matched MOU id available for update',
+        message: `Row threw during apply: ${message}`,
       })
-      continue
     }
-    const mou = state.mous.find((m) => m.id === matchedId)
-    if (!mou) {
-      outcomes.push({
-        rowNum: cls.refreshRow.rowNum,
-        schoolName: cls.refreshRow.schoolName,
-        classification: cls.classification,
-        decision: 'apply',
-        result: 'error',
-        changes: [],
-        message: `Matched MOU ${matchedId} not found in state`,
-      })
-      continue
-    }
-    const mouChanges = updateMouFields(mou, cls.refreshRow, cls.mouDiffs, decision.conflictResolution, input.refreshTag, input.appliedBy)
-    const instChanges = applyInstallmentChanges(state, mou.id, cls.refreshRow, input.refreshTag, input.appliedBy, false)
-    outcomes.push({
-      rowNum: cls.refreshRow.rowNum,
-      schoolName: cls.refreshRow.schoolName,
-      classification: cls.classification,
-      decision: 'apply',
-      result: mouChanges.length + instChanges.length > 0 ? 'updated' : 'unchanged',
-      changes: [...mouChanges, ...instChanges],
-    })
   }
 
   const summary = {
