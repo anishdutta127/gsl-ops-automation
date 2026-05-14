@@ -434,7 +434,7 @@ export function parsePranavRefresh(
     lastSchoolName = schoolName
   }
 
-  for (const [slug, rowNums] of seenBySchool) {
+  for (const [slug, rowNums] of Array.from(seenBySchool.entries())) {
     if (rowNums.length > 1) {
       const name = result.rows.find((row) => row.schoolSlug === slug)?.schoolName ?? slug
       result.summary.multiProductSchools.push({ name, rowNums })
