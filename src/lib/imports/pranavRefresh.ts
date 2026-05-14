@@ -13,7 +13,7 @@
  * The thin CLI in scripts/import-pranav-refresh.mjs handles file IO.
  */
 
-import xlsx from 'xlsx'
+import * as xlsx from 'xlsx'
 import {
   parseDuration,
   parseNumber,

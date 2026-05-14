@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import xlsx from 'xlsx'
+import * as xlsx from 'xlsx'
 import { parsePranavRefresh } from './pranavRefresh'
 
 /*

@@ -35,29 +35,33 @@ describe('/admin/mou-status', () => {
     expect(html).toContain('data-testid="cohort-filter-archived"')
   })
 
-  it('default view shows all 143 fixture MOUs in the table', async () => {
+  it('default view shows every fixture MOU in the table', async () => {
     getCurrentUserMock.mockResolvedValue(admin())
     const { default: Page } = await import('./page')
     const html = renderToStaticMarkup(await Page({ searchParams: Promise.resolve({}) }))
-    // 143 rows with data-testid="mou-status-row-..." across active + archived.
     const rowMatches = html.match(/data-testid="mou-status-row-/g) ?? []
-    expect(rowMatches.length).toBe(143)
+    const mousJson = (await import('@/data/mous.json')).default as Array<{ id: string }>
+    expect(rowMatches.length).toBe(mousJson.length)
   })
 
-  it('?cohort=active filters to the 51-MOU active cohort', async () => {
+  it('?cohort=active filters to the active cohort', async () => {
     getCurrentUserMock.mockResolvedValue(admin())
     const { default: Page } = await import('./page')
     const html = renderToStaticMarkup(await Page({ searchParams: Promise.resolve({ cohort: 'active' }) }))
     const rowMatches = html.match(/data-testid="mou-status-row-/g) ?? []
-    expect(rowMatches.length).toBe(51)
+    const mousJson = (await import('@/data/mous.json')).default as Array<{ cohortStatus: string }>
+    const expected = mousJson.filter((m) => m.cohortStatus === 'active').length
+    expect(rowMatches.length).toBe(expected)
   })
 
-  it('?cohort=archived filters to the 92-MOU archived cohort', async () => {
+  it('?cohort=archived filters to the archived cohort', async () => {
     getCurrentUserMock.mockResolvedValue(admin())
     const { default: Page } = await import('./page')
     const html = renderToStaticMarkup(await Page({ searchParams: Promise.resolve({ cohort: 'archived' }) }))
     const rowMatches = html.match(/data-testid="mou-status-row-/g) ?? []
-    expect(rowMatches.length).toBe(92)
+    const mousJson = (await import('@/data/mous.json')).default as Array<{ cohortStatus: string }>
+    const expected = mousJson.filter((m) => m.cohortStatus === 'archived').length
+    expect(rowMatches.length).toBe(expected)
   })
 
   it('every row has a checkbox + a flip button', async () => {
@@ -66,8 +70,10 @@ describe('/admin/mou-status', () => {
     const html = renderToStaticMarkup(await Page({ searchParams: Promise.resolve({ cohort: 'active' }) }))
     const checkboxes = html.match(/data-testid="bulk-select-/g) ?? []
     const flipButtons = html.match(/data-testid="flip-/g) ?? []
-    expect(checkboxes.length).toBe(51)
-    expect(flipButtons.length).toBe(51)
+    const mousJson = (await import('@/data/mous.json')).default as Array<{ cohortStatus: string }>
+    const expected = mousJson.filter((m) => m.cohortStatus === 'active').length
+    expect(checkboxes.length).toBe(expected)
+    expect(flipButtons.length).toBe(expected)
   })
 
   it('bulk-action bar exposes "Mark selected active" + "Mark selected archived" buttons', async () => {
