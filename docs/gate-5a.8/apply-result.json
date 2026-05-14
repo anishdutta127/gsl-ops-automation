@@ -1,0 +1,584 @@
+{
+  "refreshTag": "pranav-refresh-2026-05-13",
+  "appliedAt": "2026-05-14T03:33:15.946Z",
+  "appliedBy": "usr-anish",
+  "commit": true,
+  "summary": {
+    "created": 0,
+    "updated": 0,
+    "unchanged": 81,
+    "skipped": 0,
+    "keptCurrent": 0,
+    "keptBoth": 0,
+    "errored": 0
+  },
+  "outcomes": [
+    {
+      "rowNum": 7,
+      "schoolName": "Mutahhary Public School Baroo",
+      "classification": "CONFLICT",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 8,
+      "schoolName": "Jnana Bharathi English School",
+      "classification": "UPDATE",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 9,
+      "schoolName": "Vijaya English Primary School",
+      "classification": "UNCHANGED",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 10,
+      "schoolName": "Frank Public School",
+      "classification": "UNCHANGED",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 11,
+      "schoolName": "Christ King Public School",
+      "classification": "UNCHANGED",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 12,
+      "schoolName": "Agragami Vidya Kendar",
+      "classification": "UNCHANGED",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 13,
+      "schoolName": "Sri Ramavidyalay",
+      "classification": "UNCHANGED",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 14,
+      "schoolName": "RT Nagar Public School",
+      "classification": "UNCHANGED",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 15,
+      "schoolName": "Shrishail Vidya Sansthe",
+      "classification": "UNCHANGED",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 16,
+      "schoolName": "Mahrishi Dayanand School",
+      "classification": "UPDATE",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 17,
+      "schoolName": "Techno India Group Public School Kalyani",
+      "classification": "UPDATE",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 18,
+      "schoolName": "Techno India Group Public School Asansol",
+      "classification": "UPDATE",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 19,
+      "schoolName": "Techno India Group Public School Panagarh",
+      "classification": "UPDATE",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 20,
+      "schoolName": "St. Mary Convent School",
+      "classification": "UPDATE",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 21,
+      "schoolName": "Loreto Day School BB",
+      "classification": "CONFLICT",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 22,
+      "schoolName": "Kavyapta Global School",
+      "classification": "CONFLICT",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 23,
+      "schoolName": "Embee Rosebud Hr. Sec. School",
+      "classification": "UPDATE",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 24,
+      "schoolName": "The Learning Sanctuary",
+      "classification": "UPDATE",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 25,
+      "schoolName": "Rootland Sec. School",
+      "classification": "UPDATE",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 26,
+      "schoolName": "K.E Carmel School - Amtala",
+      "classification": "UPDATE",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 27,
+      "schoolName": "K.E Carmel School - Suri",
+      "classification": "UPDATE",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 28,
+      "schoolName": "Blue Angels Global School",
+      "classification": "CONFLICT",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 29,
+      "schoolName": "Tathastu Innovations (LAB ) Meerut",
+      "classification": "UNCHANGED",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 30,
+      "schoolName": "Holy Child English Academy, Malda",
+      "classification": "CONFLICT",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 31,
+      "schoolName": "SD Senior Secondary School",
+      "classification": "UPDATE",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 32,
+      "schoolName": "Christ Mission School",
+      "classification": "CONFLICT",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 33,
+      "schoolName": "Delhi World Public School, Barasat",
+      "classification": "UPDATE",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 34,
+      "schoolName": "Meridian Matriculation School",
+      "classification": "UNCHANGED",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 35,
+      "schoolName": "Musthafa Matric Higher Secondary School",
+      "classification": "UNCHANGED",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 36,
+      "schoolName": "Sagaya Matha Matrics Higher Secondary School",
+      "classification": "UNCHANGED",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 37,
+      "schoolName": "Takshilah Global School",
+      "classification": "UNCHANGED",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 38,
+      "schoolName": "PGS CBSE School",
+      "classification": "UNCHANGED",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 39,
+      "schoolName": "Nabi Crescent School",
+      "classification": "UNCHANGED",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 40,
+      "schoolName": "Petit Seminaire CBSE School",
+      "classification": "UNCHANGED",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 41,
+      "schoolName": "Jaffaria Academy of Modern Education - Kargil",
+      "classification": "CONFLICT",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 42,
+      "schoolName": "Sri Vidhya Niketan Matriculation School",
+      "classification": "UNCHANGED",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 43,
+      "schoolName": "B.D Memorial Jr. School",
+      "classification": "UPDATE",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 44,
+      "schoolName": "TJS Public School (CBSE)",
+      "classification": "UNCHANGED",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 45,
+      "schoolName": "Abhyasa Public School",
+      "classification": "UNCHANGED",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 46,
+      "schoolName": "Loreto Convent Entally",
+      "classification": "UNCHANGED",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 47,
+      "schoolName": "GNIMS Business School",
+      "classification": "UNCHANGED",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 48,
+      "schoolName": "Guru Nanak Institute of Management Studies",
+      "classification": "UNCHANGED",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 49,
+      "schoolName": "B.K. Birla Public School - Kalyan",
+      "classification": "UNCHANGED",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 50,
+      "schoolName": "Empyrean School",
+      "classification": "UNCHANGED",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 51,
+      "schoolName": "Empyrean School",
+      "classification": "UNCHANGED",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 52,
+      "schoolName": "St. Johns High School - RKP",
+      "classification": "UNCHANGED",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 53,
+      "schoolName": "Cardinal Warriors School",
+      "classification": "UNCHANGED",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 54,
+      "schoolName": "Radcliffe Education Private Limited",
+      "classification": "UNCHANGED",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 55,
+      "schoolName": "Lions Calcutta Greater Vidya Mandir",
+      "classification": "CONFLICT",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 56,
+      "schoolName": "B I T Global School",
+      "classification": "CONFLICT",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 57,
+      "schoolName": "Don Bonsco Krishnanagar",
+      "classification": "UNCHANGED",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 58,
+      "schoolName": "Doon Scholars School",
+      "classification": "UNCHANGED",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 59,
+      "schoolName": "Loreto House School Kolkata",
+      "classification": "UNCHANGED",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 60,
+      "schoolName": "Carmel Convent High School, Durgapur",
+      "classification": "CONFLICT",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 61,
+      "schoolName": "Carmel School, Durgapur",
+      "classification": "CONFLICT",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 62,
+      "schoolName": "St. Montfort's Sr. Secondary School, Baruipur",
+      "classification": "CONFLICT",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 63,
+      "schoolName": "Laxmipat Singhania Academy",
+      "classification": "UPDATE",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 64,
+      "schoolName": "Julien Educational Trust, Eglin Road",
+      "classification": "UPDATE",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 65,
+      "schoolName": "Julien Educational Trust, Kalyani",
+      "classification": "UPDATE",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 66,
+      "schoolName": "Julien Educational Trust, Ganganagar",
+      "classification": "UPDATE",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 67,
+      "schoolName": "Julien Educational Trust, Howrah",
+      "classification": "UPDATE",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 68,
+      "schoolName": "Contai Public School",
+      "classification": "UNCHANGED",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 69,
+      "schoolName": "Contai Public School",
+      "classification": "UNCHANGED",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 70,
+      "schoolName": "Swarnim International School",
+      "classification": "CONFLICT",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 71,
+      "schoolName": "Swarnim International School",
+      "classification": "UNCHANGED",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 72,
+      "schoolName": "Wisdom International School",
+      "classification": "UNCHANGED",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 73,
+      "schoolName": "St. Paul’s Mission School",
+      "classification": "CONFLICT",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 74,
+      "schoolName": "St. Paul's Boarding And Day School",
+      "classification": "CONFLICT",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 75,
+      "schoolName": "Berhampore City Public School",
+      "classification": "UPDATE",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 76,
+      "schoolName": "Shaw Public School",
+      "classification": "UPDATE",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 77,
+      "schoolName": "Sri R. N. Singh Memorial High School",
+      "classification": "CONFLICT",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 78,
+      "schoolName": "Sumana Dutta Memorial Vivekananda International School",
+      "classification": "UPDATE",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 79,
+      "schoolName": "Hariyana International Academy - Class 2 - 7",
+      "classification": "UPDATE",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 80,
+      "schoolName": "The Scottish Church Collegiate School",
+      "classification": "UPDATE",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 81,
+      "schoolName": "St. Johns High School",
+      "classification": "CONFLICT",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 82,
+      "schoolName": "Rishi Aurobindo Memorial Academy",
+      "classification": "UPDATE",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 83,
+      "schoolName": "Darshan Academy, Devlali",
+      "classification": "CONFLICT",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 84,
+      "schoolName": "Young Horizons School",
+      "classification": "UPDATE",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 85,
+      "schoolName": "Ramanarayana Education Trust",
+      "classification": "UPDATE",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 86,
+      "schoolName": "GMR International School",
+      "classification": "UNCHANGED",
+      "result": "unchanged",
+      "changes": []
+    },
+    {
+      "rowNum": 87,
+      "schoolName": "Discovery Oaks School",
+      "classification": "UNCHANGED",
+      "result": "unchanged",
+      "changes": []
+    }
+  ]
+}

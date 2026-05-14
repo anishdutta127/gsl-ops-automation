@@ -5070,7 +5070,7 @@
     "startDate": "2026-04-01",
     "endDate": "2028-03-31",
     "studentsMou": 500,
-    "studentsActual": 400,
+    "studentsActual": 0,
     "studentsVariance": -100,
     "studentsVariancePct": -0.2,
     "spWithoutTax": 677.966101694915,
@@ -5138,6 +5138,18 @@
           "studentsVariance": -100,
           "studentsVariancePct": -0.2
         }
+      },
+      {
+        "timestamp": "2026-05-14T03:33:15.803Z",
+        "user": "usr-anish",
+        "action": "update",
+        "before": {
+          "studentsActual": 400
+        },
+        "after": {
+          "studentsActual": 0
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
       }
     ],
     "cohortStatus": "active",
@@ -5155,7 +5167,7 @@
     "academicYear": "2026-27",
     "startDate": "2026-04-01",
     "endDate": "2027-03-31",
-    "studentsMou": 0,
+    "studentsMou": 200,
     "studentsActual": null,
     "studentsVariance": null,
     "studentsVariancePct": null,
@@ -5239,6 +5251,18 @@
         "after": {
           "delayNotes": null
         }
+      },
+      {
+        "timestamp": "2026-05-14T03:33:15.805Z",
+        "user": "usr-anish",
+        "action": "update",
+        "before": {
+          "studentsMou": 0
+        },
+        "after": {
+          "studentsMou": 200
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
       }
     ],
     "cohortStatus": "active",
@@ -5607,16 +5631,16 @@
     "academicYear": "2026-27",
     "startDate": "2026-04-01",
     "endDate": "2027-03-31",
-    "studentsMou": 559,
+    "studentsMou": 640,
     "studentsActual": 559,
     "studentsVariance": 0,
     "studentsVariancePct": 0,
     "spWithoutTax": 2100,
     "spWithTax": 2478,
-    "contractValue": 1385202,
+    "contractValue": 1585920,
     "received": 0,
     "tds": 0,
-    "balance": 1385202,
+    "balance": 1585920,
     "receivedPct": 0,
     "paymentSchedule": "50-50 half-yearly",
     "trainerModel": null,
@@ -5657,6 +5681,20 @@
           "mappedSchoolName": "Techno India Group Public School Kalyani"
         },
         "notes": "Techno India Kalyani -> -004 not -008 (Loreto Day BB). Form school: Techno India Group Public School- Kalyani. Moved OUT of this MOU."
+      },
+      {
+        "timestamp": "2026-05-14T03:33:15.807Z",
+        "user": "usr-anish",
+        "action": "update",
+        "before": {
+          "contractValue": 1385202,
+          "studentsMou": 559
+        },
+        "after": {
+          "contractValue": 1585920,
+          "studentsMou": 640
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
       }
     ],
     "cohortStatus": "active",
@@ -5675,15 +5713,15 @@
     "startDate": "2026-04-01",
     "endDate": "2029-03-31",
     "studentsMou": 180,
-    "studentsActual": null,
+    "studentsActual": 180,
     "studentsVariance": null,
     "studentsVariancePct": null,
     "spWithoutTax": 706.220338983051,
     "spWithTax": 833.34,
-    "contractValue": 150001.2,
+    "contractValue": 149999.9994,
     "received": 67500,
-    "tds": 0,
-    "balance": 82501.20000000001,
+    "tds": 7500,
+    "balance": 82499.9994,
     "receivedPct": 45,
     "paymentSchedule": "50-50 half-yearly",
     "trainerModel": "TT",
@@ -5758,6 +5796,22 @@
           "confidence": "high (intake-confirmed)"
         },
         "notes": "Mastersheet backfill landed historical delivery (Cretile row 4)."
+      },
+      {
+        "timestamp": "2026-05-14T03:33:15.807Z",
+        "user": "usr-anish",
+        "action": "update",
+        "before": {
+          "contractValue": 150001.2,
+          "studentsActual": null,
+          "tds": 0
+        },
+        "after": {
+          "contractValue": 149999.9994,
+          "studentsActual": 180,
+          "tds": 7500
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
       }
     ],
     "cohortStatus": "active",
@@ -5962,7 +6016,7 @@
     "academicYear": "2026-27",
     "startDate": "2026-03-01",
     "endDate": "2027-01-31",
-    "studentsMou": 0,
+    "studentsMou": 450,
     "studentsActual": null,
     "studentsVariance": null,
     "studentsVariancePct": null,
@@ -6018,6 +6072,18 @@
           "confidence": "high (intake-confirmed)"
         },
         "notes": "Mastersheet backfill landed historical delivery (Cretile row 5)."
+      },
+      {
+        "timestamp": "2026-05-14T03:33:15.809Z",
+        "user": "usr-anish",
+        "action": "update",
+        "before": {
+          "studentsMou": 0
+        },
+        "after": {
+          "studentsMou": 450
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
       }
     ],
     "cohortStatus": "active",
@@ -6042,10 +6108,10 @@
     "spWithoutTax": 500,
     "spWithTax": 590,
     "contractValue": 293230,
-    "received": 0,
+    "received": 50000,
     "tds": 0,
-    "balance": 293230,
-    "receivedPct": 0,
+    "balance": 243230,
+    "receivedPct": 17,
     "paymentSchedule": "50-50 half-yearly",
     "trainerModel": "TT",
     "salesPersonId": "sp-sabyasachi",
@@ -6091,6 +6157,18 @@
           "confidence": "high (intake-confirmed)"
         },
         "notes": "Mastersheet backfill landed historical delivery (Cretile row 10)."
+      },
+      {
+        "timestamp": "2026-05-14T03:33:15.809Z",
+        "user": "usr-anish",
+        "action": "update",
+        "before": {
+          "received": 0
+        },
+        "after": {
+          "received": 50000
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
       }
     ],
     "cohortStatus": "active",
@@ -6109,16 +6187,16 @@
     "startDate": "2026-04-01",
     "endDate": "2028-03-31",
     "studentsMou": 800,
-    "studentsActual": null,
+    "studentsActual": 800,
     "studentsVariance": null,
     "studentsVariancePct": null,
     "spWithoutTax": 762.71186440678,
     "spWithTax": 900,
     "contractValue": 720000,
-    "received": 72000,
+    "received": 208000,
     "tds": 0,
-    "balance": 648000,
-    "receivedPct": 10,
+    "balance": 512000,
+    "receivedPct": 29,
     "paymentSchedule": "50-50 half-yearly",
     "trainerModel": "TT",
     "salesPersonId": "sp-roveena",
@@ -6164,6 +6242,20 @@
           "confidence": "high (intake-confirmed)"
         },
         "notes": "Mastersheet backfill landed historical delivery (Cretile row 9)."
+      },
+      {
+        "timestamp": "2026-05-14T03:33:15.810Z",
+        "user": "usr-anish",
+        "action": "update",
+        "before": {
+          "studentsActual": null,
+          "received": 72000
+        },
+        "after": {
+          "studentsActual": 800,
+          "received": 208000
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
       }
     ],
     "cohortStatus": "active",
@@ -6180,7 +6272,7 @@
     "status": "Active",
     "academicYear": "2026-27",
     "startDate": "2026-04-01",
-    "endDate": "2027-03-31",
+    "endDate": "2029-03-31",
     "studentsMou": 523,
     "studentsActual": 523,
     "studentsVariance": 0,
@@ -6191,9 +6283,9 @@
     "received": 50000,
     "tds": 0,
     "balance": 1309800,
-    "receivedPct": 3.7,
+    "receivedPct": 4,
     "paymentSchedule": "50-50 half-yearly",
-    "trainerModel": "TT",
+    "trainerModel": "GSL-T",
     "salesPersonId": "sp-hirak",
     "templateVersion": null,
     "generatedAt": null,
@@ -6217,6 +6309,20 @@
           "cohortStatus": "active"
         },
         "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
+      },
+      {
+        "timestamp": "2026-05-14T03:33:15.810Z",
+        "user": "usr-anish",
+        "action": "update",
+        "before": {
+          "trainerModel": "TT",
+          "endDate": "2027-03-31"
+        },
+        "after": {
+          "trainerModel": "GSL-T",
+          "endDate": "2029-03-31"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
       }
     ],
     "cohortStatus": "active",
@@ -6233,9 +6339,9 @@
     "status": "Active",
     "academicYear": "2026-27",
     "startDate": "2026-04-01",
-    "endDate": "2027-03-31",
+    "endDate": "2028-03-31",
     "studentsMou": 152,
-    "studentsActual": null,
+    "studentsActual": 152,
     "studentsVariance": null,
     "studentsVariancePct": null,
     "spWithoutTax": 1016.94915254237,
@@ -6304,6 +6410,20 @@
           "mappedSchoolName": "Christ Mission School"
         },
         "notes": "Christ Mission -> -019 not -025 (Lions Calcutta). Form school: Christ Mission School. Moved IN to this MOU."
+      },
+      {
+        "timestamp": "2026-05-14T03:33:15.811Z",
+        "user": "usr-anish",
+        "action": "update",
+        "before": {
+          "studentsActual": null,
+          "endDate": "2027-03-31"
+        },
+        "after": {
+          "studentsActual": 152,
+          "endDate": "2028-03-31"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
       }
     ],
     "cohortStatus": "active",
@@ -6322,16 +6442,16 @@
     "startDate": "2026-04-01",
     "endDate": "2029-03-31",
     "studentsMou": 187,
-    "studentsActual": null,
+    "studentsActual": 187,
     "studentsVariance": null,
     "studentsVariancePct": null,
     "spWithoutTax": 900,
     "spWithTax": 1062,
     "contractValue": 198594,
-    "received": 0,
-    "tds": 0,
-    "balance": 198594,
-    "receivedPct": 0,
+    "received": 45440,
+    "tds": 4209,
+    "balance": 153154,
+    "receivedPct": 23,
     "paymentSchedule": "50-50 half-yearly",
     "trainerModel": "GSL-T",
     "salesPersonId": "sp-prodipto",
@@ -6385,6 +6505,22 @@
           "confidence": "medium"
         },
         "notes": "Mastersheet backfill landed historical delivery (Cretile row 8)."
+      },
+      {
+        "timestamp": "2026-05-14T03:33:15.811Z",
+        "user": "usr-anish",
+        "action": "update",
+        "before": {
+          "studentsActual": null,
+          "received": 0,
+          "tds": 0
+        },
+        "after": {
+          "studentsActual": 187,
+          "received": 45440,
+          "tds": 4209
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
       }
     ],
     "cohortStatus": "active",
@@ -6408,11 +6544,11 @@
     "studentsVariancePct": 0.0814,
     "spWithoutTax": 677.966101694915,
     "spWithTax": 800,
-    "contractValue": 605600,
-    "received": 0,
+    "contractValue": 560000,
+    "received": 121120,
     "tds": 0,
-    "balance": 605600,
-    "receivedPct": 0,
+    "balance": 438880,
+    "receivedPct": 22,
     "paymentSchedule": "50-50 half-yearly",
     "trainerModel": "TT",
     "salesPersonId": "sp-roveena",
@@ -6444,6 +6580,20 @@
         "user": "system-w4c-backfill",
         "action": "intake-captured",
         "notes": "W4-C.4 backfill from Google Form row 17 timestamped 2026-04-17T02:46:22.509Z. Casing + missing \" - Kargil\" suffix."
+      },
+      {
+        "timestamp": "2026-05-14T03:33:15.812Z",
+        "user": "usr-anish",
+        "action": "update",
+        "before": {
+          "contractValue": 605600,
+          "received": 0
+        },
+        "after": {
+          "contractValue": 560000,
+          "received": 121120
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
       }
     ],
     "cohortStatus": "active",
@@ -6462,16 +6612,16 @@
     "startDate": "2026-04-01",
     "endDate": "2028-03-31",
     "studentsMou": 280,
-    "studentsActual": null,
+    "studentsActual": 280,
     "studentsVariance": null,
     "studentsVariancePct": null,
     "spWithoutTax": 500,
     "spWithTax": 590,
     "contractValue": 165200,
     "received": 162400,
-    "tds": 0,
+    "tds": 2800,
     "balance": 2800,
-    "receivedPct": 98.3,
+    "receivedPct": 98,
     "paymentSchedule": "50-50 half-yearly",
     "trainerModel": "TT",
     "salesPersonId": "sp-prodipto",
@@ -6511,6 +6661,20 @@
           "mappedSchoolName": "Young Horizons School"
         },
         "notes": "Young Horizons School -> -050 not -022 (B.D Memorial Jr.). Form school: Young Horizons School. Moved OUT of this MOU."
+      },
+      {
+        "timestamp": "2026-05-14T03:33:15.812Z",
+        "user": "usr-anish",
+        "action": "update",
+        "before": {
+          "studentsActual": null,
+          "tds": 0
+        },
+        "after": {
+          "studentsActual": 280,
+          "tds": 2800
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
       }
     ],
     "cohortStatus": "active",
@@ -6663,7 +6827,7 @@
     "startDate": "2026-04-01",
     "endDate": "2027-03-31",
     "studentsMou": 800,
-    "studentsActual": null,
+    "studentsActual": 873,
     "studentsVariance": null,
     "studentsVariancePct": null,
     "spWithoutTax": 1016.94915254237,
@@ -6732,10 +6896,24 @@
           "mappedSchoolName": "Christ Mission School"
         },
         "notes": "Christ Mission -> -019 not -025 (Lions Calcutta). Form school: Christ Mission School. Moved OUT of this MOU."
+      },
+      {
+        "timestamp": "2026-05-14T03:33:15.814Z",
+        "user": "usr-anish",
+        "action": "update",
+        "before": {
+          "studentsActual": null
+        },
+        "after": {
+          "studentsActual": 873,
+          "city": "Kolkata"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
       }
     ],
     "cohortStatus": "active",
-    "delayNotes": null
+    "delayNotes": null,
+    "city": "Kolkata"
   },
   {
     "id": "MOU-STEAM-2627-026",
@@ -6749,16 +6927,16 @@
     "academicYear": "2026-27",
     "startDate": "2026-04-01",
     "endDate": "2028-03-31",
-    "studentsMou": 700,
-    "studentsActual": 700,
+    "studentsMou": 658,
+    "studentsActual": 658,
     "studentsVariance": 0,
     "studentsVariancePct": 0,
     "spWithoutTax": 1200,
     "spWithTax": 1416,
-    "contractValue": 991200,
+    "contractValue": 931728,
     "received": 0,
     "tds": 0,
-    "balance": 991200,
+    "balance": 931728,
     "receivedPct": 0,
     "paymentSchedule": "50-50 half-yearly",
     "trainerModel": "TT",
@@ -6821,6 +6999,22 @@
           "studentsVariancePct": 0
         },
         "notes": "NA"
+      },
+      {
+        "timestamp": "2026-05-14T03:33:15.814Z",
+        "user": "usr-anish",
+        "action": "update",
+        "before": {
+          "contractValue": 991200,
+          "studentsMou": 700,
+          "studentsActual": 700
+        },
+        "after": {
+          "contractValue": 931728,
+          "studentsMou": 658,
+          "studentsActual": 658
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
       }
     ],
     "cohortStatus": "active",
@@ -6965,15 +7159,15 @@
     "startDate": "2026-04-01",
     "endDate": "2027-03-31",
     "studentsMou": 1000,
-    "studentsActual": 1000,
+    "studentsActual": 1048,
     "studentsVariance": 0,
     "studentsVariancePct": 0,
     "spWithoutTax": 1770,
     "spWithTax": 2088.6,
-    "contractValue": 2088600,
+    "contractValue": 2089000,
     "received": 0,
     "tds": 0,
-    "balance": 2088600,
+    "balance": 2089000,
     "receivedPct": 0,
     "paymentSchedule": "50-50 half-yearly",
     "trainerModel": null,
@@ -7000,6 +7194,20 @@
           "cohortStatus": "active"
         },
         "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
+      },
+      {
+        "timestamp": "2026-05-14T03:33:15.815Z",
+        "user": "usr-anish",
+        "action": "update",
+        "before": {
+          "contractValue": 2088600,
+          "studentsActual": 1000
+        },
+        "after": {
+          "contractValue": 2089000,
+          "studentsActual": 1048
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
       }
     ],
     "cohortStatus": "active",
@@ -7018,15 +7226,15 @@
     "startDate": "2026-04-01",
     "endDate": "2027-03-31",
     "studentsMou": 900,
-    "studentsActual": 900,
+    "studentsActual": 940,
     "studentsVariance": 0,
     "studentsVariancePct": 0,
-    "spWithoutTax": 1770,
-    "spWithTax": 2088.6,
-    "contractValue": 1879740,
+    "spWithoutTax": 1500,
+    "spWithTax": 1770,
+    "contractValue": 1593000,
     "received": 0,
     "tds": 0,
-    "balance": 1879740,
+    "balance": 1593000,
     "receivedPct": 0,
     "paymentSchedule": "50-50 half-yearly",
     "trainerModel": null,
@@ -7053,6 +7261,24 @@
           "cohortStatus": "active"
         },
         "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
+      },
+      {
+        "timestamp": "2026-05-14T03:33:15.815Z",
+        "user": "usr-anish",
+        "action": "update",
+        "before": {
+          "contractValue": 1879740,
+          "studentsActual": 900,
+          "spWithoutTax": 1770,
+          "spWithTax": 2088.6
+        },
+        "after": {
+          "contractValue": 1593000,
+          "studentsActual": 940,
+          "spWithoutTax": 1500,
+          "spWithTax": 1770
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
       }
     ],
     "cohortStatus": "active",
@@ -7071,15 +7297,15 @@
     "startDate": "2026-04-01",
     "endDate": "2027-03-31",
     "studentsMou": 500,
-    "studentsActual": 500,
+    "studentsActual": 514,
     "studentsVariance": 0,
     "studentsVariancePct": 0,
-    "spWithoutTax": 1000,
-    "spWithTax": 1180,
-    "contractValue": 590000,
+    "spWithoutTax": 1118.6440677966102,
+    "spWithTax": 1320,
+    "contractValue": 660000,
     "received": 0,
     "tds": 0,
-    "balance": 590000,
+    "balance": 660000,
     "receivedPct": 0,
     "paymentSchedule": "50-50 half-yearly",
     "trainerModel": null,
@@ -7106,6 +7332,24 @@
           "cohortStatus": "active"
         },
         "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
+      },
+      {
+        "timestamp": "2026-05-14T03:33:15.815Z",
+        "user": "usr-anish",
+        "action": "update",
+        "before": {
+          "contractValue": 590000,
+          "studentsActual": 500,
+          "spWithoutTax": 1000,
+          "spWithTax": 1180
+        },
+        "after": {
+          "contractValue": 660000,
+          "studentsActual": 514,
+          "spWithoutTax": 1118.6440677966102,
+          "spWithTax": 1320
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
       }
     ],
     "cohortStatus": "active",
@@ -7124,7 +7368,7 @@
     "startDate": "2026-04-01",
     "endDate": "2027-03-31",
     "studentsMou": 420,
-    "studentsActual": null,
+    "studentsActual": 420,
     "studentsVariance": null,
     "studentsVariancePct": null,
     "spWithoutTax": 2000,
@@ -7133,7 +7377,7 @@
     "received": 352116,
     "tds": 0,
     "balance": 639084,
-    "receivedPct": 35.5,
+    "receivedPct": 36,
     "paymentSchedule": "50-50 half-yearly",
     "trainerModel": null,
     "salesPersonId": "sp-prodipto",
@@ -7159,6 +7403,18 @@
           "cohortStatus": "active"
         },
         "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
+      },
+      {
+        "timestamp": "2026-05-14T03:33:15.815Z",
+        "user": "usr-anish",
+        "action": "update",
+        "before": {
+          "studentsActual": null
+        },
+        "after": {
+          "studentsActual": 420
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
       }
     ],
     "cohortStatus": "active",
@@ -7389,16 +7645,16 @@
     "startDate": "2026-04-01",
     "endDate": "2027-03-31",
     "studentsMou": 250,
-    "studentsActual": 250,
+    "studentsActual": 243,
     "studentsVariance": 0,
     "studentsVariancePct": 0,
     "spWithoutTax": 1800,
     "spWithTax": 2124,
     "contractValue": 531000,
-    "received": 0,
-    "tds": 0,
-    "balance": 531000,
-    "receivedPct": 0,
+    "received": 50738,
+    "tds": 874.8,
+    "balance": 480262,
+    "receivedPct": 10,
     "paymentSchedule": "50-50 half-yearly",
     "trainerModel": null,
     "salesPersonId": "sp-prodipto",
@@ -7444,10 +7700,28 @@
           "mappedSchoolName": "Swarnim International School"
         },
         "notes": "Swarnim International -> -037 not -023 (GNIMS Business). Form school: Swarnim International School. Moved IN to this MOU."
+      },
+      {
+        "timestamp": "2026-05-14T03:33:15.815Z",
+        "user": "usr-anish",
+        "action": "update",
+        "before": {
+          "studentsActual": 250,
+          "received": 0,
+          "tds": 0
+        },
+        "after": {
+          "studentsActual": 243,
+          "received": 50738,
+          "tds": 874.8,
+          "city": "Sonarpur"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
       }
     ],
     "cohortStatus": "active",
-    "delayNotes": null
+    "delayNotes": null,
+    "city": "Sonarpur"
   },
   {
     "id": "MOU-STEAM-2627-038",
@@ -7462,15 +7736,15 @@
     "startDate": "2026-04-01",
     "endDate": "2027-03-31",
     "studentsMou": 400,
-    "studentsActual": 400,
+    "studentsActual": 450,
     "studentsVariance": 0,
     "studentsVariancePct": 0,
     "spWithoutTax": 1695,
     "spWithTax": 2000.1,
-    "contractValue": 800040,
+    "contractValue": 800000,
     "received": 0,
     "tds": 0,
-    "balance": 800040,
+    "balance": 800000,
     "receivedPct": 0,
     "paymentSchedule": "50-50 half-yearly",
     "trainerModel": null,
@@ -7497,6 +7771,20 @@
           "cohortStatus": "active"
         },
         "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
+      },
+      {
+        "timestamp": "2026-05-14T03:33:15.816Z",
+        "user": "usr-anish",
+        "action": "update",
+        "before": {
+          "contractValue": 800040,
+          "studentsActual": 400
+        },
+        "after": {
+          "contractValue": 800000,
+          "studentsActual": 450
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
       }
     ],
     "cohortStatus": "active",
@@ -7513,20 +7801,20 @@
     "status": "Active",
     "academicYear": "2026-27",
     "startDate": "2026-04-01",
-    "endDate": "2027-03-31",
+    "endDate": "2028-03-31",
     "studentsMou": 900,
-    "studentsActual": 860,
+    "studentsActual": 841,
     "studentsVariance": -40,
     "studentsVariancePct": -0.0444,
     "spWithoutTax": 2000,
     "spWithTax": 2360,
-    "contractValue": 2029600,
+    "contractValue": 2124000,
     "received": 0,
     "tds": 0,
-    "balance": 2029600,
+    "balance": 2124000,
     "receivedPct": 0,
     "paymentSchedule": "50-50 half-yearly",
-    "trainerModel": null,
+    "trainerModel": "GSL-T",
     "salesPersonId": "sp-prodipto",
     "templateVersion": null,
     "generatedAt": null,
@@ -7582,6 +7870,24 @@
           "stage": "kit-dispatched"
         },
         "notes": "testinng testing"
+      },
+      {
+        "timestamp": "2026-05-14T03:33:15.816Z",
+        "user": "usr-anish",
+        "action": "update",
+        "before": {
+          "trainerModel": null,
+          "contractValue": 2029600,
+          "studentsActual": 860,
+          "endDate": "2027-03-31"
+        },
+        "after": {
+          "trainerModel": "GSL-T",
+          "contractValue": 2124000,
+          "studentsActual": 841,
+          "endDate": "2028-03-31"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
       }
     ],
     "cohortStatus": "active",
@@ -7759,16 +8065,16 @@
     "startDate": "2026-04-01",
     "endDate": "2027-03-31",
     "studentsMou": 67,
-    "studentsActual": null,
+    "studentsActual": 57,
     "studentsVariance": null,
     "studentsVariancePct": null,
-    "spWithoutTax": 2000,
-    "spWithTax": 2360,
-    "contractValue": 158120,
-    "received": 0,
+    "spWithoutTax": 1440.677966101695,
+    "spWithTax": 1700,
+    "contractValue": 113900,
+    "received": 96900,
     "tds": 0,
-    "balance": 158120,
-    "receivedPct": 0,
+    "balance": 17000,
+    "receivedPct": 85,
     "paymentSchedule": "50-50 half-yearly",
     "trainerModel": null,
     "salesPersonId": "sp-prodipto",
@@ -7794,6 +8100,26 @@
           "cohortStatus": "active"
         },
         "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
+      },
+      {
+        "timestamp": "2026-05-14T03:33:15.816Z",
+        "user": "usr-anish",
+        "action": "update",
+        "before": {
+          "contractValue": 158120,
+          "studentsActual": null,
+          "spWithoutTax": 2000,
+          "spWithTax": 2360,
+          "received": 0
+        },
+        "after": {
+          "contractValue": 113900,
+          "studentsActual": 57,
+          "spWithoutTax": 1440.677966101695,
+          "spWithTax": 1700,
+          "received": 96900
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
       }
     ],
     "cohortStatus": "active",
@@ -7971,7 +8297,7 @@
     "startDate": "2026-04-01",
     "endDate": "2027-03-31",
     "studentsMou": 600,
-    "studentsActual": 600,
+    "studentsActual": 443,
     "studentsVariance": 0,
     "studentsVariancePct": 0,
     "spWithoutTax": 1800,
@@ -8040,6 +8366,18 @@
           "confidence": "high (intake-confirmed)"
         },
         "notes": "Mastersheet backfill landed historical delivery (Cretile row 17)."
+      },
+      {
+        "timestamp": "2026-05-14T03:33:15.817Z",
+        "user": "usr-anish",
+        "action": "update",
+        "before": {
+          "studentsActual": 600
+        },
+        "after": {
+          "studentsActual": 443
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
       }
     ],
     "cohortStatus": "active",
@@ -8122,19 +8460,19 @@
     "academicYear": "2026-27",
     "startDate": "2026-04-01",
     "endDate": "2027-03-31",
-    "studentsMou": 210,
-    "studentsActual": null,
+    "studentsMou": 245,
+    "studentsActual": 234,
     "studentsVariance": null,
     "studentsVariancePct": null,
     "spWithoutTax": 1271.18644067797,
     "spWithTax": 1500,
-    "contractValue": 315000,
+    "contractValue": 367500,
     "received": 0,
     "tds": 0,
-    "balance": 315000,
+    "balance": 367500,
     "receivedPct": 0,
     "paymentSchedule": "50-50 half-yearly",
-    "trainerModel": "TT",
+    "trainerModel": "GSL-T",
     "salesPersonId": "sp-suresh",
     "templateVersion": null,
     "generatedAt": null,
@@ -8164,6 +8502,24 @@
         "user": "system-w4c-backfill",
         "action": "intake-captured",
         "notes": "W4-C.4 backfill from Google Form row 13 timestamped 2026-03-29T06:28:51.953Z. Form name includes \"-Nashik\"; MOU drops it."
+      },
+      {
+        "timestamp": "2026-05-14T03:33:15.817Z",
+        "user": "usr-anish",
+        "action": "update",
+        "before": {
+          "trainerModel": "TT",
+          "contractValue": 315000,
+          "studentsMou": 210,
+          "studentsActual": null
+        },
+        "after": {
+          "trainerModel": "GSL-T",
+          "contractValue": 367500,
+          "studentsMou": 245,
+          "studentsActual": 234
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
       }
     ],
     "cohortStatus": "active",
@@ -8182,7 +8538,7 @@
     "startDate": "2026-04-01",
     "endDate": "2027-03-31",
     "studentsMou": 300,
-    "studentsActual": null,
+    "studentsActual": 290,
     "studentsVariance": null,
     "studentsVariancePct": null,
     "spWithoutTax": 1800,
@@ -8251,6 +8607,18 @@
           "confidence": "high (intake-confirmed)"
         },
         "notes": "Mastersheet backfill landed historical delivery (Cretile row 16)."
+      },
+      {
+        "timestamp": "2026-05-14T03:33:15.817Z",
+        "user": "usr-anish",
+        "action": "update",
+        "before": {
+          "studentsActual": null
+        },
+        "after": {
+          "studentsActual": 290
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
       }
     ],
     "cohortStatus": "active",
@@ -8432,5 +8800,1655 @@
     ],
     "cohortStatus": "active",
     "delayNotes": null
+  },
+  {
+    "id": "MOU-STEAM-2627-052",
+    "schoolId": "sch-vijaya-english-primary-school",
+    "schoolName": "Vijaya English Primary School",
+    "programme": "STEAM",
+    "programmeSubType": null,
+    "schoolScope": "SINGLE",
+    "schoolGroupId": null,
+    "status": "Pending Signature",
+    "cohortStatus": "active",
+    "academicYear": "2026-27",
+    "startDate": "2026-04-01",
+    "endDate": "2027-03-31",
+    "studentsMou": 250,
+    "studentsActual": null,
+    "studentsVariance": null,
+    "studentsVariancePct": null,
+    "spWithoutTax": 1271.1864406779662,
+    "spWithTax": 1500,
+    "contractValue": 375000,
+    "received": 0,
+    "tds": 0,
+    "balance": 375000,
+    "receivedPct": 0,
+    "paymentSchedule": "",
+    "trainerModel": "GSL-T",
+    "salesPersonId": "sp-balachandra",
+    "templateVersion": null,
+    "generatedAt": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "delayNotes": null,
+    "daysToExpiry": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.805Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "schoolName": "Vijaya English Primary School",
+          "contractValue": 375000,
+          "studentsMou": 250,
+          "trainerModel": "GSL-T"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ],
+    "effectiveDate": "2026-04-01",
+    "signedMouPdfPath": null,
+    "importNotes": "acquisitionStatus=New; source=pranav-refresh-2026-05-13"
+  },
+  {
+    "id": "MOU-STEAM-2627-053",
+    "schoolId": "SCH-FRANK_PUBLIC_SCHOOL",
+    "schoolName": "Frank Public School",
+    "programme": "STEAM",
+    "programmeSubType": null,
+    "schoolScope": "SINGLE",
+    "schoolGroupId": null,
+    "status": "Pending Signature",
+    "cohortStatus": "active",
+    "academicYear": "2026-27",
+    "startDate": "2026-04-01",
+    "endDate": "2027-03-31",
+    "studentsMou": 180,
+    "studentsActual": null,
+    "studentsVariance": null,
+    "studentsVariancePct": null,
+    "spWithoutTax": 1016.9491525423729,
+    "spWithTax": 1200,
+    "contractValue": 216000,
+    "received": 0,
+    "tds": 0,
+    "balance": 216000,
+    "receivedPct": 0,
+    "paymentSchedule": "",
+    "trainerModel": "GSL-T",
+    "salesPersonId": "sp-balachandra",
+    "templateVersion": null,
+    "generatedAt": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "delayNotes": null,
+    "daysToExpiry": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.806Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "schoolName": "Frank Public School",
+          "contractValue": 216000,
+          "studentsMou": 180,
+          "trainerModel": "GSL-T"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ],
+    "effectiveDate": "2026-04-01",
+    "signedMouPdfPath": null,
+    "importNotes": "acquisitionStatus=Retained; source=pranav-refresh-2026-05-13"
+  },
+  {
+    "id": "MOU-STEAM-2627-054",
+    "schoolId": "sch-christ-king-public-school",
+    "schoolName": "Christ King Public School",
+    "programme": "STEAM",
+    "programmeSubType": null,
+    "schoolScope": "SINGLE",
+    "schoolGroupId": null,
+    "status": "Pending Signature",
+    "cohortStatus": "active",
+    "academicYear": "2026-27",
+    "startDate": "2026-04-01",
+    "endDate": "2027-03-31",
+    "studentsMou": 600,
+    "studentsActual": null,
+    "studentsVariance": null,
+    "studentsVariancePct": null,
+    "spWithoutTax": 847.457627118644,
+    "spWithTax": 1000,
+    "contractValue": 600000,
+    "received": 0,
+    "tds": 0,
+    "balance": 600000,
+    "receivedPct": 0,
+    "paymentSchedule": "",
+    "trainerModel": "TT",
+    "salesPersonId": "sp-balachandra",
+    "templateVersion": null,
+    "generatedAt": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "delayNotes": null,
+    "daysToExpiry": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.806Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "schoolName": "Christ King Public School",
+          "contractValue": 600000,
+          "studentsMou": 600,
+          "trainerModel": "TT"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ],
+    "effectiveDate": "2026-04-01",
+    "signedMouPdfPath": null,
+    "importNotes": "acquisitionStatus=New; source=pranav-refresh-2026-05-13"
+  },
+  {
+    "id": "MOU-STEAM-2627-055",
+    "schoolId": "sch-agragami-vidya-kendar",
+    "schoolName": "Agragami Vidya Kendar",
+    "programme": "STEAM",
+    "programmeSubType": null,
+    "schoolScope": "SINGLE",
+    "schoolGroupId": null,
+    "status": "Pending Signature",
+    "cohortStatus": "active",
+    "academicYear": "2026-27",
+    "startDate": "2026-04-01",
+    "endDate": "2027-03-31",
+    "studentsMou": 800,
+    "studentsActual": null,
+    "studentsVariance": null,
+    "studentsVariancePct": null,
+    "spWithoutTax": 847.457627118644,
+    "spWithTax": 1000,
+    "contractValue": 800000,
+    "received": 0,
+    "tds": 0,
+    "balance": 800000,
+    "receivedPct": 0,
+    "paymentSchedule": "",
+    "trainerModel": "TT",
+    "salesPersonId": "sp-balachandra",
+    "templateVersion": null,
+    "generatedAt": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "delayNotes": null,
+    "daysToExpiry": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.806Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "schoolName": "Agragami Vidya Kendar",
+          "contractValue": 800000,
+          "studentsMou": 800,
+          "trainerModel": "TT"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ],
+    "effectiveDate": "2026-04-01",
+    "signedMouPdfPath": null,
+    "importNotes": "acquisitionStatus=New; source=pranav-refresh-2026-05-13"
+  },
+  {
+    "id": "MOU-STEAM-2627-056",
+    "schoolId": "sch-sri-ramavidyalay",
+    "schoolName": "Sri Ramavidyalay",
+    "programme": "STEAM",
+    "programmeSubType": null,
+    "schoolScope": "SINGLE",
+    "schoolGroupId": null,
+    "status": "Pending Signature",
+    "cohortStatus": "active",
+    "academicYear": "2026-27",
+    "startDate": "2026-04-01",
+    "endDate": "2027-03-31",
+    "studentsMou": 800,
+    "studentsActual": null,
+    "studentsVariance": null,
+    "studentsVariancePct": null,
+    "spWithoutTax": 847.457627118644,
+    "spWithTax": 1000,
+    "contractValue": 800000,
+    "received": 0,
+    "tds": 0,
+    "balance": 800000,
+    "receivedPct": 0,
+    "paymentSchedule": "",
+    "trainerModel": "TT",
+    "salesPersonId": "sp-balachandra",
+    "templateVersion": null,
+    "generatedAt": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "delayNotes": null,
+    "daysToExpiry": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.806Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "schoolName": "Sri Ramavidyalay",
+          "contractValue": 800000,
+          "studentsMou": 800,
+          "trainerModel": "TT"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ],
+    "effectiveDate": "2026-04-01",
+    "signedMouPdfPath": null,
+    "importNotes": "acquisitionStatus=New; source=pranav-refresh-2026-05-13"
+  },
+  {
+    "id": "MOU-STEAM-2627-057",
+    "schoolId": "sch-rt-nagar-public-school",
+    "schoolName": "RT Nagar Public School",
+    "programme": "STEAM",
+    "programmeSubType": null,
+    "schoolScope": "SINGLE",
+    "schoolGroupId": null,
+    "status": "Pending Signature",
+    "cohortStatus": "active",
+    "academicYear": "2026-27",
+    "startDate": "2026-04-01",
+    "endDate": "2027-03-31",
+    "studentsMou": 1300,
+    "studentsActual": null,
+    "studentsVariance": null,
+    "studentsVariancePct": null,
+    "spWithoutTax": 847.457627118644,
+    "spWithTax": 1000,
+    "contractValue": 1300000,
+    "received": 0,
+    "tds": 0,
+    "balance": 1300000,
+    "receivedPct": 0,
+    "paymentSchedule": "",
+    "trainerModel": "TT",
+    "salesPersonId": "sp-balachandra",
+    "templateVersion": null,
+    "generatedAt": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "delayNotes": null,
+    "daysToExpiry": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.807Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "schoolName": "RT Nagar Public School",
+          "contractValue": 1300000,
+          "studentsMou": 1300,
+          "trainerModel": "TT"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ],
+    "effectiveDate": "2026-04-01",
+    "signedMouPdfPath": null,
+    "importNotes": "acquisitionStatus=New; source=pranav-refresh-2026-05-13"
+  },
+  {
+    "id": "MOU-STEAM-2627-058",
+    "schoolId": "sch-shrishail-vidya-sansthe",
+    "schoolName": "Shrishail Vidya Sansthe",
+    "programme": "STEAM",
+    "programmeSubType": null,
+    "schoolScope": "SINGLE",
+    "schoolGroupId": null,
+    "status": "Pending Signature",
+    "cohortStatus": "active",
+    "academicYear": "2026-27",
+    "startDate": "2026-04-01",
+    "endDate": "2027-03-31",
+    "studentsMou": 200,
+    "studentsActual": null,
+    "studentsVariance": null,
+    "studentsVariancePct": null,
+    "spWithoutTax": 1271.1864406779662,
+    "spWithTax": 1500,
+    "contractValue": 300000,
+    "received": 0,
+    "tds": 0,
+    "balance": 300000,
+    "receivedPct": 0,
+    "paymentSchedule": "",
+    "trainerModel": "GSL-T",
+    "salesPersonId": "sp-balachandra",
+    "templateVersion": null,
+    "generatedAt": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "delayNotes": null,
+    "daysToExpiry": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.807Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "schoolName": "Shrishail Vidya Sansthe",
+          "contractValue": 300000,
+          "studentsMou": 200,
+          "trainerModel": "GSL-T"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ],
+    "effectiveDate": "2026-04-01",
+    "signedMouPdfPath": null,
+    "importNotes": "acquisitionStatus=New; source=pranav-refresh-2026-05-13"
+  },
+  {
+    "id": "MOU-STEAM-2627-059",
+    "schoolId": "sch-meridian-matriculation-school",
+    "schoolName": "Meridian Matriculation School",
+    "programme": "STEAM",
+    "programmeSubType": null,
+    "schoolScope": "SINGLE",
+    "schoolGroupId": null,
+    "status": "Active",
+    "cohortStatus": "active",
+    "academicYear": "2026-27",
+    "startDate": "2026-06-01",
+    "endDate": "2028-05-31",
+    "studentsMou": 400,
+    "studentsActual": null,
+    "studentsVariance": null,
+    "studentsVariancePct": null,
+    "spWithoutTax": 847.457627118644,
+    "spWithTax": 1000,
+    "contractValue": 400000,
+    "received": 0,
+    "tds": 0,
+    "balance": 400000,
+    "receivedPct": 0,
+    "paymentSchedule": "",
+    "trainerModel": "TT",
+    "salesPersonId": "sp-balu_r",
+    "templateVersion": null,
+    "generatedAt": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "delayNotes": null,
+    "daysToExpiry": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.811Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "schoolName": "Meridian Matriculation School",
+          "contractValue": 400000,
+          "studentsMou": 400,
+          "trainerModel": "TT"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ],
+    "effectiveDate": "2026-06-01",
+    "signedMouPdfPath": "imports/pranav-refresh-2026-05-13/stubs/MOU-STEAM-2627-059.pdf",
+    "importNotes": "acquisitionStatus=New; source=pranav-refresh-2026-05-13"
+  },
+  {
+    "id": "MOU-STEAM-2627-060",
+    "schoolId": "sch-musthafa-matric-higher-secondary-school",
+    "schoolName": "Musthafa Matric Higher Secondary School",
+    "programme": "STEAM",
+    "programmeSubType": null,
+    "schoolScope": "SINGLE",
+    "schoolGroupId": null,
+    "status": "Active",
+    "cohortStatus": "active",
+    "academicYear": "2026-27",
+    "startDate": "2026-06-01",
+    "endDate": "2027-05-31",
+    "studentsMou": 450,
+    "studentsActual": null,
+    "studentsVariance": null,
+    "studentsVariancePct": null,
+    "spWithoutTax": 677.9661016949152,
+    "spWithTax": 800,
+    "contractValue": 360000,
+    "received": 0,
+    "tds": 0,
+    "balance": 360000,
+    "receivedPct": 0,
+    "paymentSchedule": "",
+    "trainerModel": "TT",
+    "salesPersonId": "sp-balu_r",
+    "templateVersion": null,
+    "generatedAt": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "delayNotes": null,
+    "daysToExpiry": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.811Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "schoolName": "Musthafa Matric Higher Secondary School",
+          "contractValue": 360000,
+          "studentsMou": 450,
+          "trainerModel": "TT"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ],
+    "effectiveDate": "2026-06-01",
+    "signedMouPdfPath": "imports/pranav-refresh-2026-05-13/stubs/MOU-STEAM-2627-060.pdf",
+    "importNotes": "acquisitionStatus=Retained; source=pranav-refresh-2026-05-13"
+  },
+  {
+    "id": "MOU-STEAM-2627-061",
+    "schoolId": "sch-sagaya-matha-matrics-higher-secondary-school",
+    "schoolName": "Sagaya Matha Matrics Higher Secondary School",
+    "programme": "STEAM",
+    "programmeSubType": null,
+    "schoolScope": "SINGLE",
+    "schoolGroupId": null,
+    "status": "Active",
+    "cohortStatus": "active",
+    "academicYear": "2026-27",
+    "startDate": "2026-06-01",
+    "endDate": "2027-05-31",
+    "studentsMou": 650,
+    "studentsActual": null,
+    "studentsVariance": null,
+    "studentsVariancePct": null,
+    "spWithoutTax": 762.7118644067797,
+    "spWithTax": 900,
+    "contractValue": 585000,
+    "received": 0,
+    "tds": 0,
+    "balance": 585000,
+    "receivedPct": 0,
+    "paymentSchedule": "",
+    "trainerModel": "TT",
+    "salesPersonId": "sp-balu_r",
+    "templateVersion": null,
+    "generatedAt": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "delayNotes": null,
+    "daysToExpiry": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.811Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "schoolName": "Sagaya Matha Matrics Higher Secondary School",
+          "contractValue": 585000,
+          "studentsMou": 650,
+          "trainerModel": "TT"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ],
+    "effectiveDate": "2026-06-01",
+    "signedMouPdfPath": "imports/pranav-refresh-2026-05-13/stubs/MOU-STEAM-2627-061.pdf",
+    "importNotes": "acquisitionStatus=Retained; source=pranav-refresh-2026-05-13"
+  },
+  {
+    "id": "MOU-STEAM-2627-062",
+    "schoolId": "sch-takshilah-global-school",
+    "schoolName": "Takshilah Global School",
+    "programme": "STEAM",
+    "programmeSubType": null,
+    "schoolScope": "SINGLE",
+    "schoolGroupId": null,
+    "status": "Active",
+    "cohortStatus": "active",
+    "academicYear": "2026-27",
+    "startDate": "2026-06-01",
+    "endDate": "2028-05-31",
+    "studentsMou": 700,
+    "studentsActual": null,
+    "studentsVariance": null,
+    "studentsVariancePct": null,
+    "spWithoutTax": 800,
+    "spWithTax": 944,
+    "contractValue": 660800,
+    "received": 0,
+    "tds": 0,
+    "balance": 660800,
+    "receivedPct": 0,
+    "paymentSchedule": "",
+    "trainerModel": "TT",
+    "salesPersonId": "sp-balu_r",
+    "templateVersion": null,
+    "generatedAt": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "delayNotes": null,
+    "daysToExpiry": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.811Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "schoolName": "Takshilah Global School",
+          "contractValue": 660800,
+          "studentsMou": 700,
+          "trainerModel": "TT"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ],
+    "effectiveDate": "2026-06-01",
+    "signedMouPdfPath": "imports/pranav-refresh-2026-05-13/stubs/MOU-STEAM-2627-062.pdf",
+    "importNotes": "acquisitionStatus=New; source=pranav-refresh-2026-05-13"
+  },
+  {
+    "id": "MOU-STEAM-2627-063",
+    "schoolId": "sch-pgs-cbse-school",
+    "schoolName": "PGS CBSE School",
+    "programme": "STEAM",
+    "programmeSubType": null,
+    "schoolScope": "SINGLE",
+    "schoolGroupId": null,
+    "status": "Active",
+    "cohortStatus": "active",
+    "academicYear": "2026-27",
+    "startDate": "2026-06-01",
+    "endDate": "2027-05-31",
+    "studentsMou": 250,
+    "studentsActual": null,
+    "studentsVariance": null,
+    "studentsVariancePct": null,
+    "spWithoutTax": 1016.9491525423729,
+    "spWithTax": 1200,
+    "contractValue": 300000,
+    "received": 0,
+    "tds": 0,
+    "balance": 300000,
+    "receivedPct": 0,
+    "paymentSchedule": "",
+    "trainerModel": "GSL-T",
+    "salesPersonId": "sp-balu_r",
+    "templateVersion": null,
+    "generatedAt": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "delayNotes": null,
+    "daysToExpiry": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.812Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "schoolName": "PGS CBSE School",
+          "contractValue": 300000,
+          "studentsMou": 250,
+          "trainerModel": "GSL-T"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ],
+    "effectiveDate": "2026-06-01",
+    "signedMouPdfPath": "imports/pranav-refresh-2026-05-13/stubs/MOU-STEAM-2627-063.pdf",
+    "importNotes": "acquisitionStatus=Retained; source=pranav-refresh-2026-05-13"
+  },
+  {
+    "id": "MOU-STEAM-2627-064",
+    "schoolId": "SCH-NABI_CRESCENT_SCHOOL",
+    "schoolName": "Nabi Crescent School",
+    "programme": "STEAM",
+    "programmeSubType": null,
+    "schoolScope": "SINGLE",
+    "schoolGroupId": null,
+    "status": "Active",
+    "cohortStatus": "active",
+    "academicYear": "2026-27",
+    "startDate": "2026-06-01",
+    "endDate": "2027-05-31",
+    "studentsMou": 150,
+    "studentsActual": null,
+    "studentsVariance": null,
+    "studentsVariancePct": null,
+    "spWithoutTax": 1016.9491525423729,
+    "spWithTax": 1200,
+    "contractValue": 180000,
+    "received": 0,
+    "tds": 0,
+    "balance": 180000,
+    "receivedPct": 0,
+    "paymentSchedule": "",
+    "trainerModel": "GSL-T",
+    "salesPersonId": "sp-balu_r",
+    "templateVersion": null,
+    "generatedAt": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "delayNotes": null,
+    "daysToExpiry": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.812Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "schoolName": "Nabi Crescent School",
+          "contractValue": 180000,
+          "studentsMou": 150,
+          "trainerModel": "GSL-T"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ],
+    "effectiveDate": "2026-06-01",
+    "signedMouPdfPath": "imports/pranav-refresh-2026-05-13/stubs/MOU-STEAM-2627-064.pdf",
+    "importNotes": "acquisitionStatus=Retained; source=pranav-refresh-2026-05-13"
+  },
+  {
+    "id": "MOU-STEAM-2627-065",
+    "schoolId": "sch-petit-seminaire-cbse-school",
+    "schoolName": "Petit Seminaire CBSE School",
+    "programme": "STEAM",
+    "programmeSubType": null,
+    "schoolScope": "SINGLE",
+    "schoolGroupId": null,
+    "status": "Pending Signature",
+    "cohortStatus": "active",
+    "academicYear": "2026-27",
+    "startDate": "2026-06-01",
+    "endDate": "2027-05-31",
+    "studentsMou": 2200,
+    "studentsActual": null,
+    "studentsVariance": null,
+    "studentsVariancePct": null,
+    "spWithoutTax": 338.9830508474576,
+    "spWithTax": 400,
+    "contractValue": 880000,
+    "received": 0,
+    "tds": 0,
+    "balance": 880000,
+    "receivedPct": 0,
+    "paymentSchedule": "",
+    "trainerModel": "TT",
+    "salesPersonId": "sp-balu_r",
+    "templateVersion": null,
+    "generatedAt": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "delayNotes": null,
+    "daysToExpiry": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.812Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "schoolName": "Petit Seminaire CBSE School",
+          "contractValue": 880000,
+          "studentsMou": 2200,
+          "trainerModel": "TT"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ],
+    "effectiveDate": "2026-06-01",
+    "signedMouPdfPath": null,
+    "importNotes": "acquisitionStatus=New; source=pranav-refresh-2026-05-13"
+  },
+  {
+    "id": "MOU-STEAM-2627-066",
+    "schoolId": "sch-sri-vidhya-niketan-matriculation-school",
+    "schoolName": "Sri Vidhya Niketan Matriculation School",
+    "programme": "STEAM",
+    "programmeSubType": null,
+    "schoolScope": "SINGLE",
+    "schoolGroupId": null,
+    "status": "Active",
+    "cohortStatus": "active",
+    "academicYear": "2026-27",
+    "startDate": "2026-04-01",
+    "endDate": "2027-05-31",
+    "studentsMou": 250,
+    "studentsActual": null,
+    "studentsVariance": null,
+    "studentsVariancePct": null,
+    "spWithoutTax": 593.2203389830509,
+    "spWithTax": 700,
+    "contractValue": 175000,
+    "received": 0,
+    "tds": 0,
+    "balance": 175000,
+    "receivedPct": 0,
+    "paymentSchedule": "",
+    "trainerModel": "TT",
+    "salesPersonId": "sp-balu_r",
+    "templateVersion": null,
+    "generatedAt": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "delayNotes": null,
+    "daysToExpiry": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.812Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "schoolName": "Sri Vidhya Niketan Matriculation School",
+          "contractValue": 175000,
+          "studentsMou": 250,
+          "trainerModel": "TT"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ],
+    "effectiveDate": "2026-04-01",
+    "signedMouPdfPath": "imports/pranav-refresh-2026-05-13/stubs/MOU-STEAM-2627-066.pdf",
+    "importNotes": "acquisitionStatus=Retained; source=pranav-refresh-2026-05-13"
+  },
+  {
+    "id": "MOU-STEAM-2627-067",
+    "schoolId": "sch-tjs-public-school-cbse",
+    "schoolName": "TJS Public School (CBSE)",
+    "programme": "STEAM",
+    "programmeSubType": null,
+    "schoolScope": "SINGLE",
+    "schoolGroupId": null,
+    "status": "Active",
+    "cohortStatus": "active",
+    "academicYear": "2026-27",
+    "startDate": "2026-06-01",
+    "endDate": "2028-05-31",
+    "studentsMou": 510,
+    "studentsActual": null,
+    "studentsVariance": null,
+    "studentsVariancePct": null,
+    "spWithoutTax": 900,
+    "spWithTax": 1062,
+    "contractValue": 541620,
+    "received": 0,
+    "tds": 0,
+    "balance": 541620,
+    "receivedPct": 0,
+    "paymentSchedule": "",
+    "trainerModel": "GSL-T",
+    "salesPersonId": "sp-balu_r",
+    "templateVersion": null,
+    "generatedAt": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "delayNotes": null,
+    "daysToExpiry": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.812Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "schoolName": "TJS Public School (CBSE)",
+          "contractValue": 541620,
+          "studentsMou": 510,
+          "trainerModel": "GSL-T"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ],
+    "effectiveDate": "2026-06-01",
+    "signedMouPdfPath": null,
+    "importNotes": "acquisitionStatus=New; source=pranav-refresh-2026-05-13"
+  },
+  {
+    "id": "MOU-STEAM-2627-068",
+    "schoolId": "sch-abhyasa-public-school",
+    "schoolName": "Abhyasa Public School",
+    "programme": "STEAM",
+    "programmeSubType": null,
+    "schoolScope": "SINGLE",
+    "schoolGroupId": null,
+    "status": "Active",
+    "cohortStatus": "active",
+    "academicYear": "2026-27",
+    "startDate": "2026-04-01",
+    "endDate": "2027-03-31",
+    "studentsMou": 210,
+    "studentsActual": null,
+    "studentsVariance": null,
+    "studentsVariancePct": null,
+    "spWithoutTax": 762.7118644067797,
+    "spWithTax": 900,
+    "contractValue": 189000,
+    "received": 0,
+    "tds": 0,
+    "balance": 189000,
+    "receivedPct": 0,
+    "paymentSchedule": "",
+    "trainerModel": "GSL-T",
+    "salesPersonId": "sp-suresh",
+    "templateVersion": null,
+    "generatedAt": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "delayNotes": null,
+    "daysToExpiry": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.813Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "schoolName": "Abhyasa Public School",
+          "contractValue": 189000,
+          "studentsMou": 210,
+          "trainerModel": "GSL-T"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ],
+    "effectiveDate": "2026-04-01",
+    "signedMouPdfPath": null,
+    "importNotes": "acquisitionStatus=New; source=pranav-refresh-2026-05-13"
+  },
+  {
+    "id": "MOU-STEAM-2627-069",
+    "schoolId": "sch-loreto-convent-entally",
+    "schoolName": "Loreto Convent Entally",
+    "programme": "STEAM",
+    "programmeSubType": null,
+    "schoolScope": "SINGLE",
+    "schoolGroupId": null,
+    "status": "Active",
+    "cohortStatus": "active",
+    "academicYear": "2026-27",
+    "startDate": "2026-05-08",
+    "endDate": "2028-03-31",
+    "studentsMou": 505,
+    "studentsActual": 505,
+    "studentsVariance": null,
+    "studentsVariancePct": null,
+    "spWithoutTax": 2500,
+    "spWithTax": 2950,
+    "contractValue": 1489750,
+    "received": 0,
+    "tds": 0,
+    "balance": 1489750,
+    "receivedPct": 0,
+    "paymentSchedule": "",
+    "trainerModel": "TT",
+    "salesPersonId": "sp-prodipto",
+    "templateVersion": null,
+    "generatedAt": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "delayNotes": null,
+    "daysToExpiry": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.813Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "schoolName": "Loreto Convent Entally",
+          "contractValue": 1489750,
+          "studentsMou": 505,
+          "trainerModel": "TT"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ],
+    "effectiveDate": "2026-05-08",
+    "signedMouPdfPath": null,
+    "importNotes": "acquisitionStatus=New; source=pranav-refresh-2026-05-13"
+  },
+  {
+    "id": "MOU-STEAM-2627-070",
+    "schoolId": "sch-b-k-birla-public-school-kalyan",
+    "schoolName": "B.K. Birla Public School - Kalyan",
+    "programme": "STEAM",
+    "programmeSubType": null,
+    "schoolScope": "SINGLE",
+    "schoolGroupId": null,
+    "status": "Pending Signature",
+    "cohortStatus": "active",
+    "academicYear": "2026-27",
+    "startDate": "2026-04-01",
+    "endDate": "2027-03-31",
+    "studentsMou": 41,
+    "studentsActual": 41,
+    "studentsVariance": null,
+    "studentsVariancePct": null,
+    "spWithoutTax": 508.47457627118644,
+    "spWithTax": 600,
+    "contractValue": 24600,
+    "received": 24600,
+    "tds": 0,
+    "balance": 0,
+    "receivedPct": 100,
+    "paymentSchedule": "",
+    "trainerModel": "Bootcamp",
+    "salesPersonId": "sp-sumit",
+    "templateVersion": null,
+    "generatedAt": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "delayNotes": null,
+    "daysToExpiry": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.813Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "schoolName": "B.K. Birla Public School - Kalyan",
+          "contractValue": 24600,
+          "studentsMou": 41,
+          "trainerModel": "Bootcamp"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ],
+    "effectiveDate": "2026-04-01",
+    "signedMouPdfPath": null,
+    "importNotes": "acquisitionStatus=New; source=pranav-refresh-2026-05-13"
+  },
+  {
+    "id": "MOU-STEAM-2627-071",
+    "schoolId": "sch-empyrean-school",
+    "schoolName": "Empyrean School",
+    "programme": "STEAM",
+    "programmeSubType": null,
+    "schoolScope": "SINGLE",
+    "schoolGroupId": null,
+    "status": "Pending Signature",
+    "cohortStatus": "active",
+    "academicYear": "2026-27",
+    "startDate": "2026-04-01",
+    "endDate": "2027-03-31",
+    "studentsMou": 9,
+    "studentsActual": 9,
+    "studentsVariance": null,
+    "studentsVariancePct": null,
+    "spWithoutTax": 1016.9491525423729,
+    "spWithTax": 1200,
+    "contractValue": 10800,
+    "received": 10800,
+    "tds": 0,
+    "balance": 0,
+    "receivedPct": 100,
+    "paymentSchedule": "",
+    "trainerModel": "Bootcamp",
+    "salesPersonId": "sp-sumit",
+    "templateVersion": null,
+    "generatedAt": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "delayNotes": null,
+    "daysToExpiry": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.814Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "schoolName": "Empyrean School",
+          "contractValue": 10800,
+          "studentsMou": 9,
+          "trainerModel": "Bootcamp"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ],
+    "effectiveDate": "2026-04-01",
+    "signedMouPdfPath": null,
+    "importNotes": "acquisitionStatus=New; source=pranav-refresh-2026-05-13"
+  },
+  {
+    "id": "MOU-STEAM-2627-072",
+    "schoolId": "sch-empyrean-school",
+    "schoolName": "Empyrean School",
+    "programme": "STEAM",
+    "programmeSubType": null,
+    "schoolScope": "SINGLE",
+    "schoolGroupId": null,
+    "status": "Pending Signature",
+    "cohortStatus": "active",
+    "academicYear": "2026-27",
+    "startDate": "2026-04-01",
+    "endDate": "2027-03-31",
+    "studentsMou": 19,
+    "studentsActual": 19,
+    "studentsVariance": null,
+    "studentsVariancePct": null,
+    "spWithoutTax": 2118.64406779661,
+    "spWithTax": 2500,
+    "contractValue": 47500,
+    "received": 47500,
+    "tds": 0,
+    "balance": 0,
+    "receivedPct": 100,
+    "paymentSchedule": "",
+    "trainerModel": "Bootcamp",
+    "salesPersonId": "sp-sumit",
+    "templateVersion": null,
+    "generatedAt": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "delayNotes": null,
+    "daysToExpiry": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.814Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "schoolName": "Empyrean School",
+          "contractValue": 47500,
+          "studentsMou": 19,
+          "trainerModel": "Bootcamp"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ],
+    "effectiveDate": "2026-04-01",
+    "signedMouPdfPath": null,
+    "importNotes": "acquisitionStatus=New; source=pranav-refresh-2026-05-13"
+  },
+  {
+    "id": "MOU-STEAM-2627-073",
+    "schoolId": "sch-st-johns-high-school-rkp",
+    "schoolName": "St. Johns High School - RKP",
+    "programme": "STEAM",
+    "programmeSubType": null,
+    "schoolScope": "SINGLE",
+    "schoolGroupId": null,
+    "status": "Active",
+    "cohortStatus": "active",
+    "academicYear": "2026-27",
+    "startDate": "2026-04-01",
+    "endDate": "2027-03-31",
+    "studentsMou": 195,
+    "studentsActual": 195,
+    "studentsVariance": null,
+    "studentsVariancePct": null,
+    "spWithoutTax": 2542.3728813559323,
+    "spWithTax": 3000,
+    "contractValue": 585000,
+    "received": 0,
+    "tds": 0,
+    "balance": 585000,
+    "receivedPct": 0,
+    "paymentSchedule": "",
+    "trainerModel": "GSL-T",
+    "salesPersonId": "sp-prodipto",
+    "templateVersion": null,
+    "generatedAt": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "delayNotes": null,
+    "daysToExpiry": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.814Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "schoolName": "St. Johns High School - RKP",
+          "contractValue": 585000,
+          "studentsMou": 195,
+          "trainerModel": "GSL-T"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ],
+    "effectiveDate": "2026-04-01",
+    "signedMouPdfPath": null,
+    "importNotes": "acquisitionStatus=New; source=pranav-refresh-2026-05-13"
+  },
+  {
+    "id": "MOU-STEAM-2627-074",
+    "schoolId": "sch-cardinal-warriors-school",
+    "schoolName": "Cardinal Warriors School",
+    "programme": "STEAM",
+    "programmeSubType": null,
+    "schoolScope": "SINGLE",
+    "schoolGroupId": null,
+    "status": "Active",
+    "cohortStatus": "active",
+    "academicYear": "2026-27",
+    "startDate": "2026-04-01",
+    "endDate": "2029-03-31",
+    "studentsMou": 182,
+    "studentsActual": 182,
+    "studentsVariance": null,
+    "studentsVariancePct": null,
+    "spWithoutTax": 600,
+    "spWithTax": 708,
+    "contractValue": 128856,
+    "received": 0,
+    "tds": 0,
+    "balance": 128856,
+    "receivedPct": 0,
+    "paymentSchedule": "",
+    "trainerModel": "TT",
+    "salesPersonId": "sp-sumit",
+    "templateVersion": null,
+    "generatedAt": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "delayNotes": null,
+    "daysToExpiry": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.814Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "schoolName": "Cardinal Warriors School",
+          "contractValue": 128856,
+          "studentsMou": 182,
+          "trainerModel": "TT"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ],
+    "effectiveDate": "2026-04-01",
+    "signedMouPdfPath": null,
+    "importNotes": "acquisitionStatus=New; source=pranav-refresh-2026-05-13"
+  },
+  {
+    "id": "MOU-STEAM-2627-075",
+    "schoolId": "sch-radcliffe-education-private-limited",
+    "schoolName": "Radcliffe Education Private Limited",
+    "programme": "STEAM",
+    "programmeSubType": null,
+    "schoolScope": "SINGLE",
+    "schoolGroupId": null,
+    "status": "Active",
+    "cohortStatus": "active",
+    "academicYear": "2026-27",
+    "startDate": "2026-04-01",
+    "endDate": "2027-03-31",
+    "studentsMou": 2000,
+    "studentsActual": 56,
+    "studentsVariance": null,
+    "studentsVariancePct": null,
+    "spWithoutTax": 847.457627118644,
+    "spWithTax": 1000,
+    "contractValue": 2000000,
+    "received": 0,
+    "tds": 0,
+    "balance": 2000000,
+    "receivedPct": 0,
+    "paymentSchedule": "",
+    "trainerModel": "Bootcamp",
+    "salesPersonId": "sp-sumit",
+    "templateVersion": null,
+    "generatedAt": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "delayNotes": null,
+    "daysToExpiry": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.814Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "schoolName": "Radcliffe Education Private Limited",
+          "contractValue": 2000000,
+          "studentsMou": 2000,
+          "trainerModel": "Bootcamp"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ],
+    "effectiveDate": "2026-04-01",
+    "signedMouPdfPath": null,
+    "importNotes": "acquisitionStatus=New; source=pranav-refresh-2026-05-13"
+  },
+  {
+    "id": "MOU-STEAM-2627-076",
+    "schoolId": "sch-don-bonsco-krishnanagar",
+    "schoolName": "Don Bonsco Krishnanagar",
+    "programme": "STEAM",
+    "programmeSubType": null,
+    "schoolScope": "SINGLE",
+    "schoolGroupId": null,
+    "status": "Active",
+    "cohortStatus": "active",
+    "academicYear": "2026-27",
+    "startDate": "2026-04-01",
+    "endDate": "2029-03-31",
+    "studentsMou": 350,
+    "studentsActual": null,
+    "studentsVariance": null,
+    "studentsVariancePct": null,
+    "spWithoutTax": 1016.9491525423729,
+    "spWithTax": 1200,
+    "contractValue": 420000,
+    "received": 0,
+    "tds": 0,
+    "balance": 420000,
+    "receivedPct": 0,
+    "paymentSchedule": "",
+    "trainerModel": "TT",
+    "salesPersonId": "sp-sabyasachi",
+    "templateVersion": null,
+    "generatedAt": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "delayNotes": null,
+    "daysToExpiry": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.815Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "schoolName": "Don Bonsco Krishnanagar",
+          "contractValue": 420000,
+          "studentsMou": 350,
+          "trainerModel": "TT"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ],
+    "effectiveDate": "2026-04-01",
+    "signedMouPdfPath": "imports/pranav-refresh-2026-05-13/stubs/MOU-STEAM-2627-076.pdf",
+    "importNotes": "acquisitionStatus=New; kitsSent=no; source=pranav-refresh-2026-05-13"
+  },
+  {
+    "id": "MOU-STEAM-2627-077",
+    "schoolId": "SCH-DOON_SCHOLARS_SCHOOL",
+    "schoolName": "Doon Scholars School",
+    "programme": "STEAM",
+    "programmeSubType": null,
+    "schoolScope": "SINGLE",
+    "schoolGroupId": null,
+    "status": "Pending Signature",
+    "cohortStatus": "active",
+    "academicYear": "2026-27",
+    "startDate": "2026-04-01",
+    "endDate": "2027-03-31",
+    "studentsMou": 432,
+    "studentsActual": 432,
+    "studentsVariance": null,
+    "studentsVariancePct": null,
+    "spWithoutTax": 1220.3389830508474,
+    "spWithTax": 1440,
+    "contractValue": 622080,
+    "received": 0,
+    "tds": 0,
+    "balance": 622080,
+    "receivedPct": 0,
+    "paymentSchedule": "",
+    "trainerModel": null,
+    "salesPersonId": "sp-tanuj",
+    "templateVersion": null,
+    "generatedAt": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "delayNotes": null,
+    "daysToExpiry": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.815Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "schoolName": "Doon Scholars School",
+          "contractValue": 622080,
+          "studentsMou": 432,
+          "trainerModel": null
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ],
+    "effectiveDate": "2026-04-01",
+    "signedMouPdfPath": null,
+    "importNotes": "acquisitionStatus=Retained; source=pranav-refresh-2026-05-13"
+  },
+  {
+    "id": "MOU-STEAM-2627-078",
+    "schoolId": "sch-loreto-house-school-kolkata",
+    "schoolName": "Loreto House School Kolkata",
+    "programme": "STEAM",
+    "programmeSubType": null,
+    "schoolScope": "SINGLE",
+    "schoolGroupId": null,
+    "status": "Active",
+    "cohortStatus": "active",
+    "academicYear": "2026-27",
+    "startDate": "2026-04-01",
+    "endDate": "2027-03-31",
+    "studentsMou": 608,
+    "studentsActual": 608,
+    "studentsVariance": null,
+    "studentsVariancePct": null,
+    "spWithoutTax": 2100,
+    "spWithTax": 2478,
+    "contractValue": 1506624,
+    "received": 0,
+    "tds": 0,
+    "balance": 1506624,
+    "receivedPct": 0,
+    "paymentSchedule": "",
+    "trainerModel": null,
+    "salesPersonId": "sp-prodipto",
+    "templateVersion": null,
+    "generatedAt": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "delayNotes": null,
+    "daysToExpiry": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.815Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "schoolName": "Loreto House School Kolkata",
+          "contractValue": 1506624,
+          "studentsMou": 608,
+          "trainerModel": null
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ],
+    "effectiveDate": "2026-04-01",
+    "signedMouPdfPath": "imports/pranav-refresh-2026-05-13/stubs/MOU-STEAM-2627-078.pdf",
+    "importNotes": "acquisitionStatus=Retained; source=pranav-refresh-2026-05-13"
+  },
+  {
+    "id": "MOU-STEAM-2627-079",
+    "schoolId": "SCH-CONTAI_PUBLIC_SCHOOL",
+    "schoolName": "Contai Public School",
+    "programme": "STEAM",
+    "programmeSubType": null,
+    "schoolScope": "SINGLE",
+    "schoolGroupId": null,
+    "status": "Active",
+    "cohortStatus": "active",
+    "academicYear": "2026-27",
+    "startDate": "2026-04-01",
+    "endDate": "2028-02-28",
+    "studentsMou": 450,
+    "studentsActual": 450,
+    "studentsVariance": null,
+    "studentsVariancePct": null,
+    "spWithoutTax": 2070.3389830508477,
+    "spWithTax": 2443,
+    "contractValue": 1099350,
+    "received": 0,
+    "tds": 0,
+    "balance": 1099350,
+    "receivedPct": 0,
+    "paymentSchedule": "",
+    "trainerModel": "GSL-T",
+    "salesPersonId": "sp-prodipto",
+    "templateVersion": null,
+    "generatedAt": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "delayNotes": null,
+    "daysToExpiry": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.815Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "schoolName": "Contai Public School",
+          "contractValue": 1099350,
+          "studentsMou": 450,
+          "trainerModel": "GSL-T"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ],
+    "effectiveDate": "2026-04-01",
+    "signedMouPdfPath": null,
+    "importNotes": "acquisitionStatus=Retained; source=pranav-refresh-2026-05-13"
+  },
+  {
+    "id": "MOU-STEAM-2627-080",
+    "schoolId": "SCH-CONTAI_PUBLIC_SCHOOL",
+    "schoolName": "Contai Public School",
+    "programme": "STEAM",
+    "programmeSubType": null,
+    "schoolScope": "SINGLE",
+    "schoolGroupId": null,
+    "status": "Active",
+    "cohortStatus": "active",
+    "academicYear": "2026-27",
+    "startDate": "2026-04-01",
+    "endDate": "2028-02-28",
+    "studentsMou": 150,
+    "studentsActual": 150,
+    "studentsVariance": null,
+    "studentsVariancePct": null,
+    "spWithoutTax": 1800,
+    "spWithTax": 2124,
+    "contractValue": 318600,
+    "received": 0,
+    "tds": 0,
+    "balance": 318600,
+    "receivedPct": 0,
+    "paymentSchedule": "",
+    "trainerModel": "GSL-T",
+    "salesPersonId": "sp-prodipto",
+    "templateVersion": null,
+    "generatedAt": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "delayNotes": null,
+    "daysToExpiry": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.815Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "schoolName": "Contai Public School",
+          "contractValue": 318600,
+          "studentsMou": 150,
+          "trainerModel": "GSL-T"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ],
+    "effectiveDate": "2026-04-01",
+    "signedMouPdfPath": null,
+    "importNotes": "acquisitionStatus=Retained; source=pranav-refresh-2026-05-13"
+  },
+  {
+    "id": "MOU-STEAM-2627-081",
+    "schoolId": "SCH-SWARNIM_INTERNATIONA",
+    "schoolName": "Swarnim International School",
+    "programme": "STEAM",
+    "programmeSubType": null,
+    "schoolScope": "SINGLE",
+    "schoolGroupId": null,
+    "status": "Pending Signature",
+    "cohortStatus": "active",
+    "academicYear": "2026-27",
+    "startDate": "2026-04-01",
+    "endDate": "2027-03-31",
+    "studentsMou": 250,
+    "studentsActual": 181,
+    "studentsVariance": null,
+    "studentsVariancePct": null,
+    "spWithoutTax": 1400,
+    "spWithTax": 1652,
+    "contractValue": 413000,
+    "received": 29394.2,
+    "tds": 506.8,
+    "balance": 383605.8,
+    "receivedPct": 7,
+    "paymentSchedule": "",
+    "trainerModel": "AIQ",
+    "salesPersonId": "sp-prodipto",
+    "templateVersion": null,
+    "generatedAt": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "delayNotes": null,
+    "daysToExpiry": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.816Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "schoolName": "Swarnim International School",
+          "contractValue": 413000,
+          "studentsMou": 250,
+          "trainerModel": "AIQ"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ],
+    "effectiveDate": "2026-04-01",
+    "signedMouPdfPath": null,
+    "importNotes": "acquisitionStatus=Retained; kitsSent=Yes; source=pranav-refresh-2026-05-13"
+  },
+  {
+    "id": "MOU-STEAM-2627-082",
+    "schoolId": "sch-wisdom-international-school",
+    "schoolName": "Wisdom International School",
+    "programme": "STEAM",
+    "programmeSubType": null,
+    "schoolScope": "SINGLE",
+    "schoolGroupId": null,
+    "status": "Active",
+    "cohortStatus": "active",
+    "academicYear": "2026-27",
+    "startDate": "2026-04-01",
+    "endDate": "2028-03-31",
+    "studentsMou": 600,
+    "studentsActual": null,
+    "studentsVariance": null,
+    "studentsVariancePct": null,
+    "spWithoutTax": 1600,
+    "spWithTax": 1888,
+    "contractValue": 1132800,
+    "received": 0,
+    "tds": 0,
+    "balance": 1132800,
+    "receivedPct": 0,
+    "paymentSchedule": "",
+    "trainerModel": "AIQ",
+    "salesPersonId": "sp-sumit",
+    "templateVersion": null,
+    "generatedAt": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "delayNotes": null,
+    "daysToExpiry": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.816Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "schoolName": "Wisdom International School",
+          "contractValue": 1132800,
+          "studentsMou": 600,
+          "trainerModel": "AIQ"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ],
+    "effectiveDate": "2026-04-01",
+    "signedMouPdfPath": null,
+    "importNotes": "acquisitionStatus=new; source=pranav-refresh-2026-05-13"
+  },
+  {
+    "id": "MOU-STEAM-2627-083",
+    "schoolId": "sch-gmr-international-school",
+    "schoolName": "GMR International School",
+    "programme": "STEAM",
+    "programmeSubType": null,
+    "schoolScope": "SINGLE",
+    "schoolGroupId": null,
+    "status": "Active",
+    "cohortStatus": "active",
+    "academicYear": "2026-27",
+    "startDate": "2026-04-01",
+    "endDate": "2028-03-31",
+    "studentsMou": 100,
+    "studentsActual": 100,
+    "studentsVariance": null,
+    "studentsVariancePct": null,
+    "spWithoutTax": 1271.1864406779662,
+    "spWithTax": 1500,
+    "contractValue": 150000,
+    "received": 30000,
+    "tds": 0,
+    "balance": 120000,
+    "receivedPct": 20,
+    "paymentSchedule": "",
+    "trainerModel": "TT",
+    "salesPersonId": "sp-sumit",
+    "templateVersion": null,
+    "generatedAt": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "delayNotes": null,
+    "daysToExpiry": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.817Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "schoolName": "GMR International School",
+          "contractValue": 150000,
+          "studentsMou": 100,
+          "trainerModel": "TT"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ],
+    "effectiveDate": "2026-04-01",
+    "signedMouPdfPath": "imports/pranav-refresh-2026-05-13/stubs/MOU-STEAM-2627-083.pdf",
+    "importNotes": "acquisitionStatus=New; kitsSent=no; source=pranav-refresh-2026-05-13"
+  },
+  {
+    "id": "MOU-STEAM-2627-084",
+    "schoolId": "sch-discovery-oaks-school",
+    "schoolName": "Discovery Oaks School",
+    "programme": "STEAM",
+    "programmeSubType": null,
+    "schoolScope": "SINGLE",
+    "schoolGroupId": null,
+    "status": "Pending Signature",
+    "cohortStatus": "active",
+    "academicYear": "2026-27",
+    "startDate": "2026-04-01",
+    "endDate": "2027-03-31",
+    "studentsMou": 200,
+    "studentsActual": null,
+    "studentsVariance": null,
+    "studentsVariancePct": null,
+    "spWithoutTax": 1440.677966101695,
+    "spWithTax": 1700,
+    "contractValue": 340000,
+    "received": 0,
+    "tds": 0,
+    "balance": 340000,
+    "receivedPct": 0,
+    "paymentSchedule": "",
+    "trainerModel": null,
+    "salesPersonId": "sp-kranthi",
+    "templateVersion": null,
+    "generatedAt": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "delayNotes": null,
+    "daysToExpiry": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.817Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "schoolName": "Discovery Oaks School",
+          "contractValue": 340000,
+          "studentsMou": 200,
+          "trainerModel": null
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ],
+    "effectiveDate": "2026-04-01",
+    "signedMouPdfPath": null,
+    "importNotes": "acquisitionStatus=Retained; kitsSent=no; source=pranav-refresh-2026-05-13"
   }
 ]

@@ -71,7 +71,7 @@ function readJson(p) { return JSON.parse(readFileSync(p, 'utf-8')) }
 function writeJson(p, v) { writeFileSync(p, JSON.stringify(v, null, 2) + '\n', 'utf-8') }
 
 const parsed = readJson(PARSED_PATH)
-const diff = readJson(DIFF_PATH)
+const diffCached = readJson(DIFF_PATH)
 
 // ---------------------------------------------------------------------------
 // Decisions: load from disk OR auto-generate
@@ -82,10 +82,10 @@ if (existsSync(DECISIONS_PATH)) {
   decisionsRaw = readJson(DECISIONS_PATH)
   console.log(`Loaded ${decisionsRaw.length} decisions from ${DECISIONS_PATH}`)
 } else if (AUTO) {
-  decisionsRaw = diff.classified.map((c) => {
+  decisionsRaw = diffCached.classified.map((c) => {
     const base = { rowNum: c.refreshRow.rowNum }
     if (c.classification === 'AMBIGUOUS') return { ...base, decision: 'skip' }
-    if (c.classification === 'CONFLICT') return { ...base, decision: 'apply', conflictResolution: 'keep-current' }
+    if (c.classification === 'CONFLICT') return { ...base, decision: 'apply', conflictResolution: 'apply-refresh' }
     return { ...base, decision: 'apply' }
   })
   if (COMMIT) {
@@ -296,6 +296,7 @@ function updateMouFields(mou, diffs, conflictResolution, refreshTag, userId) {
     const shouldApply = d.kind === 'fill' || (d.kind === 'overwrite' && conflictResolution === 'apply-refresh')
     if (!shouldApply) continue
     const before = mou[d.field]
+    if (before === d.refresh) continue
     mou[d.field] = d.refresh
     changes.push({ field: d.field, before, after: d.refresh })
   }
@@ -320,8 +321,90 @@ const state = {
   salesTeam: readJson(SALES_PATH),
 }
 
+// Re-classify against current live state so re-runs after a successful
+// apply detect the just-created MOUs and treat them as UPDATE/UNCHANGED
+// rather than NEW. Without this, --commit on the second run would
+// create duplicate MOUs (the cached diff-report.json is computed against
+// the pre-apply state and stays stale).
+const liveBySlug = new Map()
+for (const m of state.mous) {
+  if (m.academicYear !== '2026-27') continue
+  const slug = slugify(m.schoolName)
+  if (!liveBySlug.has(slug)) liveBySlug.set(slug, [])
+  liveBySlug.get(slug).push(m)
+}
+
+function alignCandidate(row, candidates) {
+  if (candidates.length === 0) return null
+  if (candidates.length === 1) return candidates[0]
+  let best = null
+  let bestScore = -1
+  for (const cand of candidates) {
+    let score = 0
+    if (row.trainerModel && cand.trainerModel === row.trainerModel) score += 100
+    if (row.contractValue && cand.contractValue) {
+      const ratio = Math.min(row.contractValue, cand.contractValue) / Math.max(row.contractValue, cand.contractValue)
+      score += ratio * 10
+    }
+    if (score > bestScore) { bestScore = score; best = cand }
+  }
+  return bestScore >= 5 ? best : null
+}
+
+function alignGroup(rows, candidates) {
+  const used = new Set()
+  const out = []
+  const singleCandidate = candidates.length === 1 && rows.length === 1
+  for (const row of rows) {
+    let best = null
+    let bestScore = -1
+    for (const cand of candidates) {
+      if (used.has(cand.id)) continue
+      let score = 0
+      if (row.refreshRow.trainerModel && cand.trainerModel === row.refreshRow.trainerModel) score += 100
+      if (row.refreshRow.contractValue && cand.contractValue) {
+        const ratio = Math.min(row.refreshRow.contractValue, cand.contractValue) / Math.max(row.refreshRow.contractValue, cand.contractValue)
+        score += ratio * 10
+      }
+      if (score > bestScore) { bestScore = score; best = cand }
+    }
+    const accept = best && (bestScore >= 5 || singleCandidate)
+    if (accept) {
+      used.add(best.id)
+      out.push({ row, match: best })
+    } else {
+      out.push({ row, match: null })
+    }
+  }
+  return out
+}
+
+const cachedBySlug = new Map()
+for (const c of diffCached.classified) {
+  const slug = c.refreshRow.schoolSlug
+  if (!cachedBySlug.has(slug)) cachedBySlug.set(slug, [])
+  cachedBySlug.get(slug).push(c)
+}
+
+const liveClassified = []
+for (const [slug, rows] of cachedBySlug) {
+  const candidates = liveBySlug.get(slug) ?? []
+  const aligned = alignGroup(rows, candidates)
+  for (const { row, match } of aligned) {
+    if (!match) {
+      liveClassified.push({ ...row, classification: 'NEW', matchedMouId: null })
+      continue
+    }
+    if (!row.matchedMouId) {
+      liveClassified.push({ ...row, classification: 'UNCHANGED', matchedMouId: match.id, mouDiffs: [], installmentDiffs: [] })
+      continue
+    }
+    liveClassified.push({ ...row, matchedMouId: match.id })
+  }
+}
+
 const outcomes = []
-for (const cls of diff.classified) {
+for (const cls of liveClassified) {
   const d = decisions.get(cls.refreshRow.rowNum)
   if (!d || d.decision === 'skip') {
     outcomes.push({ rowNum: cls.refreshRow.rowNum, schoolName: cls.refreshRow.schoolName, classification: cls.classification, result: 'skipped', changes: [] })

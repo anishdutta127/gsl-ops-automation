@@ -3956,5 +3956,811 @@
         }
       }
     ]
+  },
+  {
+    "id": "sch-vijaya-english-primary-school",
+    "name": "Vijaya English Primary School",
+    "legalEntity": null,
+    "city": "Bengaluru",
+    "state": "Karanataka",
+    "region": "",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "active": true,
+    "createdAt": "2026-05-14T03:33:15.805Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.805Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "name": "Vijaya English Primary School",
+          "city": "Bengaluru",
+          "state": "Karanataka"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ]
+  },
+  {
+    "id": "sch-christ-king-public-school",
+    "name": "Christ King Public School",
+    "legalEntity": null,
+    "city": "Bengaluru",
+    "state": "Karanataka",
+    "region": "",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "active": true,
+    "createdAt": "2026-05-14T03:33:15.806Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.806Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "name": "Christ King Public School",
+          "city": "Bengaluru",
+          "state": "Karanataka"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ]
+  },
+  {
+    "id": "sch-agragami-vidya-kendar",
+    "name": "Agragami Vidya Kendar",
+    "legalEntity": null,
+    "city": "Bengaluru",
+    "state": "Karanataka",
+    "region": "",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "active": true,
+    "createdAt": "2026-05-14T03:33:15.806Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.806Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "name": "Agragami Vidya Kendar",
+          "city": "Bengaluru",
+          "state": "Karanataka"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ]
+  },
+  {
+    "id": "sch-sri-ramavidyalay",
+    "name": "Sri Ramavidyalay",
+    "legalEntity": null,
+    "city": "Bengaluru",
+    "state": "Karanataka",
+    "region": "",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "active": true,
+    "createdAt": "2026-05-14T03:33:15.806Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.806Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "name": "Sri Ramavidyalay",
+          "city": "Bengaluru",
+          "state": "Karanataka"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ]
+  },
+  {
+    "id": "sch-rt-nagar-public-school",
+    "name": "RT Nagar Public School",
+    "legalEntity": null,
+    "city": "Bengaluru",
+    "state": "Karanataka",
+    "region": "",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "active": true,
+    "createdAt": "2026-05-14T03:33:15.806Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.806Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "name": "RT Nagar Public School",
+          "city": "Bengaluru",
+          "state": "Karanataka"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ]
+  },
+  {
+    "id": "sch-shrishail-vidya-sansthe",
+    "name": "Shrishail Vidya Sansthe",
+    "legalEntity": null,
+    "city": "Bengaluru",
+    "state": "Karanataka",
+    "region": "",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "active": true,
+    "createdAt": "2026-05-14T03:33:15.807Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.807Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "name": "Shrishail Vidya Sansthe",
+          "city": "Bengaluru",
+          "state": "Karanataka"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ]
+  },
+  {
+    "id": "sch-meridian-matriculation-school",
+    "name": "Meridian Matriculation School",
+    "legalEntity": null,
+    "city": "Vellore",
+    "state": "Tamil Nadu",
+    "region": "",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "active": true,
+    "createdAt": "2026-05-14T03:33:15.811Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.811Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "name": "Meridian Matriculation School",
+          "city": "Vellore",
+          "state": "Tamil Nadu"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ]
+  },
+  {
+    "id": "sch-musthafa-matric-higher-secondary-school",
+    "name": "Musthafa Matric Higher Secondary School",
+    "legalEntity": null,
+    "city": "Chidambaram",
+    "state": "Tamil Nadu",
+    "region": "",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "active": true,
+    "createdAt": "2026-05-14T03:33:15.811Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.811Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "name": "Musthafa Matric Higher Secondary School",
+          "city": "Chidambaram",
+          "state": "Tamil Nadu"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ]
+  },
+  {
+    "id": "sch-sagaya-matha-matrics-higher-secondary-school",
+    "name": "Sagaya Matha Matrics Higher Secondary School",
+    "legalEntity": null,
+    "city": "Chennai",
+    "state": "Tamil Nadu",
+    "region": "",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "active": true,
+    "createdAt": "2026-05-14T03:33:15.811Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.811Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "name": "Sagaya Matha Matrics Higher Secondary School",
+          "city": "Chennai",
+          "state": "Tamil Nadu"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ]
+  },
+  {
+    "id": "sch-takshilah-global-school",
+    "name": "Takshilah Global School",
+    "legalEntity": null,
+    "city": "Vellore",
+    "state": "Tamil Nadu",
+    "region": "",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "active": true,
+    "createdAt": "2026-05-14T03:33:15.811Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.811Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "name": "Takshilah Global School",
+          "city": "Vellore",
+          "state": "Tamil Nadu"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ]
+  },
+  {
+    "id": "sch-pgs-cbse-school",
+    "name": "PGS CBSE School",
+    "legalEntity": null,
+    "city": "Chennai",
+    "state": "Tamil Nadu",
+    "region": "",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "active": true,
+    "createdAt": "2026-05-14T03:33:15.812Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.812Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "name": "PGS CBSE School",
+          "city": "Chennai",
+          "state": "Tamil Nadu"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ]
+  },
+  {
+    "id": "sch-petit-seminaire-cbse-school",
+    "name": "Petit Seminaire CBSE School",
+    "legalEntity": null,
+    "city": "Puducherry",
+    "state": "Tamil Nadu",
+    "region": "",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "active": true,
+    "createdAt": "2026-05-14T03:33:15.812Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.812Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "name": "Petit Seminaire CBSE School",
+          "city": "Puducherry",
+          "state": "Tamil Nadu"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ]
+  },
+  {
+    "id": "sch-sri-vidhya-niketan-matriculation-school",
+    "name": "Sri Vidhya Niketan Matriculation School",
+    "legalEntity": null,
+    "city": "Chennai",
+    "state": "Tamil Nadu",
+    "region": "",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "active": true,
+    "createdAt": "2026-05-14T03:33:15.812Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.812Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "name": "Sri Vidhya Niketan Matriculation School",
+          "city": "Chennai",
+          "state": "Tamil Nadu"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ]
+  },
+  {
+    "id": "sch-tjs-public-school-cbse",
+    "name": "TJS Public School (CBSE)",
+    "legalEntity": null,
+    "city": "Thiruvallur",
+    "state": "Tamil Nadu",
+    "region": "",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "active": true,
+    "createdAt": "2026-05-14T03:33:15.812Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.812Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "name": "TJS Public School (CBSE)",
+          "city": "Thiruvallur",
+          "state": "Tamil Nadu"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ]
+  },
+  {
+    "id": "sch-abhyasa-public-school",
+    "name": "Abhyasa Public School",
+    "legalEntity": null,
+    "city": "Pune",
+    "state": "Maharashtra",
+    "region": "",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "active": true,
+    "createdAt": "2026-05-14T03:33:15.813Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.813Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "name": "Abhyasa Public School",
+          "city": "Pune",
+          "state": "Maharashtra"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ]
+  },
+  {
+    "id": "sch-loreto-convent-entally",
+    "name": "Loreto Convent Entally",
+    "legalEntity": null,
+    "city": "Kolkata",
+    "state": "West Bengal",
+    "region": "",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "active": true,
+    "createdAt": "2026-05-14T03:33:15.813Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.813Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "name": "Loreto Convent Entally",
+          "city": "Kolkata",
+          "state": "West Bengal"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ]
+  },
+  {
+    "id": "sch-b-k-birla-public-school-kalyan",
+    "name": "B.K. Birla Public School - Kalyan",
+    "legalEntity": null,
+    "city": "Kalyan",
+    "state": "Maharashtra",
+    "region": "",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "active": true,
+    "createdAt": "2026-05-14T03:33:15.813Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.813Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "name": "B.K. Birla Public School - Kalyan",
+          "city": "Kalyan",
+          "state": "Maharashtra"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ]
+  },
+  {
+    "id": "sch-empyrean-school",
+    "name": "Empyrean School",
+    "legalEntity": null,
+    "city": "Mumbai",
+    "state": "Maharashtra",
+    "region": "",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "active": true,
+    "createdAt": "2026-05-14T03:33:15.814Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.814Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "name": "Empyrean School",
+          "city": "Mumbai",
+          "state": "Maharashtra"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ]
+  },
+  {
+    "id": "sch-st-johns-high-school-rkp",
+    "name": "St. Johns High School - RKP",
+    "legalEntity": null,
+    "city": "Howrah",
+    "state": "West Bengal",
+    "region": "",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "active": true,
+    "createdAt": "2026-05-14T03:33:15.814Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.814Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "name": "St. Johns High School - RKP",
+          "city": "Howrah",
+          "state": "West Bengal"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ]
+  },
+  {
+    "id": "sch-cardinal-warriors-school",
+    "name": "Cardinal Warriors School",
+    "legalEntity": null,
+    "city": "Nimora",
+    "state": "Chhattisgarh",
+    "region": "",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "active": true,
+    "createdAt": "2026-05-14T03:33:15.814Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.814Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "name": "Cardinal Warriors School",
+          "city": "Nimora",
+          "state": "Chhattisgarh"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ]
+  },
+  {
+    "id": "sch-radcliffe-education-private-limited",
+    "name": "Radcliffe Education Private Limited",
+    "legalEntity": null,
+    "city": "Mumbai",
+    "state": "Maharashtra",
+    "region": "",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "active": true,
+    "createdAt": "2026-05-14T03:33:15.814Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.814Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "name": "Radcliffe Education Private Limited",
+          "city": "Mumbai",
+          "state": "Maharashtra"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ]
+  },
+  {
+    "id": "sch-don-bonsco-krishnanagar",
+    "name": "Don Bonsco Krishnanagar",
+    "legalEntity": null,
+    "city": "Krishnanagar",
+    "state": "West Bengal",
+    "region": "",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "active": true,
+    "createdAt": "2026-05-14T03:33:15.815Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.815Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "name": "Don Bonsco Krishnanagar",
+          "city": "Krishnanagar",
+          "state": "West Bengal"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ]
+  },
+  {
+    "id": "sch-loreto-house-school-kolkata",
+    "name": "Loreto House School Kolkata",
+    "legalEntity": null,
+    "city": "Kolkata",
+    "state": "West Bengal",
+    "region": "",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "active": true,
+    "createdAt": "2026-05-14T03:33:15.815Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.815Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "name": "Loreto House School Kolkata",
+          "city": "Kolkata",
+          "state": "West Bengal"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ]
+  },
+  {
+    "id": "sch-wisdom-international-school",
+    "name": "Wisdom International School",
+    "legalEntity": null,
+    "city": "Nashik",
+    "state": "Maharashtra",
+    "region": "",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "active": true,
+    "createdAt": "2026-05-14T03:33:15.816Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.816Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "name": "Wisdom International School",
+          "city": "Nashik",
+          "state": "Maharashtra"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ]
+  },
+  {
+    "id": "sch-gmr-international-school",
+    "name": "GMR International School",
+    "legalEntity": null,
+    "city": "Siddipet",
+    "state": "Telangana",
+    "region": "",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "active": true,
+    "createdAt": "2026-05-14T03:33:15.817Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.817Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "name": "GMR International School",
+          "city": "Siddipet",
+          "state": "Telangana"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ]
+  },
+  {
+    "id": "sch-discovery-oaks-school",
+    "name": "Discovery Oaks School",
+    "legalEntity": null,
+    "city": "Abdullapurmet",
+    "state": "Telangana",
+    "region": "",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "active": true,
+    "createdAt": "2026-05-14T03:33:15.817Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-05-14T03:33:15.817Z",
+        "user": "usr-anish",
+        "action": "create",
+        "after": {
+          "name": "Discovery Oaks School",
+          "city": "Abdullapurmet",
+          "state": "Telangana"
+        },
+        "notes": "source: pranav-refresh-2026-05-13"
+      }
+    ]
   }
 ]

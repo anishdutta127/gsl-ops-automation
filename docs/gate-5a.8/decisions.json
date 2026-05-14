@@ -1,0 +1,344 @@
+[
+  {
+    "rowNum": 7,
+    "decision": "apply",
+    "conflictResolution": "apply-refresh"
+  },
+  {
+    "rowNum": 8,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 9,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 10,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 11,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 12,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 13,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 14,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 15,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 16,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 17,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 18,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 19,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 20,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 21,
+    "decision": "apply",
+    "conflictResolution": "apply-refresh"
+  },
+  {
+    "rowNum": 22,
+    "decision": "apply",
+    "conflictResolution": "apply-refresh"
+  },
+  {
+    "rowNum": 23,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 24,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 25,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 26,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 27,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 28,
+    "decision": "apply",
+    "conflictResolution": "apply-refresh"
+  },
+  {
+    "rowNum": 29,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 30,
+    "decision": "apply",
+    "conflictResolution": "apply-refresh"
+  },
+  {
+    "rowNum": 31,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 32,
+    "decision": "apply",
+    "conflictResolution": "apply-refresh"
+  },
+  {
+    "rowNum": 33,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 34,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 35,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 36,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 37,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 38,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 39,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 40,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 41,
+    "decision": "apply",
+    "conflictResolution": "apply-refresh"
+  },
+  {
+    "rowNum": 42,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 43,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 44,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 45,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 46,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 47,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 48,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 49,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 50,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 51,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 52,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 53,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 54,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 55,
+    "decision": "apply",
+    "conflictResolution": "apply-refresh"
+  },
+  {
+    "rowNum": 56,
+    "decision": "apply",
+    "conflictResolution": "apply-refresh"
+  },
+  {
+    "rowNum": 57,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 58,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 59,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 60,
+    "decision": "apply",
+    "conflictResolution": "apply-refresh"
+  },
+  {
+    "rowNum": 61,
+    "decision": "apply",
+    "conflictResolution": "apply-refresh"
+  },
+  {
+    "rowNum": 62,
+    "decision": "apply",
+    "conflictResolution": "apply-refresh"
+  },
+  {
+    "rowNum": 63,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 64,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 65,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 66,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 67,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 68,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 69,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 70,
+    "decision": "apply",
+    "conflictResolution": "apply-refresh"
+  },
+  {
+    "rowNum": 71,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 72,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 73,
+    "decision": "apply",
+    "conflictResolution": "apply-refresh"
+  },
+  {
+    "rowNum": 74,
+    "decision": "apply",
+    "conflictResolution": "apply-refresh"
+  },
+  {
+    "rowNum": 75,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 76,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 77,
+    "decision": "apply",
+    "conflictResolution": "apply-refresh"
+  },
+  {
+    "rowNum": 78,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 79,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 80,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 81,
+    "decision": "apply",
+    "conflictResolution": "apply-refresh"
+  },
+  {
+    "rowNum": 82,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 83,
+    "decision": "apply",
+    "conflictResolution": "apply-refresh"
+  },
+  {
+    "rowNum": 84,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 85,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 86,
+    "decision": "apply"
+  },
+  {
+    "rowNum": 87,
+    "decision": "apply"
+  }
+]

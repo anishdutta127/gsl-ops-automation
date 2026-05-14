@@ -265,5 +265,25 @@
     ],
     "active": true,
     "joinedDate": "2025-04-01"
+  },
+  {
+    "id": "sp-brij-singh",
+    "name": "Brij Singh",
+    "email": null,
+    "phone": null,
+    "territories": [],
+    "active": true,
+    "notes": "Auto-created from Pranav refresh pranav-refresh-2026-05-13",
+    "createdAt": "2026-05-14T03:33:15.811Z"
+  },
+  {
+    "id": "sp-kranthi",
+    "name": "Kranthi",
+    "email": null,
+    "phone": null,
+    "territories": [],
+    "active": true,
+    "notes": "Auto-created from Pranav refresh pranav-refresh-2026-05-13",
+    "createdAt": "2026-05-14T03:33:15.817Z"
   }
 ]
