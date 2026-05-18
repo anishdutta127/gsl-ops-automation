@@ -5070,9 +5070,9 @@
     "startDate": "2026-04-01",
     "endDate": "2028-03-31",
     "studentsMou": 500,
-    "studentsActual": 0,
-    "studentsVariance": -100,
-    "studentsVariancePct": -0.2,
+    "studentsActual": 500,
+    "studentsVariance": 0,
+    "studentsVariancePct": 0,
     "spWithoutTax": 677.966101694915,
     "spWithTax": 800,
     "contractValue": 400000,
@@ -5150,6 +5150,21 @@
           "studentsActual": 0
         },
         "notes": "source: pranav-refresh-2026-05-13"
+      },
+      {
+        "timestamp": "2026-05-18T10:18:45.481Z",
+        "user": "pranav.b",
+        "action": "actuals-confirmed",
+        "before": {
+          "studentsActual": 0,
+          "studentsVariance": -100,
+          "studentsVariancePct": -0.2
+        },
+        "after": {
+          "studentsActual": 500,
+          "studentsVariance": 0,
+          "studentsVariancePct": 0
+        }
       }
     ],
     "cohortStatus": "active",
