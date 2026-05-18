@@ -1,1 +1,60 @@
-[]
+[
+  {
+    "id": "38aa8459-19a0-4d0f-99bd-277faa89e8dd",
+    "queuedAt": "2026-05-18T14:42:17.530Z",
+    "queuedBy": "pranav.b",
+    "entity": "payment",
+    "operation": "update",
+    "payload": {
+      "id": "MOU-STEAM-2627-001-i1",
+      "mouId": "MOU-STEAM-2627-001",
+      "schoolName": "Mutahhary Public School Baroo",
+      "programme": "STEAM",
+      "instalmentLabel": "1 of 4",
+      "instalmentSeq": 1,
+      "totalInstalments": 4,
+      "description": "",
+      "dueDateRaw": "2026-02-28",
+      "dueDateIso": "2026-02-28",
+      "expectedAmount": 40000,
+      "receivedAmount": null,
+      "receivedDate": null,
+      "paymentMode": null,
+      "bankReference": null,
+      "piNumber": null,
+      "taxInvoiceNumber": null,
+      "status": "Pending",
+      "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+      "piSentDate": null,
+      "piSentTo": null,
+      "piGeneratedAt": null,
+      "studentCountActual": null,
+      "partialPayments": null,
+      "auditLog": [
+        {
+          "timestamp": "2026-05-14T03:33:15.805Z",
+          "user": "usr-anish",
+          "action": "create",
+          "after": {
+            "expectedAmount": 0,
+            "status": "Pending"
+          },
+          "notes": "source: pranav-refresh-2026-05-13"
+        },
+        {
+          "timestamp": "2026-05-18T14:42:17.529Z",
+          "user": "pranav.b",
+          "action": "update",
+          "before": {
+            "installmentCount": 4
+          },
+          "after": {
+            "installmentCount": 4
+          },
+          "notes": "Payment schedule edited (no-PI path): 4 instalment(s)."
+        }
+      ]
+    },
+    "retryCount": 0
+  }
+]
