@@ -142,7 +142,7 @@ export default async function KitDispatchDetailPage({
     approved: 'Dispatch approved. Saved. Will reflect everywhere within ~5 minutes.',
     rejected: 'Allocation rejected. Ops can revise and resubmit.',
     'summary-saved': 'Summary saved. School master updated within ~5 minutes.',
-    'accounts-saved': 'Dispatch saved. Status will update within ~5 minutes; warehouse notified at next cron drain.',
+    'accounts-saved': 'Dispatch saved. Status will update within ~5 minutes and the warehouse will be notified.',
     'shipment-saved': 'Shipment tracking saved. Will reflect everywhere within ~5 minutes.',
     'pod-uploaded': 'POD uploaded. Status flipped to Delivered.',
   }
