@@ -5165,6 +5165,18 @@
           "studentsVariance": 0,
           "studentsVariancePct": 0
         }
+      },
+      {
+        "timestamp": "2026-05-18T14:42:17.529Z",
+        "user": "pranav.b",
+        "action": "update",
+        "before": {
+          "installmentCount": 4
+        },
+        "after": {
+          "installmentCount": 4
+        },
+        "notes": "Payment schedule edited (no-PI path): 4 instalment(s)."
       }
     ],
     "cohortStatus": "active",
