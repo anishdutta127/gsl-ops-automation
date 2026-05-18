@@ -103,7 +103,7 @@ export default async function InstallmentsPage({ params, searchParams }: PagePro
       <TopNav currentPath="/mous" />
       <main id="main-content">
         <PageHeader
-          title={`${mou.schoolName} {'·'} Instalments`}
+          title={`${mou.schoolName} · Instalments`}
           breadcrumb={[
             { label: 'MOUs', href: '/mous' },
             { label: mou.id, href: `/mous/${mou.id}` },
