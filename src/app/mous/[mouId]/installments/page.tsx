@@ -95,6 +95,8 @@ export default async function InstallmentsPage({ params, searchParams }: PagePro
   const canRecordReceipt = canEditFinanceData(user)
   const canEditPiSent = canEditMOU(user)
   const canGenPi = canGeneratePI(user)
+  const canSaveSchedule = canEditMOU(user) || canEditFinanceData(user)
+  const isMouSigned = mou.status !== 'Pending Signature' && mou.status !== 'Draft'
 
   return (
     <>
@@ -130,13 +132,35 @@ export default async function InstallmentsPage({ params, searchParams }: PagePro
           />
 
           {installments.length === 0 ? (
-            <p
-              className="rounded-md border border-dashed border-border bg-card px-5 py-6 text-center text-sm text-muted-foreground"
+            <div
+              className="flex flex-col items-center gap-3 rounded-md border border-dashed border-border bg-card px-5 py-6 text-center text-sm"
               data-testid="no-installments"
             >
-              No instalments yet. They&apos;ll appear here once this MOU is Signed and a payment
-              schedule is set.
-            </p>
+              <p className="text-muted-foreground">
+                No instalments yet. They&apos;ll appear here once this MOU is Signed and a payment
+                schedule is set.
+              </p>
+              {isMouSigned && canSaveSchedule ? (
+                <Link
+                  href={`/mous/${mou.id}/installments/schedule-edit`}
+                  className={opsButtonClass({ variant: 'primary', size: 'md' })}
+                  data-testid="empty-state-set-schedule"
+                >
+                  Set payment schedule {'→'}
+                </Link>
+              ) : null}
+              {!isMouSigned ? (
+                <p className="text-xs text-muted-foreground" data-testid="empty-state-unsigned-hint">
+                  Sign the MOU first to enable scheduling.{' '}
+                  <Link
+                    href={`/mous/${mou.id}`}
+                    className="text-brand-navy underline-offset-2 hover:underline focus:outline-none focus:ring-2 focus:ring-brand-navy"
+                  >
+                    Go to MOU detail {'→'}
+                  </Link>
+                </p>
+              ) : null}
+            </div>
           ) : (
             <div className="overflow-x-auto rounded-lg border border-border bg-card">
               <table className="w-full text-sm">

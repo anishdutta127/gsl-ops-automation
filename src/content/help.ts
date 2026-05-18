@@ -435,6 +435,18 @@ export const HELP_WORKFLOWS: WorkflowItem[] = [
     ],
   },
   {
+    task: 'Setting a payment schedule (Sales / Finance)',
+    precondition:
+      'MOU is Signed (status Active or later). Either Sales or Finance can save when no PI is issued yet; only Finance can override once any instalment has a PI.',
+    steps: [
+      'Open the MOU detail page. If no instalments exist yet you will see a Set schedule button in the action bar (primary, navy). If instalments already exist the same slot shows Edit schedule.',
+      'You can also reach the editor from the Instalments page: when the table is empty it shows a Set payment schedule button below the explainer copy.',
+      'On the editor, add one row per instalment using Add instalment row. Set the % Due (must sum to 100, ±0.5 tolerance), the due date, and optional notes. The amount column derives as contract value × % / 100.',
+      'Click Save schedule. The page redirects back to the editor with a confirmation; the new rows appear on the Instalments page within ~5 minutes (sync drain).',
+      'Once any instalment has a PI issued, the editor switches to override mode: row count locks, you must enter a ≥10 character reason, and re-priced locked rows materialise Adjustment entries automatically. Override saving requires the Finance role.',
+    ],
+  },
+  {
     task: 'Generating a Proforma Invoice (Finance)',
     precondition: 'School has a GSTIN on file; actuals are confirmed.',
     steps: [

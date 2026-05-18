@@ -42,6 +42,13 @@ function userWithRole(role: User['role'], id: string): User {
   }
 }
 
+function userWithDept(role: User['role'], department: User['department'], id: string): User {
+  return {
+    id, name: id, email: `${id}@example.test`, role, department,
+    testingOverride: false, active: true, passwordHash: 'X', createdAt: '', auditLog: [],
+  }
+}
+
 describe('/mous/[mouId] detail page', () => {
   // Phase F: timeout extended to 30s. Test passes <4s in isolation
   // but races with parallel page-test imports under full-suite load.
@@ -107,6 +114,51 @@ describe('/mous/[mouId] detail page', () => {
       expect(html).not.toMatch(/href="\/mous\/MOU-STEAM-2627-001\/pi"/)
     }
   })
+
+  it(
+    'Gate 5A.9 Step 1: shows Edit schedule when MOU has instalments and user can edit',
+    { timeout: 30000 },
+    async () => {
+      getCurrentUserMock.mockResolvedValue(userWithDept('Finance', 'finance', 'finance-user'))
+      const { default: Page } = await import('./page')
+      const html = renderToStaticMarkup(
+        await Page({ params: Promise.resolve({ mouId: 'MOU-STEAM-2627-001' }) }),
+      )
+      expect(html).toContain('data-testid="action-edit-schedule"')
+      expect(html).toMatch(
+        /href="\/mous\/MOU-STEAM-2627-001\/installments\/schedule-edit"/,
+      )
+      expect(html).not.toContain('data-testid="action-set-schedule"')
+    },
+  )
+
+  it(
+    'Gate 5A.9 Step 1: shows Set schedule when MOU is signed + has zero instalments + user can edit',
+    { timeout: 30000 },
+    async () => {
+      getCurrentUserMock.mockResolvedValue(userWithDept('Finance', 'finance', 'finance-user'))
+      const { default: Page } = await import('./page')
+      const html = renderToStaticMarkup(
+        await Page({ params: Promise.resolve({ mouId: 'MOU-STEAM-2526-028' }) }),
+      )
+      expect(html).toContain('data-testid="action-set-schedule"')
+      expect(html).not.toContain('data-testid="action-edit-schedule"')
+    },
+  )
+
+  it(
+    'Gate 5A.9 Step 1: hides schedule buttons for Ops department (no canEdit gate)',
+    { timeout: 30000 },
+    async () => {
+      getCurrentUserMock.mockResolvedValue(userWithDept('OpsEmployee', 'ops', 'ops-user'))
+      const { default: Page } = await import('./page')
+      const html = renderToStaticMarkup(
+        await Page({ params: Promise.resolve({ mouId: 'MOU-STEAM-2627-001' }) }),
+      )
+      expect(html).not.toContain('data-testid="action-set-schedule"')
+      expect(html).not.toContain('data-testid="action-edit-schedule"')
+    },
+  )
 
   it('contains no raw hex codes (token discipline)', async () => {
     getCurrentUserMock.mockResolvedValue(admin())

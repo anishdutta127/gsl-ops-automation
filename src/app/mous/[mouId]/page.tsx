@@ -69,6 +69,7 @@ import { canEditMOU } from '@/lib/access'
 import { getCurrentUser } from '@/lib/auth/session'
 import {
   canApproveDispatchOverride,
+  canEditFinanceData,
   canGeneratePI,
   canRequestDispatchOverride,
 } from '@/lib/access'
@@ -335,6 +336,15 @@ export default async function MouDetailPage({ params, searchParams }: PageProps)
   // lib/pi/generatePi.ts stays as defence in depth.
   const canGeneratePi = user ? canGeneratePI(user) : false
   const canEditMou = user ? canEditMOU(user) : false
+  // Gate 5A.9 Step 1: schedule editor entry point. Either Sales or Finance
+  // edit-gates can save in no-PI mode; Finance is required to override
+  // once a PI is issued. Show the button whenever either gate passes, the
+  // schedule editor itself surfaces override-vs-no-PI mode at runtime.
+  const canSaveSchedule = user
+    ? canEditMOU(user) || canEditFinanceData(user)
+    : false
+  const isMouSigned =
+    mou.status !== 'Pending Signature' && mou.status !== 'Draft'
   const mouAdjustments = allAdjustments.filter(
     (a) => a.mouId === mou.id && a.status === 'Active',
   )
@@ -460,6 +470,24 @@ export default async function MouDetailPage({ params, searchParams }: PageProps)
                 >
                   Instalments
                 </Link>
+                {canSaveSchedule && isMouSigned && installments.length === 0 ? (
+                  <Link
+                    href={`/mous/${mou.id}/installments/schedule-edit`}
+                    className={opsButtonClass({ variant: 'primary', size: 'md' })}
+                    data-testid="action-set-schedule"
+                  >
+                    Set schedule
+                  </Link>
+                ) : null}
+                {canSaveSchedule && installments.length > 0 ? (
+                  <Link
+                    href={`/mous/${mou.id}/installments/schedule-edit`}
+                    className={actionBtnClass}
+                    data-testid="action-edit-schedule"
+                  >
+                    Edit schedule
+                  </Link>
+                ) : null}
                 {canGeneratePi ? (
                   <Link href={`/mous/${mou.id}/pi`} className={actionBtnClass}>
                     PI
