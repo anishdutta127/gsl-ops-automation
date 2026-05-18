@@ -138,7 +138,7 @@ export default async function KitDispatchDetailPage({
     'rejection-reason-required': 'A rejection reason is required.',
   }
   const noticeMessages: Record<string, string> = {
-    allocated: 'Allocation submitted. Sales rep will receive a notification at next cron drain.',
+    allocated: 'Allocation submitted. Sales rep will receive a notification within 5 minutes.',
     approved: 'Dispatch approved. Saved. Will reflect everywhere within ~5 minutes.',
     rejected: 'Allocation rejected. Ops can revise and resubmit.',
     'summary-saved': 'Summary saved. School master updated within ~5 minutes.',
