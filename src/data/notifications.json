@@ -348,7 +348,7 @@
       "hasVariance": false
     },
     "createdAt": "2026-05-12T13:07:43.149Z",
-    "readAt": null,
+    "readAt": "2026-05-18T09:14:49.901Z",
     "auditLog": [
       {
         "timestamp": "2026-05-12T13:07:43.149Z",
@@ -360,6 +360,18 @@
           "relatedEntityId": "3647c2fd-df47-4ca1-9749-5c8a6485c679"
         },
         "notes": "Notification intake-completed fan-out to anita.c (sender=misba.m)."
+      },
+      {
+        "timestamp": "2026-05-18T09:14:49.901Z",
+        "user": "anita.c",
+        "action": "notification-marked-read",
+        "before": {
+          "readAt": null
+        },
+        "after": {
+          "readAt": "2026-05-18T09:14:49.901Z"
+        },
+        "notes": "Recipient marked notification as read."
       }
     ]
   }
