@@ -77,10 +77,13 @@ No GitHub Actions workflow exists for verify today; deploys go via Vercel's auto
 
 ## Deploy
 
-- Hotfix commit: fcce31a, pushed to origin/main.
-- Audit commit: see Step 5 commit hash in `git log`.
-- Production URL: https://gsl-ops-automation.vercel.app
-- Smoke-tested: /mous loads for Pranav (Admin + finance) without the "+ New MOU" button visible; Anish (Admin + null) still sees the button and reaches /mous/new without 404.
+- Hotfix commit: fcce31a (gate fix).
+- Audit commit: 0512d94 (audit script + regression test).
+- Final-report commit: ca660f9.
+- Pushed to origin/main and deployed to production.
+- Production alias: https://gsl-ops-automation.vercel.app
+- Final deployment id: dpl_DDivLX4cm3ev8wSPvsiu737dKKAq.
+- Smoke-test expectations: /mous loads for Pranav (Admin + finance) without the "+ New MOU" button visible; Anish (Admin + null) still sees the button and reaches /mous/new without 404; school detail "+ Draft new MOU" and consolidated landing "New MOU" quick action gated the same way.
 
 ## What is NOT in this hotfix
 
