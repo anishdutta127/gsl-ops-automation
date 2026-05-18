@@ -6706,9 +6706,9 @@
     "instalmentSeq": 1,
     "totalInstalments": 4,
     "description": "",
-    "dueDateRaw": "2026-02-28T18:29:50.000Z",
+    "dueDateRaw": "2026-02-28",
     "dueDateIso": "2026-02-28",
-    "expectedAmount": 0,
+    "expectedAmount": 40000,
     "receivedAmount": null,
     "receivedDate": null,
     "paymentMode": null,
@@ -6732,6 +6732,18 @@
           "status": "Pending"
         },
         "notes": "source: pranav-refresh-2026-05-13"
+      },
+      {
+        "timestamp": "2026-05-18T14:42:17.529Z",
+        "user": "pranav.b",
+        "action": "update",
+        "before": {
+          "installmentCount": 4
+        },
+        "after": {
+          "installmentCount": 4
+        },
+        "notes": "Payment schedule edited (no-PI path): 4 instalment(s)."
       }
     ]
   },
@@ -6744,9 +6756,9 @@
     "instalmentSeq": 2,
     "totalInstalments": 4,
     "description": "",
-    "dueDateRaw": "2026-03-31T18:29:50.000Z",
-    "dueDateIso": "2026-03-31",
-    "expectedAmount": 0.03,
+    "dueDateRaw": "2026-04-01",
+    "dueDateIso": "2026-04-01",
+    "expectedAmount": 120000,
     "receivedAmount": null,
     "receivedDate": null,
     "paymentMode": null,
@@ -6770,6 +6782,18 @@
           "status": "Pending"
         },
         "notes": "source: pranav-refresh-2026-05-13"
+      },
+      {
+        "timestamp": "2026-05-18T14:42:17.529Z",
+        "user": "pranav.b",
+        "action": "update",
+        "before": {
+          "installmentCount": 4
+        },
+        "after": {
+          "installmentCount": 4
+        },
+        "notes": "Payment schedule edited (no-PI path): 4 instalment(s)."
       }
     ]
   },
@@ -6782,9 +6806,9 @@
     "instalmentSeq": 3,
     "totalInstalments": 4,
     "description": "",
-    "dueDateRaw": "2026-05-31T18:29:50.000Z",
-    "dueDateIso": "2026-05-31",
-    "expectedAmount": 0.03,
+    "dueDateRaw": "2026-06-01",
+    "dueDateIso": "2026-06-01",
+    "expectedAmount": 120000,
     "receivedAmount": null,
     "receivedDate": null,
     "paymentMode": null,
@@ -6808,6 +6832,18 @@
           "status": "Pending"
         },
         "notes": "source: pranav-refresh-2026-05-13"
+      },
+      {
+        "timestamp": "2026-05-18T14:42:17.529Z",
+        "user": "pranav.b",
+        "action": "update",
+        "before": {
+          "installmentCount": 4
+        },
+        "after": {
+          "installmentCount": 4
+        },
+        "notes": "Payment schedule edited (no-PI path): 4 instalment(s)."
       }
     ]
   },
@@ -6820,9 +6856,9 @@
     "instalmentSeq": 4,
     "totalInstalments": 4,
     "description": "",
-    "dueDateRaw": "2026-08-31T18:29:50.000Z",
-    "dueDateIso": "2026-08-31",
-    "expectedAmount": 0.03,
+    "dueDateRaw": "2026-09-01",
+    "dueDateIso": "2026-09-01",
+    "expectedAmount": 120000,
     "receivedAmount": null,
     "receivedDate": null,
     "paymentMode": null,
@@ -6846,6 +6882,18 @@
           "status": "Pending"
         },
         "notes": "source: pranav-refresh-2026-05-13"
+      },
+      {
+        "timestamp": "2026-05-18T14:42:17.529Z",
+        "user": "pranav.b",
+        "action": "update",
+        "before": {
+          "installmentCount": 4
+        },
+        "after": {
+          "installmentCount": 4
+        },
+        "notes": "Payment schedule edited (no-PI path): 4 instalment(s)."
       }
     ]
   },
