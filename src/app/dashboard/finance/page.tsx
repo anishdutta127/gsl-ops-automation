@@ -334,7 +334,7 @@ function PaymentsAttentionCard({
                 </div>
                 <Link
                   href={matchHref}
-                  className="inline-flex shrink-0 items-center gap-1 rounded-md border border-brand-teal bg-brand-teal px-2 py-1 text-xs font-semibold text-white hover:bg-brand-teal/90"
+                  className="inline-flex shrink-0 items-center gap-1 rounded-md border border-brand-teal bg-brand-teal px-2 py-1 text-xs font-semibold text-brand-navy hover:bg-brand-teal/90"
                 >
                   Match
                 </Link>
