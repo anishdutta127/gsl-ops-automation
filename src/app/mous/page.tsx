@@ -40,6 +40,7 @@ import communicationsJson from '@/data/communications.json'
 import feedbackJson from '@/data/feedback.json'
 import schoolGroupsJson from '@/data/school_groups.json'
 import { getCurrentUser } from '@/lib/auth/session'
+import { canEditMOU } from '@/lib/access'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { FilterRail, type FilterDimension } from '@/components/ops/FilterRail'
@@ -244,17 +245,21 @@ export default async function MousListPage({ searchParams }: PageProps) {
           }
         />
         <div className="mx-auto flex max-w-screen-xl items-center justify-end gap-2 px-4 pt-2">
-          {/* Gate 3.5 Step 4: prominent "+ New MOU" affordance as the
-              primary CTA. Filled brand-teal styling marks it as the
-              dominant action on this surface. */}
-          <Link
-            href="/mous/new"
-            className={opsButtonClass({ variant: 'primary', size: 'sm' })}
-            data-testid="new-mou-link"
-          >
-            <Plus aria-hidden className="size-4" />
-            New MOU
-          </Link>
+          {/* The "+ New MOU" CTA is gated by canEditMOU so users without
+              MOU-edit rights (e.g. Finance / Ops department) do not see
+              a button that 404s on click. The /mous/new page itself
+              calls notFound() for the same set of users; this CTA gate
+              keeps the surface honest. */}
+          {user && canEditMOU(user) ? (
+            <Link
+              href="/mous/new"
+              className={opsButtonClass({ variant: 'primary', size: 'sm' })}
+              data-testid="new-mou-link"
+            >
+              <Plus aria-hidden className="size-4" />
+              New MOU
+            </Link>
+          ) : null}
           <Link
             href="/mous/archive"
             className={opsButtonClass({ variant: 'outline', size: 'sm' })}

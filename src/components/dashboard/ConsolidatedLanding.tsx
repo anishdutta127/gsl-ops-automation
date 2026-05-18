@@ -64,6 +64,10 @@ interface Props {
   ops: OpsTileKpis
   leadership: LeadershipTileKpis
   fyLabel: string
+  /** Hide the "New MOU" quick action when the viewer cannot draft MOUs.
+   *  Keeps the surface honest: /mous/new calls notFound() for these users,
+   *  so leaving the CTA visible produces a misleading 404. */
+  canDraftMou: boolean
 }
 
 export function ConsolidatedLanding({
@@ -74,6 +78,7 @@ export function ConsolidatedLanding({
   ops,
   leadership,
   fyLabel,
+  canDraftMou,
 }: Props) {
   // Gate 4.95 Step 4: drill-down tiles promoted above Quick actions
   // and Items requiring attention so a user opening the platform sees
@@ -85,7 +90,7 @@ export function ConsolidatedLanding({
       <CommercialZone data={commercial} fyLabel={fyLabel} />
       <OperationalZone data={operational} />
       <DrillDownZone finance={finance} ops={ops} leadership={leadership} />
-      <QuickActionsZone />
+      <QuickActionsZone canDraftMou={canDraftMou} />
       <AttentionZone items={attention} />
     </div>
   )
@@ -516,7 +521,13 @@ const QUICK_ACTIONS: QuickAction[] = [
   },
 ]
 
-function QuickActionsZone() {
+function QuickActionsZone({ canDraftMou }: { canDraftMou: boolean }) {
+  // Hide /mous/new for viewers without canEditMOU. The page calls
+  // notFound() for them; leaving the button visible produces a
+  // misleading 404.
+  const visibleActions = canDraftMou
+    ? QUICK_ACTIONS
+    : QUICK_ACTIONS.filter((a) => a.href !== '/mous/new')
   return (
     <section
       aria-labelledby="quick-actions-heading"
@@ -530,7 +541,7 @@ function QuickActionsZone() {
         Quick actions
       </h2>
       <ul className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
-        {QUICK_ACTIONS.map((action) => (
+        {visibleActions.map((action) => (
           <li key={action.href} className="flex">
             <Link
               href={action.href}

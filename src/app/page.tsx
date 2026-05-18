@@ -33,6 +33,7 @@ import schoolsJson from '@/data/schools.json'
 import escalationsJson from '@/data/escalations.json'
 import kitDispatchesJson from '@/data/kit_dispatches.json'
 import { getCurrentUser } from '@/lib/auth/session'
+import { canEditMOU } from '@/lib/access'
 import { TopNav } from '@/components/ops/TopNav'
 import { ConsolidatedLanding } from '@/components/dashboard/ConsolidatedLanding'
 import {
@@ -144,6 +145,7 @@ export default async function HomePage() {
           ops={tiles.ops}
           leadership={tiles.leadership}
           fyLabel={fy}
+          canDraftMou={canEditMOU(user)}
         />
       </div>
     </>

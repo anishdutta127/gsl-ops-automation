@@ -30,6 +30,7 @@ import kitDispatchesJson from '@/data/kit_dispatches.json'
 import escalationsJson from '@/data/escalations.json'
 import type { Escalation } from '@/lib/types'
 import { getCurrentUser } from '@/lib/auth/session'
+import { canEditMOU } from '@/lib/access'
 import { FileText, Inbox, Receipt, Truck } from 'lucide-react'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
@@ -273,6 +274,7 @@ export default async function SchoolDetailPage({ params, searchParams }: PagePro
               schoolMous={schoolMous}
               schoolPayments={schoolPayments}
               schoolKitDispatches={schoolDispatches}
+              canDraftMou={user !== null && canEditMOU(user)}
             />
           )}
           {activeTab === 'payments' && (
@@ -355,11 +357,13 @@ function MousPanel({
   schoolMous,
   schoolPayments,
   schoolKitDispatches,
+  canDraftMou,
 }: {
   school: School
   schoolMous: MOU[]
   schoolPayments: Payment[]
   schoolKitDispatches: KitDispatch[]
+  canDraftMou: boolean
 }) {
   // Gate 4.7 Step 2: per-MOU mini-tracker (compact mode of the Gate 4
   // StatusTracker) renders below each MOU row. Pre-compute per-MOU
@@ -383,13 +387,15 @@ function MousPanel({
         <h2 className="font-heading text-base font-semibold text-brand-navy">
           MOUs ({schoolMous.length})
         </h2>
-        <Link
-          href={`/mous/new?schoolId=${encodeURIComponent(school.id)}`}
-          className="inline-flex min-h-11 items-center gap-1.5 rounded-md border border-brand-teal bg-brand-teal px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-teal/90 focus:outline-none focus:ring-2 focus:ring-brand-navy"
-          data-testid="school-new-mou-cta"
-        >
-          + Draft new MOU
-        </Link>
+        {canDraftMou ? (
+          <Link
+            href={`/mous/new?schoolId=${encodeURIComponent(school.id)}`}
+            className="inline-flex min-h-11 items-center gap-1.5 rounded-md border border-brand-teal bg-brand-teal px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-teal/90 focus:outline-none focus:ring-2 focus:ring-brand-navy"
+            data-testid="school-new-mou-cta"
+          >
+            + Draft new MOU
+          </Link>
+        ) : null}
       </div>
       {schoolMous.length === 0 ? (
         <EmptyState
