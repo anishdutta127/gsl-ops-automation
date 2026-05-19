@@ -213,6 +213,11 @@ interface PageProps {
 const NOTICE_COPY: Record<string, string> = {
   'pi-finance-only':
     'PI generation is a Finance function. If you need a PI raised, please reach out to accounts.',
+  // Phase 5 (2026-05-19): student-count change saved notice.
+  'student-count-updated':
+    'Student count updated. Instalments have been recalculated; the affected rows reflect everywhere within ~5 minutes.',
+  'student-count-forbidden':
+    'You do not have permission to update the student count for this MOU. Sales or Finance with the relevant department gate is required.',
   saved: 'Saved. Will reflect everywhere within ~5 minutes.',
   'reminder-sent':
     'Reminder sent to the owning department. Will reflect on their notification bell within ~5 minutes.',
@@ -503,6 +508,18 @@ export default async function MouDetailPage({ params, searchParams }: PageProps)
                 <Link href={`/mous/${mou.id}/actuals`} className={actionBtnClass}>
                   Actuals
                 </Link>
+                {/* Phase 5 (2026-05-19, Pranav review #4): student-count
+                    change flow. Gated by canEditMOU || canEditFinanceData;
+                    the page route enforces the same. */}
+                {canEditMou || canEditFinanceData(user!) ? (
+                  <Link
+                    href={`/mous/${mou.id}/student-count`}
+                    className={actionBtnClass}
+                    data-testid="action-update-student-count"
+                  >
+                    Update student count
+                  </Link>
+                ) : null}
                 {canEditMou ? (
                   <Link
                     href={`/mous/${mou.id}/draft`}
