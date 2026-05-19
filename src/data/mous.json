@@ -10563,5 +10563,97 @@
     "signedMouPdfPath": null,
     "productSelection": null,
     "gradewiseDistribution": null
+  },
+  {
+    "id": "MOU-YP-2627-DRAFT-001",
+    "schoolId": "",
+    "schoolName": "Gopi Birla Memorial School",
+    "programme": "Young Pioneers",
+    "status": "Draft",
+    "academicYear": "2026-27",
+    "startDate": "2026-04-01",
+    "endDate": "2027-03-31",
+    "studentsMou": 345,
+    "studentsActual": null,
+    "studentsVariance": null,
+    "studentsVariancePct": null,
+    "spWithoutTax": 2500,
+    "spWithTax": 2500,
+    "contractValue": 862500,
+    "received": 0,
+    "tds": 0,
+    "balance": 862500,
+    "receivedPct": 0,
+    "paymentSchedule": "Y1: 50%-50%",
+    "trainerModel": "TTT",
+    "salesRep": null,
+    "notes": null,
+    "daysToExpiry": null,
+    "salesPersonId": null,
+    "templateVersion": "YP-v3",
+    "generatedAt": "2026-05-19T12:52:24.565Z",
+    "draftVariables": {
+      "SCHOOL_NAME": "Gopi Birla Memorial School",
+      "EFFECTIVE_DATE": "2026-04-27",
+      "START_DATE": "2026-04-01",
+      "END_DATE": "2027-03-31",
+      "STUDENT_COUNT": "345",
+      "PRICE_PER_STUDENT": "2500",
+      "BOOK_SET": "Beginners Level",
+      "_ANNEXURE_HTML": ""
+    },
+    "auditLog": [
+      {
+        "timestamp": "2026-05-19T12:52:24.565Z",
+        "user": "Anita C.",
+        "action": "create",
+        "notes": "Save draft via YP-v3"
+      }
+    ],
+    "effectiveDate": "2026-04-27",
+    "numberOfYears": 1,
+    "salesChannel": "School Programs (Course)",
+    "schoolCrmId": null,
+    "paymentSchedules": [
+      {
+        "year": 1,
+        "instalments": [
+          {
+            "month": "2026-04",
+            "pctDue": 50
+          },
+          {
+            "month": "2026-09",
+            "pctDue": 50
+          }
+        ]
+      }
+    ],
+    "yearlyPricing": [
+      {
+        "year": 1,
+        "spWithoutTax": 2500,
+        "spWithTax": 2500
+      }
+    ],
+    "billingBlock": {
+      "billingName": "Gopi Birla Memorial School",
+      "billingAddress": "68 Walkeshwar Road, Malabar Hill, Mumbai - 400006",
+      "billingCityState": "Mumbai",
+      "shipToName": "Gopi Birla Memorial School",
+      "shipToAddress": "68 Walkeshwar Road, Malabar Hill, Mumbai - 400006",
+      "shipToCityState": "Mumbai",
+      "schoolEmail": "birlagopi@gbmschool.co.in",
+      "contactPersonName": "Radhika Dave",
+      "designation": "Accountant",
+      "mobileNo": "7045491519",
+      "contactEmail": "accounts@gbmschool.co.in",
+      "schoolContactNo": "9326095647",
+      "pan": "AAATB0010B",
+      "gst": ""
+    },
+    "signedMouPdfPath": null,
+    "productSelection": null,
+    "gradewiseDistribution": null
   }
 ]
