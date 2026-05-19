@@ -10,7 +10,7 @@ Static structural check. The script enumerates every internal link in `src/` and
 |---|---|
 | Routes declared (`src/app/**/page.tsx`) | 234 |
 | Distinct link paths found in source | 103 |
-| Total link occurrences | 460 |
+| Total link occurrences | 459 |
 | ✅ OK (static path matches a route) | 59 |
 | ⚠ Dynamic (link matches a dynamic route, needs runtime verification) | 44 |
 | ❌ Broken (link points to no route) | 0 |
@@ -40,18 +40,18 @@ These resolve to a dynamic-segment route (e.g. `/mous/[mouId]`). The static chec
 | `/dispatch/kits/[param]` | `/dispatch/kits/[mouId]` | 3 |
 | `/escalations/[param]` | `/escalations/[escalationId]` | 13 |
 | `/escalations/[param]/edit` | `/escalations/[escalationId]/edit` | 6 |
-| `/mous/[param]` | `/mous/[mouId]` | 32 |
+| `/mous/[param]` | `/mous/[mouId]` | 33 |
 | `/mous/[param]/actuals` | `/mous/[mouId]/actuals` | 2 |
 | `/mous/[param]/delivery-ack` | `/mous/[mouId]/delivery-ack` | 1 |
 | `/mous/[param]/dispatch` | `/mous/[mouId]/dispatch` | 5 |
 | `/mous/[param]/draft` | `/mous/[mouId]/draft` | 1 |
 | `/mous/[param]/feedback-request` | `/mous/[mouId]/feedback-request` | 1 |
-| `/mous/[param]/installments` | `/mous/[mouId]/installments` | 6 |
+| `/mous/[param]/installments` | `/mous/[mouId]/installments` | 5 |
 | `/mous/[param]/installments/[param]/edit` | `/mous/[mouId]/installments/[paymentId]/edit` | 1 |
 | `/mous/[param]/installments/[param]/mark-paid` | `/mous/[mouId]/installments/[paymentId]/mark-paid` | 1 |
 | `/mous/[param]/installments/[param]/mark-partial` | `/mous/[mouId]/installments/[paymentId]/mark-partial` | 1 |
 | `/mous/[param]/installments/[param]/mark-pi-sent` | `/mous/[mouId]/installments/[paymentId]/mark-pi-sent` | 2 |
-| `/mous/[param]/installments/schedule-edit` | `/mous/[mouId]/installments/schedule-edit` | 3 |
+| `/mous/[param]/installments/schedule-edit` | `/mous/[mouId]/installments/schedule-edit` | 1 |
 | `/mous/[param]/intake` | `/mous/[mouId]/intake` | 2 |
 | `/mous/[param]/intake/edit` | `/mous/[mouId]/intake/edit` | 1 |
 | `/mous/[param]/kits-details` | `/mous/[mouId]/kits-details` | 2 |
@@ -210,7 +210,7 @@ API routes are typically called via `fetch()` rather than navigated to via `<Lin
 | `/api/pi/generate` | `src/app/api/pi/generate/route.ts` |
 | `/api/reports/[slug]/csv` | `src/app/api/reports/[slug]/csv/route.ts` |
 | `/api/schools/[id]` | `src/app/api/schools/[id]/route.ts` |
-| `/api/schools/[schoolId]/reassign-sales-rep` | `src/app/api/schools/[schoolId]/reassign-sales-rep/route.ts` |
+| `/api/schools/[id]/reassign-sales-rep` | `src/app/api/schools/[id]/reassign-sales-rep/route.ts` |
 | `/api/sync/tick` | `src/app/api/sync/tick/route.ts` |
 | `/api/sync/trigger` | `src/app/api/sync/trigger/route.ts` |
 | `/api/workflow/send-reminder` | `src/app/api/workflow/send-reminder/route.ts` |
