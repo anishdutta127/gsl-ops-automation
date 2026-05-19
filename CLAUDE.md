@@ -154,6 +154,23 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 
 ---
 
+## V4 verification standard (2026-05-19)
+
+Past gates passed verification by checking "route returns 200" or "import exists" without walking the actual flow. That pattern shipped the installment CTA gap, the `/mous/new` 404, and the `/mous/new` client-side crash to production.
+
+**V4 verification means the gate has not passed until the canonical user flow has been walked with realistic data.** Concretely, for any route or feature this gate's changes touch:
+
+1. Reproduce the flow locally with `npm run dev` (or `npm run start` after `npm run build` for production-mode parity).
+2. Use Playwright if available, otherwise manually walk the component tree with realistic mocked data through every render and submit.
+3. Confirm the page actually **renders** without a client- or server-side exception, **and** the action actually **completes** end-to-end.
+4. Capture the result in a verification log under `docs/gate-<name>/E2E_VERIFICATION_LOG.md`: which user, which flow, what happened.
+
+"Auth-gated, couldn't verify visually" is **no longer acceptable** for routes covered by the gate's changes. Use `TESTING_OPEN_ACCESS=true`, a seeded test user, or the test-bypass hook to walk the flow in the same env where the bug would appear. Vitest render tests (`renderToStaticMarkup` of the page component) catch SSR-side crashes; they do not substitute for E2E walking but they are the floor.
+
+When a flow cannot be E2E-walked in a given environment (real third-party dependency unavailable, etc.), state that explicitly in the verification log and name what the residual risk is. Do not silently fall back to "the route returns 200".
+
+---
+
 ## Routing tree (post-ceremony, 2026-04)
 
 For any question CC encounters in this repo, this table picks the first document to consult. Read this once; it becomes background.
