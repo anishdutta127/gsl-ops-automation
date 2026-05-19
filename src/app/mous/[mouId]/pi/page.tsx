@@ -24,7 +24,7 @@
 
 import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
-import { Info } from 'lucide-react'
+import { AlertCircle, Info } from 'lucide-react'
 import type { MOU, Payment, School, User } from '@/lib/types'
 import mousJson from '@/data/mous.json'
 import schoolsJson from '@/data/schools.json'
@@ -45,8 +45,31 @@ const allMous = mousJson as unknown as MOU[]
 const allSchools = schoolsJson as unknown as School[]
 const allPayments = paymentsJson as unknown as Payment[]
 
+// 2026-05-19 stabilisation: /api/pi/generate redirects every failure
+// back here with `?error=<reason>`. Map each reason to friendly copy so
+// the operator does not land on raw JSON. parallel-build-locked is the
+// only one that surfaces an amber banner (intended state); the rest
+// render a red alert with the reason embedded.
+const ERROR_COPY: Record<string, string> = {
+  'parallel-build-locked':
+    'PI generation is locked during the parallel-build window. Pranav continues issuing PIs from gsl-mou-system until cutover day.',
+  'template-missing':
+    'PI document template is not on this server. Drop the latest PI .docx into public/mou-templates/ and redeploy. Logged for the operator.',
+  'missing-mou': 'That MOU could not be found.',
+  'invalid-instalment-seq': 'Pick a valid pending instalment from the dropdown and try again.',
+  permission:
+    'You do not have permission to generate this PI. Finance or an Admin with cross-functional rights must run this.',
+  'unknown-user': 'Your session user could not be resolved. Sign out and back in, then retry.',
+  'mou-not-found': 'That MOU could not be found.',
+  'school-not-found':
+    'The school linked to this MOU is missing from the school master. Check /schools and retry.',
+  'wrong-status':
+    'PI generation is only allowed for MOUs in Active status. Sign or activate the MOU first.',
+}
+
 interface PageProps {
   params: Promise<{ mouId: string }>
+  searchParams?: Promise<Record<string, string | string[] | undefined>>
 }
 
 function isVisibleToUser(mou: MOU, user: User | null): boolean {
@@ -59,8 +82,11 @@ const FIELD_INPUT_CLASS =
   'block w-full rounded-md border border-input bg-card px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-brand-navy'
 const FIELD_LABEL_CLASS = 'block text-sm font-medium text-brand-navy mb-1'
 
-export default async function PiPage({ params }: PageProps) {
+export default async function PiPage({ params, searchParams }: PageProps) {
   const { mouId } = await params
+  const sp = (await searchParams) ?? {}
+  const errorKey = typeof sp.error === 'string' ? sp.error : null
+  const errorMessage = errorKey ? ERROR_COPY[errorKey] ?? null : null
   const user = await getCurrentUser()
   const mou = allMous.find((m) => m.id === mouId)
   if (!mou || !isVisibleToUser(mou, user)) notFound()
@@ -120,6 +146,22 @@ export default async function PiPage({ params }: PageProps) {
               { label: 'Pending instalments', value: String(pendingInstallments.length) },
             ]}
           />
+
+          {errorMessage ? (
+            <div
+              role="alert"
+              data-testid="pi-action-error"
+              data-error={errorKey}
+              className={`flex items-start gap-2 rounded-md border p-3 text-sm ${
+                errorKey === 'parallel-build-locked'
+                  ? 'border-amber-200 bg-amber-50 text-amber-900'
+                  : 'border-red-200 bg-red-50 text-red-900'
+              }`}
+            >
+              <AlertCircle aria-hidden className="size-4 shrink-0" />
+              <span>{errorMessage}</span>
+            </div>
+          ) : null}
 
           {gstinMissing ? (
             <p

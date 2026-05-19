@@ -8,24 +8,22 @@
  *
  * Failure responses follow the form-POST convention used elsewhere:
  * 303 redirect back to the MOU PI page with an `error` query param
- * so the calling page can render a friendly message. The exception
- * is `template-missing`, which is an operator-facing error rather
- * than a user-facing one; we surface its copyable message via 500
- * so it shows up clearly in server logs.
+ * so the calling page can render a friendly message. 2026-05-19
+ * stabilisation switched parallel-build-locked and template-missing
+ * onto the redirect path too; the form is a browser POST so a raw
+ * JSON 503 / 500 landed the user on raw JSON instead of the page-level
+ * banner. template-missing still logs the underlying error to the
+ * server console so the operator can drop the missing .docx and retry.
  *
  * Status codes:
  *   200 OK with Content-Disposition attachment   -> success
- *   303 redirect with error param                -> user-facing failures
- *   500 with operator copy                       -> template-missing
+ *   303 redirect with error param                -> all failures
  */
 
 import { NextResponse } from 'next/server'
 import { generatePi } from '@/lib/pi/generatePi'
 import { getCurrentSession } from '@/lib/auth/session'
-import {
-  isPiParallelBuildLocked,
-  parallelBuildLockMessage,
-} from '@/lib/pi/parallelBuildLock'
+import { isPiParallelBuildLocked } from '@/lib/pi/parallelBuildLock'
 
 export async function POST(request: Request) {
   // Parallel-build lock (Gate 2 housekeeping item A). Default ON: the
@@ -34,16 +32,20 @@ export async function POST(request: Request) {
   // collides with the next legitimate PI from gsl-mou-system. Checked
   // BEFORE auth so even an authenticated tester cannot accidentally
   // advance the counter. Production unlock: PI_PARALLEL_BUILD_LOCK=false.
-  if (isPiParallelBuildLocked()) {
-    return NextResponse.json(
-      { error: 'parallel-build-locked', message: parallelBuildLockMessage() },
-      { status: 503 },
-    )
-  }
-
+  //
+  // 2026-05-19 stabilisation: if the lock flips between page-load and
+  // submit (or the form is opened with a stale cached page), redirect
+  // to the MOU PI page so the existing parallel-build banner renders
+  // instead of dropping the user on raw JSON.
   const form = await request.formData()
   const mouId = String(form.get('mouId') ?? '')
   const instalmentSeqRaw = String(form.get('instalmentSeq') ?? '')
+
+  if (isPiParallelBuildLocked()) {
+    const url = new URL(mouId ? `/mous/${mouId}/pi` : '/', request.url)
+    url.searchParams.set('error', 'parallel-build-locked')
+    return NextResponse.redirect(url, { status: 303 })
+  }
 
   const session = await getCurrentSession()
   if (!session) {
@@ -71,13 +73,15 @@ export async function POST(request: Request) {
   })
 
   if (!result.ok) {
+    // template-missing is an operator-facing condition; surface via the
+    // same redirect-with-error pattern as the other failure modes. The
+    // server log still carries the underlying TemplateMissingError via
+    // console.error so the operator can drop the missing template file
+    // and retry.
     if (result.reason === 'template-missing') {
-      return NextResponse.json(
-        {
-          error: 'template-missing',
-          message: result.templateError?.message ?? 'PI template not yet authored.',
-        },
-        { status: 500 },
+      console.error(
+        'PI template missing:',
+        result.templateError?.message ?? '(no detail)',
       )
     }
     return errorTo(result.reason)

@@ -89,18 +89,25 @@ describe('POST /api/pi/generate', () => {
     expect(res.headers.get('location')).toContain('error=permission')
   })
 
-  it('template-missing -> 500 JSON with operator-copyable message', async () => {
+  it('template-missing -> 303 with error=template-missing (logs detail to server console)', async () => {
+    // 2026-05-19 stabilisation: template-missing was previously a 500
+    // JSON; that dropped the user on raw JSON because /mous/[id]/pi
+    // submits the form via a browser POST, not a fetch. Now redirects
+    // to the page with an error param so the operator sees friendly
+    // copy; the missing template path is still logged server-side.
+    const consoleErrMock = vi.spyOn(console, 'error').mockImplementation(() => {})
     generateMock.mockResolvedValue({
       ok: false,
       reason: 'template-missing',
       templateError: new TemplateMissingError('pi-v1', 'public/ops-templates/pi-template.docx'),
     })
     const res = await POST(buildRequest({ mouId: 'MOU-X', instalmentSeq: '1' }))
-    expect(res.status).toBe(500)
-    const json = await res.json()
-    expect(json.error).toBe('template-missing')
-    expect(json.message).toContain('public/ops-templates/pi-template.docx')
-    expect(json.message).toContain('not yet authored')
+    expect(res.status).toBe(303)
+    const loc = res.headers.get('location') ?? ''
+    expect(loc).toContain('/mous/MOU-X/pi')
+    expect(loc).toContain('error=template-missing')
+    expect(consoleErrMock).toHaveBeenCalled()
+    consoleErrMock.mockRestore()
   })
 
   it('missing mouId -> 303 to / (kanban) with error=missing-mou (no lib call)', async () => {
@@ -141,28 +148,33 @@ describe('POST /api/pi/generate: parallel-build lock', () => {
     }
   })
 
-  it('returns 503 with lock copy when lock env is unset (fail-closed default)', async () => {
+  it('redirects with error=parallel-build-locked when lock env is unset (fail-closed default)', async () => {
+    // 2026-05-19 stabilisation: lock used to return 503 JSON which
+    // dropped the user on raw JSON when the form was browser-POSTed.
+    // Now redirects to the page-level lock banner instead. The
+    // counter is still never advanced (generatePi is not invoked).
     delete process.env.PI_PARALLEL_BUILD_LOCK
     const res = await POST(buildRequest({ mouId: 'MOU-X', instalmentSeq: '1' }))
-    expect(res.status).toBe(503)
-    const body = await res.json()
-    expect(body.error).toBe('parallel-build-locked')
-    expect(body.message).toContain('PI generation is locked during the parallel-build window')
-    expect(body.message).toContain('Gate 5 cutover')
+    expect(res.status).toBe(303)
+    const loc = res.headers.get('location') ?? ''
+    expect(loc).toContain('/mous/MOU-X/pi')
+    expect(loc).toContain('error=parallel-build-locked')
     expect(generateMock).not.toHaveBeenCalled()
   })
 
-  it('returns 503 when lock env is empty (fail-closed)', async () => {
+  it('redirects with error=parallel-build-locked when lock env is empty (fail-closed)', async () => {
     process.env.PI_PARALLEL_BUILD_LOCK = ''
     const res = await POST(buildRequest({ mouId: 'MOU-X', instalmentSeq: '1' }))
-    expect(res.status).toBe(503)
+    expect(res.status).toBe(303)
+    expect(res.headers.get('location')).toContain('error=parallel-build-locked')
     expect(generateMock).not.toHaveBeenCalled()
   })
 
-  it("returns 503 when lock env is 'true' (explicit lock-on)", async () => {
+  it("redirects with error=parallel-build-locked when lock env is 'true' (explicit lock-on)", async () => {
     process.env.PI_PARALLEL_BUILD_LOCK = 'true'
     const res = await POST(buildRequest({ mouId: 'MOU-X', instalmentSeq: '1' }))
-    expect(res.status).toBe(503)
+    expect(res.status).toBe(303)
+    expect(res.headers.get('location')).toContain('error=parallel-build-locked')
     expect(generateMock).not.toHaveBeenCalled()
   })
 
@@ -188,14 +200,18 @@ describe('POST /api/pi/generate: parallel-build lock', () => {
     expect(generateMock).toHaveBeenCalledTimes(1)
   })
 
-  it('lock check fires BEFORE auth (no session leak via 401 vs 503 timing)', async () => {
+  it('lock check fires BEFORE auth (no session leak via 401 timing)', async () => {
     delete process.env.PI_PARALLEL_BUILD_LOCK
     sessionMock.mockResolvedValue(null)
     const res = await POST(buildRequest({ mouId: 'MOU-X', instalmentSeq: '1' }))
-    // 503 lock, NOT 303 redirect to login. Lock check is the first
-    // gate; an unauthenticated caller learns the route is locked
-    // before learning they need to log in.
-    expect(res.status).toBe(503)
-    expect(res.headers.get('location')).toBeNull()
+    // Locked redirect goes to /mous/<id>/pi?error=parallel-build-locked,
+    // NOT to /login. Lock check is the first gate; an unauthenticated
+    // caller learns the route is locked before learning they need to
+    // log in.
+    expect(res.status).toBe(303)
+    const loc = res.headers.get('location') ?? ''
+    expect(loc).toContain('/mous/MOU-X/pi')
+    expect(loc).toContain('error=parallel-build-locked')
+    expect(loc).not.toContain('/login')
   })
 })
