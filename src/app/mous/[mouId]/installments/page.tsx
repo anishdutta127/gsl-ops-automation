@@ -31,6 +31,7 @@ import { opsButtonClass } from '@/components/ops/OpsButton'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canEditFinanceData, canEditMOU, canGeneratePI } from '@/lib/access'
 import { deriveScheduleSummary } from '@/lib/mou/scheduleSummary'
+import { formatInstalmentPercent } from '@/lib/mou/instalmentPercent'
 import { formatRs, formatDate } from '@/lib/format'
 
 const allMous = mousJson as unknown as MOU[]
@@ -174,6 +175,7 @@ export default async function InstallmentsPage({ params, searchParams }: PagePro
                   <tr>
                     <th className="px-3 py-2.5 font-medium">Instalment</th>
                     <th className="px-3 py-2.5 font-medium">Due</th>
+                    <th className="px-3 py-2.5 font-medium text-right">%</th>
                     <th className="px-3 py-2.5 font-medium text-right">Expected</th>
                     <th className="px-3 py-2.5 font-medium text-right">Paid</th>
                     <th className="px-3 py-2.5 font-medium">Status</th>
@@ -196,6 +198,9 @@ export default async function InstallmentsPage({ params, searchParams }: PagePro
                         </td>
                         <td className="px-3 py-3 tabular-nums text-muted-foreground">
                           {p.dueDateIso ? formatDate(p.dueDateIso) : (p.dueDateRaw ?? '-')}
+                        </td>
+                        <td className="px-3 py-3 text-right tabular-nums text-muted-foreground">
+                          {formatInstalmentPercent(p.expectedAmount, mou.contractValue) ?? '-'}
                         </td>
                         <td className="px-3 py-3 text-right tabular-nums">{formatRs(p.expectedAmount)}</td>
                         <td className="px-3 py-3 text-right tabular-nums text-muted-foreground">

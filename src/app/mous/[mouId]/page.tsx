@@ -67,6 +67,7 @@ import adjustmentsJson from '@/data/adjustments.json'
 import { RecalcSummary } from '@/components/mou-system/RecalcSummary'
 import { canEditMOU } from '@/lib/access'
 import { deriveScheduleSummary } from '@/lib/mou/scheduleSummary'
+import { formatInstalmentPercent } from '@/lib/mou/instalmentPercent'
 import { getCurrentUser } from '@/lib/auth/session'
 import {
   canApproveDispatchOverride,
@@ -973,18 +974,24 @@ export default async function MouDetailPage({ params, searchParams }: PageProps)
                 testId="card-instalments"
               >
                 <ul className="divide-y divide-border">
-                  {installments.map((p) => (
+                  {installments.map((p) => {
+                    const pct = formatInstalmentPercent(p.expectedAmount, mou.contractValue)
+                    return (
                     <li key={p.id} className="py-2 text-sm">
                       <span className="font-mono text-xs text-muted-foreground">
                         {p.instalmentLabel}
                       </span>{' '}
-                      <span className="text-foreground">{formatRs(p.expectedAmount)}</span>{' '}
+                      <span className="text-foreground">{formatRs(p.expectedAmount)}</span>
+                      {pct ? (
+                        <span className="ml-1 text-[11px] text-muted-foreground">({pct})</span>
+                      ) : null}{' '}
                       <span className="text-muted-foreground">due {formatDate(p.dueDateIso)}</span>{' '}
                       <span className="ml-2 rounded-sm bg-muted px-1.5 py-0.5 text-[11px]">
                         {p.status}
                       </span>
                     </li>
-                  ))}
+                    )
+                  })}
                 </ul>
               </CollapsibleCard>
 
