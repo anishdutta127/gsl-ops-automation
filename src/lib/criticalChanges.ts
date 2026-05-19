@@ -43,6 +43,12 @@ const CRITICAL_ACTIONS: ReadonlySet<string> = new Set<string>([
   // Phase 5 (2026-05-19, Pranav review #4): student-count changes
   // recalc the entire instalment schedule and are always material.
   'student-count-changed',
+  // 2026-05-20 pre-testing smoke: Phase 2 introduced sales-rep
+  // reassignment audit entries but did not wire them to the
+  // critical-changes panel. Adding here so the "Recent critical
+  // changes" surface on MOU detail flags reassignments alongside
+  // status flips, PI issues, and count changes.
+  'sales-rep-reassigned',
 ])
 
 /**
