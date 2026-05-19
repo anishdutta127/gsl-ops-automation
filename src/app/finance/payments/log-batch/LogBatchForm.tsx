@@ -9,8 +9,10 @@
 import { useMemo, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { formatRs } from '@/lib/format'
+import { formatRs, formatDate } from '@/lib/format'
 import { opsButtonClass } from '@/components/ops/OpsButton'
+import { suggestMatches } from '@/lib/payment/matchSuggestion'
+import type { PaymentLog } from '@/lib/types'
 
 export interface SchoolLite {
   id: string
@@ -33,6 +35,14 @@ export interface BatchInstallmentLite {
   status: string
 }
 
+export interface UnmatchedLogLite {
+  id: string
+  date: string
+  amount: number
+  reference: string | null
+  narration: string | null
+}
+
 interface Props {
   school: SchoolLite
   installments: BatchInstallmentLite[]
@@ -40,6 +50,7 @@ interface Props {
   mousCount: number
   defaultReceivedDate: string
   userName: string
+  unmatchedLogs: UnmatchedLogLite[]
 }
 
 const PAYMENT_MODES = ['Bank Transfer', 'Cheque', 'DD', 'UPI', 'Other'] as const
@@ -65,6 +76,7 @@ export function LogBatchForm({
   totalsForHeader,
   mousCount,
   defaultReceivedDate,
+  unmatchedLogs,
 }: Props) {
   const router = useRouter()
   const [receivedDate, setReceivedDate] = useState(defaultReceivedDate)
@@ -92,6 +104,33 @@ export function LogBatchForm({
     }
     return { bank, tds, total: bank + tds, filled }
   }, [rows])
+
+  // Phase 4 Step 5: bank-statement match suggestion. Recompute on every
+  // bank-amount change so the banner reflects the live total. Mapped
+  // back into the PaymentLog shape suggestMatches expects.
+  const suggestions = useMemo(() => {
+    if (totals.bank <= 0) return []
+    const candidates: PaymentLog[] = unmatchedLogs.map((p) => ({
+      id: p.id,
+      date: p.date,
+      amount: p.amount,
+      mode: 'Bank Transfer',
+      reference: p.reference,
+      narration: p.narration,
+      salesPersonId: null,
+      matchedInstallmentIds: [],
+      unmatched: true,
+      loggedBy: '',
+      loggedAt: p.date,
+      notes: null,
+    }))
+    return suggestMatches({
+      totalBankAmount: totals.bank,
+      bankReference: bankReference.trim() || null,
+      receivedDate,
+      candidates,
+    })
+  }, [totals.bank, unmatchedLogs, bankReference, receivedDate])
 
   function updateRow(paymentId: string, patch: Partial<RowState>) {
     setRows((r) => r.map((row) => (row.paymentId === paymentId ? { ...row, ...patch } : row)))
@@ -364,6 +403,45 @@ export function LogBatchForm({
           ) : null}
         </table>
       </div>
+
+      {suggestions.length > 0 ? (
+        <div
+          role="status"
+          data-testid="batch-match-suggestion"
+          className="mt-4 rounded-md border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900"
+        >
+          <p className="font-semibold">
+            Possibly the same money as {suggestions.length === 1 ? 'an' : suggestions.length}{' '}
+            unmatched bank entr{suggestions.length === 1 ? 'y' : 'ies'} we already have:
+          </p>
+          <ul className="mt-1.5 space-y-1 text-xs">
+            {suggestions.map((s) => (
+              <li key={s.paymentLog.id} data-testid={`batch-match-suggestion-${s.paymentLog.id}`}>
+                <span className="font-mono">{s.paymentLog.id}</span>
+                {' · '}
+                {formatRs(s.paymentLog.amount)}
+                {' on '}
+                {formatDate(s.paymentLog.date)}
+                {s.paymentLog.reference ? ` · ref ${s.paymentLog.reference}` : ''}
+                {' · '}
+                <span className="text-amber-700">{s.reason}</span>
+                {' · '}
+                <Link
+                  href={`/finance/payments/unmatched?highlight=${encodeURIComponent(s.paymentLog.id)}`}
+                  className="underline-offset-2 hover:underline"
+                  data-testid={`batch-match-suggestion-link-${s.paymentLog.id}`}
+                >
+                  View unmatched {'→'}
+                </Link>
+              </li>
+            ))}
+          </ul>
+          <p className="mt-1 text-[11px] text-amber-800">
+            Saving the batch does NOT automatically link to these entries; mark them matched manually
+            from /finance/payments/unmatched if they refer to the same transfer.
+          </p>
+        </div>
+      ) : null}
 
       {warning ? (
         <div

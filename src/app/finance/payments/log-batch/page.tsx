@@ -11,9 +11,10 @@
 
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
-import type { MOU, Payment, School } from '@/lib/types'
+import type { MOU, Payment, PaymentLog, School } from '@/lib/types'
 import mousJson from '@/data/mous.json'
 import paymentsJson from '@/data/payments.json'
+import paymentLogsJson from '@/data/payment_logs.json'
 import schoolsJson from '@/data/schools.json'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canEditFinanceData } from '@/lib/access'
@@ -25,6 +26,7 @@ import { LogBatchForm, type BatchInstallmentLite, type SchoolLite } from './LogB
 
 const allMous = mousJson as unknown as MOU[]
 const allPayments = paymentsJson as unknown as Payment[]
+const allPaymentLogs = paymentLogsJson as unknown as PaymentLog[]
 const allSchools = schoolsJson as unknown as School[]
 
 interface PageProps {
@@ -182,6 +184,18 @@ export default async function LogBatchPage({ searchParams }: PageProps) {
               mousCount={schoolMous.length}
               defaultReceivedDate={new Date().toISOString().slice(0, 10)}
               userName={user.name}
+              // Phase 4 Step 5: pass unmatched PaymentLog rows so the
+              // batch form can surface a "this might be PL-001" banner
+              // when the totals + reference align with a parked bank
+              // entry. The set is small (11 rows in production today)
+              // so passing it client-side is fine.
+              unmatchedLogs={allPaymentLogs.filter((pl) => pl.unmatched).map((pl) => ({
+                id: pl.id,
+                date: pl.date,
+                amount: pl.amount,
+                reference: pl.reference,
+                narration: pl.narration,
+              }))}
             />
           )}
           <p className="mt-4 text-xs text-muted-foreground">
