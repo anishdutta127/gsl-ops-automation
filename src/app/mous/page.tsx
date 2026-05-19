@@ -48,6 +48,7 @@ import { EntityListTable, type ColumnDef } from '@/components/ops/EntityListTabl
 import { EmptyState } from '@/components/ops/EmptyState'
 import { StatusChip } from '@/components/ops/StatusChip'
 import { opsButtonClass } from '@/components/ops/OpsButton'
+import { YearPickerPills } from '@/components/ops/YearPickerPills'
 import {
   parseDimensions,
   applyDimensionFilters,
@@ -60,6 +61,13 @@ import {
   type KanbanStageKey,
 } from '@/lib/kanban/deriveStage'
 import { mouStatusTone } from '@/lib/ui/mouStatusTone'
+import { formatRs } from '@/lib/format'
+import {
+  filterMousByFinancialYear,
+  getAllRelevantFinancialYears,
+  getCurrentFinancialYear,
+  getYearSpecificInstalments,
+} from '@/lib/mou/yearMembership'
 import Link from 'next/link'
 import { Archive, FileEdit, Plus } from 'lucide-react'
 
@@ -102,16 +110,31 @@ export default async function MousListPage({ searchParams }: PageProps) {
   const cohortFiltered = allMous.filter((m) => m.cohortStatus === 'active')
   const scoped = scopeMousForUser(cohortFiltered, user)
 
+  // Phase 3 (2026-05-19): year picker. Resolve the active FY from
+  // ?year=, defaulting to today's FY when absent or unknown. The
+  // relevant-FY list is derived from MOU + Payment data so a year only
+  // appears as a pill when at least one MOU lives in it.
+  const relevantYears = getAllRelevantFinancialYears(scoped, allPayments)
+  const currentFy = getCurrentFinancialYear()
+  const yearParam = typeof sp.year === 'string' ? sp.year : null
+  const activeYear = yearParam && relevantYears.includes(yearParam)
+    ? yearParam
+    : relevantYears.includes(currentFy)
+      ? currentFy
+      : relevantYears[0] ?? currentFy
+  const yearFiltered = filterMousByFinancialYear(scoped, allPayments, activeYear)
+
   const active = parseDimensions(sp, DIMENSION_KEYS as unknown as string[])
   const search = typeof sp.q === 'string' ? sp.q : ''
 
   // W3-C C3: kanban column-header navigation lands here with ?stage=<key>.
   // Filter scoped MOUs to those whose deriveStage matches the requested key.
+  // Year filter applies first; stage + dimension + text search chain on top.
   const stageParam = typeof sp.stage === 'string' && KANBAN_STAGE_KEYS.has(sp.stage)
     ? (sp.stage as KanbanStageKey)
     : null
   const stageFiltered = stageParam !== null
-    ? scoped.filter((m) =>
+    ? yearFiltered.filter((m) =>
         deriveStage(m, {
           dispatches: allDispatches,
           payments: allPayments,
@@ -119,7 +142,7 @@ export default async function MousListPage({ searchParams }: PageProps) {
           feedback: allFeedback,
         }) === stageParam,
       )
-    : scoped
+    : yearFiltered
 
   const filtered = applyTextSearch(
     applyDimensionFilters(stageFiltered, active, {
@@ -127,7 +150,9 @@ export default async function MousListPage({ searchParams }: PageProps) {
       programme: (m) => m.programme,
       region: (m) => regionFor(m, schoolById),
       schoolGroup: (m) => m.schoolGroupId,
-      year: (m) => m.academicYear,
+      // 'year' is intentionally absent here. The pill row above the
+      // table drives the FY filter via yearMembership.ts; the legacy
+      // ?year= URL is consumed by the pill resolver upstream.
     }),
     search,
     (m) => [m.id, m.schoolName, m.programmeSubType ?? '', m.notes ?? ''],
@@ -137,17 +162,10 @@ export default async function MousListPage({ searchParams }: PageProps) {
     ? KANBAN_COLUMNS.find((c) => c.key === stageParam)?.label ?? stageParam
     : null
 
-  // Step 5: derive year + school-group filter options from the current
-  // cohort. Years are sorted reverse-chrono (latest first); groups are
-  // sorted by name. Empty options arrays fall through to a no-op chip set.
-  const yearSet = new Set<string>()
-  for (const m of scoped) {
-    if (m.academicYear) yearSet.add(m.academicYear)
-  }
-  const yearOptions = Array.from(yearSet).sort().reverse()
-
+  // School-group filter options come from the year-filtered set so
+  // groups with no MOUs in the active year are not offered.
   const groupIdsInUse = new Set<string>()
-  for (const m of scoped) {
+  for (const m of yearFiltered) {
     if (m.schoolGroupId) groupIdsInUse.add(m.schoolGroupId)
   }
   const schoolGroupOptions = allSchoolGroups
@@ -187,11 +205,11 @@ export default async function MousListPage({ searchParams }: PageProps) {
       ],
       options: ['East', 'North', 'South-West'].map((v) => ({ value: v, label: v })),
     },
-    {
-      key: 'year',
-      label: 'Academic year',
-      options: yearOptions.map((v) => ({ value: v, label: v })),
-    },
+    // Phase 3 (2026-05-19): the year dimension is retired from the chip
+    // rail and replaced by the YearPickerPills above the table. The
+    // `year` key remains in DIMENSION_KEYS so legacy bookmarked links
+    // like /mous?year=2026-27 parse cleanly; that param now drives the
+    // pill picker rather than the chip rail.
     {
       key: 'schoolGroup',
       label: 'School group',
@@ -199,6 +217,11 @@ export default async function MousListPage({ searchParams }: PageProps) {
     },
   ]
 
+  // Year-aware columns (Phase 3): when the active year is set, each row
+  // surfaces year-scoped financials derived from the instalments due in
+  // that FY. The lifetime contract value renders below the year amount
+  // as small secondary text so multi-year MOUs do not lose the
+  // headline number.
   const columns: ColumnDef<MOU>[] = [
     {
       key: 'id',
@@ -224,6 +247,69 @@ export default async function MousListPage({ searchParams }: PageProps) {
       ),
     },
     {
+      key: 'yearContract',
+      header: `FY ${activeYear} contract`,
+      align: 'right',
+      render: (m) => {
+        const ys = getYearSpecificInstalments(m, activeYear, allPayments)
+        const total = ys.reduce((s, p) => s + p.expectedAmount, 0)
+        const lifetime = m.contractValue
+        return (
+          <span className="tabular-nums" data-testid={`year-contract-${m.id}`}>
+            {total > 0 ? formatRs(total) : <span className="text-muted-foreground">{'-'}</span>}
+            {lifetime > total ? (
+              <span className="ml-1 block text-[11px] text-muted-foreground">
+                lifetime {formatRs(lifetime)}
+              </span>
+            ) : null}
+          </span>
+        )
+      },
+    },
+    {
+      key: 'yearReceived',
+      header: `FY ${activeYear} received`,
+      align: 'right',
+      render: (m) => {
+        const ys = getYearSpecificInstalments(m, activeYear, allPayments)
+        const total = ys.reduce((s, p) => s + (p.receivedAmount ?? 0), 0)
+        return (
+          <span className="tabular-nums text-muted-foreground" data-testid={`year-received-${m.id}`}>
+            {total > 0 ? formatRs(total) : '-'}
+          </span>
+        )
+      },
+    },
+    {
+      key: 'yearBalance',
+      header: `FY ${activeYear} balance`,
+      align: 'right',
+      render: (m) => {
+        const ys = getYearSpecificInstalments(m, activeYear, allPayments)
+        const expected = ys.reduce((s, p) => s + p.expectedAmount, 0)
+        const received = ys.reduce((s, p) => s + (p.receivedAmount ?? 0), 0)
+        const balance = Math.max(0, expected - received)
+        return (
+          <span className="tabular-nums" data-testid={`year-balance-${m.id}`}>
+            {expected > 0 ? formatRs(balance) : '-'}
+          </span>
+        )
+      },
+    },
+    {
+      key: 'yearInstalments',
+      header: 'Instalments',
+      align: 'right',
+      render: (m) => {
+        const ys = getYearSpecificInstalments(m, activeYear, allPayments)
+        return (
+          <span className="tabular-nums text-muted-foreground" data-testid={`year-instalments-${m.id}`}>
+            {ys.length > 0 ? ys.length : '-'}
+          </span>
+        )
+      },
+    },
+    {
       key: 'students',
       header: 'Students',
       align: 'right',
@@ -239,12 +325,17 @@ export default async function MousListPage({ searchParams }: PageProps) {
       <TopNav currentPath="/mous" />
       <main id="main-content">
         <PageHeader
-          title={stageLabel !== null ? `MOUs at ${stageLabel}` : 'MOUs'}
+          title={stageLabel !== null ? `MOUs at ${stageLabel}` : `MOUs - FY ${activeYear}`}
           subtitle={
             stageLabel !== null
               ? `${filtered.length} MOUs at the ${stageLabel} stage. Filtered from the MOU Pipeline.`
-              : `${filtered.length} of ${scoped.length} matching`
+              : `${filtered.length} of ${yearFiltered.length} matching in FY ${activeYear}`
           }
+        />
+        <YearPickerPills
+          years={relevantYears}
+          activeYear={activeYear}
+          otherParams={sp}
         />
         <div className="mx-auto flex max-w-screen-xl items-center justify-end gap-2 px-4 pt-2">
           {/* The "+ New MOU" CTA is gated by canEditMOU so users without
@@ -298,14 +389,30 @@ export default async function MousListPage({ searchParams }: PageProps) {
             <EntityListTable
               rows={filtered}
               columns={columns}
-              rowHref={(m) => `/mous/${m.id}`}
+              rowHref={(m) => `/mous/${m.id}?fy=${encodeURIComponent(activeYear)}`}
               rowKey={(m) => m.id}
               caption="MOUs"
               empty={
-                <EmptyState
-                  title="No MOUs match your filters."
-                  description="Try broadening the programme or region, or clearing filters to see the full list."
-                />
+                yearFiltered.length === 0 && activeYear !== currentFy && relevantYears.includes(currentFy) ? (
+                  <EmptyState
+                    title={`No MOUs for FY ${activeYear} yet.`}
+                    description="Switch to the current year to see active MOUs."
+                    action={
+                      <Link
+                        href={`/mous?year=${encodeURIComponent(currentFy)}`}
+                        className={opsButtonClass({ variant: 'outline', size: 'sm' })}
+                        data-testid="empty-year-switch-current"
+                      >
+                        Go to FY {currentFy} {'→'}
+                      </Link>
+                    }
+                  />
+                ) : (
+                  <EmptyState
+                    title="No MOUs match your filters."
+                    description="Try broadening the programme or region, or clearing filters to see the full list."
+                  />
+                )
               }
             />
           </div>
