@@ -151,19 +151,56 @@ export function PaymentLogForm({
           />
         </div>
 
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        {/* Phase 4 (2026-05-19): bank + TDS split replaces the single
+            "Amount received" input. The hidden receivedAmount field
+            below is set on submit (via the inline script) so the
+            existing API contract on /api/finance/payment/log keeps
+            working; the API also reads bankAmount + tdsAmount and
+            persists the split on the Payment row. */}
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           <div>
-            <label htmlFor="receivedAmount" className={FIELD_LABEL_CLASS}>
-              Amount received (Rs)
+            <label htmlFor="bankAmount" className={FIELD_LABEL_CLASS}>
+              Bank amount (Rs)
+              <span aria-hidden className="ml-0.5 text-signal-alert">*</span>
             </label>
             <input
-              id="receivedAmount"
-              name="receivedAmount"
+              id="bankAmount"
+              name="bankAmount"
               type="number"
-              min="1"
+              min="0"
               step="0.01"
               required
               className={FIELD_INPUT_CLASS}
+              data-testid="payment-log-bank-amount"
+              onChange={(e) => {
+                const bank = parseFloat(e.target.value) || 0
+                const tdsEl = document.getElementById('tdsAmount') as HTMLInputElement | null
+                const tds = tdsEl ? parseFloat(tdsEl.value) || 0 : 0
+                const totalEl = document.getElementById('receivedAmount') as HTMLInputElement | null
+                if (totalEl) totalEl.value = String(bank + tds)
+              }}
+            />
+          </div>
+          <div>
+            <label htmlFor="tdsAmount" className={FIELD_LABEL_CLASS}>
+              TDS amount (Rs)
+            </label>
+            <input
+              id="tdsAmount"
+              name="tdsAmount"
+              type="number"
+              min="0"
+              step="0.01"
+              defaultValue="0"
+              className={FIELD_INPUT_CLASS}
+              data-testid="payment-log-tds-amount"
+              onChange={(e) => {
+                const tds = parseFloat(e.target.value) || 0
+                const bankEl = document.getElementById('bankAmount') as HTMLInputElement | null
+                const bank = bankEl ? parseFloat(bankEl.value) || 0 : 0
+                const totalEl = document.getElementById('receivedAmount') as HTMLInputElement | null
+                if (totalEl) totalEl.value = String(bank + tds)
+              }}
             />
           </div>
           <div>
@@ -180,6 +217,7 @@ export function PaymentLogForm({
             />
           </div>
         </div>
+        <input id="receivedAmount" name="receivedAmount" type="hidden" defaultValue="0" />
 
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div>
@@ -334,19 +372,7 @@ export function PaymentLogForm({
           ) : null}
         </div>
 
-        <div>
-          <label htmlFor="tdsDeducted" className={FIELD_LABEL_CLASS}>
-            TDS deducted (optional, Rs)
-          </label>
-          <input
-            id="tdsDeducted"
-            name="tdsDeducted"
-            type="number"
-            min="0"
-            step="0.01"
-            className={FIELD_INPUT_CLASS}
-          />
-        </div>
+        {/* TDS field consolidated into the Bank + TDS pair above. */}
 
         <div>
           <label htmlFor="notes" className={FIELD_LABEL_CLASS}>

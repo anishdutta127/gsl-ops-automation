@@ -78,7 +78,18 @@ export async function POST(request: Request) {
   const bankReference = String(form.get('bankReference') ?? '').trim()
   if (!bankReference) return errorTo('missing-reference')
 
-  const receivedAmount = Number(String(form.get('receivedAmount') ?? ''))
+  // Phase 4 (2026-05-19): the form now sends bankAmount + tdsAmount
+  // as the primary inputs; receivedAmount is the hidden sum the
+  // client computed onChange. Fall back to receivedAmount as the
+  // canonical total when bank + TDS are both zero (legacy callers
+  // who post receivedAmount only).
+  const bankAmountRaw = Number(String(form.get('bankAmount') ?? ''))
+  const tdsAmountRaw = Number(String(form.get('tdsAmount') ?? ''))
+  const formReceived = Number(String(form.get('receivedAmount') ?? ''))
+  const bankAmount = Number.isFinite(bankAmountRaw) && bankAmountRaw >= 0 ? bankAmountRaw : 0
+  const tdsAmount = Number.isFinite(tdsAmountRaw) && tdsAmountRaw >= 0 ? tdsAmountRaw : 0
+  const splitProvided = bankAmount + tdsAmount > 0
+  const receivedAmount = splitProvided ? bankAmount + tdsAmount : formReceived
   if (!Number.isFinite(receivedAmount) || receivedAmount <= 0) {
     return errorTo('invalid-amount')
   }
@@ -102,10 +113,7 @@ export async function POST(request: Request) {
   const mouId = String(form.get('mouId') ?? '').trim()
   const paymentId = String(form.get('paymentId') ?? '').trim()
   const notesRaw = String(form.get('notes') ?? '').trim()
-  const tdsRaw = String(form.get('tdsDeducted') ?? '').trim()
-  const tdsDeducted = tdsRaw !== '' && Number.isFinite(Number(tdsRaw))
-    ? Number(tdsRaw)
-    : null
+  const tdsDeducted = splitProvided ? tdsAmount : null
 
   // Build the narration string carried on the queued PaymentLog (or
   // dropped onto the audit notes for auto-matches).
@@ -131,6 +139,11 @@ export async function POST(request: Request) {
         notes:
           (notesRaw ? notesRaw + ' | ' : '') + `Bank: ${bankName || '-'}`,
         recordedBy: user.id,
+        // Phase 4: persist the bank / TDS split alongside the receipt
+        // when the form supplied them; legacy callers that posted only
+        // receivedAmount continue to land here with both undefined.
+        bankAmount: splitProvided ? bankAmount : undefined,
+        tdsAmount: splitProvided ? tdsAmount : undefined,
       })
       if (!result.ok) return errorTo(result.reason)
       const url = new URL('/finance/payments', request.url)
