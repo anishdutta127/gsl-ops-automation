@@ -217,9 +217,10 @@ export default async function InstallmentsPage({ params, searchParams }: PagePro
                               className="ml-1 block text-[10px] text-muted-foreground"
                               data-testid={`installment-nominal-adjustment-${p.id}`}
                             >
-                              nominal {formatRs(p.nominalAmount)}{' '}
-                              {p.adjustmentFromLockedInstallments < 0 ? '↓' : '↑'}{' '}
-                              {formatRs(Math.abs(p.adjustmentFromLockedInstallments))}
+                              share {formatRs(p.nominalAmount)}{' '}
+                              {p.adjustmentFromLockedInstallments < 0
+                                ? `less ${formatRs(Math.abs(p.adjustmentFromLockedInstallments))} credit from earlier PI`
+                                : `plus ${formatRs(Math.abs(p.adjustmentFromLockedInstallments))} catchup from earlier PI`}
                             </span>
                           ) : null}
                         </td>

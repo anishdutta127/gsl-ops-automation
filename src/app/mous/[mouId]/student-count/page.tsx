@@ -46,7 +46,7 @@ const ERROR_COPY: Record<string, string> = {
   'invalid-reason': 'Reason cannot be blank.',
   'reason-too-short': 'Add at least 10 characters of context for the reason field.',
   'invalid-date': 'Effective date must be a valid date.',
-  'reconciliation-failure': 'The recalc could not reconcile to current count x price-per-student. Review the schedule.',
+  'reconciliation-failure': 'Could not balance the schedule against current count x price per student. Review the instalments or contact Anish.',
 }
 
 interface PageProps {
@@ -278,16 +278,21 @@ export default async function StudentCountChangePage({ params, searchParams }: P
                   Preview at {previewCount?.toLocaleString('en-IN')} students
                 </h3>
                 <p className="mt-1 text-xs text-amber-900">
-                  Cumulative carry from locked instalments:{' '}
+                  Carry from earlier PIs:{' '}
                   <span className="font-mono font-semibold">
                     {preview.cumulativeDelta > 0 ? '+' : ''}{formatRs(preview.cumulativeDelta)}
                   </span>
+                  {preview.cumulativeDelta === 0
+                    ? null
+                    : preview.cumulativeDelta < 0
+                      ? ' (credit going to next PI)'
+                      : ' (shortfall to recover on next PI)'}
                 </p>
                 <p className="text-xs text-amber-900">
-                  Total committed: <span className="font-mono">{formatRs(preview.totalCommitted)}</span>
+                  Total schedule: <span className="font-mono">{formatRs(preview.totalCommitted)}</span>
                   {preview.reconciled ? null : (
                     <span className="ml-1 rounded bg-amber-300 px-1 text-[10px] font-semibold uppercase tracking-wider text-amber-900">
-                      gap
+                      does not reconcile
                     </span>
                   )}
                 </p>
@@ -315,8 +320,10 @@ export default async function StudentCountChangePage({ params, searchParams }: P
                         </span>
                         {r.adjustmentFromLockedInstallments !== 0 ? (
                           <span className="block w-full text-[10px] text-amber-900">
-                            nominal {formatRs(r.nominalAmount)} {r.adjustmentFromLockedInstallments < 0 ? 'less excess credit' : 'plus shortfall catchup'}{' '}
-                            {formatRs(Math.abs(r.adjustmentFromLockedInstallments))}
+                            share {formatRs(r.nominalAmount)}{' '}
+                            {r.adjustmentFromLockedInstallments < 0
+                              ? `less ${formatRs(Math.abs(r.adjustmentFromLockedInstallments))} credit from earlier PI`
+                              : `plus ${formatRs(Math.abs(r.adjustmentFromLockedInstallments))} catchup from earlier PI`}
                           </span>
                         ) : null}
                       </li>
