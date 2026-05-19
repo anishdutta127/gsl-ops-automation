@@ -180,7 +180,7 @@ export default async function InstallmentsPage({ params, searchParams }: PagePro
                     <th className="px-3 py-2.5 font-medium">Instalment</th>
                     <th className="px-3 py-2.5 font-medium">Due</th>
                     <th className="px-3 py-2.5 font-medium text-right">%</th>
-                    <th className="px-3 py-2.5 font-medium text-right">Expected</th>
+                    <th className="px-3 py-2.5 font-medium text-right">Net due</th>
                     <th className="px-3 py-2.5 font-medium text-right">Paid</th>
                     <th className="px-3 py-2.5 font-medium">Status</th>
                     <th className="px-3 py-2.5 font-medium">PI</th>
@@ -206,7 +206,23 @@ export default async function InstallmentsPage({ params, searchParams }: PagePro
                         <td className="px-3 py-3 text-right tabular-nums text-muted-foreground">
                           {formatInstalmentPercent(p.expectedAmount, mou.contractValue) ?? '-'}
                         </td>
-                        <td className="px-3 py-3 text-right tabular-nums">{formatRs(p.expectedAmount)}</td>
+                        <td className="px-3 py-3 text-right tabular-nums" data-testid={`installment-expected-${p.id}`}>
+                          {formatRs(p.expectedAmount)}
+                          {/* Phase 5 (2026-05-19, Pranav review #4): when the
+                              row carries the post-recalc split, surface
+                              nominal + adjustment underneath the net due so
+                              operators can see the carry from locked rows. */}
+                          {p.nominalAmount !== null && p.nominalAmount !== undefined && p.adjustmentFromLockedInstallments !== null && p.adjustmentFromLockedInstallments !== undefined && p.adjustmentFromLockedInstallments !== 0 ? (
+                            <span
+                              className="ml-1 block text-[10px] text-muted-foreground"
+                              data-testid={`installment-nominal-adjustment-${p.id}`}
+                            >
+                              nominal {formatRs(p.nominalAmount)}{' '}
+                              {p.adjustmentFromLockedInstallments < 0 ? '↓' : '↑'}{' '}
+                              {formatRs(Math.abs(p.adjustmentFromLockedInstallments))}
+                            </span>
+                          ) : null}
+                        </td>
                         <td className="px-3 py-3 text-right tabular-nums text-muted-foreground">
                           {paid > 0 ? formatRs(paid) : '-'}
                           {/* Phase 4 (2026-05-19): show the TDS split subtly
