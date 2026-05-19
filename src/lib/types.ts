@@ -1421,6 +1421,25 @@ export interface Payment {
    */
   piVoidedAt?: string | null
   piVoidReason?: string | null
+  /**
+   * Phase 4 (2026-05-19) - TDS-aware payment logging. When the new
+   * batch / single forms write a payment, `receivedAmount` stays as
+   * the canonical total (`bankAmount + tdsAmount`) so every existing
+   * display surface continues to read the right number without
+   * change. The split fields are optional: pre-Phase-4 rows leave
+   * them undefined; libraries that need the bank-only or TDS-only
+   * number fall back to `bankAmount = receivedAmount, tdsAmount = 0`.
+   *
+   * Pranav files form 26AS using these splits, so the TDS amount
+   * needs to be persisted as a number rather than reconstructed from
+   * narration text. tdsCertificateRef + tdsRate are forward-looking
+   * placeholders for the Phase 5 TDS reconciliation report; both
+   * stay optional and are not populated by this gate's forms.
+   */
+  bankAmount?: number | null
+  tdsAmount?: number | null
+  tdsCertificateRef?: string | null
+  tdsRate?: number | null
 }
 
 export interface PaymentLog {

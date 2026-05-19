@@ -61,6 +61,16 @@ export interface RecordReceiptArgs {
   bankReference: string | null
   notes: string | null
   recordedBy: string
+  /**
+   * Phase 4 (2026-05-19): bank + TDS split. When both are provided,
+   * the lib stores them on the Payment row and validates that
+   * `bankAmount + tdsAmount` equals `receivedAmount` (within a 1
+   * rupee tolerance for paise-level rounding). When omitted, the
+   * row's split fields stay undefined; existing call sites that pass
+   * only `receivedAmount` keep working without change.
+   */
+  bankAmount?: number | null
+  tdsAmount?: number | null
 }
 
 export type RecordReceiptFailureReason =
@@ -70,6 +80,7 @@ export type RecordReceiptFailureReason =
   | 'invalid-amount'
   | 'invalid-date'
   | 'invalid-mode'
+  | 'invalid-tds-split'
 
 export interface RecordReceiptResult {
   ok: true
@@ -124,6 +135,22 @@ export async function recordReceipt(
     return { ok: false, reason: 'invalid-mode' }
   }
 
+  // Phase 4 split validation: if either bank or TDS is supplied, both
+  // must add up to receivedAmount within 1 Rs tolerance. Negative
+  // numbers are rejected (TDS is never negative; a refund would be a
+  // separate Adjustment record).
+  const bankAmount = args.bankAmount ?? null
+  const tdsAmount = args.tdsAmount ?? null
+  if (bankAmount !== null || tdsAmount !== null) {
+    const bank = bankAmount ?? 0
+    const tds = tdsAmount ?? 0
+    if (!Number.isFinite(bank) || bank < 0) return { ok: false, reason: 'invalid-tds-split' }
+    if (!Number.isFinite(tds) || tds < 0) return { ok: false, reason: 'invalid-tds-split' }
+    if (Math.abs(bank + tds - args.receivedAmount) > 1) {
+      return { ok: false, reason: 'invalid-tds-split' }
+    }
+  }
+
   const payment = deps.payments.find((p) => p.id === args.paymentId)
   if (!payment) return { ok: false, reason: 'payment-not-found' }
 
@@ -147,6 +174,8 @@ export async function recordReceipt(
       paymentMode: payment.paymentMode,
       bankReference: payment.bankReference,
       status: payment.status,
+      bankAmount: payment.bankAmount ?? null,
+      tdsAmount: payment.tdsAmount ?? null,
     },
     after: {
       receivedAmount: args.receivedAmount,
@@ -154,6 +183,8 @@ export async function recordReceipt(
       paymentMode: args.paymentMode,
       bankReference: trimmedRef,
       status: 'Paid' as const,
+      bankAmount: args.bankAmount ?? null,
+      tdsAmount: args.tdsAmount ?? null,
     },
     notes: auditNotes,
   }
@@ -166,6 +197,10 @@ export async function recordReceipt(
     bankReference: trimmedRef,
     status: 'Paid',
     notes: trimmedNotes ?? payment.notes,
+    // Phase 4: persist the split when supplied; preserve undefined
+    // for callers that did not pass it (backwards compat).
+    ...(args.bankAmount !== undefined ? { bankAmount: args.bankAmount } : {}),
+    ...(args.tdsAmount !== undefined ? { tdsAmount: args.tdsAmount } : {}),
     auditLog: [...(payment.auditLog ?? []), auditEntry],
   }
 

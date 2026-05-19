@@ -315,4 +315,159 @@ describe('recordReceipt', () => {
     if (!res.ok) expect(res.reason).toBe('payment-not-found')
     expect(calls).toHaveLength(0)
   })
+
+  // Phase 4 (2026-05-19) TDS split tests
+  it('TDS split: bank + TDS adding to receivedAmount persists both fields', async () => {
+    const p = payment({ expectedAmount: 150000 })
+    const { deps, calls } = makeDeps({
+      payments: [p],
+      users: [user('Finance', 'shubhangi.g')],
+    })
+    const res = await recordReceipt(
+      {
+        paymentId: 'MOU-X-i1',
+        receivedDate: '2026-05-10',
+        receivedAmount: 150000,
+        paymentMode: 'Bank Transfer',
+        bankReference: 'UTR-TDS-1',
+        notes: null,
+        recordedBy: 'shubhangi.g',
+        bankAmount: 142500,
+        tdsAmount: 7500,
+      },
+      deps,
+    )
+    expect(res.ok).toBe(true)
+    if (res.ok) {
+      expect(res.payment.bankAmount).toBe(142500)
+      expect(res.payment.tdsAmount).toBe(7500)
+      expect(res.payment.receivedAmount).toBe(150000)
+      expect(res.varianceRs).toBe(0)
+    }
+    const payload = calls[0]?.payload as Record<string, unknown>
+    expect(payload.bankAmount).toBe(142500)
+    expect(payload.tdsAmount).toBe(7500)
+  })
+
+  it('TDS split: bank only (no TDS) sets tdsAmount = 0 alongside bankAmount', async () => {
+    const p = payment({ expectedAmount: 150000 })
+    const { deps } = makeDeps({
+      payments: [p],
+      users: [user('Finance', 'shubhangi.g')],
+    })
+    const res = await recordReceipt(
+      {
+        paymentId: 'MOU-X-i1',
+        receivedDate: '2026-05-10',
+        receivedAmount: 150000,
+        paymentMode: 'Bank Transfer',
+        bankReference: 'UTR-NO-TDS',
+        notes: null,
+        recordedBy: 'shubhangi.g',
+        bankAmount: 150000,
+        tdsAmount: 0,
+      },
+      deps,
+    )
+    expect(res.ok).toBe(true)
+    if (res.ok) {
+      expect(res.payment.bankAmount).toBe(150000)
+      expect(res.payment.tdsAmount).toBe(0)
+    }
+  })
+
+  it('TDS split: rejects when bank + TDS does not match receivedAmount', async () => {
+    const p = payment({ expectedAmount: 150000 })
+    const { deps } = makeDeps({
+      payments: [p],
+      users: [user('Finance', 'shubhangi.g')],
+    })
+    const res = await recordReceipt(
+      {
+        paymentId: 'MOU-X-i1',
+        receivedDate: '2026-05-10',
+        receivedAmount: 150000,
+        paymentMode: 'Bank Transfer',
+        bankReference: 'UTR-MISMATCH',
+        notes: null,
+        recordedBy: 'shubhangi.g',
+        bankAmount: 100000,
+        tdsAmount: 7500,
+      },
+      deps,
+    )
+    expect(res.ok).toBe(false)
+    if (!res.ok) expect(res.reason).toBe('invalid-tds-split')
+  })
+
+  it('TDS split: rejects negative bank or TDS', async () => {
+    const p = payment({ expectedAmount: 150000 })
+    const { deps } = makeDeps({
+      payments: [p],
+      users: [user('Finance', 'shubhangi.g')],
+    })
+    const res = await recordReceipt(
+      {
+        paymentId: 'MOU-X-i1',
+        receivedDate: '2026-05-10',
+        receivedAmount: 150000,
+        paymentMode: 'Bank Transfer',
+        bankReference: 'UTR-NEG',
+        notes: null,
+        recordedBy: 'shubhangi.g',
+        bankAmount: 160000,
+        tdsAmount: -10000,
+      },
+      deps,
+    )
+    expect(res.ok).toBe(false)
+    if (!res.ok) expect(res.reason).toBe('invalid-tds-split')
+  })
+
+  it('TDS split: allows 1 Rs tolerance for paise rounding (149999 + 1 ~ 150000)', async () => {
+    const p = payment({ expectedAmount: 150000 })
+    const { deps } = makeDeps({
+      payments: [p],
+      users: [user('Finance', 'shubhangi.g')],
+    })
+    const res = await recordReceipt(
+      {
+        paymentId: 'MOU-X-i1',
+        receivedDate: '2026-05-10',
+        receivedAmount: 150000,
+        paymentMode: 'Bank Transfer',
+        bankReference: 'UTR-PAISE',
+        notes: null,
+        recordedBy: 'shubhangi.g',
+        bankAmount: 142500.4,
+        tdsAmount: 7499.7,
+      },
+      deps,
+    )
+    expect(res.ok).toBe(true)
+  })
+
+  it('TDS split: omitting both fields preserves backwards compat (no bank / TDS persisted)', async () => {
+    const p = payment({ expectedAmount: 150000 })
+    const { deps, calls } = makeDeps({
+      payments: [p],
+      users: [user('Finance', 'shubhangi.g')],
+    })
+    const res = await recordReceipt(
+      {
+        paymentId: 'MOU-X-i1',
+        receivedDate: '2026-05-10',
+        receivedAmount: 150000,
+        paymentMode: 'Bank Transfer',
+        bankReference: 'UTR-LEGACY',
+        notes: null,
+        recordedBy: 'shubhangi.g',
+      },
+      deps,
+    )
+    expect(res.ok).toBe(true)
+    const payload = calls[0]?.payload as Record<string, unknown>
+    expect('bankAmount' in payload).toBe(false)
+    expect('tdsAmount' in payload).toBe(false)
+  })
 })
