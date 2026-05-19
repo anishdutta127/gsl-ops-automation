@@ -166,9 +166,14 @@ function buildPlaceholderBag(args: {
   gstAmount: number
   total: number
   instalmentLabel: string
+  /** Phase 5: optional MOU-wide instalment list for the summary table. */
+  allInstallmentsForMou?: Payment[]
+  /** Phase 5: optional currently-issued payment id so the table can flag "this invoice". */
+  thisPaymentId?: string
 }): Record<string, unknown> {
   const { piNumber, piDateIso, mou, school, company, entity,
-    studentsForBilling, subtotal, gstAmount, total, instalmentLabel } = args
+    studentsForBilling, subtotal, gstAmount, total, instalmentLabel,
+    allInstallmentsForMou, thisPaymentId } = args
 
   const renderedGstin = (school.gstNumber !== null && school.gstNumber.trim() !== '')
     ? school.gstNumber
@@ -182,6 +187,59 @@ function buildPlaceholderBag(args: {
       amount: subtotal,
     },
   ]
+
+  // Phase 5 (2026-05-19, Pranav review #5): instalment summary table.
+  // The PI document now carries a table of every instalment for the
+  // parent MOU with status (Paid / This invoice / Due) and amount.
+  // The placeholder bag exposes `INSTALMENT_SUMMARY` for the docx
+  // template's `{#INSTALMENT_SUMMARY}...{/INSTALMENT_SUMMARY}` loop;
+  // the template binary must be updated separately. The
+  // `CONTRACT_TOTAL_AT_CURRENT_COUNT` and `TOTAL_RECEIVED_TO_DATE`
+  // placeholders below the loop carry the footer numbers.
+  const sortedAll = (allInstallmentsForMou ?? [])
+    .slice()
+    .sort((a, b) => a.instalmentSeq - b.instalmentSeq)
+  const installmentSummary = sortedAll.map((p) => {
+    const dueDate = p.dueDateIso ? formatDate(p.dueDateIso) : (p.dueDateRaw ?? '-')
+    const isCurrent = thisPaymentId === p.id
+    const isPaid = p.receivedAmount !== null && p.receivedAmount > 0
+    const status = isPaid
+      ? `Paid${p.receivedDate ? ` (${formatDate(p.receivedDate)})` : ''}`
+      : isCurrent
+        ? 'This invoice'
+        : 'Due'
+    const amount = (() => {
+      if (typeof p.netDue === 'number' && p.netDue !== p.expectedAmount) return p.netDue
+      if (isPaid && p.receivedAmount !== null) return p.receivedAmount
+      return p.expectedAmount
+    })()
+    const breakdown =
+      typeof p.nominalAmount === 'number' &&
+      typeof p.adjustmentFromLockedInstallments === 'number' &&
+      p.adjustmentFromLockedInstallments !== 0
+        ? `Nominal ${formatRs(p.nominalAmount)} ${p.adjustmentFromLockedInstallments < 0 ? 'less excess credit' : 'plus shortfall catchup'} ${formatRs(Math.abs(p.adjustmentFromLockedInstallments))}`
+        : ''
+    return {
+      seq: String(p.instalmentSeq),
+      label: p.instalmentLabel,
+      dueDate,
+      status,
+      amount: formatRs(amount),
+      breakdown,
+      isCurrent,
+      isPaid,
+    }
+  })
+  const contractTotalAtCurrentCount = sortedAll.reduce((s, p) => {
+    const isPaid = p.receivedAmount !== null && p.receivedAmount > 0
+    const amount = (() => {
+      if (typeof p.netDue === 'number' && p.netDue !== p.expectedAmount) return p.netDue
+      if (isPaid && p.receivedAmount !== null) return p.receivedAmount
+      return p.expectedAmount
+    })()
+    return s + amount
+  }, 0)
+  const totalReceivedToDate = sortedAll.reduce((s, p) => s + (p.receivedAmount ?? 0), 0)
 
   return {
     PI_NUMBER: piNumber,
@@ -210,6 +268,10 @@ function buildPlaceholderBag(args: {
     INSTALLMENT_LABEL: `Instalment ${instalmentLabel}`,
     PAYMENT_TERMS: company.paymentTerms,
     ACCOUNT_DETAILS: company.accountDetails.join('\n'),
+    INSTALMENT_SUMMARY: installmentSummary,
+    CONTRACT_TOTAL_AT_CURRENT_COUNT: formatRs(contractTotalAtCurrentCount),
+    TOTAL_RECEIVED_TO_DATE: formatRs(totalReceivedToDate),
+    CURRENT_STUDENT_COUNT: String(studentsForBilling),
   }
 }
 
@@ -279,11 +341,14 @@ export async function renderPi(
   const gstAmount = Math.round(subtotal * deps.company.gstRate)
   const total = subtotal + gstAmount
 
+  const allInstallmentsForMou = deps.payments.filter((p) => p.mouId === mou.id)
   const bag = buildPlaceholderBag({
     piNumber: payment.piNumber,
     piDateIso: payment.piGeneratedAt ?? deps.now().toISOString(),
     mou, school, company: deps.company, entity,
     studentsForBilling, subtotal, gstAmount, total, instalmentLabel,
+    allInstallmentsForMou,
+    thisPaymentId: payment.id,
   })
   const r = await renderDocxFromBag(bag, deps.loadTemplate)
   if (!r.ok) return { ok: false, reason: 'template-missing', templateError: r.templateError }
@@ -357,9 +422,48 @@ export async function issueAndRenderPi(
   const total = subtotal + gstAmount
   const expectedAmount = Math.round(mou.contractValue / totalInsts)
 
+  const allInstallmentsForMou = deps.payments.filter((p) => p.mouId === mou.id)
+  // The PI being minted right now is not in `deps.payments` yet (it's
+  // being created in this very call); inject a synthetic placeholder
+  // row at the right seq so the summary table shows "This invoice"
+  // for the row about to be persisted.
+  const summaryWithCurrentRow = allInstallmentsForMou.some((p) => p.instalmentSeq === args.instalmentSeq)
+    ? allInstallmentsForMou
+    : [
+        ...allInstallmentsForMou,
+        {
+          id: expectedPaymentId,
+          mouId: mou.id,
+          schoolName: school.name,
+          programme: mou.programme,
+          instalmentLabel,
+          instalmentSeq: args.instalmentSeq,
+          totalInstalments: totalInsts,
+          description: '',
+          dueDateRaw: null,
+          dueDateIso: null,
+          expectedAmount,
+          receivedAmount: null,
+          receivedDate: null,
+          paymentMode: null,
+          bankReference: null,
+          piNumber,
+          taxInvoiceNumber: null,
+          status: 'PI Sent' as const,
+          notes: null,
+          piSentDate: ts,
+          piSentTo: null,
+          piGeneratedAt: ts,
+          studentCountActual: null,
+          partialPayments: null,
+          auditLog: [],
+        } as Payment,
+      ]
   const bag = buildPlaceholderBag({
     piNumber, piDateIso: ts, mou, school, company: deps.company, entity,
     studentsForBilling, subtotal, gstAmount, total, instalmentLabel,
+    allInstallmentsForMou: summaryWithCurrentRow,
+    thisPaymentId: expectedPaymentId,
   })
   const r = await renderDocxFromBag(bag, deps.loadTemplate)
   if (!r.ok) {
