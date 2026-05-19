@@ -97,7 +97,20 @@ export default async function PaymentDetailPage({ params, searchParams }: PagePr
             metadata={[
               { label: 'Status', value: payment.status },
               { label: 'Expected', value: formatRs(payment.expectedAmount) },
-              { label: 'Received', value: payment.receivedAmount !== null ? formatRs(payment.receivedAmount) : 'none' },
+              {
+                label: 'Received',
+                value: payment.receivedAmount !== null ? (
+                  <span data-testid="payment-detail-received">
+                    {formatRs(payment.receivedAmount)}
+                    {/* Phase 4 (2026-05-19): TDS split surfaced when the row carries it. */}
+                    {payment.bankAmount !== null && payment.bankAmount !== undefined ? (
+                      <span className="ml-2 text-[11px] text-muted-foreground" data-testid="payment-detail-tds-split">
+                        Bank {formatRs(payment.bankAmount ?? 0)} + TDS {formatRs(payment.tdsAmount ?? 0)}
+                      </span>
+                    ) : null}
+                  </span>
+                ) : 'none',
+              },
               { label: 'Received date', value: payment.receivedDate ? formatDate(payment.receivedDate) : 'n/a' },
               { label: 'PI number', value: payment.piNumber ?? 'none' },
               { label: 'Bank ref', value: payment.bankReference ?? 'none' },

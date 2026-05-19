@@ -209,6 +209,16 @@ export default async function InstallmentsPage({ params, searchParams }: PagePro
                         <td className="px-3 py-3 text-right tabular-nums">{formatRs(p.expectedAmount)}</td>
                         <td className="px-3 py-3 text-right tabular-nums text-muted-foreground">
                           {paid > 0 ? formatRs(paid) : '-'}
+                          {/* Phase 4 (2026-05-19): show the TDS split subtly
+                              when the row carries it. */}
+                          {paid > 0 && p.bankAmount !== null && p.bankAmount !== undefined ? (
+                            <span
+                              className="ml-1 block text-[10px] text-muted-foreground"
+                              data-testid={`installment-tds-split-${p.id}`}
+                            >
+                              Bank {formatRs(p.bankAmount ?? 0)} + TDS {formatRs(p.tdsAmount ?? 0)}
+                            </span>
+                          ) : null}
                           {paid > 0 && paid < p.expectedAmount ? (
                             <span className="ml-1 block text-[11px] text-signal-alert">
                               {formatRs(balance)} open
