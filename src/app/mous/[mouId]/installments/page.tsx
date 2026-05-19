@@ -82,6 +82,10 @@ export default async function InstallmentsPage({ params, searchParams }: PagePro
         ? 'Edit'
         : null
   const flashId = markedPaid ?? markedPartial ?? edited
+  // Phase 3 (2026-05-19): preserve the year context through the
+  // installments page so back-nav lands on the same year filter on
+  // the registry and the same year tab on the MOU detail.
+  const fyParam = typeof sp.fy === 'string' ? sp.fy : null
   const user = await getCurrentUser()
   const mou = allMous.find((m) => m.id === mouId)
   if (!mou || !isVisibleToUser(mou, user)) notFound()
@@ -107,8 +111,8 @@ export default async function InstallmentsPage({ params, searchParams }: PagePro
         <PageHeader
           title={`${mou.schoolName} · Instalments`}
           breadcrumb={[
-            { label: 'MOUs', href: '/mous' },
-            { label: mou.id, href: `/mous/${mou.id}` },
+            { label: 'MOUs', href: fyParam ? `/mous?year=${encodeURIComponent(fyParam)}` : '/mous' },
+            { label: mou.id, href: fyParam ? `/mous/${mou.id}?fy=${encodeURIComponent(fyParam)}` : `/mous/${mou.id}` },
             { label: 'Instalments' },
           ]}
         />
@@ -333,10 +337,10 @@ export default async function InstallmentsPage({ params, searchParams }: PagePro
 
           <div className="flex flex-wrap items-center gap-2">
             <Link
-              href={`/mous/${mou.id}`}
+              href={fyParam ? `/mous/${mou.id}?fy=${encodeURIComponent(fyParam)}` : `/mous/${mou.id}`}
               className={opsButtonClass({ variant: 'outline', size: 'md' })}
             >
-              Back to MOU detail
+              Back to MOU detail{fyParam ? ` (FY ${fyParam})` : ''}
             </Link>
           </div>
         </div>

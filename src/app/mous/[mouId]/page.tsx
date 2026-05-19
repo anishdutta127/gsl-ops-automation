@@ -435,7 +435,16 @@ export default async function MouDetailPage({ params, searchParams }: PageProps)
         <PageHeader
           title={mou.schoolName}
           breadcrumb={[
-            { label: 'MOUs', href: '/mous' },
+            // Phase 3 (2026-05-19): the breadcrumb back to /mous
+            // preserves the year context the operator was in. When
+            // ?fy= is set on this page (clicked from the year-filtered
+            // registry), the back link forwards as ?year=<fy>. Without
+            // ?fy=, the breadcrumb returns to /mous with no year
+            // override (the registry then defaults to today's FY).
+            {
+              label: 'MOUs',
+              href: activeYearTab ? `/mous?year=${encodeURIComponent(activeYearTab)}` : '/mous',
+            },
             { label: mou.id },
           ]}
         />
@@ -513,7 +522,7 @@ export default async function MouDetailPage({ params, searchParams }: PageProps)
                   </Link>
                 ) : null}
                 <Link
-                  href={`/mous/${mou.id}/installments`}
+                  href={`/mous/${mou.id}/installments${activeYearTab ? `?fy=${encodeURIComponent(activeYearTab)}` : ''}`}
                   className={actionBtnClass}
                   data-testid="action-installments"
                 >
@@ -521,7 +530,7 @@ export default async function MouDetailPage({ params, searchParams }: PageProps)
                 </Link>
                 {canSaveSchedule && isMouSigned && installments.length === 0 ? (
                   <Link
-                    href={`/mous/${mou.id}/installments/schedule-edit`}
+                    href={`/mous/${mou.id}/installments/schedule-edit${activeYearTab ? `?fy=${encodeURIComponent(activeYearTab)}` : ''}`}
                     className={opsButtonClass({ variant: 'primary', size: 'md' })}
                     data-testid="action-set-schedule"
                   >
@@ -530,7 +539,7 @@ export default async function MouDetailPage({ params, searchParams }: PageProps)
                 ) : null}
                 {canSaveSchedule && installments.length > 0 ? (
                   <Link
-                    href={`/mous/${mou.id}/installments/schedule-edit`}
+                    href={`/mous/${mou.id}/installments/schedule-edit${activeYearTab ? `?fy=${encodeURIComponent(activeYearTab)}` : ''}`}
                     className={actionBtnClass}
                     data-testid="action-edit-schedule"
                   >
