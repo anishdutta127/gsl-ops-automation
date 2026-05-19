@@ -70,5 +70,26 @@
       ]
     },
     "retryCount": 0
+  },
+  {
+    "id": "6f9e176a-a8cc-4ecf-834c-368f938abc00",
+    "queuedAt": "2026-05-19T13:46:22.602Z",
+    "queuedBy": "pranav.b",
+    "entity": "paymentLog",
+    "operation": "create",
+    "payload": {
+      "id": "VEXPL-6b3b8047",
+      "scope": "vex",
+      "vexPiId": "VEXPI-MH-2627-001",
+      "date": "2026-05-19",
+      "bankAmount": 1265496,
+      "tdsAmount": 0,
+      "total": 1265496,
+      "mode": "Bank Transfer",
+      "reference": null,
+      "loggedBy": "Pranav B.",
+      "loggedAt": "2026-05-19T13:46:21.387Z"
+    },
+    "retryCount": 0
   }
 ]
