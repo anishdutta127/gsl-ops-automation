@@ -61,7 +61,7 @@ import {
 } from '@/lib/kanban/deriveStage'
 import { mouStatusTone } from '@/lib/ui/mouStatusTone'
 import Link from 'next/link'
-import { Archive, Plus } from 'lucide-react'
+import { Archive, FileEdit, Plus } from 'lucide-react'
 
 const allMous = mousJson as unknown as MOU[]
 const allSchools = schoolsJson as unknown as School[]
@@ -159,11 +159,13 @@ export default async function MousListPage({ searchParams }: PageProps) {
     {
       key: 'status',
       label: 'Status',
-      // 'Draft' is dropped as a chip option in W4-B.4: zero MOUs in the
-      // imported cohort carry that status. The MouStatus type still
-      // includes 'Draft' for forward compatibility (a future intake
-      // form may produce drafts pre-signature).
-      options: ['Active', 'Pending Signature', 'Completed', 'Expired', 'Renewed'].map((v) => ({
+      // 2026-05-19 stabilisation (Bug 9): 'Draft' restored to the chip
+      // options. W4-B.4 dropped it because zero imported MOUs carried
+      // the status, but the wizard's Save Draft button now produces
+      // them (MOU-STEAM-2627-DRAFT-001 etc.) and Pranav reported he had
+      // no way to find his saved drafts. Filter chip + the Drafts CTA
+      // above the table cover both discovery paths.
+      options: ['Draft', 'Active', 'Pending Signature', 'Completed', 'Expired', 'Renewed'].map((v) => ({
         value: v,
         label: v,
       })),
@@ -258,6 +260,22 @@ export default async function MousListPage({ searchParams }: PageProps) {
             >
               <Plus aria-hidden className="size-4" />
               New MOU
+            </Link>
+          ) : null}
+          {/* 2026-05-19 stabilisation (Bug 9): drafts CTA. Pranav saved a
+              draft via the wizard and could not find it. This applies the
+              status=Draft filter so saved drafts surface immediately;
+              the existing chip in the filter rail clears it. Count comes
+              from the user-scoped + cohort-filtered set so a SalesRep
+              only sees their own draft count. */}
+          {user && canEditMOU(user) ? (
+            <Link
+              href="/mous?status=Draft"
+              className={opsButtonClass({ variant: 'outline', size: 'sm' })}
+              data-testid="drafts-link"
+            >
+              <FileEdit aria-hidden className="size-4" />
+              {`Drafts (${scoped.filter((m) => m.status === 'Draft').length})`}
             </Link>
           ) : null}
           <Link

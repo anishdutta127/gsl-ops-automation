@@ -85,6 +85,20 @@ export default async function PickTemplatePage({ searchParams }: PageProps) {
             <code className="rounded bg-muted px-1 py-0.5 text-[11px]">public/mou-templates/</code> and
             register it in <code className="rounded bg-muted px-1 py-0.5 text-[11px]">src/lib/mouSystem/templates.ts</code>.
           </p>
+          {/* 2026-05-19 stabilisation (Bug 9): drafts shortcut. Pranav
+              reported he saved a draft and could not find where it
+              lived. The MOU registry now exposes a Drafts CTA at the top
+              and a Draft chip in the status filter; this link keeps the
+              same destination one click away from the template picker. */}
+          <p className="mt-3 text-xs">
+            <Link
+              href="/mous?status=Draft"
+              className="text-brand-navy underline-offset-2 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
+              data-testid="picker-drafts-link"
+            >
+              See your saved drafts {'→'}
+            </Link>
+          </p>
         </div>
       </main>
     </>
