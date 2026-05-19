@@ -30,6 +30,7 @@ import { StatusChip } from '@/components/ops/StatusChip'
 import { opsButtonClass } from '@/components/ops/OpsButton'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canEditFinanceData, canEditMOU, canGeneratePI } from '@/lib/access'
+import { deriveScheduleSummary } from '@/lib/mou/scheduleSummary'
 import { formatRs, formatDate } from '@/lib/format'
 
 const allMous = mousJson as unknown as MOU[]
@@ -127,7 +128,12 @@ export default async function InstallmentsPage({ params, searchParams }: PagePro
               { label: 'Total expected', value: formatRs(totalExpected) },
               { label: 'Total received', value: formatRs(totalReceived) },
               { label: 'Balance', value: formatRs(Math.max(0, totalExpected - totalReceived)) },
-              { label: 'Schedule', value: mou.paymentSchedule || 'not set' },
+              {
+                label: 'Schedule',
+                value:
+                  deriveScheduleSummary(installments, mou.contractValue, mou.paymentSchedule) ||
+                  'not set',
+              },
             ]}
           />
 

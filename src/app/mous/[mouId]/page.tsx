@@ -66,6 +66,7 @@ import usersJson from '@/data/users.json'
 import adjustmentsJson from '@/data/adjustments.json'
 import { RecalcSummary } from '@/components/mou-system/RecalcSummary'
 import { canEditMOU } from '@/lib/access'
+import { deriveScheduleSummary } from '@/lib/mou/scheduleSummary'
 import { getCurrentUser } from '@/lib/auth/session'
 import {
   canApproveDispatchOverride,
@@ -351,6 +352,19 @@ export default async function MouDetailPage({ params, searchParams }: PageProps)
   const totalReceivedRs = installments.reduce((s, p) => s + (p.receivedAmount ?? 0), 0)
   const totalAdjustmentsRs = mouAdjustments.reduce((s, a) => s + a.amountDelta, 0)
   const balanceDuePreviousInstalments = totalAdjustmentsRs
+
+  // 2026-05-19 stabilisation (Bug 5): Pranav reported the detail KPI tiles
+  // showed mou.received (bank-only, from the legacy Pranav import) while
+  // the Instalments tab summed p.receivedAmount (TDS-inclusive, each row
+  // carries the full receipt amount). Detail "Received" and "Balance"
+  // tiles now derive from installments so the two views agree. Stored
+  // mou.received / mou.balance / mou.receivedPct fields are left alone;
+  // a TDS-aware backfill of those stored fields is tracked separately.
+  const receivedFromInstallments = totalReceivedRs
+  const balanceFromInstallments = Math.max(0, mou.contractValue - receivedFromInstallments)
+  const receivedPctFromInstallments = mou.contractValue > 0
+    ? Math.round((receivedFromInstallments / mou.contractValue) * 100)
+    : 0
 
   const smartSuggestions = getSmartTemplateSuggestions({
     mou,
@@ -753,13 +767,21 @@ export default async function MouDetailPage({ params, searchParams }: PageProps)
                     ),
                     value: formatRs(mou.contractValue),
                   },
-                  { label: 'Received', value: `${formatRs(mou.received)} (${mou.receivedPct}%)` },
-                  { label: 'Balance', value: formatRs(mou.balance) },
+                  {
+                    label: 'Received',
+                    value: `${formatRs(receivedFromInstallments)} (${receivedPctFromInstallments}%)`,
+                  },
+                  { label: 'Balance', value: formatRs(balanceFromInstallments) },
                   {
                     label: 'Start / End',
                     value: `${formatDate(mou.startDate)} - ${formatDate(mou.endDate)}`,
                   },
-                  { label: 'Payment schedule', value: mou.paymentSchedule || 'not set' },
+                  {
+                    label: 'Payment schedule',
+                    value:
+                      deriveScheduleSummary(installments, mou.contractValue, mou.paymentSchedule) ||
+                      'not set',
+                  },
                 ]}
               />
 
