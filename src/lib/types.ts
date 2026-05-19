@@ -196,6 +196,13 @@ export type AuditAction =
   // role-edit UI; entries are written by data-mutation scripts (round 2
   // tester provisioning per D-040) and surface in admin audit views.
   | 'user-role-changed'
+  // 2026-05-19 quick-wins (Pranav review #6): emitted on School audit
+  // log when the school's sales rep is reassigned via
+  // /schools/[id]/reassign-sales-rep. before / after capture
+  // { salesPersonId, scope }; notes carry the operator-supplied
+  // reason. Also emitted on each MOU's audit log when scope is
+  // 'all-mous' (the cascade variant).
+  | 'sales-rep-reassigned'
   // W4-I.4 MM5: emitted when an Escalation's editable fields (status,
   // category, type, severity, assignedTo, description, resolutionNotes)
   // are modified via /escalations/[id]/edit. before / after capture the

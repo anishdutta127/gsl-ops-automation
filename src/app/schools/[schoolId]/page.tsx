@@ -27,10 +27,12 @@ import schoolGroupsJson from '@/data/school_groups.json'
 import mousJson from '@/data/mous.json'
 import paymentsJson from '@/data/payments.json'
 import kitDispatchesJson from '@/data/kit_dispatches.json'
+import salesTeamJson from '@/data/sales_team.json'
 import escalationsJson from '@/data/escalations.json'
-import type { Escalation } from '@/lib/types'
+import type { Escalation, SalesPerson } from '@/lib/types'
 import { getCurrentUser } from '@/lib/auth/session'
-import { canEditMOU } from '@/lib/access'
+import { canEditFinanceData, canEditMOU } from '@/lib/access'
+import { getCurrentSalesRepForSchool } from '@/lib/schools/currentSalesRep'
 import { FileText, Inbox, Receipt, Truck } from 'lucide-react'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
@@ -47,6 +49,7 @@ const allSchoolGroups = schoolGroupsJson as unknown as SchoolGroup[]
 const allMous = mousJson as unknown as MOU[]
 const allPayments = paymentsJson as unknown as Payment[]
 const allKitDispatches = kitDispatchesJson as unknown as KitDispatch[]
+const allSalesTeam = salesTeamJson as unknown as SalesPerson[]
 const allEscalations = escalationsJson as unknown as Escalation[]
 
 type TabKey = 'overview' | 'mous' | 'payments' | 'dispatches' | 'activity'
@@ -65,6 +68,12 @@ interface PageProps {
 
 const NOTICE_COPY: Record<string, string> = {
   saved: 'Saved. Will reflect everywhere within ~5 minutes.',
+  'sales-rep-reassigned':
+    'Sales rep reassigned for future MOUs. Existing MOUs keep their original rep on the record.',
+  'sales-rep-reassigned-all':
+    'Sales rep reassigned across every MOU at this school. Per-MOU audit entries captured the change.',
+  'sales-rep-reassign-forbidden':
+    'You do not have permission to reassign the sales rep for this school.',
 }
 
 function canEdit(user: User | null): boolean {
@@ -108,6 +117,11 @@ export default async function SchoolDetailPage({ params, searchParams }: PagePro
   const user = await getCurrentUser()
   const group = allSchoolGroups.find((g) => g.memberSchoolIds.includes(school.id))
   const schoolMous = allMous.filter((m) => m.schoolId === school.id)
+  const currentSalesRepId = getCurrentSalesRepForSchool(school, schoolMous)
+  const currentSalesRep = currentSalesRepId
+    ? allSalesTeam.find((sp) => sp.id === currentSalesRepId) ?? null
+    : null
+  const canReassignSalesRep = user ? canEditMOU(user) || canEditFinanceData(user) : false
   const mouIdsForSchool = new Set(schoolMous.map((m) => m.id))
   const schoolPayments = allPayments.filter((p) => mouIdsForSchool.has(p.mouId))
   const schoolDispatches = allKitDispatches.filter((d) => d.schoolId === school.id)
@@ -189,6 +203,35 @@ export default async function SchoolDetailPage({ params, searchParams }: PagePro
                     {school.email ? ` · ${school.email}` : ''}
                   </p>
                 ) : null}
+                {/* 2026-05-19 quick-wins (Pranav review #6): Sales rep line +
+                    Reassign CTA. Source of truth derived from school audit
+                    log first, then the most-recent MOU - see
+                    src/lib/schools/currentSalesRep.ts. */}
+                <p className="mt-1 text-xs text-slate-600" data-testid="school-sales-rep-line">
+                  Sales rep:{' '}
+                  {currentSalesRep ? (
+                    <span className="font-medium text-foreground">
+                      {currentSalesRep.name}
+                      <span className="ml-1 font-mono text-[10px] text-muted-foreground">
+                        ({currentSalesRep.id})
+                      </span>
+                    </span>
+                  ) : (
+                    <span className="text-muted-foreground">(none on file)</span>
+                  )}
+                  {canReassignSalesRep ? (
+                    <>
+                      {' · '}
+                      <Link
+                        href={`/schools/${school.id}/reassign-sales-rep`}
+                        className="text-brand-navy underline-offset-2 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
+                        data-testid="school-reassign-sales-rep-cta"
+                      >
+                        Reassign {'→'}
+                      </Link>
+                    </>
+                  ) : null}
+                </p>
               </div>
               <div className="flex items-center gap-3">
                 {statusBadge}
