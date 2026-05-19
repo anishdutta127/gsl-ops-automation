@@ -8,13 +8,13 @@ Static structural check. The script enumerates every internal link in `src/` and
 
 | Bucket | Count |
 |---|---|
-| Routes declared (`src/app/**/page.tsx`) | 236 |
-| Distinct link paths found in source | 104 |
-| Total link occurrences | 468 |
+| Routes declared (`src/app/**/page.tsx`) | 238 |
+| Distinct link paths found in source | 105 |
+| Total link occurrences | 473 |
 | ✅ OK (static path matches a route) | 60 |
-| ⚠ Dynamic (link matches a dynamic route, needs runtime verification) | 44 |
+| ⚠ Dynamic (link matches a dynamic route, needs runtime verification) | 45 |
 | ❌ Broken (link points to no route) | 0 |
-| ⚠ Orphan routes (route exists but nothing links to it) | 126 |
+| ⚠ Orphan routes (route exists but nothing links to it) | 127 |
 
 ## ❌ Broken links
 
@@ -40,7 +40,7 @@ These resolve to a dynamic-segment route (e.g. `/mous/[mouId]`). The static chec
 | `/dispatch/kits/[param]` | `/dispatch/kits/[mouId]` | 3 |
 | `/escalations/[param]` | `/escalations/[escalationId]` | 13 |
 | `/escalations/[param]/edit` | `/escalations/[escalationId]/edit` | 6 |
-| `/mous/[param]` | `/mous/[mouId]` | 33 |
+| `/mous/[param]` | `/mous/[mouId]` | 35 |
 | `/mous/[param]/actuals` | `/mous/[mouId]/actuals` | 2 |
 | `/mous/[param]/delivery-ack` | `/mous/[mouId]/delivery-ack` | 1 |
 | `/mous/[param]/dispatch` | `/mous/[mouId]/dispatch` | 5 |
@@ -58,6 +58,7 @@ These resolve to a dynamic-segment route (e.g. `/mous/[mouId]`). The static chec
 | `/mous/[param]/pi` | `/mous/[mouId]/pi` | 4 |
 | `/mous/[param]/send-template/[param]` | `/mous/[mouId]/send-template/[templateId]` | 2 |
 | `/mous/[param]/signed-values` | `/mous/[mouId]/signed-values` | 1 |
+| `/mous/[param]/student-count` | `/mous/[mouId]/student-count` | 2 |
 | `/notifications/[param]/visit` | `/notifications/[notificationId]/visit` | 2 |
 | `/operations/agreements/[param]` | `/operations/agreements/[id]` | 2 |
 | `/operations/vendors/[param]` | `/operations/vendors/[id]` | 1 |
@@ -109,7 +110,7 @@ These routes exist but no `href` / `router.push` / `redirect` in `src/` referenc
 | `/overview` | `src/app/overview/page.tsx` |
 | `/portal/status/[tokenId]` | `src/app/portal/status/[tokenId]/page.tsx` |
 
-### API-route orphans (97)
+### API-route orphans (98)
 
 API routes are typically called via `fetch()` rather than navigated to via `<Link>` or `router.push`. The static audit only inspects href / router.push / redirect, so most API orphans are expected. Listed here for completeness; treat as low signal unless a specific endpoint looks unused.
 
@@ -183,6 +184,7 @@ API routes are typically called via `fetch()` rather than navigated to via `<Lin
 | `/api/mou/[mouId]/mark-renewed` | `src/app/api/mou/[mouId]/mark-renewed/route.ts` |
 | `/api/mou/[mouId]/schedule/save` | `src/app/api/mou/[mouId]/schedule/save/route.ts` |
 | `/api/mou/[mouId]/signed-mou/upload` | `src/app/api/mou/[mouId]/signed-mou/upload/route.ts` |
+| `/api/mou/[mouId]/student-count` | `src/app/api/mou/[mouId]/student-count/route.ts` |
 | `/api/mou/actuals/confirm` | `src/app/api/mou/actuals/confirm/route.ts` |
 | `/api/mou/cohort-status` | `src/app/api/mou/cohort-status/route.ts` |
 | `/api/mou/delay-notes` | `src/app/api/mou/delay-notes/route.ts` |
