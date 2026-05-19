@@ -109,12 +109,20 @@ export default async function FinancePaymentsPage({ searchParams }: PageProps) {
           actions={
             canLog ? (
               <>
+                {/* Phase 4 (2026-05-19): batch flow is the new primary. */}
+                <Link
+                  href="/finance/payments/log-batch"
+                  className={opsButtonClass({ variant: 'primary', size: 'md' })}
+                  data-testid="payment-log-batch-cta"
+                >
+                  <Plus aria-hidden className="size-4" /> Log batch
+                </Link>
                 <Link
                   href="/finance/payments/new"
-                  className={opsButtonClass({ variant: 'action', size: 'md' })}
+                  className={opsButtonClass({ variant: 'outline', size: 'md' })}
                   data-testid="payment-log-new-cta"
                 >
-                  <Plus aria-hidden className="size-4" /> Log payment
+                  Log single payment
                 </Link>
                 <Link
                   href="/finance/payments/bulk"
