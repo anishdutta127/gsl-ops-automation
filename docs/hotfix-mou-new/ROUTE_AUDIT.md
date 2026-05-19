@@ -8,13 +8,13 @@ Static structural check. The script enumerates every internal link in `src/` and
 
 | Bucket | Count |
 |---|---|
-| Routes declared (`src/app/**/page.tsx`) | 234 |
-| Distinct link paths found in source | 103 |
-| Total link occurrences | 459 |
-| ✅ OK (static path matches a route) | 59 |
+| Routes declared (`src/app/**/page.tsx`) | 236 |
+| Distinct link paths found in source | 104 |
+| Total link occurrences | 468 |
+| ✅ OK (static path matches a route) | 60 |
 | ⚠ Dynamic (link matches a dynamic route, needs runtime verification) | 44 |
 | ❌ Broken (link points to no route) | 0 |
-| ⚠ Orphan routes (route exists but nothing links to it) | 125 |
+| ⚠ Orphan routes (route exists but nothing links to it) | 126 |
 
 ## ❌ Broken links
 
@@ -109,7 +109,7 @@ These routes exist but no `href` / `router.push` / `redirect` in `src/` referenc
 | `/overview` | `src/app/overview/page.tsx` |
 | `/portal/status/[tokenId]` | `src/app/portal/status/[tokenId]/page.tsx` |
 
-### API-route orphans (96)
+### API-route orphans (97)
 
 API routes are typically called via `fetch()` rather than navigated to via `<Link>` or `router.push`. The static audit only inspects href / router.push / redirect, so most API orphans are expected. Listed here for completeness; treat as low signal unless a specific endpoint looks unused.
 
@@ -158,6 +158,7 @@ API routes are typically called via `fetch()` rather than navigated to via `<Lin
 | `/api/finance/payment/[paymentId]/skip` | `src/app/api/finance/payment/[paymentId]/skip/route.ts` |
 | `/api/finance/payment/bulk-import` | `src/app/api/finance/payment/bulk-import/route.ts` |
 | `/api/finance/payment/log` | `src/app/api/finance/payment/log/route.ts` |
+| `/api/finance/payment/log-batch` | `src/app/api/finance/payment/log-batch/route.ts` |
 | `/api/finance/payments/confirm-match` | `src/app/api/finance/payments/confirm-match/route.ts` |
 | `/api/finance/payments/park-unmatched` | `src/app/api/finance/payments/park-unmatched/route.ts` |
 | `/api/finance/pi/[paymentId]/reissue` | `src/app/api/finance/pi/[paymentId]/reissue/route.ts` |
@@ -219,5 +220,5 @@ API routes are typically called via `fetch()` rather than navigated to via `<Lin
 
 ## ✅ OK links (sample)
 
-59 static links resolved to a non-dynamic route. Full list omitted from the report; the script's exit code (0 vs 1) is the actionable signal.
+60 static links resolved to a non-dynamic route. Full list omitted from the report; the script's exit code (0 vs 1) is the actionable signal.
 
