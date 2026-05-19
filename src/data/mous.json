@@ -10591,7 +10591,7 @@
     "daysToExpiry": null,
     "salesPersonId": null,
     "templateVersion": "YP-v3",
-    "generatedAt": "2026-05-19T12:52:24.565Z",
+    "generatedAt": "2026-05-19T12:52:45.177Z",
     "draftVariables": {
       "SCHOOL_NAME": "Gopi Birla Memorial School",
       "EFFECTIVE_DATE": "2026-04-27",
@@ -10607,6 +10607,12 @@
         "timestamp": "2026-05-19T12:52:24.565Z",
         "user": "Anita C.",
         "action": "create",
+        "notes": "Save draft via YP-v3"
+      },
+      {
+        "timestamp": "2026-05-19T12:52:45.177Z",
+        "user": "Anita C.",
+        "action": "update",
         "notes": "Save draft via YP-v3"
       }
     ],
