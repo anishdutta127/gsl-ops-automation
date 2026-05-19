@@ -37,10 +37,10 @@ export default function PranavRefreshError({ error, reset }: PranavRefreshErrorP
           Refresh
         </button>
         <Link
-          href="/admin/imports"
+          href="/admin"
           className="inline-flex min-h-11 items-center justify-center rounded-md border border-border bg-card px-4 text-sm font-medium text-brand-navy hover:bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-navy"
         >
-          Back to imports
+          Back to admin
         </Link>
       </div>
     </main>
