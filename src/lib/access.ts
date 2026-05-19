@@ -15,16 +15,22 @@
  *     depth even when Layer 1 opens up in testing mode.
  *
  * TESTING_OPEN_ACCESS toggle:
- *   When unset or 'true' (the Phase 1 default), VIEW gates open up
- *   for every active user regardless of department. EDIT gates stay
- *   strict because role / department correctness is what the pilot
- *   is actually testing for: an Ops user must not be able to
- *   generate a PI even when discoverability is wide-open. When the
- *   env var is 'false' (production), every gate enforces the
- *   department-scoped rule.
+ *   When unset or 'true' (the Phase 1 default), BOTH VIEW and EDIT
+ *   gates open up for every active user regardless of department.
+ *   The testing window asks pilot users (Pranav, Misba, Shubhangi,
+ *   Anita, Pradeep, Swati, Ajith) to walk every flow end-to-end so
+ *   they can internalise the system; a department-scoped Admin who
+ *   cannot click into the surface cannot dogfood it. Production
+ *   lockdown (`TESTING_OPEN_ACCESS=false`) re-enables the strict
+ *   department-scoped rule on every EDIT gate, at which point the
+ *   Misba MM2 acceptance criterion (Ops user blocked from PI) and
+ *   the sibling separation-of-duties invariants apply as designed.
  *
  *   The default lives in code (not env) so a missing env var fails
- *   open for testers, not closed.
+ *   open for testers, not closed. Layer 2 (`canPerform` in
+ *   src/lib/auth/permissions.ts) remains the server-side defence
+ *   in depth either way; the current test roster all carries
+ *   role: 'Admin' which trips the ADMIN_WILDCARD branch.
  *
  * Department backfill on existing users follows docs/role-decisions.md
  * "2026-05-10: Gate 1 department backfill". Sales reps + heads to
@@ -141,7 +147,7 @@ export function canAccessLeadershipReports(user: User): boolean {
 }
 
 // ----------------------------------------------------------------------------
-// EDIT gates: strict regardless of testing mode
+// EDIT gates: open in testing mode, strict in production lockdown
 // ----------------------------------------------------------------------------
 
 function editGate(
@@ -149,11 +155,17 @@ function editGate(
   allowedDepartments: Array<Exclude<Department, null>>,
 ): boolean {
   if (!activeOrFalse(user)) return false
+  // Testing window opens both VIEW and EDIT for every active user so
+  // pilot testers can walk every flow end-to-end. Production lockdown
+  // (`TESTING_OPEN_ACCESS=false`) re-enables strict department-scoped
+  // EDIT, at which point Misba MM2 and the sibling separation-of-duties
+  // invariants apply.
+  if (isTestingOpenAccess()) return true
   const dept = getDepartment(user)
   // Admin with null department is the cross-functional wildcard
-  // (Anish, Ameet pre-promotion intent). Admin with an explicit
-  // department is department-scoped per docs/role-decisions.md
-  // 2026-04-27 trusted-core-team pattern: Misba is Admin role with
+  // (Anish, Ameet, Gowri at seed). Admin with an explicit department
+  // is department-scoped per docs/role-decisions.md 2026-04-27
+  // trusted-core-team pattern: Misba is Admin role with
   // department='ops' so her PI-gen attempts hit the Misba MM2 gate
   // even though she carries the Admin role.
   if (user.role === 'Admin' && dept === null) return true
@@ -291,6 +303,7 @@ export function canApproveDispatchOverride(
   approverUserId: string,
 ): boolean {
   if (!activeOrFalse(user)) return false
+  if (isTestingOpenAccess()) return true
   if (user.id === approverUserId) return true
   const dept = getDepartment(user)
   if (user.role === 'Admin' && dept === null) return true

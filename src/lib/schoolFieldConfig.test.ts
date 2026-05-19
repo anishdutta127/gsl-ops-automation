@@ -1,10 +1,25 @@
-import { describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import type { User } from './types'
 import {
   FINANCE_ONLY_SCHOOL_FIELDS,
   canEditFinanceSchoolFields,
   isFinanceOnlySchoolField,
 } from './schoolFieldConfig'
+
+// Strict-gate tests: force production-mode so canEditFinanceData
+// enforces Finance-only. Testing-open default opens EDIT for every
+// active user.
+const ORIGINAL_TESTING = process.env.TESTING_OPEN_ACCESS
+beforeEach(() => {
+  process.env.TESTING_OPEN_ACCESS = 'false'
+})
+afterEach(() => {
+  if (ORIGINAL_TESTING === undefined) {
+    delete process.env.TESTING_OPEN_ACCESS
+  } else {
+    process.env.TESTING_OPEN_ACCESS = ORIGINAL_TESTING
+  }
+})
 
 function user(args: { role: User['role']; department?: User['department']; active?: boolean }): User {
   return {

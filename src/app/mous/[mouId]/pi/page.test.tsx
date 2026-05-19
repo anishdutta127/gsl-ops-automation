@@ -15,11 +15,16 @@ vi.mock('@/components/ops/TopNav', () => ({ TopNav: () => null }))
 
 // Gate 2 housekeeping A: most tests assume the route is ACTIVE; toggle
 // the parallel-build lock OFF in beforeEach. The lock-on case has its
-// own describe block below.
+// own describe block below. MM2 strict-gate cases also need
+// TESTING_OPEN_ACCESS=false so the department-scoped redirect fires
+// (the testing-open default opens EDIT gates for every active user;
+// the redirect is a production-mode invariant).
 const ORIGINAL_LOCK = process.env.PI_PARALLEL_BUILD_LOCK
+const ORIGINAL_TESTING = process.env.TESTING_OPEN_ACCESS
 beforeEach(() => {
   vi.clearAllMocks()
   process.env.PI_PARALLEL_BUILD_LOCK = 'false'
+  process.env.TESTING_OPEN_ACCESS = 'false'
 })
 
 afterEach(() => {
@@ -27,6 +32,11 @@ afterEach(() => {
     delete process.env.PI_PARALLEL_BUILD_LOCK
   } else {
     process.env.PI_PARALLEL_BUILD_LOCK = ORIGINAL_LOCK
+  }
+  if (ORIGINAL_TESTING === undefined) {
+    delete process.env.TESTING_OPEN_ACCESS
+  } else {
+    process.env.TESTING_OPEN_ACCESS = ORIGINAL_TESTING
   }
 })
 

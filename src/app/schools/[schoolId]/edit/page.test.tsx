@@ -1,4 +1,4 @@
-import { describe, expect, it, vi, beforeEach } from 'vitest'
+import { afterEach, describe, expect, it, vi, beforeEach } from 'vitest'
 import { renderToStaticMarkup } from 'react-dom/server'
 import type { User } from '@/lib/types'
 
@@ -17,8 +17,20 @@ vi.mock('next/navigation', () => ({
 
 vi.mock('@/components/ops/TopNav', () => ({ TopNav: () => null }))
 
+// Strict-gate tests: force production-mode so the Finance-only GSTIN
+// field hides for OpsHead / SalesRep / Misba (MM4). Testing-open
+// default opens EDIT for every active user.
+const ORIGINAL_TESTING = process.env.TESTING_OPEN_ACCESS
 beforeEach(() => {
   vi.clearAllMocks()
+  process.env.TESTING_OPEN_ACCESS = 'false'
+})
+afterEach(() => {
+  if (ORIGINAL_TESTING === undefined) {
+    delete process.env.TESTING_OPEN_ACCESS
+  } else {
+    process.env.TESTING_OPEN_ACCESS = ORIGINAL_TESTING
+  }
 })
 
 function makeUser(role: User['role']): User {

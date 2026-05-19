@@ -214,63 +214,98 @@ describe('access: VIEW gates in production-strict mode', () => {
 })
 
 // ----------------------------------------------------------------------------
-// EDIT gates: strict regardless of testing mode
+// EDIT gates × testing mode
 // ----------------------------------------------------------------------------
 
-describe('access: EDIT gates stay strict in testing mode', () => {
+describe('access: EDIT gates open in testing-open mode (default)', () => {
   beforeEach(() => {
     delete process.env.TESTING_OPEN_ACCESS
   })
 
-  it('canGeneratePI: Ops user blocked even with testing mode on (Misba MM2)', () => {
+  it('canGeneratePI: Ops Admin opens during testing window', () => {
     const opsUser = user({ id: 'misba.m', role: 'Admin', department: 'ops' })
-    expect(canGeneratePI(opsUser)).toBe(false)
+    expect(canGeneratePI(opsUser)).toBe(true)
   })
 
-  it('canEditMOU: Finance user blocked even with testing mode on', () => {
+  it('canEditMOU: Finance Admin opens during testing window (Pranav hotfix)', () => {
     const financeUser = user({
-      id: 'shubhangi.g',
+      id: 'pranav.b',
       role: 'Admin',
       department: 'finance',
     })
-    expect(canEditMOU(financeUser)).toBe(false)
+    expect(canEditMOU(financeUser)).toBe(true)
   })
 
-  it('canRaiseDispatch: Sales user blocked even with testing mode on', () => {
+  it('canRaiseDispatch: Sales Admin opens during testing window', () => {
     const salesUser = user({
       id: 'pratik.d',
       role: 'Admin',
       department: 'sales',
     })
-    expect(canRaiseDispatch(salesUser)).toBe(false)
+    expect(canRaiseDispatch(salesUser)).toBe(true)
+  })
+
+  it.each(ALL_ROLES)('every active role can canEditMOU: %s', (role) => {
+    expect(canEditMOU(user({ role, department: 'finance' }))).toBe(true)
+  })
+
+  it.each(ALL_ROLES)('every active role can canGeneratePI: %s', (role) => {
+    expect(canGeneratePI(user({ role, department: 'ops' }))).toBe(true)
+  })
+
+  it('inactive user blocked from EDIT gates even in testing mode', () => {
+    const u = user({ role: 'Admin', department: null, active: false })
+    expect(canEditMOU(u)).toBe(false)
+    expect(canEditFinanceData(u)).toBe(false)
+    expect(canGeneratePI(u)).toBe(false)
+    expect(canRaiseDispatch(u)).toBe(false)
   })
 })
 
-describe('access: canEditMOU', () => {
-  it('grants Sales department + Admin', () => {
+// Production-strict suites: each EDIT-gate test below relies on
+// `TESTING_OPEN_ACCESS=false` so the department-scoped semantics apply.
+// The shared scaffold lives in `editStrictMode()` below; each describe
+// calls it once.
+function editStrictMode() {
+  beforeEach(() => {
+    process.env.TESTING_OPEN_ACCESS = 'false'
+  })
+  afterEach(() => {
+    delete process.env.TESTING_OPEN_ACCESS
+  })
+}
+
+describe('access: canEditMOU (production strict)', () => {
+  editStrictMode()
+  it('grants Sales department + Admin null wildcard only', () => {
     expect(canEditMOU(user({ role: 'SalesHead', department: 'sales' }))).toBe(true)
     expect(canEditMOU(user({ role: 'SalesRep', department: 'sales' }))).toBe(true)
     expect(canEditMOU(user({ role: 'Admin', department: null }))).toBe(true)
+    expect(canEditMOU(user({ role: 'Admin', department: 'finance' }))).toBe(false)
     expect(canEditMOU(user({ role: 'Leadership', department: null }))).toBe(false)
     expect(canEditMOU(user({ role: 'OpsHead', department: 'ops' }))).toBe(false)
     expect(canEditMOU(user({ role: 'Finance', department: 'finance' }))).toBe(false)
   })
 })
 
-describe('access: canEditFinanceData', () => {
-  it('grants Finance department + Admin', () => {
+describe('access: canEditFinanceData (production strict)', () => {
+  editStrictMode()
+  it('grants Finance department + Admin null wildcard only', () => {
     expect(canEditFinanceData(user({ role: 'Finance', department: 'finance' }))).toBe(true)
     expect(canEditFinanceData(user({ role: 'Admin', department: null }))).toBe(true)
+    expect(canEditFinanceData(user({ role: 'Admin', department: 'sales' }))).toBe(false)
     expect(canEditFinanceData(user({ role: 'Leadership', department: null }))).toBe(false)
     expect(canEditFinanceData(user({ role: 'SalesRep', department: 'sales' }))).toBe(false)
     expect(canEditFinanceData(user({ role: 'OpsHead', department: 'ops' }))).toBe(false)
   })
 })
 
-describe('access: canGeneratePI (Misba MM2)', () => {
-  it('grants Finance + Admin only', () => {
+describe('access: canGeneratePI (Misba MM2, production strict)', () => {
+  editStrictMode()
+  it('grants Finance + Admin null wildcard only', () => {
     expect(canGeneratePI(user({ role: 'Finance', department: 'finance' }))).toBe(true)
     expect(canGeneratePI(user({ role: 'Admin', department: null }))).toBe(true)
+    expect(canGeneratePI(user({ role: 'Admin', department: 'ops' }))).toBe(false)
     expect(canGeneratePI(user({ role: 'Leadership', department: null }))).toBe(false)
     expect(canGeneratePI(user({ role: 'SalesRep', department: 'sales' }))).toBe(false)
     expect(canGeneratePI(user({ role: 'OpsHead', department: 'ops' }))).toBe(false)
@@ -278,18 +313,21 @@ describe('access: canGeneratePI (Misba MM2)', () => {
   })
 })
 
-describe('access: canRaiseDispatch', () => {
-  it('grants Ops + Admin', () => {
+describe('access: canRaiseDispatch (production strict)', () => {
+  editStrictMode()
+  it('grants Ops + Admin null wildcard only', () => {
     expect(canRaiseDispatch(user({ role: 'OpsHead', department: 'ops' }))).toBe(true)
     expect(canRaiseDispatch(user({ role: 'OpsEmployee', department: 'ops' }))).toBe(true)
     expect(canRaiseDispatch(user({ role: 'Admin', department: null }))).toBe(true)
+    expect(canRaiseDispatch(user({ role: 'Admin', department: 'finance' }))).toBe(false)
     expect(canRaiseDispatch(user({ role: 'SalesRep', department: 'sales' }))).toBe(false)
     expect(canRaiseDispatch(user({ role: 'Finance', department: 'finance' }))).toBe(false)
   })
 })
 
-describe('access: canApproveDispatch (Misba MM1 early approval)', () => {
-  it('grants Sales + Admin', () => {
+describe('access: canApproveDispatch (Misba MM1, production strict)', () => {
+  editStrictMode()
+  it('grants Sales + Admin null wildcard only', () => {
     expect(canApproveDispatch(user({ role: 'SalesHead', department: 'sales' }))).toBe(true)
     expect(canApproveDispatch(user({ role: 'SalesRep', department: 'sales' }))).toBe(true)
     expect(canApproveDispatch(user({ role: 'Admin', department: null }))).toBe(true)
@@ -298,8 +336,9 @@ describe('access: canApproveDispatch (Misba MM1 early approval)', () => {
   })
 })
 
-describe('access: canExecuteDispatch', () => {
-  it('grants Finance + Admin', () => {
+describe('access: canExecuteDispatch (production strict)', () => {
+  editStrictMode()
+  it('grants Finance + Admin null wildcard only', () => {
     expect(canExecuteDispatch(user({ role: 'Finance', department: 'finance' }))).toBe(true)
     expect(canExecuteDispatch(user({ role: 'Admin', department: null }))).toBe(true)
     expect(canExecuteDispatch(user({ role: 'OpsHead', department: 'ops' }))).toBe(false)
@@ -307,8 +346,9 @@ describe('access: canExecuteDispatch', () => {
   })
 })
 
-describe('access: canManageInventory', () => {
-  it('grants Finance + Admin (Misba spec; W4-G OpsHead gate stays in permissions.ts)', () => {
+describe('access: canManageInventory (production strict)', () => {
+  editStrictMode()
+  it('grants Finance + Admin null wildcard (W4-G OpsHead gate lives in permissions.ts)', () => {
     expect(canManageInventory(user({ role: 'Finance', department: 'finance' }))).toBe(true)
     expect(canManageInventory(user({ role: 'Admin', department: null }))).toBe(true)
     expect(canManageInventory(user({ role: 'OpsHead', department: 'ops' }))).toBe(false)
@@ -316,8 +356,9 @@ describe('access: canManageInventory', () => {
   })
 })
 
-describe('access: canEditSchoolMaster', () => {
-  it('grants Sales + Admin', () => {
+describe('access: canEditSchoolMaster (production strict)', () => {
+  editStrictMode()
+  it('grants Sales + Admin null wildcard only', () => {
     expect(canEditSchoolMaster(user({ role: 'SalesHead', department: 'sales' }))).toBe(true)
     expect(canEditSchoolMaster(user({ role: 'SalesRep', department: 'sales' }))).toBe(true)
     expect(canEditSchoolMaster(user({ role: 'Admin', department: null }))).toBe(true)
@@ -326,8 +367,9 @@ describe('access: canEditSchoolMaster', () => {
   })
 })
 
-describe('access: canManageEscalations', () => {
-  it('grants Sales, Ops, Finance + Admin', () => {
+describe('access: canManageEscalations (production strict)', () => {
+  editStrictMode()
+  it('grants Sales, Ops, Finance + Admin null wildcard', () => {
     expect(canManageEscalations(user({ role: 'SalesHead', department: 'sales' }))).toBe(true)
     expect(canManageEscalations(user({ role: 'OpsHead', department: 'ops' }))).toBe(true)
     expect(canManageEscalations(user({ role: 'Finance', department: 'finance' }))).toBe(true)

@@ -7,12 +7,26 @@
  * audit lands on the parent MOU, not on the Adjustment).
  */
 
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   reverseAdjustment,
   type ReverseAdjustmentDeps,
 } from './reverseAdjustment'
 import type { Adjustment, MOU, PendingUpdate, User } from '@/lib/types'
+
+// Strict-gate tests: force production-mode so canEditFinanceData
+// rejects non-Finance callers. Testing-open default opens EDIT.
+const ORIGINAL_TESTING = process.env.TESTING_OPEN_ACCESS
+beforeEach(() => {
+  process.env.TESTING_OPEN_ACCESS = 'false'
+})
+afterEach(() => {
+  if (ORIGINAL_TESTING === undefined) {
+    delete process.env.TESTING_OPEN_ACCESS
+  } else {
+    process.env.TESTING_OPEN_ACCESS = ORIGINAL_TESTING
+  }
+})
 import type { enqueueUpdate } from '@/lib/pendingUpdates'
 
 const FIXED_TS = '2026-05-15T10:00:00.000Z'

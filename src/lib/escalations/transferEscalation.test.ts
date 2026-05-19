@@ -1,10 +1,25 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   claimEscalation,
   transferEscalation,
   type TransferEscalationDeps,
 } from './transferEscalation'
 import type { Escalation, PendingUpdate, User } from '@/lib/types'
+
+// Strict-gate tests: force production-mode so canManageEscalations
+// rejects Leadership. Testing-open default opens EDIT for every active
+// user.
+const ORIGINAL_TESTING = process.env.TESTING_OPEN_ACCESS
+beforeEach(() => {
+  process.env.TESTING_OPEN_ACCESS = 'false'
+})
+afterEach(() => {
+  if (ORIGINAL_TESTING === undefined) {
+    delete process.env.TESTING_OPEN_ACCESS
+  } else {
+    process.env.TESTING_OPEN_ACCESS = ORIGINAL_TESTING
+  }
+})
 
 const FIXED_TS = '2026-05-10T12:00:00.000Z'
 

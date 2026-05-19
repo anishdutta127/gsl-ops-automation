@@ -54,14 +54,16 @@ Both roles share Admin's null-department wildcard. The Step 7 brief's "canRaiseD
 
 ## Testing-vs-production access defaults
 
-`TESTING_OPEN_ACCESS` env var controls VIEW-gate strictness. Defaults to **fail-open for testers** (a missing or empty env var reads as `true`).
+`TESTING_OPEN_ACCESS` env var controls strictness for BOTH VIEW and EDIT gates. Defaults to **fail-open for testers** (a missing or empty env var reads as `true`).
 
 | Env value | VIEW gates | EDIT gates |
 |---|---|---|
-| unset, `''`, `'true'`, `'TRUE'` (default) | every active user can see every stage | strict per department, regardless of testing mode |
-| `'false'` (production lockdown) | strict per department; Admin / Leadership are the only cross-cutting roles | strict per department, same as testing mode |
+| unset, `''`, `'true'`, `'TRUE'` (default) | every active user can see every stage | every active user can act on every stage |
+| `'false'` (production lockdown) | strict per department; Admin / Leadership are the only cross-cutting roles | strict per department; Misba MM2 + sibling separation-of-duties invariants apply |
 
-Rationale: pilot testers reported friction when role gates hid functions they needed to internalise the system (W3-B). Opening VIEW gates removes the friction without compromising what the pilot is actually testing for: role / department correctness on EDIT actions. An Ops user must not be able to generate a PI even when discoverability is wide-open. Production lockdown is a one-line env flip.
+Rationale: pilot testers reported friction when role gates hid functions they needed to internalise the system (W3-B, restated 2026-05-19 after Pranav MOU-button hotfix). Testing window opens everything so a department-scoped Admin (Pranav = Finance, Misba = Ops, etc.) can walk every flow end-to-end. Production lockdown re-enables strict EDIT semantics: an Ops user cannot generate a PI; a Finance user cannot draft an MOU; cross-functional Admin (`role: 'Admin'`, `department: null`) is the only wildcard. Production lockdown is a one-line env flip.
+
+Layer 2 (`canPerform` in `src/lib/auth/permissions.ts`) stays as server-side defence in depth regardless of the toggle. All current test users carry `role: 'Admin'`, which trips ADMIN_WILDCARD at Layer 2 and unblocks every write the Layer-1 open gates make discoverable.
 
 The default lives in code (not env), so a missing env var fails open for testers, not closed.
 

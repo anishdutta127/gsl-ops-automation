@@ -12,10 +12,25 @@
  * the GitHub Contents API.
  */
 
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 const saveDraftMouMock = vi.fn()
 const getCurrentUserMock = vi.fn()
+
+// These tests validate the strict department-scoped EDIT gate.
+// Force production-mode so canEditMOU enforces Sales-only; the
+// testing-open default would let every active user through.
+const ORIGINAL_TESTING = process.env.TESTING_OPEN_ACCESS
+beforeEach(() => {
+  process.env.TESTING_OPEN_ACCESS = 'false'
+})
+afterEach(() => {
+  if (ORIGINAL_TESTING === undefined) {
+    delete process.env.TESTING_OPEN_ACCESS
+  } else {
+    process.env.TESTING_OPEN_ACCESS = ORIGINAL_TESTING
+  }
+})
 
 vi.mock('@/lib/auth/session', () => ({
   getCurrentUser: () => getCurrentUserMock(),

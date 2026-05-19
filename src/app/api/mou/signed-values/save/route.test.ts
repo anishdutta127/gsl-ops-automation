@@ -7,10 +7,24 @@
  *   - 303 redirect to /mous/[id]/signed-values?notice=saved on success.
  */
 
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 const upsertMock = vi.fn()
 const getCurrentUserMock = vi.fn()
+
+// Strict-gate tests: force production-mode so canEditMOU enforces
+// Sales-only. Testing-open default opens EDIT for every active user.
+const ORIGINAL_TESTING = process.env.TESTING_OPEN_ACCESS
+beforeEach(() => {
+  process.env.TESTING_OPEN_ACCESS = 'false'
+})
+afterEach(() => {
+  if (ORIGINAL_TESTING === undefined) {
+    delete process.env.TESTING_OPEN_ACCESS
+  } else {
+    process.env.TESTING_OPEN_ACCESS = ORIGINAL_TESTING
+  }
+})
 
 vi.mock('@/lib/auth/session', () => ({
   getCurrentUser: () => getCurrentUserMock(),
