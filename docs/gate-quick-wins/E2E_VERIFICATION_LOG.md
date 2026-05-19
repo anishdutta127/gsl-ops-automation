@@ -79,9 +79,32 @@ sales-rep` (action).
 ## Commits in this gate
 
 ```
+1ba294e fix(schools): rename reassign-sales-rep API segment from [schoolId] to [id]
+f6be5e7 chore(route-audit): refresh static link report after quick-wins gate
+3ed6505 docs(gate-quick-wins): E2E verification log + SSR walkthrough tests for WS1 + WS2
 2608583 feat(schools): salesperson reassignment with future-only and all-MOUs scopes
 2a79e72 feat(installments): show % share alongside expected amount on instalment rows
 ```
 
-Plus the audit docs and SSR walkthrough test file land alongside this
-verification log as a single follow-up commit.
+## Deploy incident
+
+The first Vercel deploy of the WS2 changes failed with a Next.js
+sorted-routes conflict: `/api/schools/[id]` (the existing W4-I.4 MM4
+editSchool route handler) and the new
+`/api/schools/[schoolId]/reassign-sales-rep` used different param
+names at the same path level. Next.js rejects this at build time.
+Local `npm run build` had passed because the conflict detector is
+order-sensitive on directory enumeration, which behaved differently
+on the Linux Vercel builder than on the Windows local file system.
+
+Fix in `1ba294e`: renamed the API directory to `[id]` to match the
+existing convention; the route body uses `{ id: schoolId }`
+destructuring so the rest of the handler keeps the schoolId name.
+The page side under `/schools/[schoolId]/...` stayed as-is to avoid
+touching every existing schools page. The codebase inconsistency
+between the page side `[schoolId]` and the API side `[id]` is
+pre-existing and orthogonal to this gate.
+
+The CLAUDE.md V4 standard caught this at deploy time. Adding a local
+linux-like route enumeration test to the verify pipeline would catch
+it pre-push; tracked as a process follow-up.
