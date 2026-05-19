@@ -40,6 +40,9 @@ const CRITICAL_ACTIONS: ReadonlySet<string> = new Set<string>([
   'dispatch-override-requested',
   'dispatch-override-approved',
   'dispatch-override-rejected',
+  // Phase 5 (2026-05-19, Pranav review #4): student-count changes
+  // recalc the entire instalment schedule and are always material.
+  'student-count-changed',
 ])
 
 /**
