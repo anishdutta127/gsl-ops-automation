@@ -21,7 +21,7 @@ import {
 } from '@/lib/schools/reassignSalesRep'
 
 interface RouteParams {
-  params: Promise<{ schoolId: string }>
+  params: Promise<{ id: string }>
 }
 
 function parseScope(raw: FormDataEntryValue | null): ReassignScope | null {
@@ -34,7 +34,7 @@ function asString(raw: FormDataEntryValue | null): string {
 }
 
 export async function POST(request: Request, { params }: RouteParams) {
-  const { schoolId } = await params
+  const { id: schoolId } = await params
   const form = await request.formData()
 
   const session = await getCurrentSession()
