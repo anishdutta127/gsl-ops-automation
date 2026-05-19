@@ -8,13 +8,13 @@ Static structural check. The script enumerates every internal link in `src/` and
 
 | Bucket | Count |
 |---|---|
-| Routes declared (`src/app/**/page.tsx`) | 232 |
-| Distinct link paths found in source | 102 |
-| Total link occurrences | 456 |
+| Routes declared (`src/app/**/page.tsx`) | 234 |
+| Distinct link paths found in source | 103 |
+| Total link occurrences | 460 |
 | ✅ OK (static path matches a route) | 59 |
-| ⚠ Dynamic (link matches a dynamic route, needs runtime verification) | 43 |
+| ⚠ Dynamic (link matches a dynamic route, needs runtime verification) | 44 |
 | ❌ Broken (link points to no route) | 0 |
-| ⚠ Orphan routes (route exists but nothing links to it) | 124 |
+| ⚠ Orphan routes (route exists but nothing links to it) | 125 |
 
 ## ❌ Broken links
 
@@ -67,8 +67,9 @@ These resolve to a dynamic-segment route (e.g. `/mous/[mouId]`). The static chec
 | `/sales-pipeline/[param]` | `/sales-pipeline/[id]` | 19 |
 | `/sales-pipeline/[param]/edit` | `/sales-pipeline/[id]/edit` | 4 |
 | `/sales-pipeline/[param]/mark-lost` | `/sales-pipeline/[id]/mark-lost` | 2 |
-| `/schools/[param]` | `/schools/[schoolId]` | 9 |
+| `/schools/[param]` | `/schools/[schoolId]` | 11 |
 | `/schools/[param]/edit` | `/schools/[schoolId]/edit` | 5 |
+| `/schools/[param]/reassign-sales-rep` | `/schools/[schoolId]/reassign-sales-rep` | 1 |
 
 ## ⚠ Orphan routes (no internal link points here)
 
@@ -108,7 +109,7 @@ These routes exist but no `href` / `router.push` / `redirect` in `src/` referenc
 | `/overview` | `src/app/overview/page.tsx` |
 | `/portal/status/[tokenId]` | `src/app/portal/status/[tokenId]/page.tsx` |
 
-### API-route orphans (95)
+### API-route orphans (96)
 
 API routes are typically called via `fetch()` rather than navigated to via `<Link>` or `router.push`. The static audit only inspects href / router.push / redirect, so most API orphans are expected. Listed here for completeness; treat as low signal unless a specific endpoint looks unused.
 
@@ -209,6 +210,7 @@ API routes are typically called via `fetch()` rather than navigated to via `<Lin
 | `/api/pi/generate` | `src/app/api/pi/generate/route.ts` |
 | `/api/reports/[slug]/csv` | `src/app/api/reports/[slug]/csv/route.ts` |
 | `/api/schools/[id]` | `src/app/api/schools/[id]/route.ts` |
+| `/api/schools/[schoolId]/reassign-sales-rep` | `src/app/api/schools/[schoolId]/reassign-sales-rep/route.ts` |
 | `/api/sync/tick` | `src/app/api/sync/tick/route.ts` |
 | `/api/sync/trigger` | `src/app/api/sync/trigger/route.ts` |
 | `/api/workflow/send-reminder` | `src/app/api/workflow/send-reminder/route.ts` |
