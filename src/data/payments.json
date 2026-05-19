@@ -6709,14 +6709,14 @@
     "dueDateRaw": "2026-02-28",
     "dueDateIso": "2026-02-28",
     "expectedAmount": 40000,
-    "receivedAmount": null,
-    "receivedDate": null,
-    "paymentMode": null,
+    "receivedAmount": 40000,
+    "receivedDate": "2026-01-02",
+    "paymentMode": "Bank Transfer",
     "bankReference": null,
     "piNumber": null,
     "taxInvoiceNumber": null,
-    "status": "Pending",
-    "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+    "status": "Paid",
+    "notes": "Manual Mark as Paid. Reason: NEFT-JAKA260102225954-MUTAHHARY PUBLIC SCHOOL BAROO--1219040100001412-JAKA0EBAROO 10 % advance for FY 2627",
     "piSentDate": null,
     "piSentTo": null,
     "piGeneratedAt": null,
@@ -6744,6 +6744,26 @@
           "installmentCount": 4
         },
         "notes": "Payment schedule edited (no-PI path): 4 instalment(s)."
+      },
+      {
+        "timestamp": "2026-05-19T04:34:18.202Z",
+        "user": "anita.c",
+        "action": "payment-recorded",
+        "before": {
+          "receivedAmount": null,
+          "receivedDate": null,
+          "paymentMode": null,
+          "bankReference": null,
+          "status": "Pending"
+        },
+        "after": {
+          "receivedAmount": 40000,
+          "receivedDate": "2026-01-02",
+          "paymentMode": "Bank Transfer",
+          "bankReference": null,
+          "status": "Paid"
+        },
+        "notes": "Exact match."
       }
     ]
   },
