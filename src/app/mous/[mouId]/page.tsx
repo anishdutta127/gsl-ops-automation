@@ -68,6 +68,11 @@ import { RecalcSummary } from '@/components/mou-system/RecalcSummary'
 import { canEditMOU } from '@/lib/access'
 import { deriveScheduleSummary } from '@/lib/mou/scheduleSummary'
 import { formatInstalmentPercent } from '@/lib/mou/instalmentPercent'
+import {
+  getCurrentFinancialYear,
+  getFinancialYearsForMou,
+  getYearSpecificInstalments,
+} from '@/lib/mou/yearMembership'
 import { getCurrentUser } from '@/lib/auth/session'
 import {
   canApproveDispatchOverride,
@@ -261,6 +266,23 @@ export default async function MouDetailPage({ params, searchParams }: PageProps)
 
   const school = allSchools.find((s) => s.id === mou.schoolId)
   const installments = allPayments.filter((p) => p.mouId === mou.id)
+
+  // Phase 3 (2026-05-19): year tabs for multi-year MOUs. The MOU may
+  // span multiple FYs via instalment due-dates (Apr 2026 - Mar 2028
+  // with quarterly instalments lives in both 2026-27 and 2027-28). The
+  // ?fy=<tag> param picks a tab; absence shows the "All years" view
+  // which keeps the existing lifetime totals. Single-year MOUs render
+  // without a tab strip.
+  const mouFys = getFinancialYearsForMou(mou, allPayments)
+  const isMultiYearMou = mouFys.length > 1
+  const fyParam = typeof sp.fy === 'string' ? sp.fy : null
+  const activeYearTab: string | null = isMultiYearMou && fyParam && mouFys.includes(fyParam)
+    ? fyParam
+    : null
+  const displayedInstallments = activeYearTab
+    ? getYearSpecificInstalments(mou, activeYearTab, allPayments)
+    : installments
+
   const installmentDispatches = allDispatches.filter((d) => d.mouId === mou.id)
   const mouKitDispatches = allKitDispatches.filter((d) => d.mouId === mou.id)
   const mouFeedback = allFeedback.filter((f) => f.mouId === mou.id)
@@ -361,11 +383,23 @@ export default async function MouDetailPage({ params, searchParams }: PageProps)
   // tiles now derive from installments so the two views agree. Stored
   // mou.received / mou.balance / mou.receivedPct fields are left alone;
   // a TDS-aware backfill of those stored fields is tracked separately.
-  const receivedFromInstallments = totalReceivedRs
-  const balanceFromInstallments = Math.max(0, mou.contractValue - receivedFromInstallments)
-  const receivedPctFromInstallments = mou.contractValue > 0
-    ? Math.round((receivedFromInstallments / mou.contractValue) * 100)
+  //
+  // Phase 3 (2026-05-19): when a year tab is active, KPI tiles scope
+  // to the tab's instalments. The contract base is the year's
+  // expectedAmount sum (no fall back to mou.contractValue), so a
+  // 2-year contract worth Rs 4L total surfaces "FY 26-27 contract
+  // value Rs 2L" on its 2026-27 tab and "FY 27-28 contract Rs 2L" on
+  // the 2027-28 tab. The "All years" view (single-year MOUs or no
+  // ?fy=) preserves the lifetime totals from the stabilise gate.
+  const contractValueForView = activeYearTab
+    ? displayedInstallments.reduce((s, p) => s + p.expectedAmount, 0)
+    : mou.contractValue
+  const receivedFromInstallments = displayedInstallments.reduce((s, p) => s + (p.receivedAmount ?? 0), 0)
+  const balanceFromInstallments = Math.max(0, contractValueForView - receivedFromInstallments)
+  const receivedPctFromInstallments = contractValueForView > 0
+    ? Math.round((receivedFromInstallments / contractValueForView) * 100)
     : 0
+  const yearCurrentFy = getCurrentFinancialYear()
 
   const smartSuggestions = getSmartTemplateSuggestions({
     mou,
@@ -524,6 +558,53 @@ export default async function MouDetailPage({ params, searchParams }: PageProps)
               initialNotes={mou.delayNotes}
               initialMetaLine={lastDelayNotesUpdate(mou)}
             />
+            {isMultiYearMou ? (
+              <nav
+                aria-label="Financial year view"
+                data-testid="mou-detail-year-tabs"
+                className="flex flex-wrap items-center gap-2 border-t border-border pt-3"
+              >
+                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  View by FY
+                </span>
+                <Link
+                  href={`/mous/${mou.id}`}
+                  data-testid="year-tab-all"
+                  data-active={activeYearTab === null ? 'true' : 'false'}
+                  aria-current={activeYearTab === null ? 'page' : undefined}
+                  className={
+                    activeYearTab === null
+                      ? 'inline-flex min-h-9 items-center rounded-full bg-brand-navy px-3 py-1 text-xs font-medium text-white'
+                      : 'inline-flex min-h-9 items-center rounded-full border border-border bg-white px-3 py-1 text-xs text-slate-700 hover:bg-slate-50'
+                  }
+                >
+                  All years
+                </Link>
+                {mouFys.map((fy) => {
+                  const isActive = fy === activeYearTab
+                  return (
+                    <Link
+                      key={fy}
+                      href={`/mous/${mou.id}?fy=${encodeURIComponent(fy)}`}
+                      data-testid={`year-tab-${fy}`}
+                      data-active={isActive ? 'true' : 'false'}
+                      aria-current={isActive ? 'page' : undefined}
+                      className={
+                        isActive
+                          ? 'inline-flex min-h-9 items-center rounded-full bg-brand-navy px-3 py-1 text-xs font-medium text-white'
+                          : 'inline-flex min-h-9 items-center rounded-full border border-border bg-white px-3 py-1 text-xs text-slate-700 hover:bg-slate-50'
+                      }
+                    >
+                      FY {fy}
+                      {fy === yearCurrentFy ? <span className="ml-1 text-[10px]">{'(current)'}</span> : null}
+                    </Link>
+                  )
+                })}
+                <span className="ml-1 text-[11px] text-muted-foreground">
+                  Spans {mouFys.length} financial years
+                </span>
+              </nav>
+            ) : null}
           </div>
         </div>
 
@@ -758,7 +839,7 @@ export default async function MouDetailPage({ params, searchParams }: PageProps)
                   {
                     label: (
                       <span className="inline-flex items-baseline gap-1">
-                        Contract value
+                        {activeYearTab ? `FY ${activeYearTab} contract` : 'Contract value'}
                         <EditHistoryReveal
                           entries={mou.auditLog}
                           field={['contractValue', 'spWithTax', 'spWithoutTax']}
@@ -766,13 +847,25 @@ export default async function MouDetailPage({ params, searchParams }: PageProps)
                         />
                       </span>
                     ),
-                    value: formatRs(mou.contractValue),
+                    value: (
+                      <span data-testid="mou-contract-value-display">
+                        {formatRs(contractValueForView)}
+                        {activeYearTab && mou.contractValue !== contractValueForView ? (
+                          <span className="ml-2 text-[11px] text-muted-foreground">
+                            lifetime {formatRs(mou.contractValue)}
+                          </span>
+                        ) : null}
+                      </span>
+                    ),
                   },
                   {
-                    label: 'Received',
+                    label: activeYearTab ? `FY ${activeYearTab} received` : 'Received',
                     value: `${formatRs(receivedFromInstallments)} (${receivedPctFromInstallments}%)`,
                   },
-                  { label: 'Balance', value: formatRs(balanceFromInstallments) },
+                  {
+                    label: activeYearTab ? `FY ${activeYearTab} balance` : 'Balance',
+                    value: formatRs(balanceFromInstallments),
+                  },
                   {
                     label: 'Start / End',
                     value: `${formatDate(mou.startDate)} - ${formatDate(mou.endDate)}`,
@@ -966,15 +1059,19 @@ export default async function MouDetailPage({ params, searchParams }: PageProps)
               </CollapsibleCard>
 
               <CollapsibleCard
-                title="Instalments"
+                title={activeYearTab ? `Instalments (FY ${activeYearTab})` : 'Instalments'}
                 icon={<Receipt className="size-4" />}
-                count={installments.length}
-                hasData={installments.length > 0}
-                emptyHint="No instalments captured yet."
+                count={displayedInstallments.length}
+                hasData={displayedInstallments.length > 0}
+                emptyHint={
+                  activeYearTab
+                    ? `No instalments due in FY ${activeYearTab}.`
+                    : 'No instalments captured yet.'
+                }
                 testId="card-instalments"
               >
                 <ul className="divide-y divide-border">
-                  {installments.map((p) => {
+                  {displayedInstallments.map((p) => {
                     const pct = formatInstalmentPercent(p.expectedAmount, mou.contractValue)
                     return (
                     <li key={p.id} className="py-2 text-sm">
