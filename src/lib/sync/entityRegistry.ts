@@ -55,6 +55,10 @@ export const ARRAY_ENTITY_TO_PATH: Record<
   // lifecycle stage; the lib synthesises `id=stage` on the payload so
   // the drain's by-id upsert matches.
   stageResponsibility: 'src/data/stage_responsibility.json',
+  // Phase 5 (2026-05-19, Pranav review #4): student-count change events.
+  // Append-only audit log; the MOU points at events via
+  // mou.studentCountEventIds.
+  studentCountEvent: 'src/data/student_count_events.json',
 }
 
 export function pathForEntity(entity: PendingUpdateEntity): string | null {

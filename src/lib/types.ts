@@ -196,6 +196,15 @@ export type AuditAction =
   // role-edit UI; entries are written by data-mutation scripts (round 2
   // tester provisioning per D-040) and surface in admin audit views.
   | 'user-role-changed'
+  // Phase 5 (2026-05-19, Pranav review #4): emitted on MOU audit log
+  // when an operator records a real-world student-count change via
+  // /mous/[id]/student-count. Each entry's `after` captures the new
+  // count + the recalc impact summary (installmentsAffected,
+  // previousExpectedTotal, newExpectedTotal, the adjustment row +
+  // cumulativeDelta). A parallel entry lands on each affected
+  // Payment row with the per-row before / after nominalAmount /
+  // adjustmentFromLockedInstallments / netDue.
+  | 'student-count-changed'
   // 2026-05-19 quick-wins (Pranav review #6): emitted on School audit
   // log when the school's sales rep is reassigned via
   // /schools/[id]/reassign-sales-rep. before / after capture
@@ -571,6 +580,14 @@ export interface MOU {
    * `{ status: 'none', ... }` when first accessed via the helper.
    */
   dispatchOverride?: MouDispatchOverride
+  /**
+   * Phase 5 (2026-05-19, Pranav review #4): history of
+   * student-count change events for this MOU. Most-recent last.
+   * `getCurrentStudentCount(mou, events)` derives the latest count;
+   * pre-Phase-5 MOUs leave this undefined and fall back to
+   * `studentsActual ?? studentsMou`.
+   */
+  studentCountEventIds?: string[]
 }
 
 /**
@@ -1440,6 +1457,79 @@ export interface Payment {
   tdsAmount?: number | null
   tdsCertificateRef?: string | null
   tdsRate?: number | null
+  /**
+   * Phase 5 (2026-05-19, Pranav review #4 + #5) - variable student
+   * count + per-instalment recalc.
+   *
+   * The 396 pre-Phase-5 rows do NOT carry these fields. The first
+   * time an operator updates the student count for a MOU via
+   * /mous/[id]/student-count, the MOU's Payments gain the fields
+   * lazily. Display surfaces continue reading `expectedAmount` (the
+   * operational total) where the breakdown is not needed; the new
+   * surfaces read `nominalAmount`, `adjustmentFromLockedInstallments`,
+   * and `netDue` for transparency.
+   *
+   * Invariants (held by src/lib/mou/studentCountRecalc.ts):
+   *   - `nominalAmount = (percentShare / 100) × currentCount × pricePerStudent`,
+   *     for every row, regardless of locked status.
+   *   - `adjustmentFromLockedInstallments` is non-zero only on the
+   *     first unpaid row (the "adjusting" row). It captures the
+   *     cumulative `currentCountNominal - receivedAmount` summed
+   *     across all locked rows. Negative = excess credit; positive =
+   *     shortfall.
+   *   - `netDue` for a LOCKED row equals `receivedAmount` (immutable).
+   *     For the first unpaid row, `nominalAmount +
+   *     adjustmentFromLockedInstallments`. For subsequent unpaid
+   *     rows, `nominalAmount`.
+   *   - `expectedAmount` continues to mirror `netDue` for the
+   *     operational read path; legacy surfaces (reports, dashboards)
+   *     keep working without change.
+   */
+  percentShare?: number | null            // 0-100; derived from expectedAmount / contractValue if absent
+  nominalAmount?: number | null           // current-count value of this share
+  adjustmentFromLockedInstallments?: number | null  // 0 for locked + non-first-unpaid; cumulative on firstUnpaid
+  netDue?: number | null                  // operational; equals receivedAmount when locked
+  lockedAt?: string | null                // ISO when the row first got a receipt
+  isLocked?: boolean                      // computed from receivedAmount > 0; persisted for explicit-lock futures
+}
+
+// ============================================================================
+// StudentCountEvent (Phase 5; Pranav review #4)
+//
+// Each event records a real-world change in the student count for a MOU.
+// The event is the audit-trail anchor: it captures the previous + new
+// count, the operator-supplied reason, and the recalc impact (which
+// installments changed, the cumulative delta, the row that absorbed
+// the carry). The MOU's `currentStudentCount` is derived from the most
+// recent event for the MOU; pre-Phase-5 MOUs without any event fall
+// back to `studentsActual ?? studentsMou`.
+// ============================================================================
+
+export interface StudentCountEventRecalcImpact {
+  installmentsAffected: string[]              // Payment.id values
+  previousExpectedTotal: number
+  newExpectedTotal: number
+  adjustmentApplied: {
+    toInstallmentId: string | null            // null when no unpaid row exists
+    previousNetDue: number
+    newNetDue: number
+    cumulativeDelta: number                   // overpayment (negative) or shortfall (positive)
+  }
+}
+
+export interface StudentCountEvent {
+  id: string                                  // 'SCE-2026-0001'
+  mouId: string
+  newCount: number
+  previousCount: number
+  effectiveDate: string                       // ISO yyyy-mm-dd; when the count became effective in real life
+  recordedAt: string                          // ISO datetime; when the operator entered it
+  recordedBy: string                          // User.id
+  reason: string                              // free-text, required >= 10 chars at form level
+  relatedInstallmentId: string | null         // optional Payment.id hint
+  notes: string | null
+  recalcImpact: StudentCountEventRecalcImpact
+  auditLog: AuditEntry[]
 }
 
 export interface PaymentLog {
@@ -1590,6 +1680,7 @@ export type PendingUpdateEntity =
   | 'agreement'                    // NDA / vendor agreement registry
   | 'piIssue'                      // mou-system pi issuance ledger
   | 'stageResponsibility'          // Gate 4.9 stage-level ownership config
+  | 'studentCountEvent'            // Phase 5 (Pranav review #4): per-event log of count changes that re-price installments
 
 export interface PendingUpdate {
   id: string                       // UUID
