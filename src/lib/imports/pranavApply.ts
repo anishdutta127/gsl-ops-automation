@@ -63,7 +63,7 @@ export interface ApplyInput {
     mous: MOU[]
     payments: Payment[]
     schools: School[]
-    salesTeam: Array<{ id: string; name: string; email: string | null; phone: string | null; territories: string[]; active: boolean; notes: string | null; createdAt: string }>
+    salesTeam: Array<{ id: string; name: string; email: string | null; phone: string | null; territories: string[]; programmes?: string[]; active: boolean; notes: string | null; createdAt: string }>
   }
 }
 
@@ -214,6 +214,10 @@ function upsertSalesRep(
     email: null,
     phone: null,
     territories: [],
+    // Empty programmes means "covers every programme" downstream in the
+    // GeneratorWizard filter; a missing field crashes the wizard, so the
+    // default must be explicit. See docs/hotfix-mous-new/ROOT_CAUSE.md.
+    programmes: [],
     active: true,
     notes: `Auto-created from Pranav refresh ${refreshTag}`,
     createdAt: new Date().toISOString(),

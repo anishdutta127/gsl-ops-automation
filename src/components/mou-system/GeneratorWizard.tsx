@@ -511,9 +511,14 @@ export function GeneratorWizard({
     currentUserName,
   ])
 
-  const programmeSalesTeam = salesTeam.filter(
-    (sp) => sp.programmes.length === 0 || sp.programmes.some((p) => p === template.programme),
-  )
+  // Auto-created SalesPerson records (e.g. from the Pranav refresh import)
+  // may land without the `programmes` field set. Treat a missing or empty
+  // programmes list as "rep covers every programme", so the wizard does not
+  // crash when one of these partial records ends up in the team.
+  const programmeSalesTeam = salesTeam.filter((sp) => {
+    const programmes = sp.programmes ?? []
+    return programmes.length === 0 || programmes.some((p) => p === template.programme)
+  })
 
   const fieldClass =
     'mt-1 w-full min-h-11 rounded-md border border-input bg-card px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-brand-navy'

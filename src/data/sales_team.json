@@ -274,7 +274,8 @@
     "territories": [],
     "active": true,
     "notes": "Auto-created from Pranav refresh pranav-refresh-2026-05-13",
-    "createdAt": "2026-05-14T03:33:15.811Z"
+    "createdAt": "2026-05-14T03:33:15.811Z",
+    "programmes": []
   },
   {
     "id": "sp-kranthi",
@@ -284,6 +285,7 @@
     "territories": [],
     "active": true,
     "notes": "Auto-created from Pranav refresh pranav-refresh-2026-05-13",
-    "createdAt": "2026-05-14T03:33:15.817Z"
+    "createdAt": "2026-05-14T03:33:15.817Z",
+    "programmes": []
   }
 ]
