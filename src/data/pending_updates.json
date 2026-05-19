@@ -551,5 +551,63 @@
       ]
     },
     "retryCount": 0
+  },
+  {
+    "id": "059d80aa-1faa-436f-8ca8-40d74a8967c5",
+    "queuedAt": "2026-05-19T08:41:49.664Z",
+    "queuedBy": "anita.c",
+    "entity": "payment",
+    "operation": "update",
+    "payload": {
+      "id": "MOU-STEAM-2627-007-i2",
+      "mouId": "MOU-STEAM-2627-007",
+      "schoolName": "St. Mary Convent School",
+      "programme": "STEAM",
+      "instalmentLabel": "2 of 2",
+      "instalmentSeq": 2,
+      "totalInstalments": 2,
+      "description": "",
+      "dueDateRaw": "2027-03-01",
+      "dueDateIso": "2027-03-01",
+      "expectedAmount": 100000,
+      "receivedAmount": null,
+      "receivedDate": null,
+      "paymentMode": null,
+      "bankReference": null,
+      "piNumber": null,
+      "taxInvoiceNumber": null,
+      "status": "Pending",
+      "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+      "piSentDate": null,
+      "piSentTo": null,
+      "piGeneratedAt": null,
+      "studentCountActual": null,
+      "partialPayments": null,
+      "auditLog": [
+        {
+          "timestamp": "2026-05-14T03:33:15.807Z",
+          "user": "usr-anish",
+          "action": "create",
+          "after": {
+            "expectedAmount": 0,
+            "status": "Pending"
+          },
+          "notes": "source: pranav-refresh-2026-05-13"
+        },
+        {
+          "timestamp": "2026-05-19T08:41:48.722Z",
+          "user": "anita.c",
+          "action": "update",
+          "before": {
+            "installmentCount": 2
+          },
+          "after": {
+            "installmentCount": 2
+          },
+          "notes": "Payment schedule edited (no-PI path): 2 instalment(s)."
+        }
+      ]
+    },
+    "retryCount": 0
   }
 ]
