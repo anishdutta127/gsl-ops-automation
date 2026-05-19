@@ -913,8 +913,20 @@ export function GeneratorWizard({
       )}
 
       {serverError && (
-        <div className="rounded border border-signal-alert/40 bg-red-50 px-4 py-3 text-sm text-signal-alert">
-          {serverError}
+        <div
+          data-testid="wizard-server-error"
+          className="space-y-2 rounded border border-signal-alert/40 bg-red-50 px-4 py-3 text-sm text-signal-alert"
+        >
+          <p>{serverError}</p>
+          {generateState === 'error' ? (
+            <p className="text-xs text-signal-alert/80">
+              {'.docx generation is still being hardened (Phase 1.1). Save the draft and use the Word template at '}
+              <code className="rounded bg-white px-1 py-0.5 text-[11px] text-brand-navy">
+                public/mou-templates/{template.id.replace('-v3', '-v2.1')}.docx
+              </code>
+              {' as a manual fallback for now.'}
+            </p>
+          ) : null}
         </div>
       )}
 
@@ -948,6 +960,13 @@ export function GeneratorWizard({
             <CheckCircle aria-hidden className="size-3" /> Generated. Check your downloads.
           </span>
         )}
+        <span className="inline-flex items-center gap-1 text-xs text-muted-foreground" data-testid="wizard-generate-fallback-hint">
+          {'.docx generation is still being hardened. If the button errors, save the draft and download the Word template at '}
+          <code className="rounded bg-white px-1 py-0.5 text-[11px] text-brand-navy">
+            public/mou-templates/{template.id.replace('-v3', '-v2.1')}.docx
+          </code>
+          {'.'}
+        </span>
       </div>
     </div>
   )

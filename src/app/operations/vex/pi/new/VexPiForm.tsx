@@ -50,6 +50,12 @@ export function VexPiForm({ products, defaultEntityKey, userName }: Props) {
   ])
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  // 2026-05-19 stabilisation (Bug 4): the page-level lock banner hides
+  // the form when isPiParallelBuildLocked() is true at render time, but
+  // a race (lock flipped after page-load) still lands the lock copy on
+  // the inline error banner. Track whether the error is the lock so the
+  // banner renders amber (intended state) instead of red.
+  const [errorIsLock, setErrorIsLock] = useState(false)
   const [toast, setToast] = useState<string | null>(null)
 
   function addRow() {
@@ -108,6 +114,7 @@ export function VexPiForm({ products, defaultEntityKey, userName }: Props) {
     }
     setBusy(true)
     setError(null)
+    setErrorIsLock(false)
     try {
       const res = await fetch('/api/operations/vex/pi/create', {
         method: 'POST',
@@ -127,6 +134,8 @@ export function VexPiForm({ products, defaultEntityKey, userName }: Props) {
       })
       if (!res.ok) {
         const b = (await res.json().catch(() => ({}))) as { error?: string; message?: string }
+        // Lock errors get a separate flag so the banner renders amber.
+        if (b.error === 'parallel-build-locked') setErrorIsLock(true)
         throw new Error(b.message ?? b.error ?? `Submit failed (${res.status})`)
       }
       const json = (await res.json()) as { pi: { id: string; piNumber: string } }
@@ -147,7 +156,15 @@ export function VexPiForm({ products, defaultEntityKey, userName }: Props) {
         </div>
       ) : null}
       {error ? (
-        <div className="rounded-md border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-800">
+        <div
+          data-testid="vex-pi-form-error"
+          data-error-is-lock={errorIsLock ? 'true' : 'false'}
+          className={`rounded-md border px-3 py-2 text-sm ${
+            errorIsLock
+              ? 'border-amber-300 bg-amber-50 text-amber-900'
+              : 'border-red-300 bg-red-50 text-red-800'
+          }`}
+        >
           {error}
         </div>
       ) : null}
