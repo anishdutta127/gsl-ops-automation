@@ -674,5 +674,78 @@
       ]
     },
     "retryCount": 0
+  },
+  {
+    "id": "953d816b-1a0b-4c68-818f-266c63ffcec4",
+    "queuedAt": "2026-05-20T12:20:28.662Z",
+    "queuedBy": "anita.c",
+    "entity": "mou",
+    "operation": "update",
+    "payload": {
+      "id": "MOU-STEAM-2627-079",
+      "schoolId": "SCH-CONTAI_PUBLIC_SCHOOL",
+      "schoolName": "Contai Public School",
+      "programme": "STEAM",
+      "programmeSubType": null,
+      "schoolScope": "SINGLE",
+      "schoolGroupId": null,
+      "status": "Active",
+      "cohortStatus": "active",
+      "academicYear": "2026-27",
+      "startDate": "2026-04-01",
+      "endDate": "2028-02-28",
+      "studentsMou": 450,
+      "studentsActual": 458,
+      "studentsVariance": 8,
+      "studentsVariancePct": 0.017777777777777778,
+      "spWithoutTax": 2070.3389830508477,
+      "spWithTax": 2443,
+      "contractValue": 1099350,
+      "received": 0,
+      "tds": 0,
+      "balance": 1099350,
+      "receivedPct": 0,
+      "paymentSchedule": "",
+      "trainerModel": "GSL-T",
+      "salesPersonId": "sp-prodipto",
+      "templateVersion": null,
+      "generatedAt": null,
+      "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+      "delayNotes": null,
+      "daysToExpiry": null,
+      "auditLog": [
+        {
+          "timestamp": "2026-05-14T03:33:15.815Z",
+          "user": "usr-anish",
+          "action": "create",
+          "after": {
+            "schoolName": "Contai Public School",
+            "contractValue": 1099350,
+            "studentsMou": 450,
+            "trainerModel": "GSL-T"
+          },
+          "notes": "source: pranav-refresh-2026-05-13"
+        },
+        {
+          "timestamp": "2026-05-20T12:20:28.660Z",
+          "user": "anita.c",
+          "action": "actuals-confirmed",
+          "before": {
+            "studentsActual": 450,
+            "studentsVariance": null,
+            "studentsVariancePct": null
+          },
+          "after": {
+            "studentsActual": 458,
+            "studentsVariance": 8,
+            "studentsVariancePct": 0.017777777777777778
+          }
+        }
+      ],
+      "effectiveDate": "2026-04-01",
+      "signedMouPdfPath": null,
+      "importNotes": "acquisitionStatus=Retained; source=pranav-refresh-2026-05-13"
+    },
+    "retryCount": 0
   }
 ]
