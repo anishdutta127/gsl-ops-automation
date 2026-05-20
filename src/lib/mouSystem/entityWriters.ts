@@ -529,7 +529,19 @@ export async function saveDraftMou(
         schoolId: input.schoolId ?? '',
         schoolName: input.schoolName,
         programme: input.programme,
+        programmeSubType: null,
+        schoolScope: 'SINGLE',
+        schoolGroupId: null,
         status: 'Draft' as MouStatus,
+        // Phase 6A (2026-05-20, Pranav review #2): brand-new drafts
+        // MUST carry cohortStatus: 'active' so they appear on the
+        // /mous list (which filters cohortFiltered === 'active'). Pre
+        // 6A the field was omitted, drafts were saved but never
+        // surfaced to the operator. cohortStatus is orthogonal to
+        // MouStatus; a Draft is always part of the current cohort
+        // unless an operator explicitly archives it.
+        cohortStatus: 'active',
+        delayNotes: null,
         academicYear: fy,
         startDate,
         endDate,

@@ -119,6 +119,18 @@ export interface MOU {
   schoolId: string
   schoolName: string               // denormalised for fast list rendering
   programme: Programme
+  // Phase 6A (2026-05-20): the canonical MOU type in src/lib/types.ts
+  // carries programmeSubType, schoolScope, schoolGroupId,
+  // cohortStatus, and delayNotes as required fields. The mouSystem
+  // shape was missing them; new drafts written via this writer
+  // therefore landed without `cohortStatus`, and /mous filtered them
+  // out of the registry. The fields are mirrored here so the writer
+  // can populate them at create time.
+  programmeSubType?: string | null
+  schoolScope?: 'SINGLE' | 'GROUP'
+  schoolGroupId?: string | null
+  cohortStatus?: 'active' | 'archived'
+  delayNotes?: string | null
   status: MouStatus
   academicYear: string             // "2025-26"
   startDate: string | null         // ISO YYYY-MM-DD
