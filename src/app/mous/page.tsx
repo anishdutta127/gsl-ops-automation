@@ -68,6 +68,10 @@ import {
   getCurrentFinancialYear,
   getYearSpecificInstalments,
 } from '@/lib/mou/yearMembership'
+import {
+  deriveMouBucketAmounts,
+  sumRegistryBuckets,
+} from '@/lib/mou/mouRegistryBuckets'
 import Link from 'next/link'
 import { Archive, FileEdit, Plus } from 'lucide-react'
 
@@ -83,6 +87,132 @@ const KANBAN_STAGE_KEYS = new Set<string>(KANBAN_COLUMNS.map((c) => c.key))
 // Step 5: extra Gate 2 dimensions (school-group, year).
 // 'region' continues to carry the NE / SW super-region shortcut.
 const DIMENSION_KEYS = ['status', 'programme', 'region', 'schoolGroup', 'year'] as const
+
+function RegistryFooterTotals({
+  totals,
+  activeYear,
+  stacked,
+}: {
+  totals: {
+    piNoPayYes: number
+    piYesPayYes: number
+    piYesPayNo: number
+    piNoPayNo: number
+    expectedTotal: number
+    rowCount: number
+  }
+  activeYear: string
+  stacked?: boolean
+}) {
+  const sum =
+    totals.piNoPayYes +
+    totals.piYesPayYes +
+    totals.piYesPayNo +
+    totals.piNoPayNo
+  const reconciles = Math.abs(sum - totals.expectedTotal) <= 1
+  if (stacked) {
+    return (
+      <div
+        className="rounded-md border border-border bg-muted/30 p-3 text-sm"
+        data-testid="registry-footer-totals-mobile"
+      >
+        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          Totals across {totals.rowCount} visible MOU(s) for FY {activeYear}
+        </p>
+        <dl className="mt-2 space-y-1">
+          <div className="flex justify-between">
+            <dt className="text-amber-700">PI not raised, payment received</dt>
+            <dd className="font-mono tabular-nums text-amber-700">{formatRs(totals.piNoPayYes)}</dd>
+          </div>
+          <div className="flex justify-between">
+            <dt className="text-emerald-700">PI raised, payment received</dt>
+            <dd className="font-mono tabular-nums text-emerald-700">{formatRs(totals.piYesPayYes)}</dd>
+          </div>
+          <div className="flex justify-between">
+            <dt className="text-brand-navy">PI raised, payment not received</dt>
+            <dd className="font-mono tabular-nums text-brand-navy">{formatRs(totals.piYesPayNo)}</dd>
+          </div>
+          <div className="flex justify-between">
+            <dt className="text-muted-foreground">PI not raised, payment not received</dt>
+            <dd className="font-mono tabular-nums text-muted-foreground">{formatRs(totals.piNoPayNo)}</dd>
+          </div>
+          <div className="mt-1 flex justify-between border-t border-border pt-1">
+            <dt className="font-semibold">Expected total (sum)</dt>
+            <dd
+              className="font-mono tabular-nums font-semibold"
+              data-testid="registry-footer-expected-mobile"
+            >
+              {formatRs(totals.expectedTotal)} ({reconciles ? 'reconciles' : 'mismatch'})
+            </dd>
+          </div>
+        </dl>
+      </div>
+    )
+  }
+  return (
+    <div
+      className="mt-3 overflow-x-auto rounded-md border border-border bg-muted/30"
+      data-testid="registry-footer-totals"
+    >
+      <table className="min-w-full text-sm">
+        <tbody>
+          <tr>
+            <td
+              className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground"
+              colSpan={4}
+            >
+              Totals across {totals.rowCount} visible MOU(s) for FY {activeYear}
+            </td>
+            <td
+              className="px-3 py-2 text-right font-mono tabular-nums text-amber-700"
+              data-testid="registry-footer-pi-no-pay-yes"
+            >
+              {formatRs(totals.piNoPayYes)}
+            </td>
+            <td
+              className="px-3 py-2 text-right font-mono tabular-nums text-emerald-700"
+              data-testid="registry-footer-pi-yes-pay-yes"
+            >
+              {formatRs(totals.piYesPayYes)}
+            </td>
+            <td
+              className="px-3 py-2 text-right font-mono tabular-nums text-brand-navy"
+              data-testid="registry-footer-pi-yes-pay-no"
+            >
+              {formatRs(totals.piYesPayNo)}
+            </td>
+            <td
+              className="px-3 py-2 text-right font-mono tabular-nums text-muted-foreground"
+              data-testid="registry-footer-pi-no-pay-no"
+            >
+              {formatRs(totals.piNoPayNo)}
+            </td>
+            <td className="px-3 py-2" />
+          </tr>
+          <tr>
+            <td
+              className="border-t border-border px-3 py-2 text-left text-xs text-muted-foreground"
+              colSpan={4}
+            >
+              Expected total (sum of four columns){' '}
+              <span data-testid="registry-footer-reconciles">
+                {reconciles ? '· reconciles' : '· mismatch'}
+              </span>
+            </td>
+            <td
+              className="border-t border-border px-3 py-2 text-right font-mono tabular-nums font-semibold"
+              colSpan={4}
+              data-testid="registry-footer-expected"
+            >
+              {formatRs(totals.expectedTotal)}
+            </td>
+            <td className="border-t border-border px-3 py-2" />
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  )
+}
 
 function scopeMousForUser(mous: MOU[], user: User | null): MOU[] {
   if (!user) return mous
@@ -266,45 +396,72 @@ export default async function MousListPage({ searchParams }: PageProps) {
         )
       },
     },
+    // Phase 6C: four-column PI x Payment matrix per Pranav review #2.
+    // Replaces the legacy received / balance / instalments columns.
     {
-      key: 'yearReceived',
-      header: `FY ${activeYear} received`,
+      key: 'piNoPayYes',
+      header: 'PI not raised, payment received',
       align: 'right',
       render: (m) => {
         const ys = getYearSpecificInstalments(m, activeYear, allPayments)
-        const total = ys.reduce((s, p) => s + (p.receivedAmount ?? 0), 0)
+        const b = deriveMouBucketAmounts(ys)
         return (
-          <span className="tabular-nums text-muted-foreground" data-testid={`year-received-${m.id}`}>
-            {total > 0 ? formatRs(total) : '-'}
+          <span
+            className="tabular-nums text-amber-700"
+            data-testid={`bucket-pi-no-pay-yes-${m.id}`}
+          >
+            {b.piNoPayYes > 0 ? formatRs(b.piNoPayYes) : '-'}
           </span>
         )
       },
     },
     {
-      key: 'yearBalance',
-      header: `FY ${activeYear} balance`,
+      key: 'piYesPayYes',
+      header: 'PI raised, payment received',
       align: 'right',
       render: (m) => {
         const ys = getYearSpecificInstalments(m, activeYear, allPayments)
-        const expected = ys.reduce((s, p) => s + p.expectedAmount, 0)
-        const received = ys.reduce((s, p) => s + (p.receivedAmount ?? 0), 0)
-        const balance = Math.max(0, expected - received)
+        const b = deriveMouBucketAmounts(ys)
         return (
-          <span className="tabular-nums" data-testid={`year-balance-${m.id}`}>
-            {expected > 0 ? formatRs(balance) : '-'}
+          <span
+            className="tabular-nums text-emerald-700"
+            data-testid={`bucket-pi-yes-pay-yes-${m.id}`}
+          >
+            {b.piYesPayYes > 0 ? formatRs(b.piYesPayYes) : '-'}
           </span>
         )
       },
     },
     {
-      key: 'yearInstalments',
-      header: 'Instalments',
+      key: 'piYesPayNo',
+      header: 'PI raised, payment not received',
       align: 'right',
       render: (m) => {
         const ys = getYearSpecificInstalments(m, activeYear, allPayments)
+        const b = deriveMouBucketAmounts(ys)
         return (
-          <span className="tabular-nums text-muted-foreground" data-testid={`year-instalments-${m.id}`}>
-            {ys.length > 0 ? ys.length : '-'}
+          <span
+            className="tabular-nums text-brand-navy"
+            data-testid={`bucket-pi-yes-pay-no-${m.id}`}
+          >
+            {b.piYesPayNo > 0 ? formatRs(b.piYesPayNo) : '-'}
+          </span>
+        )
+      },
+    },
+    {
+      key: 'piNoPayNo',
+      header: 'PI not raised, payment not received',
+      align: 'right',
+      render: (m) => {
+        const ys = getYearSpecificInstalments(m, activeYear, allPayments)
+        const b = deriveMouBucketAmounts(ys)
+        return (
+          <span
+            className="tabular-nums text-muted-foreground"
+            data-testid={`bucket-pi-no-pay-no-${m.id}`}
+          >
+            {b.piNoPayNo > 0 ? formatRs(b.piNoPayNo) : '-'}
           </span>
         )
       },
@@ -386,35 +543,150 @@ export default async function MousListPage({ searchParams }: PageProps) {
             search={{ value: search, placeholder: 'Search id / school / notes' }}
           />
           <div className="min-w-0 flex-1">
-            <EntityListTable
-              rows={filtered}
-              columns={columns}
-              rowHref={(m) => `/mous/${m.id}?fy=${encodeURIComponent(activeYear)}`}
-              rowKey={(m) => m.id}
-              caption="MOUs"
-              empty={
-                yearFiltered.length === 0 && activeYear !== currentFy && relevantYears.includes(currentFy) ? (
-                  <EmptyState
-                    title={`No MOUs for FY ${activeYear} yet.`}
-                    description="Switch to the current year to see active MOUs."
-                    action={
-                      <Link
-                        href={`/mous?year=${encodeURIComponent(currentFy)}`}
-                        className={opsButtonClass({ variant: 'outline', size: 'sm' })}
-                        data-testid="empty-year-switch-current"
+            {/* Phase 6C: 4-column registry footer totals. Computed
+                once on the server across the visible (filtered) rows
+                so the footer reflects whatever year + filter the user
+                is looking at. */}
+            {(() => {
+              const visibleBuckets = filtered.map((m) => ({
+                buckets: deriveMouBucketAmounts(
+                  getYearSpecificInstalments(m, activeYear, allPayments),
+                ),
+              }))
+              const totals = sumRegistryBuckets(visibleBuckets)
+              return (
+                <>
+                  {/* Desktop / tablet: existing table. */}
+                  <div className="hidden md:block">
+                    <EntityListTable
+                      rows={filtered}
+                      columns={columns}
+                      rowHref={(m) => `/mous/${m.id}?fy=${encodeURIComponent(activeYear)}`}
+                      rowKey={(m) => m.id}
+                      caption="MOUs"
+                      empty={
+                        yearFiltered.length === 0 && activeYear !== currentFy && relevantYears.includes(currentFy) ? (
+                          <EmptyState
+                            title={`No MOUs for FY ${activeYear} yet.`}
+                            description="Switch to the current year to see active MOUs."
+                            action={
+                              <Link
+                                href={`/mous?year=${encodeURIComponent(currentFy)}`}
+                                className={opsButtonClass({ variant: 'outline', size: 'sm' })}
+                                data-testid="empty-year-switch-current"
+                              >
+                                Go to FY {currentFy} {'→'}
+                              </Link>
+                            }
+                          />
+                        ) : (
+                          <EmptyState
+                            title="No MOUs match your filters."
+                            description="Try broadening the programme or region, or clearing filters to see the full list."
+                          />
+                        )
+                      }
+                    />
+                    {filtered.length > 0 ? (
+                      <RegistryFooterTotals
+                        totals={totals}
+                        activeYear={activeYear}
+                      />
+                    ) : null}
+                  </div>
+
+                  {/* Mobile: card stack per MOU. */}
+                  <div className="md:hidden">
+                    {filtered.length === 0 ? (
+                      <EmptyState
+                        title="No MOUs match your filters."
+                        description="Broaden the filters or clear them."
+                      />
+                    ) : (
+                      <ul
+                        className="space-y-3"
+                        data-testid="mous-mobile-cards"
                       >
-                        Go to FY {currentFy} {'→'}
-                      </Link>
-                    }
-                  />
-                ) : (
-                  <EmptyState
-                    title="No MOUs match your filters."
-                    description="Try broadening the programme or region, or clearing filters to see the full list."
-                  />
-                )
-              }
-            />
+                        {filtered.map((m) => {
+                          const ys = getYearSpecificInstalments(m, activeYear, allPayments)
+                          const b = deriveMouBucketAmounts(ys)
+                          return (
+                            <li
+                              key={m.id}
+                              className="rounded-lg border border-border bg-card p-3"
+                              data-testid={`mou-mobile-card-${m.id}`}
+                            >
+                              <Link
+                                href={`/mous/${m.id}?fy=${encodeURIComponent(activeYear)}`}
+                                className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
+                              >
+                                <div className="flex items-baseline justify-between gap-2">
+                                  <span className="font-semibold text-brand-navy">
+                                    {m.schoolName}
+                                  </span>
+                                  <StatusChip
+                                    tone={mouStatusTone(m.status)}
+                                    label={m.status}
+                                    withDot={false}
+                                  />
+                                </div>
+                                <p className="mt-1 text-xs text-muted-foreground">
+                                  {m.id} {'·'} {m.programme}
+                                  {m.programmeSubType ? ` / ${m.programmeSubType}` : ''}
+                                </p>
+                                <dl className="mt-3 grid grid-cols-1 gap-1 text-sm">
+                                  <div className="flex justify-between">
+                                    <dt className="text-amber-700">
+                                      PI not raised, payment received
+                                    </dt>
+                                    <dd className="font-mono tabular-nums text-amber-700">
+                                      {b.piNoPayYes > 0 ? formatRs(b.piNoPayYes) : '-'}
+                                    </dd>
+                                  </div>
+                                  <div className="flex justify-between">
+                                    <dt className="text-emerald-700">
+                                      PI raised, payment received
+                                    </dt>
+                                    <dd className="font-mono tabular-nums text-emerald-700">
+                                      {b.piYesPayYes > 0 ? formatRs(b.piYesPayYes) : '-'}
+                                    </dd>
+                                  </div>
+                                  <div className="flex justify-between">
+                                    <dt className="text-brand-navy">
+                                      PI raised, payment not received
+                                    </dt>
+                                    <dd className="font-mono tabular-nums text-brand-navy">
+                                      {b.piYesPayNo > 0 ? formatRs(b.piYesPayNo) : '-'}
+                                    </dd>
+                                  </div>
+                                  <div className="flex justify-between">
+                                    <dt className="text-muted-foreground">
+                                      PI not raised, payment not received
+                                    </dt>
+                                    <dd className="font-mono tabular-nums text-muted-foreground">
+                                      {b.piNoPayNo > 0 ? formatRs(b.piNoPayNo) : '-'}
+                                    </dd>
+                                  </div>
+                                </dl>
+                              </Link>
+                            </li>
+                          )
+                        })}
+                      </ul>
+                    )}
+                    {filtered.length > 0 ? (
+                      <div className="mt-4">
+                        <RegistryFooterTotals
+                          totals={totals}
+                          activeYear={activeYear}
+                          stacked
+                        />
+                      </div>
+                    ) : null}
+                  </div>
+                </>
+              )
+            })()}
           </div>
         </div>
       </main>
