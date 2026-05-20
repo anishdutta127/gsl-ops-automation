@@ -374,5 +374,389 @@
         "notes": "Recipient marked notification as read."
       }
     ]
+  },
+  {
+    "id": "NTF-17b26d36",
+    "recipientUserId": "anish.d",
+    "senderUserId": "anita.c",
+    "kind": "intake-completed",
+    "title": "Intake completed for Contai Public School",
+    "body": "Anita C. captured intake for Contai Public School (450 students; variance vs MOU).",
+    "actionUrl": "/mous/MOU-STEAM-2627-079",
+    "payload": {
+      "intakeRecordId": "34cacab1-61d9-41f6-af66-4203f8efe82f",
+      "mouId": "MOU-STEAM-2627-079",
+      "schoolName": "Contai Public School",
+      "completedByName": "Anita C.",
+      "studentsAtIntake": 450,
+      "hasVariance": true
+    },
+    "createdAt": "2026-05-20T12:12:54.011Z",
+    "readAt": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-20T12:12:54.011Z",
+        "user": "anita.c",
+        "action": "create",
+        "after": {
+          "kind": "intake-completed",
+          "recipientUserId": "anish.d",
+          "relatedEntityId": "34cacab1-61d9-41f6-af66-4203f8efe82f"
+        },
+        "notes": "Notification intake-completed fan-out to anish.d (sender=anita.c)."
+      }
+    ]
+  },
+  {
+    "id": "NTF-3800a3f8",
+    "recipientUserId": "ameet.z",
+    "senderUserId": "anita.c",
+    "kind": "intake-completed",
+    "title": "Intake completed for Contai Public School",
+    "body": "Anita C. captured intake for Contai Public School (450 students; variance vs MOU).",
+    "actionUrl": "/mous/MOU-STEAM-2627-079",
+    "payload": {
+      "intakeRecordId": "34cacab1-61d9-41f6-af66-4203f8efe82f",
+      "mouId": "MOU-STEAM-2627-079",
+      "schoolName": "Contai Public School",
+      "completedByName": "Anita C.",
+      "studentsAtIntake": 450,
+      "hasVariance": true
+    },
+    "createdAt": "2026-05-20T12:12:54.011Z",
+    "readAt": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-20T12:12:54.011Z",
+        "user": "anita.c",
+        "action": "create",
+        "after": {
+          "kind": "intake-completed",
+          "recipientUserId": "ameet.z",
+          "relatedEntityId": "34cacab1-61d9-41f6-af66-4203f8efe82f"
+        },
+        "notes": "Notification intake-completed fan-out to ameet.z (sender=anita.c)."
+      }
+    ]
+  },
+  {
+    "id": "NTF-1b3c2a10",
+    "recipientUserId": "pratik.d",
+    "senderUserId": "anita.c",
+    "kind": "intake-completed",
+    "title": "Intake completed for Contai Public School",
+    "body": "Anita C. captured intake for Contai Public School (450 students; variance vs MOU).",
+    "actionUrl": "/mous/MOU-STEAM-2627-079",
+    "payload": {
+      "intakeRecordId": "34cacab1-61d9-41f6-af66-4203f8efe82f",
+      "mouId": "MOU-STEAM-2627-079",
+      "schoolName": "Contai Public School",
+      "completedByName": "Anita C.",
+      "studentsAtIntake": 450,
+      "hasVariance": true
+    },
+    "createdAt": "2026-05-20T12:12:54.011Z",
+    "readAt": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-20T12:12:54.011Z",
+        "user": "anita.c",
+        "action": "create",
+        "after": {
+          "kind": "intake-completed",
+          "recipientUserId": "pratik.d",
+          "relatedEntityId": "34cacab1-61d9-41f6-af66-4203f8efe82f"
+        },
+        "notes": "Notification intake-completed fan-out to pratik.d (sender=anita.c)."
+      }
+    ]
+  },
+  {
+    "id": "NTF-e24f56d0",
+    "recipientUserId": "vishwanath.g",
+    "senderUserId": "anita.c",
+    "kind": "intake-completed",
+    "title": "Intake completed for Contai Public School",
+    "body": "Anita C. captured intake for Contai Public School (450 students; variance vs MOU).",
+    "actionUrl": "/mous/MOU-STEAM-2627-079",
+    "payload": {
+      "intakeRecordId": "34cacab1-61d9-41f6-af66-4203f8efe82f",
+      "mouId": "MOU-STEAM-2627-079",
+      "schoolName": "Contai Public School",
+      "completedByName": "Anita C.",
+      "studentsAtIntake": 450,
+      "hasVariance": true
+    },
+    "createdAt": "2026-05-20T12:12:54.011Z",
+    "readAt": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-20T12:12:54.011Z",
+        "user": "anita.c",
+        "action": "create",
+        "after": {
+          "kind": "intake-completed",
+          "recipientUserId": "vishwanath.g",
+          "relatedEntityId": "34cacab1-61d9-41f6-af66-4203f8efe82f"
+        },
+        "notes": "Notification intake-completed fan-out to vishwanath.g (sender=anita.c)."
+      }
+    ]
+  },
+  {
+    "id": "NTF-3eaf37a1",
+    "recipientUserId": "misba.m",
+    "senderUserId": "anita.c",
+    "kind": "intake-completed",
+    "title": "Intake completed for Contai Public School",
+    "body": "Anita C. captured intake for Contai Public School (450 students; variance vs MOU).",
+    "actionUrl": "/mous/MOU-STEAM-2627-079",
+    "payload": {
+      "intakeRecordId": "34cacab1-61d9-41f6-af66-4203f8efe82f",
+      "mouId": "MOU-STEAM-2627-079",
+      "schoolName": "Contai Public School",
+      "completedByName": "Anita C.",
+      "studentsAtIntake": 450,
+      "hasVariance": true
+    },
+    "createdAt": "2026-05-20T12:12:54.011Z",
+    "readAt": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-20T12:12:54.011Z",
+        "user": "anita.c",
+        "action": "create",
+        "after": {
+          "kind": "intake-completed",
+          "recipientUserId": "misba.m",
+          "relatedEntityId": "34cacab1-61d9-41f6-af66-4203f8efe82f"
+        },
+        "notes": "Notification intake-completed fan-out to misba.m (sender=anita.c)."
+      }
+    ]
+  },
+  {
+    "id": "NTF-fa40c563",
+    "recipientUserId": "pradeep.r",
+    "senderUserId": "anita.c",
+    "kind": "intake-completed",
+    "title": "Intake completed for Contai Public School",
+    "body": "Anita C. captured intake for Contai Public School (450 students; variance vs MOU).",
+    "actionUrl": "/mous/MOU-STEAM-2627-079",
+    "payload": {
+      "intakeRecordId": "34cacab1-61d9-41f6-af66-4203f8efe82f",
+      "mouId": "MOU-STEAM-2627-079",
+      "schoolName": "Contai Public School",
+      "completedByName": "Anita C.",
+      "studentsAtIntake": 450,
+      "hasVariance": true
+    },
+    "createdAt": "2026-05-20T12:12:54.011Z",
+    "readAt": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-20T12:12:54.011Z",
+        "user": "anita.c",
+        "action": "create",
+        "after": {
+          "kind": "intake-completed",
+          "recipientUserId": "pradeep.r",
+          "relatedEntityId": "34cacab1-61d9-41f6-af66-4203f8efe82f"
+        },
+        "notes": "Notification intake-completed fan-out to pradeep.r (sender=anita.c)."
+      }
+    ]
+  },
+  {
+    "id": "NTF-0e164fcb",
+    "recipientUserId": "swati.p",
+    "senderUserId": "anita.c",
+    "kind": "intake-completed",
+    "title": "Intake completed for Contai Public School",
+    "body": "Anita C. captured intake for Contai Public School (450 students; variance vs MOU).",
+    "actionUrl": "/mous/MOU-STEAM-2627-079",
+    "payload": {
+      "intakeRecordId": "34cacab1-61d9-41f6-af66-4203f8efe82f",
+      "mouId": "MOU-STEAM-2627-079",
+      "schoolName": "Contai Public School",
+      "completedByName": "Anita C.",
+      "studentsAtIntake": 450,
+      "hasVariance": true
+    },
+    "createdAt": "2026-05-20T12:12:54.011Z",
+    "readAt": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-20T12:12:54.011Z",
+        "user": "anita.c",
+        "action": "create",
+        "after": {
+          "kind": "intake-completed",
+          "recipientUserId": "swati.p",
+          "relatedEntityId": "34cacab1-61d9-41f6-af66-4203f8efe82f"
+        },
+        "notes": "Notification intake-completed fan-out to swati.p (sender=anita.c)."
+      }
+    ]
+  },
+  {
+    "id": "NTF-5869c0ae",
+    "recipientUserId": "shubhangi.g",
+    "senderUserId": "anita.c",
+    "kind": "intake-completed",
+    "title": "Intake completed for Contai Public School",
+    "body": "Anita C. captured intake for Contai Public School (450 students; variance vs MOU).",
+    "actionUrl": "/mous/MOU-STEAM-2627-079",
+    "payload": {
+      "intakeRecordId": "34cacab1-61d9-41f6-af66-4203f8efe82f",
+      "mouId": "MOU-STEAM-2627-079",
+      "schoolName": "Contai Public School",
+      "completedByName": "Anita C.",
+      "studentsAtIntake": 450,
+      "hasVariance": true
+    },
+    "createdAt": "2026-05-20T12:12:54.011Z",
+    "readAt": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-20T12:12:54.011Z",
+        "user": "anita.c",
+        "action": "create",
+        "after": {
+          "kind": "intake-completed",
+          "recipientUserId": "shubhangi.g",
+          "relatedEntityId": "34cacab1-61d9-41f6-af66-4203f8efe82f"
+        },
+        "notes": "Notification intake-completed fan-out to shubhangi.g (sender=anita.c)."
+      }
+    ]
+  },
+  {
+    "id": "NTF-1ab8db8f",
+    "recipientUserId": "pranav.b",
+    "senderUserId": "anita.c",
+    "kind": "intake-completed",
+    "title": "Intake completed for Contai Public School",
+    "body": "Anita C. captured intake for Contai Public School (450 students; variance vs MOU).",
+    "actionUrl": "/mous/MOU-STEAM-2627-079",
+    "payload": {
+      "intakeRecordId": "34cacab1-61d9-41f6-af66-4203f8efe82f",
+      "mouId": "MOU-STEAM-2627-079",
+      "schoolName": "Contai Public School",
+      "completedByName": "Anita C.",
+      "studentsAtIntake": 450,
+      "hasVariance": true
+    },
+    "createdAt": "2026-05-20T12:12:54.011Z",
+    "readAt": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-20T12:12:54.011Z",
+        "user": "anita.c",
+        "action": "create",
+        "after": {
+          "kind": "intake-completed",
+          "recipientUserId": "pranav.b",
+          "relatedEntityId": "34cacab1-61d9-41f6-af66-4203f8efe82f"
+        },
+        "notes": "Notification intake-completed fan-out to pranav.b (sender=anita.c)."
+      }
+    ]
+  },
+  {
+    "id": "NTF-abb43aed",
+    "recipientUserId": "shashank.s",
+    "senderUserId": "anita.c",
+    "kind": "intake-completed",
+    "title": "Intake completed for Contai Public School",
+    "body": "Anita C. captured intake for Contai Public School (450 students; variance vs MOU).",
+    "actionUrl": "/mous/MOU-STEAM-2627-079",
+    "payload": {
+      "intakeRecordId": "34cacab1-61d9-41f6-af66-4203f8efe82f",
+      "mouId": "MOU-STEAM-2627-079",
+      "schoolName": "Contai Public School",
+      "completedByName": "Anita C.",
+      "studentsAtIntake": 450,
+      "hasVariance": true
+    },
+    "createdAt": "2026-05-20T12:12:54.011Z",
+    "readAt": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-20T12:12:54.011Z",
+        "user": "anita.c",
+        "action": "create",
+        "after": {
+          "kind": "intake-completed",
+          "recipientUserId": "shashank.s",
+          "relatedEntityId": "34cacab1-61d9-41f6-af66-4203f8efe82f"
+        },
+        "notes": "Notification intake-completed fan-out to shashank.s (sender=anita.c)."
+      }
+    ]
+  },
+  {
+    "id": "NTF-2db5858c",
+    "recipientUserId": "gowri.r",
+    "senderUserId": "anita.c",
+    "kind": "intake-completed",
+    "title": "Intake completed for Contai Public School",
+    "body": "Anita C. captured intake for Contai Public School (450 students; variance vs MOU).",
+    "actionUrl": "/mous/MOU-STEAM-2627-079",
+    "payload": {
+      "intakeRecordId": "34cacab1-61d9-41f6-af66-4203f8efe82f",
+      "mouId": "MOU-STEAM-2627-079",
+      "schoolName": "Contai Public School",
+      "completedByName": "Anita C.",
+      "studentsAtIntake": 450,
+      "hasVariance": true
+    },
+    "createdAt": "2026-05-20T12:12:54.011Z",
+    "readAt": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-20T12:12:54.011Z",
+        "user": "anita.c",
+        "action": "create",
+        "after": {
+          "kind": "intake-completed",
+          "recipientUserId": "gowri.r",
+          "relatedEntityId": "34cacab1-61d9-41f6-af66-4203f8efe82f"
+        },
+        "notes": "Notification intake-completed fan-out to gowri.r (sender=anita.c)."
+      }
+    ]
+  },
+  {
+    "id": "NTF-6cbae49e",
+    "recipientUserId": "ajith.n",
+    "senderUserId": "anita.c",
+    "kind": "intake-completed",
+    "title": "Intake completed for Contai Public School",
+    "body": "Anita C. captured intake for Contai Public School (450 students; variance vs MOU).",
+    "actionUrl": "/mous/MOU-STEAM-2627-079",
+    "payload": {
+      "intakeRecordId": "34cacab1-61d9-41f6-af66-4203f8efe82f",
+      "mouId": "MOU-STEAM-2627-079",
+      "schoolName": "Contai Public School",
+      "completedByName": "Anita C.",
+      "studentsAtIntake": 450,
+      "hasVariance": true
+    },
+    "createdAt": "2026-05-20T12:12:54.011Z",
+    "readAt": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-20T12:12:54.011Z",
+        "user": "anita.c",
+        "action": "create",
+        "after": {
+          "kind": "intake-completed",
+          "recipientUserId": "ajith.n",
+          "relatedEntityId": "34cacab1-61d9-41f6-af66-4203f8efe82f"
+        },
+        "notes": "Notification intake-completed fan-out to ajith.n (sender=anita.c)."
+      }
+    ]
   }
 ]
