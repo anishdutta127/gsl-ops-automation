@@ -4,7 +4,7 @@ import {
   isDriftReviewRequired,
   type ConfirmActualsDeps,
 } from './confirmActuals'
-import type { MOU, PendingUpdate, User } from '@/lib/types'
+import type { MOU, Payment, PendingUpdate, StudentCountEvent, User } from '@/lib/types'
 
 const FIXED_TS = '2026-04-26T10:00:00.000Z'
 
@@ -32,7 +32,12 @@ function user(role: User['role'], id = 'u'): User {
   }
 }
 
-function makeDeps(opts: { mous: MOU[]; users: User[] }): { deps: ConfirmActualsDeps; calls: Array<Record<string, unknown>> } {
+function makeDeps(opts: {
+  mous: MOU[]
+  users: User[]
+  payments?: Payment[]
+  events?: StudentCountEvent[]
+}): { deps: ConfirmActualsDeps; calls: Array<Record<string, unknown>> } {
   const calls: Array<Record<string, unknown>> = []
   const enqueue = vi.fn(async (params: Record<string, unknown>) => {
     calls.push(params)
@@ -47,10 +52,26 @@ function makeDeps(opts: { mous: MOU[]; users: User[] }): { deps: ConfirmActualsD
   return {
     deps: {
       mous: opts.mous, users: opts.users,
+      payments: opts.payments ?? [],
+      events: opts.events ?? [],
       enqueue: enqueue as unknown as ConfirmActualsDeps['enqueue'],
       now: () => new Date(FIXED_TS),
     },
     calls,
+  }
+}
+
+function pay(overrides: Partial<Payment>): Payment {
+  return {
+    id: 'MOU-X-i1', mouId: 'MOU-X', schoolName: 'X', programme: 'STEAM',
+    instalmentLabel: '1 of 4', instalmentSeq: 1, totalInstalments: 4,
+    description: '', dueDateRaw: null, dueDateIso: null,
+    expectedAmount: 125000, receivedAmount: null, receivedDate: null,
+    paymentMode: null, bankReference: null, piNumber: null,
+    taxInvoiceNumber: null, status: 'Pending', notes: null,
+    piSentDate: null, piSentTo: null, piGeneratedAt: null,
+    studentCountActual: null, partialPayments: null, auditLog: [],
+    ...overrides,
   }
 }
 
@@ -232,5 +253,106 @@ describe('confirmActuals', () => {
     expect(entry.before).toMatchObject({ studentsActual: 195, studentsVariance: -5 })
     expect(entry.after).toMatchObject({ studentsActual: 198 })
     expect(entry.notes).toBe('Re-check after register update')
+  })
+})
+
+describe('confirmActuals - recalc cascade (Phase 6A)', () => {
+  // Pranav production reproduction (Mutahhary Public School Baroo).
+  // 10/30/30/30 against Rs 4,00,000 contract at 500 × Rs 800; i1
+  // paid Rs 40,000 (locked).
+  function mutahharyMou(): MOU {
+    return mou({
+      id: 'MOU-S', schoolId: 'SCH-S', schoolName: 'Mutahhary',
+      studentsMou: 500, studentsActual: 500,
+      studentsVariance: 0, studentsVariancePct: 0,
+      spWithoutTax: 678, spWithTax: 800, contractValue: 400000,
+      paymentSchedule: '10-30-30-30',
+    })
+  }
+  function mutahharyPayments(): Payment[] {
+    return [
+      pay({ id: 'MOU-S-i1', mouId: 'MOU-S', instalmentSeq: 1, instalmentLabel: '1 of 4', expectedAmount: 40000, receivedAmount: 40000, status: 'Paid' }),
+      pay({ id: 'MOU-S-i2', mouId: 'MOU-S', instalmentSeq: 2, instalmentLabel: '2 of 4', expectedAmount: 120000 }),
+      pay({ id: 'MOU-S-i3', mouId: 'MOU-S', instalmentSeq: 3, instalmentLabel: '3 of 4', expectedAmount: 120000 }),
+      pay({ id: 'MOU-S-i4', mouId: 'MOU-S', instalmentSeq: 4, instalmentLabel: '4 of 4', expectedAmount: 120000 }),
+    ]
+  }
+
+  it('cascades through applyCountChange when count changes and payments exist', async () => {
+    const m = mutahharyMou()
+    const u = user('Admin', 'pranav.b')
+    const { deps, calls } = makeDeps({
+      mous: [m], users: [u], payments: mutahharyPayments(),
+    })
+    const result = await confirmActuals(
+      { mouId: 'MOU-S', studentsActual: 450, confirmedBy: 'pranav.b' },
+      deps,
+    )
+    expect(result.ok).toBe(true)
+    if (!result.ok) return
+    expect(result.recalcCascadeApplied).toBe(true)
+
+    // Calls order: studentCountEvent create → 4 payment updates →
+    // mou update (single combined record).
+    const sceCalls = calls.filter((c) => c.entity === 'studentCountEvent')
+    const paymentCalls = calls.filter((c) => c.entity === 'payment')
+    const mouCalls = calls.filter((c) => c.entity === 'mou')
+    expect(sceCalls).toHaveLength(1)
+    expect(paymentCalls).toHaveLength(4)
+    expect(mouCalls).toHaveLength(1)
+
+    // Payment i2 / i3 / i4 land at Rs 1,06,666.67 each (spread).
+    const i2 = paymentCalls.find((c) => (c.payload as Payment).id === 'MOU-S-i2')
+      ?.payload as Payment | undefined
+    const i3 = paymentCalls.find((c) => (c.payload as Payment).id === 'MOU-S-i3')
+      ?.payload as Payment | undefined
+    const i4 = paymentCalls.find((c) => (c.payload as Payment).id === 'MOU-S-i4')
+      ?.payload as Payment | undefined
+    expect(i2?.netDue).toBe(106666.67)
+    expect(i3?.netDue).toBe(106666.67)
+    expect(i4?.netDue).toBe(106666.66)
+    expect(i2?.expectedAmount).toBe(106666.67)
+
+    // The single MOU update stacks both audit entries and carries the
+    // appended studentCountEventIds.
+    const mouPayload = mouCalls[0]?.payload as MOU
+    expect(mouPayload.studentsActual).toBe(450)
+    expect(mouPayload.studentCountEventIds?.length).toBe(1)
+    const actions = mouPayload.auditLog.map((e) => e.action)
+    expect(actions).toContain('actuals-confirmed')
+    expect(actions).toContain('student-count-changed')
+  })
+
+  it('does NOT cascade when count is unchanged', async () => {
+    const m = mutahharyMou()
+    const u = user('Admin', 'pranav.b')
+    const { deps, calls } = makeDeps({
+      mous: [m], users: [u], payments: mutahharyPayments(),
+    })
+    const result = await confirmActuals(
+      { mouId: 'MOU-S', studentsActual: 500, confirmedBy: 'pranav.b' },
+      deps,
+    )
+    expect(result.ok).toBe(true)
+    if (!result.ok) return
+    expect(result.recalcCascadeApplied).toBe(false)
+    expect(calls.filter((c) => c.entity === 'studentCountEvent')).toHaveLength(0)
+    expect(calls.filter((c) => c.entity === 'payment')).toHaveLength(0)
+    expect(calls.filter((c) => c.entity === 'mou')).toHaveLength(1)
+  })
+
+  it('does NOT cascade when MOU has no Payment rows', async () => {
+    const m = mutahharyMou()
+    const u = user('Admin', 'pranav.b')
+    const { deps, calls } = makeDeps({ mous: [m], users: [u], payments: [] })
+    const result = await confirmActuals(
+      { mouId: 'MOU-S', studentsActual: 450, confirmedBy: 'pranav.b' },
+      deps,
+    )
+    expect(result.ok).toBe(true)
+    if (!result.ok) return
+    expect(result.recalcCascadeApplied).toBe(false)
+    expect(calls.filter((c) => c.entity === 'studentCountEvent')).toHaveLength(0)
+    expect(calls.filter((c) => c.entity === 'mou')).toHaveLength(1)
   })
 })

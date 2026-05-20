@@ -47,7 +47,7 @@ Edge cases:
 
 ## Tests
 
-- `src/lib/mou/instalmentPercent.ts` — unit tests for the formatter (whole, half-decimal, third-decimal, zero contract value).
+- `src/lib/mou/instalmentPercent.ts`: unit tests for the formatter (whole, half-decimal, third-decimal, zero contract value).
 - SSR walk test asserts `%` column header + at least one row's percent text on the installments page.
 
 ## Decision

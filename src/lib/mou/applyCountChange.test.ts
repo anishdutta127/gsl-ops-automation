@@ -299,21 +299,24 @@ describe('applyCountChange - Pranav scenario A (500 -> 450 -> 400 with PI 1 lock
     expect(result.payloads.event.previousCount).toBe(450)
     expect(result.payloads.event.newCount).toBe(400)
     expect(result.payloads.event.id).toBe('SCE-2026-0002')
-    // PI 2 in the updates has the carry.
+    // Phase 6A spread-by-weight: remainingContract = 400,000 - 112,500
+    // = 287,500. Three unpaid at 25% each; each lands at
+    // 287,500 × 25 / 75 = 95,833.33 (last absorbs rounding tail).
     const pi2 = result.payloads.paymentUpdates.find((p) => p.id === 'MOU-PRANAV-001-i2')
     expect(pi2).toBeTruthy()
     if (!pi2) return
     expect(pi2.nominalAmount).toBe(100000)
-    expect(pi2.adjustmentFromLockedInstallments).toBe(-12500)
-    expect(pi2.netDue).toBe(87500)
-    expect(pi2.expectedAmount).toBe(87500)
-    // PI 3, 4: clean nominal 100,000.
+    expect(pi2.adjustmentFromLockedInstallments).toBe(-4166.67)
+    expect(pi2.netDue).toBe(95833.33)
+    expect(pi2.expectedAmount).toBe(95833.33)
+    // PI 3 also carries a small per-row adjustment now.
     const pi3 = result.payloads.paymentUpdates.find((p) => p.id === 'MOU-PRANAV-001-i3')
-    expect(pi3?.netDue).toBe(100000)
-    expect(pi3?.adjustmentFromLockedInstallments).toBe(0)
-    // PI 1 should NOT be in the payment updates because lockedDelta differs
-    // but the row's stored values do not change (netDue stays at receivedAmount).
-    // Actually it DOES change: nominalAmount was 112500, now 100000.
+    expect(pi3?.netDue).toBe(95833.33)
+    expect(pi3?.adjustmentFromLockedInstallments).toBe(-4166.67)
+    const pi4 = result.payloads.paymentUpdates.find((p) => p.id === 'MOU-PRANAV-001-i4')
+    expect(pi4?.netDue).toBe(95833.34)
+    // PI 1 (locked) gets an update because nominalAmount drifts even
+    // though netDue stays at receivedAmount.
     const pi1 = result.payloads.paymentUpdates.find((p) => p.id === 'MOU-PRANAV-001-i1')
     expect(pi1).toBeTruthy()
     expect(pi1?.netDue).toBe(112500) // immutable
@@ -321,6 +324,9 @@ describe('applyCountChange - Pranav scenario A (500 -> 450 -> 400 with PI 1 lock
     expect(pi1?.expectedAmount).toBe(112500) // locked rows keep expectedAmount
 
     expect(result.payloads.event.recalcImpact.adjustmentApplied.cumulativeDelta).toBe(-12500)
+    // firstUnpaidId still points at PI 2 (the operator's attention
+    // anchor); under spread-by-weight the adjustment is shared across
+    // all unpaid rows but PI 2 remains the conventional pointer.
     expect(result.payloads.event.recalcImpact.adjustmentApplied.toInstallmentId).toBe('MOU-PRANAV-001-i2')
   })
 })

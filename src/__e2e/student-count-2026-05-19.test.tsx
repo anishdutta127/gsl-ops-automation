@@ -140,13 +140,16 @@ describe('Pranav exact-number reconciliation (Flows 2, 3, 5, 6)', () => {
     expect(result.reconciled).toBe(true)
     expect(result.cumulativeDelta).toBe(-12500)
     expect(result.firstUnpaidId).toBe('MOU-X-i2')
-    expect(result.rows[1]?.netDue).toBe(87500)
-    expect(result.rows[2]?.netDue).toBe(100000)
-    expect(result.rows[3]?.netDue).toBe(100000)
+    // Phase 6A spread-by-weight: remainingContract = 400,000 - 112,500
+    // = 287,500. Three unpaid at 25% each. Each lands at
+    // 287,500 × 25 / 75 = 95,833.33 (last absorbs rounding tail).
+    expect(result.rows[1]?.netDue).toBe(95833.33)
+    expect(result.rows[2]?.netDue).toBe(95833.33)
+    expect(result.rows[3]?.netDue).toBe(95833.34)
     expect(result.totalCommitted).toBe(400000)
   })
 
-  it('Flow 5: 500 -> 600 after PI 1 paid at 1,25,000 produces PI 2 net 1,75,000', async () => {
+  it('Flow 5: 500 -> 600 after PI 1 paid at 1,25,000 spreads PI 2 / 3 / 4 to Rs 1,58,333.33 each', async () => {
     const { recalcInstallments } = await import('../lib/mou/studentCountRecalc')
     const rows = [1, 2, 3, 4].map((seq) => ({
       id: `MOU-X-i${seq}`,
@@ -183,7 +186,12 @@ describe('Pranav exact-number reconciliation (Flows 2, 3, 5, 6)', () => {
     })
     expect(result.reconciled).toBe(true)
     expect(result.cumulativeDelta).toBe(25000)
-    expect(result.rows[1]?.netDue).toBe(175000)
+    // Phase 6A spread-by-weight: remainingContract = 600,000 - 125,000
+    // = 475,000. Three unpaid at 25% each. Each lands at
+    // 475,000 × 25 / 75 = 158,333.33 (last absorbs rounding tail).
+    expect(result.rows[1]?.netDue).toBe(158333.33)
+    expect(result.rows[2]?.netDue).toBe(158333.33)
+    expect(result.rows[3]?.netDue).toBe(158333.34)
     expect(result.totalCommitted).toBe(600000)
   })
 

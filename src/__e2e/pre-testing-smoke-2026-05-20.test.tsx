@@ -409,7 +409,9 @@ describe('Cross-feature interaction 1 - TDS + count change reconcile correctly',
     // so the carry is the same as the pure-bank case.
     expect(result.rows[0]?.lockedDeltaContribution).toBe(-12500)
     expect(result.cumulativeDelta).toBe(-12500)
-    expect(result.rows[1]?.netDue).toBe(87500)
+    // Phase 6A spread-by-weight: remainingContract = 400,000 - 112,500
+    // = 287,500. Three unpaid at 25%. Each = 95,833.33.
+    expect(result.rows[1]?.netDue).toBe(95833.33)
   })
 })
 
@@ -476,7 +478,7 @@ describe('Cross-feature interaction 5 - empty / dead-end state copy', () => {
 })
 
 describe('Pranav exact-number reconciliation (regression guard)', () => {
-  it('500 -> 450 -> 400 still produces Rs 87,500 on PI 2', async () => {
+  it('500 -> 450 -> 400 spreads PI 2 / 3 / 4 to Rs 95,833.33 each (Phase 6A)', async () => {
     const { recalcInstallments } = await import('../lib/mou/studentCountRecalc')
     const rows = [1, 2, 3, 4].map((seq) => ({
       id: `MOU-X-i${seq}`,
@@ -512,7 +514,12 @@ describe('Pranav exact-number reconciliation (regression guard)', () => {
       installments: rows,
     })
     expect(result.reconciled).toBe(true)
-    expect(result.rows[1]?.netDue).toBe(87500)
+    // Phase 6A spread-by-weight: remainingContract = 400,000 - 112,500
+    // = 287,500. Three unpaid at 25%. Each = 287,500 × 25/75 = 95,833.33
+    // (last absorbs rounding tail).
+    expect(result.rows[1]?.netDue).toBe(95833.33)
+    expect(result.rows[2]?.netDue).toBe(95833.33)
+    expect(result.rows[3]?.netDue).toBe(95833.34)
     expect(result.totalCommitted).toBe(400000)
   })
 })

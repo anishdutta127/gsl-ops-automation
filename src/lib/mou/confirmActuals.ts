@@ -1,32 +1,46 @@
 /*
- * MOU actuals confirmation (Phase C4 hybrid; first lifecycle stage
- * with a real API + lib).
+ * MOU actuals confirmation.
  *
- * Pure async function. Validates inputs, computes variance + variance
- * percentage, builds the updated MOU with an 'actuals-confirmed'
- * auditLog entry, and enqueues the queue write. Returns a
- * discriminated result.
+ * Phase 6A (2026-05-20) revision per Pranav review #2: confirming
+ * actuals now ALSO cascades the count change through the recalc
+ * engine. Pre-Phase-6A this lib only updated `studentsActual` on the
+ * MOU and left the Payment rows alone, so an operator who clicked the
+ * "Update Actual student count" icon on the instalments page (which
+ * still links to /actuals) would see no instalment recalculation.
+ * Pranav hit exactly this on MOU-STEAM-2627-001 (Mutahhary Public
+ * School Baroo): count changed from 500 to 450, but PI 2 / 3 / 4
+ * stayed at Rs 1,20,000 each instead of redistributing.
+ *
+ * Behaviour now: after computing the variance + drift state, if the
+ * count actually changed AND the MOU has Payment rows, the lib
+ * delegates to applyCountChange to mint a StudentCountEvent and
+ * rewrite the unpaid Payment rows. The MOU update is enqueued once
+ * with both audit entries (actuals-confirmed AND student-count-changed)
+ * stacked, plus the appended studentCountEventIds pointer. The order
+ * of writes that hit the queue is: studentCountEvent create →
+ * payment updates → mou update (single combined record). The order
+ * matches the existing student-count route.
  *
  * Drift detection: if |variancePct| > 0.10 strictly, the result is
  * marked needsDriftReview=true. The badge UI consumes this flag.
- * Queue routing to Pratik's Sales Head queue is deferred to Phase D
- * (separate /admin/drift-approvals surface); for C4 we only compute
- * + flag.
  *
- * Permission gate: caller must hold the 'mou:confirm-actuals' Action
- * (Admin / SalesHead / SalesRep per Item B). Cross-verify (per
- * handoff: "OpsHead cross-verifies") is documentation-grade in
- * Phase 1, not a separate UI gate; the actuals page surfaces a single
- * submit action for both gather and sign-off paths. Phase 1.1 may
- * add a dedicated 'mou:verify-actuals' Action and a "Verify" button
- * if testers ask for it.
+ * Permission gate: caller must hold the 'mou:confirm-actuals' Action.
  */
 
-import type { AuditEntry, MOU, User } from '@/lib/types'
+import type {
+  AuditEntry,
+  MOU,
+  Payment,
+  StudentCountEvent,
+  User,
+} from '@/lib/types'
 import mousJson from '@/data/mous.json'
+import paymentsJson from '@/data/payments.json'
 import usersJson from '@/data/users.json'
+import eventsJson from '@/data/student_count_events.json'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
 import { canPerform } from '@/lib/auth/permissions'
+import { applyCountChange } from './applyCountChange'
 
 const STUDENTS_MAX = 20000
 const DRIFT_THRESHOLD = 0.10  // strict greater than triggers review
@@ -46,12 +60,14 @@ export type ConfirmActualsFailureReason =
   | 'unknown-user'
 
 export type ConfirmActualsResult =
-  | { ok: true; mou: MOU; needsDriftReview: boolean; variancePct: number }
+  | { ok: true; mou: MOU; needsDriftReview: boolean; variancePct: number; recalcCascadeApplied: boolean }
   | { ok: false; reason: ConfirmActualsFailureReason }
 
 export interface ConfirmActualsDeps {
   mous: MOU[]
   users: User[]
+  payments?: Payment[]
+  events?: StudentCountEvent[]
   enqueue: typeof enqueueUpdate
   now: () => Date
 }
@@ -59,6 +75,8 @@ export interface ConfirmActualsDeps {
 const defaultDeps: ConfirmActualsDeps = {
   mous: mousJson as unknown as MOU[],
   users: usersJson as unknown as User[],
+  payments: paymentsJson as unknown as Payment[],
+  events: eventsJson as unknown as StudentCountEvent[],
   enqueue: enqueueUpdate,
   now: () => new Date(),
 }
@@ -112,12 +130,85 @@ export async function confirmActuals(
     notes: args.notes,
   }
 
+  // Decide whether to cascade through the recalc engine. We cascade
+  // when (a) the count actually changed from the previously-recorded
+  // count and (b) the MOU has Payment rows to recalculate. The
+  // previous count is studentsActual (or studentsMou when the actuals
+  // have never been recorded). Cascading mints a StudentCountEvent +
+  // rewrites unpaid Payment rows in the same way the dedicated
+  // /mous/[id]/student-count flow does.
+  const previousCount = mou.studentsActual ?? mou.studentsMou
+  const countChanged = args.studentsActual !== previousCount
+  const ownPayments = (deps.payments ?? []).filter((p) => p.mouId === mou.id)
+  const shouldCascade = countChanged && ownPayments.length > 0
+
+  let cascadeApplied = false
+  let cascadeAuditEntry: AuditEntry | null = null
+  let cascadeEventId: string | null = null
+
+  if (shouldCascade) {
+    const cascade = applyCountChange(
+      {
+        mouId: mou.id,
+        newCount: args.studentsActual,
+        effectiveDate: ts.slice(0, 10),
+        reason: `Actuals confirmation: count moved from ${previousCount} to ${args.studentsActual}.`,
+        recordedBy: args.confirmedBy,
+        notes: args.notes ?? null,
+      },
+      {
+        mous: deps.mous,
+        payments: deps.payments ?? [],
+        users: deps.users,
+        events: deps.events ?? [],
+        now: deps.now,
+      },
+    )
+    if (cascade.ok) {
+      cascadeApplied = true
+      cascadeEventId = cascade.payloads.event.id
+      // Pull out the student-count-changed audit entry that
+      // applyCountChange built so we can stack it onto the single
+      // MOU update we enqueue below.
+      cascadeAuditEntry =
+        cascade.payloads.mouUpdate.auditLog.find(
+          (e) =>
+            e.action === 'student-count-changed' &&
+            e.timestamp === ts &&
+            (e.after as Record<string, unknown> | undefined)?.eventId === cascade.payloads.event.id,
+        ) ?? null
+      // Enqueue the StudentCountEvent + per-Payment updates first; the
+      // combined MOU update lands last so the drain order matches the
+      // dedicated /student-count path.
+      await deps.enqueue({
+        queuedBy: args.confirmedBy,
+        entity: 'studentCountEvent',
+        operation: 'create',
+        payload: cascade.payloads.event as unknown as Record<string, unknown>,
+      })
+      for (const p of cascade.payloads.paymentUpdates) {
+        await deps.enqueue({
+          queuedBy: args.confirmedBy,
+          entity: 'payment',
+          operation: 'update',
+          payload: p as unknown as Record<string, unknown>,
+        })
+      }
+    }
+  }
+
+  const stackedAuditLog: AuditEntry[] = [...mou.auditLog, auditEntry]
+  if (cascadeAuditEntry) stackedAuditLog.push(cascadeAuditEntry)
+
   const updatedMou: MOU = {
     ...mou,
     studentsActual: args.studentsActual,
     studentsVariance: variance,
     studentsVariancePct: variancePct,
-    auditLog: [...mou.auditLog, auditEntry],
+    studentCountEventIds: cascadeEventId
+      ? [...(mou.studentCountEventIds ?? []), cascadeEventId]
+      : mou.studentCountEventIds,
+    auditLog: stackedAuditLog,
   }
 
   await deps.enqueue({
@@ -132,5 +223,6 @@ export async function confirmActuals(
     mou: updatedMou,
     needsDriftReview: isDriftReviewRequired(variancePct),
     variancePct,
+    recalcCascadeApplied: cascadeApplied,
   }
 }

@@ -48,11 +48,11 @@ The brief said "canEditMOU OR canEditFinanceData". The matched action grant is `
 
 ## In-scope changes
 
-1. New helper `src/lib/schools/currentSalesRep.ts` — derivation function + unit tests.
-2. New library `src/lib/schools/reassignSalesRep.ts` — write path; enqueues School + optional MOU updates.
+1. New helper `src/lib/schools/currentSalesRep.ts`: derivation function + unit tests.
+2. New library `src/lib/schools/reassignSalesRep.ts`: write path; enqueues School + optional MOU updates.
 3. New form page `src/app/schools/[schoolId]/reassign-sales-rep/page.tsx`.
 4. New API route `src/app/api/schools/[schoolId]/reassign-sales-rep/route.ts`.
-5. `src/app/schools/[schoolId]/page.tsx` header card — show "Sales rep" + "Reassign" button.
+5. `src/app/schools/[schoolId]/page.tsx` header card: show "Sales rep" + "Reassign" button.
 
 ## Explicitly out of scope (follow-up tracked separately)
 
@@ -66,9 +66,9 @@ The brief said "canEditMOU OR canEditFinanceData". The matched action grant is `
 
 ## Tests
 
-- `src/lib/schools/currentSalesRep.test.ts` — derivation for: empty audit, single reassignment, multiple reassignments (latest wins), no MOUs at school + no audit (null), audit + MOUs (audit wins), no audit + multiple MOUs (most-recent MOU wins).
-- `src/lib/schools/reassignSalesRep.test.ts` — happy path future-only, happy path all-mous, permission denied, unknown school, unknown new rep, no-op when new rep equals current.
-- `src/app/api/schools/[schoolId]/reassign-sales-rep/route.test.ts` — 303 redirect with notice param on success, 303 with error param on failure.
+- `src/lib/schools/currentSalesRep.test.ts`: derivation for: empty audit, single reassignment, multiple reassignments (latest wins), no MOUs at school + no audit (null), audit + MOUs (audit wins), no audit + multiple MOUs (most-recent MOU wins).
+- `src/lib/schools/reassignSalesRep.test.ts`: happy path future-only, happy path all-mous, permission denied, unknown school, unknown new rep, no-op when new rep equals current.
+- `src/app/api/schools/[schoolId]/reassign-sales-rep/route.test.ts`: 303 redirect with notice param on success, 303 with error param on failure.
 
 ## Decision summary
 

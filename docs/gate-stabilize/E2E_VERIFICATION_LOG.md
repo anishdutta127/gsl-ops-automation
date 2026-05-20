@@ -9,10 +9,10 @@ backed by a passing production build.
 
 ## Verification tooling
 
-1. `src/__e2e/stabilize-2026-05-19.test.tsx` — 7 SSR walkthrough cases
+1. `src/__e2e/stabilize-2026-05-19.test.tsx`: 7 SSR walkthrough cases
    covering each in-scope route. `npm test -- stabilize-2026-05-19`
    runs them in isolation.
-2. `npm run build` — full Next.js production build. Passing build
+2. `npm run build`: full Next.js production build. Passing build
    means every page compiled, ran its data-load layer, and emitted
    a server bundle without static analysis errors.
 3. Full vitest suite at HEAD: **2937 / 2938 tests pass** (the only
@@ -21,7 +21,7 @@ backed by a passing production build.
 
 ## Flow walks
 
-### Flow 1 — Create new MOU
+### Flow 1: Create new MOU
 
 **Route:** `/mous/new` (picker) → `/mous/new/[templateId]` (wizard)
 **Bug fixes in scope:** Bug 1 (re-checked), Bug 9 (drafts shortcut on
@@ -36,7 +36,7 @@ picker), Bug 3 (Generate .docx fallback hint).
 | Fallback hint visible near button | `still being hardened` copy | PASS |
 | No 500 / RSC error markers | `Application error` absent | PASS |
 
-### Flow 2 — Generate PI for an instalment
+### Flow 2: Generate PI for an instalment
 
 **Route:** `/mous/[mouId]/pi` (form + lock banner) → POST `/api/pi/generate`
 **Bug fixes in scope:** Bug 2 (clean lock UX + redirect error param).
@@ -49,7 +49,7 @@ picker), Bug 3 (Generate .docx fallback hint).
 | `/api/pi/generate` template-missing now redirects 303 (was 500 JSON) | route.test.ts updated case + console.error log assertion | PASS |
 | Page does not crash on any error param | `Application error` absent | PASS |
 
-### Flow 3 — Log payment with TDS
+### Flow 3: Log payment with TDS
 
 **Route:** `/finance/payments` (existing). Per the brief, "whatever exists
 works (two-column form is Phase 4 work, not this gate)."
@@ -59,7 +59,7 @@ works (two-column form is Phase 4 work, not this gate)."
 | `/finance/payments` route exists | `find src/app/finance/payments -name page.tsx` returns the file | PASS |
 | No bug-fix scope changes to this route | `git diff origin/main -- src/app/finance/payments` empty | PASS (out of gate scope) |
 
-### Flow 4 — View MOU detail
+### Flow 4: View MOU detail
 
 **Route:** `/mous/[mouId]`
 **Bug fixes in scope:** Bug 5 (TDS-inclusive Received / Balance tiles
@@ -73,7 +73,7 @@ derived from instalments), Bug 6 (schedule derived from instalments).
 | `scheduleSummary` helper covers 7 rounding / 50-50 / 25-25-25-25 cases | `src/lib/mou/scheduleSummary.test.ts` 7 / 7 green | PASS |
 | No 500 / RSC error markers | `Application error` absent | PASS |
 
-### Flow 5 — VEX PI
+### Flow 5: VEX PI
 
 **Route:** `/operations/vex/pi/new`
 **Bug fixes in scope:** Bug 4 (lock UX amber styling on the inline
