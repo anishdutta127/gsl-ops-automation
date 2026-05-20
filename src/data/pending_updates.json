@@ -92,5 +92,49 @@
       "importNotes": "Pratik FY25-26 sheet; ownerName=Nilabhra; mouStatusText=2025-05-26 00:00:00; salesRep=Balu R"
     },
     "retryCount": 0
+  },
+  {
+    "id": "7001ddc6-0f5e-42ab-a3f3-95f1286967f0",
+    "queuedAt": "2026-05-20T20:31:25.937Z",
+    "queuedBy": "anish.d",
+    "entity": "payment",
+    "operation": "create",
+    "payload": {
+      "id": "MOU-STEAM-2526-070-i1",
+      "mouId": "MOU-STEAM-2526-070",
+      "schoolName": "*Sagaya Matha Matriculation Higher Secondary School",
+      "programme": "STEAM",
+      "instalmentLabel": "1 of 4",
+      "instalmentSeq": 1,
+      "totalInstalments": 4,
+      "description": "STEAM - Instalment 1 of 4 (FY 2025-26 import)",
+      "dueDateRaw": "June",
+      "dueDateIso": null,
+      "expectedAmount": 104615,
+      "receivedAmount": 104615,
+      "receivedDate": null,
+      "paymentMode": "Bank Transfer",
+      "bankReference": null,
+      "piNumber": null,
+      "taxInvoiceNumber": null,
+      "status": "Received",
+      "notes": null,
+      "piSentDate": null,
+      "piSentTo": null,
+      "piGeneratedAt": null,
+      "studentCountActual": 427,
+      "partialPayments": null,
+      "bankAmount": 104615,
+      "tdsAmount": null,
+      "auditLog": [
+        {
+          "timestamp": "2026-05-20T20:31:24.135Z",
+          "user": "anish.d",
+          "action": "create",
+          "notes": "FY 2025-26 import; paymentReceived=yes"
+        }
+      ]
+    },
+    "retryCount": 0
   }
 ]
