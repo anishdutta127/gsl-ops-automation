@@ -1,1 +1,78 @@
-[]
+[
+  {
+    "id": "ab3ecc95-99dd-4c93-af6f-6e6664ea4200",
+    "queuedAt": "2026-05-20T12:07:53.833Z",
+    "queuedBy": "misba.m",
+    "entity": "mou",
+    "operation": "update",
+    "payload": {
+      "id": "MOU-STEAM-2627-046",
+      "schoolId": "SCH-THE_SCOTTISH_CHURCH_",
+      "schoolName": "The Scottish Church Collegiate School",
+      "programme": "STEAM",
+      "programmeSubType": null,
+      "schoolScope": "SINGLE",
+      "schoolGroupId": null,
+      "status": "Active",
+      "academicYear": "2026-27",
+      "startDate": "2026-01-01",
+      "endDate": "2026-12-31",
+      "studentsMou": 100,
+      "studentsActual": 100,
+      "studentsVariance": 0,
+      "studentsVariancePct": 0,
+      "spWithoutTax": 1694.91525423729,
+      "spWithTax": 2000,
+      "contractValue": 200000,
+      "received": 0,
+      "tds": 0,
+      "balance": 200000,
+      "receivedPct": 0,
+      "paymentSchedule": "50-50 half-yearly",
+      "trainerModel": null,
+      "salesPersonId": "sp-somnath",
+      "templateVersion": null,
+      "generatedAt": null,
+      "notes": "Status: Retained",
+      "daysToExpiry": 254,
+      "auditLog": [
+        {
+          "timestamp": "2026-04-27T12:00:00.000Z",
+          "user": "system",
+          "action": "auto-link-exact-match",
+          "notes": "Imported from gsl-mou-system; auto-linked to school SCH-THE_SCOTTISH_CHURCH_."
+        },
+        {
+          "timestamp": "2026-04-27T18:01:00.000Z",
+          "user": "system-w4-a-2",
+          "action": "mou-cohort-status-changed",
+          "before": {
+            "cohortStatus": null
+          },
+          "after": {
+            "cohortStatus": "active"
+          },
+          "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
+        },
+        {
+          "timestamp": "2026-05-20T12:07:53.832Z",
+          "user": "misba.m",
+          "action": "actuals-confirmed",
+          "before": {
+            "studentsActual": 100,
+            "studentsVariance": 0,
+            "studentsVariancePct": 0
+          },
+          "after": {
+            "studentsActual": 100,
+            "studentsVariance": 0,
+            "studentsVariancePct": 0
+          }
+        }
+      ],
+      "cohortStatus": "active",
+      "delayNotes": null
+    },
+    "retryCount": 0
+  }
+]
