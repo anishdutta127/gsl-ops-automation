@@ -8355,6 +8355,21 @@
           "cohortStatus": "active"
         },
         "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
+      },
+      {
+        "timestamp": "2026-05-20T12:07:53.832Z",
+        "user": "misba.m",
+        "action": "actuals-confirmed",
+        "before": {
+          "studentsActual": 100,
+          "studentsVariance": 0,
+          "studentsVariancePct": 0
+        },
+        "after": {
+          "studentsActual": 100,
+          "studentsVariance": 0,
+          "studentsVariancePct": 0
+        }
       }
     ],
     "cohortStatus": "active",
@@ -10241,9 +10256,9 @@
     "startDate": "2026-04-01",
     "endDate": "2028-02-28",
     "studentsMou": 450,
-    "studentsActual": 450,
-    "studentsVariance": null,
-    "studentsVariancePct": null,
+    "studentsActual": 458,
+    "studentsVariance": 8,
+    "studentsVariancePct": 0.017777777777777778,
     "spWithoutTax": 2070.3389830508477,
     "spWithTax": 2443,
     "contractValue": 1099350,
@@ -10271,6 +10286,21 @@
           "trainerModel": "GSL-T"
         },
         "notes": "source: pranav-refresh-2026-05-13"
+      },
+      {
+        "timestamp": "2026-05-20T12:20:28.660Z",
+        "user": "anita.c",
+        "action": "actuals-confirmed",
+        "before": {
+          "studentsActual": 450,
+          "studentsVariance": null,
+          "studentsVariancePct": null
+        },
+        "after": {
+          "studentsActual": 458,
+          "studentsVariance": 8,
+          "studentsVariancePct": 0.017777777777777778
+        }
       }
     ],
     "effectiveDate": "2026-04-01",
@@ -10291,9 +10321,9 @@
     "startDate": "2026-04-01",
     "endDate": "2028-02-28",
     "studentsMou": 150,
-    "studentsActual": 150,
-    "studentsVariance": null,
-    "studentsVariancePct": null,
+    "studentsActual": 133,
+    "studentsVariance": -17,
+    "studentsVariancePct": -0.11333333333333333,
     "spWithoutTax": 1800,
     "spWithTax": 2124,
     "contractValue": 318600,
@@ -10321,6 +10351,21 @@
           "trainerModel": "GSL-T"
         },
         "notes": "source: pranav-refresh-2026-05-13"
+      },
+      {
+        "timestamp": "2026-05-20T12:21:35.516Z",
+        "user": "anita.c",
+        "action": "actuals-confirmed",
+        "before": {
+          "studentsActual": 150,
+          "studentsVariance": null,
+          "studentsVariancePct": null
+        },
+        "after": {
+          "studentsActual": 133,
+          "studentsVariance": -17,
+          "studentsVariancePct": -0.11333333333333333
+        }
       }
     ],
     "effectiveDate": "2026-04-01",
