@@ -1,1 +1,41 @@
-[]
+[
+  {
+    "id": "da00d3aa-0c81-4083-a6a1-41e1fe43baa1",
+    "queuedAt": "2026-05-20T20:31:24.136Z",
+    "queuedBy": "anish.d",
+    "entity": "school",
+    "operation": "create",
+    "payload": {
+      "id": "SCH-SAGAYA_MATHA_MATRICU_2",
+      "name": "*Sagaya Matha Matriculation Higher Secondary School",
+      "legalEntity": null,
+      "city": "Chennai",
+      "state": "Tamil Nadu",
+      "region": "South-West",
+      "pinCode": null,
+      "contactPerson": null,
+      "email": null,
+      "phone": null,
+      "billingName": null,
+      "pan": null,
+      "gstNumber": null,
+      "notes": null,
+      "active": true,
+      "createdAt": "2026-05-20T20:31:24.135Z",
+      "auditLog": [
+        {
+          "timestamp": "2026-05-20T20:31:24.135Z",
+          "user": "anish.d",
+          "action": "create",
+          "after": {
+            "name": "*Sagaya Matha Matriculation Higher Secondary School",
+            "city": "Chennai",
+            "state": "Tamil Nadu"
+          },
+          "notes": "FY 2025-26 import"
+        }
+      ]
+    },
+    "retryCount": 0
+  }
+]
