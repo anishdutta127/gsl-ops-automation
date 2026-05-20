@@ -1,11 +1,12 @@
 {
+  "_comment": "Phase 6B cutover snapshot of gsl-mou-system/src/data/pi_counter.json (verified against vex_pis.json + payments.json ledger). Ops is now the source of truth; legacy is read-only post-banner. priorFiscalYears['2526'] is a defensive double-seed (both MH and UP at next=27) past the historic Series B max (MTPL/25-26/26 in Ops payments.json, on YP MOUs; original entity attribution is ambiguous in source data, so seeding both protects against collision regardless of which entity Pratik historically used). UP/2627 was advanced to 18 by a Phase 6B post-flip smoke PI (MTPL/UP/26-27/0017 on MOU-STEAM-2627-001 instalment 2) and rolled back to 17 here; paired pending_updates entries (payment.create + mou.update) removed before drain so no audit residue lands in payments.json or mous.json.",
   "fiscalYear": "2627",
   "entities": {
     "MH": {
       "next": 2
     },
     "UP": {
-      "next": 18
+      "next": 17
     }
   },
   "priorFiscalYears": {
