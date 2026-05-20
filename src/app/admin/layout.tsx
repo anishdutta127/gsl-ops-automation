@@ -15,6 +15,7 @@ const ADMIN_NAV: Array<{ label: string; href: string }> = [
   { label: 'School groups', href: '/admin/school-groups' },
   { label: 'Import review', href: '/admin/mou-import-review' },
   { label: 'FY 2025-26 import', href: '/admin/imports/fy-2025-26' },
+  { label: 'PI backfill', href: '/admin/imports/pi-backfill' },
   { label: 'PI counter', href: '/admin/pi-counter' },
   { label: 'PI counter status', href: '/admin/pi-counter-status' },
   { label: 'PI blockers', href: '/admin/pi-blockers' },

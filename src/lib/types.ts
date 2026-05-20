@@ -286,6 +286,13 @@ export type AuditAction =
   | 'dispatch-override-requested'
   | 'dispatch-override-approved'
   | 'dispatch-override-rejected'
+  // Phase 6C PI backfill: Pranav-driven backfill of historic paid-no-PI
+  // payment rows. Emitted on both the Payment.auditLog and the parent
+  // MOU.auditLog when /admin/imports/pi-backfill applies a fresh or
+  // manually-supplied PI number to a payment row whose piNumber was
+  // null. before.piNumber is null; after.piNumber is the applied
+  // value; notes carries the auto-match candidate id or "manual entry".
+  | 'pi-backfill-applied'
 
 export interface AuditEntry {
   timestamp: string                // ISO
