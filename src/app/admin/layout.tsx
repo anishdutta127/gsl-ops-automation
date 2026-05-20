@@ -15,6 +15,8 @@ const ADMIN_NAV: Array<{ label: string; href: string }> = [
   { label: 'School groups', href: '/admin/school-groups' },
   { label: 'Import review', href: '/admin/mou-import-review' },
   { label: 'PI counter', href: '/admin/pi-counter' },
+  { label: 'PI counter status', href: '/admin/pi-counter-status' },
+  { label: 'PI blockers', href: '/admin/pi-blockers' },
   { label: 'Data snapshot', href: '/admin/data-snapshot' },
 ]
 
