@@ -113,7 +113,14 @@ describe('getFinancialYearsForMou', () => {
   })
 
   it('three-year MOU returns three FYs', () => {
-    const mou = makeMou({ id: 'M-3' })
+    // Explicit 3-year duration so the advance-payment rule does NOT
+    // reclassify the 2025-12 payment (which is before startDate of a
+    // shorter MOU). Here the MOU is genuinely multi-year.
+    const mou = makeMou({
+      id: 'M-3',
+      startDate: '2025-04-01',
+      endDate: '2028-03-31',
+    })
     const payments = [
       makePayment({ mouId: 'M-3', dueDateIso: '2025-12-01' }),
       makePayment({ mouId: 'M-3', dueDateIso: '2026-12-01' }),
@@ -145,13 +152,15 @@ describe('getFinancialYearsForMou', () => {
     expect(getFinancialYearsForMou(mou, [])).toEqual(['2025-26'])
   })
 
-  it('MOU starting before April uses prior FY (boundary edge)', () => {
-    const mou = makeMou({ id: 'M-edge' })
+  it('instalment due BEFORE MOU startDate reclassifies to MOU first FY (advance-payment rule)', () => {
+    // Phase 6A: a March-15 advance against an April-1 MOU is treated
+    // as part of the MOU's first FY, not the prior FY.
+    const mou = makeMou({ id: 'M-edge', startDate: '2026-04-01' })
     const payments = [
       makePayment({ mouId: 'M-edge', dueDateIso: '2026-03-15' }),
       makePayment({ mouId: 'M-edge', dueDateIso: '2026-04-15' }),
     ]
-    expect(getFinancialYearsForMou(mou, payments)).toEqual(['2025-26', '2026-27'])
+    expect(getFinancialYearsForMou(mou, payments)).toEqual(['2026-27'])
   })
 
   it('payments without dueDateIso are ignored', () => {
@@ -276,5 +285,31 @@ describe('getYearSpecificInstalments', () => {
       makePayment({ mouId: 'M-other', dueDateIso: '2026-07-01' }),
     ]
     expect(getYearSpecificInstalments(mou, '2026-27', payments)).toHaveLength(1)
+  })
+
+  it('Phase 6A advance-payment rule: instalment due BEFORE startDate counts in the MOU first FY (Kavyapta repro)', () => {
+    // Mirrors MOU-STEAM-2627-009: 2026-04-01 → 2029-03-31 contract;
+    // i1 due 2026-02-28 (advance, FY 25-26 naively) was paid Rs 75,000.
+    // The first FY of this MOU is 2026-27, so i1 should appear there.
+    const mou = makeMou({
+      id: 'M-adv', startDate: '2026-04-01', endDate: '2029-03-31',
+    })
+    const payments = [
+      makePayment({
+        id: 'M-adv-i1', mouId: 'M-adv', instalmentSeq: 1,
+        dueDateIso: '2026-02-28', receivedAmount: 75000, status: 'Received',
+      }),
+      makePayment({
+        id: 'M-adv-i2', mouId: 'M-adv', instalmentSeq: 2,
+        dueDateIso: '2026-08-31',
+      }),
+    ]
+    // FY tab membership: only 26-27 (no longer surfaces a spurious 25-26 tab).
+    expect(getFinancialYearsForMou(mou, payments)).toEqual(['2026-27'])
+    // Both instalments now live in the 26-27 tab.
+    const ys = getYearSpecificInstalments(mou, '2026-27', payments)
+    expect(ys.map((p) => p.id)).toEqual(['M-adv-i1', 'M-adv-i2'])
+    // FY 25-26 tab has nothing for this MOU.
+    expect(getYearSpecificInstalments(mou, '2025-26', payments)).toEqual([])
   })
 })

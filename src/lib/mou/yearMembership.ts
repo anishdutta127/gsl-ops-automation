@@ -32,6 +32,38 @@ export function getCurrentFinancialYear(now: Date = new Date()): string {
 }
 
 /**
+ * Returns the FY this instalment belongs to FOR THIS MOU. Differs
+ * from a raw `fiscalYearOfIso(p.dueDateIso)` in one case:
+ *
+ *   - When the instalment's dueDateIso falls BEFORE the MOU's
+ *     startDate, it is treated as part of the MOU's first FY (the FY
+ *     containing startDate). This is the "advance payment" rule:
+ *     instalment 1 is often a 10% advance due months before the
+ *     academic year begins. Without this rule, an advance paid in
+ *     February 2026 (FY 25-26) would never appear on an MOU that
+ *     starts in April 2026 (FY 26-27), even though Finance treats
+ *     it as the first FY 26-27 payment.
+ *
+ * Phase 6A (2026-05-20, Pranav review #2): Kavyapta Global School's
+ * Rs 75,000 i1 advance due 2026-02-28 was reading as FY 25-26 and
+ * therefore invisible on every FY tab of its 2026-29 contract. Now
+ * it reclassifies to the MOU's first FY (2026-27).
+ */
+export function fiscalYearOfInstalmentForMou(
+  payment: Payment,
+  mou: MOU,
+): string | null {
+  if (!payment.dueDateIso) return null
+  const dueFy = fiscalYearOfIso(payment.dueDateIso)
+  if (!dueFy) return null
+  if (mou.startDate && payment.dueDateIso < mou.startDate) {
+    const startFy = fiscalYearOfIso(mou.startDate)
+    if (startFy) return startFy
+  }
+  return dueFy
+}
+
+/**
  * Enumerate every FY label between (and including) two ISO dates.
  * Used by the draft / unsigned fallback when an MOU has no Payments
  * yet but does have startDate / endDate.
@@ -75,8 +107,7 @@ export function getFinancialYearsForMou(
   const ownPayments = allPayments.filter((p) => p.mouId === mou.id)
   const fysFromPayments = new Set<string>()
   for (const p of ownPayments) {
-    if (!p.dueDateIso) continue
-    const fy = fiscalYearOfIso(p.dueDateIso)
+    const fy = fiscalYearOfInstalmentForMou(p, mou)
     if (fy) fysFromPayments.add(fy)
   }
   if (fysFromPayments.size > 0) {
@@ -141,9 +172,6 @@ export function getYearSpecificInstalments(
 ): Payment[] {
   return allPayments
     .filter((p) => p.mouId === mou.id)
-    .filter((p) => {
-      if (!p.dueDateIso) return false
-      return fiscalYearOfIso(p.dueDateIso) === fyTag
-    })
+    .filter((p) => fiscalYearOfInstalmentForMou(p, mou) === fyTag)
     .sort((a, b) => a.instalmentSeq - b.instalmentSeq)
 }

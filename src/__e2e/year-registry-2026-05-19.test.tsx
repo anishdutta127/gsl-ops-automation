@@ -122,11 +122,40 @@ describe('Flow 2: Year switching updates the list', () => {
 })
 
 describe('Flow 3: Multi-year MOU detail shows tabs + scoped KPIs', () => {
+  // Phase 6A: discover a genuinely multi-FY MOU dynamically. The
+  // advance-payment rule (instalments due before startDate count in
+  // the MOU's first FY) means a hard-coded MOU id is fragile - one
+  // schedule edit can collapse a 2-FY MOU into a 1-FY MOU.
+  async function findMultiFyMou(): Promise<{ id: string; fys: string[] }> {
+    const { getFinancialYearsForMou } = await import(
+      '../lib/mou/yearMembership'
+    )
+    const mous = (await import('../data/mous.json')).default as unknown as Array<{
+      id: string
+      cohortStatus: string
+    }>
+    const payments = (await import('../data/payments.json')).default as unknown as Array<{
+      id: string
+      mouId: string
+      dueDateIso: string | null
+    }>
+    for (const m of mous) {
+      if (m.cohortStatus !== 'active') continue
+      const fys = getFinancialYearsForMou(
+        m as unknown as import('@/lib/types').MOU,
+        payments as unknown as import('@/lib/types').Payment[],
+      )
+      if (fys.length > 1) return { id: m.id, fys }
+    }
+    throw new Error('no multi-FY active MOU found in fixtures')
+  }
+
   it('multi-year MOU detail renders the year-tab strip with All years + per-year pills', async () => {
+    const { id } = await findMultiFyMou()
     const { default: Page } = await import('../app/mous/[mouId]/page')
     const html = renderToStaticMarkup(
       await Page({
-        params: Promise.resolve({ mouId: 'MOU-STEAM-2627-001' }),
+        params: Promise.resolve({ mouId: id }),
         searchParams: Promise.resolve({}),
       }),
     )
@@ -137,18 +166,20 @@ describe('Flow 3: Multi-year MOU detail shows tabs + scoped KPIs', () => {
     expect(html).not.toContain('Application error')
   }, 30000)
 
-  it('?fy=2026-27 makes that tab active and re-labels KPI tiles', async () => {
+  it('?fy=<first FY> makes that tab active and re-labels KPI tiles', async () => {
+    const { id, fys } = await findMultiFyMou()
+    const targetFy = fys[0]!
     const { default: Page } = await import('../app/mous/[mouId]/page')
     const html = renderToStaticMarkup(
       await Page({
-        params: Promise.resolve({ mouId: 'MOU-STEAM-2627-001' }),
-        searchParams: Promise.resolve({ fy: '2026-27' }),
+        params: Promise.resolve({ mouId: id }),
+        searchParams: Promise.resolve({ fy: targetFy }),
       }),
     )
-    expect(html).toContain('data-testid="year-tab-2026-27" data-active="true"')
-    expect(html).toContain('FY 2026-27 contract')
-    expect(html).toContain('FY 2026-27 received')
-    expect(html).toContain('FY 2026-27 balance')
+    expect(html).toContain(`data-testid="year-tab-${targetFy}" data-active="true"`)
+    expect(html).toContain(`FY ${targetFy} contract`)
+    expect(html).toContain(`FY ${targetFy} received`)
+    expect(html).toContain(`FY ${targetFy} balance`)
   }, 30000)
 
   it('single-FY MOU does NOT render the year-tab strip', async () => {

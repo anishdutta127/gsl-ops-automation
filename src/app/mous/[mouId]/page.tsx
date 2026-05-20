@@ -50,6 +50,7 @@ import type {
   MOU,
   Payment,
   School,
+  StudentCountEvent,
   User,
 } from '@/lib/types'
 import { formatSkuBreakdown } from '@/lib/dispatch/formatLineItems'
@@ -73,6 +74,8 @@ import {
   getFinancialYearsForMou,
   getYearSpecificInstalments,
 } from '@/lib/mou/yearMembership'
+import { getCurrentStudentCountFor } from '@/lib/mou/applyCountChange'
+import studentCountEventsJson from '@/data/student_count_events.json'
 import { getCurrentUser } from '@/lib/auth/session'
 import {
   canApproveDispatchOverride,
@@ -114,6 +117,7 @@ const allIntakeRecords = intakeRecordsJson as unknown as IntakeRecord[]
 const allTemplates = templatesJson as unknown as CommunicationTemplate[]
 const allEscalations = escalationsJson as unknown as Escalation[]
 const allAdjustments = adjustmentsJson as unknown as Adjustment[]
+const allStudentCountEvents = studentCountEventsJson as unknown as StudentCountEvent[]
 
 function lastDelayNotesUpdate(mou: MOU): string | null {
   const usersById = new Map(allUsers.map((u) => [u.id, u.name]))
@@ -394,11 +398,20 @@ export default async function MouDetailPage({ params, searchParams }: PageProps)
   // expectedAmount sum (no fall back to mou.contractValue), so a
   // 2-year contract worth Rs 4L total surfaces "FY 26-27 contract
   // value Rs 2L" on its 2026-27 tab and "FY 27-28 contract Rs 2L" on
-  // the 2027-28 tab. The "All years" view (single-year MOUs or no
-  // ?fy=) preserves the lifetime totals from the stabilise gate.
+  // the 2027-28 tab.
+  //
+  // Phase 6A (2026-05-20, Pranav review #2): the lifetime contract
+  // value is now derived from the CURRENT student count × spWithTax,
+  // not the signing-time stored contractValue. Pranav's expectation
+  // is that "Total Sales Amount" reflects the count change he just
+  // made. Falls back to mou.contractValue when spWithTax is unset.
+  const currentStudentCount = getCurrentStudentCountFor(mou, allStudentCountEvents)
+  const lifetimeContractFromCount = mou.spWithTax > 0
+    ? Math.round(currentStudentCount * mou.spWithTax * 100) / 100
+    : mou.contractValue
   const contractValueForView = activeYearTab
     ? displayedInstallments.reduce((s, p) => s + p.expectedAmount, 0)
-    : mou.contractValue
+    : lifetimeContractFromCount
   const receivedFromInstallments = displayedInstallments.reduce((s, p) => s + (p.receivedAmount ?? 0), 0)
   const balanceFromInstallments = Math.max(0, contractValueForView - receivedFromInstallments)
   const receivedPctFromInstallments = contractValueForView > 0
