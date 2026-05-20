@@ -14350,5 +14350,149 @@
         "notes": "source: pranav-refresh-2026-05-13"
       }
     ]
+  },
+  {
+    "id": "MOU-STEAM-2526-070-i1",
+    "mouId": "MOU-STEAM-2526-070",
+    "schoolName": "*Sagaya Matha Matriculation Higher Secondary School",
+    "programme": "STEAM",
+    "instalmentLabel": "1 of 4",
+    "instalmentSeq": 1,
+    "totalInstalments": 4,
+    "description": "STEAM - Instalment 1 of 4 (FY 2025-26 import)",
+    "dueDateRaw": "June",
+    "dueDateIso": null,
+    "expectedAmount": 104615,
+    "receivedAmount": 104615,
+    "receivedDate": null,
+    "paymentMode": "Bank Transfer",
+    "bankReference": null,
+    "piNumber": null,
+    "taxInvoiceNumber": null,
+    "status": "Received",
+    "notes": null,
+    "piSentDate": null,
+    "piSentTo": null,
+    "piGeneratedAt": null,
+    "studentCountActual": 427,
+    "partialPayments": null,
+    "bankAmount": 104615,
+    "tdsAmount": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-20T20:31:24.135Z",
+        "user": "anish.d",
+        "action": "create",
+        "notes": "FY 2025-26 import; paymentReceived=yes"
+      }
+    ]
+  },
+  {
+    "id": "MOU-STEAM-2526-070-i2",
+    "mouId": "MOU-STEAM-2526-070",
+    "schoolName": "*Sagaya Matha Matriculation Higher Secondary School",
+    "programme": "STEAM",
+    "instalmentLabel": "2 of 4",
+    "instalmentSeq": 2,
+    "totalInstalments": 4,
+    "description": "STEAM - Instalment 2 of 4 (FY 2025-26 import)",
+    "dueDateRaw": "Sep",
+    "dueDateIso": null,
+    "expectedAmount": 89670,
+    "receivedAmount": null,
+    "receivedDate": null,
+    "paymentMode": null,
+    "bankReference": null,
+    "piNumber": null,
+    "taxInvoiceNumber": null,
+    "status": "Pending",
+    "notes": null,
+    "piSentDate": null,
+    "piSentTo": null,
+    "piGeneratedAt": null,
+    "studentCountActual": 427,
+    "partialPayments": null,
+    "bankAmount": null,
+    "tdsAmount": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-20T20:31:24.135Z",
+        "user": "anish.d",
+        "action": "create",
+        "notes": "FY 2025-26 import; paymentReceived=No"
+      }
+    ]
+  },
+  {
+    "id": "MOU-STEAM-2526-070-i3",
+    "mouId": "MOU-STEAM-2526-070",
+    "schoolName": "*Sagaya Matha Matriculation Higher Secondary School",
+    "programme": "STEAM",
+    "instalmentLabel": "3 of 4",
+    "instalmentSeq": 3,
+    "totalInstalments": 4,
+    "description": "STEAM - Instalment 3 of 4 (FY 2025-26 import)",
+    "dueDateRaw": "Dec",
+    "dueDateIso": null,
+    "expectedAmount": 104615,
+    "receivedAmount": 104615,
+    "receivedDate": null,
+    "paymentMode": "Bank Transfer",
+    "bankReference": null,
+    "piNumber": null,
+    "taxInvoiceNumber": null,
+    "status": "Received",
+    "notes": null,
+    "piSentDate": null,
+    "piSentTo": null,
+    "piGeneratedAt": null,
+    "studentCountActual": 427,
+    "partialPayments": null,
+    "bankAmount": 104615,
+    "tdsAmount": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-20T20:31:24.135Z",
+        "user": "anish.d",
+        "action": "create",
+        "notes": "FY 2025-26 import; paymentReceived=yes"
+      }
+    ]
+  },
+  {
+    "id": "MOU-STEAM-2526-070-i4",
+    "mouId": "MOU-STEAM-2526-070",
+    "schoolName": "*Sagaya Matha Matriculation Higher Secondary School",
+    "programme": "STEAM",
+    "instalmentLabel": "4 of 4",
+    "instalmentSeq": 4,
+    "totalInstalments": 4,
+    "description": "STEAM - Instalment 4 of 4 (FY 2025-26 import)",
+    "dueDateRaw": null,
+    "dueDateIso": null,
+    "expectedAmount": 0,
+    "receivedAmount": null,
+    "receivedDate": null,
+    "paymentMode": null,
+    "bankReference": null,
+    "piNumber": null,
+    "taxInvoiceNumber": null,
+    "status": "Pending",
+    "notes": null,
+    "piSentDate": null,
+    "piSentTo": null,
+    "piGeneratedAt": null,
+    "studentCountActual": 427,
+    "partialPayments": null,
+    "bankAmount": null,
+    "tdsAmount": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-20T20:31:24.135Z",
+        "user": "anish.d",
+        "action": "create",
+        "notes": "FY 2025-26 import; paymentReceived=no"
+      }
+    ]
   }
 ]
