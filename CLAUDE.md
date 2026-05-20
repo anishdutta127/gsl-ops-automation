@@ -169,6 +169,20 @@ Past gates passed verification by checking "route returns 200" or "import exists
 
 When a flow cannot be E2E-walked in a given environment (real third-party dependency unavailable, etc.), state that explicitly in the verification log and name what the residual risk is. Do not silently fall back to "the route returns 200".
 
+### Playwright screenshot verification (Phase 6D)
+
+For gates with UI-visible changes, run `scripts/verify-deploy.mjs` as the final verification step. The script logs into the live deploy with the supplied credentials, walks a list of URLs in headless Chromium, and writes screenshots to `.verification/<timestamp>/<name>.png`. Paste the screenshot paths in the final report so the reviewer can audit what each URL actually rendered.
+
+```
+VERIFY_PASSWORD='<password>' node scripts/verify-deploy.mjs
+# or with custom targets:
+node scripts/verify-deploy.mjs --user anish.d@getsetlearn.info --password '<pw>' --urls custom-targets.json
+# mobile viewport (375 wide):
+node scripts/verify-deploy.mjs --viewport mobile --password '<pw>'
+```
+
+A summary.json drops alongside the screenshots with the HTTP status of each capture. Exit code is 1 if any URL failed; the failed URLs still capture their screenshots so the post-mortem has evidence.
+
 ---
 
 ## Routing tree (post-ceremony, 2026-04)
