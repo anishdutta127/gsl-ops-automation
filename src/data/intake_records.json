@@ -1070,5 +1070,46 @@
         }
       }
     ]
+  },
+  {
+    "id": "34cacab1-61d9-41f6-af66-4203f8efe82f",
+    "mouId": "MOU-STEAM-2627-079",
+    "completedAt": "2026-05-20T12:12:51.673Z",
+    "completedBy": "anita.c",
+    "salesOwnerId": "sp-prodipto",
+    "location": "Kolkata",
+    "grades": "6-9",
+    "recipientName": "D Das",
+    "recipientDesignation": "Administrative Head",
+    "recipientEmail": "cps953@gmail.com",
+    "studentsAtIntake": 450,
+    "durationYears": 2,
+    "startDate": "2026-04-01",
+    "endDate": "2028-03-31",
+    "physicalSubmissionStatus": "Submitted",
+    "softCopySubmissionStatus": "Submitted",
+    "productConfirmed": "TinkRworks",
+    "gslTrainingMode": "GSL Trainer",
+    "schoolPointOfContactName": "D Das",
+    "schoolPointOfContactPhone": "+919932260028",
+    "signedMouUrl": "https://maftechnologies-my.sharepoint.com/:b:/g/personal/ujaccounts_getsetlearn_info/IQCIAxrFEF46Q7T9Auw4bVlyARnmBCfG_uFz-whptznVMNI?e=bSSsEu",
+    "thankYouEmailSentAt": null,
+    "gradeBreakdown": null,
+    "rechargeableBatteries": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-20T12:12:51.673Z",
+        "user": "anita.c",
+        "action": "intake-captured",
+        "after": {
+          "salesOwnerId": "sp-prodipto",
+          "studentsAtIntake": 450,
+          "durationYears": 2,
+          "productConfirmed": "TinkRworks",
+          "gslTrainingMode": "GSL Trainer"
+        },
+        "notes": "Product mismatch: intake='TinkRworks', MOU='STEAM'."
+      }
+    ]
   }
 ]
