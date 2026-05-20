@@ -1,0 +1,3466 @@
+{
+  "source": "Pratik_School_Invoicing_Details_2025-26_Final.xlsx",
+  "sheet": "2025-2026",
+  "exportedAt": "2026-05-20",
+  "totalRecords": 69,
+  "currency": "INR",
+  "fiscalYear": "2025-26",
+  "notes": "All amounts INCLUDE GST. Field 'piRaisedPaymentReceived' etc are the 4 status flags Pranav wants on the MOU registry. Total per-record across the 4 status flags should equal salesAmountWithTax. instalments[].pctShare is a fraction (0.25 = 25%).",
+  "records": [
+    {
+      "srNo": 1.0,
+      "schoolName": "Laxmipat Singhania Academy",
+      "salesRep": null,
+      "schoolCount": 1.0,
+      "mouStatusText": "Existing School",
+      "kitsSent": "YES",
+      "duration": "01st April 2025 to 31st march 2026",
+      "city": "Kolkata",
+      "state": "West Bengal",
+      "studentsMou": 420,
+      "studentsActual": 420.0,
+      "spPerStudentWithoutTax": 2000.0,
+      "spPerStudentWithTax": 1832,
+      "salesAmountWithTax": 769440.0,
+      "amountReceived": 704232.0,
+      "tdsAmount": 65208.0,
+      "balanceOutstanding": 0.0,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": 1.0,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": 0.5,
+          "amount": 384720.0,
+          "month": "Jun-25",
+          "paymentReceived": "Yes"
+        },
+        {
+          "instalmentNo": 2,
+          "pctShare": 0.5,
+          "amount": 384720.0,
+          "month": "Sep-25",
+          "paymentReceived": "yes"
+        }
+      ],
+      "ownerName": "Pratik",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 769441.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 0.0
+    },
+    {
+      "srNo": 2.0,
+      "schoolName": "Don Bosco Bandel",
+      "salesRep": null,
+      "schoolCount": 1.0,
+      "mouStatusText": "Existing School",
+      "kitsSent": "YES",
+      "duration": "01st April 2025 to 31st march 2026",
+      "city": "Bandel, West Bengal",
+      "state": "West Bengal",
+      "studentsMou": 540,
+      "studentsActual": 531.0,
+      "spPerStudentWithoutTax": 2700.0,
+      "spPerStudentWithTax": 3186,
+      "salesAmountWithTax": 1691766.0,
+      "amountReceived": 774198.0,
+      "tdsAmount": 71686.0,
+      "balanceOutstanding": -2.0,
+      "amtRecdIn2627": 774198.0,
+      "tds2627": 71686.0,
+      "pctReceivedOverall": 1.0000011821965922,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": 0.25,
+          "amount": 422941.5,
+          "month": "Jun-25",
+          "paymentReceived": "Yes"
+        },
+        {
+          "instalmentNo": 2,
+          "pctShare": 0.25,
+          "amount": 422941.5,
+          "month": "Sep-25",
+          "paymentReceived": "yes"
+        },
+        {
+          "instalmentNo": 3,
+          "pctShare": 0.25,
+          "amount": 422941.5,
+          "month": "Oct-25",
+          "paymentReceived": "yes"
+        },
+        {
+          "instalmentNo": 4,
+          "pctShare": 0.25,
+          "amount": 422941.5,
+          "month": "Jan-25",
+          "paymentReceived": "Yes"
+        }
+      ],
+      "ownerName": "Pratik",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 1691769.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 0.0
+    },
+    {
+      "srNo": 3.0,
+      "schoolName": "Loreto Day School BB",
+      "salesRep": null,
+      "schoolCount": 1.0,
+      "mouStatusText": "YES",
+      "kitsSent": "YES",
+      "duration": "01st April 2025 to 31st march 2026",
+      "city": "Kolkata",
+      "state": "West Bengal",
+      "studentsMou": 500,
+      "studentsActual": 559.0,
+      "spPerStudentWithoutTax": 2500.0,
+      "spPerStudentWithTax": 2950,
+      "salesAmountWithTax": 1649050.0,
+      "amountReceived": 1509300.0,
+      "tdsAmount": 139752.0,
+      "balanceOutstanding": -2.0,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": 1.0000012128195022,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": 0.25,
+          "amount": 412262.5,
+          "month": "Apr-25",
+          "paymentReceived": "Yes"
+        },
+        {
+          "instalmentNo": 2,
+          "pctShare": 0.25,
+          "amount": 412262.5,
+          "month": "Jul-25",
+          "paymentReceived": "yes"
+        },
+        {
+          "instalmentNo": 3,
+          "pctShare": 0.25,
+          "amount": 412262.5,
+          "month": "Oct-25",
+          "paymentReceived": "yes"
+        },
+        {
+          "instalmentNo": 4,
+          "pctShare": 0.25,
+          "amount": 412262.5,
+          "month": "Jan-25",
+          "paymentReceived": "Yes"
+        }
+      ],
+      "ownerName": "Pratik",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 1649050.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 0.0
+    },
+    {
+      "srNo": 4.0,
+      "schoolName": "Loreto House - Kolkata",
+      "salesRep": null,
+      "schoolCount": 1.0,
+      "mouStatusText": "AWAITED",
+      "kitsSent": "YES",
+      "duration": "01st April 2025 to 31st march 2026",
+      "city": "Kolkata",
+      "state": "West Bengal",
+      "studentsMou": 500,
+      "studentsActual": 608.0,
+      "spPerStudentWithoutTax": 2500.0,
+      "spPerStudentWithTax": 2950,
+      "salesAmountWithTax": 1734600.0,
+      "amountReceived": 1587600.0,
+      "tdsAmount": 147000.0,
+      "balanceOutstanding": 0.0,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": 1.0,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": 0.25,
+          "amount": 433650.0,
+          "month": "May-25",
+          "paymentReceived": "Yes"
+        },
+        {
+          "instalmentNo": 2,
+          "pctShare": 0.25,
+          "amount": 433650.0,
+          "month": "Aug-25",
+          "paymentReceived": "No"
+        },
+        {
+          "instalmentNo": 3,
+          "pctShare": 0.25,
+          "amount": 433650.0,
+          "month": "Oct-25",
+          "paymentReceived": "yes"
+        },
+        {
+          "instalmentNo": 4,
+          "pctShare": 0.25,
+          "amount": 433650.0,
+          "month": "Jan-25",
+          "paymentReceived": "Yes"
+        }
+      ],
+      "ownerName": "Pratik",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 1734600.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 0.0
+    },
+    {
+      "srNo": 5.0,
+      "schoolName": "Carmel Convent High School, Durgapur",
+      "salesRep": null,
+      "schoolCount": 1.0,
+      "mouStatusText": "YES",
+      "kitsSent": "YES",
+      "duration": "01st April 2025 to 31st march 2026",
+      "city": "Durgapur, West bengal",
+      "state": "West Bengal",
+      "studentsMou": 900,
+      "studentsActual": 1048.0,
+      "spPerStudentWithoutTax": 1864.406779661017,
+      "spPerStudentWithTax": 2200,
+      "salesAmountWithTax": 2305600.0,
+      "amountReceived": 2305600.0,
+      "tdsAmount": 0.0,
+      "balanceOutstanding": 0.0,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": 1.0,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": 0.05,
+          "amount": 576400.0,
+          "month": "Feb-25",
+          "paymentReceived": "Yes"
+        },
+        {
+          "instalmentNo": 2,
+          "pctShare": 0.95,
+          "amount": 2190320.0,
+          "month": "Apr-25",
+          "paymentReceived": "Yes"
+        },
+        {
+          "instalmentNo": 3,
+          "pctShare": 0.0,
+          "amount": 0.0,
+          "month": "0",
+          "paymentReceived": null
+        },
+        {
+          "instalmentNo": 4,
+          "pctShare": 0.0,
+          "amount": 0.0,
+          "month": "0",
+          "paymentReceived": null
+        }
+      ],
+      "ownerName": "Pratik",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 2305604.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 0.0
+    },
+    {
+      "srNo": 6.0,
+      "schoolName": "Carmel School, Durgapur",
+      "salesRep": null,
+      "schoolCount": 1.0,
+      "mouStatusText": "YES",
+      "kitsSent": "YES",
+      "duration": "01st April 2025 to 31st march 2026",
+      "city": "Durgapur, West bengal",
+      "state": "West Bengal",
+      "studentsMou": 900,
+      "studentsActual": 960.0,
+      "spPerStudentWithoutTax": 1864.406779661017,
+      "spPerStudentWithTax": 2200,
+      "salesAmountWithTax": 2112000.0,
+      "amountReceived": 1933016.0,
+      "tdsAmount": 178984.0,
+      "balanceOutstanding": 0.0,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": 1.0,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": 0.25,
+          "amount": 528000.0,
+          "month": "Jul-25",
+          "paymentReceived": "Yes"
+        },
+        {
+          "instalmentNo": 2,
+          "pctShare": 0.25,
+          "amount": 528000.0,
+          "month": "Sep-25",
+          "paymentReceived": "Yes"
+        },
+        {
+          "instalmentNo": 3,
+          "pctShare": 0.25,
+          "amount": 528000.0,
+          "month": "Dec-25",
+          "paymentReceived": "No"
+        },
+        {
+          "instalmentNo": 4,
+          "pctShare": 0.25,
+          "amount": 528000.0,
+          "month": "Feb-25",
+          "paymentReceived": "Yes"
+        }
+      ],
+      "ownerName": "Pratik",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 2112004.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 0.0
+    },
+    {
+      "srNo": 7.0,
+      "schoolName": "Julien Educational Trust, Eglin Road",
+      "salesRep": null,
+      "schoolCount": 1.0,
+      "mouStatusText": "YES",
+      "kitsSent": "YES",
+      "duration": "01st April 2025 to 31st march 2026",
+      "city": "Kolkata",
+      "state": "West Bengal",
+      "studentsMou": 271,
+      "studentsActual": 270.0,
+      "spPerStudentWithoutTax": 1800.0,
+      "spPerStudentWithTax": 2124,
+      "salesAmountWithTax": 573480.0,
+      "amountReceived": 3290523.0,
+      "tdsAmount": 48405.0,
+      "balanceOutstanding": 0.0,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": 1.0,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": 0.05,
+          "amount": 143370.0,
+          "month": "Feb-25",
+          "paymentReceived": "Yes"
+        },
+        {
+          "instalmentNo": 2,
+          "pctShare": 0.95,
+          "amount": 544806.0,
+          "month": "Apr-25",
+          "paymentReceived": "Yes"
+        },
+        {
+          "instalmentNo": 3,
+          "pctShare": 0.0,
+          "amount": 0.0,
+          "month": "0",
+          "paymentReceived": null
+        },
+        {
+          "instalmentNo": 4,
+          "pctShare": 0.0,
+          "amount": 0.0,
+          "month": "0",
+          "paymentReceived": null
+        }
+      ],
+      "ownerName": "Pratik",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 573480.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 0.0
+    },
+    {
+      "srNo": 8.0,
+      "schoolName": "Julien Educational Trust, Kalyani",
+      "salesRep": null,
+      "schoolCount": 1.0,
+      "mouStatusText": "YES",
+      "kitsSent": "YES",
+      "duration": "01st April 2025 to 31st march 2026",
+      "city": "Kalyani",
+      "state": "West Bengal",
+      "studentsMou": 476,
+      "studentsActual": 474.0,
+      "spPerStudentWithoutTax": 1800.0,
+      "spPerStudentWithTax": 2124,
+      "salesAmountWithTax": 1006776.0,
+      "amountReceived": null,
+      "tdsAmount": null,
+      "balanceOutstanding": null,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": null,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": 0.05,
+          "amount": 251694.0,
+          "month": "Feb-25",
+          "paymentReceived": "Yes"
+        },
+        {
+          "instalmentNo": 2,
+          "pctShare": 0.95,
+          "amount": 956437.2,
+          "month": "Apr-25",
+          "paymentReceived": "Yes"
+        },
+        {
+          "instalmentNo": 3,
+          "pctShare": 0.0,
+          "amount": 0.0,
+          "month": "0",
+          "paymentReceived": null
+        },
+        {
+          "instalmentNo": 4,
+          "pctShare": 0.0,
+          "amount": 0.0,
+          "month": "0",
+          "paymentReceived": null
+        }
+      ],
+      "ownerName": "Pratik",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 1006776.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 0.0
+    },
+    {
+      "srNo": 9.0,
+      "schoolName": "Julien Educational Trust, Ganganagar",
+      "salesRep": null,
+      "schoolCount": 1.0,
+      "mouStatusText": "YES",
+      "kitsSent": "YES",
+      "duration": "01st April 2025 to 31st march 2026",
+      "city": "Ganganagar",
+      "state": "West Bengal",
+      "studentsMou": 592,
+      "studentsActual": 589.0,
+      "spPerStudentWithoutTax": 1800.0,
+      "spPerStudentWithTax": 2124,
+      "salesAmountWithTax": 1251036.0,
+      "amountReceived": null,
+      "tdsAmount": null,
+      "balanceOutstanding": null,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": null,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": 0.05,
+          "amount": 312759.0,
+          "month": "Feb-25",
+          "paymentReceived": "Yes"
+        },
+        {
+          "instalmentNo": 2,
+          "pctShare": 0.95,
+          "amount": 1188484.2,
+          "month": "Apr-25",
+          "paymentReceived": "Yes"
+        },
+        {
+          "instalmentNo": 3,
+          "pctShare": 0.0,
+          "amount": 0.0,
+          "month": "0",
+          "paymentReceived": null
+        },
+        {
+          "instalmentNo": 4,
+          "pctShare": 0.0,
+          "amount": 0.0,
+          "month": "0",
+          "paymentReceived": null
+        }
+      ],
+      "ownerName": "Pratik",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 1251036.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 0.0
+    },
+    {
+      "srNo": 10.0,
+      "schoolName": "Julien Educational Trust, Howrah",
+      "salesRep": null,
+      "schoolCount": 1.0,
+      "mouStatusText": "YES",
+      "kitsSent": "YES",
+      "duration": "01st April 2025 to 31st march 2026",
+      "city": "Howrah",
+      "state": "West Bengal",
+      "studentsMou": 232,
+      "studentsActual": 239.0,
+      "spPerStudentWithoutTax": 1800.0,
+      "spPerStudentWithTax": 2124,
+      "salesAmountWithTax": 507636.0,
+      "amountReceived": null,
+      "tdsAmount": null,
+      "balanceOutstanding": null,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": null,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": 0.05,
+          "amount": 126909.0,
+          "month": "Feb-25",
+          "paymentReceived": "Yes"
+        },
+        {
+          "instalmentNo": 2,
+          "pctShare": 0.95,
+          "amount": 482254.19999999995,
+          "month": "Apr-25",
+          "paymentReceived": "Yes"
+        },
+        {
+          "instalmentNo": 3,
+          "pctShare": 0.0,
+          "amount": 0.0,
+          "month": "0",
+          "paymentReceived": null
+        },
+        {
+          "instalmentNo": 4,
+          "pctShare": 0.0,
+          "amount": 0.0,
+          "month": "0",
+          "paymentReceived": null
+        }
+      ],
+      "ownerName": "Pratik",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 507636.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 0.0
+    },
+    {
+      "srNo": 11.0,
+      "schoolName": "Contai Public School",
+      "salesRep": null,
+      "schoolCount": 1.0,
+      "mouStatusText": "Existing School",
+      "kitsSent": "YES",
+      "duration": "01st April 2025 to 31st march 2026",
+      "city": "Kolkata",
+      "state": "West Bengal",
+      "studentsMou": 430,
+      "studentsActual": 450.0,
+      "spPerStudentWithoutTax": 1754.2372881355932,
+      "spPerStudentWithTax": 2070,
+      "salesAmountWithTax": 931500.0,
+      "amountReceived": 852560.0,
+      "tdsAmount": 78940.0,
+      "balanceOutstanding": 0.0,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": 1.0,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": 0.25,
+          "amount": 232875.0,
+          "month": "Apr-25",
+          "paymentReceived": "Yes"
+        },
+        {
+          "instalmentNo": 2,
+          "pctShare": 0.25,
+          "amount": 232875.0,
+          "month": "July-25",
+          "paymentReceived": "yes"
+        },
+        {
+          "instalmentNo": 3,
+          "pctShare": 0.25,
+          "amount": 232875.0,
+          "month": "Sept-25",
+          "paymentReceived": "yes"
+        },
+        {
+          "instalmentNo": 4,
+          "pctShare": 0.25,
+          "amount": 232875.0,
+          "month": "Dec-25",
+          "paymentReceived": "Yes"
+        }
+      ],
+      "ownerName": "Pratik",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 931500.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 0.0
+    },
+    {
+      "srNo": 12.0,
+      "schoolName": "Young Horizons School",
+      "salesRep": null,
+      "schoolCount": 1.0,
+      "mouStatusText": "Existing School",
+      "kitsSent": "YES",
+      "duration": "01st April 2025 to 31st march 2026",
+      "city": "Medinpur",
+      "state": "West Bengal",
+      "studentsMou": 200,
+      "studentsActual": 175.0,
+      "spPerStudentWithoutTax": 2000.0,
+      "spPerStudentWithTax": 2360,
+      "salesAmountWithTax": 413000.0,
+      "amountReceived": 203000.0,
+      "tdsAmount": 3500.0,
+      "balanceOutstanding": 0.0,
+      "amtRecdIn2627": 203000.0,
+      "tds2627": 3500.0,
+      "pctReceivedOverall": 1.0,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": 0.5,
+          "amount": 206500.0,
+          "month": "Apr-25",
+          "paymentReceived": "Yes"
+        },
+        {
+          "instalmentNo": 2,
+          "pctShare": 0.5,
+          "amount": 206500.0,
+          "month": "Sep-25",
+          "paymentReceived": "yes"
+        },
+        {
+          "instalmentNo": 3,
+          "pctShare": 0.0,
+          "amount": 0.0,
+          "month": "0",
+          "paymentReceived": null
+        },
+        {
+          "instalmentNo": 4,
+          "pctShare": 0.0,
+          "amount": 0.0,
+          "month": "0",
+          "paymentReceived": null
+        }
+      ],
+      "ownerName": "Pratik",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 413000.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 0.0
+    },
+    {
+      "srNo": 13.0,
+      "schoolName": "Swarnim International School",
+      "salesRep": null,
+      "schoolCount": 1.0,
+      "mouStatusText": "Existing School",
+      "kitsSent": "YES",
+      "duration": "01st April 2025 to 31st march 2026",
+      "city": "Kolkata",
+      "state": "West Bengal",
+      "studentsMou": 350,
+      "studentsActual": 363.0,
+      "spPerStudentWithoutTax": 1800.0,
+      "spPerStudentWithTax": 2124,
+      "salesAmountWithTax": 771012.0,
+      "amountReceived": 759251.0,
+      "tdsAmount": 11761.0,
+      "balanceOutstanding": 0.0,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": 1.0,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": 0.1,
+          "amount": 77101.2,
+          "month": "Apr-25",
+          "paymentReceived": "Yes"
+        },
+        {
+          "instalmentNo": 2,
+          "pctShare": 0.4,
+          "amount": 308404.8,
+          "month": "July-25",
+          "paymentReceived": "Yes"
+        },
+        {
+          "instalmentNo": 3,
+          "pctShare": 0.5,
+          "amount": 385506.0,
+          "month": "Oct-25",
+          "paymentReceived": "No"
+        },
+        {
+          "instalmentNo": 4,
+          "pctShare": 0.0,
+          "amount": 0.0,
+          "month": "0",
+          "paymentReceived": null
+        }
+      ],
+      "ownerName": "Pratik",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 771012.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 0.0
+    },
+    {
+      "srNo": 14.0,
+      "schoolName": "St. Paul\u2019s Mission School",
+      "salesRep": null,
+      "schoolCount": 1.0,
+      "mouStatusText": "YES",
+      "kitsSent": "YES",
+      "duration": "01st April 2025 to 31st march 2026",
+      "city": "Kolkata",
+      "state": "West Bengal",
+      "studentsMou": 350,
+      "studentsActual": 420.0,
+      "spPerStudentWithoutTax": 1694.9152542372883,
+      "spPerStudentWithTax": 2000,
+      "salesAmountWithTax": 840000.0,
+      "amountReceived": 768814.0,
+      "tdsAmount": 71186.0,
+      "balanceOutstanding": 0.0,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": 1.0,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": 0.5,
+          "amount": 420000.0,
+          "month": "Apr-25",
+          "paymentReceived": "Yes"
+        },
+        {
+          "instalmentNo": 2,
+          "pctShare": 0.5,
+          "amount": 420000.0,
+          "month": "Oct-25",
+          "paymentReceived": "yes"
+        },
+        {
+          "instalmentNo": 3,
+          "pctShare": 0.0,
+          "amount": 0.0,
+          "month": "0",
+          "paymentReceived": null
+        },
+        {
+          "instalmentNo": 4,
+          "pctShare": 0.0,
+          "amount": 0.0,
+          "month": "0",
+          "paymentReceived": null
+        }
+      ],
+      "ownerName": "Pratik",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 840000.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 0.0
+    },
+    {
+      "srNo": 15.0,
+      "schoolName": "St. Paul Boarding and Day School",
+      "salesRep": null,
+      "schoolCount": 1.0,
+      "mouStatusText": "Existing School",
+      "kitsSent": "YES",
+      "duration": "Existing School",
+      "city": "Kolkata",
+      "state": "West Bengal",
+      "studentsMou": 400,
+      "studentsActual": 343.0,
+      "spPerStudentWithoutTax": 2000.0,
+      "spPerStudentWithTax": 2360,
+      "salesAmountWithTax": 809480.0,
+      "amountReceived": 809480.0,
+      "tdsAmount": 0.0,
+      "balanceOutstanding": 0.0,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": 1.0,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": 0.25,
+          "amount": 202370.0,
+          "month": "Apr-25",
+          "paymentReceived": "Yes"
+        },
+        {
+          "instalmentNo": 2,
+          "pctShare": 0.25,
+          "amount": 202370.0,
+          "month": "July-25",
+          "paymentReceived": "No"
+        },
+        {
+          "instalmentNo": 3,
+          "pctShare": 0.25,
+          "amount": 202370.0,
+          "month": "Sept-25",
+          "paymentReceived": "No"
+        },
+        {
+          "instalmentNo": 4,
+          "pctShare": 0.25,
+          "amount": 202370.0,
+          "month": "Dec-25",
+          "paymentReceived": "No"
+        }
+      ],
+      "ownerName": "Pratik",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 809480.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 0.0
+    },
+    {
+      "srNo": 16.0,
+      "schoolName": "Lions Calcutta Greater Vidya Mandir",
+      "salesRep": null,
+      "schoolCount": 1.0,
+      "mouStatusText": "YES",
+      "kitsSent": "YES",
+      "duration": "01st April 2025 to 31st march 2026",
+      "city": "Sonarpur",
+      "state": "West Bengal",
+      "studentsMou": 800,
+      "studentsActual": 796.0,
+      "spPerStudentWithoutTax": 1016.9491525423729,
+      "spPerStudentWithTax": 1200,
+      "salesAmountWithTax": 955200.0,
+      "amountReceived": 874251.0,
+      "tdsAmount": 80949.0,
+      "balanceOutstanding": 0.0,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": 1.0,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": 0.3333,
+          "amount": 318400.0,
+          "month": "Apr-25",
+          "paymentReceived": "Yes"
+        },
+        {
+          "instalmentNo": 2,
+          "pctShare": 0.3333,
+          "amount": 318400.0,
+          "month": "Jul-25",
+          "paymentReceived": "Yes"
+        },
+        {
+          "instalmentNo": 3,
+          "pctShare": 0.3333,
+          "amount": 318400.0,
+          "month": "Oct 25",
+          "paymentReceived": "yes"
+        },
+        {
+          "instalmentNo": 4,
+          "pctShare": 0.0,
+          "amount": 0.0,
+          "month": "0",
+          "paymentReceived": null
+        }
+      ],
+      "ownerName": "Pratik",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 955200.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 0.0
+    },
+    {
+      "srNo": 17.0,
+      "schoolName": "St. John\u2019s School",
+      "salesRep": null,
+      "schoolCount": 1.0,
+      "mouStatusText": "YES",
+      "kitsSent": "YES",
+      "duration": "01st April 2025 to 31st march 2026",
+      "city": "Kolkata",
+      "state": "West Bengal",
+      "studentsMou": 250,
+      "studentsActual": 191.0,
+      "spPerStudentWithoutTax": 2118.64406779661,
+      "spPerStudentWithTax": 2500,
+      "salesAmountWithTax": 477500.0,
+      "amountReceived": 475000.0,
+      "tdsAmount": 2500.0,
+      "balanceOutstanding": 0.0,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": 1.0,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": 0.5,
+          "amount": 238750.0,
+          "month": "Apr-25",
+          "paymentReceived": "Yes"
+        },
+        {
+          "instalmentNo": 2,
+          "pctShare": 0.5,
+          "amount": 238750.0,
+          "month": "Oct-25",
+          "paymentReceived": "yes"
+        },
+        {
+          "instalmentNo": 3,
+          "pctShare": 0.0,
+          "amount": 0.0,
+          "month": "0",
+          "paymentReceived": null
+        },
+        {
+          "instalmentNo": 4,
+          "pctShare": 0.0,
+          "amount": 0.0,
+          "month": "0",
+          "paymentReceived": null
+        }
+      ],
+      "ownerName": "Pratik",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 477499.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 0.0
+    },
+    {
+      "srNo": 18.0,
+      "schoolName": "St. Montfort's Sr. Secondary School, Baruipur",
+      "salesRep": null,
+      "schoolCount": 1.0,
+      "mouStatusText": "YES",
+      "kitsSent": "YES",
+      "duration": "01st April 2025 to 31st march 2026",
+      "city": "Kolkata",
+      "state": "West Bengal",
+      "studentsMou": 450,
+      "studentsActual": 438.0,
+      "spPerStudentWithoutTax": 1016.9491525423729,
+      "spPerStudentWithTax": 1200,
+      "salesAmountWithTax": 525600.0,
+      "amountReceived": 516696.0,
+      "tdsAmount": 8908.0,
+      "balanceOutstanding": -4.0,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": 1.0000076103500761,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": 0.25,
+          "amount": 131400.0,
+          "month": "Apr-25",
+          "paymentReceived": "Yes"
+        },
+        {
+          "instalmentNo": 2,
+          "pctShare": 0.25,
+          "amount": 131400.0,
+          "month": "Jul-25",
+          "paymentReceived": "yes"
+        },
+        {
+          "instalmentNo": 3,
+          "pctShare": 0.25,
+          "amount": 131400.0,
+          "month": "Oct-25",
+          "paymentReceived": "yes"
+        },
+        {
+          "instalmentNo": 4,
+          "pctShare": 0.25,
+          "amount": 131400.0,
+          "month": "Jan-25",
+          "paymentReceived": "No"
+        }
+      ],
+      "ownerName": "Pratik",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 525605.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 0.0
+    },
+    {
+      "srNo": 19.0,
+      "schoolName": "Berhampore City Public School",
+      "salesRep": null,
+      "schoolCount": 1.0,
+      "mouStatusText": "YES",
+      "kitsSent": "YES",
+      "duration": "01st April 2025 to 31st march 2026",
+      "city": "Berhampore",
+      "state": "West Bengal",
+      "studentsMou": 200,
+      "studentsActual": 183.0,
+      "spPerStudentWithoutTax": 1016.9491525423729,
+      "spPerStudentWithTax": 1200,
+      "salesAmountWithTax": 219600.0,
+      "amountReceived": 109600.0,
+      "tdsAmount": null,
+      "balanceOutstanding": 89800.0,
+      "amtRecdIn2627": 20200.0,
+      "tds2627": null,
+      "pctReceivedOverall": 0.4990892531876138,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": 0.5,
+          "amount": 109800.0,
+          "month": "Apr-25",
+          "paymentReceived": "Yes"
+        },
+        {
+          "instalmentNo": 2,
+          "pctShare": 0.5,
+          "amount": 109800.0,
+          "month": "Oct-25",
+          "paymentReceived": "No"
+        },
+        {
+          "instalmentNo": 3,
+          "pctShare": 0.0,
+          "amount": 0.0,
+          "month": "0",
+          "paymentReceived": null
+        },
+        {
+          "instalmentNo": 4,
+          "pctShare": 0.0,
+          "amount": 0.0,
+          "month": "0",
+          "paymentReceived": null
+        }
+      ],
+      "ownerName": "Pratik",
+      "piNotRaisedPaymentReceived": 20000.0,
+      "piRaisedPaymentReceived": 109800.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 89800.0
+    },
+    {
+      "srNo": 20.0,
+      "schoolName": "Shaw Public School",
+      "salesRep": null,
+      "schoolCount": 1.0,
+      "mouStatusText": "Existing School",
+      "kitsSent": "YES",
+      "duration": "01st April 2025 to 31st march 2026",
+      "city": "Kolkata",
+      "state": "West Bengal",
+      "studentsMou": 50,
+      "studentsActual": 41.0,
+      "spPerStudentWithoutTax": 2542.37,
+      "spPerStudentWithTax": 2999.9965999999995,
+      "salesAmountWithTax": 122999.86059999999,
+      "amountReceived": 120915.0,
+      "tdsAmount": 2085.0,
+      "balanceOutstanding": -0.1394000000145752,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": 1.000001133334618,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": 1.0,
+          "amount": 122999.86059999999,
+          "month": "Apr-25",
+          "paymentReceived": "Yes"
+        },
+        {
+          "instalmentNo": 2,
+          "pctShare": 0,
+          "amount": 0.0,
+          "month": "0",
+          "paymentReceived": null
+        },
+        {
+          "instalmentNo": 3,
+          "pctShare": 0.0,
+          "amount": 0.0,
+          "month": "0",
+          "paymentReceived": null
+        },
+        {
+          "instalmentNo": 4,
+          "pctShare": 0.0,
+          "amount": 0.0,
+          "month": "0",
+          "paymentReceived": null
+        }
+      ],
+      "ownerName": "Pratik",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 123000.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 0.0
+    },
+    {
+      "srNo": 21.0,
+      "schoolName": "Sri R. N. Singh Memorial High School (For Class 8) - MTPL 14 RD",
+      "salesRep": null,
+      "schoolCount": 1.0,
+      "mouStatusText": "Existing School",
+      "kitsSent": "YES",
+      "duration": "01st April 2025 to 31st march 2026",
+      "city": "Kolkata",
+      "state": "West Bengal",
+      "studentsMou": 10,
+      "studentsActual": 11.0,
+      "spPerStudentWithoutTax": 2118.64406779661,
+      "spPerStudentWithTax": 2500,
+      "salesAmountWithTax": 27500.0,
+      "amountReceived": 27500.0,
+      "tdsAmount": null,
+      "balanceOutstanding": 0.0,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": 1.0,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": 1.0,
+          "amount": 27500.0,
+          "month": "Apr-25",
+          "paymentReceived": "Yes"
+        },
+        {
+          "instalmentNo": 2,
+          "pctShare": 0,
+          "amount": 0.0,
+          "month": "0",
+          "paymentReceived": null
+        },
+        {
+          "instalmentNo": 3,
+          "pctShare": 0.0,
+          "amount": 0.0,
+          "month": "0",
+          "paymentReceived": null
+        },
+        {
+          "instalmentNo": 4,
+          "pctShare": 0.0,
+          "amount": 0.0,
+          "month": "0",
+          "paymentReceived": null
+        }
+      ],
+      "ownerName": "Pratik",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 27500.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 0.0
+    },
+    {
+      "srNo": 22.0,
+      "schoolName": "Sri R. N. Singh Memorial High School - MTPL13/15",
+      "salesRep": null,
+      "schoolCount": 1.0,
+      "mouStatusText": "Existing School",
+      "kitsSent": "YES",
+      "duration": "01st April 2025 to 31st march 2026",
+      "city": "Kolkata",
+      "state": "West Bengal",
+      "studentsMou": 60,
+      "studentsActual": 67.0,
+      "spPerStudentWithoutTax": 2000.0,
+      "spPerStudentWithTax": 2360,
+      "salesAmountWithTax": 158120.0,
+      "amountReceived": 158120.0,
+      "tdsAmount": 0.0,
+      "balanceOutstanding": 0.0,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": 1.0,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": 1.0,
+          "amount": 158120.0,
+          "month": "Apr-25",
+          "paymentReceived": "Yes"
+        },
+        {
+          "instalmentNo": 2,
+          "pctShare": 0,
+          "amount": 0.0,
+          "month": "0",
+          "paymentReceived": null
+        },
+        {
+          "instalmentNo": 3,
+          "pctShare": 0.0,
+          "amount": 0.0,
+          "month": "0",
+          "paymentReceived": null
+        },
+        {
+          "instalmentNo": 4,
+          "pctShare": 0.0,
+          "amount": 0.0,
+          "month": "0",
+          "paymentReceived": null
+        }
+      ],
+      "ownerName": "Pratik",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 158120.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 0.0
+    },
+    {
+      "srNo": null,
+      "schoolName": "Sri Ram Narayan Singh Memorial High School",
+      "salesRep": null,
+      "schoolCount": 1.0,
+      "mouStatusText": "Existing School",
+      "kitsSent": "YES",
+      "duration": null,
+      "city": "Kolkata",
+      "state": "West Bengal",
+      "studentsMou": 20,
+      "studentsActual": 21.0,
+      "spPerStudentWithoutTax": 1694.92,
+      "spPerStudentWithTax": 2000,
+      "salesAmountWithTax": 42000.0,
+      "amountReceived": 42000.0,
+      "tdsAmount": 0.0,
+      "balanceOutstanding": 0.0,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": 1.0,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": 1.0,
+          "amount": 42000.0,
+          "month": null,
+          "paymentReceived": "Yes"
+        }
+      ],
+      "ownerName": "Pratik",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 42000.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 0.0
+    },
+    {
+      "srNo": 23.0,
+      "schoolName": "BGS School",
+      "salesRep": "Roveena",
+      "schoolCount": 1.0,
+      "mouStatusText": null,
+      "kitsSent": "YES",
+      "duration": "01st April 2025 to 31st march 2026",
+      "city": "Kolkata",
+      "state": "West Bengal",
+      "studentsMou": 385,
+      "studentsActual": 670.0,
+      "spPerStudentWithoutTax": 1461.864406779661,
+      "spPerStudentWithTax": 1725,
+      "salesAmountWithTax": 1155750.0,
+      "amountReceived": 1155750.0,
+      "tdsAmount": 0.0,
+      "balanceOutstanding": 0.0,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": 1.0,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": 1.0,
+          "amount": 1155750.0,
+          "month": "Apr-25",
+          "paymentReceived": "Yes"
+        },
+        {
+          "instalmentNo": 2,
+          "pctShare": 0,
+          "amount": 0.0,
+          "month": "0",
+          "paymentReceived": null
+        },
+        {
+          "instalmentNo": 3,
+          "pctShare": 0.0,
+          "amount": 0.0,
+          "month": "0",
+          "paymentReceived": null
+        },
+        {
+          "instalmentNo": 4,
+          "pctShare": 0.0,
+          "amount": 0.0,
+          "month": "0",
+          "paymentReceived": null
+        }
+      ],
+      "ownerName": "Pratik",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 1155750.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 0.0
+    },
+    {
+      "srNo": 24.0,
+      "schoolName": "Doon Scholars School",
+      "salesRep": "Roveena",
+      "schoolCount": 1.0,
+      "mouStatusText": null,
+      "kitsSent": "YES",
+      "duration": "01st April 2025 to 31st march 2026",
+      "city": "Dehradun",
+      "state": "Uttarakhand",
+      "studentsMou": null,
+      "studentsActual": 342.0,
+      "spPerStudentWithoutTax": 1220.34,
+      "spPerStudentWithTax": 1440.0012,
+      "salesAmountWithTax": 492480.4104,
+      "amountReceived": 492480.0,
+      "tdsAmount": 0.0,
+      "balanceOutstanding": 0.4103999999933876,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": 0.9999991666673611,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": 0.25,
+          "amount": 123120.1026,
+          "month": "Jul-25",
+          "paymentReceived": "Yes"
+        },
+        {
+          "instalmentNo": 2,
+          "pctShare": null,
+          "amount": 166040.0,
+          "month": "Aug-25",
+          "paymentReceived": "Yes"
+        },
+        {
+          "instalmentNo": 3,
+          "pctShare": 0.25,
+          "amount": 101660.0,
+          "month": "Dec-25",
+          "paymentReceived": "yes"
+        },
+        {
+          "instalmentNo": 4,
+          "pctShare": 0.25,
+          "amount": 101660.0,
+          "month": "Jan-25",
+          "paymentReceived": "Yes"
+        }
+      ],
+      "ownerName": "Pratik",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 492480.0,
+      "piRaisedPaymentNotReceived": 0.4103999999933876,
+      "piNotRaisedPaymentNotReceived": 0.0
+    },
+    {
+      "srNo": 25.0,
+      "schoolName": "RBSM PUBLIC SCHOOL",
+      "salesRep": "Roveena",
+      "schoolCount": 1.0,
+      "mouStatusText": null,
+      "kitsSent": "YES",
+      "duration": null,
+      "city": "Gurugram",
+      "state": "Haryana",
+      "studentsMou": null,
+      "studentsActual": 732.0,
+      "spPerStudentWithoutTax": 1016.95,
+      "spPerStudentWithTax": 1200,
+      "salesAmountWithTax": 878400.0,
+      "amountReceived": 645624.0,
+      "tdsAmount": 13176.0,
+      "balanceOutstanding": 219600.0,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": 0.75,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": 0.25,
+          "amount": 219600.0,
+          "month": "Jul-25",
+          "paymentReceived": "Yes"
+        },
+        {
+          "instalmentNo": 2,
+          "pctShare": 0.25,
+          "amount": 219600.0,
+          "month": "Sep-25",
+          "paymentReceived": "yes"
+        },
+        {
+          "instalmentNo": 3,
+          "pctShare": 0.25,
+          "amount": 219600.0,
+          "month": "Dec-25",
+          "paymentReceived": "yes"
+        },
+        {
+          "instalmentNo": 4,
+          "pctShare": 0.25,
+          "amount": 219600.0,
+          "month": "Jan-25",
+          "paymentReceived": "No"
+        }
+      ],
+      "ownerName": "Pratik",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 658800.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 219600.0
+    },
+    {
+      "srNo": 26.0,
+      "schoolName": "NARAYANA SCHOOL",
+      "salesRep": null,
+      "schoolCount": 9.0,
+      "mouStatusText": "YES",
+      "kitsSent": "YES",
+      "duration": "01st April 2025 to 31st march 2026",
+      "city": "9 Different Locations",
+      "state": "West Bengal",
+      "studentsMou": 2000,
+      "studentsActual": 819.0,
+      "spPerStudentWithoutTax": 1000.0,
+      "spPerStudentWithTax": 1180,
+      "salesAmountWithTax": 966420.0,
+      "amountReceived": 180000.0,
+      "tdsAmount": 0.0,
+      "balanceOutstanding": 186420.0,
+      "amtRecdIn2627": 600000.0,
+      "tds2627": null,
+      "pctReceivedOverall": 0.18625442354255914,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": 1.0,
+          "amount": 966420.0,
+          "month": "Dec",
+          "paymentReceived": null
+        }
+      ],
+      "ownerName": "Pratik",
+      "piNotRaisedPaymentReceived": 780000.0,
+      "piRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 186420.0
+    },
+    {
+      "srNo": 27.0,
+      "schoolName": "KAZIMAN RAI MEMORIAL TRUST",
+      "salesRep": null,
+      "schoolCount": 1.0,
+      "mouStatusText": "YES",
+      "kitsSent": "NO",
+      "duration": "01st April 2025 to 31st march 2026",
+      "city": "Kolkata",
+      "state": "West Bengal",
+      "studentsMou": 150,
+      "studentsActual": 0.0,
+      "spPerStudentWithoutTax": 1000.0,
+      "spPerStudentWithTax": 1180,
+      "salesAmountWithTax": 0.0,
+      "amountReceived": 20000.0,
+      "tdsAmount": null,
+      "balanceOutstanding": -20000.0,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": null,
+      "instalments": [],
+      "ownerName": "Pratik",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 0.0
+    },
+    {
+      "srNo": 30.0,
+      "schoolName": "Shemrock School",
+      "salesRep": null,
+      "schoolCount": 1.0,
+      "mouStatusText": "YES",
+      "kitsSent": "YES",
+      "duration": "01st April 2025 to 31st march 2026",
+      "city": "Nagaland",
+      "state": "Nagaland",
+      "studentsMou": "not mentioned In MOU",
+      "studentsActual": 39.0,
+      "spPerStudentWithoutTax": 3000.0,
+      "spPerStudentWithTax": 3540,
+      "salesAmountWithTax": 138060.0,
+      "amountReceived": 30000.0,
+      "tdsAmount": 0.0,
+      "balanceOutstanding": 108060.0,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": 0.21729682746631898,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": null,
+          "amount": 30000.0,
+          "month": null,
+          "paymentReceived": "Yes"
+        },
+        {
+          "instalmentNo": 2,
+          "pctShare": null,
+          "amount": 108060.0,
+          "month": "Dec-25",
+          "paymentReceived": "No"
+        }
+      ],
+      "ownerName": "Pratik",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 30000.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 108060.0
+    },
+    {
+      "srNo": 31.0,
+      "schoolName": "ITIKI School",
+      "salesRep": null,
+      "schoolCount": 1.0,
+      "mouStatusText": "YES",
+      "kitsSent": "YES",
+      "duration": "01st April 2025 to 31st march 2026",
+      "city": "Nagaland",
+      "state": "Nagaland",
+      "studentsMou": "not mentioned In MOU",
+      "studentsActual": 20.0,
+      "spPerStudentWithoutTax": 2542.37,
+      "spPerStudentWithTax": 3000,
+      "salesAmountWithTax": 60000.0,
+      "amountReceived": 60000.0,
+      "tdsAmount": 0.0,
+      "balanceOutstanding": 0.0,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": 1.0,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": 1.0,
+          "amount": 60000.0,
+          "month": null,
+          "paymentReceived": "Yes"
+        }
+      ],
+      "ownerName": "Pratik",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 60000.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 0.0
+    },
+    {
+      "srNo": 32.0,
+      "schoolName": "The Shree ji school",
+      "salesRep": "Roveena",
+      "schoolCount": 1.0,
+      "mouStatusText": "As per email",
+      "kitsSent": "YES",
+      "duration": "01st April 2025 to 31st march 2026",
+      "city": "Faridabad",
+      "state": "Haryana",
+      "studentsMou": null,
+      "studentsActual": 270.0,
+      "spPerStudentWithoutTax": 941.6186440677965,
+      "spPerStudentWithTax": 1111.11,
+      "salesAmountWithTax": 299999.69999999995,
+      "amountReceived": 300000.0,
+      "tdsAmount": 0.0,
+      "balanceOutstanding": -0.30000000004656613,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": 1.0000010000010002,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": null,
+          "amount": 300000.0,
+          "month": "Dec",
+          "paymentReceived": "Yes"
+        },
+        {
+          "instalmentNo": 2,
+          "pctShare": null,
+          "amount": 100000.0,
+          "month": "Dec-25",
+          "paymentReceived": "yes"
+        }
+      ],
+      "ownerName": "Pratik",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 300000.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": -0.30000000004656613
+    },
+    {
+      "srNo": 33.0,
+      "schoolName": "Sumana Dutta Memorial Vivekananda International School",
+      "salesRep": null,
+      "schoolCount": 1.0,
+      "mouStatusText": "YES",
+      "kitsSent": "YES",
+      "duration": "01st April 2025 to 31st march 2026",
+      "city": "Singhbhum",
+      "state": "Jharkhand",
+      "studentsMou": 40,
+      "studentsActual": 31.0,
+      "spPerStudentWithoutTax": 1016.95,
+      "spPerStudentWithTax": 1200,
+      "salesAmountWithTax": 37200.0,
+      "amountReceived": 18600.0,
+      "tdsAmount": 0.0,
+      "balanceOutstanding": 18600.0,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": 0.5,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": 0.5,
+          "amount": 18600.0,
+          "month": "Jul-25",
+          "paymentReceived": "Yes"
+        },
+        {
+          "instalmentNo": 2,
+          "pctShare": 0.5,
+          "amount": 18600.0,
+          "month": "Oct-25",
+          "paymentReceived": "No"
+        }
+      ],
+      "ownerName": "Pratik",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 18600.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 18600.0
+    },
+    {
+      "srNo": 34.0,
+      "schoolName": "Hariyana International Academy - Class 3 & 4",
+      "salesRep": null,
+      "schoolCount": 1.0,
+      "mouStatusText": "YES",
+      "kitsSent": "YES",
+      "duration": "01st July 2025 to 31st march 2026",
+      "city": "Kalaberia",
+      "state": "West Bengal",
+      "studentsMou": 10,
+      "studentsActual": 10.0,
+      "spPerStudentWithoutTax": 2118.64,
+      "spPerStudentWithTax": 2500,
+      "salesAmountWithTax": 25000.0,
+      "amountReceived": 22881.0,
+      "tdsAmount": 2119.0,
+      "balanceOutstanding": 0.0,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": 1.0,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": 1.0,
+          "amount": 25000.0,
+          "month": null,
+          "paymentReceived": "Yes"
+        }
+      ],
+      "ownerName": "Pratik",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 25000.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 0.0
+    },
+    {
+      "srNo": 35.0,
+      "schoolName": "National Gems Higher Secondary School",
+      "salesRep": "Ranotosh",
+      "schoolCount": 1.0,
+      "mouStatusText": "Existing School",
+      "kitsSent": "YES",
+      "duration": "01st July 2025 to 31st march 2026",
+      "city": "Kolkata",
+      "state": "West Bengal",
+      "studentsMou": null,
+      "studentsActual": 49.0,
+      "spPerStudentWithoutTax": 2500.0,
+      "spPerStudentWithTax": 2950,
+      "salesAmountWithTax": 144550.0,
+      "amountReceived": null,
+      "tdsAmount": null,
+      "balanceOutstanding": 144550.0,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": 0.0,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": 0.25,
+          "amount": 36137.5,
+          "month": "Jul-25",
+          "paymentReceived": null
+        },
+        {
+          "instalmentNo": 2,
+          "pctShare": 0.25,
+          "amount": 36137.5,
+          "month": "Sep-25",
+          "paymentReceived": "No"
+        },
+        {
+          "instalmentNo": 3,
+          "pctShare": 0.25,
+          "amount": 36137.5,
+          "month": "Dec-25",
+          "paymentReceived": null
+        },
+        {
+          "instalmentNo": 4,
+          "pctShare": 0.25,
+          "amount": 36137.5,
+          "month": "Feb-25",
+          "paymentReceived": null
+        }
+      ],
+      "ownerName": "Pratik",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 144550.0
+    },
+    {
+      "srNo": 36.0,
+      "schoolName": "B I T Global School",
+      "salesRep": "Roveena",
+      "schoolCount": 1.0,
+      "mouStatusText": "Pending",
+      "kitsSent": "YES",
+      "duration": null,
+      "city": "Meerut",
+      "state": "Uttar Pradesh",
+      "studentsMou": null,
+      "studentsActual": 120.0,
+      "spPerStudentWithoutTax": 1271.19,
+      "spPerStudentWithTax": 1500,
+      "salesAmountWithTax": 180000.0,
+      "amountReceived": 177174.0,
+      "tdsAmount": 2826.0,
+      "balanceOutstanding": 0.0,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": 1.0,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": 0.25,
+          "amount": 45000.0,
+          "month": "Jul-25",
+          "paymentReceived": "Yes"
+        },
+        {
+          "instalmentNo": 2,
+          "pctShare": 0.25,
+          "amount": 45000.0,
+          "month": "Sep-25",
+          "paymentReceived": "Yes"
+        },
+        {
+          "instalmentNo": 3,
+          "pctShare": 0.25,
+          "amount": 45000.0,
+          "month": "Dec-25",
+          "paymentReceived": "Yes"
+        },
+        {
+          "instalmentNo": 4,
+          "pctShare": 0.25,
+          "amount": 45000.0,
+          "month": null,
+          "paymentReceived": "Yes"
+        }
+      ],
+      "ownerName": "Pratik",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 180000.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 0.0
+    },
+    {
+      "srNo": 37.0,
+      "schoolName": "TINKRSPHERE ACADEMY,",
+      "salesRep": null,
+      "schoolCount": 1.0,
+      "mouStatusText": "YES",
+      "kitsSent": "YES",
+      "duration": null,
+      "city": "Howrah",
+      "state": "West Bengal",
+      "studentsMou": 1,
+      "studentsActual": 1.0,
+      "spPerStudentWithoutTax": 10169.49152542373,
+      "spPerStudentWithTax": 12000,
+      "salesAmountWithTax": 12000.0,
+      "amountReceived": 12000.0,
+      "tdsAmount": 0.0,
+      "balanceOutstanding": 0.0,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": 1.0,
+      "instalments": [],
+      "ownerName": "Pratik",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 12000.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 0.0
+    },
+    {
+      "srNo": 38.0,
+      "schoolName": "Modern High School International",
+      "salesRep": null,
+      "schoolCount": null,
+      "mouStatusText": "Pending",
+      "kitsSent": "Yes",
+      "duration": null,
+      "city": "Kolkata",
+      "state": "West Bengal",
+      "studentsMou": null,
+      "studentsActual": 9.0,
+      "spPerStudentWithoutTax": 13200.0,
+      "spPerStudentWithTax": 15576,
+      "salesAmountWithTax": 140184.0,
+      "amountReceived": 140184.0,
+      "tdsAmount": null,
+      "balanceOutstanding": 0.0,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": 1.0,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": 1.0,
+          "amount": 140184.0,
+          "month": "Dec",
+          "paymentReceived": "No"
+        }
+      ],
+      "ownerName": "Pratik",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 140184.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 0.0
+    },
+    {
+      "srNo": null,
+      "schoolName": "Modern High School International",
+      "salesRep": null,
+      "schoolCount": null,
+      "mouStatusText": "Pending",
+      "kitsSent": "Yes",
+      "duration": null,
+      "city": null,
+      "state": null,
+      "studentsMou": null,
+      "studentsActual": 72.0,
+      "spPerStudentWithoutTax": null,
+      "spPerStudentWithTax": "Drone workshop",
+      "salesAmountWithTax": 200000.0,
+      "amountReceived": 183051.0,
+      "tdsAmount": 16949.0,
+      "balanceOutstanding": 0.0,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": 1.0,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": 1.0,
+          "amount": 200000.0,
+          "month": null,
+          "paymentReceived": null
+        }
+      ],
+      "ownerName": "Pratik",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 200000.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 0.0
+    },
+    {
+      "srNo": 39.0,
+      "schoolName": "GR International School",
+      "salesRep": "sahil",
+      "schoolCount": null,
+      "mouStatusText": null,
+      "kitsSent": "YES",
+      "duration": null,
+      "city": "Mhendragadh",
+      "state": "Haryana",
+      "studentsMou": 125,
+      "studentsActual": 110.0,
+      "spPerStudentWithoutTax": 1864.406779661017,
+      "spPerStudentWithTax": 2200,
+      "salesAmountWithTax": 242000.0,
+      "amountReceived": null,
+      "tdsAmount": null,
+      "balanceOutstanding": 242000.0,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": 0.0,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": 1.0,
+          "amount": 242000.0,
+          "month": "Dec",
+          "paymentReceived": "No"
+        }
+      ],
+      "ownerName": "Pratik",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentNotReceived": null,
+      "piNotRaisedPaymentNotReceived": 242000.0
+    },
+    {
+      "srNo": 40.0,
+      "schoolName": "The Scottish Church Collegiate School",
+      "salesRep": null,
+      "schoolCount": 1.0,
+      "mouStatusText": "YES",
+      "kitsSent": "YES",
+      "duration": "01st August 2025 to 31st march 2026",
+      "city": "Kolkata",
+      "state": "West Bengal",
+      "studentsMou": 80,
+      "studentsActual": 74.0,
+      "spPerStudentWithoutTax": 847.457627118644,
+      "spPerStudentWithTax": 1000,
+      "salesAmountWithTax": 74000.0,
+      "amountReceived": 72746.0,
+      "tdsAmount": 1254.0,
+      "balanceOutstanding": 0.0,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": 1.0,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": 0.5,
+          "amount": 37000.0,
+          "month": "Aug-25",
+          "paymentReceived": "Yes"
+        },
+        {
+          "instalmentNo": 2,
+          "pctShare": 0.5,
+          "amount": 37000.0,
+          "month": "Oct-25",
+          "paymentReceived": "yes"
+        }
+      ],
+      "ownerName": "Pratik",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 74000.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 0.0
+    },
+    {
+      "srNo": 41.0,
+      "schoolName": "Rishi Aurobindo Memorial Academy",
+      "salesRep": null,
+      "schoolCount": 1.0,
+      "mouStatusText": "YES",
+      "kitsSent": "YES",
+      "duration": "01st August 2025 to 31st march 2026",
+      "city": "Kolkata",
+      "state": "West Bengal",
+      "studentsMou": 50,
+      "studentsActual": 13.0,
+      "spPerStudentWithoutTax": 2000.0,
+      "spPerStudentWithTax": 2360,
+      "salesAmountWithTax": 29680.0,
+      "amountReceived": 19840.0,
+      "tdsAmount": 0.0,
+      "balanceOutstanding": 0.0,
+      "amtRecdIn2627": 18840.0,
+      "tds2627": null,
+      "pctReceivedOverall": 1.0,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": null,
+          "amount": 29680.0,
+          "month": "Aug-25",
+          "paymentReceived": "Yes"
+        },
+        {
+          "instalmentNo": 2,
+          "pctShare": 0.5,
+          "amount": null,
+          "month": "Jan-25",
+          "paymentReceived": null
+        }
+      ],
+      "ownerName": "Pratik",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 38680.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 0.0
+    },
+    {
+      "srNo": null,
+      "schoolName": "Rishi Aurobindo Memorial Academy",
+      "salesRep": null,
+      "schoolCount": null,
+      "mouStatusText": null,
+      "kitsSent": null,
+      "duration": null,
+      "city": null,
+      "state": null,
+      "studentsMou": null,
+      "studentsActual": 3.0,
+      "spPerStudentWithoutTax": 2542.3728813559323,
+      "spPerStudentWithTax": 3000,
+      "salesAmountWithTax": 9000.0,
+      "amountReceived": null,
+      "tdsAmount": null,
+      "balanceOutstanding": null,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": null,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": null,
+          "amount": 9000.0,
+          "month": "Aug-25",
+          "paymentReceived": "Yes"
+        }
+      ],
+      "ownerName": "Pratik",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 0.0
+    },
+    {
+      "srNo": 42.0,
+      "schoolName": "Stepping Stone Model School",
+      "salesRep": null,
+      "schoolCount": 1.0,
+      "mouStatusText": "YES",
+      "kitsSent": "YES",
+      "duration": "01st August 2025 to 31st march 2026",
+      "city": "Alipurduar",
+      "state": "West Bengal",
+      "studentsMou": 60,
+      "studentsActual": 60.0,
+      "spPerStudentWithoutTax": 1525.4237288135594,
+      "spPerStudentWithTax": 1800,
+      "salesAmountWithTax": 108000.0,
+      "amountReceived": 108000.0,
+      "tdsAmount": 0.0,
+      "balanceOutstanding": 0.0,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": 1.0,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": 1.0,
+          "amount": null,
+          "month": "2015-09-01 00:00:00",
+          "paymentReceived": "Yes"
+        }
+      ],
+      "ownerName": "Pratik",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 108000.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 0.0
+    },
+    {
+      "srNo": 43.0,
+      "schoolName": "Podar International School Howrah",
+      "salesRep": null,
+      "schoolCount": 1.0,
+      "mouStatusText": "YES",
+      "kitsSent": "YES",
+      "duration": null,
+      "city": "Howrah",
+      "state": "West Bengal",
+      "studentsMou": null,
+      "studentsActual": 22.0,
+      "spPerStudentWithoutTax": 1633.2796610169491,
+      "spPerStudentWithTax": 1927.27,
+      "salesAmountWithTax": 42399.94,
+      "amountReceived": 42400.0,
+      "tdsAmount": 0.0,
+      "balanceOutstanding": -0.059999999997671694,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": 1.000001415096342,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": 1.0,
+          "amount": 42400.0,
+          "month": "May",
+          "paymentReceived": "Yes"
+        }
+      ],
+      "ownerName": "Pratik",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 42400.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": -0.059999999997671694
+    },
+    {
+      "srNo": 44.0,
+      "schoolName": "Shree Pralhadrao Kashid Foundation (Matoshree National School)",
+      "salesRep": null,
+      "schoolCount": 1.0,
+      "mouStatusText": "YES",
+      "kitsSent": "YES",
+      "duration": null,
+      "city": "Pune",
+      "state": "Maharashtra",
+      "studentsMou": null,
+      "studentsActual": 30.0,
+      "spPerStudentWithoutTax": 1271.1864406779662,
+      "spPerStudentWithTax": 1500,
+      "salesAmountWithTax": 45000.0,
+      "amountReceived": 45000.0,
+      "tdsAmount": 0.0,
+      "balanceOutstanding": 0.0,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": 1.0,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": 1.0,
+          "amount": 45000.0,
+          "month": "Nov",
+          "paymentReceived": "Yes"
+        }
+      ],
+      "ownerName": "Pratik",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 45000.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 0.0
+    },
+    {
+      "srNo": 45.0,
+      "schoolName": "Nabi Crescent School",
+      "salesRep": "Balu R",
+      "schoolCount": 1.0,
+      "mouStatusText": "2025-04-18 00:00:00",
+      "kitsSent": "No",
+      "duration": "01st April 2025 to 31st march 2026",
+      "city": "Avadi",
+      "state": "Tamil Nadu",
+      "studentsMou": 300,
+      "studentsActual": 150.0,
+      "spPerStudentWithoutTax": 1016.9491525423729,
+      "spPerStudentWithTax": 1200,
+      "salesAmountWithTax": 180000.0,
+      "amountReceived": 63000.0,
+      "tdsAmount": 0.0,
+      "balanceOutstanding": 63000.0,
+      "amtRecdIn2627": 54000.0,
+      "tds2627": null,
+      "pctReceivedOverall": 0.35,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": 0.35,
+          "amount": 62999.99999999999,
+          "month": "June",
+          "paymentReceived": "yes"
+        },
+        {
+          "instalmentNo": 2,
+          "pctShare": 0.3,
+          "amount": 54000.0,
+          "month": "Sep",
+          "paymentReceived": "No"
+        },
+        {
+          "instalmentNo": 3,
+          "pctShare": 0.35,
+          "amount": 62999.99999999999,
+          "month": "Dec",
+          "paymentReceived": "No"
+        },
+        {
+          "instalmentNo": 4,
+          "pctShare": null,
+          "amount": 0.0,
+          "month": null,
+          "paymentReceived": null
+        }
+      ],
+      "ownerName": "Nilabhra",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 117000.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 63000.0
+    },
+    {
+      "srNo": 46.0,
+      "schoolName": "Mustafa Matric School",
+      "salesRep": "Balu R",
+      "schoolCount": 1.0,
+      "mouStatusText": "2025-04-12 00:00:00",
+      "kitsSent": "No",
+      "duration": "01st April 2025 to 31st march 2026",
+      "city": "Chidambaram",
+      "state": "Tamil Nadu",
+      "studentsMou": 300,
+      "studentsActual": 373.0,
+      "spPerStudentWithoutTax": 677.9661016949152,
+      "spPerStudentWithTax": 800,
+      "salesAmountWithTax": 298400.0,
+      "amountReceived": 193960.0,
+      "tdsAmount": 0.0,
+      "balanceOutstanding": 104440.0,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": 0.65,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": 0.35,
+          "amount": 104440.0,
+          "month": "June",
+          "paymentReceived": "yes"
+        },
+        {
+          "instalmentNo": 2,
+          "pctShare": 0.3,
+          "amount": 89520.0,
+          "month": "Sep",
+          "paymentReceived": "yes"
+        },
+        {
+          "instalmentNo": 3,
+          "pctShare": 0.35,
+          "amount": 104440.0,
+          "month": "Dec",
+          "paymentReceived": "No"
+        },
+        {
+          "instalmentNo": 4,
+          "pctShare": null,
+          "amount": 0.0,
+          "month": null,
+          "paymentReceived": null
+        }
+      ],
+      "ownerName": "Nilabhra",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 193960.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 104440.0
+    },
+    {
+      "srNo": 47.0,
+      "schoolName": "PGIS Chennai",
+      "salesRep": "Balu R",
+      "schoolCount": 1.0,
+      "mouStatusText": "Pending",
+      "kitsSent": "No",
+      "duration": "01st April 2025 to 31st march 2026",
+      "city": "Chennai",
+      "state": "Tamil Nadu",
+      "studentsMou": 250,
+      "studentsActual": 218.0,
+      "spPerStudentWithoutTax": 1271.1864406779662,
+      "spPerStudentWithTax": 1500,
+      "salesAmountWithTax": 327000.0,
+      "amountReceived": 212550.0,
+      "tdsAmount": 0.0,
+      "balanceOutstanding": 0.0,
+      "amtRecdIn2627": 114450.0,
+      "tds2627": null,
+      "pctReceivedOverall": 1.0,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": 0.35,
+          "amount": 114450.0,
+          "month": "June",
+          "paymentReceived": "yes"
+        },
+        {
+          "instalmentNo": 2,
+          "pctShare": 0.3,
+          "amount": 98100.0,
+          "month": "Sep",
+          "paymentReceived": "No"
+        },
+        {
+          "instalmentNo": 3,
+          "pctShare": 0.35,
+          "amount": 114450.0,
+          "month": "Dec",
+          "paymentReceived": "yes"
+        },
+        {
+          "instalmentNo": 4,
+          "pctShare": null,
+          "amount": 0.0,
+          "month": null,
+          "paymentReceived": null
+        }
+      ],
+      "ownerName": "Nilabhra",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 327000.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 0.0
+    },
+    {
+      "srNo": 48.0,
+      "schoolName": "*Sagaya Matha Matriculation Higher Secondary School",
+      "salesRep": "Balu R",
+      "schoolCount": 1.0,
+      "mouStatusText": "2025-05-26 00:00:00",
+      "kitsSent": "No",
+      "duration": "01st April 2025 to 31st march 2026",
+      "city": "Chennai",
+      "state": "Tamil Nadu",
+      "studentsMou": 508,
+      "studentsActual": 427.0,
+      "spPerStudentWithoutTax": 593.2203389830509,
+      "spPerStudentWithTax": 700,
+      "salesAmountWithTax": 298900.0,
+      "amountReceived": 295354.0,
+      "tdsAmount": 3546.0,
+      "balanceOutstanding": 0.0,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": 1.0,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": 0.35,
+          "amount": 104615.0,
+          "month": "June",
+          "paymentReceived": "yes"
+        },
+        {
+          "instalmentNo": 2,
+          "pctShare": 0.3,
+          "amount": 89670.0,
+          "month": "Sep",
+          "paymentReceived": "No"
+        },
+        {
+          "instalmentNo": 3,
+          "pctShare": 0.35,
+          "amount": 104615.0,
+          "month": "Dec",
+          "paymentReceived": "yes"
+        },
+        {
+          "instalmentNo": 4,
+          "pctShare": null,
+          "amount": 0.0,
+          "month": null,
+          "paymentReceived": null
+        }
+      ],
+      "ownerName": "Nilabhra",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 298900.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 0.0
+    },
+    {
+      "srNo": 49.0,
+      "schoolName": "Sri Vidhya Nikethan Matriculation School",
+      "salesRep": "Balu R",
+      "schoolCount": 1.0,
+      "mouStatusText": "2025-06-09 00:00:00",
+      "kitsSent": "No",
+      "duration": "01st April 2025 to 31st march 2026",
+      "city": "Chennai",
+      "state": "Tamil Nadu",
+      "studentsMou": 200,
+      "studentsActual": 255.0,
+      "spPerStudentWithoutTax": 593.2203389830509,
+      "spPerStudentWithTax": 700,
+      "salesAmountWithTax": 178500.0,
+      "amountReceived": 151750.0,
+      "tdsAmount": 0.0,
+      "balanceOutstanding": 0.0,
+      "amtRecdIn2627": 26750.0,
+      "tds2627": null,
+      "pctReceivedOverall": 0.8501400560224089,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": 0.35,
+          "amount": 62474.99999999999,
+          "month": "June",
+          "paymentReceived": "yes"
+        },
+        {
+          "instalmentNo": 2,
+          "pctShare": 0.5,
+          "amount": 89250.0,
+          "month": "Sep",
+          "paymentReceived": "yes"
+        },
+        {
+          "instalmentNo": 3,
+          "pctShare": 0.15,
+          "amount": 26775.0,
+          "month": "Dec",
+          "paymentReceived": "No"
+        },
+        {
+          "instalmentNo": 4,
+          "pctShare": null,
+          "amount": 0.0,
+          "month": null,
+          "paymentReceived": null
+        }
+      ],
+      "ownerName": "Nilabhra",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 178500.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 0.0
+    },
+    {
+      "srNo": 50.0,
+      "schoolName": "Ebenezer Jaganath Matriculation",
+      "salesRep": "Balu R",
+      "schoolCount": 1.0,
+      "mouStatusText": "pending",
+      "kitsSent": "Yes",
+      "duration": "01st April 2025 to 31st march 2026",
+      "city": "Chennai",
+      "state": "Tamil Nadu",
+      "studentsMou": 0,
+      "studentsActual": 33.0,
+      "spPerStudentWithoutTax": 1016.9491525423729,
+      "spPerStudentWithTax": 1200,
+      "salesAmountWithTax": 39600.0,
+      "amountReceived": 16000.0,
+      "tdsAmount": 0.0,
+      "balanceOutstanding": 23600.0,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": 0.40404040404040403,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": null,
+          "amount": 16000.0,
+          "month": "Dec",
+          "paymentReceived": "yes"
+        },
+        {
+          "instalmentNo": 2,
+          "pctShare": null,
+          "amount": 23600.0,
+          "month": null,
+          "paymentReceived": null
+        },
+        {
+          "instalmentNo": 3,
+          "pctShare": 0.0,
+          "amount": 0.0,
+          "month": null,
+          "paymentReceived": null
+        },
+        {
+          "instalmentNo": 4,
+          "pctShare": null,
+          "amount": 0.0,
+          "month": null,
+          "paymentReceived": null
+        }
+      ],
+      "ownerName": "Nilabhra",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 16000.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 23600.0
+    },
+    {
+      "srNo": 51.0,
+      "schoolName": "Ebenezer Modern Matriculation",
+      "salesRep": "Balu R",
+      "schoolCount": null,
+      "mouStatusText": null,
+      "kitsSent": "Yes",
+      "duration": "01st April 2025 to 31st march 2026",
+      "city": "Chennai",
+      "state": "Tamil Nadu",
+      "studentsMou": null,
+      "studentsActual": 30.0,
+      "spPerStudentWithoutTax": 1016.9491525423729,
+      "spPerStudentWithTax": 1200,
+      "salesAmountWithTax": 36000.0,
+      "amountReceived": 19800.0,
+      "tdsAmount": 0.0,
+      "balanceOutstanding": 16200.0,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": 0.55,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": null,
+          "amount": 19800.0,
+          "month": "Dec",
+          "paymentReceived": "yes"
+        },
+        {
+          "instalmentNo": 2,
+          "pctShare": null,
+          "amount": 16200.0,
+          "month": null,
+          "paymentReceived": null
+        }
+      ],
+      "ownerName": "Nilabhra",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 19800.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 16200.0
+    },
+    {
+      "srNo": 52.0,
+      "schoolName": "Kirti Book Agency (Empros International School _Chinchwad, Pune)",
+      "salesRep": null,
+      "schoolCount": 1.0,
+      "mouStatusText": "Pending",
+      "kitsSent": "yes",
+      "duration": "01st June 2025 to 31st march 2026",
+      "city": "Chinchwad",
+      "state": "Maharashtra",
+      "studentsMou": 154,
+      "studentsActual": 166.0,
+      "spPerStudentWithoutTax": 508.47457627118644,
+      "spPerStudentWithTax": 600,
+      "salesAmountWithTax": 99600.0,
+      "amountReceived": 99600.0,
+      "tdsAmount": 0.0,
+      "balanceOutstanding": 0.0,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": 1.0,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": 0.5,
+          "amount": 49800.0,
+          "month": "May",
+          "paymentReceived": "yes"
+        },
+        {
+          "instalmentNo": 2,
+          "pctShare": 0.5,
+          "amount": 49800.0,
+          "month": "Oct",
+          "paymentReceived": "yes"
+        },
+        {
+          "instalmentNo": 3,
+          "pctShare": null,
+          "amount": 0.0,
+          "month": null,
+          "paymentReceived": null
+        },
+        {
+          "instalmentNo": 4,
+          "pctShare": null,
+          "amount": 0.0,
+          "month": null,
+          "paymentReceived": null
+        }
+      ],
+      "ownerName": "Nilabhra",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 99600.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 0.0
+    },
+    {
+      "srNo": 53.0,
+      "schoolName": "Kirti Book Agency (Empros International School _Talegaon)",
+      "salesRep": null,
+      "schoolCount": 1.0,
+      "mouStatusText": "Pending",
+      "kitsSent": "yes",
+      "duration": "01st June 2025 to 31st march 2026",
+      "city": "Talegaon",
+      "state": "Maharashtra",
+      "studentsMou": 178,
+      "studentsActual": 178.0,
+      "spPerStudentWithoutTax": 508.47457627118644,
+      "spPerStudentWithTax": 600,
+      "salesAmountWithTax": 106800.0,
+      "amountReceived": 106800.0,
+      "tdsAmount": 0.0,
+      "balanceOutstanding": 0.0,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": 1.0,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": 0.5,
+          "amount": 53400.0,
+          "month": "May",
+          "paymentReceived": "yes"
+        },
+        {
+          "instalmentNo": 2,
+          "pctShare": 0.5,
+          "amount": 53400.0,
+          "month": "Oct",
+          "paymentReceived": "yes"
+        },
+        {
+          "instalmentNo": 3,
+          "pctShare": null,
+          "amount": 0.0,
+          "month": null,
+          "paymentReceived": null
+        },
+        {
+          "instalmentNo": 4,
+          "pctShare": null,
+          "amount": 0.0,
+          "month": null,
+          "paymentReceived": null
+        }
+      ],
+      "ownerName": "Nilabhra",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 106800.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 0.0
+    },
+    {
+      "srNo": 54.0,
+      "schoolName": "Tip Top Convent School",
+      "salesRep": null,
+      "schoolCount": 1.0,
+      "mouStatusText": "Pending",
+      "kitsSent": "yes",
+      "duration": "01st July 2025 to 31st march 2026",
+      "city": "Nagpur",
+      "state": "Maharashtra",
+      "studentsMou": 277,
+      "studentsActual": 285.0,
+      "spPerStudentWithoutTax": 677.9661016949152,
+      "spPerStudentWithTax": 800,
+      "salesAmountWithTax": 228000.0,
+      "amountReceived": 208000.0,
+      "tdsAmount": 20000.0,
+      "balanceOutstanding": 0.0,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": 1.0,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": null,
+          "amount": 228000.0,
+          "month": "June",
+          "paymentReceived": "yes"
+        },
+        {
+          "instalmentNo": 2,
+          "pctShare": 0.35,
+          "amount": 28000.0,
+          "month": "Dec",
+          "paymentReceived": "Yes"
+        },
+        {
+          "instalmentNo": 3,
+          "pctShare": null,
+          "amount": 0.0,
+          "month": null,
+          "paymentReceived": null
+        },
+        {
+          "instalmentNo": 4,
+          "pctShare": null,
+          "amount": 0.0,
+          "month": null,
+          "paymentReceived": null
+        }
+      ],
+      "ownerName": "Nilabhra",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 228000.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 0.0
+    },
+    {
+      "srNo": 55.0,
+      "schoolName": "Discoveri Okas School",
+      "salesRep": null,
+      "schoolCount": 1.0,
+      "mouStatusText": "yes",
+      "kitsSent": "No",
+      "duration": "01st April 2025 to 31st march 2026",
+      "city": "Hyderabad",
+      "state": "Telangana",
+      "studentsMou": 200,
+      "studentsActual": 244.0,
+      "spPerStudentWithoutTax": 1694.915254237288,
+      "spPerStudentWithTax": 2000,
+      "salesAmountWithTax": 488000.0,
+      "amountReceived": 300000.0,
+      "tdsAmount": 0.0,
+      "balanceOutstanding": 188000.0,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": 0.6147540983606558,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": 0.5,
+          "amount": 244000.0,
+          "month": "June",
+          "paymentReceived": "yes"
+        },
+        {
+          "instalmentNo": 2,
+          "pctShare": 0.5,
+          "amount": 244000.0,
+          "month": "Oct",
+          "paymentReceived": "Partly Recd"
+        },
+        {
+          "instalmentNo": 3,
+          "pctShare": null,
+          "amount": 0.0,
+          "month": null,
+          "paymentReceived": null
+        },
+        {
+          "instalmentNo": 4,
+          "pctShare": null,
+          "amount": 0.0,
+          "month": null,
+          "paymentReceived": null
+        }
+      ],
+      "ownerName": "Nilabhra",
+      "piNotRaisedPaymentReceived": 56000.0,
+      "piRaisedPaymentReceived": 244000.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 188000.0
+    },
+    {
+      "srNo": 56.0,
+      "schoolName": "Sri Vaishnavi School",
+      "salesRep": null,
+      "schoolCount": 1.0,
+      "mouStatusText": "yes",
+      "kitsSent": "No",
+      "duration": "01st April 2025 to 31st march 2026",
+      "city": "Hyderabad",
+      "state": "Telangana",
+      "studentsMou": 350,
+      "studentsActual": 280.0,
+      "spPerStudentWithoutTax": 593.2203389830509,
+      "spPerStudentWithTax": 700,
+      "salesAmountWithTax": 196000.0,
+      "amountReceived": 0.0,
+      "tdsAmount": 0.0,
+      "balanceOutstanding": 196000.0,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": 0.0,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": 0.25,
+          "amount": 49000.0,
+          "month": "Dec",
+          "paymentReceived": "No"
+        },
+        {
+          "instalmentNo": 2,
+          "pctShare": 0.25,
+          "amount": 49000.0,
+          "month": "Dec",
+          "paymentReceived": null
+        },
+        {
+          "instalmentNo": 3,
+          "pctShare": 0.25,
+          "amount": 49000.0,
+          "month": null,
+          "paymentReceived": "No"
+        },
+        {
+          "instalmentNo": 4,
+          "pctShare": 0.25,
+          "amount": 49000.0,
+          "month": null,
+          "paymentReceived": "No"
+        }
+      ],
+      "ownerName": "Nilabhra",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 196000.0
+    },
+    {
+      "srNo": 57.0,
+      "schoolName": "Bolton School",
+      "salesRep": null,
+      "schoolCount": 1.0,
+      "mouStatusText": "Pending",
+      "kitsSent": "No",
+      "duration": null,
+      "city": "Secunderabad",
+      "state": "Telangana",
+      "studentsMou": 250,
+      "studentsActual": 90.0,
+      "spPerStudentWithoutTax": 2118.64406779661,
+      "spPerStudentWithTax": 2500,
+      "salesAmountWithTax": 225000.0,
+      "amountReceived": 0.0,
+      "tdsAmount": 0.0,
+      "balanceOutstanding": 225000.0,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": 0.0,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": 0.5,
+          "amount": 112500.0,
+          "month": "Dec",
+          "paymentReceived": "No"
+        },
+        {
+          "instalmentNo": 2,
+          "pctShare": 0.5,
+          "amount": 112500.0,
+          "month": null,
+          "paymentReceived": null
+        },
+        {
+          "instalmentNo": 3,
+          "pctShare": null,
+          "amount": 0.0,
+          "month": null,
+          "paymentReceived": null
+        },
+        {
+          "instalmentNo": 4,
+          "pctShare": null,
+          "amount": 0.0,
+          "month": null,
+          "paymentReceived": null
+        }
+      ],
+      "ownerName": "Nilabhra",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 225000.0
+    },
+    {
+      "srNo": 58.0,
+      "schoolName": "Clever Minds School",
+      "salesRep": null,
+      "schoolCount": 1.0,
+      "mouStatusText": "yes",
+      "kitsSent": "Yes",
+      "duration": "01st April 2025 to 31st march 2026",
+      "city": "Secuderabad",
+      "state": "Telangana",
+      "studentsMou": 150,
+      "studentsActual": 65.0,
+      "spPerStudentWithoutTax": 847.457627118644,
+      "spPerStudentWithTax": 1000,
+      "salesAmountWithTax": 65000.0,
+      "amountReceived": 40000.0,
+      "tdsAmount": 0.0,
+      "balanceOutstanding": 25000.0,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": 0.6153846153846154,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": 0.5,
+          "amount": 40000.0,
+          "month": "Dec",
+          "paymentReceived": null
+        },
+        {
+          "instalmentNo": 2,
+          "pctShare": "50%(comm of teacher training)",
+          "amount": 25000.0,
+          "month": null,
+          "paymentReceived": null
+        },
+        {
+          "instalmentNo": 3,
+          "pctShare": null,
+          "amount": 0.0,
+          "month": null,
+          "paymentReceived": null
+        },
+        {
+          "instalmentNo": 4,
+          "pctShare": null,
+          "amount": 0.0,
+          "month": null,
+          "paymentReceived": null
+        }
+      ],
+      "ownerName": "Nilabhra",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 40000.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 25000.0
+    },
+    {
+      "srNo": null,
+      "schoolName": "Clever Minds School",
+      "salesRep": null,
+      "schoolCount": null,
+      "mouStatusText": null,
+      "kitsSent": null,
+      "duration": null,
+      "city": "Secuderabad",
+      "state": "Telangana",
+      "studentsMou": "ISRO Competition",
+      "studentsActual": 3.0,
+      "spPerStudentWithoutTax": 1694.915254237288,
+      "spPerStudentWithTax": 2000,
+      "salesAmountWithTax": 6000.0,
+      "amountReceived": 6000.0,
+      "tdsAmount": 0.0,
+      "balanceOutstanding": 0.0,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": 1.0,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": 1.0,
+          "amount": 6000.0,
+          "month": "Sep",
+          "paymentReceived": null
+        },
+        {
+          "instalmentNo": 3,
+          "pctShare": null,
+          "amount": 0.0,
+          "month": null,
+          "paymentReceived": null
+        },
+        {
+          "instalmentNo": 4,
+          "pctShare": null,
+          "amount": 0.0,
+          "month": null,
+          "paymentReceived": null
+        }
+      ],
+      "ownerName": "Nilabhra",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 6000.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 0.0
+    },
+    {
+      "srNo": 59.0,
+      "schoolName": "Secunderabad Public School/St.Ann's Grammar School",
+      "salesRep": null,
+      "schoolCount": 1.0,
+      "mouStatusText": "Pending",
+      "kitsSent": "Yes",
+      "duration": "01st April 2025 to 31st march 2026",
+      "city": "Hyderabad",
+      "state": "Telangana",
+      "studentsMou": 450,
+      "studentsActual": 50.0,
+      "spPerStudentWithoutTax": 2118.64406779661,
+      "spPerStudentWithTax": 2500,
+      "salesAmountWithTax": 125000.0,
+      "amountReceived": 40000.0,
+      "tdsAmount": 0.0,
+      "balanceOutstanding": 85000.0,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": 0.32,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": 0.5,
+          "amount": 40000.0,
+          "month": "Dec",
+          "paymentReceived": null
+        },
+        {
+          "instalmentNo": 2,
+          "pctShare": "50%(comm of teacher training)",
+          "amount": 85000.0,
+          "month": null,
+          "paymentReceived": null
+        },
+        {
+          "instalmentNo": 3,
+          "pctShare": null,
+          "amount": 0.0,
+          "month": null,
+          "paymentReceived": null
+        },
+        {
+          "instalmentNo": 4,
+          "pctShare": null,
+          "amount": 0.0,
+          "month": null,
+          "paymentReceived": null
+        }
+      ],
+      "ownerName": "Nilabhra",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 40000.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 85000.0
+    },
+    {
+      "srNo": 60.0,
+      "schoolName": "Bright Future High School",
+      "salesRep": null,
+      "schoolCount": null,
+      "mouStatusText": "Pending",
+      "kitsSent": "Yes",
+      "duration": "01st July 2025 to 31st march 2026",
+      "city": "Navi Mumbai",
+      "state": "Maharashtra",
+      "studentsMou": 270,
+      "studentsActual": 232.0,
+      "spPerStudentWithoutTax": 847.457627118644,
+      "spPerStudentWithTax": 1000,
+      "salesAmountWithTax": 232000.0,
+      "amountReceived": 232000.0,
+      "tdsAmount": 0.0,
+      "balanceOutstanding": 0.0,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": 1.0,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": null,
+          "amount": 65000.0,
+          "month": "July",
+          "paymentReceived": "yes"
+        },
+        {
+          "instalmentNo": 2,
+          "pctShare": null,
+          "amount": 65000.0,
+          "month": "Aug",
+          "paymentReceived": "yes"
+        },
+        {
+          "instalmentNo": 3,
+          "pctShare": null,
+          "amount": 102000.0,
+          "month": "Sep",
+          "paymentReceived": "yes"
+        },
+        {
+          "instalmentNo": 4,
+          "pctShare": null,
+          "amount": 0.0,
+          "month": null,
+          "paymentReceived": null
+        }
+      ],
+      "ownerName": "Nilabhra",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 232000.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 0.0
+    },
+    {
+      "srNo": 61.0,
+      "schoolName": "Darshan Academy, Devlali",
+      "salesRep": null,
+      "schoolCount": 1.0,
+      "mouStatusText": "2025-07-14 00:00:00",
+      "kitsSent": "Yes",
+      "duration": "not mentioned in MOU",
+      "city": "Nashik",
+      "state": "Maharashtra",
+      "studentsMou": 207,
+      "studentsActual": 207.0,
+      "spPerStudentWithoutTax": 1271.1864406779662,
+      "spPerStudentWithTax": 1500,
+      "salesAmountWithTax": 310500.0,
+      "amountReceived": 209613.0,
+      "tdsAmount": 23262.0,
+      "balanceOutstanding": 0.0,
+      "amtRecdIn2627": 69863.0,
+      "tds2627": 7762.0,
+      "pctReceivedOverall": 1.0,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": 0.25,
+          "amount": 77625.0,
+          "month": "July",
+          "paymentReceived": "yes"
+        },
+        {
+          "instalmentNo": 2,
+          "pctShare": 0.25,
+          "amount": 77625.0,
+          "month": "Oct",
+          "paymentReceived": "yes"
+        },
+        {
+          "instalmentNo": 3,
+          "pctShare": 0.25,
+          "amount": 77625.0,
+          "month": "dec",
+          "paymentReceived": "yes"
+        },
+        {
+          "instalmentNo": 4,
+          "pctShare": 0.25,
+          "amount": 77625.0,
+          "month": "Jan",
+          "paymentReceived": "yes"
+        }
+      ],
+      "ownerName": "Nilabhra",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 310500.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 0.0
+    },
+    {
+      "srNo": 62.0,
+      "schoolName": "Darshan Academy, Pune",
+      "salesRep": null,
+      "schoolCount": 1.0,
+      "mouStatusText": "as per mail",
+      "kitsSent": "Yes",
+      "duration": "01st July 2025 to 31st march 2026",
+      "city": "Pune",
+      "state": "Maharashtra",
+      "studentsMou": null,
+      "studentsActual": 48.0,
+      "spPerStudentWithoutTax": 2118.64406779661,
+      "spPerStudentWithTax": 2500,
+      "salesAmountWithTax": 120000.0,
+      "amountReceived": 108000.0,
+      "tdsAmount": 12000.0,
+      "balanceOutstanding": 0.0,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": 1.0,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": 1.0,
+          "amount": 120000.0,
+          "month": "July",
+          "paymentReceived": "yes"
+        }
+      ],
+      "ownerName": "Nilabhra",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 120000.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 0.0
+    },
+    {
+      "srNo": 63.0,
+      "schoolName": "Shivam Eduactional Academy_Indraprastha",
+      "salesRep": null,
+      "schoolCount": 1.0,
+      "mouStatusText": "as per mail",
+      "kitsSent": "yes",
+      "duration": "01st July 2025 to 31st march 2026",
+      "city": "Raipur",
+      "state": "Chhatisgarh",
+      "studentsMou": "40 per batch",
+      "studentsActual": 90.0,
+      "spPerStudentWithoutTax": 1525.4237288135594,
+      "spPerStudentWithTax": 1800,
+      "salesAmountWithTax": 162000.0,
+      "amountReceived": 162000.0,
+      "tdsAmount": null,
+      "balanceOutstanding": 0.0,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": 1.0,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": null,
+          "amount": 162000.0,
+          "month": "July",
+          "paymentReceived": "yes"
+        },
+        {
+          "instalmentNo": 2,
+          "pctShare": null,
+          "amount": 93600.0,
+          "month": "15th Aug",
+          "paymentReceived": "Yes"
+        }
+      ],
+      "ownerName": "Nilabhra",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 162000.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 0.0
+    },
+    {
+      "srNo": 64.0,
+      "schoolName": "Shivam Eduactional Academy_Bhatagaon",
+      "salesRep": null,
+      "schoolCount": 1.0,
+      "mouStatusText": "as per mail",
+      "kitsSent": "yes",
+      "duration": "01st July 2025 to 31st march 2026",
+      "city": "Raipur",
+      "state": "Chhatisgarh",
+      "studentsMou": "40 per batch",
+      "studentsActual": 48.0,
+      "spPerStudentWithoutTax": 1525.4237288135594,
+      "spPerStudentWithTax": 1800,
+      "salesAmountWithTax": 86400.0,
+      "amountReceived": 86400.0,
+      "tdsAmount": 0.0,
+      "balanceOutstanding": 0.0,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": 1.0,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": null,
+          "amount": 86400.0,
+          "month": "July",
+          "paymentReceived": "yes"
+        },
+        {
+          "instalmentNo": 2,
+          "pctShare": null,
+          "amount": 49500.0,
+          "month": "15th Aug",
+          "paymentReceived": "Yes"
+        }
+      ],
+      "ownerName": "Nilabhra",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 86400.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 0.0
+    },
+    {
+      "srNo": 65.0,
+      "schoolName": "St. Xavier's Sr. Sec. School",
+      "salesRep": null,
+      "schoolCount": 1.0,
+      "mouStatusText": null,
+      "kitsSent": "Yes",
+      "duration": null,
+      "city": null,
+      "state": null,
+      "studentsMou": 36,
+      "studentsActual": 38.0,
+      "spPerStudentWithoutTax": 1016.9491525423729,
+      "spPerStudentWithTax": 1200,
+      "salesAmountWithTax": 45600.0,
+      "amountReceived": 21600.0,
+      "tdsAmount": 0.0,
+      "balanceOutstanding": 24000.0,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": 0.47368421052631576,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": null,
+          "amount": 21600.0,
+          "month": "Dec",
+          "paymentReceived": "yes"
+        },
+        {
+          "instalmentNo": 2,
+          "pctShare": null,
+          "amount": 24000.0,
+          "month": null,
+          "paymentReceived": "No"
+        }
+      ],
+      "ownerName": "Nilabhra",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 21600.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 24000.0
+    },
+    {
+      "srNo": 66.0,
+      "schoolName": "Don Bosco Matric Higher Secondary School",
+      "salesRep": "Balu R",
+      "schoolCount": null,
+      "mouStatusText": null,
+      "kitsSent": null,
+      "duration": null,
+      "city": null,
+      "state": null,
+      "studentsMou": null,
+      "studentsActual": 25.0,
+      "spPerStudentWithoutTax": 2288.135593220339,
+      "spPerStudentWithTax": 2700,
+      "salesAmountWithTax": 67500.0,
+      "amountReceived": 67500.0,
+      "tdsAmount": 0.0,
+      "balanceOutstanding": 0.0,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": 1.0,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": null,
+          "amount": 67500.0,
+          "month": "Dec",
+          "paymentReceived": "yes"
+        },
+        {
+          "instalmentNo": 2,
+          "pctShare": null,
+          "amount": 0.0,
+          "month": null,
+          "paymentReceived": "Yes"
+        }
+      ],
+      "ownerName": "Nilabhra",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 67500.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 0.0
+    },
+    {
+      "srNo": 67.0,
+      "schoolName": "Frank Public School",
+      "salesRep": null,
+      "schoolCount": 1.0,
+      "mouStatusText": "Pending",
+      "kitsSent": "Yes",
+      "duration": null,
+      "city": "Bengaluru",
+      "state": "Karnataka",
+      "studentsMou": 162,
+      "studentsActual": 83.0,
+      "spPerStudentWithoutTax": 1016.95,
+      "spPerStudentWithTax": 1200,
+      "salesAmountWithTax": 99600.0,
+      "amountReceived": 98000.0,
+      "tdsAmount": 1600.0,
+      "balanceOutstanding": 0.0,
+      "amtRecdIn2627": null,
+      "tds2627": null,
+      "pctReceivedOverall": 1.0,
+      "instalments": [
+        {
+          "instalmentNo": 1,
+          "pctShare": 0.3,
+          "amount": 98000.0,
+          "month": "Jun-25",
+          "paymentReceived": "Yes"
+        },
+        {
+          "instalmentNo": 2,
+          "pctShare": null,
+          "amount": 69600.0,
+          "month": "2025-08-01 00:00:00",
+          "paymentReceived": "Yes"
+        },
+        {
+          "instalmentNo": 3,
+          "pctShare": null,
+          "amount": 0.0,
+          "month": null,
+          "paymentReceived": null
+        }
+      ],
+      "ownerName": "Nilabhra",
+      "piNotRaisedPaymentReceived": 0.0,
+      "piRaisedPaymentReceived": 99600.0,
+      "piRaisedPaymentNotReceived": 0.0,
+      "piNotRaisedPaymentNotReceived": 0.0
+    }
+  ]
+}
