@@ -9,6 +9,8 @@
  */
 
 import { notFound, redirect } from 'next/navigation'
+import type { Payment } from '@/lib/types'
+import paymentsJson from '@/data/payments.json'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canManageUsers } from '@/lib/access'
 import { TopNav } from '@/components/ops/TopNav'
@@ -18,6 +20,32 @@ import {
   type BypassedByTestingOpenAccess,
   type PiBlocker,
 } from '@/lib/pi/blockers'
+
+const allPayments = paymentsJson as unknown as Payment[]
+
+interface PiMissingRow {
+  paymentId: string
+  mouId: string | null
+  schoolName: string | null
+  receivedAmount: number
+  instalmentSeq: number
+}
+
+function piMissingBackfillCandidates(): PiMissingRow[] {
+  const out: PiMissingRow[] = []
+  for (const p of allPayments) {
+    if (!((p.receivedAmount ?? 0) > 0)) continue
+    if (p.piNumber && String(p.piNumber).trim() !== '') continue
+    out.push({
+      paymentId: p.id,
+      mouId: p.mouId,
+      schoolName: p.schoolName,
+      receivedAmount: p.receivedAmount ?? 0,
+      instalmentSeq: p.instalmentSeq,
+    })
+  }
+  return out
+}
 
 const BYPASS_LABEL: Record<BypassedByTestingOpenAccess, string> = {
   no: 'No',
@@ -70,6 +98,7 @@ export default async function PiBlockersPage() {
   const financeCorrectnessIncorrectlyBypassed = PI_BLOCKERS.filter(
     (b) => b.category === 'finance-correctness' && b.bypassed === 'yes',
   )
+  const backfillCandidates = piMissingBackfillCandidates()
 
   return (
     <>
@@ -123,6 +152,92 @@ export default async function PiBlockersPage() {
                 </span>
               )}
             </p>
+          </section>
+
+          <section
+            className="rounded-md border border-border bg-card p-6"
+            data-testid="pi-missing-backfill"
+          >
+            <h2 className="font-heading text-lg font-semibold text-brand-navy">
+              PI-missing backfill candidates
+            </h2>
+            <p className="mt-2 text-sm text-slate-700">
+              Paid payment rows (receivedAmount &gt; 0) with no piNumber
+              set. These came in via the Pratik / Pranav Excel imports
+              where the PI column was blank on the source sheet. They
+              are NOT blocked by code; the system can generate fresh
+              PIs against any of these instalments and the counter
+              advances normally. Surfacing here so Pranav can backfill
+              at his pace.
+            </p>
+            <p
+              className="mt-3 text-sm font-semibold text-brand-navy"
+              data-testid="pi-missing-count"
+            >
+              {backfillCandidates.length} row(s) outstanding.
+            </p>
+            {backfillCandidates.length > 0 ? (
+              <div className="mt-4 overflow-x-auto">
+                <table className="w-full table-auto border-collapse text-sm">
+                  <thead>
+                    <tr className="border-b border-border text-left">
+                      <th className="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                        Payment id
+                      </th>
+                      <th className="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                        MOU
+                      </th>
+                      <th className="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                        School
+                      </th>
+                      <th className="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                        Instalment
+                      </th>
+                      <th className="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                        Received (Rs)
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {backfillCandidates.slice(0, 50).map((row) => (
+                      <tr
+                        key={row.paymentId}
+                        className="border-b border-border align-top"
+                        data-testid={`pi-missing-row-${row.paymentId}`}
+                      >
+                        <td className="px-3 py-2 font-mono text-xs text-slate-700">
+                          {row.paymentId}
+                        </td>
+                        <td className="px-3 py-2 font-mono text-xs text-slate-700">
+                          {row.mouId ?? '(no mou)'}
+                        </td>
+                        <td className="px-3 py-2 text-sm text-slate-700">
+                          {row.schoolName ?? '(no school)'}
+                        </td>
+                        <td className="px-3 py-2 text-sm text-slate-700">
+                          {row.instalmentSeq}
+                        </td>
+                        <td className="px-3 py-2 text-right font-mono text-sm text-brand-navy">
+                          {row.receivedAmount.toLocaleString('en-IN')}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                {backfillCandidates.length > 50 ? (
+                  <p className="mt-3 text-xs text-muted-foreground">
+                    Showing first 50 of {backfillCandidates.length}. The
+                    full list is in src/data/payments.json (filter:
+                    receivedAmount &gt; 0 AND piNumber is null).
+                  </p>
+                ) : null}
+              </div>
+            ) : (
+              <p className="mt-3 text-sm text-slate-600">
+                No backfill candidates. Every paid payment row carries a
+                PI number.
+              </p>
+            )}
           </section>
 
           {CATEGORY_ORDER.map((cat) => {

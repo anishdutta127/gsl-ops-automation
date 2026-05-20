@@ -33,6 +33,7 @@ import type { Escalation, SalesPerson } from '@/lib/types'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canEditFinanceData, canEditMOU } from '@/lib/access'
 import { getCurrentSalesRepForSchool } from '@/lib/schools/currentSalesRep'
+import { deriveSchoolFinancials } from '@/lib/schools/financials'
 import { FileText, Inbox, Receipt, Truck } from 'lucide-react'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
@@ -151,8 +152,17 @@ export default async function SchoolDetailPage({ params, searchParams }: PagePro
     stalledDispatches,
   })
   const activeMousCount = schoolMous.filter((m) => m.status === 'Active').length
-  const totalContractValue = schoolMous.reduce((s, m) => s + (m.contractValue ?? 0), 0)
-  const totalBalance = schoolMous.reduce((s, m) => s + (m.balance ?? 0), 0)
+  // Phase 6B: Received is derived from the linked-payments ledger
+  // (sum of receivedAmount across every payment on every MOU of this
+  // school), mirroring the Phase 6A Bug 2 fix on /mous/[mouId].
+  // Balance reconciles by construction: Contract = Received + Balance.
+  // Stored mou.received / mou.balance are left untouched; a TDS-aware
+  // backfill of those is tracked separately.
+  const {
+    contractValue: totalContractValue,
+    received: totalReceived,
+    balance: totalBalance,
+  } = deriveSchoolFinancials({ schoolMous, schoolPayments })
 
   const statusBadge = (
     <StatusChip
@@ -245,10 +255,26 @@ export default async function SchoolDetailPage({ params, searchParams }: PagePro
                 ) : null}
               </div>
             </div>
-            <div className="mt-4 grid grid-cols-3 gap-3">
+            <div
+              className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4"
+              data-testid="school-detail-header-kpis"
+            >
               <Kpi label="Active MOUs" value={`${activeMousCount}`} />
-              <Kpi label="Contract value" value={formatRs(totalContractValue)} />
-              <Kpi label="Balance" value={formatRs(totalBalance)} />
+              <Kpi
+                label="Contract value"
+                value={formatRs(totalContractValue)}
+                testId="school-detail-contract"
+              />
+              <Kpi
+                label="Received"
+                value={formatRs(totalReceived)}
+                testId="school-detail-received"
+              />
+              <Kpi
+                label="Balance"
+                value={formatRs(totalBalance)}
+                testId="school-detail-balance"
+              />
             </div>
             {group ? (
               <p className="mt-3 text-xs text-slate-600">
@@ -335,9 +361,17 @@ export default async function SchoolDetailPage({ params, searchParams }: PagePro
   )
 }
 
-function Kpi({ label, value }: { label: string; value: string }) {
+function Kpi({
+  label,
+  value,
+  testId,
+}: {
+  label: string
+  value: string
+  testId?: string
+}) {
   return (
-    <div className="rounded-md border border-border bg-white p-3">
+    <div className="rounded-md border border-border bg-white p-3" data-testid={testId}>
       <div className="text-xs uppercase tracking-wide text-slate-600">{label}</div>
       <div className="mt-1 font-heading text-lg font-bold text-brand-navy">{value}</div>
     </div>

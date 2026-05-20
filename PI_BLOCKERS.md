@@ -45,3 +45,9 @@ No finance-correctness check is bypassed by `TESTING_OPEN_ACCESS`.
 
 1. **GSTIN non-blocking** (W4-A.6). The .docx surfaces "To be added" instead of refusing to issue. If at cutover Anish wants GSTIN to block PI generation, that is a one-line `&&` change at `src/lib/pi/generatePi.ts:178`. Not changed in this gate.
 2. **PAN not validated per PI**. Company PAN is configuration; the PI documents read it from `config/company.json`. No per-PI PAN check exists, and there is no school-side PAN field on the PI record either. Worth re-validating at cutover whether finance needs PAN validation introduced.
+
+## PI-missing backfill candidates (live counter on `/admin/pi-blockers`)
+
+Paid payment rows (`receivedAmount > 0`) with no `piNumber` set. These came in via the Pratik / Pranav Excel imports where the PI column was blank on the source sheet. They are NOT blocked by code; the system can generate fresh PIs against any of these instalments and the counter advances normally.
+
+At Phase 6B cutover the count was ~126 rows (split: ~105 MOU-STEAM-2526, ~15 MOU-STEAM-2627, ~6 MOU-YP-2526). The live `/admin/pi-blockers` page surfaces the current count and lists the first 50 with payment id, MOU, school, instalment seq, and received amount so Pranav can backfill at his pace. The full filter is `receivedAmount > 0 AND piNumber IS NULL` against `src/data/payments.json`.
