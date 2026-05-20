@@ -10877,5 +10877,52 @@
     "signedMouPdfPath": null,
     "productSelection": null,
     "gradewiseDistribution": null
+  },
+  {
+    "id": "MOU-STEAM-2526-070",
+    "schoolId": "SCH-SAGAYA_MATHA_MATRICU_2",
+    "schoolName": "*Sagaya Matha Matriculation Higher Secondary School",
+    "programme": "STEAM",
+    "programmeSubType": null,
+    "schoolScope": "SINGLE",
+    "schoolGroupId": null,
+    "status": "Active",
+    "cohortStatus": "archived",
+    "academicYear": "2025-26",
+    "startDate": "2025-04-01",
+    "endDate": "2026-03-31",
+    "studentsMou": 508,
+    "studentsActual": 427,
+    "studentsVariance": null,
+    "studentsVariancePct": null,
+    "spWithoutTax": 593.2203389830509,
+    "spWithTax": 700,
+    "contractValue": 298900,
+    "received": 295354,
+    "tds": 3546,
+    "balance": 0,
+    "receivedPct": 100,
+    "paymentSchedule": "35-30-35-0 (FY 2025-26 import)",
+    "trainerModel": null,
+    "salesPersonId": null,
+    "templateVersion": null,
+    "generatedAt": null,
+    "notes": null,
+    "delayNotes": null,
+    "daysToExpiry": null,
+    "auditLog": [
+      {
+        "timestamp": "2026-05-20T20:31:24.135Z",
+        "user": "anish.d",
+        "action": "create",
+        "after": {
+          "schoolId": "SCH-SAGAYA_MATHA_MATRICU_2",
+          "academicYear": "2025-26",
+          "contractValue": 298900
+        },
+        "notes": "FY 2025-26 import"
+      }
+    ],
+    "importNotes": "Pratik FY25-26 sheet; ownerName=Nilabhra; mouStatusText=2025-05-26 00:00:00; salesRep=Balu R"
   }
 ]
