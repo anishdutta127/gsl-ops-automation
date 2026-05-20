@@ -5070,9 +5070,9 @@
     "startDate": "2026-04-01",
     "endDate": "2028-03-31",
     "studentsMou": 500,
-    "studentsActual": 500,
-    "studentsVariance": 0,
-    "studentsVariancePct": 0,
+    "studentsActual": 450,
+    "studentsVariance": -50,
+    "studentsVariancePct": -0.1,
     "spWithoutTax": 677.966101694915,
     "spWithTax": 800,
     "contractValue": 400000,
@@ -5177,6 +5177,21 @@
           "installmentCount": 4
         },
         "notes": "Payment schedule edited (no-PI path): 4 instalment(s)."
+      },
+      {
+        "timestamp": "2026-05-20T07:09:19.556Z",
+        "user": "anita.c",
+        "action": "actuals-confirmed",
+        "before": {
+          "studentsActual": 500,
+          "studentsVariance": 0,
+          "studentsVariancePct": 0
+        },
+        "after": {
+          "studentsActual": 450,
+          "studentsVariance": -50,
+          "studentsVariancePct": -0.1
+        }
       }
     ],
     "cohortStatus": "active",
