@@ -4776,5 +4776,36 @@
         "notes": "source: pranav-refresh-2026-05-13"
       }
     ]
+  },
+  {
+    "id": "SCH-SAGAYA_MATHA_MATRICU_2",
+    "name": "*Sagaya Matha Matriculation Higher Secondary School",
+    "legalEntity": null,
+    "city": "Chennai",
+    "state": "Tamil Nadu",
+    "region": "South-West",
+    "pinCode": null,
+    "contactPerson": null,
+    "email": null,
+    "phone": null,
+    "billingName": null,
+    "pan": null,
+    "gstNumber": null,
+    "notes": null,
+    "active": true,
+    "createdAt": "2026-05-20T20:31:24.135Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-05-20T20:31:24.135Z",
+        "user": "anish.d",
+        "action": "create",
+        "after": {
+          "name": "*Sagaya Matha Matriculation Higher Secondary School",
+          "city": "Chennai",
+          "state": "Tamil Nadu"
+        },
+        "notes": "FY 2025-26 import"
+      }
+    ]
   }
 ]
