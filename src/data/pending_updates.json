@@ -224,5 +224,49 @@
       ]
     },
     "retryCount": 0
+  },
+  {
+    "id": "e18f9d79-4cec-4e82-ae08-58e55b8a08fb",
+    "queuedAt": "2026-05-20T20:31:28.981Z",
+    "queuedBy": "anish.d",
+    "entity": "payment",
+    "operation": "create",
+    "payload": {
+      "id": "MOU-STEAM-2526-070-i4",
+      "mouId": "MOU-STEAM-2526-070",
+      "schoolName": "*Sagaya Matha Matriculation Higher Secondary School",
+      "programme": "STEAM",
+      "instalmentLabel": "4 of 4",
+      "instalmentSeq": 4,
+      "totalInstalments": 4,
+      "description": "STEAM - Instalment 4 of 4 (FY 2025-26 import)",
+      "dueDateRaw": null,
+      "dueDateIso": null,
+      "expectedAmount": 0,
+      "receivedAmount": null,
+      "receivedDate": null,
+      "paymentMode": null,
+      "bankReference": null,
+      "piNumber": null,
+      "taxInvoiceNumber": null,
+      "status": "Pending",
+      "notes": null,
+      "piSentDate": null,
+      "piSentTo": null,
+      "piGeneratedAt": null,
+      "studentCountActual": 427,
+      "partialPayments": null,
+      "bankAmount": null,
+      "tdsAmount": null,
+      "auditLog": [
+        {
+          "timestamp": "2026-05-20T20:31:24.135Z",
+          "user": "anish.d",
+          "action": "create",
+          "notes": "FY 2025-26 import; paymentReceived=no"
+        }
+      ]
+    },
+    "retryCount": 0
   }
 ]
