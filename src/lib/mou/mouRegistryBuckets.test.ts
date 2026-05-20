@@ -127,6 +127,30 @@ describe('bucketsReconcile invariant (production data)', () => {
     expect(anomalies).toBeGreaterThan(0)
   })
 
+  it('Phase 6C.1: archived-cohort MOUs reconcile under the same invariant', () => {
+    // The 4-column panel was extended to /mous/archive; assert that
+    // the same invariant holds when the cohort filter selects archived
+    // rows (where most of Pranav's FY 25-26 data lives).
+    const archived = allMous.filter((m) => m.cohortStatus === 'archived')
+    expect(archived.length).toBeGreaterThan(0)
+    let checked = 0
+    let mismatches = 0
+    for (const mou of archived) {
+      const mouPayments = allPayments.filter((p) => p.mouId === mou.id)
+      const isAnomalous = mouPayments.some(
+        (p) =>
+          (p.expectedAmount ?? 0) < 0 ||
+          (p.receivedAmount ?? 0) > (p.expectedAmount ?? 0) + 1,
+      )
+      if (isAnomalous) continue
+      const b = deriveLifetimeBucketsForMou(mou, allPayments)
+      if (!bucketsReconcile(b)) mismatches += 1
+      checked += 1
+    }
+    expect(checked).toBeGreaterThan(0)
+    expect(mismatches).toBe(0)
+  })
+
   it('at least one MOU in production has receivedAmount > 0 in at least one row', () => {
     // Sanity that the test set is non-trivial (otherwise the
     // reconcile-by-construction test would pass with all zeros).
