@@ -111,6 +111,8 @@ const company = {
 
 interface FakeCounterCalls {
   count: number
+  lastFyDisplay?: string
+  fysSeen: string[]
 }
 
 function makeDeps(opts: {
@@ -125,7 +127,7 @@ function makeDeps(opts: {
   counterCalls: FakeCounterCalls
 } {
   const enqueueCalls: Array<Record<string, unknown>> = []
-  const counterCalls: FakeCounterCalls = { count: 0 }
+  const counterCalls: FakeCounterCalls = { count: 0, fysSeen: [] }
   const enqueue = vi.fn(async (params: Record<string, unknown>) => {
     enqueueCalls.push(params)
     const stub: PendingUpdate = {
@@ -136,11 +138,14 @@ function makeDeps(opts: {
     }
     return stub
   })
-  const issueCounter = vi.fn(async () => {
+  const issueCounter = vi.fn(async (_entity: string, fyDisplay?: string) => {
     counterCalls.count += 1
+    counterCalls.lastFyDisplay = fyDisplay
+    counterCalls.fysSeen.push(fyDisplay ?? '(default)')
     const seq = counterCalls.count
+    const fy = fyDisplay ?? '26-27'
     return {
-      piNumber: `GSL/OPS/26-27/${String(seq).padStart(4, '0')}`,
+      piNumber: `GSL/OPS/${fy}/${String(seq).padStart(4, '0')}`,
       counter: { fiscalYear: '26-27', next: seq + 1, prefix: 'GSL/OPS' },
     }
   })
@@ -198,6 +203,40 @@ describe('generatePi', () => {
       deps,
     )
     expect(result.ok).toBe(true)
+  })
+
+  it('Phase 6B: a FY 2025-26 MOU yields a 25-26 PI; counter call carries fyDisplay=25-26', async () => {
+    const u = user('Finance', 'shubhangi.g')
+    const m = mou({ id: 'MOU-25-26-A', academicYear: '2025-26' })
+    const s = school()
+    const { deps, counterCalls } = makeDeps({
+      mous: [m], schools: [s], users: [u],
+    })
+    const result = await generatePi(
+      { mouId: 'MOU-25-26-A', instalmentSeq: 1, generatedBy: 'shubhangi.g' },
+      deps,
+    )
+    expect(result.ok).toBe(true)
+    if (!result.ok) return
+    expect(result.piNumber).toBe('GSL/OPS/25-26/0001')
+    expect(counterCalls.lastFyDisplay).toBe('25-26')
+  })
+
+  it('Phase 6B: a FY 2026-27 MOU yields a 26-27 PI; counter call carries fyDisplay=26-27', async () => {
+    const u = user('Finance', 'shubhangi.g')
+    const m = mou({ academicYear: '2026-27' })
+    const s = school()
+    const { deps, counterCalls } = makeDeps({
+      mous: [m], schools: [s], users: [u],
+    })
+    const result = await generatePi(
+      { mouId: 'MOU-X', instalmentSeq: 1, generatedBy: 'shubhangi.g' },
+      deps,
+    )
+    expect(result.ok).toBe(true)
+    if (!result.ok) return
+    expect(result.piNumber).toBe('GSL/OPS/26-27/0001')
+    expect(counterCalls.lastFyDisplay).toBe('26-27')
   })
 
   it('OpsHead is REJECTED (mou:generate-pi not granted)', async () => {

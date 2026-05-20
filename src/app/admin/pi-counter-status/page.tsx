@@ -26,6 +26,16 @@ interface PiCounterMap {
   _comment?: string
   fiscalYear: string
   entities: CounterEntities
+  priorFiscalYears?: {
+    [fy: string]: { entities: CounterEntities }
+  }
+}
+
+function fyDisplayFromCounterKey(counterKey: string): string {
+  if (/^\d{4}$/.test(counterKey)) {
+    return counterKey.slice(0, 2) + '-' + counterKey.slice(2)
+  }
+  return counterKey
 }
 
 function loadCounter(): PiCounterMap | null {
@@ -140,6 +150,82 @@ export default async function PiCounterStatusPage() {
                   </tbody>
                 </table>
               </section>
+
+              {counter.priorFiscalYears &&
+              Object.keys(counter.priorFiscalYears).length > 0 ? (
+                <section
+                  className="rounded-md border border-border bg-card p-6"
+                  data-testid="prior-fiscal-years"
+                >
+                  <h2 className="font-heading text-lg font-semibold text-brand-navy">
+                    Prior fiscal years
+                  </h2>
+                  <p className="mt-1 text-sm text-slate-700">
+                    Counters for prior FYs. Advanced when a PI is issued
+                    against a MOU whose academicYear is older than the
+                    current FY.
+                  </p>
+                  {Object.entries(counter.priorFiscalYears).map(
+                    ([fy, block]) => {
+                      const fyDisplay = fyDisplayFromCounterKey(fy)
+                      return (
+                        <div key={fy} className="mt-4">
+                          <h3 className="font-mono text-sm font-semibold text-brand-navy">
+                            FY {fyDisplay} (counter key {fy})
+                          </h3>
+                          <table className="mt-2 w-full table-auto border-collapse text-sm">
+                            <thead>
+                              <tr className="border-b border-border text-left">
+                                <th className="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                                  Entity
+                                </th>
+                                <th className="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                                  Counter (next)
+                                </th>
+                                <th className="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                                  Next PI number
+                                </th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {Object.entries(block.entities).map(
+                                ([key, val]) => {
+                                  const entityKey = key as EntityKey
+                                  const cfg = company.entities[entityKey]
+                                  const formatted = cfg
+                                    ? formatPiNumber(
+                                        entityKey,
+                                        val.next,
+                                        fyDisplay,
+                                      )
+                                    : '(unknown entity)'
+                                  return (
+                                    <tr
+                                      key={key}
+                                      className="border-b border-border"
+                                      data-testid={`pi-counter-prior-row-${fy}-${key}`}
+                                    >
+                                      <td className="px-3 py-3 font-mono text-sm font-semibold text-brand-navy">
+                                        {key}
+                                      </td>
+                                      <td className="px-3 py-3 font-mono text-sm text-slate-700">
+                                        {val.next}
+                                      </td>
+                                      <td className="px-3 py-3 font-mono text-sm font-semibold text-brand-navy">
+                                        {formatted}
+                                      </td>
+                                    </tr>
+                                  )
+                                },
+                              )}
+                            </tbody>
+                          </table>
+                        </div>
+                      )
+                    },
+                  )}
+                </section>
+              ) : null}
 
               {counter._comment ? (
                 <section className="rounded-md border border-border bg-card p-6">

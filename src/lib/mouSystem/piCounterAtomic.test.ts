@@ -111,6 +111,64 @@ describe('issuePiNumberAtomic: shared counter (V5)', () => {
     }
   })
 
+  describe('Phase 6B FY-aware issuance', () => {
+    it("a FY 25-26 PI advances priorFiscalYears['2526'] not entities; output uses '25-26' display FY", async () => {
+      installCounterMock({
+        fiscalYear: '2627',
+        entities: { MH: { next: 2 }, UP: { next: 17 } },
+        priorFiscalYears: {
+          '2526': { entities: { MH: { next: 27 }, UP: { next: 27 } } },
+        },
+      })
+      const r = await issuePiNumberAtomic('UP', '25-26')
+      expect(r.piNumber).toBe('MTPL/UP/25-26/0027')
+      // Top-level counter must NOT have advanced.
+      expect(r.counter.entities.UP.next).toBe(17)
+      expect(r.counter.entities.MH.next).toBe(2)
+      // priorFiscalYears['2526'].UP advances; MH stays.
+      expect(r.counter.priorFiscalYears?.['2526']?.entities.UP.next).toBe(28)
+      expect(r.counter.priorFiscalYears?.['2526']?.entities.MH.next).toBe(27)
+    })
+
+    it("an explicit current-FY call ('26-27') still advances the top-level entities block", async () => {
+      installCounterMock({
+        fiscalYear: '2627',
+        entities: { MH: { next: 2 }, UP: { next: 17 } },
+      })
+      const r = await issuePiNumberAtomic('UP', '26-27')
+      expect(r.piNumber).toBe('MTPL/UP/26-27/0017')
+      expect(r.counter.entities.UP.next).toBe(18)
+    })
+
+    it('a FY 25-26 PI seeds priorFiscalYears at next=1 when the block is missing', async () => {
+      installCounterMock({
+        fiscalYear: '2627',
+        entities: { MH: { next: 2 }, UP: { next: 17 } },
+      })
+      const r = await issuePiNumberAtomic('MH', '25-26')
+      expect(r.piNumber).toBe('MTPL/MH/25-26/0001')
+      expect(r.counter.priorFiscalYears?.['2526']?.entities.MH.next).toBe(2)
+      // Top-level untouched.
+      expect(r.counter.entities.MH.next).toBe(2)
+    })
+
+    it('MH and UP advance independently inside the same prior-FY block', async () => {
+      installCounterMock({
+        fiscalYear: '2627',
+        entities: { MH: { next: 2 }, UP: { next: 17 } },
+        priorFiscalYears: {
+          '2526': { entities: { MH: { next: 27 }, UP: { next: 27 } } },
+        },
+      })
+      const mh = await issuePiNumberAtomic('MH', '25-26')
+      const up = await issuePiNumberAtomic('UP', '25-26')
+      expect(mh.piNumber).toBe('MTPL/MH/25-26/0027')
+      expect(up.piNumber).toBe('MTPL/UP/25-26/0027')
+      expect(up.counter.priorFiscalYears?.['2526']?.entities.MH.next).toBe(28)
+      expect(up.counter.priorFiscalYears?.['2526']?.entities.UP.next).toBe(28)
+    })
+  })
+
   it('legacy single-counter migration: old PiCounter shape carries forward on UP', async () => {
     // migrateLegacyCounter handles the pre-Phase-3 file shape.
     let state: PiCounter | PiCounterMap = {

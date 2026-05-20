@@ -525,10 +525,24 @@ export interface PiCounter {
  * with the migration path in githubQueue.ts.
  */
 export interface PiCounterMap {
-  fiscalYear: string               // "2627"
+  fiscalYear: string               // "2627" (default / current FY for callers that don't pass an explicit fy)
   entities: {
     MH: { next: number }
     UP: { next: number }
+  }
+  // Phase 6B: per-FY counter for prior fiscal years. Keys are
+  // counter-format FY strings ("2526"). When the PI generator is
+  // invoked with a non-default fy (derived from MOU.academicYear),
+  // it advances the counter inside this block instead of the
+  // top-level `entities` block. Missing block means no prior-FY
+  // PIs have been issued yet; first call seeds the entry at 1.
+  priorFiscalYears?: {
+    [fy: string]: {
+      entities: {
+        MH: { next: number }
+        UP: { next: number }
+      }
+    }
   }
 }
 

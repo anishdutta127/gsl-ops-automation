@@ -65,7 +65,11 @@ import usersJson from '@/data/users.json'
 import companyJson from '../../../config/company.json'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
 import { issuePiNumberAtomic } from '@/lib/mouSystem/piCounterAtomic'
-import { getEntityForProgramme, getEntity } from '@/lib/mouSystem/company'
+import {
+  fyFromAcademicYear,
+  getEntityForProgramme,
+  getEntity,
+} from '@/lib/mouSystem/company'
 import { canPerform } from '@/lib/auth/permissions'
 import { formatRs, formatDate } from '@/lib/format'
 import { PI_TEMPLATE, TemplateMissingError } from './templates'
@@ -409,9 +413,17 @@ export async function issueAndRenderPi(
   // First-ever issue. Advance counter atomically BEFORE any other
   // write. If anything below fails the counter has still moved, but
   // PI numbers gap; they never duplicate.
+  //
+  // Phase 6B: the PI fiscal year is derived from the parent MOU's
+  // academicYear, not from today's calendar date. A reissue against
+  // a FY 25-26 MOU emits MTPL/<entity>/25-26/<nnnn> using the
+  // priorFiscalYears['2526'] counter; a FY 26-27 MOU emits
+  // MTPL/<entity>/26-27/<nnnn> using the top-level counter. The
+  // counter file at src/data/pi_counter_map.json carries both.
   const entityKey = getEntityForProgramme(mou.programme)
   const entity = getEntity(entityKey)
-  const { piNumber } = await deps.issueCounter(entityKey)
+  const { display: fyDisplay } = fyFromAcademicYear(mou.academicYear)
+  const { piNumber } = await deps.issueCounter(entityKey, fyDisplay)
   const ts = deps.now().toISOString()
 
   const totalInsts = totalInstallments(mou.paymentSchedule)

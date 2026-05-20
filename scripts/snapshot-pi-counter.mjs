@@ -74,6 +74,21 @@ function parsePiNumber(piNumber) {
   }
 }
 
+// Phase 6B: Series B parser. The pre-system FY 25-26 PIs in Ops
+// payments.json carry the no-entity-prefix shape: MTPL/25-26/<seq>.
+// Original entity attribution is ambiguous in source data; this
+// parser returns the seq only, callers seed both MH and UP at
+// (highest seq + 1) as a defensive double-seed.
+function parseSeriesBPiNumber(piNumber) {
+  if (typeof piNumber !== 'string') return null
+  const m = piNumber.match(/^MTPL\/(\d{2}-\d{2})\/(\d+)$/)
+  if (!m) return null
+  return {
+    fy: m[1].replace('-', ''),
+    seq: Number(m[2]),
+  }
+}
+
 // Scan a list of records for piNumber fields and group highest seq per (entity, fy).
 function scanForHighestSeq(records, source) {
   const highest = new Map()
@@ -98,6 +113,24 @@ function mergeHighest(a, b) {
   return out
 }
 
+// Phase 6B: scan Ops payments.json for Series B (MTPL/25-26/<seq>,
+// no entity prefix). Returns the highest seq found across all Series
+// B rows, or 0 if none. Source data is in Ops, not legacy, because
+// the Pratik Excel import landed Series B into Ops payments only.
+function scanSeriesBHighest() {
+  const opsPaymentsPath = path.join(REPO_ROOT, 'src/data/payments.json')
+  if (!fs.existsSync(opsPaymentsPath)) return 0
+  const opsPayments = JSON.parse(fs.readFileSync(opsPaymentsPath, 'utf-8'))
+  let highest = 0
+  for (const p of opsPayments) {
+    const parsed = parseSeriesBPiNumber(p.piNumber)
+    if (parsed && parsed.fy === '2526' && parsed.seq > highest) {
+      highest = parsed.seq
+    }
+  }
+  return highest
+}
+
 function main() {
   console.log(`source: ${sourceDir}`)
   console.log(`target: ${TARGET_PATH}`)
@@ -111,6 +144,7 @@ function main() {
   const vexPis = readJson('vex_pis.json') ?? []
   const payments = readJson('payments.json') ?? []
   const prevTarget = readTargetJson()
+  const seriesBHighest = scanSeriesBHighest()
 
   console.log('legacy counter (source of truth):')
   console.log(JSON.stringify(legacyCounter, null, 2))
@@ -164,14 +198,44 @@ function main() {
   console.log('verification: legacy counter matches ledger for every tracked entity.')
   console.log('')
 
-  // Build the target counter map. Preserve the comment + structure
-  // shape that Ops already uses; refresh with legacy values verbatim.
+  // Build the target counter map. Phase 6B adds priorFiscalYears
+  // with FY 25-26 defensive double-seed (both entities at
+  // seriesBHighest+1) so a future Reissue against a FY 25-26 MOU
+  // cannot collide with the historic Series B numbers regardless of
+  // which entity Pratik originally used.
+  const priorSeed = seriesBHighest + 1
   const target = {
     _comment:
-      'Phase 6B cutover snapshot of gsl-mou-system/src/data/pi_counter.json (verified against vex_pis.json + payments.json ledger). Ops is now the source of truth; legacy is read-only post-banner.',
+      "Phase 6B cutover snapshot of gsl-mou-system/src/data/pi_counter.json (verified against vex_pis.json + payments.json ledger). Ops is now the source of truth; legacy is read-only post-banner. priorFiscalYears['2526'] is a defensive double-seed (both MH and UP at next=" +
+      priorSeed +
+      ') past the historic Series B max (MTPL/25-26/' +
+      seriesBHighest +
+      ' in Ops payments.json, on YP MOUs; original entity attribution is ambiguous in source data, so seeding both protects against collision regardless of which entity Pratik historically used).',
     fiscalYear: legacyCounter.fiscalYear,
     entities: legacyCounter.entities,
+    priorFiscalYears: {
+      ...(prevTarget?.priorFiscalYears ?? {}),
+      // Only seed 2526 if not already present, OR if the existing
+      // seed is below the scanned series B max+1 (guarded against
+      // accidentally lowering a counter that's been advanced live).
+      2526: (() => {
+        const existing = prevTarget?.priorFiscalYears?.['2526']?.entities
+        const mhExisting = existing?.MH?.next ?? 0
+        const upExisting = existing?.UP?.next ?? 0
+        return {
+          entities: {
+            MH: { next: Math.max(priorSeed, mhExisting) },
+            UP: { next: Math.max(priorSeed, upExisting) },
+          },
+        }
+      })(),
+    },
   }
+  console.log(
+    `series B (MTPL/25-26/<seq> in Ops payments.json) highest seq: ${seriesBHighest}`,
+  )
+  console.log(`priorFiscalYears['2526'] seed (defensive double): ${priorSeed}`)
+  console.log('')
 
   console.log('diff vs previous Ops counter map:')
   if (!prevTarget) {

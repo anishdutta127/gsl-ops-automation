@@ -61,9 +61,55 @@ export function getEntityForProgramme(programme: Programme | 'VEX' | string): En
 
 /**
  * Format a sequence number under a given entity's prefix.
- *   piPrefix = MTPL/MH, fy = 2627 → MTPL/MH/2627/0001
+ *   piPrefix = MTPL/MH, fy = 26-27 -> MTPL/MH/26-27/0001
+ *
+ * Phase 6B: optional fyDisplay lets callers route PI numbers into a
+ * prior fiscal year (e.g., reissuing a FY 25-26 PI on a
+ * MOU.academicYear='2025-26' instalment). Defaults to the current
+ * company.fiscalYear when omitted, so existing callers do not change.
+ * fyDisplay must be in the dashed format ('25-26'), not the counter
+ * key form ('2526').
  */
-export function formatPiNumber(entityKey: EntityKey, seq: number): string {
+export function formatPiNumber(
+  entityKey: EntityKey,
+  seq: number,
+  fyDisplay?: string,
+): string {
   const e = getEntity(entityKey)
-  return `${e.piPrefix}${e.piPrefixSeparator}${company.fiscalYear}${e.piPrefixSeparator}${String(seq).padStart(4, '0')}`
+  const fy = fyDisplay ?? company.fiscalYear
+  return `${e.piPrefix}${e.piPrefixSeparator}${fy}${e.piPrefixSeparator}${String(seq).padStart(4, '0')}`
+}
+
+/**
+ * Phase 6B: derive the FY for a PI from the parent MOU's academicYear
+ * (e.g., '2025-26'). Returns the two representations that
+ * formatPiNumber and the counter atomic need:
+ *   - display: dashed two-digit form, used in the PI number itself
+ *   - counterKey: undashed form, used as the priorFiscalYears map key
+ *
+ * The mapping is purely textual; the function does not validate that
+ * the academic year is one our system actually supports.
+ */
+export function fyFromAcademicYear(
+  academicYear: string,
+): { display: string; counterKey: string } {
+  const m = academicYear.match(/^(\d{2})(\d{2})-(\d{2})$/)
+  if (!m) {
+    throw new Error(
+      `Cannot derive PI fiscal year from academicYear='${academicYear}'. Expected '20YY-YY' shape (e.g. '2025-26').`,
+    )
+  }
+  const display = `${m[2]}-${m[3]}`
+  const counterKey = `${m[2]}${m[3]}`
+  return { display, counterKey }
+}
+
+/**
+ * Counter-key form of the current fiscal year ('26-27' -> '2627').
+ * Used by piCounterAtomic to decide whether to write into the
+ * top-level entities block (current FY) or the priorFiscalYears
+ * block (any other FY).
+ */
+export function currentFiscalYearCounterKey(): string {
+  return company.fiscalYear.replace('-', '')
 }
