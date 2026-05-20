@@ -1,0 +1,8 @@
+{
+  "_comment": "Gate 2 Step 3 snapshot from gsl-mou-system/src/data/pi_counter.json. Mou-system advances this counter during the parallel-build window; Ops re-snapshots one final time at Gate 5 cutover and locks. See MERGE_PLAN.md §9.",
+  "fiscalYear": "2627",
+  "entities": {
+    "MH": { "next": 2 },
+    "UP": { "next": 16 }
+  }
+}
