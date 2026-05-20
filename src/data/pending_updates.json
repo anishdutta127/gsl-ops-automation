@@ -820,5 +820,64 @@
       "importNotes": "acquisitionStatus=Retained; source=pranav-refresh-2026-05-13"
     },
     "retryCount": 0
+  },
+  {
+    "id": "5647eeb0-15e8-4334-9e47-2b8409ae97c3",
+    "queuedAt": "2026-05-20T12:34:56.681Z",
+    "queuedBy": "anita.c",
+    "entity": "mou",
+    "operation": "update",
+    "payload": {
+      "mouId": "MOU-STEAM-2627-079",
+      "productSelection": "TinkRworks",
+      "gradewiseDistribution": [
+        {
+          "grade": 6,
+          "students": 148,
+          "kitType": null
+        },
+        {
+          "grade": 7,
+          "students": 170,
+          "kitType": null
+        },
+        {
+          "grade": 8,
+          "students": 140,
+          "kitType": null
+        }
+      ],
+      "audit": {
+        "timestamp": "2026-05-20T12:34:56.679Z",
+        "user": "Anita C.",
+        "action": "update",
+        "before": {
+          "productSelection": null,
+          "gradewiseDistribution": null
+        },
+        "after": {
+          "productSelection": "TinkRworks",
+          "gradewiseDistribution": [
+            {
+              "grade": 6,
+              "students": 148,
+              "kitType": null
+            },
+            {
+              "grade": 7,
+              "students": 170,
+              "kitType": null
+            },
+            {
+              "grade": 8,
+              "students": 140,
+              "kitType": null
+            }
+          ]
+        },
+        "notes": "kits-details edit"
+      }
+    },
+    "retryCount": 0
   }
 ]
