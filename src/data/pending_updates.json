@@ -879,5 +879,64 @@
       }
     },
     "retryCount": 0
+  },
+  {
+    "id": "8f3ee300-703f-4443-ad42-9e8130e00654",
+    "queuedAt": "2026-05-20T12:35:49.931Z",
+    "queuedBy": "anita.c",
+    "entity": "mou",
+    "operation": "update",
+    "payload": {
+      "mouId": "MOU-STEAM-2627-079",
+      "productSelection": "TinkRworks",
+      "gradewiseDistribution": [
+        {
+          "grade": 6,
+          "students": 148,
+          "kitType": null
+        },
+        {
+          "grade": 7,
+          "students": 170,
+          "kitType": null
+        },
+        {
+          "grade": 8,
+          "students": 140,
+          "kitType": null
+        }
+      ],
+      "audit": {
+        "timestamp": "2026-05-20T12:35:49.931Z",
+        "user": "Anita C.",
+        "action": "update",
+        "before": {
+          "productSelection": null,
+          "gradewiseDistribution": null
+        },
+        "after": {
+          "productSelection": "TinkRworks",
+          "gradewiseDistribution": [
+            {
+              "grade": 6,
+              "students": 148,
+              "kitType": null
+            },
+            {
+              "grade": 7,
+              "students": 170,
+              "kitType": null
+            },
+            {
+              "grade": 8,
+              "students": 140,
+              "kitType": null
+            }
+          ]
+        },
+        "notes": "kits-details edit"
+      }
+    },
+    "retryCount": 0
   }
 ]
