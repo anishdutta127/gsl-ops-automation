@@ -202,6 +202,16 @@ Phase 1 outline. Each subsection grows as real incidents land. Living document; 
 - Symptom: CI green but Vercel deploy fails.
 - Recovery: revert the offending commit; investigate; redeploy.
 
+### 5.4a Vercel GitHub webhook health (Phase 6D verified 2026-05-21)
+
+- Expected: every `git push origin main` whose top commit does NOT match `^chore\(queue\):` triggers an auto-deploy within ~20 seconds. Queue commits are filtered by the `ignoreCommand` in `vercel.json`.
+- Verify: `git commit --allow-empty -m "chore: webhook verification" && git push`; within 30 seconds `npx vercel ls gsl-ops-automation` should show a fresh `Building` deployment at the top of the list. Phase 6D verification (commit `908e517` -> deploy `gsl-ops-automation-kj767hyhh`) confirmed this behaviour.
+- If no deploy appears within a minute, the webhook is genuinely broken. Recovery:
+  1. `npx vercel git disconnect` then `npx vercel git connect https://github.com/anishdutta127/gsl-ops-automation` (CLI prompts for GitHub auth on first run).
+  2. Confirm in GitHub `Settings -> Webhooks` that `https://api.vercel.com/v1/integrations/deploy/...` is registered and recent deliveries are green.
+  3. If CLI does not surface the reconnect, do it manually via the Vercel dashboard: `Project Settings -> Git -> Disconnect -> Connect`.
+- Fallback while broken: `npx vercel --prod` from the working tree forces a deploy. Burns a daily-quota slot (Hobby tier caps at 100 deploys/day); avoid stacking these.
+
 ### 5.5 PI counter skip or duplicate
 
 - Symptom: daily sync-runner check fires monotonicity violation.
