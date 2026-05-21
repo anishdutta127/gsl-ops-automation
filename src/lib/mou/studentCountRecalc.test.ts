@@ -348,3 +348,135 @@ describe('recalcInstallments - additional cases', () => {
     expect(result.totalCommitted).toBe(400000)
   })
 })
+
+describe('Phase 6D Part 4: identity between /student-count and /schedule-edit flows', () => {
+  // The two surfaces now share the same engine (recalcInstallments).
+  // This test asserts they produce identical per-row netDue for the
+  // same logical input.
+  //
+  // Scenario: 4-row MOU at contractValue Rs 4,00,000, percentShares
+  // 10/30/30/30, with i1 locked at Rs 40,000.
+  //
+  //   - /student-count flow: caller passes pricePerStudent = 1000,
+  //     currentCount = 400 (so currentCount * pricePerStudent =
+  //     400,000) and lets the engine derive contract from count.
+  //   - /schedule-edit override flow: caller passes pricePerStudent
+  //     and currentCount as informational, plus newContractValue =
+  //     400,000 explicitly. The engine MUST use the override.
+  //
+  // The two callsites must yield identical row.netDue values.
+  it('produces identical per-row netDue for the same input regardless of which caller flow drives the engine', () => {
+    const installments: Payment[] = [
+      inst({
+        id: 'MOU-X-i1',
+        instalmentSeq: 1,
+        expectedAmount: 40000,
+        receivedAmount: 40000,
+        status: 'Received',
+        percentShare: 10,
+      }),
+      inst({
+        id: 'MOU-X-i2',
+        instalmentSeq: 2,
+        expectedAmount: 120000,
+        receivedAmount: null,
+        percentShare: 30,
+      }),
+      inst({
+        id: 'MOU-X-i3',
+        instalmentSeq: 3,
+        expectedAmount: 120000,
+        receivedAmount: null,
+        percentShare: 30,
+      }),
+      inst({
+        id: 'MOU-X-i4',
+        instalmentSeq: 4,
+        expectedAmount: 120000,
+        receivedAmount: null,
+        percentShare: 30,
+      }),
+    ]
+    // Flow A: student-count driven. contract derived from count × price.
+    const flowA = recalcInstallments({
+      pricePerStudent: 1000,
+      currentCount: 400,
+      installments,
+    })
+    // Flow B: schedule-edit override. contractValue passed explicitly.
+    const flowB = recalcInstallments({
+      pricePerStudent: 1000,
+      currentCount: 400,
+      installments,
+      newContractValue: 400000,
+    })
+    expect(flowA.rows.length).toBe(flowB.rows.length)
+    for (let i = 0; i < flowA.rows.length; i += 1) {
+      expect(flowA.rows[i]?.paymentId).toBe(flowB.rows[i]?.paymentId)
+      expect(flowA.rows[i]?.netDue).toBe(flowB.rows[i]?.netDue)
+      expect(flowA.rows[i]?.adjustmentFromLockedInstallments).toBe(
+        flowB.rows[i]?.adjustmentFromLockedInstallments,
+      )
+    }
+    expect(flowA.totalCommitted).toBe(flowB.totalCommitted)
+    expect(flowA.reconciled).toBe(flowB.reconciled)
+    // Sanity: the locked row's netDue is Rs 40,000 (receivedAmount
+    // preserved); the three unpaid rows share Rs 3,60,000 by their
+    // 30/30/30 weights, each getting Rs 1,20,000 exactly.
+    expect(flowA.rows[0]?.netDue).toBe(40000)
+    expect(flowA.rows[1]?.netDue).toBe(120000)
+    expect(flowA.rows[2]?.netDue).toBe(120000)
+    expect(flowA.rows[3]?.netDue).toBe(120000)
+  })
+
+  it('flow B (schedule-edit) honours the contractValue override when it diverges from count × price', () => {
+    // currentCount × pricePerStudent = 500 × 1000 = 500,000.
+    // But the operator-supplied newContractValue is 400,000; the
+    // engine must use the override.
+    const installments: Payment[] = [
+      inst({
+        id: 'MOU-X-i1',
+        instalmentSeq: 1,
+        expectedAmount: 125000,
+        receivedAmount: 125000,
+        status: 'Received',
+        percentShare: 25,
+      }),
+      inst({
+        id: 'MOU-X-i2',
+        instalmentSeq: 2,
+        expectedAmount: 125000,
+        receivedAmount: null,
+        percentShare: 25,
+      }),
+      inst({
+        id: 'MOU-X-i3',
+        instalmentSeq: 3,
+        expectedAmount: 125000,
+        receivedAmount: null,
+        percentShare: 25,
+      }),
+      inst({
+        id: 'MOU-X-i4',
+        instalmentSeq: 4,
+        expectedAmount: 125000,
+        receivedAmount: null,
+        percentShare: 25,
+      }),
+    ]
+    const result = recalcInstallments({
+      pricePerStudent: 1000,
+      currentCount: 500, // intentionally NOT 400; override governs
+      installments,
+      newContractValue: 400000,
+    })
+    expect(result.totalCommitted).toBe(400000)
+    // remainingContract = 400,000 - 125,000 = 275,000.
+    // Three unpaid at 25 / 75 = 1/3 each. 275,000 / 3 = 91,666.67;
+    // last unpaid absorbs the rounding tail.
+    expect(result.rows[0]?.netDue).toBe(125000)
+    expect(result.rows[1]?.netDue).toBe(91666.67)
+    expect(result.rows[2]?.netDue).toBe(91666.67)
+    expect(result.rows[3]?.netDue).toBe(91666.66)
+  })
+})

@@ -19,17 +19,13 @@
  * and returns structured error reasons for the form to surface.
  */
 
-import crypto from 'node:crypto'
 import type { AuditEntry, MOU, Payment, User } from '@/lib/types'
 import mousJson from '@/data/mous.json'
 import paymentsJson from '@/data/payments.json'
 import usersJson from '@/data/users.json'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
 import { canEditFinanceData, canEditMOU } from '@/lib/access'
-import {
-  computeRecalcWithAdjustments,
-  type ExistingInstallment,
-} from '@/lib/mouSystem/recalc'
+import { recalcInstallments } from '@/lib/mou/studentCountRecalc'
 
 export interface ScheduleRowInput {
   /** Existing Payment.id when editing a row; null for newly-added rows. */
@@ -87,11 +83,6 @@ function round2(n: number): number {
 
 function isPiIssued(p: Payment): boolean {
   return p.piNumber !== null || p.piSentDate !== null
-}
-
-function paidAmountFor(p: Payment): number {
-  if (p.receivedAmount !== null && p.receivedAmount > 0) return p.receivedAmount
-  return 0
 }
 
 function validateRows(rows: ScheduleRowInput[]): SaveScheduleFailureReason | null {
@@ -306,25 +297,28 @@ export async function overrideLockedSchedule(
   const rowError = validateRows(args.rows)
   if (rowError) return { ok: false, reason: rowError }
 
-  // Map editor rows to existing payments by sequence index.
-  // Per-row fresh expected amount (derived from contractValue * pct).
-  const instalmentInputs: Array<ExistingInstallment & { piSentDate?: string | null }> = existing.map((p, i) => ({
-    id: p.id,
-    seq: p.instalmentSeq,
-    pctDue: args.rows[i]!.pctDue,
-    expectedAmount: p.expectedAmount,
-    paidAmount: paidAmountFor(p),
-    piSentDate: p.piSentDate ?? null,
-    freshExpectedAmount: round2((mou.contractValue * args.rows[i]!.pctDue) / 100),
+  // Phase 6D Part 4: route through the unified spread-by-weight engine.
+  // The operator's per-row pctDue becomes each Payment's percentShare;
+  // mou.contractValue is the override total so the engine derives the
+  // new per-row netDue at fixed contract value rather than from
+  // currentCount * pricePerStudent. Locked rows preserve receivedAmount
+  // as netDue; the carry from any locked-row delta is absorbed by the
+  // unpaid rows in proportion to their pctDue. No Adjustment entity is
+  // created here (Pranav's stated model: "adjustments will be made in
+  // the next PIs", which is what the netDue redistribution captures).
+  const recalcInputs: Payment[] = existing.map((p, i) => ({
+    ...p,
+    percentShare: args.rows[i]!.pctDue,
   }))
-
-  const { updates, adjustments } = computeRecalcWithAdjustments({
-    perStudentPrice: 0, // unused because freshExpectedAmount is supplied
-    newStudents: 0,
-    installments: instalmentInputs,
-    reason,
+  const recalcResult = recalcInstallments({
+    pricePerStudent: mou.spWithTax,
+    currentCount: mou.studentsActual ?? mou.studentsMou,
+    installments: recalcInputs,
+    newContractValue: mou.contractValue,
   })
-  const updatesById = new Map(updates.map((u) => [u.installmentId, u]))
+  const newExpectedById = new Map(
+    recalcResult.rows.map((r) => [r.paymentId, r.netDue]),
+  )
 
   const ts = deps.now().toISOString()
   const mouAudit: AuditEntry = {
@@ -335,9 +329,9 @@ export async function overrideLockedSchedule(
       installmentExpected: existing.map((p) => ({ id: p.id, expected: p.expectedAmount })),
     },
     after: {
-      installmentExpected: existing.map((p, i) => ({
+      installmentExpected: existing.map((p) => ({
         id: p.id,
-        expected: instalmentInputs[i]!.freshExpectedAmount,
+        expected: newExpectedById.get(p.id) ?? p.expectedAmount,
       })),
     },
     notes: `Override locked schedule: ${reason}`,
@@ -347,9 +341,15 @@ export async function overrideLockedSchedule(
   for (let i = 0; i < existing.length; i++) {
     const prior = existing[i]!
     const row = args.rows[i]!
-    const update = updatesById.get(prior.id)
-    // Always update due date / notes on every row, regardless of lock state.
-    const newExpected = update !== undefined ? update.newExpectedAmount : prior.expectedAmount
+    const recalcNetDue = newExpectedById.get(prior.id) ?? prior.expectedAmount
+    // The engine returns netDue for every row. Locked rows return
+    // receivedAmount (unchanged from prior.expectedAmount in the
+    // common case where expectedAmount == receivedAmount); unpaid rows
+    // return the spread-by-weight allocation.
+    const newExpected = recalcNetDue
+    const expectedChanged = Math.abs(newExpected - prior.expectedAmount) > 0.01
+    void expectedChanged
+    const update = expectedChanged ? { newExpectedAmount: newExpected } : undefined
     const rowAudit: AuditEntry = {
       timestamp: ts,
       user: args.recordedBy,
@@ -385,30 +385,11 @@ export async function overrideLockedSchedule(
     touched += 1
   }
 
-  // Enqueue Adjustment rows for locked rows whose expected changed.
-  for (const adj of adjustments) {
-    const adjId = `ADJ-${crypto.randomBytes(4).toString('hex').toUpperCase()}`
-    await deps.enqueue({
-      queuedBy: args.recordedBy,
-      entity: 'adjustment',
-      operation: 'create',
-      payload: {
-        id: adjId,
-        mouId: mou.id,
-        schoolId: mou.schoolId,
-        triggeredByEvent: 'installment_plan_change',
-        triggeredAt: ts,
-        triggeredBy: args.recordedBy,
-        originalInstallmentId: adj.originalInstallmentId,
-        appliedToInstallmentId: adj.appliedToInstallmentId,
-        amountDelta: adj.amountDelta,
-        reason: adj.reason,
-        beforeAmount: adj.beforeAmount,
-        afterAmount: adj.afterAmount,
-        status: 'Active' as const,
-      } as Record<string, unknown>,
-    })
-  }
+  // Phase 6D Part 4: Adjustment-entity creation retired. The locked-row
+  // delta is now absorbed by the unpaid-row spread inside
+  // recalcInstallments; no separate Adjustment entity is required.
+  // The return shape keeps `adjustmentsCount` for API compatibility,
+  // pinned to 0.
   await deps.enqueue({
     queuedBy: args.recordedBy,
     entity: 'mou',
@@ -424,6 +405,6 @@ export async function overrideLockedSchedule(
     touchedPayments: touched,
     createdPayments: 0,
     deletedPayments: 0,
-    adjustmentsCount: adjustments.length,
+    adjustmentsCount: 0,
   }
 }

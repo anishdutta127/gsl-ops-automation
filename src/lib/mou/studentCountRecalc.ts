@@ -54,6 +54,16 @@ export interface RecalcInput {
    * `percentShare` explicitly when in doubt.
    */
   installments: Payment[]
+  /**
+   * Phase 6D Part 4 hook for the schedule-edit override path. When
+   * set, the engine uses this value as the new contract total instead
+   * of deriving it as `currentCount * pricePerStudent`. Lets
+   * `saveSchedule.overrideLockedSchedule` rewrite the per-row split at
+   * a fixed contract value without changing the student count. The
+   * `/student-count` flow leaves this undefined so the standard
+   * count-driven derivation kicks in.
+   */
+  newContractValue?: number
 }
 
 export interface RecalcInstalmentRow {
@@ -125,7 +135,7 @@ function derivePercentShare(p: Payment, fallbackBase: number): number {
 }
 
 export function recalcInstallments(input: RecalcInput): RecalcResult {
-  const { pricePerStudent, currentCount, installments } = input
+  const { pricePerStudent, currentCount, installments, newContractValue } = input
   const sorted = installments
     .slice()
     .sort((a, b) => a.instalmentSeq - b.instalmentSeq)
@@ -170,8 +180,11 @@ export function recalcInstallments(input: RecalcInput): RecalcResult {
       .reduce((s, p) => s + (p.receivedAmount ?? 0), 0),
   )
 
-  const newContractValue = round2(currentCount * pricePerStudent)
-  const remainingContract = round2(newContractValue - lockedReceivedSum)
+  const resolvedContractValue =
+    typeof newContractValue === 'number'
+      ? round2(newContractValue)
+      : round2(currentCount * pricePerStudent)
+  const remainingContract = round2(resolvedContractValue - lockedReceivedSum)
 
   // Sum of percent share across the UNPAID rows. This is the basis
   // for the spread-by-weight allocation. When zero (every row locked),
@@ -216,7 +229,7 @@ export function recalcInstallments(input: RecalcInput): RecalcResult {
   }
 
   const totalCommitted = round2(rows.reduce((s, r) => s + r.netDue, 0))
-  const reconciled = Math.abs(totalCommitted - newContractValue) <= 1
+  const reconciled = Math.abs(totalCommitted - resolvedContractValue) <= 1
 
   return { rows, cumulativeDelta, firstUnpaidId, totalCommitted, reconciled }
 }

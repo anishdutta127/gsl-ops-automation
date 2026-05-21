@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { computeRecalcWithAdjustments, recalculatePaymentSchedule } from './recalc'
+import { recalculatePaymentSchedule } from './recalc'
 
 describe('recalculatePaymentSchedule', () => {
   // Pranav's example, verbatim.
@@ -111,104 +111,5 @@ describe('recalculatePaymentSchedule', () => {
     expect(r.instalments[1]!.newExpected).toBe(100000)
     expect(r.instalments[2]!.newExpected).toBe(100000)
     expect(r.totalDue).toBe(400000)
-  })
-})
-
-describe('computeRecalcWithAdjustments : adjustment-as-line-item', () => {
-  // Pranav's exact 500/450/400 example.
-
-  it('500 → 450 BEFORE any payment rewrites every PI in place', () => {
-    const result = computeRecalcWithAdjustments({
-      perStudentPrice: 1000,
-      newStudents: 450,
-      installments: [
-        { id: 'i1', seq: 1, pctDue: 25, expectedAmount: 125000, paidAmount: 0, piSentDate: null },
-        { id: 'i2', seq: 2, pctDue: 25, expectedAmount: 125000, paidAmount: 0, piSentDate: null },
-        { id: 'i3', seq: 3, pctDue: 25, expectedAmount: 125000, paidAmount: 0, piSentDate: null },
-        { id: 'i4', seq: 4, pctDue: 25, expectedAmount: 125000, paidAmount: 0, piSentDate: null },
-      ],
-      reason: 'Round 2 test: drop 500→450 pre-payment',
-    })
-    expect(result.adjustments).toHaveLength(0)
-    expect(result.updates.map((u) => u.newExpectedAmount)).toEqual([
-      112500, 112500, 112500, 112500,
-    ])
-  })
-
-  it('450 → 400 AFTER Inst 1 paid preserves Inst 1 and creates a Rs 12,500 credit on Inst 2', () => {
-    const result = computeRecalcWithAdjustments({
-      perStudentPrice: 1000,
-      newStudents: 400,
-      installments: [
-        { id: 'i1', seq: 1, pctDue: 25, expectedAmount: 112500, paidAmount: 112500, piSentDate: '2026-04-01' },
-        { id: 'i2', seq: 2, pctDue: 25, expectedAmount: 112500, paidAmount: 0, piSentDate: null },
-        { id: 'i3', seq: 3, pctDue: 25, expectedAmount: 112500, paidAmount: 0, piSentDate: null },
-        { id: 'i4', seq: 4, pctDue: 25, expectedAmount: 112500, paidAmount: 0, piSentDate: null },
-      ],
-      reason: 'Round 2 test: drop 450→400 after Inst 1 paid',
-    })
-    // Three unlocked installments rewrite to Rs 1,00,000.
-    expect(result.updates.map((u) => [u.installmentId, u.newExpectedAmount])).toEqual([
-      ['i2', 100000],
-      ['i3', 100000],
-      ['i4', 100000],
-    ])
-    // One adjustment for Inst 1 : credit applied to Inst 2.
-    expect(result.adjustments).toHaveLength(1)
-    expect(result.adjustments[0]).toMatchObject({
-      originalInstallmentId: 'i1',
-      appliedToInstallmentId: 'i2',
-      amountDelta: -12500,
-      beforeAmount: 112500,
-      afterAmount: 100000,
-    })
-  })
-
-  it('paid installment with PI sent gates the rewrite (PI sent = locked even if not paid)', () => {
-    const result = computeRecalcWithAdjustments({
-      perStudentPrice: 1000,
-      newStudents: 400,
-      installments: [
-        { id: 'i1', seq: 1, pctDue: 25, expectedAmount: 112500, paidAmount: 0, piSentDate: '2026-04-01' },
-        { id: 'i2', seq: 2, pctDue: 25, expectedAmount: 112500, paidAmount: 0, piSentDate: null },
-      ],
-      reason: 'PI-sent lock test',
-    })
-    expect(result.updates.find((u) => u.installmentId === 'i1')).toBeUndefined()
-    expect(result.adjustments[0]).toMatchObject({
-      originalInstallmentId: 'i1',
-      appliedToInstallmentId: 'i2',
-    })
-  })
-
-  it('floats the adjustment when no future unlocked installment exists', () => {
-    const result = computeRecalcWithAdjustments({
-      perStudentPrice: 1000,
-      newStudents: 400,
-      installments: [
-        { id: 'i1', seq: 1, pctDue: 50, expectedAmount: 56250, paidAmount: 56250, piSentDate: '2026-04-01' },
-        { id: 'i2', seq: 2, pctDue: 50, expectedAmount: 56250, paidAmount: 56250, piSentDate: '2026-07-01' },
-      ],
-      reason: 'No unlocked future installment',
-    })
-    expect(result.updates).toHaveLength(0)
-    expect(result.adjustments).toHaveLength(2)
-    for (const adj of result.adjustments) {
-      expect(adj.appliedToInstallmentId).toBeNull()
-    }
-  })
-
-  it('no-op when actuals match committed (every newExpected equals existing)', () => {
-    const result = computeRecalcWithAdjustments({
-      perStudentPrice: 1000,
-      newStudents: 500,
-      installments: [
-        { id: 'i1', seq: 1, pctDue: 25, expectedAmount: 125000, paidAmount: 0, piSentDate: null },
-        { id: 'i2', seq: 2, pctDue: 25, expectedAmount: 125000, paidAmount: 0, piSentDate: null },
-      ],
-      reason: 'no change',
-    })
-    expect(result.updates).toHaveLength(0)
-    expect(result.adjustments).toHaveLength(0)
   })
 })

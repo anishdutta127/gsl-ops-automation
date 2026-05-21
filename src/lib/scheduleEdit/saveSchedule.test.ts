@@ -240,8 +240,8 @@ describe('saveScheduleNoPi', () => {
 })
 
 describe('overrideLockedSchedule', () => {
-  it('Pranav 500→400 canonical: PI-1 paid Rs 1,25,000 preserved; PI-2 re-priced; adjustment created', async () => {
-    const m = mou({ contractValue: 400000 }) // post-actuals contract value after 500→400 drop
+  it('Pranav 500-to-400 canonical: PI-1 paid Rs 1,25,000 preserved; PI-2/3/4 absorb the carry via spread-by-weight (Phase 6D Part 4 unified semantics)', async () => {
+    const m = mou({ contractValue: 400000 }) // post-actuals contract value after 500-to-400 drop
     const p1 = pay({
       id: 'M-i1',
       instalmentSeq: 1,
@@ -290,15 +290,33 @@ describe('overrideLockedSchedule', () => {
     )
     expect(res.ok).toBe(true)
     if (res.ok) {
-      expect(res.adjustmentsCount).toBe(1)
+      // Phase 6D Part 4: no Adjustment entity is created on this path
+      // anymore. The locked-row delta (-Rs 25,000) is absorbed by the
+      // three unpaid rows in proportion to their percentShare.
+      expect(res.adjustmentsCount).toBe(0)
     }
-    const adjCall = calls.find((c) => c.entity === 'adjustment')
-    expect(adjCall).toBeDefined()
-    const adjPayload = adjCall!.payload as Record<string, unknown>
-    expect(adjPayload.originalInstallmentId).toBe('M-i1')
-    expect(adjPayload.appliedToInstallmentId).toBe('M-i2')
-    expect(adjPayload.amountDelta).toBe(-25000) // 100000 new - 125000 old
-    expect(adjPayload.status).toBe('Active')
+    expect(calls.find((c) => c.entity === 'adjustment')).toBeUndefined()
+
+    // p1 locked: expectedAmount preserved at Rs 1,25,000.
+    const paymentCalls = calls.filter((c) => c.entity === 'payment')
+    const p1Update = paymentCalls.find(
+      (c) => (c.payload as { id?: string }).id === 'M-i1',
+    )
+    expect(p1Update).toBeDefined()
+    expect((p1Update!.payload as { expectedAmount: number }).expectedAmount).toBe(125000)
+
+    // p2 / p3 / p4 share the remaining Rs 2,75,000 by their 25% weight:
+    // each gets Rs 91,666.67; the last unpaid row absorbs the rounding tail.
+    const newP2 = paymentCalls.find((c) => (c.payload as { id?: string }).id === 'M-i2')
+    const newP3 = paymentCalls.find((c) => (c.payload as { id?: string }).id === 'M-i3')
+    const newP4 = paymentCalls.find((c) => (c.payload as { id?: string }).id === 'M-i4')
+    const newP2Amount = (newP2!.payload as { expectedAmount: number }).expectedAmount
+    const newP3Amount = (newP3!.payload as { expectedAmount: number }).expectedAmount
+    const newP4Amount = (newP4!.payload as { expectedAmount: number }).expectedAmount
+    expect(newP2Amount).toBeCloseTo(91666.67, 1)
+    expect(newP3Amount).toBeCloseTo(91666.67, 1)
+    expect(newP4Amount).toBeCloseTo(91666.66, 1)
+    expect(125000 + newP2Amount + newP3Amount + newP4Amount).toBeCloseTo(400000, 1)
   })
 
   it('refuses when reason is too short', async () => {
