@@ -1,1 +1,40 @@
-[]
+[
+  {
+    "id": "e313a15e-576f-4f2d-aa81-fa3e13817cd2",
+    "queuedAt": "2026-05-21T07:46:22.350Z",
+    "queuedBy": "anita.c",
+    "entity": "inventoryItem",
+    "operation": "create",
+    "payload": {
+      "id": "INV-MORSE-CODING-PROJECT-KIT",
+      "skuName": "Morse Coding Project Kit",
+      "category": "TinkRworks",
+      "cretileGrade": null,
+      "mastersheetSourceName": null,
+      "currentStock": 310,
+      "reorderThreshold": null,
+      "notes": null,
+      "active": true,
+      "lastUpdatedAt": "2026-05-21T07:46:22.349Z",
+      "lastUpdatedBy": "anita.c",
+      "auditLog": [
+        {
+          "timestamp": "2026-05-21T07:46:22.349Z",
+          "user": "anita.c",
+          "action": "create",
+          "after": {
+            "id": "INV-MORSE-CODING-PROJECT-KIT",
+            "skuName": "Morse Coding Project Kit",
+            "category": "TinkRworks",
+            "cretileGrade": null,
+            "currentStock": 310,
+            "reorderThreshold": null,
+            "active": true
+          },
+          "notes": "Inventory item INV-MORSE-CODING-PROJECT-KIT created manually."
+        }
+      ]
+    },
+    "retryCount": 0
+  }
+]
