@@ -33,12 +33,18 @@ import schoolsJson from '@/data/schools.json'
 import escalationsJson from '@/data/escalations.json'
 import dispatchesJson from '@/data/dispatches.json'
 import kitDispatchesJson from '@/data/kit_dispatches.json'
+import homepageActionLogJson from '@/data/homepage_action_log.json'
 import { getCurrentUser } from '@/lib/auth/session'
 import { TopNav } from '@/components/ops/TopNav'
 import { ActionQueueLayout } from '@/components/homepage/ActionQueueLayout'
 import { LeadershipAggregate } from '@/components/homepage/LeadershipAggregate'
 import { buildActionQueue, resolveHomepageView } from '@/lib/homepage/actionQueue'
 import { NO_OP_AI_INSIGHTS } from '@/lib/homepage/aiInsights'
+import {
+  applyDismissals,
+  applyRollover,
+  type ActionLogEntry,
+} from '@/lib/homepage/rollover'
 
 const allMous = mousJson as unknown as MOU[]
 const allPayments = paymentsJson as unknown as Payment[]
@@ -78,7 +84,7 @@ export default async function HomePage() {
 
   const now = new Date()
 
-  const { view, items } = await buildActionQueue(
+  const { view, items: rawItems } = await buildActionQueue(
     {
       now,
       user,
@@ -94,6 +100,15 @@ export default async function HomePage() {
     },
     NO_OP_AI_INSIGHTS,
   )
+
+  // Phase 6F Part 4: apply rollover + dismissal honour. Items the
+  // user has dismissed today stay hidden UNLESS they promoted to
+  // overdue (per Anish 2026-05-21 GO). Items unactioned across
+  // multiple days get a higher urgencyScore + a "Carried over" pill.
+  const todayIso = now.toISOString().slice(0, 10)
+  const log = homepageActionLogJson as unknown as ActionLogEntry[]
+  const promoted = applyRollover(rawItems, { todayIso, user: { id: user.id }, log })
+  const items = applyDismissals(promoted, { todayIso, user: { id: user.id }, log })
 
   const greeting = `${partOfDay(now)}, ${user.name.split(' ')[0]}`
   const today = todayLine(now)

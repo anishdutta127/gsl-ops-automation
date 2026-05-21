@@ -59,6 +59,10 @@ export const ARRAY_ENTITY_TO_PATH: Record<
   // Append-only audit log; the MOU points at events via
   // mou.studentCountEventIds.
   studentCountEvent: 'src/data/student_count_events.json',
+  // Phase 6F Part 4: per-(user, day, item) homepage interaction log.
+  // Drives rollover + urgency promotion + dismissal-vs-promotion
+  // honour. Append-only; entries keyed by date + userId + itemId.
+  homepageActionLog: 'src/data/homepage_action_log.json',
 }
 
 export function pathForEntity(entity: PendingUpdateEntity): string | null {

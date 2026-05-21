@@ -1707,6 +1707,7 @@ export type PendingUpdateEntity =
   | 'piIssue'                      // mou-system pi issuance ledger
   | 'stageResponsibility'          // Gate 4.9 stage-level ownership config
   | 'studentCountEvent'            // Phase 5 (Pranav review #4): per-event log of count changes that re-price installments
+  | 'homepageActionLog'            // Phase 6F Part 4: per-user/day/item seen/actioned/dismissed log for rollover semantics
 
 export interface PendingUpdate {
   id: string                       // UUID
