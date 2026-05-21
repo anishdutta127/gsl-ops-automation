@@ -200,8 +200,8 @@ export default async function PiPage({ params, searchParams }: PageProps) {
             >
               <input type="hidden" name="mouId" value={mou.id} />
               <div>
-                <label htmlFor="installmentSeq" className={FIELD_LABEL_CLASS}>Instalment</label>
-                <select id="installmentSeq" name="installmentSeq" required className={FIELD_INPUT_CLASS}>
+                <label htmlFor="instalmentSeq" className={FIELD_LABEL_CLASS}>Instalment</label>
+                <select id="instalmentSeq" name="instalmentSeq" required className={FIELD_INPUT_CLASS}>
                   {pendingInstallments.length === 0 ? (
                     <option value="">No pending instalments</option>
                   ) : (

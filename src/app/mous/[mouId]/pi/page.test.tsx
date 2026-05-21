@@ -59,6 +59,24 @@ describe('/mous/[mouId]/pi page', () => {
     expect(html).toContain('Generate PI')
   })
 
+  it('Phase 6E Finding 2: form field name matches the API field name (instalmentSeq, British spelling)', async () => {
+    // Latent typo: the select used name="installmentSeq" (American
+    // double-L) but the route at src/app/api/pi/generate/route.ts:42
+    // reads form.get('instalmentSeq') (British single-L). Pranav's BIT
+    // PI submission failed with "Pick a valid pending instalment from
+    // the dropdown and try again." because the API got an empty string,
+    // NaN-checked, and 303-redirected with ?error=invalid-instalment-seq.
+    // The assertion below is paired with the literal-string read in the
+    // route handler so a future rename keeps both sides in sync.
+    getCurrentUserMock.mockResolvedValue(user('Finance', 'shubhangi.g'))
+    const { default: Page } = await import('./page')
+    const html = renderToStaticMarkup(
+      await Page({ params: Promise.resolve({ mouId: 'MOU-STEAM-2627-001' }) }),
+    )
+    expect(html).toContain('name="instalmentSeq"')
+    expect(html).not.toContain('name="installmentSeq"')
+  })
+
   it('SalesRep on own MOU redirects with notice (Gate 1 Step 4 MM2)', async () => {
     // Gate 1 Step 4 changes the PI gate from notFound() to a redirect
     // back to the MOU detail page with a ?notice=pi-finance-only param,
