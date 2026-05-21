@@ -140,7 +140,7 @@ try {
     // /api/admin/__impersonate route to swap the active session to
     // the named user, then walks the rest of the queue as them.
     if (target.asUser) {
-      const impResp = await page.request.post(`${BASE}/api/admin/__impersonate`, {
+      const impResp = await page.request.post(`${BASE}/api/admin/walk-as`, {
         multipart: { targetUserId: target.asUser },
         maxRedirects: 0,
       })

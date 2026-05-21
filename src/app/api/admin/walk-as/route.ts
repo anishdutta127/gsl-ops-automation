@@ -1,5 +1,5 @@
 /*
- * POST /api/admin/__impersonate (Phase 6F Part 5, V4 verification).
+ * POST /api/admin/walk-as (Phase 6F Part 5, V4 verification).
  *
  * Verification-only endpoint that lets the Playwright walker render
  * the homepage as Pranav (Finance), Misba (Ops), or Ameet
