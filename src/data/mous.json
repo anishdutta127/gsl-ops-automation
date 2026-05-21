@@ -5361,6 +5361,17 @@
           "studentsVariance": -50,
           "studentsVariancePct": -0.1
         }
+      },
+      {
+        "timestamp": "2026-05-21T10:52:24.367Z",
+        "user": "anita.c",
+        "action": "pi-issued",
+        "after": {
+          "piNumber": "MTPL/UP/26-27/0017",
+          "instalmentSeq": 2,
+          "total": 359999.74576271174
+        },
+        "notes": "Generated PI MTPL/UP/26-27/0017 for MOU-STEAM-2627-001 instalment 2 of 2."
       }
     ],
     "cohortStatus": "active",
