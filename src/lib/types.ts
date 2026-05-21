@@ -300,6 +300,13 @@ export type AuditAction =
   // i1=Jun, i2=Sep, i3=Dec, i4=Mar) and stamps each touched row.
   // before.dueDateIso is null; after.dueDateIso is the derived ISO.
   | 'due-date-backfill-phase-6d'
+  // Phase 6E Finding 1: one-shot productSelection backfill on MOUs
+  // that have dispatch evidence of Cretile or TinkRworks SKUs but
+  // null productSelection. scripts/backfill-mou-products.mjs maps
+  // each dispatch lineItem to its inventory category and writes the
+  // inferred product onto the parent MOU. before.productSelection is
+  // null; after.productSelection is 'Cretile' / 'TinkRworks' / 'Both'.
+  | 'product-selection-backfill-phase-6e'
 
 export interface AuditEntry {
   timestamp: string                // ISO
