@@ -11,12 +11,12 @@ const nextConfig = {
   // after the wizard's "Generate .docx" button returned a "Template file
   // not found" error in production.
   //
-  // Phase 6E Finding 3 (2026-05-21): sweep for the 5 remaining
-  // template-loading routes Phase 6A had flagged as deferred (dispatch
-  // note, handover worksheet, dispatch generate, delivery ack, finance
-  // PI download). The diagnostic /api/admin/template-smoke entry exists
-  // to verify YP-v2.1.docx is bundled in production; it is removed
-  // once verification lands. See PHASE_6E_TEMPLATE_AUDIT.md.
+  // Phase 6E Finding 3 (2026-05-21): swept the 5 remaining template-
+  // loading routes Phase 6A had flagged as deferred (dispatch note,
+  // handover worksheet, dispatch generate, delivery ack, finance PI
+  // download). Verified via the /api/admin/template-smoke diagnostic
+  // route (since removed) that all 7 .docx assets are present in the
+  // deployed serverless bundle at /var/task/public/.
   experimental: {
     outputFileTracingIncludes: {
       '/api/pi/generate':                        ['./public/ops-templates/**/*'],
@@ -26,7 +26,6 @@ const nextConfig = {
       '/api/dispatch/generate':                  ['./public/ops-templates/**/*'],
       '/api/delivery-ack/template':              ['./public/ops-templates/**/*'],
       '/api/finance/pi/[paymentId]/download':    ['./public/ops-templates/**/*'],
-      '/api/admin/template-smoke':               ['./public/mou-templates/**/*', './public/ops-templates/**/*'],
     },
   },
 };

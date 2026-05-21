@@ -36,13 +36,29 @@ experimental.outputFileTracingIncludes: {
   '/api/dispatch/generate':                      ['./public/ops-templates/**/*'],
   '/api/delivery-ack/template':                  ['./public/ops-templates/**/*'],
   '/api/finance/pi/[paymentId]/download':        ['./public/ops-templates/**/*'],
-  // Diagnostic smoke route added during Phase 6E Finding 3 to confirm
-  // the YP-v2.1.docx is bundled correctly. Removed after verification.
-  '/api/admin/template-smoke':                   ['./public/mou-templates/**/*', './public/ops-templates/**/*'],
 }
 ```
 
-The trailing diagnostic entry is removed once the smoke route confirms the YP wizard toast root cause; see Phase 6E final report for the verification result.
+## Production smoke verification (post-deploy)
+
+Diagnostic route `/api/admin/template-smoke` (added in this gate, removed after verification) probed all 7 templates from inside the deployed serverless function. JSON response from the Vercel runtime:
+
+```json
+{
+  "cwd": "/var/task",
+  "results": {
+    "public/mou-templates/STEAM-v2.1.docx":         { "state": "present", "sizeBytes": 14244 },
+    "public/mou-templates/YP-v2.1.docx":            { "state": "present", "sizeBytes": 13099 },
+    "public/mou-templates/HBPE-v2.1.docx":          { "state": "present", "sizeBytes": 12012 },
+    "public/ops-templates/pi-template.docx":        { "state": "present", "sizeBytes": 8603 },
+    "public/ops-templates/dispatch-template.docx":  { "state": "present", "sizeBytes": 9646 },
+    "public/ops-templates/handover-template.docx":  { "state": "present", "sizeBytes": 2283 },
+    "public/ops-templates/delivery-ack-template.docx": { "state": "present", "sizeBytes": 9633 }
+  }
+}
+```
+
+All 7 templates are present in the deployed bundle at `/var/task/public/`. The YP-v2.1.docx is bundled correctly — so Pranav's Image 3 toast root cause was NOT a missing template (the YP entry has been in the include since Phase 6A on 2026-05-20). The diagnostic route + its include entry are removed in a follow-up commit.
 
 ## Notes
 
