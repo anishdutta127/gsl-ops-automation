@@ -520,7 +520,7 @@
       "hasVariance": true
     },
     "createdAt": "2026-05-20T12:12:54.011Z",
-    "readAt": null,
+    "readAt": "2026-05-21T07:27:47.973Z",
     "auditLog": [
       {
         "timestamp": "2026-05-20T12:12:54.011Z",
@@ -532,6 +532,18 @@
           "relatedEntityId": "34cacab1-61d9-41f6-af66-4203f8efe82f"
         },
         "notes": "Notification intake-completed fan-out to misba.m (sender=anita.c)."
+      },
+      {
+        "timestamp": "2026-05-21T07:27:47.973Z",
+        "user": "misba.m",
+        "action": "notification-marked-read",
+        "before": {
+          "readAt": null
+        },
+        "after": {
+          "readAt": "2026-05-21T07:27:47.973Z"
+        },
+        "notes": "Recipient marked notification as read."
       }
     ]
   },
@@ -744,7 +756,7 @@
       "hasVariance": true
     },
     "createdAt": "2026-05-20T12:12:54.011Z",
-    "readAt": null,
+    "readAt": "2026-05-21T07:26:14.105Z",
     "auditLog": [
       {
         "timestamp": "2026-05-20T12:12:54.011Z",
@@ -756,6 +768,18 @@
           "relatedEntityId": "34cacab1-61d9-41f6-af66-4203f8efe82f"
         },
         "notes": "Notification intake-completed fan-out to ajith.n (sender=anita.c)."
+      },
+      {
+        "timestamp": "2026-05-21T07:26:14.105Z",
+        "user": "ajith.n",
+        "action": "notification-marked-read",
+        "before": {
+          "readAt": null
+        },
+        "after": {
+          "readAt": "2026-05-21T07:26:14.105Z"
+        },
+        "notes": "Recipient marked notification as read."
       }
     ]
   }
