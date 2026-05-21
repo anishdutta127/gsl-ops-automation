@@ -24,5 +24,9 @@ export default async function DashboardRedirect({ searchParams }: PageProps) {
     if (typeof v === 'string') params.set(k, v)
   }
   const qs = params.toString()
-  redirect(qs === '' ? '/' : `/?${qs}`)
+  // Phase 6F (2026-05-21): /dashboard was a redirect to /. The action-
+  // first homepage now lives at /; bookmarks to /dashboard expecting
+  // the legacy 5-zone view get the new /dashboard/overview route
+  // instead. Search params still forward.
+  redirect(qs === '' ? '/dashboard/overview' : `/dashboard/overview?${qs}`)
 }

@@ -1,9 +1,10 @@
 /*
- * / consolidated landing tests (Gate 3.6).
+ * / action-first homepage tests (Phase 6F Part 3).
  *
- * Pre-Gate-3.6 the / route hosted the Operations Control
- * Dashboard; that surface moved to /dashboard/ops and these
- * tests now exercise the new five-zone landing.
+ * Replaces the legacy 5-zone landing tests (now at
+ * /dashboard/overview/page.test.tsx). These exercise the new
+ * action-queue surface: greeting, role tag, queue partitioning,
+ * and the leadership aggregate branch for Ameet.
  */
 
 import { describe, expect, it, vi, beforeEach } from 'vitest'
@@ -45,147 +46,74 @@ function admin(): User {
     passwordHash: 'X',
     createdAt: '',
     auditLog: [],
+    department: null,
   }
 }
 
-describe('/ consolidated landing (Gate 3.6)', () => {
+function ameet(): User {
+  return {
+    id: 'ameet.z',
+    name: 'Ameet Zaveri',
+    email: 'a@example.test',
+    role: 'Admin',
+    testingOverride: false,
+    active: true,
+    passwordHash: 'X',
+    createdAt: '',
+    auditLog: [],
+    department: null,
+  }
+}
+
+describe('/ action-first homepage', () => {
   it('redirects unauthenticated callers to /login', async () => {
     getCurrentUserMock.mockResolvedValue(null)
     const { default: HomePage } = await import('./page')
     await expect(HomePage()).rejects.toThrow('REDIRECT:/login?next=%2F')
   })
 
-  it('renders header with platform name + user name', async () => {
+  it('admin sees the action-queue root with a greeting', async () => {
     getCurrentUserMock.mockResolvedValue(admin())
     const { default: HomePage } = await import('./page')
     const html = renderToStaticMarkup(await HomePage())
-    expect(html).toContain('GSL Ops Platform')
-    expect(html).toContain('Welcome, Anish')
+    expect(html).toContain('data-testid="action-queue-root"')
+    expect(html).toMatch(/Good (morning|afternoon|evening), Anish/)
+    expect(html).toContain('Admin') // role tag chip
   })
 
-  it('renders all five landing zones', async () => {
+  it('admin queue includes the null-productSelection data-quality card', async () => {
+    // The fixture data carries MOUs with null productSelection in
+    // src/data/mous.json; the engine surfaces them as a card. The
+    // homepage admin partition pushes all non-AI items to "Your queue".
     getCurrentUserMock.mockResolvedValue(admin())
     const { default: HomePage } = await import('./page')
     const html = renderToStaticMarkup(await HomePage())
-    expect(html).toContain('data-testid="zone-commercial"')
-    expect(html).toContain('data-testid="zone-operational"')
-    expect(html).toContain('data-testid="zone-attention"')
-    expect(html).toContain('data-testid="zone-quick-actions"')
-    expect(html).toContain('data-testid="zone-drill-down"')
+    expect(html).toContain('data-quality:null-productSelection')
+    expect(html).toContain('/admin/product-backfill')
   })
 
-  it('Gate 4.95: drill-down tiles render above Quick actions and Items requiring attention', async () => {
-    getCurrentUserMock.mockResolvedValue(admin())
+  it('Ameet sees the leadership aggregate instead of a personal queue', async () => {
+    getCurrentUserMock.mockResolvedValue(ameet())
     const { default: HomePage } = await import('./page')
     const html = renderToStaticMarkup(await HomePage())
-    const idxOperational = html.indexOf('data-testid="zone-operational"')
-    const idxDrillDown = html.indexOf('data-testid="zone-drill-down"')
-    const idxQuickActions = html.indexOf('data-testid="zone-quick-actions"')
-    const idxAttention = html.indexOf('data-testid="zone-attention"')
-    expect(idxOperational).toBeGreaterThan(-1)
-    expect(idxDrillDown).toBeGreaterThan(idxOperational)
-    expect(idxQuickActions).toBeGreaterThan(idxDrillDown)
-    expect(idxAttention).toBeGreaterThan(idxQuickActions)
+    expect(html).toContain('data-testid="leadership-aggregate-root"')
+    expect(html).toContain('data-testid="platform-pulse"')
+    expect(html).not.toContain('data-testid="action-queue-root"')
   })
 
-  it('Zone 1 surfaces 4 KPIs + sparkline + finance link', async () => {
+  it('footer links to /dashboard/overview (legacy 5-zone surface)', async () => {
     getCurrentUserMock.mockResolvedValue(admin())
     const { default: HomePage } = await import('./page')
     const html = renderToStaticMarkup(await HomePage())
-    expect(html).toContain('Commercial position')
-    expect(html).toContain('data-testid="kpi-signed-contract"')
-    expect(html).toContain('data-testid="kpi-received"')
-    expect(html).toContain('data-testid="kpi-outstanding"')
-    expect(html).toContain('data-testid="kpi-active-schools"')
-    expect(html).toContain('data-testid="commercial-sparkline"')
-    expect(html).toMatch(
-      /data-testid="commercial-finance-link"[^>]*href="\/dashboard\/finance"|href="\/dashboard\/finance"[^>]*data-testid="commercial-finance-link"/,
-    )
-  })
-
-  it('Zone 2 surfaces pipeline-by-stage + in-transit + pending-allocation columns', async () => {
-    getCurrentUserMock.mockResolvedValue(admin())
-    const { default: HomePage } = await import('./page')
-    const html = renderToStaticMarkup(await HomePage())
-    expect(html).toContain('Operational position')
-    // Gate 4 Step 1: first column now reads MOUs in pipeline by stage,
-    // backed by the statusTracker.bucketByStage helper.
-    expect(html).toMatch(/data-testid="op-pipeline-by-stage"[^>]*href="\/mous"/)
-    expect(html).toContain('data-testid="stage-bar"')
-    expect(html).toMatch(
-      /data-testid="op-in-transit"[^>]*href="\/dispatch\?status=In\+Transit"/,
-    )
-    expect(html).toMatch(
-      /data-testid="op-pending-allocation"[^>]*href="\/dispatch\/kits"/,
-    )
-    expect(html).toMatch(
-      /data-testid="operational-ops-link"[^>]*href="\/dashboard\/ops"|href="\/dashboard\/ops"[^>]*data-testid="operational-ops-link"/,
-    )
-  })
-
-  it('Zone 3 attention surfaces empty state or items, never both', async () => {
-    getCurrentUserMock.mockResolvedValue(admin())
-    const { default: HomePage } = await import('./page')
-    const html = renderToStaticMarkup(await HomePage())
-    expect(html).toContain('Items requiring attention')
-    // Either the empty state or attention items render; the heading is
-    // always present.
-    const hasItems = /data-testid="attention-item-/.test(html)
-    const hasEmpty = /data-testid="attention-empty"/.test(html)
-    expect(hasItems || hasEmpty).toBe(true)
-    expect(hasItems && hasEmpty).toBe(false)
-  })
-
-  it('Zone 4 quick actions strip carries 5 outlined buttons with correct hrefs', async () => {
-    getCurrentUserMock.mockResolvedValue(admin())
-    const { default: HomePage } = await import('./page')
-    const html = renderToStaticMarkup(await HomePage())
-    expect(html).toContain('Quick actions')
-    expect(html).toMatch(/data-testid="quick-new-mou"[^>]*href="\/mous\/new"/)
-    expect(html).toMatch(
-      /data-testid="quick-match-payment"[^>]*href="\/finance\/payments\/unmatched"/,
-    )
-    expect(html).toMatch(
-      /data-testid="quick-raise-dispatch"[^>]*href="\/dispatch\/kits"/,
-    )
-    expect(html).toMatch(
-      /data-testid="quick-raise-escalation"[^>]*href="\/escalations\/new"/,
-    )
-    expect(html).toMatch(
-      /data-testid="quick-generate-pi"[^>]*href="\/finance\/pi\/pending"/,
-    )
-  })
-
-  it('Zone 5 renders Finance, Ops, Leadership tiles with KPI numbers', async () => {
-    getCurrentUserMock.mockResolvedValue(admin())
-    const { default: HomePage } = await import('./page')
-    const html = renderToStaticMarkup(await HomePage())
-    expect(html).toMatch(/data-testid="tile-finance"[^>]*href="\/dashboard\/finance"/)
-    expect(html).toMatch(/data-testid="tile-ops"[^>]*href="\/dashboard\/ops"/)
-    expect(html).toMatch(
-      /data-testid="tile-leadership"[^>]*href="\/dashboard\/leadership"/,
-    )
-    expect(html).toContain('Finance health')
-    expect(html).toContain('Operations')
-    expect(html).toContain('Leadership view')
-    expect(html).toContain('Outstanding')
-    expect(html).toContain('PIs awaiting')
-    expect(html).toContain('Active dispatches')
-  })
-
-  it('contains no raw hex codes (token discipline)', async () => {
-    getCurrentUserMock.mockResolvedValue(admin())
-    const { default: HomePage } = await import('./page')
-    const html = renderToStaticMarkup(await HomePage())
-    expect(html).not.toMatch(/#[0-9a-fA-F]{3,6}/)
+    expect(html).toContain('href="/dashboard/overview"')
   })
 
   it('contains no em-dash characters', async () => {
     getCurrentUserMock.mockResolvedValue(admin())
     const { default: HomePage } = await import('./page')
     const html = renderToStaticMarkup(await HomePage())
-    // Construct the em-dash from its codepoint so this test file itself
-    // doesn't trip the docs-lint em-dash-zero rule.
-    expect(html).not.toContain('\u2014')
+    // Construct the dash from its codepoint so docs-lint does not
+    // trip on the test source itself.
+    expect(html).not.toContain(String.fromCharCode(0x2014))
   })
 })

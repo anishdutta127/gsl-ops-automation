@@ -1,24 +1,24 @@
 /*
- * / Consolidated landing (Gate 3.6).
+ * / Action-first homepage (Phase 6F Part 3).
  *
- * Pre-Gate-3.6 this URL hosted the Operations Control Dashboard.
- * Gate 3.6 replaces it with a deliberately-designed five-zone
- * orientation surface: Commercial position, Operational position,
- * Items requiring attention, Quick actions, drill-down tiles to
- * the dedicated dept dashboards. The Operations Control Dashboard
- * moved to /dashboard/ops.
+ * Replaces the Gate 3.6 five-zone landing per Ameet's directive: when
+ * a user opens the platform, they see what they need to do today, not
+ * aggregated metrics. The legacy 5-zone surface moves to
+ * /dashboard/overview and is linked from this page's footer.
  *
- * Design intent: orient any user (Leadership, Ops, Finance, Admin)
- * in five seconds and route them to their workspace in one click.
+ * Data flow: the engine at src/lib/homepage/actionQueue.ts produces
+ * the ActionItem[] from the canonical data files. This page resolves
+ * the user view, splits the queue into "Your queue" / "Team blockers"
+ * (Leadership view uses the LeadershipAggregate component instead),
+ * and renders the cards.
  *
- * Data flow: every zone is computed at request time from the
- * canonical data files via `src/lib/dashboard/landingData.ts`. No
- * filter UI on the landing itself: filters belong on the deeper
- * department dashboards where analysis happens.
+ * Single-<main> rule: the root layout owns the only <main>; this
+ * page returns its content inside a fragment + <div>.
  */
 
 import { redirect } from 'next/navigation'
 import type {
+  Dispatch,
   Escalation,
   KitDispatch,
   MOU,
@@ -31,123 +31,117 @@ import paymentsJson from '@/data/payments.json'
 import paymentLogsJson from '@/data/payment_logs.json'
 import schoolsJson from '@/data/schools.json'
 import escalationsJson from '@/data/escalations.json'
+import dispatchesJson from '@/data/dispatches.json'
 import kitDispatchesJson from '@/data/kit_dispatches.json'
 import { getCurrentUser } from '@/lib/auth/session'
-import { canEditMOU } from '@/lib/access'
 import { TopNav } from '@/components/ops/TopNav'
-import { ConsolidatedLanding } from '@/components/dashboard/ConsolidatedLanding'
-import {
-  computeCommercialPosition,
-  computeLandingAttention,
-  computeOperationalPosition,
-  computeTileSlices,
-  currentFiscalYear,
-  type LandingCriticalChange,
-} from '@/lib/dashboard/landingData'
-import {
-  collectCriticalChanges,
-  withinTrailingWindow,
-} from '@/lib/criticalChanges'
+import { ActionQueueLayout } from '@/components/homepage/ActionQueueLayout'
+import { LeadershipAggregate } from '@/components/homepage/LeadershipAggregate'
+import { buildActionQueue, resolveHomepageView } from '@/lib/homepage/actionQueue'
+import { NO_OP_AI_INSIGHTS } from '@/lib/homepage/aiInsights'
 
 const allMous = mousJson as unknown as MOU[]
 const allPayments = paymentsJson as unknown as Payment[]
 const allPaymentLogs = paymentLogsJson as unknown as PaymentLog[]
 const allSchools = schoolsJson as unknown as School[]
 const allEscalations = escalationsJson as unknown as Escalation[]
+const allDispatches = dispatchesJson as unknown as Dispatch[]
 const allKitDispatches = kitDispatchesJson as unknown as KitDispatch[]
+
+function partOfDay(now: Date): string {
+  const hour = now.getHours()
+  if (hour < 12) return 'Good morning'
+  if (hour < 17) return 'Good afternoon'
+  return 'Good evening'
+}
+
+function todayLine(now: Date): string {
+  // British spelling, no em-dash. eg "Thursday 21 May 2026".
+  const weekday = now.toLocaleDateString('en-GB', { weekday: 'long' })
+  const day = now.getDate()
+  const month = now.toLocaleDateString('en-GB', { month: 'long' })
+  const year = now.getFullYear()
+  return `${weekday} ${day} ${month} ${year}`
+}
+
+const ROLE_TAG: Record<ReturnType<typeof resolveHomepageView>, string> = {
+  admin: 'Admin',
+  leadership: 'Leadership',
+  finance: 'Finance',
+  ops: 'Ops',
+  sales: 'Sales',
+}
 
 export default async function HomePage() {
   const user = await getCurrentUser()
   if (!user) redirect('/login?next=%2F')
 
   const now = new Date()
-  const fy = currentFiscalYear(now)
 
-  const commercial = computeCommercialPosition({
-    mous: allMous,
-    payments: allPayments,
-    fy,
-    now,
-  })
-  const operational = computeOperationalPosition({
-    mous: allMous,
-    dispatches: allKitDispatches,
-    payments: allPayments,
-    now,
-  })
-  // Gate 4.7 Step 3: collect critical changes in the last 24h across
-  // every MOU. Cap at 5 per MOU (top-most recent) and 50 overall so
-  // the interleave doesn't blow up on a heavy-activity day; the
-  // landing zone itself further caps total visible items to 5.
-  const ONE_DAY_MS = 24 * 60 * 60 * 1000
-  const recentCriticalChanges: LandingCriticalChange[] = []
-  for (const mou of allMous) {
-    if (!mou.auditLog || mou.auditLog.length === 0) continue
-    const changes = collectCriticalChanges({
-      entityType: 'mou',
-      entityId: mou.id,
-      entityLabel: mou.schoolName,
-      hrefBase: '/mous',
-      auditLog: mou.auditLog,
-    })
-    const recent = withinTrailingWindow(changes, now, ONE_DAY_MS)
-    for (const c of recent.slice(0, 5)) {
-      recentCriticalChanges.push({
-        description: `${mou.schoolName}: ${c.action}`,
-        href: c.href,
-        timestamp: c.timestamp,
-      })
-      if (recentCriticalChanges.length >= 50) break
-    }
-    if (recentCriticalChanges.length >= 50) break
+  const { view, items } = await buildActionQueue(
+    {
+      now,
+      user,
+      data: {
+        mous: allMous,
+        payments: allPayments,
+        paymentLogs: allPaymentLogs,
+        schools: allSchools,
+        dispatches: allDispatches,
+        kitDispatches: allKitDispatches,
+        escalations: allEscalations,
+      },
+    },
+    NO_OP_AI_INSIGHTS,
+  )
+
+  const greeting = `${partOfDay(now)}, ${user.name.split(' ')[0]}`
+  const today = todayLine(now)
+
+  // Leadership users get the platform-pulse aggregate instead of a
+  // personal queue.
+  if (view === 'leadership') {
+    return (
+      <>
+        <TopNav currentPath="/" />
+        <LeadershipAggregate
+          greeting={greeting}
+          todayLine={today}
+          items={items}
+          fallbackOverviewHref="/dashboard/overview"
+        />
+      </>
+    )
   }
 
-  const attention = computeLandingAttention({
-    mous: allMous,
-    schools: allSchools,
-    escalations: allEscalations,
-    dispatches: allKitDispatches,
-    payments: allPayments,
-    now,
-    recentCriticalChanges,
-  })
-  const tiles = computeTileSlices({
-    mous: allMous,
-    payments: allPayments,
-    paymentLogs: allPaymentLogs,
-    escalations: allEscalations,
-    dispatches: allKitDispatches,
-    commercial,
-    operational,
-  })
+  // For Finance / Ops / Sales / Admin, partition the queue into
+  // "Your queue" (items tagged to your role) vs "Team blockers"
+  // (items tagged Both - they're system-wide signals every role
+  // should see, but in the queue layout we surface them on the right
+  // so the user's department-specific work dominates the left
+  // column). Admin sees everything in "Your queue" (no Team column).
+  const yourQueue =
+    view === 'admin'
+      ? items.filter((i) => i.category !== 'ai-insight')
+      : items.filter((i) => i.role === view && i.category !== 'ai-insight')
+  const teamBlockers =
+    view === 'admin'
+      ? []
+      : items.filter((i) => i.role === 'both' && i.category !== 'ai-insight')
+  const aiInsights = items.filter((i) => i.category === 'ai-insight')
 
-  // Per CLAUDE.md "Single-<main> rule": the root layout owns the only
-  // <main id="main-content">. This page wraps its content in a <div>
-  // so the skip-link target stays valid.
   return (
     <>
       <TopNav currentPath="/" />
-      <div className="mx-auto max-w-screen-xl px-4 py-6 sm:px-6" data-testid="landing-root">
-        <header className="mb-5">
-          <h1 className="font-heading text-2xl font-bold text-brand-navy">
-            GSL Ops Platform
-          </h1>
-          <p className="mt-1 text-sm text-slate-600">
-            Welcome, {user.name}. Today&apos;s signal across commercial,
-            operational, and attention.
-          </p>
-        </header>
-        <ConsolidatedLanding
-          commercial={commercial}
-          operational={operational}
-          attention={attention}
-          finance={tiles.finance}
-          ops={tiles.ops}
-          leadership={tiles.leadership}
-          fyLabel={fy}
-          canDraftMou={canEditMOU(user)}
-        />
-      </div>
+      <ActionQueueLayout
+        greeting={greeting}
+        todayLine={today}
+        roleTag={ROLE_TAG[view]}
+        yourQueue={yourQueue}
+        teamBlockers={teamBlockers}
+        aiInsights={aiInsights}
+        fallbackOverviewHref="/dashboard/overview"
+      />
     </>
   )
 }

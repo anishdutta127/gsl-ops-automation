@@ -307,6 +307,11 @@ export type AuditAction =
   // inferred product onto the parent MOU. before.productSelection is
   // null; after.productSelection is 'Cretile' / 'TinkRworks' / 'Both'.
   | 'product-selection-backfill-phase-6e'
+  // Phase 6F Part 3: operator-driven productSelection edits through
+  // the /admin/product-backfill bulk-edit page. Pattern matches the
+  // one-shot backfill action but is recorded per-MOU at save time
+  // rather than via a script run.
+  | 'product-selection-bulk-update'
 
 export interface AuditEntry {
   timestamp: string                // ISO
