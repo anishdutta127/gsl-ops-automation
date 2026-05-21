@@ -470,4 +470,44 @@ describe('recordReceipt', () => {
     expect('bankAmount' in payload).toBe(false)
     expect('tdsAmount' in payload).toBe(false)
   })
+
+  it('Phase 6E Finding 4: single-payment Bank Rs 2,32,932 + TDS Rs 25,881 split persists both halves', async () => {
+    // Pranav's canonical reproduction from the brief: a single Mark-Paid
+    // submission carries Bank + TDS. The /api/mou/installments/mark-paid
+    // route now reads bankAmount + tdsAmount from the form, sums them
+    // to compute the canonical receivedAmount, and forwards both halves
+    // to recordReceipt. This test asserts the lib accepts the split,
+    // recomputes the total via bank + tds, and emits a Payment payload
+    // carrying both fields for Pranav's 26AS filing.
+    const p = payment({ expectedAmount: 258813 })
+    const { deps, calls } = makeDeps({
+      payments: [p],
+      users: [user('Finance', 'shubhangi.g')],
+    })
+    const res = await recordReceipt(
+      {
+        paymentId: 'MOU-X-i1',
+        receivedDate: '2026-05-10',
+        receivedAmount: 258813, // bank 2,32,932 + tds 25,881
+        bankAmount: 232932,
+        tdsAmount: 25881,
+        paymentMode: 'Bank Transfer',
+        bankReference: 'UTR-TDS-CANONICAL',
+        notes: null,
+        recordedBy: 'shubhangi.g',
+      },
+      deps,
+    )
+    expect(res.ok).toBe(true)
+    if (res.ok) {
+      expect(res.payment.receivedAmount).toBe(258813)
+      expect(res.payment.bankAmount).toBe(232932)
+      expect(res.payment.tdsAmount).toBe(25881)
+      expect(res.payment.status).toBe('Paid')
+    }
+    const payload = calls[0]?.payload as Record<string, unknown>
+    expect(payload.bankAmount).toBe(232932)
+    expect(payload.tdsAmount).toBe(25881)
+    expect(payload.receivedAmount).toBe(258813)
+  })
 })

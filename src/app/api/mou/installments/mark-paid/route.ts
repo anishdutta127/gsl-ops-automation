@@ -51,7 +51,29 @@ export async function POST(request: Request) {
   const reason = String(form.get('reasonForManualMark') ?? '').trim()
   if (!reason) return errorTo('missing-reason')
 
-  const receivedAmount = Number(String(form.get('receivedAmount') ?? ''))
+  // Phase 6E Finding 4: form now sends bankAmount + tdsAmount as the
+  // editable inputs. Total receivedAmount is the server-side sum so
+  // the legacy receivedAmount field is preserved as the canonical
+  // total downstream. Back-compat: if bankAmount + tdsAmount are
+  // absent (older clients), fall back to the legacy receivedAmount
+  // field with tds=0.
+  const bankAmountRaw = String(form.get('bankAmount') ?? '')
+  const tdsAmountRaw = String(form.get('tdsAmount') ?? '')
+  const legacyReceivedRaw = String(form.get('receivedAmount') ?? '')
+  let bankAmount: number | null = null
+  let tdsAmount: number | null = null
+  let receivedAmount: number
+  if (bankAmountRaw !== '') {
+    const b = Number(bankAmountRaw)
+    const t = tdsAmountRaw !== '' ? Number(tdsAmountRaw) : 0
+    if (!Number.isFinite(b) || b < 0) return errorTo('invalid-amount')
+    if (!Number.isFinite(t) || t < 0) return errorTo('invalid-amount')
+    bankAmount = b
+    tdsAmount = t
+    receivedAmount = Math.round((b + t) * 100) / 100
+  } else {
+    receivedAmount = Number(legacyReceivedRaw)
+  }
   if (!Number.isFinite(receivedAmount) || receivedAmount <= 0) {
     return errorTo('invalid-amount')
   }
@@ -64,6 +86,8 @@ export async function POST(request: Request) {
     paymentId,
     receivedDate,
     receivedAmount,
+    bankAmount,
+    tdsAmount,
     paymentMode,
     bankReference: bankReferenceRaw === '' ? null : bankReferenceRaw,
     notes: `Manual Mark as Paid. Reason: ${reason}`,

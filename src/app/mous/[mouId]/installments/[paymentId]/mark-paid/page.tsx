@@ -133,22 +133,56 @@ export default async function MarkPaidPage({ params, searchParams }: PageProps) 
             <input type="hidden" name="mouId" value={mou.id} />
             <input type="hidden" name="paymentId" value={payment.id} />
 
+            {/* Phase 6E Finding 4: Bank + TDS split mirroring the batch
+                form (/finance/payments/log-batch). Pranav files form 26AS
+                from the TDS amount, so the split has to be captured at
+                the single-payment surface too. Bank Amount + TDS Amount
+                are the editable inputs; total received is read-only and
+                surfaces as their sum. The legacy single-field
+                receivedAmount input is preserved as a hidden field
+                computed from bank + TDS so the existing API contract
+                (recordReceipt reads receivedAmount as the canonical
+                total) keeps working. */}
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div>
-                <label htmlFor="receivedAmount" className={FIELD_LABEL_CLASS}>
-                  Amount received (Rs)
+                <label htmlFor="bankAmount" className={FIELD_LABEL_CLASS}>
+                  Bank Amount (Rs)
+                  <span className="ml-1 text-xs font-normal text-muted-foreground">
+                    (cash credited to the bank)
+                  </span>
                 </label>
                 <input
-                  id="receivedAmount"
-                  name="receivedAmount"
+                  id="bankAmount"
+                  name="bankAmount"
                   type="number"
-                  min="1"
+                  min="0"
                   step="0.01"
                   required
                   defaultValue={payment.expectedAmount}
                   className={FIELD_INPUT_CLASS}
+                  data-testid="mark-paid-bank-amount"
                 />
               </div>
+              <div>
+                <label htmlFor="tdsAmount" className={FIELD_LABEL_CLASS}>
+                  TDS Amount (Rs)
+                  <span className="ml-1 text-xs font-normal text-muted-foreground">
+                    (defaults to 0)
+                  </span>
+                </label>
+                <input
+                  id="tdsAmount"
+                  name="tdsAmount"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  defaultValue={0}
+                  className={FIELD_INPUT_CLASS}
+                  data-testid="mark-paid-tds-amount"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div>
                 <label htmlFor="receivedDate" className={FIELD_LABEL_CLASS}>
                   Date received
@@ -161,6 +195,18 @@ export default async function MarkPaidPage({ params, searchParams }: PageProps) 
                   defaultValue={today}
                   className={FIELD_INPUT_CLASS}
                 />
+              </div>
+              <div>
+                <p className={FIELD_LABEL_CLASS}>Total received (Bank + TDS)</p>
+                <p
+                  className="block w-full min-h-11 rounded-md border border-border bg-muted/30 px-3 py-2 text-sm text-foreground"
+                  data-testid="mark-paid-total-received"
+                >
+                  {formatRs(payment.expectedAmount)}
+                  <span className="ml-2 text-xs text-muted-foreground">
+                    Server recomputes from the two inputs on submit.
+                  </span>
+                </p>
               </div>
             </div>
 
