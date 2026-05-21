@@ -113,7 +113,6 @@ describe('saveDraftMou - regression: cohortStatus + required fields (Pranav revi
         receivedPct: 0,
         paymentSchedule: '',
         trainerModel: 'GSL-T',
-        salesRep: null,
         notes: null,
         daysToExpiry: null,
         salesPersonId: null,

@@ -558,7 +558,6 @@ export async function saveDraftMou(
         receivedPct: 0,
         paymentSchedule: v.PAYMENT_SCHEDULE ?? summarisePaymentSchedules(input.paymentSchedules ?? null),
         trainerModel: input.trainerModel ?? null,
-        salesRep: v.SALES_REP ?? null,
         notes: null,
         daysToExpiry: null,
         salesPersonId: input.salesPersonId ?? null,

@@ -13,16 +13,15 @@
 // all read from company.json programmeRouting which lists Robotics->UP.
 export type Programme = 'STEAM' | 'Young Pioneers' | 'Harvard HBPE' | 'Robotics'
 
-export type MouStatus =
-  | 'Draft'                          // Phase 3: in MOU Pipeline, sales person drafting
-  | 'Sent for Signing'               // Phase 3: emailed/printed for school signature
-  | 'Awaiting Signature'             // Phase 3: with the school for sign-off
-  | 'Pending Signature'              // legacy alias of Awaiting Signature
-  | 'Signed'                         // Phase 3: signed PDF uploaded; in Signed Registry
-  | 'Active'                         // legacy/Phase 2 alias of Signed
-  | 'Completed'
-  | 'Expired'
-  | 'Renewed'
+// Phase 6D Part 3: MouStatus re-exported from the canonical type so the
+// MOU re-export below stays internally consistent. The legacy mouSystem
+// statuses 'Sent for Signing' / 'Awaiting Signature' / 'Signed' fold
+// into 'Pending Signature' / 'Active' in the canonical enum (verified
+// against production data: 0 MOUs carry the legacy values; 153 are
+// 'Active', 23 'Pending Signature', 4 'Draft'). PI_BLOCKED_STATUSES in
+// ./pi.ts still references the legacy strings via a string-literal
+// const array, which does not depend on this type.
+export type { MouStatus } from '@/lib/types'
 
 export type PaymentStatus =
   | 'Received'
@@ -47,7 +46,13 @@ export type AlertStatus = 'Open' | 'Resolved' | 'Dismissed'
  * TT and TTT are aliases (Train the Trainer). GSL-T = Train the
  * students with a GSL trainer. Bootcamp + Other kept for legacy.
  */
-export type TrainerModel = 'Bootcamp' | 'GSL-T' | 'TT' | 'TTT' | 'Other'
+// Phase 6D Part 3: TrainerModel re-exported from canonical. Canonical
+// admits 'AIQ' (Pranav-added cohort) and omits 'TTT' (an alias of
+// 'TT'). Production data has 2 TTT records (data drift surfaced
+// against the TS check, since JSON loads via `as unknown as MOU[]`);
+// follow-up backfill to migrate TTT to TT is out of scope for this
+// gate.
+export type { TrainerModel } from '@/lib/types'
 
 export type SalesChannel =
   | 'School Programs (Course)'
@@ -114,69 +119,15 @@ export type PaymentMode =
   | 'Razorpay'
   | 'Other'
 
-export interface MOU {
-  id: string                       // "MOU-STEAM-2526-001"
-  schoolId: string
-  schoolName: string               // denormalised for fast list rendering
-  programme: Programme
-  // Phase 6A (2026-05-20): the canonical MOU type in src/lib/types.ts
-  // carries programmeSubType, schoolScope, schoolGroupId,
-  // cohortStatus, and delayNotes as required fields. The mouSystem
-  // shape was missing them; new drafts written via this writer
-  // therefore landed without `cohortStatus`, and /mous filtered them
-  // out of the registry. The fields are mirrored here so the writer
-  // can populate them at create time.
-  programmeSubType?: string | null
-  schoolScope?: 'SINGLE' | 'GROUP'
-  schoolGroupId?: string | null
-  cohortStatus?: 'active' | 'archived'
-  delayNotes?: string | null
-  status: MouStatus
-  academicYear: string             // "2025-26"
-  startDate: string | null         // ISO YYYY-MM-DD
-  endDate: string | null
-  studentsMou: number
-  studentsActual: number | null
-  studentsVariance: number | null  // signed (actual - committed)
-  studentsVariancePct: number | null  // decimal, e.g. 0.118 = 11.8%
-  spWithoutTax: number             // Rs per student, pre-tax
-  spWithTax: number                // Rs per student, post-tax
-  contractValue: number            // Rs total
-  received: number
-  tds: number
-  balance: number
-  receivedPct: number              // 0-100
-  paymentSchedule: string          // legacy "25-25-25-25 quarterly" string
-  trainerModel: TrainerModel | null
-  salesRep: string | null          // v1 free-text, preserved for backward compatibility
-  notes: string | null
-  daysToExpiry: number | null
-  // v2 fields
-  salesPersonId: string | null     // FK to sales_team.json; null until backfill succeeds
-  templateVersion: string | null   // e.g. "STEAM-v2.1"; null for pre-v2 MOUs
-  generatedAt: string | null       // ISO timestamp, set by generator on save-draft
-  draftVariables: Record<string, string> | null
-  auditLog: AuditEntry[]
-  // Phase 3 Step 4 fields
-  effectiveDate?: string | null
-  numberOfYears?: number | null
-  salesChannel?: SalesChannel | null
-  schoolCrmId?: string | null      // free-text reference to the sales CRM
-  paymentSchedules?: YearPaymentSchedule[] | null
-  /** Per-year pricing. Round 3: when set, contract value and instalments
-   *  use this. When null/empty, callers fall back to the top-level
-   *  spWithTax * numberOfYears for the contract value. */
-  yearlyPricing?: YearlyPricingRow[] | null
-  billingBlock?: MouBillingBlock | null
-  signedMouPdfPath?: string | null // public/signed-mous/<mou>.pdf once uploaded
-  // Gate 3 Step 1: kits-dispatch enhancements. Optional at draft time.
-  // Per joint spec section 1: Sales picks product line(s) shipped under the
-  // MOU and optionally entries grade-wise student distribution. Grade-wise
-  // data flows downstream to the Kits for Dispatch module (Gate 3 Step 2);
-  // if missing at draft time, Ops fills it in the Step 3 allocation flow.
-  productSelection?: ProductSelection | null
-  gradewiseDistribution?: GradewiseDistributionRow[] | null
-}
+// Phase 6D Part 3: the MOU interface was previously duplicated here as a
+// looser shape (Phase 6A surfaced Bug 4 because the mouSystem shape was
+// missing cohortStatus / schoolScope / etc., and new drafts landed
+// without those fields, vanishing from /mous). The canonical MOU now
+// lives in src/lib/types.ts; this file re-exports it so legacy import
+// paths (e.g. `import type { MOU } from '@/lib/mouSystem/types'`) keep
+// working but resolve to the single source of truth. Any callsite that
+// was relying on the looser optional fields needs to populate them.
+export type { MOU } from '@/lib/types'
 
 /**
  * Gate 3 Step 1: which product line(s) ship under this MOU. Drives the

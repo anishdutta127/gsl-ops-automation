@@ -45,7 +45,7 @@ function mou(overrides: Partial<MOU> = {}): MOU {
     programmeSubType: null,
     schoolScope: 'SINGLE',
     schoolGroupId: null,
-    status: 'Signed',
+    status: 'Active',
     cohortStatus: 'active',
     academicYear: '2026-27',
     startDate: '2026-04-01',
