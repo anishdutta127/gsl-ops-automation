@@ -136,6 +136,37 @@ try {
   }
 
   for (const target of targets) {
+    // Phase 6F Part 5: optional `asUser` on a target invokes the
+    // /api/admin/__impersonate route to swap the active session to
+    // the named user, then walks the rest of the queue as them.
+    if (target.asUser) {
+      const impResp = await page.request.post(`${BASE}/api/admin/__impersonate`, {
+        multipart: { targetUserId: target.asUser },
+        maxRedirects: 0,
+      })
+      if (impResp.status() !== 200) {
+        console.error(`impersonation to ${target.asUser} failed: HTTP ${impResp.status()}`)
+        console.error(await impResp.text())
+        process.exit(1)
+      }
+      const setCookie = impResp.headers()['set-cookie'] ?? ''
+      const cookieMatch = setCookie.match(/gsl_ops_session=([^;]+)/)
+      if (cookieMatch) {
+        await context.clearCookies()
+        await context.addCookies([
+          {
+            name: 'gsl_ops_session',
+            value: cookieMatch[1],
+            domain: new URL(BASE).hostname,
+            path: '/',
+            httpOnly: true,
+            secure: true,
+            sameSite: 'Lax',
+          },
+        ])
+        console.log(`  (impersonating ${target.asUser})`)
+      }
+    }
     const fullUrl = `${BASE}${target.url}`
     const screenshotPath = join(outDir, `${target.name}.png`)
     process.stdout.write(`  ${target.name} ${target.url} ... `)

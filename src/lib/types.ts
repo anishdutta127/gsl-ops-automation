@@ -312,6 +312,11 @@ export type AuditAction =
   // one-shot backfill action but is recorded per-MOU at save time
   // rather than via a script run.
   | 'product-selection-bulk-update'
+  // Phase 6F Part 5: V4-verification impersonation start. Written on
+  // the caller's auditLog (not the target's). Lets Anish walk the
+  // homepage as Pranav / Misba / Ameet for role-specific screenshot
+  // capture without needing those users' passwords.
+  | 'user-impersonation-started'
 
 export interface AuditEntry {
   timestamp: string                // ISO
