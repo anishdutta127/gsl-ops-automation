@@ -1,1 +1,61 @@
-[]
+[
+  {
+    "id": "5f2f0391-9045-4abe-8d83-a567dff28d11",
+    "queuedAt": "2026-05-21T07:22:49.678Z",
+    "queuedBy": "anita.c",
+    "entity": "mou",
+    "operation": "update",
+    "payload": {
+      "mouId": "MOU-STEAM-2627-079",
+      "productSelection": "TinkRworks",
+      "gradewiseDistribution": [
+        {
+          "grade": 6,
+          "students": 148,
+          "kitType": "Reusable"
+        },
+        {
+          "grade": 7,
+          "students": 170,
+          "kitType": "Reusable"
+        },
+        {
+          "grade": 8,
+          "students": 140,
+          "kitType": "Reusable"
+        }
+      ],
+      "audit": {
+        "timestamp": "2026-05-21T07:22:49.678Z",
+        "user": "Anita C.",
+        "action": "update",
+        "before": {
+          "productSelection": null,
+          "gradewiseDistribution": null
+        },
+        "after": {
+          "productSelection": "TinkRworks",
+          "gradewiseDistribution": [
+            {
+              "grade": 6,
+              "students": 148,
+              "kitType": "Reusable"
+            },
+            {
+              "grade": 7,
+              "students": 170,
+              "kitType": "Reusable"
+            },
+            {
+              "grade": 8,
+              "students": 140,
+              "kitType": "Reusable"
+            }
+          ]
+        },
+        "notes": "kits-details edit"
+      }
+    },
+    "retryCount": 0
+  }
+]
