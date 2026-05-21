@@ -100,20 +100,62 @@ For each category, the exact filter that produces the list. All examples use tod
 ### Category 5 — AI insights (urgency colour: brand-teal purple)
 
 - Stub returning empty array for now.
-- **Contract for future integration:**
+- **Contract for future integration** (Anish 2026-05-21 GO: must be implementation-agnostic so ChatGPT / Anthropic API / local rules-based engine can be swapped in without touching homepage code):
+
   ```ts
-  interface AiInsightProvider {
-    listInsights(context: {
-      now: Date
-      user: User
-      data: { mous: MOU[]; payments: Payment[]; ... }
-    }): Promise<ActionItem[]>
+  // src/lib/homepage/aiInsights.ts
+  //
+  // The homepage calls listInsights(context) and renders whatever
+  // ActionItem[] comes back. The provider is free to call an external
+  // model, run local heuristics, or return []. The homepage does NOT
+  // know which provider is in use; that selection is one constant at
+  // the lib boundary (NO_OP_AI_INSIGHTS in this gate).
+  //
+  // Provider implementations:
+  //   - NO_OP_AI_INSIGHTS:    Phase 6F default. Returns []. No I/O.
+  //   - ChatGPT (future):     wraps OpenAI's chat.completions endpoint
+  //                           with a domain-specific system prompt;
+  //                           response is JSON-parsed into ActionItem[].
+  //   - Anthropic (future):   wraps the Anthropic Messages API; same
+  //                           shape as the ChatGPT provider.
+  //   - LocalRules (future):  runs deterministic heuristics over the
+  //                           data slice (e.g. "schools that paid
+  //                           on time 3 quarters in a row likely to
+  //                           renew") and emits ActionItem[] entirely
+  //                           offline. Safe for production; no
+  //                           external API key required.
+
+  export interface AiInsightContext {
+    /** Server time at request. */
+    now: Date
+    /** Requesting user; provider may use role/department for tailoring. */
+    user: User
+    /** Read-only data slice the provider may inspect. */
+    data: {
+      mous: MOU[]
+      payments: Payment[]
+      schools: School[]
+      dispatches: Dispatch[]
+      kitDispatches: KitDispatch[]
+      escalations: Escalation[]
+    }
   }
-  const NO_OP_AI_INSIGHTS: AiInsightProvider = {
+
+  export interface AiInsightProvider {
+    /** Stable identifier for telemetry / debug. */
+    readonly id: string
+    /** Producer of category-5 ActionItem entries. */
+    listInsights(context: AiInsightContext): Promise<ActionItem[]>
+  }
+
+  export const NO_OP_AI_INSIGHTS: AiInsightProvider = {
+    id: 'no-op',
     listInsights: async () => [],
   }
   ```
-- The stub lives at `src/lib/homepage/aiInsights.ts`. No `await fetch(...)`, no API key, no provider import in Phase 6F. Future ChatGPT / local-model wiring replaces `NO_OP_AI_INSIGHTS` with a real implementation; the call site does not change.
+
+- The stub lives at `src/lib/homepage/aiInsights.ts`. **No `await fetch(...)`, no API key, no provider import in Phase 6F.** Future provider wiring replaces `NO_OP_AI_INSIGHTS` with a real implementation; the call site at `src/app/page.tsx` does not change.
+- The `id: 'no-op'` field exists so when telemetry lands later we can disambiguate which provider produced which insight without parsing the body.
 
 ---
 
@@ -140,12 +182,19 @@ function resolveHomepageView(user: User): 'admin' | 'leadership' | 'finance' | '
 ```
 
 The brief's four explicit roles map to:
-- **Anish** → `admin` (sees everything, no filtering)
+- **Anish** → `admin` (sees everything, no filtering, no salesPersonId scoping)
 - **Pranav** → `finance` (sees `role: 'finance' | 'both'` cards)
 - **Misba** → `ops` (sees `role: 'ops' | 'both'` cards)
 - **Ameet** → `leadership` (no personal queue, only "Platform pulse" counts)
 
-The `ActionItem.role` field is the discriminator: `'finance' | 'ops' | 'both'`. There is no `'sales'` value; Sales users see Both + Ops by default until Anish confirms otherwise.
+The `ActionItem.role` field is the discriminator: `'finance' | 'ops' | 'sales' | 'both'`. Per Anish 2026-05-21 GO:
+
+- **Sales** is a first-class role tag. Sales users see `'sales' | 'both'` cards.
+- Sales cards are **portfolio-scoped**: the engine filters by `mou.salesPersonId === user.id` before surfacing. A sales user does not see another sales user's MOUs even in the same category.
+- Sales-specific categories: renewal-eligible (60-day horizon), signed-not-activated, PI-blocker escalations restricted to MOUs they own.
+- Sales users see `'both'` cards platform-wide (no portfolio scoping on Both), because Both = data-quality / system health every role should see.
+
+**Shashank / Gowri / Ajith** carry `department: null`; they are routed to **Admin** view per Anish 2026-05-21 GO. If any of them needs a department-scoped view later, set `department` on their `users.json` record.
 
 **`role: 'both'` cards** are seen by every department-scoped role plus Admin. Example: "Paid-no-PI backfill candidates" is data-quality work both Finance and Ops should know about; tag it `'both'`.
 
@@ -178,14 +227,39 @@ The `ActionItem.role` field is the discriminator: `'finance' | 'ops' | 'both'`. 
 
 ---
 
-## 6. Open questions for Anish
+### Scope addition (Anish 2026-05-21 GO)
 
-1. **Sales department**: pratik.d and vishwanath.g currently fall outside the brief's four roles. Default proposal: Sales sees `'both'` cards plus a Sales-specific subset (renewal-eligible, signed-not-activated, PI-blocker escalations). Confirm or override.
-2. **Shashank / Gowri / Ajith homepage view**: these three carry `department: null` but aren't explicitly Leadership. Default proposal: they see the Admin view (full queue, no filtering). Confirm.
-3. **Renewal-eligible MOU horizon**: 60 days is the proposed window per the brief. Confirm or adjust.
-4. **Dismiss-for-today TTL**: 24 hours per the brief. Action items reappear tomorrow if still actionable. Confirm.
-5. **Rollover promotion threshold**: 3 days of carry-over before an item moves to "Overdue & escalating" regardless of original category. Confirm.
-6. **AI insights stub category 5**: confirm that an empty-array stub is acceptable for Phase 6F and the contract above is the right interface for future integration.
+The "MOUs with null productSelection" data quality card (Category 4) is the **first data quality item** in the queue — at 161 MOUs it is the largest single gap. CTA deep-links to a new **`/admin/product-backfill`** page built as part of Phase 6F Parts 2 + 3:
+
+- **Page surface**: list every MOU with `productSelection === null`, grouped by school.
+- **Per-row controls**: school name (header), MOU id (clickable to detail), programme chip, current dispatch evidence (if any, as a "Cretile" / "TinkRworks" / "Both" hint from `dispatches.json` via the inventory mapper from Phase 6E backfill script), product dropdown (`TinkRworks` / `Cretile` / `Both`).
+- **Bulk action**: "Save all" button at top + bottom; submits the form to a new `POST /api/admin/product-backfill` route which enqueues one `mou:update` per touched row + appends a `product-selection-bulk-update` audit entry.
+- **Permission**: `canEditMOU` (Sales + Admin) gates the route + page. Pranav (Finance) sees the page but cannot submit.
+- **Pre-fill**: if dispatch evidence exists, the dropdown defaults to the inferred product. The operator can override before saving.
+- **Idempotent**: re-submission of an unchanged row is a no-op (no audit entry).
+
+The page absorbs the 161-row backlog from the Phase 6E backfill's complement set in one operator session.
+
+---
+
+## 6. Open questions for Anish — RESOLVED 2026-05-21
+
+| # | Question | Resolution |
+|---|---|---|
+| 1 | Sales department view | Add `'sales'` as fourth `ActionItem.role` value. Sales sees `'sales' \| 'both'` cards. Sales cards are portfolio-scoped via `salesPersonId === user.id`; Both is platform-wide. |
+| 2 | Shashank / Gowri / Ajith | Route to Admin view. Set `department` later if a department-scoped view is needed. |
+| 3 | Renewal horizon | 60 days. |
+| 4 | Dismiss TTL | 24h, with one twist: an item whose urgency promotes (e.g. "Today" → "Overdue") **re-surfaces immediately**, ignoring the dismissal. Dismissal is bypassed by Category-1 promotion. |
+| 5 | Rollover threshold | 3 days of carry-over → promote to "Overdue & escalating". |
+| 6 | AI insights stub | Empty-array stub confirmed. `AiInsightProvider` interface documented above (section "Category 5"). Implementation-agnostic so ChatGPT / Anthropic / local rules engine can be swapped at the lib boundary without touching the homepage. |
+
+## 7. Open questions deferred to operator review (not blocking Phase 6F)
+
+- Color tokens for category stripes (the 5 hex values).
+- Card density (3 vs 4 cards above-the-fold on desktop).
+- "Show team blockers" toggle copy.
+
+These are visual decisions Anish + Pranav can iterate on once Part 3's first cut is in front of them; not blocking the engine work.
 
 ---
 
