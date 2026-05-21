@@ -10928,7 +10928,7 @@
   {
     "id": "MOU-YP-2627-DRAFT-003",
     "schoolId": "",
-    "schoolName": "Gopi Birla Memorial School",
+    "schoolName": "",
     "programme": "Young Pioneers",
     "programmeSubType": null,
     "schoolScope": "SINGLE",
@@ -10950,14 +10950,14 @@
     "tds": 0,
     "balance": 862500,
     "receivedPct": 0,
-    "paymentSchedule": "Y1: 50%-50%",
-    "trainerModel": "TTT",
+    "paymentSchedule": "",
+    "trainerModel": null,
     "salesRep": null,
     "notes": null,
     "daysToExpiry": null,
     "salesPersonId": null,
     "templateVersion": "YP-v3",
-    "generatedAt": "2026-05-21T06:35:37.050Z",
+    "generatedAt": "2026-05-21T07:02:27.215Z",
     "draftVariables": {
       "EFFECTIVE_DATE": "2026-04-27",
       "SCHOOL_NAME": "Gopi Birla Memorial School",
@@ -10974,50 +10974,21 @@
         "user": "Anita C.",
         "action": "create",
         "notes": "Save draft via YP-v3"
+      },
+      {
+        "timestamp": "2026-05-21T07:02:27.214Z",
+        "user": "Anita C.",
+        "action": "update",
+        "notes": "Save draft via YP-v3"
       }
     ],
     "effectiveDate": "2026-04-27",
     "numberOfYears": 1,
-    "salesChannel": "School Programs (Course)",
+    "salesChannel": null,
     "schoolCrmId": null,
-    "paymentSchedules": [
-      {
-        "year": 1,
-        "instalments": [
-          {
-            "month": "2026-04",
-            "pctDue": 50
-          },
-          {
-            "month": "2026-09",
-            "pctDue": 50
-          }
-        ]
-      }
-    ],
-    "yearlyPricing": [
-      {
-        "year": 1,
-        "spWithoutTax": 2500,
-        "spWithTax": 2500
-      }
-    ],
-    "billingBlock": {
-      "billingName": "Gopi Birla Memorial School",
-      "billingAddress": "68 Walkeshwar Road, Malabar Hill, Mumbai - 400006",
-      "billingCityState": "Mumbai",
-      "shipToName": "Gopi Birla Memorial School",
-      "shipToAddress": "68 Walkeshwar Road, Malabar Hill, Mumbai - 400006",
-      "shipToCityState": "Mumbai",
-      "schoolEmail": "birlagopi@gbmschool.co.in",
-      "contactPersonName": "Radhika Dave",
-      "designation": "Accountant",
-      "mobileNo": "7045491519",
-      "contactEmail": "accounts@gbmschool.co.in",
-      "schoolContactNo": "9326095647",
-      "pan": "AAATB0010B",
-      "gst": ""
-    },
+    "paymentSchedules": null,
+    "yearlyPricing": null,
+    "billingBlock": null,
     "signedMouPdfPath": null,
     "productSelection": null,
     "gradewiseDistribution": null
