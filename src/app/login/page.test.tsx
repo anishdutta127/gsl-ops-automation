@@ -149,4 +149,60 @@ describe('/login page (already-logged-in detect)', () => {
     const html = renderToStaticMarkup(result)
     expect(html).not.toMatch(/#[0-9a-fA-F]{3,6}/)
   })
+
+  it('Phase 6G: SSO button renders in DISABLED state when env vars are missing', async () => {
+    cookieGetMock.mockReturnValue(undefined)
+    const original = {
+      id: process.env.AUTH_MICROSOFT_ENTRA_ID_ID,
+      tenant: process.env.AUTH_MICROSOFT_ENTRA_ID_TENANT_ID,
+      auth: process.env.AUTH_SECRET,
+    }
+    delete process.env.AUTH_MICROSOFT_ENTRA_ID_ID
+    delete process.env.AUTH_MICROSOFT_ENTRA_ID_TENANT_ID
+    delete process.env.AUTH_SECRET
+    try {
+      const { default: LoginPage } = await import('./page')
+      const result = await LoginPage({ searchParams: Promise.resolve({}) })
+      const html = renderToStaticMarkup(result)
+      expect(html).toContain('data-testid="login-sso-button-disabled"')
+      expect(html).not.toContain('data-testid="login-sso-button"')
+      // tooltip + help text both surface the IT-configuring copy.
+      expect(html).toMatch(/IT team is configuring access/)
+    } finally {
+      if (original.id) process.env.AUTH_MICROSOFT_ENTRA_ID_ID = original.id
+      if (original.tenant) process.env.AUTH_MICROSOFT_ENTRA_ID_TENANT_ID = original.tenant
+      if (original.auth) process.env.AUTH_SECRET = original.auth
+    }
+  })
+
+  it('Phase 6G: SSO button renders in ENABLED state when the three PKCE-flow env vars are set (no client secret needed)', async () => {
+    cookieGetMock.mockReturnValue(undefined)
+    process.env.AUTH_MICROSOFT_ENTRA_ID_ID = 'placeholder-id'
+    process.env.AUTH_MICROSOFT_ENTRA_ID_TENANT_ID = 'placeholder-tenant'
+    process.env.AUTH_SECRET = 'placeholder-auth-secret'
+    try {
+      const { default: LoginPage } = await import('./page')
+      const result = await LoginPage({ searchParams: Promise.resolve({}) })
+      const html = renderToStaticMarkup(result)
+      expect(html).toContain('data-testid="login-sso-button"')
+      expect(html).not.toContain('data-testid="login-sso-button-disabled"')
+      expect(html).toContain('href="/api/auth/signin/microsoft-entra-id')
+    } finally {
+      delete process.env.AUTH_MICROSOFT_ENTRA_ID_ID
+      delete process.env.AUTH_MICROSOFT_ENTRA_ID_TENANT_ID
+      delete process.env.AUTH_SECRET
+    }
+  })
+
+  it('Phase 6G: SSO error keys surface friendly messages, not the raw error code', async () => {
+    cookieGetMock.mockReturnValue(undefined)
+    const { default: LoginPage } = await import('./page')
+    const result = await LoginPage({
+      searchParams: Promise.resolve({ error: 'sso-domain-not-allowed' }),
+    })
+    const html = renderToStaticMarkup(result)
+    expect(html).toContain('data-testid="login-sso-error"')
+    expect(html).toMatch(/not on the allowed-domain list/)
+    expect(html).not.toContain('sso-domain-not-allowed') // raw code not leaked
+  })
 })

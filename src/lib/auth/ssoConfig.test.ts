@@ -17,7 +17,6 @@ const ORIGINAL_ENV = { ...process.env }
 
 beforeEach(() => {
   delete process.env.AUTH_MICROSOFT_ENTRA_ID_ID
-  delete process.env.AUTH_MICROSOFT_ENTRA_ID_SECRET
   delete process.env.AUTH_MICROSOFT_ENTRA_ID_TENANT_ID
   delete process.env.AUTH_MICROSOFT_ENTRA_ID_ALLOWED_DOMAINS
   delete process.env.AUTH_SECRET
@@ -28,11 +27,9 @@ afterEach(() => {
 })
 
 describe('isMicrosoftEntraIdConfigured', () => {
-  it('returns false when any of the four required env vars are missing', () => {
+  it('returns true once Client ID + Tenant ID + AUTH_SECRET are set (PKCE flow needs no client secret)', () => {
     expect(isMicrosoftEntraIdConfigured()).toBe(false)
     process.env.AUTH_MICROSOFT_ENTRA_ID_ID = 'X'
-    expect(isMicrosoftEntraIdConfigured()).toBe(false)
-    process.env.AUTH_MICROSOFT_ENTRA_ID_SECRET = 'Y'
     expect(isMicrosoftEntraIdConfigured()).toBe(false)
     process.env.AUTH_MICROSOFT_ENTRA_ID_TENANT_ID = 'Z'
     expect(isMicrosoftEntraIdConfigured()).toBe(false)

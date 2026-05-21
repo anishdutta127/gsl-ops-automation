@@ -153,6 +153,7 @@ function makeData(opts: {
   payments?: Payment[]
   paymentLogs?: PaymentLog[]
   schools?: School[]
+  users?: User[]
 } = {}): ActionQueueContext['data'] {
   return {
     mous: opts.mous ?? [],
@@ -162,6 +163,7 @@ function makeData(opts: {
     dispatches: [] as Dispatch[],
     kitDispatches: [] as KitDispatch[],
     escalations: [] as Escalation[],
+    users: opts.users,
   }
 }
 
@@ -387,6 +389,30 @@ describe('buildDataQualityItems', () => {
     const items = buildDataQualityItems({ now: NOW, user: user(), data })
     const card = items.find((i) => i.id === 'data-quality:orphan-payments')
     expect(card?.count).toBe(1)
+  })
+
+  it('Phase 6G: pending-user-reviews card fires when an auto-created SSO user is waiting for approval', () => {
+    const pendingUser: User = {
+      id: 'newhire',
+      name: 'New Hire',
+      email: 'newhire@getsetlearn.info',
+      role: 'OpsEmployee',
+      department: null,
+      testingOverride: false,
+      active: false,
+      passwordHash: '',
+      createdAt: '2026-05-21T15:00:00Z',
+      auditLog: [],
+      azureAdObjectId: 'oid-newhire',
+      requiresAdminReview: true,
+    }
+    const activeUser: User = { ...pendingUser, id: 'existing', active: true, requiresAdminReview: false }
+    const data = makeData({ users: [pendingUser, activeUser] })
+    const items = buildDataQualityItems({ now: NOW, user: user(), data })
+    const card = items.find((i) => i.id === 'data-quality:pending-user-reviews')
+    expect(card?.count).toBe(1)
+    expect(card?.ctaHref).toBe('/admin/queue-status')
+    expect(card?.role).toBe('both')
   })
 })
 

@@ -122,7 +122,19 @@ Ameet wants "Continue with Microsoft" on the login page so Mafatlal staff can si
 
 ---
 
-## 3. Awaiting Anish review
+## 2.6 Decisions recorded (Anish 2026-05-21 GO + follow-up)
+
+1. **Env var naming**: Auth.js convention. `AUTH_MICROSOFT_ENTRA_ID_ID`, `AUTH_MICROSOFT_ENTRA_ID_TENANT_ID`, `AUTH_SECRET`. **No `AUTH_MICROSOFT_ENTRA_ID_SECRET`** - Mafatlal IT registered the app as a public client with PKCE. Provider config sets `client.token_endpoint_auth_method: 'none'`.
+2. **New-user role**: `OpsEmployee` chosen as the most-restricted existing role. Lowest privilege on Layer 2 `canPerform`: no PI generation, no MOU drafting, no dispatch raising, no audit-route writes; viewing-only at the operations surfaces. Combined with `active: false` + `requiresAdminReview: true`, the auto-created user holds a session but cannot reach any gated surface until Anish flips `active: true` and clears the review flag.
+3. **Cookie shared** between Auth.js + legacy flow as `gsl_ops_session`. JWT encode/decode overridden in `ssoConfig.ts` to round-trip through our `jose` helpers; middleware verifies the same shape regardless of origin.
+4. **`requiresAdminReview` queue**: deferred. Counter lives on `/admin/queue-status`; first SSO pending review surfaces on the homepage action queue as a Data Quality card.
+5. **Allowlist** wired via `AUTH_MICROSOFT_ENTRA_ID_ALLOWED_DOMAINS` (comma-separated). Empty = no allowlist; relies on single-tenant config alone.
+6. **Pre-approved-email override** added per follow-up: 3-branch dispatch in `applySsoSignin`:
+   - (a) email domain in allowlist OR allowlist empty -> in-tenant flow.
+   - (b) email outside allowlist BUT existing pre-created user in `users.json` -> link the Microsoft identity, preserve role + permissions, NO review gate.
+   - (c) email outside allowlist AND no existing user -> reject with "Account not authorised. Contact your GSL administrator for access."
+
+## 3. Status
 
 Reply **GO** with any adjustments to:
 - The library decision (NextAuth vs custom MSAL).

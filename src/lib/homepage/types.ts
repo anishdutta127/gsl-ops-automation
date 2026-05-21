@@ -21,6 +21,8 @@ import type {
   User,
 } from '@/lib/types'
 
+export type { User } from '@/lib/types'
+
 /** The card-stripe category. Ordered roughly by urgency. */
 export type ActionCategory =
   | 'overdue'         // Category 1: red. Past due, escalating, > threshold.
@@ -90,6 +92,14 @@ export interface ActionQueueData {
   dispatches: Dispatch[]
   kitDispatches: KitDispatch[]
   escalations: Escalation[]
+  /**
+   * Phase 6G: all-users slice for the SSO pending-review card. The
+   * action queue engine consumes this read-only; mutations to users
+   * go through the legacy /admin/users surface + the Auth.js signIn
+   * callback. Defaults to [] when omitted so existing test fixtures
+   * still compile.
+   */
+  users?: User[]
 }
 
 export interface ActionQueueContext {

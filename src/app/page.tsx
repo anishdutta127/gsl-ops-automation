@@ -25,6 +25,7 @@ import type {
   Payment,
   PaymentLog,
   School,
+  User,
 } from '@/lib/types'
 import mousJson from '@/data/mous.json'
 import paymentsJson from '@/data/payments.json'
@@ -34,6 +35,7 @@ import escalationsJson from '@/data/escalations.json'
 import dispatchesJson from '@/data/dispatches.json'
 import kitDispatchesJson from '@/data/kit_dispatches.json'
 import homepageActionLogJson from '@/data/homepage_action_log.json'
+import usersJson from '@/data/users.json'
 import { getCurrentUser } from '@/lib/auth/session'
 import { TopNav } from '@/components/ops/TopNav'
 import { ActionQueueLayout } from '@/components/homepage/ActionQueueLayout'
@@ -53,6 +55,7 @@ const allSchools = schoolsJson as unknown as School[]
 const allEscalations = escalationsJson as unknown as Escalation[]
 const allDispatches = dispatchesJson as unknown as Dispatch[]
 const allKitDispatches = kitDispatchesJson as unknown as KitDispatch[]
+const allUsers = usersJson as unknown as User[]
 
 function partOfDay(now: Date): string {
   const hour = now.getHours()
@@ -96,6 +99,7 @@ export default async function HomePage() {
         dispatches: allDispatches,
         kitDispatches: allKitDispatches,
         escalations: allEscalations,
+        users: allUsers,
       },
     },
     NO_OP_AI_INSIGHTS,

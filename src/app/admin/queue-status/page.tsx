@@ -13,11 +13,13 @@
 
 import { readFile } from 'node:fs/promises'
 import path from 'node:path'
+import Link from 'next/link'
 import { redirect } from 'next/navigation'
-import { Activity, AlertTriangle, CheckCircle2, CircleDashed } from 'lucide-react'
+import { Activity, AlertTriangle, CheckCircle2, CircleDashed, UserCheck } from 'lucide-react'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canManageUsers } from '@/lib/access'
-import type { PendingUpdate } from '@/lib/types'
+import usersJson from '@/data/users.json'
+import type { PendingUpdate, User } from '@/lib/types'
 import type { SyncHealthEntry } from '@/lib/syncHealth/appendEntry'
 import {
   computeFreshnessState,
@@ -55,6 +57,14 @@ export default async function QueueStatusPage() {
     .sort((a, b) => a.queuedAt.localeCompare(b.queuedAt))
 
   const recentHistory = history.slice(-10).reverse()
+
+  // Phase 6G Part 5: pending SSO user reviews counter. New users
+  // auto-created by the Microsoft sign-in callback land with
+  // requiresAdminReview=true; admin promotes them by editing
+  // users.json. JSON dump at /api/admin/pending-user-reviews lets
+  // an admin see the full list until a real approval UI ships.
+  const allUsers = usersJson as unknown as User[]
+  const pendingReviewCount = allUsers.filter((u) => u.requiresAdminReview === true).length
 
   return (
     <>
@@ -144,6 +154,34 @@ export default async function QueueStatusPage() {
                     : 'Last drain: anomaly'}
               </p>
             </div>
+          </div>
+
+          {/* Phase 6G Part 5: pending SSO user reviews counter. */}
+          <div
+            className="mt-4 rounded-md border border-border p-3"
+            data-testid="pending-user-reviews-tile"
+          >
+            <div className="flex items-center gap-2 text-xs uppercase tracking-wide text-muted-foreground">
+              <UserCheck aria-hidden className="size-4 text-brand-navy" />
+              <span>Pending user reviews</span>
+            </div>
+            <p className="mt-1 font-heading text-xl font-semibold text-brand-navy">
+              {pendingReviewCount}
+            </p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              {pendingReviewCount === 0
+                ? 'No new SSO sign-ins waiting for approval.'
+                : 'New users auto-created by Microsoft sign-in are inactive until promoted.'}
+            </p>
+            {pendingReviewCount > 0 && (
+              <Link
+                href="/api/admin/pending-user-reviews"
+                className="mt-2 inline-block text-xs font-medium text-brand-navy underline-offset-2 hover:underline"
+                data-testid="pending-user-reviews-link"
+              >
+                View pending users (JSON)
+              </Link>
+            )}
           </div>
         </section>
 

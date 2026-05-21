@@ -47,10 +47,7 @@ import {
   verifySessionToken,
 } from '@/lib/crypto/jwt'
 import { applySsoSignin } from './applySsoSignin'
-import {
-  isEmailDomainAllowed,
-  isMicrosoftEntraIdConfigured,
-} from './ssoEnv'
+import { isMicrosoftEntraIdConfigured } from './ssoEnv'
 
 export { isEmailDomainAllowed, isMicrosoftEntraIdConfigured } from './ssoEnv'
 
@@ -61,10 +58,15 @@ export const ssoConfig: NextAuthConfig = {
   // sign-ins.
   providers: isMicrosoftEntraIdConfigured()
     ? [
+        // Phase 6G public-client / PKCE configuration. Mafatlal IT
+        // registered the app without a client secret; Auth.js's
+        // token_endpoint_auth_method='none' tells the provider to
+        // complete the auth code exchange with PKCE only.
         MicrosoftEntraID({
           clientId: process.env.AUTH_MICROSOFT_ENTRA_ID_ID!,
-          clientSecret: process.env.AUTH_MICROSOFT_ENTRA_ID_SECRET!,
+          // clientSecret intentionally unset; PKCE flow uses none.
           issuer: `https://login.microsoftonline.com/${process.env.AUTH_MICROSOFT_ENTRA_ID_TENANT_ID}/v2.0`,
+          client: { token_endpoint_auth_method: 'none' },
         }),
       ]
     : [],
@@ -116,9 +118,9 @@ export const ssoConfig: NextAuthConfig = {
     async signIn({ user, account, profile }) {
       const email = (user?.email ?? (profile?.email as string | undefined) ?? '').toLowerCase()
       if (!email) return '/login?error=sso-no-email'
-      if (!isEmailDomainAllowed(email)) {
-        return '/login?error=sso-domain-not-allowed'
-      }
+      // Domain allowlist + pre-approved-email override branch logic
+      // lives in applySsoSignin (Anish 2026-05-21 follow-up GO). The
+      // 3-branch result drives whether to issue a session or reject.
       const oid = (profile?.oid as string | undefined) ?? account?.providerAccountId ?? null
       const upn = (profile?.preferred_username as string | undefined) ?? email
       const displayName = user?.name ?? (profile?.name as string | undefined) ?? email
@@ -128,10 +130,13 @@ export const ssoConfig: NextAuthConfig = {
         userPrincipalName: upn,
         displayName,
       })
+      if (result.outcome === 'external-rejected') {
+        return '/login?error=sso-not-authorised'
+      }
       // Attach the user.id so the jwt callback sees it on `user`.
-      if (user) {
+      if (user && result.userId) {
         user.id = result.userId
-        ;(user as { role?: string }).role = result.role
+        ;(user as { role?: string }).role = result.role ?? 'OpsEmployee'
       }
       return true
     },

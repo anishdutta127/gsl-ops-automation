@@ -16,12 +16,26 @@
  *      capture the new sign-in event).
  */
 
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { applySsoSignin } from './applySsoSignin'
 import type { ApplySsoSigninDeps } from './applySsoSignin'
 import type { PendingUpdate, User } from '@/lib/types'
 
 const FIXED_TS = '2026-05-21T15:00:00.000Z'
+
+const ORIGINAL_ALLOWLIST = process.env.AUTH_MICROSOFT_ENTRA_ID_ALLOWED_DOMAINS
+
+beforeEach(() => {
+  delete process.env.AUTH_MICROSOFT_ENTRA_ID_ALLOWED_DOMAINS
+})
+
+afterEach(() => {
+  if (ORIGINAL_ALLOWLIST !== undefined) {
+    process.env.AUTH_MICROSOFT_ENTRA_ID_ALLOWED_DOMAINS = ORIGINAL_ALLOWLIST
+  } else {
+    delete process.env.AUTH_MICROSOFT_ENTRA_ID_ALLOWED_DOMAINS
+  }
+})
 
 function user(overrides: Partial<User> = {}): User {
   return {
@@ -205,5 +219,109 @@ describe('applySsoSignin', () => {
     )
     expect(r.created).toBe(false)
     expect(r.userId).toBe('anish.d')
+  })
+})
+
+describe('applySsoSignin - 3-branch dispatch (Anish 2026-05-21 follow-up GO)', () => {
+  it('branch (a) in-tenant-existing: domain in allowlist, matched user', async () => {
+    process.env.AUTH_MICROSOFT_ENTRA_ID_ALLOWED_DOMAINS = 'getsetlearn.info'
+    const { deps, calls } = makeDeps([user({ id: 'anish.d', email: 'anish.d@getsetlearn.info' })])
+    const r = await applySsoSignin(
+      {
+        email: 'anish.d@getsetlearn.info',
+        azureAdObjectId: 'oid-anish',
+        userPrincipalName: 'anish.d@getsetlearn.info',
+        displayName: 'Anish',
+      },
+      deps,
+    )
+    expect(r.outcome).toBe('in-tenant-existing')
+    expect(r.userId).toBe('anish.d')
+    expect(calls).toHaveLength(1)
+  })
+
+  it('branch (a) in-tenant-new: domain in allowlist, no matched user -> auto-create with pending review', async () => {
+    process.env.AUTH_MICROSOFT_ENTRA_ID_ALLOWED_DOMAINS = 'getsetlearn.info,mafatlal.com'
+    const { deps, calls } = makeDeps([])
+    const r = await applySsoSignin(
+      {
+        email: 'newjoiner@mafatlal.com',
+        azureAdObjectId: 'oid-newjoiner',
+        userPrincipalName: 'newjoiner@mafatlal.com',
+        displayName: 'New Joiner',
+      },
+      deps,
+    )
+    expect(r.outcome).toBe('in-tenant-new')
+    expect(r.created).toBe(true)
+    expect(r.active).toBe(false)
+    expect(calls).toHaveLength(1)
+    const created = calls[0]?.payload as User
+    expect(created.requiresAdminReview).toBe(true)
+  })
+
+  it('branch (b) external-existing: domain outside allowlist BUT pre-existing record -> proceed, preserve role', async () => {
+    process.env.AUTH_MICROSOFT_ENTRA_ID_ALLOWED_DOMAINS = 'getsetlearn.info'
+    const preApproved: User = {
+      ...user({
+        id: 'partner.x',
+        email: 'partner@externalvendor.com',
+        role: 'Finance',
+        active: true,
+        requiresAdminReview: false,
+      }),
+    }
+    const { deps, calls } = makeDeps([preApproved])
+    const r = await applySsoSignin(
+      {
+        email: 'partner@externalvendor.com',
+        azureAdObjectId: 'oid-partner',
+        userPrincipalName: 'partner@externalvendor.com',
+        displayName: 'External Partner',
+      },
+      deps,
+    )
+    expect(r.outcome).toBe('external-existing')
+    expect(r.userId).toBe('partner.x')
+    expect(r.role).toBe('Finance')
+    expect(r.active).toBe(true)
+    // Update enqueued to backfill oid; requiresAdminReview NOT set.
+    const payload = calls[0]?.payload as User
+    expect(payload.azureAdObjectId).toBe('oid-partner')
+    expect(payload.requiresAdminReview).toBe(false)
+  })
+
+  it('branch (c) external-rejected: domain outside allowlist AND no matched record -> reject, no write', async () => {
+    process.env.AUTH_MICROSOFT_ENTRA_ID_ALLOWED_DOMAINS = 'getsetlearn.info'
+    const { deps, calls } = makeDeps([])
+    const r = await applySsoSignin(
+      {
+        email: 'random@stranger.com',
+        azureAdObjectId: 'oid-stranger',
+        userPrincipalName: 'random@stranger.com',
+        displayName: 'Random Stranger',
+      },
+      deps,
+    )
+    expect(r.outcome).toBe('external-rejected')
+    expect(r.userId).toBeNull()
+    expect(r.role).toBeNull()
+    expect(calls).toHaveLength(0)
+  })
+
+  it('empty allowlist treats EVERY email as in-tenant (defers to Microsoft single-tenant config alone)', async () => {
+    // No allowlist env var set in this case.
+    const { deps } = makeDeps([])
+    const r = await applySsoSignin(
+      {
+        email: 'random@anywhere.com',
+        azureAdObjectId: 'oid-random',
+        userPrincipalName: 'random@anywhere.com',
+        displayName: 'Random',
+      },
+      deps,
+    )
+    expect(r.outcome).toBe('in-tenant-new')
+    expect(r.created).toBe(true)
   })
 })

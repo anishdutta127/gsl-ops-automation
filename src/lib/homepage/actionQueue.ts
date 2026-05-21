@@ -455,6 +455,27 @@ export function buildDataQualityItems(ctx: ActionQueueContext): ActionItem[] {
     })
   }
 
+  // 4.6 Phase 6G: pending SSO user reviews. Auto-created users from
+  // Microsoft sign-in surface as a data-quality card so Anish sees
+  // them on the homepage immediately. CTA deep links to the JSON
+  // dump endpoint until a real approval UI ships.
+  const pendingReviewUsers = (data.users ?? []).filter((u) => u.requiresAdminReview === true)
+  if (pendingReviewUsers.length > 0) {
+    out.push({
+      id: 'data-quality:pending-user-reviews',
+      category: 'data-quality',
+      role: 'both',
+      title: `${pendingReviewUsers.length} pending SSO user review${pendingReviewUsers.length === 1 ? '' : 's'}`,
+      count: pendingReviewUsers.length,
+      ctaLabel: 'Review',
+      ctaHref: '/admin/queue-status',
+      meta: {
+        subtitle: 'Auto-created on first Microsoft sign-in; inactive until promoted.',
+      },
+      urgencyScore: 340, // between null-productSelection (350) and paid-no-pi (320)
+    })
+  }
+
   return out
 }
 

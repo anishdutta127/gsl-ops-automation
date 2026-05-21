@@ -2,16 +2,24 @@
  * applySsoSignin (Phase 6G Part 2).
  *
  * Pure lookup-or-create lib for SSO sign-in. Called from the
- * NextAuth signIn callback after the domain allowlist check. Three
- * outcomes:
- *   1. Existing user matched by email -> set azureAdObjectId if
- *      missing, append 'sso-signin' audit entry, return the user.
- *   2. No existing user -> create a new User with role=OpsEmployee,
- *      active=false, requiresAdminReview=true, azureAdObjectId=oid.
- *      Append the audit entry on the new record.
- *   3. Inactive user matched by email -> still set the oid and
- *      append the audit entry; the session token will be issued but
- *      page-level guards block them until Anish flips active=true.
+ * NextAuth signIn callback. Per Anish 2026-05-21 follow-up GO,
+ * authentication branches on the email's domain against the
+ * configurable allowlist:
+ *
+ *   (a) In-tenant email (domain matches allowlist, or allowlist is
+ *       empty): proceed normally. Existing user -> link oid. No
+ *       existing user -> create with active=false +
+ *       requiresAdminReview=true so Anish promotes them.
+ *   (b) Outside-tenant email + existing pre-created user: proceed,
+ *       link oid, preserve the user's existing role + permissions.
+ *       requiresAdminReview is NOT set (admin already created the
+ *       record).
+ *   (c) Outside-tenant email + no existing user: REJECT. The
+ *       caller surfaces a "contact your administrator" message.
+ *
+ * The result.outcome field tells the caller which branch fired so
+ * the NextAuth signIn callback can either return true (a/b) or a
+ * redirect URL (c).
  *
  * Writes go through enqueueUpdate so the change drains via the
  * GitHub Contents API queue + the 5-min cron. The lib NEVER writes
@@ -21,6 +29,7 @@
 import usersJson from '@/data/users.json'
 import type { AuditEntry, User, UserRole } from '@/lib/types'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
+import { isEmailDomainAllowed, parseAllowedDomains } from './ssoEnv'
 
 const allUsers = usersJson as unknown as User[]
 
@@ -32,8 +41,19 @@ export interface ApplySsoSigninInput {
 }
 
 export interface ApplySsoSigninResult {
-  userId: string
-  role: UserRole
+  /**
+   * 'in-tenant-existing': branch (a), domain in allowlist, matched user.
+   * 'in-tenant-new':      branch (a), domain in allowlist, user auto-created (pending review).
+   * 'external-existing':  branch (b), domain outside allowlist, matched pre-created user.
+   * 'external-rejected':  branch (c), domain outside allowlist, no pre-created user. Caller must reject.
+   */
+  outcome:
+    | 'in-tenant-existing'
+    | 'in-tenant-new'
+    | 'external-existing'
+    | 'external-rejected'
+  userId: string | null
+  role: UserRole | null
   created: boolean
   active: boolean
 }
@@ -68,6 +88,24 @@ export async function applySsoSignin(
   const lowered = input.email.toLowerCase()
   const existing = deps.users.find((u) => u.email.toLowerCase() === lowered)
   const ts = deps.now().toISOString()
+
+  // Branch dispatch (Anish 2026-05-21 follow-up GO):
+  //   (a) email domain is in the allowlist (or allowlist empty) -> proceed.
+  //   (b) email outside allowlist but existing user record -> proceed (external stakeholder).
+  //   (c) email outside allowlist and no existing user -> REJECT.
+  const allowedDomains = parseAllowedDomains()
+  const inTenant = allowedDomains.length === 0 || isEmailDomainAllowed(lowered, allowedDomains)
+
+  if (!inTenant && !existing) {
+    // Branch (c). No write, no audit; caller surfaces a friendly rejection.
+    return {
+      outcome: 'external-rejected',
+      userId: null,
+      role: null,
+      created: false,
+      active: false,
+    }
+  }
 
   if (existing) {
     // Idempotent oid backfill + audit entry.
@@ -110,6 +148,7 @@ export async function applySsoSignin(
       })
     }
     return {
+      outcome: inTenant ? 'in-tenant-existing' : 'external-existing',
       userId: existing.id,
       role: existing.role,
       created: false,
@@ -154,6 +193,7 @@ export async function applySsoSignin(
     payload: newUser as unknown as Record<string, unknown>,
   })
   return {
+    outcome: 'in-tenant-new',
     userId: newId,
     role: 'OpsEmployee',
     created: true,
