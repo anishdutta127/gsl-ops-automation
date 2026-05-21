@@ -293,6 +293,13 @@ export type AuditAction =
   // null. before.piNumber is null; after.piNumber is the applied
   // value; notes carries the auto-match candidate id or "manual entry".
   | 'pi-backfill-applied'
+  // Phase 6D Part 6: one-shot dueDateIso backfill on YP-2526 Series B
+  // payment rows imported during Week 3 with dueDateIso=null. The
+  // script scripts/backfill-yp2526-due-dates.mjs derives a date from
+  // the parent MOU's academicYear + instalment seq (canonical cadence
+  // i1=Jun, i2=Sep, i3=Dec, i4=Mar) and stamps each touched row.
+  // before.dueDateIso is null; after.dueDateIso is the derived ISO.
+  | 'due-date-backfill-phase-6d'
 
 export interface AuditEntry {
   timestamp: string                // ISO
