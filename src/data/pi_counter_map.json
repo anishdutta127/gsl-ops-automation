@@ -1,12 +1,11 @@
 {
-  "_comment": "Phase 6B cutover snapshot of gsl-mou-system/src/data/pi_counter.json (verified against vex_pis.json + payments.json ledger). Ops is now the source of truth; legacy is read-only post-banner. Phase 6C resolved Series B entity attribution via programmeRouting: all 44 Series B payment rows resolve to MH (YP programme -> MH per company.json programmeRouting; max seq 26 on Apple Global School / MOU-YP-2526-024). MH/2526 now seeded at next=27; UP/2526 has zero Series B PIs and is reset to next=1 (clean slate; defensive double-seed retired). UP/2627 was advanced to 18 by a Phase 6B post-flip smoke PI and rolled back to 17.",
   "fiscalYear": "2627",
   "entities": {
     "MH": {
       "next": 2
     },
     "UP": {
-      "next": 17
+      "next": 18
     }
   },
   "priorFiscalYears": {
