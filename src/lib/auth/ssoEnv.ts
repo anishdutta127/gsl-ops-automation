@@ -1,0 +1,38 @@
+/*
+ * Pure env-detection + allowlist helpers (Phase 6G Part 2).
+ *
+ * Lives separately from ssoConfig.ts so callers + tests can reach
+ * the helpers without importing NextAuth (which pulls in next/server
+ * and trips up vitest's Node environment).
+ */
+
+/**
+ * Returns true when every variable needed to actually round-trip a
+ * Microsoft sign-in is present. /login uses this for the button's
+ * enabled/disabled state.
+ */
+export function isMicrosoftEntraIdConfigured(): boolean {
+  return (
+    !!process.env.AUTH_MICROSOFT_ENTRA_ID_ID &&
+    !!process.env.AUTH_MICROSOFT_ENTRA_ID_SECRET &&
+    !!process.env.AUTH_MICROSOFT_ENTRA_ID_TENANT_ID &&
+    !!process.env.AUTH_SECRET
+  )
+}
+
+/** Parse the optional domain allowlist from env. Empty = no allowlist. */
+export function parseAllowedDomains(): string[] {
+  const raw = process.env.AUTH_MICROSOFT_ENTRA_ID_ALLOWED_DOMAINS ?? ''
+  return raw
+    .split(',')
+    .map((s) => s.trim().toLowerCase())
+    .filter((s) => s.length > 0)
+}
+
+/** True when the email's domain is allowed (or allowlist is empty). */
+export function isEmailDomainAllowed(email: string, allowed?: string[]): boolean {
+  const list = allowed ?? parseAllowedDomains()
+  if (list.length === 0) return true
+  const domain = (email.split('@')[1] ?? '').toLowerCase()
+  return list.includes(domain)
+}

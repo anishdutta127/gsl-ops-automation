@@ -59,6 +59,11 @@ const PUBLIC_PATHS = [
 const PUBLIC_PREFIXES = [
   '/feedback',        // /feedback/[tokenId], /feedback/thank-you, /feedback/link-expired
   '/portal/status',   // /portal/status/[tokenId], /portal/status/link-expired
+  // Phase 6G: NextAuth callback + sign-in handlers manage their own
+  // OAuth state cookie + redirect to /login on rejection. The
+  // session cookie they write is the same gsl_ops_session this
+  // middleware verifies on every subsequent request.
+  '/api/auth',
 ]
 
 export async function middleware(request: NextRequest) {

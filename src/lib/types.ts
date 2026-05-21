@@ -317,6 +317,12 @@ export type AuditAction =
   // homepage as Pranav / Misba / Ameet for role-specific screenshot
   // capture without needing those users' passwords.
   | 'user-impersonation-started'
+  // Phase 6G: Microsoft Entra ID SSO sign-in. Written on the User
+  // record (existing matched-by-email user OR a fresh auto-created
+  // pending user). before.azureAdObjectId / after.azureAdObjectId
+  // capture the oid backfill; notes carry the Microsoft
+  // userPrincipalName.
+  | 'sso-signin'
 
 export interface AuditEntry {
   timestamp: string                // ISO
@@ -373,6 +379,24 @@ export interface User {
   passwordHash: string                          // bcrypt hash; never plaintext anywhere
   createdAt: string                             // ISO
   auditLog: AuditEntry[]
+  /**
+   * Phase 6G: Microsoft Entra ID object ID (the immutable `oid`
+   * claim). Set on first SSO sign-in. Null for users who have
+   * never signed in via Microsoft. Lookups during SSO sign-in
+   * prefer email match (case-insensitive), then write the oid
+   * onto the matched user so subsequent sign-ins are oid-keyed
+   * (defence against the user changing their email at Microsoft).
+   */
+  azureAdObjectId?: string | null
+  /**
+   * Phase 6G: set to true when a User record is auto-created by
+   * the SSO sign-in callback for an email that did not match any
+   * existing user. Cleared by an admin via the approval queue (or
+   * by direct edit on /admin/users). When true, the user holds a
+   * session token but `active: false` keeps them out of every
+   * gated surface until Anish promotes them.
+   */
+  requiresAdminReview?: boolean
 }
 
 /**
