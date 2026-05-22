@@ -1,1 +1,145 @@
-[]
+[
+  {
+    "id": "38da7597-b222-459c-832c-fdacb26aacc4",
+    "queuedAt": "2026-05-22T18:00:23.907Z",
+    "queuedBy": "anish.d",
+    "entity": "mou",
+    "operation": "update",
+    "payload": {
+      "id": "MOU-STEAM-2627-007",
+      "schoolId": "SCH-ST_MARY_CONVENT_SCHO",
+      "schoolName": "St. Mary Convent School",
+      "programme": "STEAM",
+      "programmeSubType": null,
+      "schoolScope": "SINGLE",
+      "schoolGroupId": null,
+      "status": "Active",
+      "academicYear": "2026-27",
+      "startDate": "2026-04-01",
+      "endDate": "2028-03-31",
+      "studentsMou": 200,
+      "studentsActual": null,
+      "studentsVariance": null,
+      "studentsVariancePct": null,
+      "spWithoutTax": 847.457627118644,
+      "spWithTax": 1000,
+      "contractValue": 200000,
+      "received": 0,
+      "tds": 0,
+      "balance": 200000,
+      "receivedPct": 0,
+      "paymentSchedule": "50-50 half-yearly",
+      "trainerModel": "TT",
+      "salesPersonId": "sp-ranotosh",
+      "templateVersion": null,
+      "generatedAt": null,
+      "notes": "Status: New",
+      "daysToExpiry": 710,
+      "auditLog": [
+        {
+          "timestamp": "2026-04-27T12:00:00.000Z",
+          "user": "system",
+          "action": "auto-link-exact-match",
+          "notes": "Imported from gsl-mou-system; auto-linked to school SCH-ST_MARY_CONVENT_SCHO."
+        },
+        {
+          "timestamp": "2026-04-27T18:01:00.000Z",
+          "user": "system-w4-a-2",
+          "action": "mou-cohort-status-changed",
+          "before": {
+            "cohortStatus": null
+          },
+          "after": {
+            "cohortStatus": "active"
+          },
+          "notes": "W4-A.2 fixture migration: tagged as active cohort. In Anish 51-list of operationally-current MOUs."
+        },
+        {
+          "timestamp": "2026-02-24T14:51:18.010Z",
+          "user": "system-w4c-backfill",
+          "action": "intake-captured",
+          "notes": "W4-C.4 backfill from Google Form row 4 timestamped 2026-02-24T14:51:18.010Z. Form name has apostrophe-s; MOU has 'St. Mary Convent School' (no apostrophe-s)."
+        },
+        {
+          "timestamp": "2026-04-28T15:30:00.000Z",
+          "user": "system-pre-w4d",
+          "action": "dispatch-backfilled-from-mastersheet",
+          "after": {
+            "dispatchId": "DIS-BF-Cretile-r6",
+            "sheet": "Cretile",
+            "rowNumber": 6,
+            "lineItemCount": 1,
+            "totalQuantity": 33,
+            "confidence": "high (intake-confirmed)"
+          },
+          "notes": "Mastersheet backfill landed historical delivery (Cretile row 6)."
+        },
+        {
+          "timestamp": "2026-05-19T08:41:48.722Z",
+          "user": "anita.c",
+          "action": "update",
+          "before": {
+            "installmentCount": 2
+          },
+          "after": {
+            "installmentCount": 2
+          },
+          "notes": "Payment schedule edited (no-PI path): 2 instalment(s)."
+        },
+        {
+          "timestamp": "2026-05-21T08:35:59.338Z",
+          "user": "system",
+          "action": "product-selection-backfill-phase-6e",
+          "before": {
+            "productSelection": null
+          },
+          "after": {
+            "productSelection": "Cretile"
+          },
+          "notes": "Phase 6E Finding 1: inferred productSelection=Cretile from existing dispatch lineItems via inventory_items.category mapping."
+        },
+        {
+          "timestamp": "2026-05-22T18:00:23.906Z",
+          "user": "Anish Dutta",
+          "action": "update",
+          "before": {
+            "productSelection": "Cretile",
+            "gradewiseDistribution": null
+          },
+          "after": {
+            "productSelection": "Cretile",
+            "gradewiseDistribution": [
+              {
+                "grade": 6,
+                "students": 120,
+                "kitType": "Reusable"
+              },
+              {
+                "grade": 7,
+                "students": 140,
+                "kitType": "Reusable"
+              }
+            ]
+          },
+          "notes": "kits-details edit"
+        }
+      ],
+      "cohortStatus": "active",
+      "delayNotes": null,
+      "productSelection": "Cretile",
+      "gradewiseDistribution": [
+        {
+          "grade": 6,
+          "students": 120,
+          "kitType": "Reusable"
+        },
+        {
+          "grade": 7,
+          "students": 140,
+          "kitType": "Reusable"
+        }
+      ]
+    },
+    "retryCount": 0
+  }
+]
