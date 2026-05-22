@@ -26,6 +26,7 @@ import { redirect } from 'next/navigation'
 import { SESSION_COOKIE_NAME, verifySessionToken } from '@/lib/crypto/jwt'
 import { validateNextParam } from '@/lib/auth/nextParam'
 import { isMicrosoftEntraIdConfigured } from '@/lib/auth/ssoEnv'
+import { signIn } from '@/lib/auth/ssoConfig'
 
 interface PageProps {
   searchParams: Promise<{ error?: string; next?: string }>
@@ -148,17 +149,30 @@ export default async function LoginPage({ searchParams }: PageProps) {
             </p>
           )}
           {ssoEnabled ? (
-            <a
-              href={`/api/auth/signin/microsoft-entra-id${
-                validatedNext ? `?callbackUrl=${encodeURIComponent(validatedNext)}` : ''
-              }`}
-              aria-label="Sign in with Microsoft work account"
-              data-testid="login-sso-button"
-              className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-md border border-border bg-card px-4 py-2 text-sm font-medium text-foreground hover:bg-muted focus:outline-none focus:ring-2 focus:ring-brand-navy"
+            // Auth.js v5 dropped the GET /api/auth/signin/<provider>
+            // entrypoint that v4 supported (UnknownAction on GET). The
+            // canonical v5 trigger is a server action calling signIn(),
+            // which handles the CSRF token + redirect internally. Pass
+            // validatedNext through the closure so a deep-linked login
+            // returns the user to the page they were trying to reach.
+            <form
+              action={async () => {
+                'use server'
+                await signIn('microsoft-entra-id', {
+                  redirectTo: validatedNext ?? '/',
+                })
+              }}
             >
-              <MicrosoftLogo />
-              <span>Continue with Microsoft</span>
-            </a>
+              <button
+                type="submit"
+                aria-label="Sign in with Microsoft work account"
+                data-testid="login-sso-button"
+                className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-md border border-border bg-card px-4 py-2 text-sm font-medium text-foreground hover:bg-muted focus:outline-none focus:ring-2 focus:ring-brand-navy"
+              >
+                <MicrosoftLogo />
+                <span>Continue with Microsoft</span>
+              </button>
+            </form>
           ) : (
             <button
               type="button"
