@@ -109,17 +109,24 @@ export async function POST(request: Request, ctx: RouteContext) {
     notes: 'kits-details edit',
   }
 
+  // Spread the existing MOU so the queue payload carries top-level `id`
+  // (the drain handler looks up by payload.id) and so the drainer's
+  // replace-by-id semantics do not obliterate the other MOU fields.
+  // Matches the working sibling pattern used by /api/mou/[mouId]/edit
+  // and every other MOU-update producer in the codebase.
+  const updated: MOU = {
+    ...mou,
+    productSelection: productSelection ?? null,
+    gradewiseDistribution: gradewiseDistribution ?? null,
+    auditLog: [...(mou.auditLog ?? []), audit],
+  }
+
   try {
     await enqueueUpdate({
       queuedBy: user.id,
       entity: 'mou',
       operation: 'update',
-      payload: {
-        mouId,
-        productSelection,
-        gradewiseDistribution,
-        audit: audit as unknown as Record<string, unknown>,
-      },
+      payload: updated as unknown as Record<string, unknown>,
     })
   } catch (e) {
     return NextResponse.json(

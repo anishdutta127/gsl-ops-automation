@@ -383,6 +383,72 @@ describe('drainQueue', () => {
     expect(messages.some((m) => m.startsWith('chore(queue): drain '))).toBe(true)
   })
 
+  it('Phase 6H: emits an anomaly per skipped entry with reason missing-id-on-payload', async () => {
+    // The kit-details bug class: a producer enqueues a payload without
+    // a top-level `id`. Pre-Phase-6H this was skipped silently, the
+    // entry was trimmed, and the data was lost without ever surfacing
+    // on the sync-health board. Now every skip emits an anomaly so the
+    // class of bug is visible at drain time.
+    const state = newState()
+    state.files.set('src/data/mous.json', [])
+    state.files.set('src/data/pending_updates.json', [
+      pending({
+        id: 'pu-bad-shape',
+        entity: 'mou',
+        operation: 'update',
+        // Pre-fix kit-details payload shape: mouId instead of id.
+        payload: { mouId: 'MOU-X', productSelection: 'TinkRworks' },
+      }),
+    ])
+    const deps = makeDeps(state)
+
+    const result = await drainQueue({ triggeredBy: 'cron' }, deps)
+
+    expect(result.perEntity[0]?.skipped).toBe(1)
+    expect(
+      result.anomalies.some(
+        (a) =>
+          a.includes('pu-bad-shape') &&
+          a.includes('missing-id-on-payload') &&
+          a.includes('operation=update'),
+      ),
+    ).toBe(true)
+    // The entry still gets trimmed (the drain machinery is unchanged
+    // on that front), but now the anomaly carries the diagnostic.
+    expect(result.remainingCount).toBe(0)
+  })
+
+  it('Phase 6H: emits an anomaly per skipped duplicate-create entry', async () => {
+    const state = newState()
+    state.files.set('src/data/schools.json', [])
+    state.files.set('src/data/pending_updates.json', [
+      pending({
+        id: 'pu-first',
+        queuedAt: '2026-04-30T09:00:00.000Z',
+        entity: 'school',
+        operation: 'create',
+        payload: { id: 'SCH-DUP', name: 'First' },
+      }),
+      pending({
+        id: 'pu-second',
+        queuedAt: '2026-04-30T09:00:15.000Z',
+        entity: 'school',
+        operation: 'create',
+        payload: { id: 'SCH-DUP', name: 'Second' },
+      }),
+    ])
+    const deps = makeDeps(state)
+
+    const result = await drainQueue({ triggeredBy: 'cron' }, deps)
+
+    expect(result.perEntity[0]?.skipped).toBe(1)
+    expect(
+      result.anomalies.some(
+        (a) => a.includes('pu-second') && a.includes('duplicate-create'),
+      ),
+    ).toBe(true)
+  })
+
   it('sync-health entry has kind sync and includes drained / remaining counts', async () => {
     const state = newState()
     state.files.set('src/data/schools.json', [])

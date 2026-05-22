@@ -101,19 +101,25 @@ function annotateDefensiveAppend(
   return { ...payload, auditLog: [...existing, fallbackEntry] }
 }
 
+type SkipReason = 'missing-id-on-payload' | 'duplicate-create' | 'unknown-operation'
+
+type ApplyResult =
+  | { list: EntityRecord[]; outcome: 'drained' }
+  | { list: EntityRecord[]; outcome: 'skipped'; reason: SkipReason }
+
 function applyOneToList(
   list: EntityRecord[],
   pending: PendingUpdate,
   drainAt: string,
-): { list: EntityRecord[]; outcome: 'drained' | 'skipped' } {
+): ApplyResult {
   const payload = pending.payload as EntityRecord
   const id = typeof payload.id === 'string' ? payload.id : null
   if (id === null) {
-    return { list, outcome: 'skipped' }
+    return { list, outcome: 'skipped', reason: 'missing-id-on-payload' }
   }
   if (pending.operation === 'create') {
     if (list.some((r) => r.id === id)) {
-      return { list, outcome: 'skipped' }
+      return { list, outcome: 'skipped', reason: 'duplicate-create' }
     }
     return { list: [...list, payload], outcome: 'drained' }
   }
@@ -133,7 +139,7 @@ function applyOneToList(
   if (pending.operation === 'delete') {
     return { list: list.filter((r) => r.id !== id), outcome: 'drained' }
   }
-  return { list, outcome: 'skipped' }
+  return { list, outcome: 'skipped', reason: 'unknown-operation' }
 }
 
 export async function drainQueue(
@@ -216,6 +222,13 @@ export async function drainQueue(
 
     let drainedThisEntity = 0
     let skippedThisEntity = 0
+    // Skipped-entry detail is collected fresh on every mutate run so
+    // atomicUpdate's retry loop does not produce duplicate anomalies.
+    let skipDetails: Array<{
+      entryId: string
+      operation: PendingUpdate['operation']
+      reason: SkipReason
+    }> = []
     try {
       await deps.atomicUpdate<EntityRecord[]>(
         filePath,
@@ -223,11 +236,20 @@ export async function drainQueue(
           let working = Array.isArray(current) ? current : []
           drainedThisEntity = 0
           skippedThisEntity = 0
+          skipDetails = []
           for (const entry of entries) {
-            const { list, outcome } = applyOneToList(working, entry, drainAt)
-            working = list
-            if (outcome === 'drained') drainedThisEntity++
-            else skippedThisEntity++
+            const result = applyOneToList(working, entry, drainAt)
+            working = result.list
+            if (result.outcome === 'drained') {
+              drainedThisEntity++
+            } else {
+              skippedThisEntity++
+              skipDetails.push({
+                entryId: entry.id,
+                operation: entry.operation,
+                reason: result.reason,
+              })
+            }
           }
           return {
             next: working,
@@ -237,6 +259,16 @@ export async function drainQueue(
         { defaultValue: [] as EntityRecord[], maxRetries: 3 },
       )
       for (const entry of entries) drainedIds.add(entry.id)
+      // Surface every skip on the sync-health board. Pre-Phase-6H the
+      // drainer trimmed skipped entries silently; the kit-details
+      // payload-shape bug went undetected for the entire Gate 3 to 6G
+      // window because of it. Anomalies fire from outside the mutate
+      // callback so atomicUpdate retries do not double-count.
+      for (const detail of skipDetails) {
+        anomalies.push(
+          `${entity} entry ${detail.entryId} skipped: ${detail.reason} (operation=${detail.operation})`,
+        )
+      }
       perEntity.push({
         entity,
         drained: drainedThisEntity,

@@ -92,15 +92,15 @@ export async function POST(
   }
 
   try {
+    // Enqueue the full KitDispatch record directly. The drain handler
+    // looks up by payload.id and does next[idx] = payload, so wrapping
+    // nextRecord under a .record key would nest the real data instead
+    // of replacing the row.
     await enqueueUpdate({
       queuedBy: user.id,
       entity: 'kitDispatch',
       operation: 'update',
-      payload: {
-        id: kd.id,
-        mouId,
-        record: nextRecord as unknown as Record<string, unknown>,
-      },
+      payload: nextRecord as unknown as Record<string, unknown>,
     })
   } catch (e) {
     return NextResponse.json(
