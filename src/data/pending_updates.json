@@ -30,5 +30,37 @@
       ]
     },
     "retryCount": 0
+  },
+  {
+    "id": "e96f21a8-0c51-444b-b138-d2c4685e83a2",
+    "queuedAt": "2026-05-22T20:04:24.536Z",
+    "queuedBy": "anish.d",
+    "entity": "user",
+    "operation": "update",
+    "payload": {
+      "id": "anish.d",
+      "name": "Anish Dutta",
+      "email": "anish.d@getsetlearn.info",
+      "role": "Admin",
+      "department": null,
+      "testingOverride": false,
+      "active": true,
+      "passwordHash": "$2b$12$If0xRbk1VrDxTv52vbltu.KmEbiAwwu4nSRHLD7oUU2oIR9PJ.WqK",
+      "createdAt": "2026-04-25T00:00:00Z",
+      "auditLog": [
+        {
+          "timestamp": "2026-05-22T20:04:24.536Z",
+          "user": "anish.d",
+          "action": "user-impersonation-started",
+          "before": {},
+          "after": {
+            "targetUserId": "ameet.z",
+            "targetRole": "Admin"
+          },
+          "notes": "Phase 6F Part 5 V4 verification walk. Impersonation does not modify the target user."
+        }
+      ]
+    },
+    "retryCount": 0
   }
 ]
