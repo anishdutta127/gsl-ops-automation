@@ -1,1 +1,44 @@
-[]
+[
+  {
+    "id": "378b348c-be00-4565-b95f-48119bf42db3",
+    "queuedAt": "2026-05-22T05:59:57.847Z",
+    "queuedBy": "anita.c",
+    "entity": "payment",
+    "operation": "create",
+    "payload": {
+      "id": "MOU-STEAM-2627-001-i2",
+      "mouId": "MOU-STEAM-2627-001",
+      "schoolName": "Mutahhary Public School Baroo",
+      "programme": "STEAM",
+      "instalmentLabel": "2 of 2",
+      "instalmentSeq": 2,
+      "totalInstalments": 2,
+      "description": "STEAM - Instalment 2 of 2",
+      "dueDateRaw": null,
+      "dueDateIso": null,
+      "expectedAmount": 200000,
+      "receivedAmount": null,
+      "receivedDate": null,
+      "paymentMode": null,
+      "bankReference": null,
+      "piNumber": "MTPL/UP/26-27/0018",
+      "taxInvoiceNumber": null,
+      "status": "PI Sent",
+      "notes": null,
+      "piSentDate": "2026-05-22T05:59:57.753Z",
+      "piSentTo": null,
+      "piGeneratedAt": "2026-05-22T05:59:57.753Z",
+      "studentCountActual": 450,
+      "partialPayments": null,
+      "auditLog": [
+        {
+          "timestamp": "2026-05-22T05:59:57.753Z",
+          "user": "anita.c",
+          "action": "create",
+          "notes": "Auto-created from PI generation (MTPL/UP/26-27/0018)."
+        }
+      ]
+    },
+    "retryCount": 0
+  }
+]
