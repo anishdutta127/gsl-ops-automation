@@ -877,16 +877,40 @@ CREATE TABLE counters (
 -- ETag-free atomicity: a row-level lock under SERIALIZABLE / REPEATABLE READ handles concurrent calls.
 ```
 
-### 2.3 Skipped files (justified)
+### 2.3 Additional tables added during Anish's double-check (Part 2 prep, 2026-05-23)
 
-- `chain_dismissals.json`: file exists, no current readers or writers found. Possibly a Phase 1 deferred feature placeholder. Skip Phase 7. If a future gate brings it back, add the table then.
-- `reminder_thresholds.json`: similarly no readers found; configuration intent unclear. Skip Phase 7.
+The Part 1 inventory mis-identified two files as having no readers. A second-pass grep including static imports + dynamic string references (the check Anish requested before GO) found them load-bearing. Adding the corresponding tables:
+
+```sql
+CREATE TABLE chain_dismissals (
+  school_id TEXT PRIMARY KEY REFERENCES schools(id) ON DELETE RESTRICT,
+  dismissed_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  dismissed_by TEXT NULL,
+  notes TEXT NULL
+);
+
+CREATE TABLE reminder_thresholds (
+  kind TEXT PRIMARY KEY CHECK (kind IN ('intake','payment','delivery-ack','feedback-chase')),
+  threshold_days INTEGER NOT NULL,
+  anchor_event TEXT NOT NULL,
+  description TEXT NULL,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_by TEXT NULL
+);
+```
+
+`chain_dismissals` source shape is `{ _comment, dismissedSchoolIds: string[] }`. Normalised to one row per dismissed school. The read path (`src/app/admin/chain-mou-reconciliation/page.tsx:23` + `src/lib/admin/chainReconciliation.ts`) becomes `SELECT school_id FROM chain_dismissals`. The write path (`src/app/api/admin/chain-reconciliation/dismiss/route.ts:14`) becomes `INSERT ... ON CONFLICT DO NOTHING`. The `_comment` field is doc-only, dropped.
+
+`reminder_thresholds` source shape is `{ intake: {...}, payment: {...}, 'delivery-ack': {...}, 'feedback-chase': {...} }` keyed by reminder kind. Readers: `src/lib/reminders/detectDueReminders.ts:61` and `src/lib/reminders/composeReminder.ts:81`. Each kind becomes one row keyed by the literal kind name. Matches the same low-cardinality config-table pattern as `lifecycle_rules`.
+
+### 2.4 Skipped files (justified)
+
 - `pi_counter_map.before-6b.json`: explicit pre-Phase-6B snapshot file. Reference only; do not migrate.
 - `pending_updates.json`: the queue itself. Becomes unnecessary in a synchronous-write world. NOT migrated as a Postgres table.
 
-### 2.4 Schema summary
+### 2.5 Schema summary
 
-- **30 tables** for domain entities + counters + housekeeping (sync_health, homepage_action_log).
+- **32 tables** for domain entities + counters + housekeeping (sync_health, homepage_action_log, chain_dismissals, reminder_thresholds).
 - **8 tables** are append-only or near-append-only (`student_count_events`, `homepage_action_log`, `sync_health`, `vex_orders` for legacy data, `feedback`, `dispatches`, `notifications`, `mou_import_review`).
 - **All FK constraints** are `ON DELETE RESTRICT`. No cascade.
 - **No Postgres ENUM types** — `TEXT` + `CHECK` constraints throughout.
