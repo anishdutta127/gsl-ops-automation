@@ -9,7 +9,19 @@
     "active": true,
     "passwordHash": "$2b$12$If0xRbk1VrDxTv52vbltu.KmEbiAwwu4nSRHLD7oUU2oIR9PJ.WqK",
     "createdAt": "2026-04-25T00:00:00Z",
-    "auditLog": []
+    "auditLog": [
+      {
+        "timestamp": "2026-05-22T20:04:56.512Z",
+        "user": "anish.d",
+        "action": "user-impersonation-started",
+        "before": {},
+        "after": {
+          "targetUserId": "ameet.z",
+          "targetRole": "Admin"
+        },
+        "notes": "Phase 6F Part 5 V4 verification walk. Impersonation does not modify the target user."
+      }
+    ]
   },
   {
     "id": "ameet.z",
@@ -26,8 +38,12 @@
         "timestamp": "2026-04-29T00:00:00Z",
         "user": "anish.d",
         "action": "user-role-changed",
-        "before": { "role": "Leadership" },
-        "after": { "role": "Admin" },
+        "before": {
+          "role": "Leadership"
+        },
+        "after": {
+          "role": "Admin"
+        },
         "notes": "Promoted to Admin for round 2 platform testing; revert per D-040 post-testing."
       }
     ]
@@ -47,8 +63,12 @@
         "timestamp": "2026-04-29T00:00:00Z",
         "user": "anish.d",
         "action": "user-role-changed",
-        "before": { "role": "SalesHead" },
-        "after": { "role": "Admin" },
+        "before": {
+          "role": "SalesHead"
+        },
+        "after": {
+          "role": "Admin"
+        },
         "notes": "Promoted to Admin for round 2 platform testing; revert per D-040 post-testing."
       }
     ]
@@ -68,8 +88,12 @@
         "timestamp": "2026-04-29T00:00:00Z",
         "user": "anish.d",
         "action": "user-role-changed",
-        "before": { "role": "SalesRep" },
-        "after": { "role": "Admin" },
+        "before": {
+          "role": "SalesRep"
+        },
+        "after": {
+          "role": "Admin"
+        },
         "notes": "Promoted to Admin for round 2 platform testing; revert per D-040 post-testing."
       }
     ]
@@ -125,8 +149,12 @@
         "timestamp": "2026-04-29T00:00:00Z",
         "user": "anish.d",
         "action": "user-role-changed",
-        "before": { "role": "Finance" },
-        "after": { "role": "Admin" },
+        "before": {
+          "role": "Finance"
+        },
+        "after": {
+          "role": "Admin"
+        },
         "notes": "Promoted to Admin for round 2 platform testing; revert per D-040 post-testing."
       }
     ]
@@ -146,8 +174,12 @@
         "timestamp": "2026-04-29T00:00:00Z",
         "user": "anish.d",
         "action": "user-role-changed",
-        "before": { "role": "Finance" },
-        "after": { "role": "Admin" },
+        "before": {
+          "role": "Finance"
+        },
+        "after": {
+          "role": "Admin"
+        },
         "notes": "Promoted to Admin for round 2 platform testing; revert per D-040 post-testing."
       }
     ]
