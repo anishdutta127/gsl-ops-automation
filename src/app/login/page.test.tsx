@@ -35,6 +35,14 @@ vi.mock('@/lib/crypto/jwt', () => ({
   verifySessionToken: (token: string) => verifyMock(token),
 }))
 
+// Phase 6F.1: /login imports signIn from ssoConfig (Phase 6G.2 server-
+// action button). The real ssoConfig pulls NextAuth which imports
+// next/server in a way the vitest module resolver does not handle.
+// Stub signIn so the page module loads under test.
+vi.mock('@/lib/auth/ssoConfig', () => ({
+  signIn: vi.fn(),
+}))
+
 beforeEach(() => {
   vi.clearAllMocks()
 })
@@ -186,7 +194,15 @@ describe('/login page (already-logged-in detect)', () => {
       const html = renderToStaticMarkup(result)
       expect(html).toContain('data-testid="login-sso-button"')
       expect(html).not.toContain('data-testid="login-sso-button-disabled"')
-      expect(html).toContain('href="/api/auth/signin/microsoft-entra-id')
+      // Phase 6G.2: the button is now a form-submit button driven by a
+      // server action, not an anchor with href. The form posts to the
+      // server action endpoint; we assert the button is a real submit
+      // control inside an enabled form (no disabled attribute, no
+      // pre-6G.2 GET href that returned UnknownAction).
+      expect(html).toMatch(/<form[^>]*>[\s\S]*?data-testid="login-sso-button"/)
+      expect(html).toMatch(/data-testid="login-sso-button"[\s\S]*?<\/form>/)
+      expect(html).toContain('type="submit"')
+      expect(html).not.toContain('href="/api/auth/signin/microsoft-entra-id')
     } finally {
       delete process.env.AUTH_MICROSOFT_ENTRA_ID_ID
       delete process.env.AUTH_MICROSOFT_ENTRA_ID_TENANT_ID

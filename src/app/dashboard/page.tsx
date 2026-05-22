@@ -9,6 +9,10 @@
  *
  * Forwards searchParams so saved filter URLs (?programme=STEAM)
  * keep working post-migration.
+ *
+ * Phase 6F (2026-05-21) pointed this redirect at /dashboard/overview
+ * because / had become the action queue. Phase 6F.1 restored the
+ * 5-zone landing to /, so the redirect target reverts to /.
  */
 
 import { redirect } from 'next/navigation'
@@ -24,9 +28,5 @@ export default async function DashboardRedirect({ searchParams }: PageProps) {
     if (typeof v === 'string') params.set(k, v)
   }
   const qs = params.toString()
-  // Phase 6F (2026-05-21): /dashboard was a redirect to /. The action-
-  // first homepage now lives at /; bookmarks to /dashboard expecting
-  // the legacy 5-zone view get the new /dashboard/overview route
-  // instead. Search params still forward.
-  redirect(qs === '' ? '/dashboard/overview' : `/dashboard/overview?${qs}`)
+  redirect(qs === '' ? '/' : `/?${qs}`)
 }
