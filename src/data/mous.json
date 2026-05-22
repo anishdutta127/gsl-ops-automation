@@ -5893,11 +5893,48 @@
           "productSelection": "Cretile"
         },
         "notes": "Phase 6E Finding 1: inferred productSelection=Cretile from existing dispatch lineItems via inventory_items.category mapping."
+      },
+      {
+        "timestamp": "2026-05-22T18:00:23.906Z",
+        "user": "Anish Dutta",
+        "action": "update",
+        "before": {
+          "productSelection": "Cretile",
+          "gradewiseDistribution": null
+        },
+        "after": {
+          "productSelection": "Cretile",
+          "gradewiseDistribution": [
+            {
+              "grade": 6,
+              "students": 120,
+              "kitType": "Reusable"
+            },
+            {
+              "grade": 7,
+              "students": 140,
+              "kitType": "Reusable"
+            }
+          ]
+        },
+        "notes": "kits-details edit"
       }
     ],
     "cohortStatus": "active",
     "delayNotes": null,
-    "productSelection": "Cretile"
+    "productSelection": "Cretile",
+    "gradewiseDistribution": [
+      {
+        "grade": 6,
+        "students": 120,
+        "kitType": "Reusable"
+      },
+      {
+        "grade": 7,
+        "students": 140,
+        "kitType": "Reusable"
+      }
+    ]
   },
   {
     "id": "MOU-STEAM-2627-008",
