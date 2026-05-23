@@ -29,7 +29,7 @@ until Part 5 GO.
 ### Coverage
 
 - 38 staging tables / 38 covered by a repo (14 individual repo files + 1 barrel file)
-- 76 parity tests total green against the seeded staging Neon branch
+- 81 parity tests total green against the seeded staging Neon branch
 - 0 regressions in the wider test suite (7 pre-existing failures verified unchanged via stash test)
 - JSONB write-parity round-trip proven on: users.audit_log, mous.lifecycleSnapshot + workflowStages + lineItems, payments.partial_payments + audit_log, dispatches.line_items, kit_dispatches.allocations + dispatch_summary + shipment_tracking + pod, vex_pis.lineItems + paymentLogIds, escalations.comments + notifiedEmails, notifications.payload
 
