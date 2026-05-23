@@ -37,7 +37,7 @@ export async function POST(request: Request, ctx: Ctx) {
   }
 
   const user = users.find((u) => u.id === session.sub)
-  const approverUserId = getDispatchOverrideApproverUserId()
+  const approverUserId = await getDispatchOverrideApproverUserId()
   if (!user || !canApproveDispatchOverride(user, approverUserId)) {
     const url = new URL(`/mous/${mouId}`, request.url)
     url.searchParams.set('error', 'override-permission')

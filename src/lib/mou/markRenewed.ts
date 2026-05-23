@@ -12,10 +12,10 @@
  */
 
 import type { AuditEntry, MOU, User } from '@/lib/types'
-import mousJson from '@/data/mous.json'
-import usersJson from '@/data/users.json'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
 import { canEditMOU } from '@/lib/access'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { userRepo } from '@/lib/db/repos/user'
 
 export interface MarkRenewedArgs {
   mouId: string
@@ -40,17 +40,16 @@ export interface MarkRenewedDeps {
   now: () => Date
 }
 
-const defaultDeps: MarkRenewedDeps = {
-  mous: mousJson as unknown as MOU[],
-  users: usersJson as unknown as User[],
-  enqueue: enqueueUpdate,
-  now: () => new Date(),
+async function defaultDeps(): Promise<MarkRenewedDeps> {
+  const [mous, users] = await Promise.all([mouRepo.findAll(), userRepo.findAll()])
+  return { mous, users, enqueue: enqueueUpdate, now: () => new Date() }
 }
 
 export async function markRenewed(
   args: MarkRenewedArgs,
-  deps: MarkRenewedDeps = defaultDeps,
+  depsOverride?: MarkRenewedDeps,
 ): Promise<MarkRenewedResult> {
+  const deps = depsOverride ?? (await defaultDeps())
   const user = deps.users.find((u) => u.id === args.changedBy)
   if (!user) return { ok: false, reason: 'unknown-user' }
   if (!canEditMOU(user)) return { ok: false, reason: 'permission' }

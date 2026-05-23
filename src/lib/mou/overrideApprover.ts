@@ -23,7 +23,7 @@
  */
 
 import type { StageResponsibility } from '@/lib/types'
-import responsibilityJson from '@/data/stage_responsibility.json'
+import { stageResponsibilityRepo } from '@/lib/db/repos/leafRepos'
 
 export const DEFAULT_OVERRIDE_APPROVER_USER_ID = 'shashank.s'
 
@@ -34,9 +34,12 @@ interface SystemResponsibilityRow {
   responsibleUserId: string | null
 }
 
-export function getDispatchOverrideApproverUserId(
-  source: ReadonlyArray<StageResponsibility | SystemResponsibilityRow> = responsibilityJson as unknown as StageResponsibility[],
-): string {
+export async function getDispatchOverrideApproverUserId(
+  sourceOverride?: ReadonlyArray<StageResponsibility | SystemResponsibilityRow>,
+): Promise<string> {
+  const source =
+    sourceOverride ??
+    ((await stageResponsibilityRepo.findAll()) as unknown as readonly StageResponsibility[])
   for (const row of source) {
     if (row.stage === OVERRIDE_APPROVER_STAGE_KEY) {
       if (row.responsibleUserId && row.responsibleUserId.trim() !== '') {

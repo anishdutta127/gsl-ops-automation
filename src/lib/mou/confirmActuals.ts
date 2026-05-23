@@ -34,13 +34,13 @@ import type {
   StudentCountEvent,
   User,
 } from '@/lib/types'
-import mousJson from '@/data/mous.json'
-import paymentsJson from '@/data/payments.json'
-import usersJson from '@/data/users.json'
-import eventsJson from '@/data/student_count_events.json'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
 import { canPerform } from '@/lib/auth/permissions'
 import { applyCountChange } from './applyCountChange'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { paymentRepo } from '@/lib/db/repos/payment'
+import { userRepo } from '@/lib/db/repos/user'
+import { studentCountEventRepo } from '@/lib/db/repos/leafRepos'
 
 const STUDENTS_MAX = 20000
 const DRIFT_THRESHOLD = 0.10  // strict greater than triggers review
@@ -72,13 +72,14 @@ export interface ConfirmActualsDeps {
   now: () => Date
 }
 
-const defaultDeps: ConfirmActualsDeps = {
-  mous: mousJson as unknown as MOU[],
-  users: usersJson as unknown as User[],
-  payments: paymentsJson as unknown as Payment[],
-  events: eventsJson as unknown as StudentCountEvent[],
-  enqueue: enqueueUpdate,
-  now: () => new Date(),
+async function defaultDeps(): Promise<ConfirmActualsDeps> {
+  const [mous, users, payments, events] = await Promise.all([
+    mouRepo.findAll(),
+    userRepo.findAll(),
+    paymentRepo.findAll(),
+    studentCountEventRepo.findAll() as unknown as Promise<StudentCountEvent[]>,
+  ])
+  return { mous, users, payments, events, enqueue: enqueueUpdate, now: () => new Date() }
 }
 
 export function isDriftReviewRequired(variancePct: number): boolean {
@@ -87,8 +88,9 @@ export function isDriftReviewRequired(variancePct: number): boolean {
 
 export async function confirmActuals(
   args: ConfirmActualsArgs,
-  deps: ConfirmActualsDeps = defaultDeps,
+  depsOverride?: ConfirmActualsDeps,
 ): Promise<ConfirmActualsResult> {
+  const deps = depsOverride ?? (await defaultDeps())
   if (
     typeof args.studentsActual !== 'number' ||
     !Number.isFinite(args.studentsActual) ||

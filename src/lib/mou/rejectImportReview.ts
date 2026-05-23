@@ -26,10 +26,10 @@ import type {
   RejectionReason,
   User,
 } from '@/lib/types'
-import mouImportReviewJson from '@/data/mou_import_review.json'
-import usersJson from '@/data/users.json'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
 import { canPerform } from '@/lib/auth/permissions'
+import { mouImportReviewRepo } from '@/lib/db/repos/leafRepos'
+import { userRepo } from '@/lib/db/repos/user'
 
 const VALID_REASONS: ReadonlyArray<RejectionReason> = [
   'data-quality-issue',
@@ -66,13 +66,14 @@ export interface RejectImportReviewDeps {
   now: () => Date
 }
 
-const defaultDeps: RejectImportReviewDeps = {
-  items: mouImportReviewJson as unknown as MouImportReviewItem[],
-  users: usersJson as unknown as User[],
+async function defaultDeps(): Promise<RejectImportReviewDeps> {
+  return {
+  items: await mouImportReviewRepo.findAll() as MouImportReviewItem[],
+  users: await userRepo.findAll() as User[],
   enqueue: enqueueUpdate,
   now: () => new Date(),
+  }
 }
-
 function rawRecordId(item: MouImportReviewItem): string | null {
   if (typeof item.rawRecord !== 'object' || item.rawRecord === null) return null
   const id = (item.rawRecord as { id?: unknown }).id
@@ -81,8 +82,9 @@ function rawRecordId(item: MouImportReviewItem): string | null {
 
 export async function rejectImportReview(
   args: RejectImportReviewArgs,
-  deps: RejectImportReviewDeps = defaultDeps,
+  depsOverride?: RejectImportReviewDeps,
 ): Promise<RejectImportReviewResult> {
+  const deps = depsOverride ?? (await defaultDeps())
   const user = deps.users.find((u) => u.id === args.rejectedBy)
   if (!user) return { ok: false, reason: 'unknown-user' }
   if (!canPerform(user, 'mou-import-review:resolve')) {

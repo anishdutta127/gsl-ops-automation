@@ -22,9 +22,9 @@
  */
 
 import type { AuditEntry, MOU, User } from '@/lib/types'
-import mousJson from '@/data/mous.json'
-import usersJson from '@/data/users.json'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { userRepo } from '@/lib/db/repos/user'
 
 const AUDIT_TRUNCATE_LIMIT = 200
 const AUDIT_TRUNCATE_SUFFIX = ' ... [truncated; full notes on MOU]'
@@ -52,13 +52,14 @@ export interface UpdateDelayNotesDeps {
   now: () => Date
 }
 
-const defaultDeps: UpdateDelayNotesDeps = {
-  mous: mousJson as unknown as MOU[],
-  users: usersJson as unknown as User[],
+async function defaultDeps(): Promise<UpdateDelayNotesDeps> {
+  return {
+  mous: await mouRepo.findAll() as MOU[],
+  users: await userRepo.findAll() as User[],
   enqueue: enqueueUpdate,
   now: () => new Date(),
+  }
 }
-
 /**
  * Truncate to ~200 chars suffix-flagged. Exported for the audit-log
  * formatter that may want to do its own paging.
@@ -79,8 +80,9 @@ function normalise(raw: string): string | null {
 
 export async function updateDelayNotes(
   args: UpdateDelayNotesArgs,
-  deps: UpdateDelayNotesDeps = defaultDeps,
+  depsOverride?: UpdateDelayNotesDeps,
 ): Promise<UpdateDelayNotesResult> {
+  const deps = depsOverride ?? (await defaultDeps())
   const user = deps.users.find((u) => u.id === args.changedBy)
   if (!user) return { ok: false, reason: 'unknown-user' }
 

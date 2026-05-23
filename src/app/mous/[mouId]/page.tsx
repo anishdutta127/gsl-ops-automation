@@ -327,7 +327,7 @@ export default async function MouDetailPage({ params, searchParams }: PageProps)
 
   // Gate 5A.5 Step 4: dispatch override state + permission gates.
   const overrideState = readOverride(mou)
-  const overrideApproverUserId = getDispatchOverrideApproverUserId()
+  const overrideApproverUserId = await getDispatchOverrideApproverUserId()
   const overrideApproverUser = allUsers.find(
     (u) => u.id === overrideApproverUserId,
   )

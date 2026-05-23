@@ -13,10 +13,10 @@
  */
 
 import type { AuditEntry, MOU, User } from '@/lib/types'
-import mousJson from '@/data/mous.json'
-import usersJson from '@/data/users.json'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
 import { canEditMOU } from '@/lib/access'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { userRepo } from '@/lib/db/repos/user'
 
 export interface DeclineRenewalArgs {
   mouId: string
@@ -41,17 +41,16 @@ export interface DeclineRenewalDeps {
   now: () => Date
 }
 
-const defaultDeps: DeclineRenewalDeps = {
-  mous: mousJson as unknown as MOU[],
-  users: usersJson as unknown as User[],
-  enqueue: enqueueUpdate,
-  now: () => new Date(),
+async function defaultDeps(): Promise<DeclineRenewalDeps> {
+  const [mous, users] = await Promise.all([mouRepo.findAll(), userRepo.findAll()])
+  return { mous, users, enqueue: enqueueUpdate, now: () => new Date() }
 }
 
 export async function declineRenewal(
   args: DeclineRenewalArgs,
-  deps: DeclineRenewalDeps = defaultDeps,
+  depsOverride?: DeclineRenewalDeps,
 ): Promise<DeclineRenewalResult> {
+  const deps = depsOverride ?? (await defaultDeps())
   const trimmedReason = (args.reason ?? '').trim()
   if (trimmedReason === '') return { ok: false, reason: 'missing-reason' }
 
