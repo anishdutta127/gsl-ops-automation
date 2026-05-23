@@ -109,10 +109,10 @@ export const userRepo = {
           active = ${!!user.active},
           password_hash = ${user.passwordHash || null},
           testing_override = ${!!user.testingOverride},
-          testing_override_permissions = ${sql.json(user.testingOverridePermissions ?? [])}::jsonb,
+          testing_override_permissions = ${sql.json((user.testingOverridePermissions ?? []) as never)}::jsonb,
           azure_ad_object_id = ${user.azureAdObjectId ?? null},
           requires_admin_review = ${!!user.requiresAdminReview},
-          audit_log = ${sql.json(user.auditLog ?? [])}::jsonb
+          audit_log = ${sql.json((user.auditLog ?? []) as never)}::jsonb
         WHERE id = ${user.id}
       `
       return
@@ -138,10 +138,10 @@ export const userRepo = {
           ${user.role}, ${user.department ?? null},
           ${!!user.active}, ${user.passwordHash || null},
           ${!!user.testingOverride},
-          ${sql.json(user.testingOverridePermissions ?? [])}::jsonb,
+          ${sql.json((user.testingOverridePermissions ?? []) as never)}::jsonb,
           ${user.azureAdObjectId ?? null},
           ${!!user.requiresAdminReview},
-          ${sql.json(user.auditLog ?? [])}::jsonb,
+          ${sql.json((user.auditLog ?? []) as never)}::jsonb,
           ${user.createdAt || sql`NOW()`}
         )
       `
@@ -166,7 +166,7 @@ export const userRepo = {
       const sql = getSql()
       await sql`
         UPDATE users
-        SET audit_log = audit_log || ${sql.json([entry])}::jsonb
+        SET audit_log = audit_log || ${sql.json([entry] as never)}::jsonb
         WHERE id = ${id}
       `
       return

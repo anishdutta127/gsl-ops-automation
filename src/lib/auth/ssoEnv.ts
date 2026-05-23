@@ -42,3 +42,47 @@ export function isEmailDomainAllowed(email: string, allowed?: string[]): boolean
   const domain = (email.split('@')[1] ?? '').toLowerCase()
   return list.includes(domain)
 }
+
+/**
+ * Phase 6G.3 (2026-05-24): build the provider-config object passed to
+ * NextAuth's MicrosoftEntraID(). Two shapes depending on whether the
+ * Azure app registration is confidential (expects a client secret on
+ * /token) or public (PKCE-only).
+ *
+ *   - If AUTH_MICROSOFT_ENTRA_ID_SECRET is set: confidential client.
+ *     We send clientSecret on the token-exchange leg.
+ *   - Otherwise: public client + PKCE. We set token_endpoint_auth_method
+ *     'none' so postgres.js's underlying openid-client lib does not send
+ *     a Basic-auth header that Microsoft would reject for a public app.
+ *
+ * The first Anish click-test (2026-05-24) failed with invalid_client
+ * from Microsoft's /token endpoint while running the public-client
+ * config. That signal told us the Azure registration is "Web" platform
+ * type (which is always confidential in Entra) rather than "SPA" /
+ * "Mobile and desktop applications" (which are public). Either: IT
+ * gives us a secret and we set AUTH_MICROSOFT_ENTRA_ID_SECRET, OR IT
+ * flips the registration to SPA and we keep the public path. This
+ * helper supports both.
+ */
+export interface EntraProviderConfig {
+  clientId: string
+  clientSecret?: string
+  issuer: string
+  client?: { token_endpoint_auth_method: 'none' }
+}
+
+export function buildEntraProviderConfig(env: NodeJS.ProcessEnv = process.env): EntraProviderConfig {
+  const clientId = env.AUTH_MICROSOFT_ENTRA_ID_ID
+  const tenantId = env.AUTH_MICROSOFT_ENTRA_ID_TENANT_ID
+  if (!clientId || !tenantId) {
+    throw new Error(
+      'buildEntraProviderConfig: AUTH_MICROSOFT_ENTRA_ID_ID and AUTH_MICROSOFT_ENTRA_ID_TENANT_ID must both be set.',
+    )
+  }
+  const issuer = `https://login.microsoftonline.com/${tenantId}/v2.0`
+  const secret = env.AUTH_MICROSOFT_ENTRA_ID_SECRET
+  if (secret) {
+    return { clientId, clientSecret: secret, issuer }
+  }
+  return { clientId, issuer, client: { token_endpoint_auth_method: 'none' } }
+}

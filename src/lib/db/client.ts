@@ -25,43 +25,43 @@ function installDnsFallback() {
   dnsFallbackInstalled = true
   const publicResolver = new Resolver()
   publicResolver.setServers(['1.1.1.1', '8.8.8.8'])
-  const originalLookup = dns.lookup
-  type LookupCb = (
-    err: NodeJS.ErrnoException | null,
-    address?: string | { address: string; family: number }[],
-    family?: number,
-  ) => void
-  ;(dns as { lookup: typeof dns.lookup }).lookup = function patched(
-    hostname: string,
-    opts: number | dns.LookupOptions | LookupCb,
-    cb?: LookupCb,
-  ) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const originalLookup = dns.lookup as any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ;(dns as any).lookup = function patched(hostname: string, opts: unknown, cb?: unknown): void {
+    let optsObj: { family?: number; all?: boolean } = {}
+    let callback: (
+      err: NodeJS.ErrnoException | null,
+      address?: string | { address: string; family: number }[],
+      family?: number,
+    ) => void
     if (typeof opts === 'function') {
-      cb = opts
-      opts = {} as dns.LookupOptions
+      callback = opts as typeof callback
+      optsObj = {}
+    } else {
+      callback = cb as typeof callback
+      if (typeof opts === 'number') optsObj = { family: opts }
+      else if (opts && typeof opts === 'object') optsObj = opts as typeof optsObj
     }
-    if (typeof opts === 'number') opts = { family: opts } as dns.LookupOptions
-    const next = cb as LookupCb
-    originalLookup.call(
-      dns,
+    originalLookup(
       hostname,
-      opts as dns.LookupOptions,
+      optsObj,
       (err: NodeJS.ErrnoException | null, addr?: string, fam?: number) => {
-        if (!err) return next(err, addr, fam)
+        if (!err) return callback(err, addr, fam)
         publicResolver
           .resolve4(hostname)
           .then((addrs) => {
-            if (!addrs || addrs.length === 0) return next(err)
-            if ((opts as dns.LookupOptions).all) {
-              next(null, addrs.map((a) => ({ address: a, family: 4 })))
+            if (!addrs || addrs.length === 0) return callback(err)
+            if (optsObj.all) {
+              callback(null, addrs.map((a) => ({ address: a, family: 4 })))
             } else {
-              next(null, addrs[0], 4)
+              callback(null, addrs[0], 4)
             }
           })
-          .catch(() => next(err))
+          .catch(() => callback(err))
       },
     )
-  } as typeof dns.lookup
+  }
 }
 
 let cached: ReturnType<typeof postgres> | null = null

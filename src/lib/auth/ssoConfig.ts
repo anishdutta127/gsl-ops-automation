@@ -47,7 +47,7 @@ import {
   verifySessionToken,
 } from '@/lib/crypto/jwt'
 import { applySsoSignin } from './applySsoSignin'
-import { isMicrosoftEntraIdConfigured } from './ssoEnv'
+import { buildEntraProviderConfig, isMicrosoftEntraIdConfigured } from './ssoEnv'
 
 export { isEmailDomainAllowed, isMicrosoftEntraIdConfigured } from './ssoEnv'
 
@@ -58,16 +58,15 @@ export const ssoConfig: NextAuthConfig = {
   // sign-ins.
   providers: isMicrosoftEntraIdConfigured()
     ? [
-        // Phase 6G public-client / PKCE configuration. Mafatlal IT
-        // registered the app without a client secret; Auth.js's
-        // token_endpoint_auth_method='none' tells the provider to
-        // complete the auth code exchange with PKCE only.
-        MicrosoftEntraID({
-          clientId: process.env.AUTH_MICROSOFT_ENTRA_ID_ID!,
-          // clientSecret intentionally unset; PKCE flow uses none.
-          issuer: `https://login.microsoftonline.com/${process.env.AUTH_MICROSOFT_ENTRA_ID_TENANT_ID}/v2.0`,
-          client: { token_endpoint_auth_method: 'none' },
-        }),
+        // Phase 6G.3 (2026-05-24): the provider config is built by
+        // buildEntraProviderConfig() in ssoEnv.ts so the dual-mode
+        // (confidential vs PKCE-public) selection is testable. See the
+        // helper's docstring for the rationale (Microsoft's /token
+        // endpoint returned invalid_client on the first Anish
+        // click-test under the public-client config, signalling the
+        // Azure app registration is "Web" platform type and expects a
+        // secret on token exchange).
+        MicrosoftEntraID(buildEntraProviderConfig()),
       ]
     : [],
   session: { strategy: 'jwt' },
