@@ -45,8 +45,7 @@
  */
 
 import type { Payment, PaymentLog } from '@/lib/types'
-import paymentsJson from '@/data/payments.json'
-
+import { paymentRepo } from '@/lib/db/repos/payment'
 const ELIGIBLE_STATUSES: ReadonlySet<Payment['status']> = new Set<Payment['status']>([
   'PI Sent',
   'Due Soon',
@@ -111,10 +110,11 @@ export interface ReconcileDeps {
   payments: Payment[]
 }
 
-const defaultDeps: ReconcileDeps = {
-  payments: paymentsJson as unknown as Payment[],
+async function defaultDeps(): Promise<ReconcileDeps> {
+  return {
+  payments: await paymentRepo.findAll() as Payment[],
+  }
 }
-
 export class ReconcileError extends Error {
   constructor(message: string) {
     super(message)
@@ -122,11 +122,12 @@ export class ReconcileError extends Error {
   }
 }
 
-export function shortlistCandidates(
+export async function shortlistCandidates(
   paymentLog: PaymentLog,
   options: ShortlistOptions = {},
-  deps: ReconcileDeps = defaultDeps,
-): Candidate[] {
+  depsOverride?: ReconcileDeps,
+): Promise<Candidate[]> {
+  const deps = depsOverride ?? (await defaultDeps())
   if (!paymentLog || typeof paymentLog.amount !== 'number' || paymentLog.amount <= 0) {
     throw new ReconcileError(
       'paymentLog.amount must be a positive number; cannot reconcile zero/negative entries',

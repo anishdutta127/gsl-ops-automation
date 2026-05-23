@@ -23,9 +23,6 @@ import type {
   Payment as MouSystemPayment,
   School as MouSystemSchool,
 } from '@/lib/mouSystem/types'
-import mousJson from '@/data/mous.json'
-import paymentsJson from '@/data/payments.json'
-import schoolsJson from '@/data/schools.json'
 import { buildTallyXml } from '@/lib/mouSystem/tally'
 import { composePi } from '@/lib/mouSystem/pi'
 import {
@@ -33,6 +30,9 @@ import {
   getEntityForProgramme,
   type EntityKey,
 } from '@/lib/mouSystem/company'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { paymentRepo } from '@/lib/db/repos/payment'
+import { schoolRepo } from '@/lib/db/repos/school'
 
 export type EntitySelection = 'MH' | 'UP' | 'both'
 
@@ -58,10 +58,12 @@ export interface RunTallyExportDeps {
   schools: School[]
 }
 
-const defaultDeps: RunTallyExportDeps = {
-  payments: paymentsJson as unknown as Payment[],
-  mous: mousJson as unknown as MOU[],
-  schools: schoolsJson as unknown as School[],
+async function defaultDeps(): Promise<RunTallyExportDeps> {
+  return {
+  payments: await paymentRepo.findAll() as Payment[],
+  mous: await mouRepo.findAll() as MOU[],
+  schools: await schoolRepo.findAll() as School[],
+}
 }
 
 /**
@@ -80,8 +82,9 @@ function fiscalYearForIso(iso: string): string {
 
 export async function runTallyExport(
   args: RunTallyExportArgs,
-  deps: RunTallyExportDeps = defaultDeps,
+  depsOverride?: RunTallyExportDeps,
 ): Promise<RunTallyExportResult> {
+  const deps = depsOverride ?? (await defaultDeps())
   const mouById = new Map(deps.mous.map((m) => [m.id, m]))
   const schoolById = new Map(deps.schools.map((s) => [s.id, s]))
 

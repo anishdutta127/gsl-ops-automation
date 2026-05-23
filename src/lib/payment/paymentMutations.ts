@@ -29,11 +29,11 @@ import type {
   PaymentMode,
   User,
 } from '@/lib/types'
-import paymentsJson from '@/data/payments.json'
-import usersJson from '@/data/users.json'
-import mousJson from '@/data/mous.json'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
 import { canEditFinanceData } from '@/lib/access'
+import { paymentRepo } from '@/lib/db/repos/payment'
+import { userRepo } from '@/lib/db/repos/user'
+import { mouRepo } from '@/lib/db/repos/mou'
 
 export interface PaymentMutationDeps {
   payments: Payment[]
@@ -43,12 +43,14 @@ export interface PaymentMutationDeps {
   now: () => Date
 }
 
-const defaultDeps: PaymentMutationDeps = {
-  payments: paymentsJson as unknown as Payment[],
-  users: usersJson as unknown as User[],
-  mous: mousJson as unknown as MOU[],
+async function defaultDeps(): Promise<PaymentMutationDeps> {
+  return {
+  payments: await paymentRepo.findAll() as Payment[],
+  users: await userRepo.findAll() as User[],
+  mous: await mouRepo.findAll() as MOU[],
   enqueue: enqueueUpdate,
   now: () => new Date(),
+}
 }
 
 const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/
@@ -91,8 +93,9 @@ export type EditPaymentResult =
 
 export async function editPayment(
   args: EditPaymentArgs,
-  deps: PaymentMutationDeps = defaultDeps,
+  depsOverride?: PaymentMutationDeps,
 ): Promise<EditPaymentResult> {
+  const deps = depsOverride ?? (await defaultDeps())
   const found = findUserAndPayment(deps, args.paymentId, args.recordedBy)
   if ('error' in found) return { ok: false, reason: found.error }
   const { user, payment } = found
@@ -204,8 +207,9 @@ export type UnmatchPaymentResult =
 
 export async function unmatchPayment(
   args: UnmatchPaymentArgs,
-  deps: PaymentMutationDeps = defaultDeps,
+  depsOverride?: PaymentMutationDeps,
 ): Promise<UnmatchPaymentResult> {
+  const deps = depsOverride ?? (await defaultDeps())
   const found = findUserAndPayment(deps, args.paymentId, args.recordedBy)
   if ('error' in found) return { ok: false, reason: found.error }
   const { user, payment } = found
@@ -285,8 +289,9 @@ export type DeletePaymentResult =
 
 export async function deletePayment(
   args: DeletePaymentArgs,
-  deps: PaymentMutationDeps = defaultDeps,
+  depsOverride?: PaymentMutationDeps,
 ): Promise<DeletePaymentResult> {
+  const deps = depsOverride ?? (await defaultDeps())
   const found = findUserAndPayment(deps, args.paymentId, args.recordedBy)
   if ('error' in found) return { ok: false, reason: found.error }
   const { user, payment } = found

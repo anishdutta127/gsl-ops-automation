@@ -33,11 +33,11 @@ import type {
   Payment,
   User,
 } from '@/lib/types'
-import mousJson from '@/data/mous.json'
-import paymentsJson from '@/data/payments.json'
-import usersJson from '@/data/users.json'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
 import { canEditFinanceData } from '@/lib/access'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { paymentRepo } from '@/lib/db/repos/payment'
+import { userRepo } from '@/lib/db/repos/user'
 
 export interface CreateAdjustmentArgs {
   mouId: string
@@ -71,12 +71,14 @@ export interface CreateAdjustmentDeps {
   now: () => Date
 }
 
-const defaultDeps: CreateAdjustmentDeps = {
-  mous: mousJson as unknown as MOU[],
-  payments: paymentsJson as unknown as Payment[],
-  users: usersJson as unknown as User[],
+async function defaultDeps(): Promise<CreateAdjustmentDeps> {
+  return {
+  mous: await mouRepo.findAll() as MOU[],
+  payments: await paymentRepo.findAll() as Payment[],
+  users: await userRepo.findAll() as User[],
   enqueue: enqueueUpdate,
   now: () => new Date(),
+}
 }
 
 function isLocked(p: Payment): boolean {
@@ -87,8 +89,9 @@ function isLocked(p: Payment): boolean {
 
 export async function createAdjustment(
   args: CreateAdjustmentArgs,
-  deps: CreateAdjustmentDeps = defaultDeps,
+  depsOverride?: CreateAdjustmentDeps,
 ): Promise<CreateAdjustmentResult> {
+  const deps = depsOverride ?? (await defaultDeps())
   const user = deps.users.find((u) => u.id === args.recordedBy)
   if (!user) return { ok: false, reason: 'unknown-user' }
   if (!canEditFinanceData(user)) return { ok: false, reason: 'permission' }

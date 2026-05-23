@@ -172,24 +172,24 @@ function ids(candidates: Candidate[]): string[] {
 
 describe('Q-G Test 3: shortlistCandidates', () => {
   describe('determinism', () => {
-    it('returns identical ranked output across repeated calls (same input)', () => {
-      const a = shortlistCandidates(PL_006, {}, defaultDeps)
-      const b = shortlistCandidates(PL_006, {}, defaultDeps)
+    it('returns identical ranked output across repeated calls (same input)', async () => {
+      const a = await shortlistCandidates(PL_006, {}, defaultDeps)
+      const b = await shortlistCandidates(PL_006, {}, defaultDeps)
       expect(a).toEqual(b)
     })
 
-    it('determinism holds across all synthetic payment logs', () => {
+    it('determinism holds across all synthetic payment logs', async () => {
       for (const log of allPaymentLogs) {
-        const a = shortlistCandidates(log, { tolerance: 0.10 }, defaultDeps)
-        const b = shortlistCandidates(log, { tolerance: 0.10 }, defaultDeps)
+        const a = await shortlistCandidates(log, { tolerance: 0.10 }, defaultDeps)
+        const b = await shortlistCandidates(log, { tolerance: 0.10 }, defaultDeps)
         expect(a).toEqual(b)
       }
     })
   })
 
   describe('top-3 accuracy', () => {
-    it('PL-001 (Greenfield Q2 with reference) ranks Greenfield-i2 first', () => {
-      const result = shortlistCandidates(PL_001, {}, defaultDeps)
+    it('PL-001 (Greenfield Q2 with reference) ranks Greenfield-i2 first', async () => {
+      const result = await shortlistCandidates(PL_001, {}, defaultDeps)
       expect(ids(result)).toContain('TEST-GREEN-i2')
       const winner = result[0]
       expect(winner?.paymentId).toBe('TEST-GREEN-i2')
@@ -202,71 +202,71 @@ describe('Q-G Test 3: shortlistCandidates', () => {
       )
     })
 
-    it('PL-002 (Oakwood Tink with reference) ranks Oakwood-Tink-i1 first', () => {
-      const result = shortlistCandidates(PL_002, {}, defaultDeps)
+    it('PL-002 (Oakwood Tink with reference) ranks Oakwood-Tink-i1 first', async () => {
+      const result = await shortlistCandidates(PL_002, {}, defaultDeps)
       expect(result[0]?.paymentId).toBe('TEST-OAK-TINK-i1')
       expect(result[0]?.reasons).toContain('reference: matches PI number')
     })
 
-    it('PL-003 (Narayana 1.5M) ranks Narayana-i2 first', () => {
-      const result = shortlistCandidates(PL_003, {}, defaultDeps)
+    it('PL-003 (Narayana 1.5M) ranks Narayana-i2 first', async () => {
+      const result = await shortlistCandidates(PL_003, {}, defaultDeps)
       expect(result[0]?.paymentId).toBe('TEST-NARAYANA-i2')
     })
   })
 
   describe('tolerance widening (strict superset)', () => {
-    it('PL-004 (5% over Greenfield) returns no candidates at default 1% tolerance', () => {
-      const result = shortlistCandidates(PL_004, {}, defaultDeps)
+    it('PL-004 (5% over Greenfield) returns no candidates at default 1% tolerance', async () => {
+      const result = await shortlistCandidates(PL_004, {}, defaultDeps)
       expect(result).toEqual([])
     })
 
-    it('PL-004 returns Greenfield candidates at widened 10% tolerance', () => {
-      const result = shortlistCandidates(PL_004, { tolerance: 0.10 }, defaultDeps)
+    it('PL-004 returns Greenfield candidates at widened 10% tolerance', async () => {
+      const result = await shortlistCandidates(PL_004, { tolerance: 0.10 }, defaultDeps)
       expect(ids(result)).toEqual(
         expect.arrayContaining(['TEST-GREEN-i2', 'TEST-GREEN-i3']),
       )
       expect(result[0]?.reasons).toContain('amount: within 5%')
     })
 
-    it('widened call is a strict superset of default call (same fixture)', () => {
-      const defaultResult = shortlistCandidates(PL_008, {}, defaultDeps)
-      const widenedResult = shortlistCandidates(PL_008, { tolerance: 0.10 }, defaultDeps)
+    it('widened call is a strict superset of default call (same fixture)', async () => {
+      const defaultResult = await shortlistCandidates(PL_008, {}, defaultDeps)
+      const widenedResult = await shortlistCandidates(PL_008, { tolerance: 0.10 }, defaultDeps)
       const widenedIds = ids(widenedResult)
       for (const id of ids(defaultResult)) expect(widenedIds).toContain(id)
     })
   })
 
   describe('eligibility', () => {
-    it('excludes Pending payments (no PI generated yet)', () => {
+    it('excludes Pending payments (no PI generated yet)', async () => {
       const log = paymentLog({
         id: 'PL-PENDING', amount: 125000,
         narration: 'Maple Leaf Public School',
       })
-      const result = shortlistCandidates(log, {}, defaultDeps)
+      const result = await shortlistCandidates(log, {}, defaultDeps)
       // Maple Leaf instalments are all Pending; even an exact-amount + school
       // match should yield no candidates.
       expect(ids(result)).not.toContain('TEST-MAPLE-i1')
       expect(ids(result)).not.toContain('TEST-MAPLE-i2')
     })
 
-    it('excludes Received payments (already reconciled)', () => {
+    it('excludes Received payments (already reconciled)', async () => {
       const log = paymentLog({
         id: 'PL-RECV', amount: 1350000,
         narration: 'Springwood',
       })
-      const result = shortlistCandidates(log, {}, defaultDeps)
+      const result = await shortlistCandidates(log, {}, defaultDeps)
       expect(ids(result)).not.toContain('TEST-SPRING-i1')
     })
 
-    it('PL-007 (no clear match, 99999) returns empty result', () => {
-      const result = shortlistCandidates(PL_007, {}, defaultDeps)
+    it('PL-007 (no clear match, 99999) returns empty result', async () => {
+      const result = await shortlistCandidates(PL_007, {}, defaultDeps)
       expect(result).toEqual([])
     })
   })
 
   describe('tie-break ordering', () => {
-    it('PL-006 (250000 ambiguous, no narration, no reference) prefers more recent PI', () => {
-      const result = shortlistCandidates(PL_006, {}, defaultDeps)
+    it('PL-006 (250000 ambiguous, no narration, no reference) prefers more recent PI', async () => {
+      const result = await shortlistCandidates(PL_006, {}, defaultDeps)
       // Both i2 (PI sent 2026-04-15) and i3 (PI sent 2026-04-22) qualify.
       // PaymentLog.date = 2026-04-25.
       // i3 is 3 days from log; i2 is 10 days. i3 wins tie-break.
@@ -276,46 +276,46 @@ describe('Q-G Test 3: shortlistCandidates', () => {
       expect(result[1]?.score).toBe(100)
     })
 
-    it('alphabetical paymentId tiebreaks when score AND recency tie', () => {
+    it('alphabetical paymentId tiebreaks when score AND recency tie', async () => {
       const synthetic: Payment[] = [
         { ...greenfieldI2, id: 'PMT-Z', piSentDate: '2026-04-15', expectedAmount: 1500000 },
         { ...greenfieldI2, id: 'PMT-A', piSentDate: '2026-04-15', expectedAmount: 1500000 },
       ]
       const log = paymentLog({ id: 'PL-TIE', amount: 1500000 })
-      const result = shortlistCandidates(log, {}, { payments: synthetic })
+      const result = await shortlistCandidates(log, {}, { payments: synthetic })
       expect(result[0]?.paymentId).toBe('PMT-A')
       expect(result[1]?.paymentId).toBe('PMT-Z')
     })
   })
 
   describe('options', () => {
-    it('limit option caps candidate count', () => {
-      const result = shortlistCandidates(PL_006, { limit: 1 }, defaultDeps)
+    it('limit option caps candidate count', async () => {
+      const result = await shortlistCandidates(PL_006, { limit: 1 }, defaultDeps)
       expect(result.length).toBeLessThanOrEqual(1)
     })
 
-    it('limit=10 returns all qualifying candidates', () => {
-      const result = shortlistCandidates(PL_006, { limit: 10 }, defaultDeps)
+    it('limit=10 returns all qualifying candidates', async () => {
+      const result = await shortlistCandidates(PL_006, { limit: 10 }, defaultDeps)
       // Only Greenfield i2 + i3 are 250k PI-issued; i1 is Received and i4 is Pending.
       expect(result).toHaveLength(2)
     })
 
-    it('tolerance=0 still matches truly identical amounts (delta=0)', () => {
-      const result = shortlistCandidates(PL_001, { tolerance: 0 }, defaultDeps)
+    it('tolerance=0 still matches truly identical amounts (delta=0)', async () => {
+      const result = await shortlistCandidates(PL_001, { tolerance: 0 }, defaultDeps)
       expect(result.length).toBeGreaterThan(0)
       expect(ids(result)).toContain('TEST-GREEN-i2')
     })
 
-    it('tolerance=0 excludes near-but-not-identical amounts', () => {
+    it('tolerance=0 excludes near-but-not-identical amounts', async () => {
       const log = paymentLog({ ...PL_001, amount: 250001 })
-      const result = shortlistCandidates(log, { tolerance: 0 }, defaultDeps)
+      const result = await shortlistCandidates(log, { tolerance: 0 }, defaultDeps)
       expect(result).toEqual([])
     })
   })
 
   describe('reasons surfaced for traceability', () => {
-    it('exact match + reference + school all surface in reasons', () => {
-      const result = shortlistCandidates(PL_001, {}, defaultDeps)
+    it('exact match + reference + school all surface in reasons', async () => {
+      const result = await shortlistCandidates(PL_001, {}, defaultDeps)
       const winner = result[0]
       expect(winner?.reasons.length).toBeGreaterThanOrEqual(3)
       expect(winner?.reasons).toContain('amount: exact match')
@@ -323,32 +323,32 @@ describe('Q-G Test 3: shortlistCandidates', () => {
       expect(winner?.reasons).toContain('reference: matches PI number')
     })
 
-    it('within-5% tier surfaces "amount: within 5%" reason', () => {
-      const result = shortlistCandidates(PL_008, { tolerance: 0.10 }, defaultDeps)
+    it('within-5% tier surfaces "amount: within 5%" reason', async () => {
+      const result = await shortlistCandidates(PL_008, { tolerance: 0.10 }, defaultDeps)
       const winner = result[0]
       expect(winner?.reasons).toContain('amount: within 5%')
     })
 
-    it('within-10% tier surfaces "amount: within 10%" reason', () => {
+    it('within-10% tier surfaces "amount: within 10%" reason', async () => {
       const log = paymentLog({
         id: 'PL-NEAR-10', amount: 270000, // 8% over 250000
         narration: 'Greenfield Academy',
       })
-      const result = shortlistCandidates(log, { tolerance: 0.10 }, defaultDeps)
+      const result = await shortlistCandidates(log, { tolerance: 0.10 }, defaultDeps)
       const winner = result[0]
       expect(winner?.reasons).toContain('amount: within 10%')
     })
   })
 
   describe('input validation', () => {
-    it('throws ReconcileError on zero amount', () => {
+    it('throws ReconcileError on zero amount', async () => {
       const log = paymentLog({ id: 'PL-ZERO', amount: 0 })
-      expect(() => shortlistCandidates(log, {}, defaultDeps)).toThrow(ReconcileError)
+      await expect(shortlistCandidates(log, {}, defaultDeps)).rejects.toThrow(ReconcileError)
     })
 
-    it('throws ReconcileError on negative amount', () => {
+    it('throws ReconcileError on negative amount', async () => {
       const log = paymentLog({ id: 'PL-NEG', amount: -100 })
-      expect(() => shortlistCandidates(log, {}, defaultDeps)).toThrow(/positive/)
+      await expect(shortlistCandidates(log, {}, defaultDeps)).rejects.toThrow(/positive/)
     })
   })
 })

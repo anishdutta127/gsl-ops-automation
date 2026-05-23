@@ -17,14 +17,14 @@
  */
 
 import type { AuditEntry, MOU, Payment, User } from '@/lib/types'
-import paymentsJson from '@/data/payments.json'
-import mousJson from '@/data/mous.json'
-import usersJson from '@/data/users.json'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
 import { canEditFinanceData } from '@/lib/access'
 import { isPiParallelBuildLocked } from '@/lib/pi/parallelBuildLock'
 import { issuePiNumberAtomic } from '@/lib/mouSystem/piCounterAtomic'
 import { getEntityForProgramme } from '@/lib/mouSystem/company'
+import { paymentRepo } from '@/lib/db/repos/payment'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { userRepo } from '@/lib/db/repos/user'
 
 export interface ReissuePiArgs {
   paymentId: string
@@ -56,19 +56,22 @@ export interface ReissuePiDeps {
   now: () => Date
 }
 
-const defaultDeps: ReissuePiDeps = {
-  payments: paymentsJson as unknown as Payment[],
-  mous: mousJson as unknown as MOU[],
-  users: usersJson as unknown as User[],
+async function defaultDeps(): Promise<ReissuePiDeps> {
+  return {
+  payments: await paymentRepo.findAll() as Payment[],
+  mous: await mouRepo.findAll() as MOU[],
+  users: await userRepo.findAll() as User[],
   enqueue: enqueueUpdate,
   issueCounter: issuePiNumberAtomic,
   now: () => new Date(),
 }
+}
 
 export async function reissuePi(
   args: ReissuePiArgs,
-  deps: ReissuePiDeps = defaultDeps,
+  depsOverride?: ReissuePiDeps,
 ): Promise<ReissuePiOutcome> {
+  const deps = depsOverride ?? (await defaultDeps())
   if (isPiParallelBuildLocked()) {
     return { ok: false, reason: 'parallel-build-locked' }
   }

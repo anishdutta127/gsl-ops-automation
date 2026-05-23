@@ -35,16 +35,16 @@ import type {
   SalesPerson,
   User,
 } from '@/lib/types'
-import paymentsJson from '@/data/payments.json'
-import mousJson from '@/data/mous.json'
-import usersJson from '@/data/users.json'
-import salesTeamJson from '@/data/sales_team.json'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
 import { canEditFinanceData } from '@/lib/access'
 import {
   broadcastNotification,
   recipientsByRole,
 } from '@/lib/notifications/createNotification'
+import { paymentRepo } from '@/lib/db/repos/payment'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { userRepo } from '@/lib/db/repos/user'
+import { salesTeamRepo } from '@/lib/db/repos/salesTeam'
 
 const VALID_MODES: ReadonlyArray<PaymentMode> = [
   'Bank Transfer',
@@ -97,19 +97,22 @@ export interface ConfirmMatchDeps {
   now: () => Date
 }
 
-const defaultDeps: ConfirmMatchDeps = {
-  payments: paymentsJson as unknown as Payment[],
-  mous: mousJson as unknown as MOU[],
-  users: usersJson as unknown as User[],
-  salesTeam: salesTeamJson as unknown as SalesPerson[],
+async function defaultDeps(): Promise<ConfirmMatchDeps> {
+  return {
+  payments: await paymentRepo.findAll() as Payment[],
+  mous: await mouRepo.findAll() as MOU[],
+  users: await userRepo.findAll() as User[],
+  salesTeam: await salesTeamRepo.findAll() as SalesPerson[],
   enqueue: enqueueUpdate,
   now: () => new Date(),
+}
 }
 
 export async function confirmMatch(
   args: ConfirmMatchArgs,
-  deps: ConfirmMatchDeps = defaultDeps,
+  depsOverride?: ConfirmMatchDeps,
 ): Promise<ConfirmMatchOutcome> {
+  const deps = depsOverride ?? (await defaultDeps())
   const user = deps.users.find((u) => u.id === args.recordedBy)
   if (!user) return { ok: false, reason: 'unknown-user' }
   if (!canEditFinanceData(user)) return { ok: false, reason: 'permission' }

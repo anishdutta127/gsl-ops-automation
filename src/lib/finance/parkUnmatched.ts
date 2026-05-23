@@ -12,9 +12,9 @@
 
 import crypto from 'node:crypto'
 import type { PaymentLog, PaymentMode, User } from '@/lib/types'
-import usersJson from '@/data/users.json'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
 import { canEditFinanceData } from '@/lib/access'
+import { userRepo } from '@/lib/db/repos/user'
 
 const VALID_MODES: ReadonlyArray<PaymentMode> = [
   'Bank Transfer',
@@ -54,16 +54,19 @@ export interface ParkUnmatchedDeps {
   now: () => Date
 }
 
-const defaultDeps: ParkUnmatchedDeps = {
-  users: usersJson as unknown as User[],
+async function defaultDeps(): Promise<ParkUnmatchedDeps> {
+  return {
+  users: await userRepo.findAll() as User[],
   enqueue: enqueueUpdate,
   now: () => new Date(),
+}
 }
 
 export async function parkUnmatched(
   args: ParkUnmatchedArgs,
-  deps: ParkUnmatchedDeps = defaultDeps,
+  depsOverride?: ParkUnmatchedDeps,
 ): Promise<ParkUnmatchedOutcome> {
+  const deps = depsOverride ?? (await defaultDeps())
   const user = deps.users.find((u) => u.id === args.loggedBy)
   if (!user) return { ok: false, reason: 'unknown-user' }
   if (!canEditFinanceData(user)) return { ok: false, reason: 'permission' }

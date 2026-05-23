@@ -19,11 +19,11 @@ import type {
   MOU,
   User,
 } from '@/lib/types'
-import adjustmentsJson from '@/data/adjustments.json'
-import mousJson from '@/data/mous.json'
-import usersJson from '@/data/users.json'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
 import { canEditFinanceData } from '@/lib/access'
+import { adjustmentRepo } from '@/lib/db/repos/leafRepos'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { userRepo } from '@/lib/db/repos/user'
 
 export interface ReverseAdjustmentArgs {
   adjustmentId: string
@@ -49,18 +49,21 @@ export interface ReverseAdjustmentDeps {
   now: () => Date
 }
 
-const defaultDeps: ReverseAdjustmentDeps = {
-  adjustments: adjustmentsJson as unknown as Adjustment[],
-  mous: mousJson as unknown as MOU[],
-  users: usersJson as unknown as User[],
+async function defaultDeps(): Promise<ReverseAdjustmentDeps> {
+  return {
+  adjustments: await adjustmentRepo.findAll() as Adjustment[],
+  mous: await mouRepo.findAll() as MOU[],
+  users: await userRepo.findAll() as User[],
   enqueue: enqueueUpdate,
   now: () => new Date(),
+}
 }
 
 export async function reverseAdjustment(
   args: ReverseAdjustmentArgs,
-  deps: ReverseAdjustmentDeps = defaultDeps,
+  depsOverride?: ReverseAdjustmentDeps,
 ): Promise<ReverseAdjustmentOutcome> {
+  const deps = depsOverride ?? (await defaultDeps())
   const user = deps.users.find((u) => u.id === args.reversedBy)
   if (!user) return { ok: false, reason: 'unknown-user' }
   if (!canEditFinanceData(user)) return { ok: false, reason: 'permission' }

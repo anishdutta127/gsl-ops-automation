@@ -27,11 +27,11 @@ import type {
   Payment,
   User,
 } from '@/lib/types'
-import paymentsJson from '@/data/payments.json'
-import usersJson from '@/data/users.json'
-import mousJson from '@/data/mous.json'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
 import { canEditFinanceData } from '@/lib/access'
+import { paymentRepo } from '@/lib/db/repos/payment'
+import { userRepo } from '@/lib/db/repos/user'
+import { mouRepo } from '@/lib/db/repos/mou'
 
 export interface SkipVoidDeps {
   payments: Payment[]
@@ -41,12 +41,13 @@ export interface SkipVoidDeps {
   now: () => Date
 }
 
-const defaultDeps: SkipVoidDeps = {
-  payments: paymentsJson as unknown as Payment[],
-  users: usersJson as unknown as User[],
-  mous: mousJson as unknown as MOU[],
-  enqueue: enqueueUpdate,
-  now: () => new Date(),
+async function defaultDeps(): Promise<SkipVoidDeps> {
+  const [payments, users, mous] = await Promise.all([
+    paymentRepo.findAll(),
+    userRepo.findAll(),
+    mouRepo.findAll(),
+  ])
+  return { payments, users, mous, enqueue: enqueueUpdate, now: () => new Date() }
 }
 
 // ----------------------------------------------------------------------------
@@ -72,8 +73,9 @@ export type SkipInstallmentResult =
 
 export async function skipInstallment(
   args: SkipInstallmentArgs,
-  deps: SkipVoidDeps = defaultDeps,
+  depsOverride?: SkipVoidDeps,
 ): Promise<SkipInstallmentResult> {
+  const deps = depsOverride ?? (await defaultDeps())
   const user = deps.users.find((u) => u.id === args.recordedBy)
   if (!user) return { ok: false, reason: 'unknown-user' }
   if (!canEditFinanceData(user)) return { ok: false, reason: 'permission' }
@@ -136,8 +138,9 @@ export type VoidPiResult =
 
 export async function voidPi(
   args: VoidPiArgs,
-  deps: SkipVoidDeps = defaultDeps,
+  depsOverride?: SkipVoidDeps,
 ): Promise<VoidPiResult> {
+  const deps = depsOverride ?? (await defaultDeps())
   const user = deps.users.find((u) => u.id === args.recordedBy)
   if (!user) return { ok: false, reason: 'unknown-user' }
   if (!(user.role === 'Admin' && (user.department ?? null) === null)) {
