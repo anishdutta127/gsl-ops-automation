@@ -92,7 +92,7 @@ export const dispatchRepo = {
     return jsonDispatches.filter((d) => d.mouId === mouId)
   },
 
-  async update(d: Dispatch): Promise<void> {
+  async update(d: Dispatch, opts?: { queuedBy?: string }): Promise<void> {
     if (currentBackend() === 'postgres') {
       const sql = getSql()
       await sql`
@@ -119,7 +119,7 @@ export const dispatchRepo = {
       return
     }
     await enqueueUpdate({
-      queuedBy: 'system',
+      queuedBy: opts?.queuedBy ?? 'system',
       entity: 'dispatch',
       operation: 'update',
       payload: d as unknown as Record<string, unknown>,

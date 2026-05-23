@@ -16,10 +16,10 @@
  * can render "3 of 4 saved" with the failing row's reason visible.
  */
 
-import type { Payment, PaymentMode, User } from '@/lib/types'
-import paymentsJson from '@/data/payments.json'
-import usersJson from '@/data/users.json'
+import type { PaymentMode } from '@/lib/types'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
+import { paymentRepo } from '@/lib/db/repos/payment'
+import { userRepo } from '@/lib/db/repos/user'
 import {
   recordReceipt,
   type RecordReceiptArgs,
@@ -68,24 +68,29 @@ export interface RecordBatchDeps {
   recordReceiptDeps: RecordReceiptDeps
 }
 
-const defaultRecordReceiptDeps: RecordReceiptDeps = {
-  payments: paymentsJson as unknown as Payment[],
-  users: usersJson as unknown as User[],
-  mous: [],
-  salesTeam: [],
-  enqueue: enqueueUpdate,
-  now: () => new Date(),
+async function buildDefaultRecordReceiptDeps(): Promise<RecordReceiptDeps> {
+  return {
+    payments: await paymentRepo.findAll(),
+    users: await userRepo.findAll(),
+    mous: [],
+    salesTeam: [],
+    enqueue: enqueueUpdate,
+    now: () => new Date(),
+  }
 }
 
-const defaultDeps: RecordBatchDeps = {
-  recordReceiptFn: recordReceipt,
-  recordReceiptDeps: defaultRecordReceiptDeps,
+async function defaultDeps(): Promise<RecordBatchDeps> {
+  return {
+    recordReceiptFn: recordReceipt,
+    recordReceiptDeps: await buildDefaultRecordReceiptDeps(),
+  }
 }
 
 export async function recordBatch(
   args: RecordBatchArgs,
-  deps: RecordBatchDeps = defaultDeps,
+  depsOverride?: RecordBatchDeps,
 ): Promise<RecordBatchResult> {
+  const deps = depsOverride ?? (await defaultDeps())
   const outcomes: BatchRowOutcome[] = []
   let okCount = 0
   let failCount = 0

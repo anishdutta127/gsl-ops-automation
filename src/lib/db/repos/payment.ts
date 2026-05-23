@@ -149,7 +149,7 @@ export const paymentRepo = {
     return jsonPayments.filter((p) => p.status === status)
   },
 
-  async update(p: Payment): Promise<void> {
+  async update(p: Payment, opts?: { queuedBy?: string }): Promise<void> {
     if (currentBackend() === 'postgres') {
       const sql = getSql()
       await sql`
@@ -195,7 +195,7 @@ export const paymentRepo = {
       return
     }
     await enqueueUpdate({
-      queuedBy: 'system',
+      queuedBy: opts?.queuedBy ?? 'system',
       entity: 'payment',
       operation: 'update',
       payload: p as unknown as Record<string, unknown>,

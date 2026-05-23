@@ -72,7 +72,7 @@ export const salesTeamRepo = {
     return jsonSalesTeam.filter((s) => s.active)
   },
 
-  async update(rep: SalesPerson): Promise<void> {
+  async update(rep: SalesPerson, opts?: { queuedBy?: string }): Promise<void> {
     if (currentBackend() === 'postgres') {
       const sql = getSql()
       await sql`
@@ -89,7 +89,7 @@ export const salesTeamRepo = {
       return
     }
     await enqueueUpdate({
-      queuedBy: 'system',
+      queuedBy: opts?.queuedBy ?? 'system',
       entity: 'salesTeam',
       operation: 'update',
       payload: rep as unknown as Record<string, unknown>,

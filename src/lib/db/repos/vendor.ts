@@ -78,7 +78,7 @@ export const vendorRepo = {
     return jsonVendors.filter((v) => v.active)
   },
 
-  async update(v: Vendor): Promise<void> {
+  async update(v: Vendor, opts?: { queuedBy?: string }): Promise<void> {
     if (currentBackend() === 'postgres') {
       const sql = getSql()
       await sql`
@@ -102,7 +102,7 @@ export const vendorRepo = {
       return
     }
     await enqueueUpdate({
-      queuedBy: 'system',
+      queuedBy: opts?.queuedBy ?? 'system',
       entity: 'vendor',
       operation: 'update',
       payload: v as unknown as Record<string, unknown>,

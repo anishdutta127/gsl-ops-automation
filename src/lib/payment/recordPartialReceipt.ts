@@ -22,12 +22,12 @@ import type {
   SalesPerson,
   User,
 } from '@/lib/types'
-import paymentsJson from '@/data/payments.json'
-import usersJson from '@/data/users.json'
-import mousJson from '@/data/mous.json'
-import salesTeamJson from '@/data/sales_team.json'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
 import { canPerform } from '@/lib/auth/permissions'
+import { paymentRepo } from '@/lib/db/repos/payment'
+import { userRepo } from '@/lib/db/repos/user'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { salesTeamRepo } from '@/lib/db/repos/salesTeam'
 
 const VALID_MODES: ReadonlyArray<PaymentMode> = [
   'Bank Transfer',
@@ -70,21 +70,24 @@ export interface RecordPartialReceiptDeps {
   now: () => Date
 }
 
-const defaultDeps: RecordPartialReceiptDeps = {
-  payments: paymentsJson as unknown as Payment[],
-  users: usersJson as unknown as User[],
-  mous: mousJson as unknown as MOU[],
-  salesTeam: salesTeamJson as unknown as SalesPerson[],
-  enqueue: enqueueUpdate,
-  now: () => new Date(),
+async function defaultDeps(): Promise<RecordPartialReceiptDeps> {
+  return {
+    payments: await paymentRepo.findAll(),
+    users: await userRepo.findAll(),
+    mous: await mouRepo.findAll(),
+    salesTeam: await salesTeamRepo.findAll(),
+    enqueue: enqueueUpdate,
+    now: () => new Date(),
+  }
 }
 
 const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/
 
 export async function recordPartialReceipt(
   args: RecordPartialReceiptArgs,
-  deps: RecordPartialReceiptDeps = defaultDeps,
+  depsOverride?: RecordPartialReceiptDeps,
 ): Promise<RecordPartialReceiptOutcome> {
+  const deps = depsOverride ?? (await defaultDeps())
   const user = deps.users.find((u) => u.id === args.recordedBy)
   if (!user) return { ok: false, reason: 'unknown-user' }
   if (!canPerform(user, 'payment:reconcile')) {

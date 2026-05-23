@@ -12,16 +12,13 @@
 import { NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canEditMOU } from '@/lib/access'
-import { enqueueUpdate } from '@/lib/pendingUpdates'
+import { mouRepo } from '@/lib/db/repos/mou'
 import type { MOU } from '@/lib/types'
 import type {
   AuditEntry,
   GradewiseDistributionRow,
   ProductSelection,
 } from '@/lib/mouSystem/types'
-import mousJson from '@/data/mous.json'
-
-const allMous = mousJson as unknown as MOU[]
 
 const PRODUCT_VALUES: ProductSelection[] = ['TinkRworks', 'Cretile', 'Both']
 
@@ -72,7 +69,7 @@ export async function POST(request: Request, ctx: RouteContext) {
   if (!canEditMOU(user)) {
     return NextResponse.json({ error: 'forbidden' }, { status: 403 })
   }
-  const mou = allMous.find((m) => m.id === mouId)
+  const mou = await mouRepo.findById(mouId)
   if (!mou) {
     return NextResponse.json({ error: 'not-found' }, { status: 404 })
   }
@@ -122,12 +119,7 @@ export async function POST(request: Request, ctx: RouteContext) {
   }
 
   try {
-    await enqueueUpdate({
-      queuedBy: user.id,
-      entity: 'mou',
-      operation: 'update',
-      payload: updated as unknown as Record<string, unknown>,
-    })
+    await mouRepo.update(updated, { queuedBy: user.id })
   } catch (e) {
     return NextResponse.json(
       {

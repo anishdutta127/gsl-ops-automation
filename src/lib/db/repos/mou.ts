@@ -170,7 +170,7 @@ export const mouRepo = {
     return jsonMous.filter((m) => m.cohortStatus === 'active')
   },
 
-  async update(m: MOU): Promise<void> {
+  async update(m: MOU, opts?: { queuedBy?: string }): Promise<void> {
     if (currentBackend() === 'postgres') {
       const sql = getSql()
       await sql`
@@ -225,7 +225,7 @@ export const mouRepo = {
       return
     }
     await enqueueUpdate({
-      queuedBy: 'system',
+      queuedBy: opts?.queuedBy ?? 'system',
       entity: 'mou',
       operation: 'update',
       payload: m as unknown as Record<string, unknown>,

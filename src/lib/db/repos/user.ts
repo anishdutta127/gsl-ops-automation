@@ -97,7 +97,7 @@ export const userRepo = {
     return jsonUsers.find((u) => u.azureAdObjectId === oid) ?? null
   },
 
-  async update(user: User): Promise<void> {
+  async update(user: User, opts?: { queuedBy?: string }): Promise<void> {
     if (currentBackend() === 'postgres') {
       const sql = getSql()
       await sql`
@@ -118,7 +118,7 @@ export const userRepo = {
       return
     }
     await enqueueUpdate({
-      queuedBy: 'system',
+      queuedBy: opts?.queuedBy ?? 'system',
       entity: 'user',
       operation: 'update',
       payload: user as unknown as Record<string, unknown>,

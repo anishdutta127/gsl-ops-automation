@@ -109,7 +109,7 @@ export const notificationRepo = {
     })
   },
 
-  async update(n: Notification): Promise<void> {
+  async update(n: Notification, opts?: { queuedBy?: string }): Promise<void> {
     if (currentBackend() === 'postgres') {
       const sql = getSql()
       await sql`
@@ -126,7 +126,7 @@ export const notificationRepo = {
       return
     }
     await enqueueUpdate({
-      queuedBy: 'system',
+      queuedBy: opts?.queuedBy ?? 'system',
       entity: 'notification',
       operation: 'update',
       payload: n as unknown as Record<string, unknown>,

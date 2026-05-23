@@ -11,14 +11,12 @@
 
 import { notFound } from 'next/navigation'
 import type { MOU, User } from '@/lib/types'
-import mousJson from '@/data/mous.json'
+import { mouRepo } from '@/lib/db/repos/mou'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canEditMOU } from '@/lib/access'
 import { KitsDetailsForm } from './KitsDetailsForm'
-
-const allMous = mousJson as unknown as MOU[]
 
 interface PageProps {
   params: Promise<{ mouId: string }>
@@ -41,7 +39,7 @@ export default async function KitsDetailsPage({ params, searchParams }: PageProp
   const { mouId } = await params
   const sp = (await searchParams) ?? {}
   const user = await getCurrentUser()
-  const mou = allMous.find((m) => m.id === mouId)
+  const mou = await mouRepo.findById(mouId)
   if (!mou || !isVisibleToUser(mou, user)) notFound()
   if (!user || !canEditMOU(user)) notFound()
 

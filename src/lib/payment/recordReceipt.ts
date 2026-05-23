@@ -32,16 +32,16 @@ import type {
   SalesPerson,
   User,
 } from '@/lib/types'
-import paymentsJson from '@/data/payments.json'
-import usersJson from '@/data/users.json'
-import mousJson from '@/data/mous.json'
-import salesTeamJson from '@/data/sales_team.json'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
 import { canPerform } from '@/lib/auth/permissions'
 import {
   broadcastNotification,
   recipientsByRole,
 } from '@/lib/notifications/createNotification'
+import { paymentRepo } from '@/lib/db/repos/payment'
+import { userRepo } from '@/lib/db/repos/user'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { salesTeamRepo } from '@/lib/db/repos/salesTeam'
 
 const VALID_MODES: ReadonlyArray<PaymentMode> = [
   'Bank Transfer',
@@ -104,21 +104,23 @@ export interface RecordReceiptDeps {
   now: () => Date
 }
 
-const defaultDeps: RecordReceiptDeps = {
-  payments: paymentsJson as unknown as Payment[],
-  users: usersJson as unknown as User[],
-  mous: mousJson as unknown as MOU[],
-  salesTeam: salesTeamJson as unknown as SalesPerson[],
+async function defaultDeps(): Promise<RecordReceiptDeps> {
+  return {
+  payments: await paymentRepo.findAll() as Payment[],
+  users: await userRepo.findAll() as User[],
+  mous: await mouRepo.findAll() as MOU[],
+  salesTeam: await salesTeamRepo.findAll() as SalesPerson[],
   enqueue: enqueueUpdate,
   now: () => new Date(),
+  }
 }
-
 const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/
 
 export async function recordReceipt(
   args: RecordReceiptArgs,
-  deps: RecordReceiptDeps = defaultDeps,
+  depsOverride?: RecordReceiptDeps,
 ): Promise<RecordReceiptOutcome> {
+  const deps = depsOverride ?? (await defaultDeps())
   const user = deps.users.find((u) => u.id === args.recordedBy)
   if (!user) return { ok: false, reason: 'unknown-user' }
   if (!canPerform(user, 'payment:reconcile')) {

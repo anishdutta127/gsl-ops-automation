@@ -58,7 +58,7 @@ export const vexProductRepo = {
     return jsonProducts.filter((p) => p.active)
   },
 
-  async update(p: VexProduct): Promise<void> {
+  async update(p: VexProduct, opts?: { queuedBy?: string }): Promise<void> {
     if (currentBackend() === 'postgres') {
       const sql = getSql()
       await sql`
@@ -71,7 +71,7 @@ export const vexProductRepo = {
       return
     }
     await enqueueUpdate({
-      queuedBy: 'system',
+      queuedBy: opts?.queuedBy ?? 'system',
       entity: 'vexProduct',
       operation: 'update',
       payload: p as unknown as Record<string, unknown>,

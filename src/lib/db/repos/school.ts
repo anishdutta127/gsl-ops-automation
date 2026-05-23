@@ -88,7 +88,7 @@ export const schoolRepo = {
     return jsonSchools.filter((s) => s.region === region && s.active)
   },
 
-  async update(school: School): Promise<void> {
+  async update(school: School, opts?: { queuedBy?: string }): Promise<void> {
     if (currentBackend() === 'postgres') {
       const sql = getSql()
       await sql`
@@ -113,7 +113,7 @@ export const schoolRepo = {
       return
     }
     await enqueueUpdate({
-      queuedBy: 'system',
+      queuedBy: opts?.queuedBy ?? 'system',
       entity: 'school',
       operation: 'update',
       payload: school as unknown as Record<string, unknown>,

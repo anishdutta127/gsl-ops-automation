@@ -58,13 +58,13 @@ import type {
   School,
   User,
 } from '@/lib/types'
-import mousJson from '@/data/mous.json'
-import schoolsJson from '@/data/schools.json'
-import paymentsJson from '@/data/payments.json'
-import usersJson from '@/data/users.json'
 import companyJson from '../../../config/company.json'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
 import { issuePiNumberAtomic } from '@/lib/mouSystem/piCounterAtomic'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { schoolRepo } from '@/lib/db/repos/school'
+import { paymentRepo } from '@/lib/db/repos/payment'
+import { userRepo } from '@/lib/db/repos/user'
 import {
   fyFromAcademicYear,
   getEntityForProgramme,
@@ -134,16 +134,24 @@ const defaultLoadTemplate = async (templatePath: string): Promise<Uint8Array> =>
   }
 }
 
-const defaultDeps: GeneratePiDeps = {
-  mous: mousJson as unknown as MOU[],
-  schools: schoolsJson as unknown as School[],
-  users: usersJson as unknown as User[],
-  payments: paymentsJson as unknown as Payment[],
-  company: companyJson as CompanyConfig,
-  enqueue: enqueueUpdate,
-  issueCounter: issuePiNumberAtomic,
-  loadTemplate: defaultLoadTemplate,
-  now: () => new Date(),
+async function defaultDeps(): Promise<GeneratePiDeps> {
+  const [mous, schools, users, payments] = await Promise.all([
+    mouRepo.findAll(),
+    schoolRepo.findAll(),
+    userRepo.findAll(),
+    paymentRepo.findAll(),
+  ])
+  return {
+    mous,
+    schools,
+    users,
+    payments,
+    company: companyJson as CompanyConfig,
+    enqueue: enqueueUpdate,
+    issueCounter: issuePiNumberAtomic,
+    loadTemplate: defaultLoadTemplate,
+    now: () => new Date(),
+  }
 }
 
 interface LineItem {
@@ -323,8 +331,9 @@ export type RenderPiResult =
 
 export async function renderPi(
   args: RenderPiArgs,
-  deps: GeneratePiDeps = defaultDeps,
+  depsOverride?: GeneratePiDeps,
 ): Promise<RenderPiResult> {
+  const deps = depsOverride ?? (await defaultDeps())
   const payment = deps.payments.find((p) => p.id === args.paymentId)
   if (!payment) return { ok: false, reason: 'payment-not-found' }
   if (!payment.piNumber) return { ok: false, reason: 'payment-missing-pi-number' }
@@ -367,8 +376,9 @@ export async function renderPi(
 
 export async function issueAndRenderPi(
   args: GeneratePiArgs,
-  deps: GeneratePiDeps = defaultDeps,
+  depsOverride?: GeneratePiDeps,
 ): Promise<GeneratePiResult> {
+  const deps = depsOverride ?? (await defaultDeps())
   const user = deps.users.find((u) => u.id === args.generatedBy)
   if (!user) return { ok: false, reason: 'unknown-user' }
   if (!canPerform(user, 'mou:generate-pi')) {

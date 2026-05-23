@@ -92,7 +92,7 @@ export const kitDispatchRepo = {
     return jsonKitDispatches.find((k) => k.mouId === mouId) ?? null
   },
 
-  async create(k: KitDispatch): Promise<void> {
+  async create(k: KitDispatch, opts?: { queuedBy?: string }): Promise<void> {
     if (currentBackend() === 'postgres') {
       const sql = getSql()
       await sql`
@@ -119,14 +119,14 @@ export const kitDispatchRepo = {
       return
     }
     await enqueueUpdate({
-      queuedBy: 'system',
+      queuedBy: opts?.queuedBy ?? 'system',
       entity: 'kitDispatch',
       operation: 'create',
       payload: k as unknown as Record<string, unknown>,
     })
   },
 
-  async update(k: KitDispatch): Promise<void> {
+  async update(k: KitDispatch, opts?: { queuedBy?: string }): Promise<void> {
     if (currentBackend() === 'postgres') {
       const sql = getSql()
       await sql`
@@ -149,7 +149,7 @@ export const kitDispatchRepo = {
       return
     }
     await enqueueUpdate({
-      queuedBy: 'system',
+      queuedBy: opts?.queuedBy ?? 'system',
       entity: 'kitDispatch',
       operation: 'update',
       payload: k as unknown as Record<string, unknown>,

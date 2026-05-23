@@ -76,7 +76,7 @@ export const inventoryItemRepo = {
     return jsonItems.filter((i) => i.active && i.category === category)
   },
 
-  async update(item: InventoryItem): Promise<void> {
+  async update(item: InventoryItem, opts?: { queuedBy?: string }): Promise<void> {
     if (currentBackend() === 'postgres') {
       const sql = getSql()
       await sql`
@@ -98,7 +98,7 @@ export const inventoryItemRepo = {
       return
     }
     await enqueueUpdate({
-      queuedBy: 'system',
+      queuedBy: opts?.queuedBy ?? 'system',
       entity: 'inventoryItem',
       operation: 'update',
       payload: item as unknown as Record<string, unknown>,

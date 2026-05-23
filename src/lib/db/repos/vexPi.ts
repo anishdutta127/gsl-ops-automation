@@ -151,7 +151,7 @@ export const vexPiRepo = {
     })
   },
 
-  async update(v: VexPi): Promise<void> {
+  async update(v: VexPi, opts?: { queuedBy?: string }): Promise<void> {
     if (currentBackend() === 'postgres') {
       const sql = getSql()
       await sql`
@@ -185,7 +185,7 @@ export const vexPiRepo = {
       return
     }
     await enqueueUpdate({
-      queuedBy: 'system',
+      queuedBy: opts?.queuedBy ?? 'system',
       entity: 'vexPi',
       operation: 'update',
       payload: v as unknown as Record<string, unknown>,

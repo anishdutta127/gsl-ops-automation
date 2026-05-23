@@ -127,7 +127,7 @@ export const escalationRepo = {
     return jsonEscalations.filter((e) => e.status !== 'Closed')
   },
 
-  async update(e: Escalation): Promise<void> {
+  async update(e: Escalation, opts?: { queuedBy?: string }): Promise<void> {
     if (currentBackend() === 'postgres') {
       const sql = getSql()
       await sql`
@@ -165,7 +165,7 @@ export const escalationRepo = {
       return
     }
     await enqueueUpdate({
-      queuedBy: 'system',
+      queuedBy: opts?.queuedBy ?? 'system',
       entity: 'escalation',
       operation: 'update',
       payload: e as unknown as Record<string, unknown>,
