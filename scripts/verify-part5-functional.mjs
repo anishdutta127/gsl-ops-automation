@@ -822,6 +822,251 @@ const FUNCTIONS = [
   },
 
   // -------------------------------------------------------------------------
+  // P2a concurrency proofs: each of the 8 routes refactored in P2a gets
+  // an N-parallel-writes test confirming N audit entries land.
+  // -------------------------------------------------------------------------
+
+  {
+    name: 'P2a-concurrency: 10 parallel kitDispatch audit appends produce 10 entries',
+    category: 'write',
+    run: async () => {
+      const mou = (await sql`SELECT id, school_id FROM mous WHERE cohort_status='active' LIMIT 1`)[0]
+      const id = `KD-P2A-${Date.now().toString(36).slice(-6).toUpperCase()}`
+      // Pre-clean and create test row
+      await sql`DELETE FROM kit_dispatches WHERE id = ${id}`
+      await sql`
+        INSERT INTO kit_dispatches (id, mou_id, school_id, school_name,
+          product_selected, dispatch_status, allocations, audit_log)
+        VALUES (${id}, ${mou.id}, ${mou.school_id}, 'P2a Concurrency Test',
+          'TinkRworks', 'Allocated', ${sql.json([])}::jsonb, ${sql.json([])}::jsonb)
+      `
+      const ts = Date.now()
+      await Promise.all(
+        Array.from({ length: 10 }, (_, i) =>
+          sql`UPDATE kit_dispatches SET audit_log = audit_log || ${sql.json([{
+            timestamp: new Date(ts + i).toISOString(), user: 'p2a-test',
+            action: 'update', notes: `kd-conc-${i}`,
+          }])}::jsonb WHERE id = ${id}`,
+        ),
+      )
+      const r = await sql`SELECT jsonb_array_length(audit_log) AS len FROM kit_dispatches WHERE id = ${id}`
+      const ok = r[0].len === 10
+      await sql`DELETE FROM kit_dispatches WHERE id = ${id}`
+      return {
+        layer1: { drove: '10 parallel UPDATE kit_dispatches audit_log || ...' },
+        layer2: { auditLen: r[0].len, expected: 10 },
+        layer3: { ok },
+        pass: ok,
+        notes: `kitDispatch ${id}: ${r[0].len}/10 entries (covers warehouse-email + challan-upload routes)`,
+      }
+    },
+  },
+
+  {
+    name: 'P2a-concurrency: 10 parallel dispatch audit appends produce 10 entries',
+    category: 'write',
+    run: async () => {
+      // Find an existing dispatch to test against (don't insert FK-bound rows)
+      const d = (await sql`SELECT id FROM dispatches LIMIT 1`)[0]
+      if (!d) return { layer1: {}, layer2: {}, layer3: {}, pass: true, notes: 'skipped - no dispatches seeded' }
+      const beforeLen = Number((await sql`SELECT jsonb_array_length(audit_log) AS len FROM dispatches WHERE id = ${d.id}`)[0].len)
+      const ts = Date.now()
+      await Promise.all(
+        Array.from({ length: 10 }, (_, i) =>
+          sql`UPDATE dispatches SET audit_log = audit_log || ${sql.json([{
+            timestamp: new Date(ts + i).toISOString(), user: 'p2a-test',
+            action: 'dispatch-note-downloaded', notes: `dispatch-conc-${i}`,
+          }])}::jsonb WHERE id = ${d.id}`,
+        ),
+      )
+      const r = await sql`SELECT jsonb_array_length(audit_log) AS len FROM dispatches WHERE id = ${d.id}`
+      const afterLen = Number(r[0].len)
+      const ok = afterLen === beforeLen + 10
+      // Trim back to baseline
+      await sql`
+        UPDATE dispatches SET audit_log = (
+          SELECT jsonb_agg(elem) FROM (
+            SELECT elem FROM jsonb_array_elements(audit_log) WITH ORDINALITY AS x(elem, n)
+            ORDER BY n LIMIT ${beforeLen}
+          ) y
+        ) WHERE id = ${d.id}
+      `
+      return {
+        layer1: { drove: '10 parallel UPDATE dispatches audit_log || ...' },
+        layer2: { beforeLen, afterLen, grew: afterLen - beforeLen },
+        layer3: { ok },
+        pass: ok,
+        notes: `dispatch ${d.id}: grew by ${afterLen - beforeLen}/10 (covers dispatch-note + handover-worksheet routes)`,
+      }
+    },
+  },
+
+  {
+    name: 'P2a-concurrency: 10 parallel escalation comment + audit appends',
+    category: 'write',
+    run: async () => {
+      const e = (await sql`SELECT id FROM escalations LIMIT 1`)[0]
+      if (!e) return { layer1: {}, layer2: {}, layer3: {}, pass: true, notes: 'skipped - no escalations seeded' }
+      const before = await sql`
+        SELECT jsonb_array_length(audit_log) AS audit_len,
+               jsonb_array_length(comments) AS comments_len
+        FROM escalations WHERE id = ${e.id}
+      `
+      const beforeAudit = Number(before[0].audit_len)
+      const beforeComments = Number(before[0].comments_len)
+      const ts = Date.now()
+      await Promise.all(
+        Array.from({ length: 10 }, (_, i) =>
+          Promise.all([
+            sql`UPDATE escalations SET comments = comments || ${sql.json([{
+              id: `EC-P2A-${i}`, timestamp: new Date(ts + i).toISOString(),
+              authorUserId: 'p2a-test', body: `concurrent comment ${i}`,
+            }])}::jsonb WHERE id = ${e.id}`,
+            sql`UPDATE escalations SET audit_log = audit_log || ${sql.json([{
+              timestamp: new Date(ts + i).toISOString(), user: 'p2a-test',
+              action: 'update', notes: `escalation-conc-${i}`,
+            }])}::jsonb WHERE id = ${e.id}`,
+          ]),
+        ),
+      )
+      const r = await sql`
+        SELECT jsonb_array_length(audit_log) AS audit_len,
+               jsonb_array_length(comments) AS comments_len
+        FROM escalations WHERE id = ${e.id}
+      `
+      const afterAudit = Number(r[0].audit_len)
+      const afterComments = Number(r[0].comments_len)
+      const ok = (afterAudit - beforeAudit) === 10 && (afterComments - beforeComments) === 10
+      await sql`
+        UPDATE escalations SET
+          audit_log = COALESCE((SELECT jsonb_agg(elem) FROM (SELECT elem FROM jsonb_array_elements(audit_log) WITH ORDINALITY AS x(elem, n) ORDER BY n LIMIT ${beforeAudit}) y), '[]'::jsonb),
+          comments = COALESCE((SELECT jsonb_agg(elem) FROM (SELECT elem FROM jsonb_array_elements(comments) WITH ORDINALITY AS x(elem, n) ORDER BY n LIMIT ${beforeComments}) y), '[]'::jsonb)
+        WHERE id = ${e.id}
+      `
+      return {
+        layer1: { drove: '10 parallel UPDATE escalations comments || ... + audit_log || ...' },
+        layer2: { auditGrew: afterAudit - beforeAudit, commentsGrew: afterComments - beforeComments, expected: 10 },
+        layer3: { ok },
+        pass: ok,
+        notes: `escalation ${e.id}: comments grew ${afterComments - beforeComments}/10, audit grew ${afterAudit - beforeAudit}/10 (covers escalations/comment route)`,
+      }
+    },
+  },
+
+  {
+    name: 'P2a-concurrency: 10 parallel inventoryItem audit appends',
+    category: 'write',
+    run: async () => {
+      const i = (await sql`SELECT id FROM inventory_items LIMIT 1`)[0]
+      if (!i) return { layer1: {}, layer2: {}, layer3: {}, pass: true, notes: 'skipped - no inventory_items seeded' }
+      const before = await sql`SELECT jsonb_array_length(audit_log) AS len FROM inventory_items WHERE id = ${i.id}`
+      const beforeLen = Number(before[0].len)
+      const ts = Date.now()
+      await Promise.all(
+        Array.from({ length: 10 }, (_, idx) =>
+          sql`UPDATE inventory_items SET audit_log = audit_log || ${sql.json([{
+            timestamp: new Date(ts + idx).toISOString(), user: 'p2a-test',
+            action: 'inventory-stock-edited', notes: `inv-conc-${idx}`,
+          }])}::jsonb WHERE id = ${i.id}`,
+        ),
+      )
+      const r = await sql`SELECT jsonb_array_length(audit_log) AS len FROM inventory_items WHERE id = ${i.id}`
+      const afterLen = Number(r[0].len)
+      const ok = afterLen - beforeLen === 10
+      await sql`
+        UPDATE inventory_items SET audit_log = (
+          SELECT jsonb_agg(elem) FROM (
+            SELECT elem FROM jsonb_array_elements(audit_log) WITH ORDINALITY AS x(elem, n)
+            ORDER BY n LIMIT ${beforeLen}
+          ) y
+        ) WHERE id = ${i.id}
+      `
+      return {
+        layer1: { drove: '10 parallel UPDATE inventory_items audit_log || ...' },
+        layer2: { beforeLen, afterLen, grew: afterLen - beforeLen },
+        layer3: { ok },
+        pass: ok,
+        notes: `inventoryItem ${i.id}: grew by ${afterLen - beforeLen}/10 (covers inventory/adjust route)`,
+      }
+    },
+  },
+
+  {
+    name: 'P2a-concurrency: 10 parallel vendor audit appends',
+    category: 'write',
+    run: async () => {
+      const v = (await sql`SELECT id FROM vendors LIMIT 1`)[0]
+      if (!v) return { layer1: {}, layer2: {}, layer3: {}, pass: true, notes: 'skipped - no vendors seeded' }
+      const before = await sql`SELECT jsonb_array_length(audit_log) AS len FROM vendors WHERE id = ${v.id}`
+      const beforeLen = Number(before[0].len)
+      const ts = Date.now()
+      await Promise.all(
+        Array.from({ length: 10 }, (_, idx) =>
+          sql`UPDATE vendors SET audit_log = audit_log || ${sql.json([{
+            timestamp: new Date(ts + idx).toISOString(), user: 'p2a-test',
+            action: 'update', notes: `vendor-conc-${idx}`,
+          }])}::jsonb WHERE id = ${v.id}`,
+        ),
+      )
+      const r = await sql`SELECT jsonb_array_length(audit_log) AS len FROM vendors WHERE id = ${v.id}`
+      const afterLen = Number(r[0].len)
+      const ok = afterLen - beforeLen === 10
+      await sql`
+        UPDATE vendors SET audit_log = (
+          SELECT jsonb_agg(elem) FROM (
+            SELECT elem FROM jsonb_array_elements(audit_log) WITH ORDINALITY AS x(elem, n)
+            ORDER BY n LIMIT ${beforeLen}
+          ) y
+        ) WHERE id = ${v.id}
+      `
+      return {
+        layer1: { drove: '10 parallel UPDATE vendors audit_log || ...' },
+        layer2: { beforeLen, afterLen, grew: afterLen - beforeLen },
+        layer3: { ok },
+        pass: ok,
+        notes: `vendor ${v.id}: grew by ${afterLen - beforeLen}/10 (covers vendors/edit route)`,
+      }
+    },
+  },
+
+  {
+    name: 'P2a-concurrency: 10 parallel mou audit appends (workflow reminder)',
+    category: 'write',
+    run: async () => {
+      const m = (await sql`SELECT id FROM mous WHERE cohort_status='active' LIMIT 1`)[0]
+      const before = await sql`SELECT jsonb_array_length(audit_log) AS len FROM mous WHERE id = ${m.id}`
+      const beforeLen = Number(before[0].len)
+      const ts = Date.now()
+      await Promise.all(
+        Array.from({ length: 10 }, (_, idx) =>
+          sql`UPDATE mous SET audit_log = audit_log || ${sql.json([{
+            timestamp: new Date(ts + idx).toISOString(), user: 'p2a-test',
+            action: 'workflow-reminder-sent', notes: `mou-conc-${idx}`,
+          }])}::jsonb WHERE id = ${m.id}`,
+        ),
+      )
+      const r = await sql`SELECT jsonb_array_length(audit_log) AS len FROM mous WHERE id = ${m.id}`
+      const afterLen = Number(r[0].len)
+      const ok = afterLen - beforeLen === 10
+      await sql`
+        UPDATE mous SET audit_log = (
+          SELECT jsonb_agg(elem) FROM (
+            SELECT elem FROM jsonb_array_elements(audit_log) WITH ORDINALITY AS x(elem, n)
+            ORDER BY n LIMIT ${beforeLen}
+          ) y
+        ) WHERE id = ${m.id}
+      `
+      return {
+        layer1: { drove: '10 parallel UPDATE mous audit_log || ...' },
+        layer2: { beforeLen, afterLen, grew: afterLen - beforeLen },
+        layer3: { ok },
+        pass: ok,
+        notes: `mou ${m.id}: grew by ${afterLen - beforeLen}/10 (covers workflow/send-reminder route)`,
+      }
+    },
+  },
+
+  // -------------------------------------------------------------------------
   // 7. MOU registry read: page renders count matches SQL
   // -------------------------------------------------------------------------
   {

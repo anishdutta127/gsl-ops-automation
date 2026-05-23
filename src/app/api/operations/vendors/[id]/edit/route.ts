@@ -9,11 +9,8 @@
 import { NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canEditFinanceData } from '@/lib/access'
-import { enqueueUpdate } from '@/lib/pendingUpdates'
 import type { AuditEntry, Vendor } from '@/lib/types'
-import vendorsJson from '@/data/vendors.json'
-
-const allVendors = vendorsJson as unknown as Vendor[]
+import { vendorRepo } from '@/lib/db/repos/vendor'
 
 function asStringOrNull(v: unknown): string | null {
   if (typeof v !== 'string') return null
@@ -37,7 +34,7 @@ export async function POST(request: Request, ctx: RouteContext) {
       { status: 403 },
     )
   }
-  const existing = allVendors.find((v) => v.id === id)
+  const existing = await vendorRepo.findById(id)
   if (!existing) return NextResponse.json({ error: 'not-found' }, { status: 404 })
 
   let body: Record<string, unknown>
@@ -85,17 +82,26 @@ export async function POST(request: Request, ctx: RouteContext) {
     after: nextWithoutAudit as unknown as Record<string, unknown>,
     notes: `Vendor ${existing.id} updated.`,
   }
-  const next: Vendor = {
-    ...nextWithoutAudit,
-    auditLog: [...nextWithoutAudit.auditLog, auditEntry],
+  const patch: Partial<Vendor> = {
+    name,
+    legalEntity: nextWithoutAudit.legalEntity,
+    category: nextWithoutAudit.category,
+    primaryContact: nextWithoutAudit.primaryContact,
+    primaryEmail: nextWithoutAudit.primaryEmail,
+    primaryPhone: nextWithoutAudit.primaryPhone,
+    address: nextWithoutAudit.address,
+    pan: nextWithoutAudit.pan,
+    gstNumber: nextWithoutAudit.gstNumber,
+    bankAccount: nextWithoutAudit.bankAccount,
+    ifsc: nextWithoutAudit.ifsc,
+    notes: nextWithoutAudit.notes,
+    active: nextWithoutAudit.active,
   }
 
   try {
-    await enqueueUpdate({
+    // ATOMIC: partial scalar UPDATE + JSONB || concat audit_log.
+    await vendorRepo.updateWithAudit(existing.id, patch, auditEntry, {
       queuedBy: user.id,
-      entity: 'vendor',
-      operation: 'update',
-      payload: next as unknown as Record<string, unknown>,
     })
   } catch (e) {
     return NextResponse.json(

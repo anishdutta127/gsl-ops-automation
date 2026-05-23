@@ -9,11 +9,8 @@
 import { NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canExecuteDispatch } from '@/lib/access'
-import type { AuditEntry, KitDispatch } from '@/lib/types'
-import kitDispatchesJson from '@/data/kit_dispatches.json'
-import { enqueueUpdate } from '@/lib/pendingUpdates'
-
-const kitDispatches = kitDispatchesJson as unknown as KitDispatch[]
+import type { AuditEntry } from '@/lib/types'
+import { kitDispatchRepo } from '@/lib/db/repos/kitDispatch'
 
 const WAREHOUSE_EMAIL = 'warehouse@getsetlearn.info'
 
@@ -27,7 +24,7 @@ export async function POST(
   if (!canExecuteDispatch(user)) {
     return NextResponse.json({ error: 'forbidden' }, { status: 403 })
   }
-  const kd = kitDispatches.find((k) => k.mouId === mouId)
+  const kd = await kitDispatchRepo.findByMouId(mouId)
   if (!kd) return NextResponse.json({ error: 'dispatch-not-found' }, { status: 404 })
   if (!kd.dispatchSummary) return NextResponse.json({ error: 'no-summary' }, { status: 400 })
 
@@ -40,24 +37,18 @@ export async function POST(
     after: { warehouseEmailLoggedAt: isoNow },
     notes: `warehouse-email-intent: ${WAREHOUSE_EMAIL}`,
   }
-  const nextRecord: KitDispatch = {
-    ...kd,
-    dispatchSummary: {
-      ...kd.dispatchSummary,
-      warehouseEmailLoggedAt: isoNow,
+  // ATOMIC: partial UPDATE on dispatch_summary JSONB + atomic audit_log
+  // append. Two parallel callers no longer race on audit_log.
+  await kitDispatchRepo.updateWithAudit(
+    kd.id,
+    {
+      dispatchSummary: {
+        ...kd.dispatchSummary,
+        warehouseEmailLoggedAt: isoNow,
+      },
     },
-    auditLog: [...kd.auditLog, audit],
-  }
-  // Enqueue the full KitDispatch record directly. The drain handler
-  // looks up by payload.id and does next[idx] = payload, so wrapping
-  // nextRecord under a .record key would nest the real data instead
-  // of replacing the row. Matches the spread-the-full-record pattern
-  // used by every other working enqueue site.
-  await enqueueUpdate({
-    queuedBy: user.id,
-    entity: 'kitDispatch',
-    operation: 'update',
-    payload: nextRecord as unknown as Record<string, unknown>,
-  })
+    audit,
+    { queuedBy: user.id },
+  )
   return NextResponse.json({ ok: true, loggedAt: isoNow })
 }

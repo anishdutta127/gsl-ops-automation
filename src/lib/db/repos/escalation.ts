@@ -191,4 +191,99 @@ export const escalationRepo = {
       payload: updated as unknown as Record<string, unknown>,
     })
   },
+
+  /**
+   * Append a comment to the comments JSONB array atomically. Same
+   * pattern as appendAudit but for the comments column. Two parallel
+   * comment posts no longer lose entries.
+   */
+  async appendComment(id: string, comment: { id: string; timestamp: string; authorUserId: string; body: string }): Promise<void> {
+    if (currentBackend() === 'postgres') {
+      const sql = getSql()
+      await sql`
+        UPDATE escalations SET comments = comments || ${sql.json([comment] as never)}::jsonb
+        WHERE id = ${id}
+      `
+      return
+    }
+    const e = jsonEscalations.find((x) => x.id === id)
+    if (!e) return
+    const updated: Escalation = { ...e, comments: [...(e.comments ?? []), comment] }
+    await enqueueUpdate({
+      queuedBy: 'system',
+      entity: 'escalation',
+      operation: 'update',
+      payload: updated as unknown as Record<string, unknown>,
+    })
+  },
+
+  async updatePartial(
+    id: string,
+    patch: Partial<Escalation>,
+    opts?: { queuedBy?: string },
+  ): Promise<void> {
+    if (currentBackend() === 'postgres') {
+      const sql = getSql()
+      const CAMEL_TO_SNAKE: Record<string, string> = {
+        createdBy: 'created_by', schoolId: 'school_id', mouId: 'mou_id',
+        stage: 'stage', lane: 'lane', level: 'level', origin: 'origin',
+        originId: 'origin_id', severity: 'severity',
+        description: 'description', assignedTo: 'assigned_to',
+        status: 'status', category: 'category', type: 'type',
+        ownedByDepartment: 'owned_by_department',
+        transferredFromDepartment: 'transferred_from_department',
+        transferredToDepartment: 'transferred_to_department',
+        transferredAt: 'transferred_at', transferReason: 'transfer_reason',
+        slaTargetDate: 'sla_target_date', slaBreached: 'sla_breached',
+        waitingOn: 'waiting_on', resolutionNotes: 'resolution_notes',
+        resolvedAt: 'resolved_at', resolvedBy: 'resolved_by',
+      }
+      const setObj: Record<string, unknown> = {}
+      for (const [k, v] of Object.entries(patch)) {
+        if (k === 'id' || k === 'auditLog' || k === 'comments') continue
+        if (k === 'notifiedEmails') {
+          setObj['notified_emails'] = sql.json((v ?? []) as never)
+          continue
+        }
+        const col = CAMEL_TO_SNAKE[k]
+        if (!col) continue
+        setObj[col] = v ?? null
+      }
+      if (Object.keys(setObj).length === 0) return
+      await sql`UPDATE escalations SET ${sql(setObj)} WHERE id = ${id}`
+      return
+    }
+    const cur = jsonEscalations.find((x) => x.id === id)
+    if (!cur) return
+    await enqueueUpdate({
+      queuedBy: opts?.queuedBy ?? 'system',
+      entity: 'escalation',
+      operation: 'update',
+      payload: { ...cur, ...patch } as unknown as Record<string, unknown>,
+    })
+  },
+
+  async updateWithAudit(
+    id: string,
+    patch: Partial<Escalation>,
+    audit: AuditEntry,
+    opts?: { queuedBy?: string },
+  ): Promise<void> {
+    if (currentBackend() === 'postgres') {
+      await this.updatePartial(id, patch, opts)
+      await this.appendAudit(id, audit)
+      return
+    }
+    const cur = jsonEscalations.find((x) => x.id === id)
+    if (!cur) return
+    await enqueueUpdate({
+      queuedBy: opts?.queuedBy ?? 'system',
+      entity: 'escalation',
+      operation: 'update',
+      payload: {
+        ...cur, ...patch,
+        auditLog: [...(cur.auditLog ?? []), audit],
+      } as unknown as Record<string, unknown>,
+    })
+  },
 }

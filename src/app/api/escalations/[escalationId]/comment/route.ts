@@ -13,16 +13,10 @@ import { getCurrentSession } from '@/lib/auth/session'
 import { canManageEscalations } from '@/lib/access'
 import type {
   AuditEntry,
-  Escalation,
   EscalationComment,
-  User,
 } from '@/lib/types'
-import escalationsJson from '@/data/escalations.json'
-import usersJson from '@/data/users.json'
-import { enqueueUpdate } from '@/lib/pendingUpdates'
-
-const allEscalations = escalationsJson as unknown as Escalation[]
-const allUsers = usersJson as unknown as User[]
+import { escalationRepo } from '@/lib/db/repos/escalation'
+import { userRepo } from '@/lib/db/repos/user'
 
 interface RouteContext {
   params: Promise<{ escalationId: string }>
@@ -36,13 +30,13 @@ export async function POST(request: Request, ctx: RouteContext) {
     url.searchParams.set('next', `/escalations/${escalationId}`)
     return NextResponse.redirect(url, { status: 303 })
   }
-  const user = allUsers.find((u) => u.id === session.sub)
+  const user = await userRepo.findById(session.sub)
   if (!user) return redirectBack(request, escalationId, { error: 'unknown-user' })
   if (!canManageEscalations(user)) {
     return redirectBack(request, escalationId, { error: 'permission' })
   }
 
-  const escalation = allEscalations.find((e) => e.id === escalationId)
+  const escalation = await escalationRepo.findById(escalationId)
   if (!escalation) {
     return redirectBack(request, escalationId, { error: 'not-found' })
   }
@@ -66,19 +60,12 @@ export async function POST(request: Request, ctx: RouteContext) {
     action: 'update',
     notes: `Comment posted: ${body.length > 80 ? `${body.slice(0, 77)}...` : body}`,
   }
-  const next: Escalation = {
-    ...escalation,
-    comments: [...(escalation.comments ?? []), comment],
-    auditLog: [...escalation.auditLog, audit],
-  }
-
   try {
-    await enqueueUpdate({
-      queuedBy: user.id,
-      entity: 'escalation',
-      operation: 'update',
-      payload: next as unknown as Record<string, unknown>,
-    })
+    // ATOMIC: appendComment (comments || jsonb concat) + appendAudit
+    // (audit_log || jsonb concat). Both are server-side atomic JSONB
+    // appends; two parallel comment posts no longer race.
+    await escalationRepo.appendComment(escalation.id, comment)
+    await escalationRepo.appendAudit(escalation.id, audit)
   } catch (e) {
     return redirectBack(request, escalationId, {
       error: 'queue-failure',

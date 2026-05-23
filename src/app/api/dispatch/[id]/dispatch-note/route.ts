@@ -25,11 +25,6 @@
 import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 import { NextResponse } from 'next/server'
-import type { Dispatch, MOU, School, User } from '@/lib/types'
-import dispatchesJson from '@/data/dispatches.json'
-import mousJson from '@/data/mous.json'
-import schoolsJson from '@/data/schools.json'
-import usersJson from '@/data/users.json'
 import companyJson from '../../../../../../config/company.json'
 import { getCurrentSession } from '@/lib/auth/session'
 import {
@@ -41,13 +36,12 @@ import {
   DISPATCH_TEMPLATE,
   DispatchTemplateMissingError,
 } from '@/lib/dispatch/templates'
-import { enqueueUpdate } from '@/lib/pendingUpdates'
 import { shouldAppendDownloadAudit } from '@/lib/dispatch/auditDownloadDedup'
+import { dispatchRepo } from '@/lib/db/repos/dispatch'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { schoolRepo } from '@/lib/db/repos/school'
+import { userRepo } from '@/lib/db/repos/user'
 
-const dispatches = dispatchesJson as unknown as Dispatch[]
-const mous = mousJson as unknown as MOU[]
-const schools = schoolsJson as unknown as School[]
-const users = usersJson as unknown as User[]
 const company = companyJson as CompanyConfig
 
 async function defaultLoadTemplate(templatePath: string): Promise<Uint8Array> {
@@ -75,17 +69,17 @@ export async function GET(
     return NextResponse.redirect(url, { status: 303 })
   }
 
-  const dispatch = dispatches.find((d) => d.id === id)
+  const dispatch = await dispatchRepo.findById(id)
   if (!dispatch) {
     return NextResponse.json({ error: 'dispatch-not-found' }, { status: 404 })
   }
 
-  const mou = mous.find((m) => m.id === dispatch.mouId)
+  const mou = dispatch.mouId ? await mouRepo.findById(dispatch.mouId) : null
   if (!mou) {
     return NextResponse.json({ error: 'mou-not-found' }, { status: 404 })
   }
 
-  const school = schools.find((s) => s.id === dispatch.schoolId)
+  const school = await schoolRepo.findById(dispatch.schoolId)
   if (!school) {
     return NextResponse.json({ error: 'school-not-found' }, { status: 404 })
   }
@@ -93,7 +87,7 @@ export async function GET(
   // raisedByName preserves the AUTHORISED_BY field from the original
   // raise (not the current downloader). Falls back to dispatch.raisedBy
   // when the user record is missing (e.g., user was deactivated).
-  const raiser = users.find((u) => u.id === dispatch.raisedBy)
+  const raiser = await userRepo.findById(dispatch.raisedBy)
   const raisedByName = raiser ? raiser.name : dispatch.raisedBy
 
   const ts = dispatch.poRaisedAt ?? new Date().toISOString()
@@ -128,26 +122,17 @@ export async function GET(
       now,
     })
   ) {
-    const updatedDispatch: Dispatch = {
-      ...dispatch,
-      auditLog: [
-        ...dispatch.auditLog,
-        {
-          timestamp: now.toISOString(),
-          user: session.sub,
-          action: 'dispatch-note-downloaded',
-          after: { dispatchId: dispatch.id },
-          notes: `Dispatch note re-downloaded by ${session.name}.`,
-        },
-      ],
-    }
-    enqueueUpdate({
-      queuedBy: session.sub,
-      entity: 'dispatch',
-      operation: 'update',
-      payload: updatedDispatch as unknown as Record<string, unknown>,
-    }).catch((err) => {
-      console.error('[dispatch-note] audit enqueue failed', err)
+    // ATOMIC: appendAudit only - no scalar field changes. Two parallel
+    // download audit entries land via JSONB || concat without losing
+    // either one.
+    dispatchRepo.appendAudit(dispatch.id, {
+      timestamp: now.toISOString(),
+      user: session.sub,
+      action: 'dispatch-note-downloaded',
+      after: { dispatchId: dispatch.id },
+      notes: `Dispatch note re-downloaded by ${session.name}.`,
+    }, { queuedBy: session.sub }).catch((err) => {
+      console.error('[dispatch-note] audit append failed', err)
     })
   }
 

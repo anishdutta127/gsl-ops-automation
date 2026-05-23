@@ -104,4 +104,85 @@ export const inventoryItemRepo = {
       payload: item as unknown as Record<string, unknown>,
     })
   },
+
+  async appendAudit(id: string, entry: AuditEntry): Promise<void> {
+    if (currentBackend() === 'postgres') {
+      const sql = getSql()
+      await sql`
+        UPDATE inventory_items SET audit_log = audit_log || ${sql.json([entry] as never)}::jsonb
+        WHERE id = ${id}
+      `
+      return
+    }
+    const cur = jsonItems.find((x) => x.id === id)
+    if (!cur) return
+    const updated: InventoryItem = { ...cur, auditLog: [...(cur.auditLog ?? []), entry] }
+    await enqueueUpdate({
+      queuedBy: 'system',
+      entity: 'inventoryItem',
+      operation: 'update',
+      payload: updated as unknown as Record<string, unknown>,
+    })
+  },
+
+  async updatePartial(
+    id: string,
+    patch: Partial<InventoryItem>,
+    opts?: { queuedBy?: string },
+  ): Promise<void> {
+    if (currentBackend() === 'postgres') {
+      const sql = getSql()
+      const CAMEL_TO_SNAKE: Record<string, string> = {
+        skuName: 'sku_name', category: 'category',
+        cretileGrade: 'cretile_grade',
+        mastersheetSourceName: 'mastersheet_source_name',
+        currentStock: 'current_stock',
+        reorderThreshold: 'reorder_threshold', notes: 'notes',
+        active: 'active', lastUpdatedAt: 'last_updated_at',
+        lastUpdatedBy: 'last_updated_by', importNotes: 'import_notes',
+      }
+      const setObj: Record<string, unknown> = {}
+      for (const [k, v] of Object.entries(patch)) {
+        if (k === 'id' || k === 'auditLog') continue
+        const col = CAMEL_TO_SNAKE[k]
+        if (!col) continue
+        setObj[col] = v ?? null
+      }
+      if (Object.keys(setObj).length === 0) return
+      await sql`UPDATE inventory_items SET ${sql(setObj)} WHERE id = ${id}`
+      return
+    }
+    const cur = jsonItems.find((x) => x.id === id)
+    if (!cur) return
+    await enqueueUpdate({
+      queuedBy: opts?.queuedBy ?? 'system',
+      entity: 'inventoryItem',
+      operation: 'update',
+      payload: { ...cur, ...patch } as unknown as Record<string, unknown>,
+    })
+  },
+
+  async updateWithAudit(
+    id: string,
+    patch: Partial<InventoryItem>,
+    audit: AuditEntry,
+    opts?: { queuedBy?: string },
+  ): Promise<void> {
+    if (currentBackend() === 'postgres') {
+      await this.updatePartial(id, patch, opts)
+      await this.appendAudit(id, audit)
+      return
+    }
+    const cur = jsonItems.find((x) => x.id === id)
+    if (!cur) return
+    await enqueueUpdate({
+      queuedBy: opts?.queuedBy ?? 'system',
+      entity: 'inventoryItem',
+      operation: 'update',
+      payload: {
+        ...cur, ...patch,
+        auditLog: [...(cur.auditLog ?? []), audit],
+      } as unknown as Record<string, unknown>,
+    })
+  },
 }

@@ -11,11 +11,8 @@
 import { NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canManageInventory } from '@/lib/access'
-import { enqueueUpdate } from '@/lib/pendingUpdates'
-import type { AuditEntry, InventoryItem } from '@/lib/types'
-import inventoryItemsJson from '@/data/inventory_items.json'
-
-const allItems = inventoryItemsJson as unknown as InventoryItem[]
+import type { AuditEntry } from '@/lib/types'
+import { inventoryItemRepo } from '@/lib/db/repos/inventoryItem'
 
 interface RouteContext {
   params: Promise<{ id: string }>
@@ -37,7 +34,7 @@ export async function POST(request: Request, ctx: RouteContext) {
     return NextResponse.redirect(url, { status: 303 })
   }
   if (!canManageInventory(user)) return errorTo('permission')
-  const item = allItems.find((i) => i.id === id)
+  const item = await inventoryItemRepo.findById(id)
   if (!item) return errorTo('item-not-found')
 
   const deltaRaw = String(form.get('qtyDelta') ?? '').trim()
@@ -60,21 +57,14 @@ export async function POST(request: Request, ctx: RouteContext) {
     after: { currentStock: newStock, qtyDelta },
     notes: reason,
   }
-  const updated: InventoryItem = {
-    ...item,
-    currentStock: newStock,
-    lastUpdatedAt: ts,
-    lastUpdatedBy: user.id,
-    auditLog: [...item.auditLog, auditEntry],
-  }
-
   try {
-    await enqueueUpdate({
-      queuedBy: user.id,
-      entity: 'inventoryItem',
-      operation: 'update',
-      payload: updated as unknown as Record<string, unknown>,
-    })
+    // ATOMIC: partial UPDATE on currentStock + JSONB || concat on audit_log.
+    await inventoryItemRepo.updateWithAudit(
+      item.id,
+      { currentStock: newStock, lastUpdatedAt: ts, lastUpdatedBy: user.id },
+      auditEntry,
+      { queuedBy: user.id },
+    )
   } catch {
     return errorTo('queue-failure')
   }

@@ -17,11 +17,8 @@ import { promises as fs } from 'node:fs'
 import path from 'node:path'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canExecuteDispatch } from '@/lib/access'
-import type { AuditEntry, KitDispatch } from '@/lib/types'
-import kitDispatchesJson from '@/data/kit_dispatches.json'
-import { enqueueUpdate } from '@/lib/pendingUpdates'
-
-const kitDispatches = kitDispatchesJson as unknown as KitDispatch[]
+import type { AuditEntry } from '@/lib/types'
+import { kitDispatchRepo } from '@/lib/db/repos/kitDispatch'
 
 const CHALLAN_DIR = path.join(process.cwd(), 'public', 'delivery-challans')
 
@@ -36,7 +33,7 @@ export async function POST(
     return NextResponse.json({ error: 'forbidden' }, { status: 403 })
   }
 
-  const kd = kitDispatches.find((k) => k.mouId === mouId)
+  const kd = await kitDispatchRepo.findByMouId(mouId)
   if (!kd) return NextResponse.json({ error: 'dispatch-not-found' }, { status: 404 })
   if (!kd.dispatchSummary) {
     return NextResponse.json({ error: 'no-summary' }, { status: 400 })
@@ -82,26 +79,20 @@ export async function POST(
     after: { deliveryChallanPath: publicPath },
     notes: 'Delivery challan uploaded.',
   }
-  const nextRecord: KitDispatch = {
-    ...kd,
-    dispatchSummary: {
-      ...kd.dispatchSummary,
-      deliveryChallanPath: publicPath,
-    },
-    auditLog: [...kd.auditLog, audit],
-  }
-
   try {
-    // Enqueue the full KitDispatch record directly. The drain handler
-    // looks up by payload.id and does next[idx] = payload, so wrapping
-    // nextRecord under a .record key would nest the real data instead
-    // of replacing the row.
-    await enqueueUpdate({
-      queuedBy: user.id,
-      entity: 'kitDispatch',
-      operation: 'update',
-      payload: nextRecord as unknown as Record<string, unknown>,
-    })
+    // ATOMIC: updateWithAudit (partial UPDATE on dispatch_summary + JSONB
+    // || concat on audit_log). Race-safe vs concurrent uploads.
+    await kitDispatchRepo.updateWithAudit(
+      kd.id,
+      {
+        dispatchSummary: {
+          ...kd.dispatchSummary,
+          deliveryChallanPath: publicPath,
+        },
+      },
+      audit,
+      { queuedBy: user.id },
+    )
   } catch (e) {
     return NextResponse.json(
       {

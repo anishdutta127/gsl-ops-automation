@@ -108,4 +108,84 @@ export const vendorRepo = {
       payload: v as unknown as Record<string, unknown>,
     })
   },
+
+  async appendAudit(id: string, entry: AuditEntry): Promise<void> {
+    if (currentBackend() === 'postgres') {
+      const sql = getSql()
+      await sql`
+        UPDATE vendors SET audit_log = audit_log || ${sql.json([entry] as never)}::jsonb
+        WHERE id = ${id}
+      `
+      return
+    }
+    const cur = jsonVendors.find((x) => x.id === id)
+    if (!cur) return
+    const updated: Vendor = { ...cur, auditLog: [...(cur.auditLog ?? []), entry] }
+    await enqueueUpdate({
+      queuedBy: 'system',
+      entity: 'vendor',
+      operation: 'update',
+      payload: updated as unknown as Record<string, unknown>,
+    })
+  },
+
+  async updatePartial(
+    id: string,
+    patch: Partial<Vendor>,
+    opts?: { queuedBy?: string },
+  ): Promise<void> {
+    if (currentBackend() === 'postgres') {
+      const sql = getSql()
+      const CAMEL_TO_SNAKE: Record<string, string> = {
+        name: 'name', legalEntity: 'legal_entity', category: 'category',
+        primaryContact: 'primary_contact', primaryEmail: 'primary_email',
+        primaryPhone: 'primary_phone', address: 'address',
+        pan: 'pan', gstNumber: 'gst_number',
+        bankAccount: 'bank_account', ifsc: 'ifsc',
+        notes: 'notes', active: 'active',
+      }
+      const setObj: Record<string, unknown> = {}
+      for (const [k, v] of Object.entries(patch)) {
+        if (k === 'id' || k === 'auditLog') continue
+        const col = CAMEL_TO_SNAKE[k]
+        if (!col) continue
+        setObj[col] = v ?? null
+      }
+      if (Object.keys(setObj).length === 0) return
+      await sql`UPDATE vendors SET ${sql(setObj)} WHERE id = ${id}`
+      return
+    }
+    const cur = jsonVendors.find((x) => x.id === id)
+    if (!cur) return
+    await enqueueUpdate({
+      queuedBy: opts?.queuedBy ?? 'system',
+      entity: 'vendor',
+      operation: 'update',
+      payload: { ...cur, ...patch } as unknown as Record<string, unknown>,
+    })
+  },
+
+  async updateWithAudit(
+    id: string,
+    patch: Partial<Vendor>,
+    audit: AuditEntry,
+    opts?: { queuedBy?: string },
+  ): Promise<void> {
+    if (currentBackend() === 'postgres') {
+      await this.updatePartial(id, patch, opts)
+      await this.appendAudit(id, audit)
+      return
+    }
+    const cur = jsonVendors.find((x) => x.id === id)
+    if (!cur) return
+    await enqueueUpdate({
+      queuedBy: opts?.queuedBy ?? 'system',
+      entity: 'vendor',
+      operation: 'update',
+      payload: {
+        ...cur, ...patch,
+        auditLog: [...(cur.auditLog ?? []), audit],
+      } as unknown as Record<string, unknown>,
+    })
+  },
 }

@@ -19,18 +19,12 @@
  */
 
 import { NextResponse } from 'next/server'
-import type { Dispatch, MOU, School } from '@/lib/types'
-import dispatchesJson from '@/data/dispatches.json'
-import mousJson from '@/data/mous.json'
-import schoolsJson from '@/data/schools.json'
 import { getCurrentSession } from '@/lib/auth/session'
 import { generateHandoverWorksheet } from '@/lib/dispatch/generateHandoverWorksheet'
-import { enqueueUpdate } from '@/lib/pendingUpdates'
 import { shouldAppendDownloadAudit } from '@/lib/dispatch/auditDownloadDedup'
-
-const dispatches = dispatchesJson as unknown as Dispatch[]
-const mous = mousJson as unknown as MOU[]
-const schools = schoolsJson as unknown as School[]
+import { dispatchRepo } from '@/lib/db/repos/dispatch'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { schoolRepo } from '@/lib/db/repos/school'
 
 export async function GET(
   request: Request,
@@ -45,17 +39,17 @@ export async function GET(
     return NextResponse.redirect(url, { status: 303 })
   }
 
-  const dispatch = dispatches.find((d) => d.id === id)
+  const dispatch = await dispatchRepo.findById(id)
   if (!dispatch) {
     return NextResponse.json({ error: 'dispatch-not-found' }, { status: 404 })
   }
 
-  const mou = mous.find((m) => m.id === dispatch.mouId)
+  const mou = dispatch.mouId ? await mouRepo.findById(dispatch.mouId) : null
   if (!mou) {
     return NextResponse.json({ error: 'mou-not-found' }, { status: 404 })
   }
 
-  const school = schools.find((s) => s.id === dispatch.schoolId)
+  const school = await schoolRepo.findById(dispatch.schoolId)
   if (!school) {
     return NextResponse.json({ error: 'school-not-found' }, { status: 404 })
   }
@@ -89,26 +83,16 @@ export async function GET(
       now,
     })
   ) {
-    const updatedDispatch: Dispatch = {
-      ...dispatch,
-      auditLog: [
-        ...dispatch.auditLog,
-        {
-          timestamp: now.toISOString(),
-          user: session.sub,
-          action: 'handover-worksheet-downloaded',
-          after: { dispatchId: dispatch.id },
-          notes: `Handover worksheet downloaded by ${session.name}.`,
-        },
-      ],
-    }
-    enqueueUpdate({
-      queuedBy: session.sub,
-      entity: 'dispatch',
-      operation: 'update',
-      payload: updatedDispatch as unknown as Record<string, unknown>,
-    }).catch((err) => {
-      console.error('[handover-worksheet] audit enqueue failed', err)
+    // ATOMIC: appendAudit. Two parallel downloads land both audit entries
+    // via JSONB || concat.
+    dispatchRepo.appendAudit(dispatch.id, {
+      timestamp: now.toISOString(),
+      user: session.sub,
+      action: 'handover-worksheet-downloaded',
+      after: { dispatchId: dispatch.id },
+      notes: `Handover worksheet downloaded by ${session.name}.`,
+    }, { queuedBy: session.sub }).catch((err) => {
+      console.error('[handover-worksheet] audit append failed', err)
     })
   }
 

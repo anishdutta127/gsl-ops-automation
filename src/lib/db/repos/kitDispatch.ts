@@ -175,4 +175,84 @@ export const kitDispatchRepo = {
       payload: updated as unknown as Record<string, unknown>,
     })
   },
+
+  /**
+   * Partial-field update. Updates ONLY the listed columns. JSONB
+   * columns (allocations, dispatch_summary, shipment_tracking, pod)
+   * auto-wrapped via sql.json(); scalars pass through. Json mode
+   * reads + merges + enqueues a full payload.
+   */
+  async updatePartial(
+    id: string,
+    patch: Partial<KitDispatch>,
+    opts?: { queuedBy?: string },
+  ): Promise<void> {
+    if (currentBackend() === 'postgres') {
+      const sql = getSql()
+      const CAMEL_TO_SNAKE: Record<string, string> = {
+        schoolId: 'school_id', schoolName: 'school_name',
+        productSelected: 'product_selected', dispatchStatus: 'dispatch_status',
+        salesApprovalStatus: 'sales_approval_status',
+        salesApprovedBy: 'sales_approved_by',
+        salesApprovedAt: 'sales_approved_at',
+        salesRejectionReason: 'sales_rejection_reason',
+        importNotes: 'import_notes',
+      }
+      const JSONB_COLS = new Set(['allocations', 'dispatchSummary', 'shipmentTracking', 'pod'])
+      const setObj: Record<string, unknown> = {}
+      for (const [k, v] of Object.entries(patch)) {
+        if (k === 'id' || k === 'auditLog') continue
+        if (JSONB_COLS.has(k)) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const col = k === 'dispatchSummary' ? 'dispatch_summary'
+            : k === 'shipmentTracking' ? 'shipment_tracking'
+            : k
+          setObj[col] = v == null ? null : sql.json(v as never)
+          continue
+        }
+        const col = CAMEL_TO_SNAKE[k]
+        if (!col) continue
+        setObj[col] = v ?? null
+      }
+      if (Object.keys(setObj).length === 0) return
+      await sql`UPDATE kit_dispatches SET ${sql(setObj)} WHERE id = ${id}`
+      return
+    }
+    const cur = jsonKitDispatches.find((x) => x.id === id)
+    if (!cur) return
+    await enqueueUpdate({
+      queuedBy: opts?.queuedBy ?? 'system',
+      entity: 'kitDispatch',
+      operation: 'update',
+      payload: { ...cur, ...patch } as unknown as Record<string, unknown>,
+    })
+  },
+
+  /**
+   * Atomic "update fields + append audit" in one call. See
+   * mouRepo.updateWithAudit for pattern docs.
+   */
+  async updateWithAudit(
+    id: string,
+    patch: Partial<KitDispatch>,
+    audit: AuditEntry,
+    opts?: { queuedBy?: string },
+  ): Promise<void> {
+    if (currentBackend() === 'postgres') {
+      await this.updatePartial(id, patch, opts)
+      await this.appendAudit(id, audit)
+      return
+    }
+    const cur = jsonKitDispatches.find((x) => x.id === id)
+    if (!cur) return
+    await enqueueUpdate({
+      queuedBy: opts?.queuedBy ?? 'system',
+      entity: 'kitDispatch',
+      operation: 'update',
+      payload: {
+        ...cur, ...patch,
+        auditLog: [...(cur.auditLog ?? []), audit],
+      } as unknown as Record<string, unknown>,
+    })
+  },
 }

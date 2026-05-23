@@ -126,7 +126,7 @@ export const dispatchRepo = {
     })
   },
 
-  async appendAudit(id: string, entry: AuditEntry): Promise<void> {
+  async appendAudit(id: string, entry: AuditEntry, opts?: { queuedBy?: string }): Promise<void> {
     if (currentBackend() === 'postgres') {
       const sql = getSql()
       await sql`
@@ -139,10 +139,80 @@ export const dispatchRepo = {
     if (!d) return
     const updated: Dispatch = { ...d, auditLog: [...(d.auditLog ?? []), entry] }
     await enqueueUpdate({
-      queuedBy: 'system',
+      queuedBy: opts?.queuedBy ?? 'system',
       entity: 'dispatch',
       operation: 'update',
       payload: updated as unknown as Record<string, unknown>,
+    })
+  },
+
+  async updatePartial(
+    id: string,
+    patch: Partial<Dispatch>,
+    opts?: { queuedBy?: string },
+  ): Promise<void> {
+    if (currentBackend() === 'postgres') {
+      const sql = getSql()
+      const CAMEL_TO_SNAKE: Record<string, string> = {
+        mouId: 'mou_id', schoolId: 'school_id',
+        installmentSeq: 'instalment_seq', stage: 'stage',
+        installment1Paid: 'installment1_paid',
+        poRaisedAt: 'po_raised_at', dispatchedAt: 'dispatched_at',
+        deliveredAt: 'delivered_at', acknowledgedAt: 'acknowledged_at',
+        acknowledgementUrl: 'acknowledgement_url', notes: 'notes',
+        requestId: 'request_id', raisedBy: 'raised_by',
+        raisedFrom: 'raised_from',
+      }
+      const setObj: Record<string, unknown> = {}
+      for (const [k, v] of Object.entries(patch)) {
+        if (k === 'id' || k === 'auditLog') continue
+        if (k === 'lineItems') {
+          setObj['line_items'] = v == null ? sql.json([] as never) : sql.json(v as never)
+          continue
+        }
+        if (k === 'overrideEvent') {
+          setObj['override_event'] = v == null ? null : sql.json(v as never)
+          continue
+        }
+        const col = CAMEL_TO_SNAKE[k]
+        if (!col) continue
+        setObj[col] = v ?? null
+      }
+      if (Object.keys(setObj).length === 0) return
+      await sql`UPDATE dispatches SET ${sql(setObj)} WHERE id = ${id}`
+      return
+    }
+    const cur = jsonDispatches.find((x) => x.id === id)
+    if (!cur) return
+    await enqueueUpdate({
+      queuedBy: opts?.queuedBy ?? 'system',
+      entity: 'dispatch',
+      operation: 'update',
+      payload: { ...cur, ...patch } as unknown as Record<string, unknown>,
+    })
+  },
+
+  async updateWithAudit(
+    id: string,
+    patch: Partial<Dispatch>,
+    audit: AuditEntry,
+    opts?: { queuedBy?: string },
+  ): Promise<void> {
+    if (currentBackend() === 'postgres') {
+      await this.updatePartial(id, patch, opts)
+      await this.appendAudit(id, audit)
+      return
+    }
+    const cur = jsonDispatches.find((x) => x.id === id)
+    if (!cur) return
+    await enqueueUpdate({
+      queuedBy: opts?.queuedBy ?? 'system',
+      entity: 'dispatch',
+      operation: 'update',
+      payload: {
+        ...cur, ...patch,
+        auditLog: [...(cur.auditLog ?? []), audit],
+      } as unknown as Record<string, unknown>,
     })
   },
 }

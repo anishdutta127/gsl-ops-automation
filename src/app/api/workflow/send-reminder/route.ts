@@ -21,23 +21,17 @@
  */
 
 import { NextResponse } from 'next/server'
-import type { AuditEntry, KitDispatch, MOU, Payment, User } from '@/lib/types'
-import mousJson from '@/data/mous.json'
-import paymentsJson from '@/data/payments.json'
-import kitDispatchesJson from '@/data/kit_dispatches.json'
-import usersJson from '@/data/users.json'
+import type { AuditEntry, MOU, User } from '@/lib/types'
 import { getCurrentUser } from '@/lib/auth/session'
-import { enqueueUpdate } from '@/lib/pendingUpdates'
 import { canSendReminder, computeWorkflowState } from '@/lib/workflowState'
 import {
   broadcastNotification,
   recipientsByRole,
 } from '@/lib/notifications/createNotification'
-
-const allMous = mousJson as unknown as MOU[]
-const allPayments = paymentsJson as unknown as Payment[]
-const allKitDispatches = kitDispatchesJson as unknown as KitDispatch[]
-const allUsers = usersJson as unknown as User[]
+import { mouRepo } from '@/lib/db/repos/mou'
+import { paymentRepo } from '@/lib/db/repos/payment'
+import { kitDispatchRepo } from '@/lib/db/repos/kitDispatch'
+import { userRepo } from '@/lib/db/repos/user'
 
 const REMINDER_ACTION = 'workflow-reminder-sent'
 
@@ -82,7 +76,7 @@ export async function POST(request: Request): Promise<Response> {
     )
   }
 
-  const mou = allMous.find((m) => m.id === mouId)
+  const mou = await mouRepo.findById(mouId)
   if (!mou) {
     return NextResponse.redirect(
       new URL(`/mous?error=mou-not-found`, request.url),
@@ -90,8 +84,11 @@ export async function POST(request: Request): Promise<Response> {
     )
   }
 
-  const installments = allPayments.filter((p) => p.mouId === mou.id)
-  const dispatches = allKitDispatches.filter((d) => d.mouId === mou.id)
+  const [installments, kd] = await Promise.all([
+    paymentRepo.findByMouId(mou.id),
+    kitDispatchRepo.findByMouId(mou.id),
+  ])
+  const dispatches = kd ? [kd] : []
   const now = new Date()
 
   const banner = computeWorkflowState({ mou, payments: installments, dispatches, now })
@@ -112,6 +109,7 @@ export async function POST(request: Request): Promise<Response> {
 
   // Fan-out the reminder to the owning department (or assignee).
   const roles = OWNER_ROLES[banner.owner]
+  const allUsers = await userRepo.findAll()
   const recipientIds = recipientsByRole(allUsers, roles).filter(
     (id) => id !== user.id,
   )
@@ -138,16 +136,8 @@ export async function POST(request: Request): Promise<Response> {
     after: { stage, owner: banner.owner, recipients: recipientIds.length },
     notes: `Workflow reminder sent for stage=${stage} to ${recipientIds.length} ${banner.owner} recipient(s).`,
   }
-  const updatedMou: MOU = {
-    ...mou,
-    auditLog: [...mou.auditLog, auditEntry],
-  }
-  await enqueueUpdate({
-    queuedBy: user.id,
-    entity: 'mou',
-    operation: 'update',
-    payload: updatedMou as unknown as Record<string, unknown>,
-  })
+  // ATOMIC: just append the audit marker. No scalar fields changed.
+  await mouRepo.appendAudit(mou.id, auditEntry)
 
   return NextResponse.redirect(
     new URL(`/mous/${mou.id}?notice=reminder-sent`, request.url),
