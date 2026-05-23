@@ -392,7 +392,7 @@
       "hasVariance": true
     },
     "createdAt": "2026-05-20T12:12:54.011Z",
-    "readAt": null,
+    "readAt": "2026-05-23T06:53:26.616Z",
     "auditLog": [
       {
         "timestamp": "2026-05-20T12:12:54.011Z",
@@ -404,6 +404,18 @@
           "relatedEntityId": "34cacab1-61d9-41f6-af66-4203f8efe82f"
         },
         "notes": "Notification intake-completed fan-out to anish.d (sender=anita.c)."
+      },
+      {
+        "timestamp": "2026-05-23T06:53:26.616Z",
+        "user": "anish.d",
+        "action": "notification-marked-read",
+        "before": {
+          "readAt": null
+        },
+        "after": {
+          "readAt": "2026-05-23T06:53:26.616Z"
+        },
+        "notes": "Recipient marked notification as read."
       }
     ]
   },
