@@ -82,7 +82,7 @@ function makeDeps(over: Partial<ComposeReminderDeps> = {}): ComposeReminderDeps 
     uuid: () => 'fixedid',
     appUrl: () => 'https://gsl-ops.example',
     now: () => NOW,
-    resolveCc: () => [],
+    resolveCc: async () => [],
     ...over,
   }
 }
@@ -224,7 +224,7 @@ describe('W4-E.4 composeReminder render + audit', () => {
     const u = user('opshead', 'OpsHead')
     const { sch, m, sp } = intakeReminderState()
     const resolveCc = vi.fn(
-      (_args: { context: string; schoolId: string; mouId: string | null }) =>
+      async (_args: { context: string; schoolId: string; mouId: string | null }) =>
         ['cc1@example.in', 'cc2@example.in'],
     )
     const result = await composeReminder(

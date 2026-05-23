@@ -18,10 +18,10 @@ import type {
   Notification,
   User,
 } from '@/lib/types'
-import notificationsJson from '@/data/notifications.json'
-import usersJson from '@/data/users.json'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
 import { canPerform } from '@/lib/auth/permissions'
+import { notificationRepo } from '@/lib/db/repos/notification'
+import { userRepo } from '@/lib/db/repos/user'
 
 export interface MarkReadArgs {
   notificationId: string
@@ -46,17 +46,20 @@ export interface MarkReadDeps {
   now: () => Date
 }
 
-const defaultDeps: MarkReadDeps = {
-  notifications: notificationsJson as unknown as Notification[],
-  users: usersJson as unknown as User[],
-  enqueue: enqueueUpdate,
-  now: () => new Date(),
+async function defaultDeps(): Promise<MarkReadDeps> {
+  return {
+    notifications: await notificationRepo.findAll(),
+    users: await userRepo.findAll(),
+    enqueue: enqueueUpdate,
+    now: () => new Date(),
+  }
 }
 
 export async function markRead(
   args: MarkReadArgs,
-  deps: MarkReadDeps = defaultDeps,
+  depsOverride?: MarkReadDeps,
 ): Promise<MarkReadResult> {
+  const deps = depsOverride ?? (await defaultDeps())
   const user = deps.users.find((u) => u.id === args.markedBy)
   if (!user) return { ok: false, reason: 'unknown-user' }
   if (!canPerform(user, 'notification:mark-read')) {
@@ -105,8 +108,9 @@ export async function markRead(
  */
 export async function markAllRead(
   userId: string,
-  deps: MarkReadDeps = defaultDeps,
+  depsOverride?: MarkReadDeps,
 ): Promise<{ updated: number; skippedReason?: MarkReadFailureReason }> {
+  const deps = depsOverride ?? (await defaultDeps())
   const user = deps.users.find((u) => u.id === userId)
   if (!user) return { updated: 0, skippedReason: 'unknown-user' }
   if (!canPerform(user, 'notification:mark-read')) {

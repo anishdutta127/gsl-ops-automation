@@ -120,7 +120,7 @@ export default async function AuditPage({
     )
   }
 
-  const allRows = collectAuditRows()
+  const allRows = await collectAuditRows()
   const visibleRows = allRows.filter((row) =>
     canViewAuditEntry(user, row.entry, { laneOfEntry: row.laneOfEntry }),
   )

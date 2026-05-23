@@ -24,7 +24,7 @@ function findRule(id: string): CcRule | undefined {
 }
 
 describe('W4-E.3 Phase 2: cc_rules.json size + new entries', () => {
-  it('cc_rules.json grows from 10 to 12 entries (2 added; 3 deferred)', () => {
+  it('cc_rules.json grows from 10 to 12 entries (2 added; 3 deferred)', async () => {
     expect(ccRules.length).toBe(12)
   })
 
@@ -43,7 +43,7 @@ describe('W4-E.3 Phase 2: cc_rules.json size + new entries', () => {
     expect(r!.auditLog[0]!.notes).toContain('W4-E.3')
   })
 
-  it('CCR-NORTH-GR-INTERNATIONAL is school-scoped on SCH-GR_INTERNATIONAL_SCH with sp-sahil', () => {
+  it('CCR-NORTH-GR-INTERNATIONAL is school-scoped on SCH-GR_INTERNATIONAL_SCH with sp-sahil', async () => {
     const r = findRule('CCR-NORTH-GR-INTERNATIONAL')
     expect(r).toBeDefined()
     expect(r!.scope).toBe('school')
@@ -54,14 +54,14 @@ describe('W4-E.3 Phase 2: cc_rules.json size + new entries', () => {
     expect(r!.auditLog[0]!.action).toBe('cc-rule-created')
   })
 
-  it('CCR-TTT-FEEDBACK stays narrow (feedback-request only); CCR-TTT-ALL not yet added (D-022 defer)', () => {
+  it('CCR-TTT-FEEDBACK stays narrow (feedback-request only); CCR-TTT-ALL not yet added (D-022 defer)', async () => {
     const ttt = findRule('CCR-TTT-FEEDBACK')
     expect(ttt).toBeDefined()
     expect(ttt!.contexts).toEqual(['feedback-request'])
     expect(findRule('CCR-TTT-ALL')).toBeUndefined()
   })
 
-  it('referenced school SCH-GR_INTERNATIONAL_SCH exists in schools.json', () => {
+  it('referenced school SCH-GR_INTERNATIONAL_SCH exists in schools.json', async () => {
     expect(schools.some((s) => s.id === 'SCH-GR_INTERNATIONAL_SCH')).toBe(true)
   })
 })
@@ -179,7 +179,7 @@ describe('W4-E.3 ccResolver union contract (proof for D-022 CCR-TTT-ALL landing)
     }
   }
 
-  it('CCR-TTT-FEEDBACK (narrow) + synthetic CCR-TTT-ALL produce union of ccUserIds on TTT feedback-request', () => {
+  it('CCR-TTT-FEEDBACK (narrow) + synthetic CCR-TTT-ALL produce union of ccUserIds on TTT feedback-request', async () => {
     const tttFeedback = makeRule('CCR-TTT-FEEDBACK', ['feedback-request'], ['shashank.s'])
     const tttAll = makeRule('CCR-TTT-ALL', ['all-communications'], ['placeholder.shushankita'])
     const deps: CcResolverDeps = {
@@ -190,7 +190,7 @@ describe('W4-E.3 ccResolver union contract (proof for D-022 CCR-TTT-ALL landing)
       salesTeam: baseSalesTeam,
     }
 
-    const result = resolveCcList(
+    const result = await resolveCcList(
       { context: 'feedback-request', schoolId: 'SCH-T-TTT-UNION', mouId: 'MOU-T-TTT-UNION' },
       deps,
     )
@@ -199,7 +199,7 @@ describe('W4-E.3 ccResolver union contract (proof for D-022 CCR-TTT-ALL landing)
     )
   })
 
-  it('on TTT non-feedback context (e.g., welcome-note), only CCR-TTT-ALL fires (CCR-TTT-FEEDBACK stays narrow)', () => {
+  it('on TTT non-feedback context (e.g., welcome-note), only CCR-TTT-ALL fires (CCR-TTT-FEEDBACK stays narrow)', async () => {
     const tttFeedback = makeRule('CCR-TTT-FEEDBACK', ['feedback-request'], ['shashank.s'])
     const tttAll = makeRule('CCR-TTT-ALL', ['all-communications'], ['placeholder.shushankita'])
     const deps: CcResolverDeps = {
@@ -210,7 +210,7 @@ describe('W4-E.3 ccResolver union contract (proof for D-022 CCR-TTT-ALL landing)
       salesTeam: baseSalesTeam,
     }
 
-    const result = resolveCcList(
+    const result = await resolveCcList(
       { context: 'welcome-note', schoolId: 'SCH-T-TTT-UNION', mouId: 'MOU-T-TTT-UNION' },
       deps,
     )

@@ -13,7 +13,6 @@ import { NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canEditMOU } from '@/lib/access'
 import { mouRepo } from '@/lib/db/repos/mou'
-import type { MOU } from '@/lib/types'
 import type {
   AuditEntry,
   GradewiseDistributionRow,
@@ -106,20 +105,22 @@ export async function POST(request: Request, ctx: RouteContext) {
     notes: 'kits-details edit',
   }
 
-  // Spread the existing MOU so the queue payload carries top-level `id`
-  // (the drain handler looks up by payload.id) and so the drainer's
-  // replace-by-id semantics do not obliterate the other MOU fields.
-  // Matches the working sibling pattern used by /api/mou/[mouId]/edit
-  // and every other MOU-update producer in the codebase.
-  const updated: MOU = {
-    ...mou,
-    productSelection: productSelection ?? null,
-    gradewiseDistribution: gradewiseDistribution ?? null,
-    auditLog: [...(mou.auditLog ?? []), audit],
-  }
-
+  // ATOMIC PATTERN (Part 5.B Blocker 1 fix): updateWithAudit hides the
+  // postgres-vs-json branch. Postgres: partial-update on the scalar/
+  // JSONB fields we're editing + atomic JSONB || concat on audit_log,
+  // so two parallel callers no longer race. Json: still the legacy
+  // single-enqueue spread pattern (unchanged behaviour for existing
+  // production).
   try {
-    await mouRepo.update(updated, { queuedBy: user.id })
+    await mouRepo.updateWithAudit(
+      mou.id,
+      {
+        productSelection: productSelection ?? null,
+        gradewiseDistribution: gradewiseDistribution ?? null,
+      },
+      audit,
+      { queuedBy: user.id },
+    )
   } catch (e) {
     return NextResponse.json(
       {

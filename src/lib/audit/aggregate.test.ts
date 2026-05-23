@@ -2,15 +2,15 @@ import { describe, expect, it } from 'vitest'
 import { collectAuditRows } from './aggregate'
 
 describe('collectAuditRows', () => {
-  it('returns rows sorted newest first', () => {
-    const rows = collectAuditRows()
+  it('returns rows sorted newest first', async () => {
+    const rows = await collectAuditRows()
     for (let i = 1; i < rows.length; i++) {
       expect(rows[i - 1]!.entry.timestamp >= rows[i]!.entry.timestamp).toBe(true)
     }
   })
 
-  it('every row carries the metadata required for AuditRow render', () => {
-    const rows = collectAuditRows()
+  it('every row carries the metadata required for AuditRow render', async () => {
+    const rows = await collectAuditRows()
     for (const row of rows) {
       expect(row.entry).toBeTruthy()
       expect(row.entry.timestamp).toMatch(/^\d{4}-\d{2}-\d{2}T/)
@@ -23,8 +23,8 @@ describe('collectAuditRows', () => {
     }
   })
 
-  it('Escalation rows carry laneOfEntry from the entity', () => {
-    const rows = collectAuditRows()
+  it('Escalation rows carry laneOfEntry from the entity', async () => {
+    const rows = await collectAuditRows()
     const escRows = rows.filter((r) => r.entityType === 'Escalation')
     for (const row of escRows) {
       expect(row.laneOfEntry).toBeDefined()
@@ -32,37 +32,37 @@ describe('collectAuditRows', () => {
     }
   })
 
-  it('Dispatch rows are marked OPS lane regardless of who triggered', () => {
-    const rows = collectAuditRows()
+  it('Dispatch rows are marked OPS lane regardless of who triggered', async () => {
+    const rows = await collectAuditRows()
     const dispatchRows = rows.filter((r) => r.entityType === 'Dispatch')
     for (const row of dispatchRows) {
       expect(row.laneOfEntry).toBe('OPS')
     }
   })
 
-  it('CcRule rows are marked OPS lane', () => {
-    const rows = collectAuditRows()
+  it('CcRule rows are marked OPS lane', async () => {
+    const rows = await collectAuditRows()
     const ccRows = rows.filter((r) => r.entityType === 'CcRule')
     for (const row of ccRows) {
       expect(row.laneOfEntry).toBe('OPS')
     }
   })
 
-  it('MOU entityHref points at /mous/<id>', () => {
-    const rows = collectAuditRows()
+  it('MOU entityHref points at /mous/<id>', async () => {
+    const rows = await collectAuditRows()
     const mouRows = rows.filter((r) => r.entityType === 'MOU')
     for (const row of mouRows) {
       expect(row.entityHref).toMatch(/^\/mous\//)
     }
   })
 
-  it('every MOU audit row has a recognized action (auto-link-exact-match for imported MOUs etc.)', () => {
+  it('every MOU audit row has a recognized action (auto-link-exact-match for imported MOUs etc.)', async () => {
     // Post Week 3 import the fixture MOUs are sourced from the
     // gsl-mou-system upstream and carry 'auto-link-exact-match' /
     // 'manual-relink' / 'create' audit entries (the GSLT-Cretile
     // normalisation path that Phase A4 added has zero exercising
     // records in the upstream cohort, surfaced in W3-A.1 report).
-    const rows = collectAuditRows()
+    const rows = await collectAuditRows()
     const mouRows = rows.filter((r) => r.entityType === 'MOU')
     const recognizedActions = new Set([
       'auto-link-exact-match', 'manual-relink', 'gslt-cretile-normalisation',
@@ -107,8 +107,8 @@ describe('collectAuditRows', () => {
     }
   })
 
-  it('contains the auto-create-from-feedback entry (Update 3 trigger)', () => {
-    const rows = collectAuditRows()
+  it('contains the auto-create-from-feedback entry (Update 3 trigger)', async () => {
+    const rows = await collectAuditRows()
     const found = rows.find(
       (r) => r.entry.action === 'auto-create-from-feedback',
     )
@@ -117,8 +117,8 @@ describe('collectAuditRows', () => {
     expect(found?.laneOfEntry).toBe('ACADEMICS')
   })
 
-  it('contains the p2-override entry from DIS-002 (Q-J exception path)', () => {
-    const rows = collectAuditRows()
+  it('contains the p2-override entry from DIS-002 (Q-J exception path)', async () => {
+    const rows = await collectAuditRows()
     const found = rows.find((r) => r.entry.action === 'p2-override')
     expect(found).toBeDefined()
     expect(found?.entityType).toBe('Dispatch')

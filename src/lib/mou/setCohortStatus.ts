@@ -21,10 +21,10 @@
  */
 
 import type { AuditEntry, CohortStatus, MOU, User } from '@/lib/types'
-import mousJson from '@/data/mous.json'
-import usersJson from '@/data/users.json'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
 import { canPerform } from '@/lib/auth/permissions'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { userRepo } from '@/lib/db/repos/user'
 
 export interface SetCohortStatusArgs {
   mouId: string
@@ -50,17 +50,19 @@ export interface SetCohortStatusDeps {
   now: () => Date
 }
 
-const defaultDeps: SetCohortStatusDeps = {
-  mous: mousJson as unknown as MOU[],
-  users: usersJson as unknown as User[],
-  enqueue: enqueueUpdate,
-  now: () => new Date(),
+async function defaultDeps(): Promise<SetCohortStatusDeps> {
+  const [mous, users] = await Promise.all([
+    mouRepo.findAll(),
+    userRepo.findAll(),
+  ])
+  return { mous, users, enqueue: enqueueUpdate, now: () => new Date() }
 }
 
 export async function setCohortStatus(
   args: SetCohortStatusArgs,
-  deps: SetCohortStatusDeps = defaultDeps,
+  depsOverride?: SetCohortStatusDeps,
 ): Promise<SetCohortStatusResult> {
+  const deps = depsOverride ?? (await defaultDeps())
   const user = deps.users.find((u) => u.id === args.changedBy)
   if (!user) return { ok: false, reason: 'unknown-user' }
   if (!canPerform(user, 'mou:edit-cohort-status')) {

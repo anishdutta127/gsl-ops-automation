@@ -25,36 +25,15 @@ import type {
   AuditEntry,
   CcRule,
   Communication,
-  Dispatch,
-  Escalation,
   EscalationLane,
   Feedback,
-  MOU,
-  School,
   SchoolGroup,
 } from '@/lib/types'
-import mousJson from '@/data/mous.json'
-import schoolsJson from '@/data/schools.json'
-import schoolGroupsJson from '@/data/school_groups.json'
-import communicationsJson from '@/data/communications.json'
-import escalationsJson from '@/data/escalations.json'
-import dispatchesJson from '@/data/dispatches.json'
-import feedbackJson from '@/data/feedback.json'
-import ccRulesJson from '@/data/cc_rules.json'
-
-// JSON imports come back with widened string types (action: string,
-// status: string, etc.), but the entity types declare narrow unions.
-// Cast through unknown to assert each fixture matches its entity
-// type by construction; the seed-dev pipeline guarantees this and
-// runtime drift would surface elsewhere.
-const mousData = mousJson as unknown as MOU[]
-const schoolsData = schoolsJson as unknown as School[]
-const schoolGroupsData = schoolGroupsJson as unknown as SchoolGroup[]
-const communicationsData = communicationsJson as unknown as Communication[]
-const escalationsData = escalationsJson as unknown as Escalation[]
-const dispatchesData = dispatchesJson as unknown as Dispatch[]
-const feedbackData = feedbackJson as unknown as Feedback[]
-const ccRulesData = ccRulesJson as unknown as CcRule[]
+import { mouRepo } from '@/lib/db/repos/mou'
+import { schoolRepo } from '@/lib/db/repos/school'
+import { escalationRepo } from '@/lib/db/repos/escalation'
+import { dispatchRepo } from '@/lib/db/repos/dispatch'
+import { schoolGroupRepo, communicationRepo, feedbackRepo, ccRuleRepo } from '@/lib/db/repos/leafRepos'
 
 export interface AuditRowData {
   entry: AuditEntry
@@ -82,8 +61,21 @@ function pushFromEntity<T extends EntityWithAudit>(
   }
 }
 
-export function collectAuditRows(): AuditRowData[] {
+export async function collectAuditRows(): Promise<AuditRowData[]> {
   const out: AuditRowData[] = []
+
+  const [mousData, schoolsData, schoolGroupsData, communicationsData,
+         escalationsData, dispatchesData, feedbackData, ccRulesData] =
+    await Promise.all([
+      mouRepo.findAll(),
+      schoolRepo.findAll(),
+      schoolGroupRepo.findAll() as unknown as Promise<SchoolGroup[]>,
+      communicationRepo.findAll() as unknown as Promise<Communication[]>,
+      escalationRepo.findAll(),
+      dispatchRepo.findAll(),
+      feedbackRepo.findAll() as unknown as Promise<Feedback[]>,
+      ccRuleRepo.findAll() as unknown as Promise<CcRule[]>,
+    ])
 
   pushFromEntity(out, mousData, (mou) => ({
     entityType: 'MOU',

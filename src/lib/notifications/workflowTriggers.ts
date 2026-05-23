@@ -24,16 +24,14 @@
  * trigger-wiring tests assert against.
  */
 
-import usersJson from '@/data/users.json'
 import type { User } from '@/lib/types'
+import { userRepo } from '@/lib/db/repos/user'
 import {
   broadcastNotification,
   recipientsByRole,
 } from './createNotification'
 import { getStageResponsibility } from '@/lib/stageResponsibility'
 import type { LifecycleStage } from '@/lib/statusTracker'
-
-const allUsers = usersJson as unknown as User[]
 
 const OPS_ROLES: User['role'][] = ['OpsHead', 'OpsEmployee']
 const SALES_ROLES: User['role'][] = ['SalesHead', 'SalesRep']
@@ -49,6 +47,7 @@ const FINANCE_ROLES: User['role'][] = ['Finance']
 function applyStageOverride(
   stage: LifecycleStage,
   baseRecipients: string[],
+  users: User[],
 ): string[] {
   const responsibility = getStageResponsibility(stage)
   const override = responsibility.responsibleUserId
@@ -56,7 +55,7 @@ function applyStageOverride(
   // Confirm the override user is still active. If they have been
   // deactivated, silently fall back to the department broadcast so the
   // signal does not vanish.
-  const user = allUsers.find((u) => u.id === override)
+  const user = users.find((u) => u.id === override)
   if (!user || !user.active) return baseRecipients
   // Narrow to the single user. We include the user FIRST so the
   // createNotification dedup keeps their delivery even if the
@@ -74,8 +73,9 @@ export interface EmitMouUploadedArgs {
 }
 
 export async function emitMouUploaded(args: EmitMouUploadedArgs): Promise<void> {
+  const allUsers = await userRepo.findAll()
   const baseRecipients = recipientsByRole(allUsers, [...OPS_ROLES, ...FINANCE_ROLES])
-  const recipients = applyStageOverride('mou-uploaded', baseRecipients)
+  const recipients = applyStageOverride('mou-uploaded', baseRecipients, allUsers)
   if (recipients.length === 0) return
   await broadcastNotification({
     recipientUserIds: recipients,
@@ -107,8 +107,9 @@ export interface EmitKitsAllocatedArgs {
 export async function emitKitsAllocatedForApproval(
   args: EmitKitsAllocatedArgs,
 ): Promise<void> {
+  const allUsers = await userRepo.findAll()
   const baseRecipients = recipientsByRole(allUsers, SALES_ROLES)
-  const recipients = applyStageOverride('dispatch-requested', baseRecipients)
+  const recipients = applyStageOverride('dispatch-requested', baseRecipients, allUsers)
   if (recipients.length === 0) return
   await broadcastNotification({
     recipientUserIds: recipients,
@@ -138,8 +139,9 @@ export interface EmitDispatchExecutedArgs {
 }
 
 export async function emitDispatchExecuted(args: EmitDispatchExecutedArgs): Promise<void> {
+  const allUsers = await userRepo.findAll()
   const baseRecipients = recipientsByRole(allUsers, [...OPS_ROLES, ...SALES_ROLES])
-  const recipients = applyStageOverride('shipment-in-progress', baseRecipients)
+  const recipients = applyStageOverride('shipment-in-progress', baseRecipients, allUsers)
   if (recipients.length === 0) return
   await broadcastNotification({
     recipientUserIds: recipients,
@@ -170,8 +172,9 @@ export interface EmitPodUploadedArgs {
 }
 
 export async function emitPodUploaded(args: EmitPodUploadedArgs): Promise<void> {
+  const allUsers = await userRepo.findAll()
   const baseRecipients = recipientsByRole(allUsers, [...FINANCE_ROLES, ...SALES_ROLES])
-  const recipients = applyStageOverride('delivered', baseRecipients)
+  const recipients = applyStageOverride('delivered', baseRecipients, allUsers)
   if (recipients.length === 0) return
   await broadcastNotification({
     recipientUserIds: recipients,

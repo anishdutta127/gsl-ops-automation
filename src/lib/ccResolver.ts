@@ -58,11 +58,11 @@ import type {
   School,
   User,
 } from '@/lib/types'
-import ccRulesJson from '@/data/cc_rules.json'
-import schoolsJson from '@/data/schools.json'
-import mousJson from '@/data/mous.json'
-import usersJson from '@/data/users.json'
-import salesTeamJson from '@/data/sales_team.json'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { schoolRepo } from '@/lib/db/repos/school'
+import { userRepo } from '@/lib/db/repos/user'
+import { salesTeamRepo } from '@/lib/db/repos/salesTeam'
+import { ccRuleRepo } from '@/lib/db/repos/leafRepos'
 import { normaliseCity } from '@/lib/cityAliases'
 
 // SPOC-DB rule text uses 'TTT' / 'GSL-Trainer'; the canonical
@@ -164,18 +164,22 @@ export interface CcResolverDeps {
   salesTeam: SalesPerson[]
 }
 
-const defaultDeps: CcResolverDeps = {
-  rules: ccRulesJson as unknown as CcRule[],
-  schools: schoolsJson as unknown as School[],
-  mous: mousJson as unknown as MOU[],
-  users: usersJson as unknown as User[],
-  salesTeam: salesTeamJson as unknown as SalesPerson[],
+async function defaultDeps(): Promise<CcResolverDeps> {
+  const [rules, schools, mous, users, salesTeam] = await Promise.all([
+    ccRuleRepo.findAll() as unknown as Promise<CcRule[]>,
+    schoolRepo.findAll(),
+    mouRepo.findAll(),
+    userRepo.findAll(),
+    salesTeamRepo.findAll(),
+  ])
+  return { rules, schools, mous, users, salesTeam }
 }
 
-export function resolveCcList(
+export async function resolveCcList(
   args: ResolveCcListArgs,
-  deps: CcResolverDeps = defaultDeps,
-): string[] {
+  depsOverride?: CcResolverDeps,
+): Promise<string[]> {
+  const deps = depsOverride ?? (await defaultDeps())
   const { context, schoolId, mouId } = args
   const school = deps.schools.find((s) => s.id === schoolId)
   if (!school) return []

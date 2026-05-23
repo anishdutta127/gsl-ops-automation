@@ -232,6 +232,135 @@ export const mouRepo = {
     })
   },
 
+  /**
+   * Partial update by field name. Updates ONLY the listed fields,
+   * leaving every other column (including audit_log) untouched.
+   *
+   * Use this in routes that want to atomically update a subset of
+   * fields without racing on read-modify-write of the whole row.
+   * The companion call for the audit entry is `appendAudit`, which
+   * uses JSONB `||` concat at SQL level so concurrent appends do not
+   * lose entries.
+   *
+   * Json-mode: read the current row, merge the patch, enqueue a full
+   * update (since the drainer's replace-by-id semantics overwrites
+   * the row; we never want to lose fields). Postgres-mode: dynamic
+   * UPDATE that touches only the patched columns.
+   *
+   * JSONB columns: payment_schedule, payment_schedules, yearly_pricing,
+   * billing_block, draft_variables, dispatch_override,
+   * gradewise_distribution, student_count_event_ids. These are wrapped
+   * with sql.json() before sending.
+   */
+  async updatePartial(
+    id: string,
+    patch: Partial<MOU>,
+    opts?: { queuedBy?: string },
+  ): Promise<void> {
+    if (currentBackend() === 'postgres') {
+      const sql = getSql()
+      const JSONB_COLS = new Set([
+        'payment_schedule', 'payment_schedules', 'yearly_pricing',
+        'billing_block', 'draft_variables', 'dispatch_override',
+        'gradewise_distribution', 'student_count_event_ids',
+      ])
+      const CAMEL_TO_SNAKE: Record<string, string> = {
+        schoolId: 'school_id', schoolName: 'school_name', programme: 'programme',
+        programmeSubType: 'programme_sub_type', schoolScope: 'school_scope',
+        schoolGroupId: 'school_group_id', status: 'status', cohortStatus: 'cohort_status',
+        academicYear: 'academic_year', effectiveDate: 'effective_date',
+        startDate: 'start_date', endDate: 'end_date', numberOfYears: 'number_of_years',
+        studentsMou: 'students_mou', studentsActual: 'students_actual',
+        studentsVariance: 'students_variance', studentsVariancePct: 'students_variance_pct',
+        spWithoutTax: 'sp_without_tax', spWithTax: 'sp_with_tax',
+        contractValue: 'contract_value', received: 'received', tds: 'tds',
+        balance: 'balance', receivedPct: 'received_pct', trainerModel: 'trainer_model',
+        salesPersonId: 'sales_person_id', templateVersion: 'template_version',
+        generatedAt: 'generated_at', notes: 'notes', delayNotes: 'delay_notes',
+        daysToExpiry: 'days_to_expiry', salesChannel: 'sales_channel',
+        schoolCrmId: 'school_crm_id', signedMouPdfPath: 'signed_mou_pdf_path',
+        importNotes: 'import_notes', productSelection: 'product_selection',
+        paymentSchedule: 'payment_schedule', paymentSchedules: 'payment_schedules',
+        yearlyPricing: 'yearly_pricing', billingBlock: 'billing_block',
+        draftVariables: 'draft_variables', dispatchOverride: 'dispatch_override',
+        gradewiseDistribution: 'gradewise_distribution',
+        studentCountEventIds: 'student_count_event_ids',
+      }
+      const updates: { col: string; val: unknown; jsonb: boolean }[] = []
+      for (const [k, v] of Object.entries(patch)) {
+        if (k === 'id' || k === 'auditLog') continue
+        const col = CAMEL_TO_SNAKE[k]
+        if (!col) continue
+        updates.push({ col, val: v, jsonb: JSONB_COLS.has(col) })
+      }
+      if (updates.length === 0) return
+      // postgres.js: build the SET clause via the sql() helper. JSONB
+      // columns must be wrapped with sql.json() so they're sent as
+      // JSONB, not as text. Scalars pass through unchanged.
+      const setObj: Record<string, unknown> = {}
+      for (const u of updates) {
+        if (u.jsonb) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          setObj[u.col] = u.val == null ? null : sql.json(u.val as never)
+        } else {
+          setObj[u.col] = u.val ?? null
+        }
+      }
+      await sql`UPDATE mous SET ${sql(setObj)} WHERE id = ${id}`
+      return
+    }
+    const m = jsonMous.find((x) => x.id === id)
+    if (!m) return
+    await enqueueUpdate({
+      queuedBy: opts?.queuedBy ?? 'system',
+      entity: 'mou',
+      operation: 'update',
+      payload: { ...m, ...patch } as unknown as Record<string, unknown>,
+    })
+  },
+
+  /**
+   * Atomic "update fields + append audit entry" in a single logical call.
+   *
+   * Postgres mode: two SQL statements; the audit `||` concat is atomic
+   * and the partial UPDATE only touches the listed columns. Two
+   * parallel callers cannot race because (a) the SET doesn't touch
+   * columns the other caller is touching and (b) the audit concat is
+   * server-side, not client-side spread.
+   *
+   * Json mode: a single enqueueUpdate carrying the full merged payload.
+   * The drainer's replace-by-id semantics work correctly because we
+   * spread the existing MOU and apply both the patch and the audit
+   * entry in one snapshot. Two parallel json-mode callers DO race
+   * here (last writer wins), but json mode is the legacy path and
+   * already had this property pre-Part-7.
+   */
+  async updateWithAudit(
+    id: string,
+    patch: Partial<MOU>,
+    audit: AuditEntry,
+    opts?: { queuedBy?: string },
+  ): Promise<void> {
+    if (currentBackend() === 'postgres') {
+      await this.updatePartial(id, patch, opts)
+      await this.appendAudit(id, audit)
+      return
+    }
+    const m = jsonMous.find((x) => x.id === id)
+    if (!m) return
+    const updated: MOU = {
+      ...m,
+      ...patch,
+      auditLog: [...(m.auditLog ?? []), audit],
+    }
+    await enqueueUpdate({
+      queuedBy: opts?.queuedBy ?? 'system',
+      entity: 'mou',
+      operation: 'update',
+      payload: updated as unknown as Record<string, unknown>,
+    })
+  },
+
   async appendAudit(id: string, entry: AuditEntry): Promise<void> {
     if (currentBackend() === 'postgres') {
       const sql = getSql()

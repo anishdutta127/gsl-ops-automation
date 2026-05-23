@@ -135,7 +135,7 @@ async function renderPreviewPanel(reminderId: string, userId: string) {
     | { subject: string; body: string; to: string; cc: string[] }
     | null = null
   let previewError: string | null = null
-  const rendered = renderReminder({
+  const rendered = await renderReminder({
     reminderId: reminder.id,
     composedBy: userId,
     reminder,

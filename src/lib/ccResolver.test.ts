@@ -227,9 +227,9 @@ function ruleById(id: string): CcRule {
 // ----------------------------------------------------------------------------
 
 describe('Q-G Test 7: ccRuleResolver', () => {
-  it('CCR-SW-RAIPUR-PUNE-NAGPUR fires on all 7 contexts for matching schools', () => {
+  it('CCR-SW-RAIPUR-PUNE-NAGPUR fires on all 7 contexts for matching schools', async () => {
     for (const context of ALL_CONTEXTS) {
-      const result = resolveCcList(
+      const result = await resolveCcList(
         { context, schoolId: greenfieldPune.id, mouId: mouGreenfieldGsl.id },
         defaultDeps,
       )
@@ -237,21 +237,21 @@ describe('Q-G Test 7: ccRuleResolver', () => {
     }
   })
 
-  it('CCR-SW-RAIPUR-PUNE-NAGPUR does not fire for South-West schools outside the named cities', () => {
+  it('CCR-SW-RAIPUR-PUNE-NAGPUR does not fire for South-West schools outside the named cities', async () => {
     const deps: CcResolverDeps = { ...defaultDeps, rules: [ruleById('CCR-SW-RAIPUR-PUNE-NAGPUR')] }
-    const result = resolveCcList(
+    const result = await resolveCcList(
       { context: 'all-communications', schoolId: sunriseHyd.id, mouId: null },
       deps,
     )
     expect(result).toEqual([])
   })
 
-  it('CCR-EAST-WELCOME fires only on welcome-note (literal scoping)', () => {
+  it('CCR-EAST-WELCOME fires only on welcome-note (literal scoping)', async () => {
     const deps: CcResolverDeps = { ...defaultDeps, rules: [ruleById('CCR-EAST-WELCOME')] }
     const expected = [emailFor('sp-rohan')]
 
     expect(
-      resolveCcList(
+      await resolveCcList(
         { context: 'welcome-note', schoolId: springwoodKol.id, mouId: null },
         deps,
       ),
@@ -259,7 +259,7 @@ describe('Q-G Test 7: ccRuleResolver', () => {
 
     for (const context of ALL_CONTEXTS) {
       if (context === 'welcome-note') continue
-      const result = resolveCcList(
+      const result = await resolveCcList(
         { context, schoolId: springwoodKol.id, mouId: null },
         deps,
       )
@@ -267,59 +267,59 @@ describe('Q-G Test 7: ccRuleResolver', () => {
     }
   })
 
-  it('CCR-NORTH-1-7 sr-no-range matches schools in the named range', () => {
+  it('CCR-NORTH-1-7 sr-no-range matches schools in the named range', async () => {
     const deps: CcResolverDeps = { ...defaultDeps, rules: [ruleById('CCR-NORTH-1-7')] }
-    const result = resolveCcList(
+    const result = await resolveCcList(
       { context: 'all-communications', schoolId: oakwoodDelhi.id, mouId: null },
       deps,
     )
     expect(result).toEqual([emailFor('sp-neha')])
   })
 
-  it('CCR-NORTH-1-7 does not match a school outside the sr-no lookup', () => {
+  it('CCR-NORTH-1-7 does not match a school outside the sr-no lookup', async () => {
     const deps: CcResolverDeps = { ...defaultDeps, rules: [ruleById('CCR-NORTH-1-7')] }
-    const result = resolveCcList(
+    const result = await resolveCcList(
       { context: 'all-communications', schoolId: greenfieldPune.id, mouId: null },
       deps,
     )
     expect(result).toEqual([])
   })
 
-  it('CCR-TTT-FEEDBACK fires only on TT-mode MOUs and only for feedback-request', () => {
+  it('CCR-TTT-FEEDBACK fires only on TT-mode MOUs and only for feedback-request', async () => {
     const deps: CcResolverDeps = { ...defaultDeps, rules: [ruleById('CCR-TTT-FEEDBACK')] }
     expect(
-      resolveCcList(
+      await resolveCcList(
         { context: 'feedback-request', schoolId: oakwoodDelhi.id, mouId: mouOakwoodTtt.id },
         deps,
       ),
     ).toEqual([emailFor('shashank.s')])
 
     expect(
-      resolveCcList(
+      await resolveCcList(
         { context: 'welcome-note', schoolId: oakwoodDelhi.id, mouId: mouOakwoodTtt.id },
         deps,
       ),
     ).toEqual([])
 
     expect(
-      resolveCcList(
+      await resolveCcList(
         { context: 'feedback-request', schoolId: greenfieldPune.id, mouId: mouGreenfieldGsl.id },
         deps,
       ),
     ).toEqual([])
 
     expect(
-      resolveCcList(
+      await resolveCcList(
         { context: 'feedback-request', schoolId: oakwoodDelhi.id, mouId: null },
         deps,
       ),
     ).toEqual([])
   })
 
-  it('CCR-GSLT-ALL fires on every context for GSL-T MOUs (alias normalisation)', () => {
+  it('CCR-GSLT-ALL fires on every context for GSL-T MOUs (alias normalisation)', async () => {
     const deps: CcResolverDeps = { ...defaultDeps, rules: [ruleById('CCR-GSLT-ALL')] }
     for (const context of ALL_CONTEXTS) {
-      const result = resolveCcList(
+      const result = await resolveCcList(
         { context, schoolId: greenfieldPune.id, mouId: mouGreenfieldGsl.id },
         deps,
       )
@@ -327,8 +327,8 @@ describe('Q-G Test 7: ccRuleResolver', () => {
     }
   })
 
-  it('overlapping ccUserIds dedupe across multiple matching rules', () => {
-    const result = resolveCcList(
+  it('overlapping ccUserIds dedupe across multiple matching rules', async () => {
+    const result = await resolveCcList(
       { context: 'welcome-note', schoolId: narayanaAsn.id, mouId: mouNarayana.id },
       defaultDeps,
     )
@@ -337,49 +337,49 @@ describe('Q-G Test 7: ccRuleResolver', () => {
     expect(occurrences).toBe(1)
   })
 
-  it('disabled rules (enabled=false) do not contribute to the result', () => {
+  it('disabled rules (enabled=false) do not contribute to the result', async () => {
     const disabled: CcRule = { ...ruleById('CCR-EAST-WELCOME'), enabled: false }
     const deps: CcResolverDeps = { ...defaultDeps, rules: [disabled] }
-    const result = resolveCcList(
+    const result = await resolveCcList(
       { context: 'welcome-note', schoolId: springwoodKol.id, mouId: null },
       deps,
     )
     expect(result).toEqual([])
   })
 
-  it('CCR-ESCALATION-LEADERSHIP region=ALL matches every school but only on escalation-notification', () => {
+  it('CCR-ESCALATION-LEADERSHIP region=ALL matches every school but only on escalation-notification', async () => {
     const deps: CcResolverDeps = { ...defaultDeps, rules: [ruleById('CCR-ESCALATION-LEADERSHIP')] }
     const ameet = emailFor('ameet.z')
     for (const s of allSchools) {
-      const result = resolveCcList(
+      const result = await resolveCcList(
         { context: 'escalation-notification', schoolId: s.id, mouId: null },
         deps,
       )
       expect(result).toEqual([ameet])
     }
     expect(
-      resolveCcList(
+      await resolveCcList(
         { context: 'welcome-note', schoolId: greenfieldPune.id, mouId: null },
         deps,
       ),
     ).toEqual([])
   })
 
-  it('unknown ccUserId is silently skipped (not crashed on)', () => {
+  it('unknown ccUserId is silently skipped (not crashed on)', async () => {
     const ghost: CcRule = {
       ...ruleById('CCR-ESCALATION-LEADERSHIP'),
       ccUserIds: ['does-not-exist', 'ameet.z'],
     }
     const deps: CcResolverDeps = { ...defaultDeps, rules: [ghost] }
-    const result = resolveCcList(
+    const result = await resolveCcList(
       { context: 'escalation-notification', schoolId: greenfieldPune.id, mouId: null },
       deps,
     )
     expect(result).toEqual([emailFor('ameet.z')])
   })
 
-  it('unknown schoolId returns []', () => {
-    const result = resolveCcList(
+  it('unknown schoolId returns []', async () => {
+    const result = await resolveCcList(
       { context: 'all-communications', schoolId: 'SCH-DOES-NOT-EXIST', mouId: null },
       defaultDeps,
     )
@@ -412,9 +412,9 @@ describe('Q-G Test 7: ccRuleResolver', () => {
           r.contexts.includes(context) ||
           r.contexts.includes('all-communications')
         const expected = fires ? r.ccUserIds.map((id) => emailFor(id)) : []
-        it(`${r.id} x ${context} -> ${fires ? expected.join(',') : '[]'}`, () => {
+        it(`${r.id} x ${context} -> ${fires ? expected.join(',') : '[]'}`, async () => {
           const deps: CcResolverDeps = { ...defaultDeps, rules: [r] }
-          const result = resolveCcList(
+          const result = await resolveCcList(
             { context, schoolId: fixture.schoolId, mouId: fixture.mouId },
             deps,
           )

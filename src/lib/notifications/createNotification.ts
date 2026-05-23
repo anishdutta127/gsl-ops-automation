@@ -42,10 +42,10 @@ import type {
   NotificationKind,
   User,
 } from '@/lib/types'
-import notificationsJson from '@/data/notifications.json'
-import usersJson from '@/data/users.json'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
 import { canPerform } from '@/lib/auth/permissions'
+import { notificationRepo } from '@/lib/db/repos/notification'
+import { userRepo } from '@/lib/db/repos/user'
 import { PAYLOAD_VALIDATORS } from './payload_contracts'
 
 export type NotificationSkipReason =
@@ -91,13 +91,19 @@ export interface CreateNotificationDeps {
   dedupWindowMs: number
 }
 
-const defaultDeps: CreateNotificationDeps = {
-  notifications: notificationsJson as unknown as Notification[],
-  users: usersJson as unknown as User[],
-  enqueue: enqueueUpdate,
-  uuid: () => crypto.randomUUID(),
-  now: () => new Date(),
-  dedupWindowMs: 60_000,
+async function defaultDeps(): Promise<CreateNotificationDeps> {
+  const [notifications, users] = await Promise.all([
+    notificationRepo.findAll(),
+    userRepo.findAll(),
+  ])
+  return {
+    notifications,
+    users,
+    enqueue: enqueueUpdate,
+    uuid: () => crypto.randomUUID(),
+    now: () => new Date(),
+    dedupWindowMs: 60_000,
+  }
 }
 
 const SYSTEM_SENDER = 'system' as const
@@ -108,7 +114,7 @@ const SYSTEM_SENDER = 'system' as const
 
 export async function createNotification(
   args: CreateNotificationArgs,
-  deps: CreateNotificationDeps = defaultDeps,
+  depsOverride?: CreateNotificationDeps,
 ): Promise<CreateNotificationResult> {
   return broadcastNotification(
     {
@@ -121,7 +127,7 @@ export async function createNotification(
       payload: args.payload,
       relatedEntityId: args.relatedEntityId,
     },
-    deps,
+    depsOverride,
   )
 }
 
@@ -131,8 +137,9 @@ export async function createNotification(
 
 export async function broadcastNotification(
   args: BroadcastNotificationArgs,
-  deps: CreateNotificationDeps = defaultDeps,
+  depsOverride?: CreateNotificationDeps,
 ): Promise<CreateNotificationResult> {
+  const deps = depsOverride ?? (await defaultDeps())
   // Payload validation up front (one validator call regardless of
   // recipient count; the validator is pure).
   const validator = PAYLOAD_VALIDATORS[args.kind]

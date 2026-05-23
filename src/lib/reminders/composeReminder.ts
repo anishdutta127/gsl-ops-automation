@@ -49,16 +49,10 @@ import type {
   CcRuleContext,
   Communication,
   CommunicationType,
-  Dispatch,
   Feedback,
   IntakeRecord,
-  MOU,
-  Payment,
-  SalesPerson,
-  School,
   User,
 } from '@/lib/types'
-import ccRulesJson from '@/data/cc_rules.json'
 import {
   REMINDER_TEMPLATES,
   type ReminderKind,
@@ -69,16 +63,15 @@ import {
   type DetectDueRemindersDeps,
   type DueReminder,
 } from '@/lib/reminders/detectDueReminders'
-import mousJson from '@/data/mous.json'
-import schoolsJson from '@/data/schools.json'
-import paymentsJson from '@/data/payments.json'
-import dispatchesJson from '@/data/dispatches.json'
-import intakeRecordsJson from '@/data/intake_records.json'
-import communicationsJson from '@/data/communications.json'
-import feedbackJson from '@/data/feedback.json'
-import salesTeamJson from '@/data/sales_team.json'
-import usersJson from '@/data/users.json'
-import thresholdsJson from '@/data/reminder_thresholds.json'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { schoolRepo } from '@/lib/db/repos/school'
+import { paymentRepo } from '@/lib/db/repos/payment'
+import { dispatchRepo } from '@/lib/db/repos/dispatch'
+import { salesTeamRepo } from '@/lib/db/repos/salesTeam'
+import { userRepo } from '@/lib/db/repos/user'
+import {
+  ccRuleRepo, intakeRecordRepo, communicationRepo, feedbackRepo, reminderThresholdRepo,
+} from '@/lib/db/repos/leafRepos'
 import { canPerform } from '@/lib/auth/permissions'
 import { resolveCcList } from '@/lib/ccResolver'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
@@ -156,23 +149,43 @@ export interface ComposeReminderDeps extends DetectDueRemindersDeps {
   resolveCc: typeof resolveCcList
 }
 
-const defaultDeps: ComposeReminderDeps = {
-  mous: mousJson as unknown as MOU[],
-  schools: schoolsJson as unknown as School[],
-  payments: paymentsJson as unknown as Payment[],
-  dispatches: dispatchesJson as unknown as Dispatch[],
-  intakeRecords: intakeRecordsJson as unknown as IntakeRecord[],
-  communications: communicationsJson as unknown as Communication[],
-  feedback: feedbackJson as unknown as Feedback[],
-  salesPersons: salesTeamJson as unknown as SalesPerson[],
-  thresholds: thresholdsJson as unknown as ComposeReminderDeps['thresholds'],
-  users: usersJson as unknown as User[],
-  ccRules: ccRulesJson as unknown as CcRule[],
-  enqueue: enqueueUpdate,
-  uuid: () => crypto.randomUUID(),
-  appUrl: () => process.env.NEXT_PUBLIC_APP_URL,
-  now: () => new Date(),
-  resolveCc: resolveCcList,
+async function defaultDeps(): Promise<ComposeReminderDeps> {
+  const [
+    mous, schools, payments, dispatches, intakeRecords, communications,
+    feedback, salesPersons, thresholdsRows, users, ccRulesRows,
+  ] = await Promise.all([
+    mouRepo.findAll(),
+    schoolRepo.findAll(),
+    paymentRepo.findAll(),
+    dispatchRepo.findAll(),
+    intakeRecordRepo.findAll() as unknown as Promise<IntakeRecord[]>,
+    communicationRepo.findAll() as unknown as Promise<Communication[]>,
+    feedbackRepo.findAll() as unknown as Promise<Feedback[]>,
+    salesTeamRepo.findAll(),
+    reminderThresholdRepo.findAll(),
+    userRepo.findAll(),
+    ccRuleRepo.findAll() as unknown as Promise<CcRule[]>,
+  ])
+  // reminderThresholds JSON shape is { kind: row }; the repo's
+  // findAll() emits row[] (each with .kind). Rehydrate the object
+  // shape callers expect.
+  const thresholds = thresholdsRows.reduce<ComposeReminderDeps['thresholds']>(
+    (acc, r) => {
+      const k = (r as unknown as { kind?: string }).kind ?? null
+      if (k) (acc as Record<string, unknown>)[k] = r
+      return acc
+    },
+    {} as ComposeReminderDeps['thresholds'],
+  )
+  return {
+    mous, schools, payments, dispatches, intakeRecords, communications,
+    feedback, salesPersons, thresholds, users, ccRules: ccRulesRows,
+    enqueue: enqueueUpdate,
+    uuid: () => crypto.randomUUID(),
+    appUrl: () => process.env.NEXT_PUBLIC_APP_URL,
+    now: () => new Date(),
+    resolveCc: resolveCcList,
+  }
 }
 
 // ----------------------------------------------------------------------------
@@ -188,10 +201,11 @@ export type RenderReminderResult =
     }
   | { ok: false; reason: ComposeReminderFailureReason }
 
-export function renderReminder(
+export async function renderReminder(
   args: ComposeReminderArgs,
-  deps: ComposeReminderDeps = defaultDeps,
-): RenderReminderResult {
+  depsOverride?: ComposeReminderDeps,
+): Promise<RenderReminderResult> {
+  const deps = depsOverride ?? (await defaultDeps())
   const user = deps.users.find((u) => u.id === args.composedBy)
   if (!user) return { ok: false, reason: 'unknown-user' }
   if (!canPerform(user, 'reminder:create')) {
@@ -218,7 +232,7 @@ export function renderReminder(
   const subject = applyPlaceholders(template.subject, placeholderValues)
   const body = applyPlaceholders(template.body, placeholderValues)
 
-  const ccEmails = deps.resolveCc(
+  const ccEmails = await deps.resolveCc(
     {
       context: KIND_TO_CC_CONTEXT[reminder.kind],
       schoolId: reminder.schoolId,
@@ -247,9 +261,10 @@ export function renderReminder(
 
 export async function composeReminder(
   args: ComposeReminderArgs,
-  deps: ComposeReminderDeps = defaultDeps,
+  depsOverride?: ComposeReminderDeps,
 ): Promise<ComposeReminderResult> {
-  const rendered = renderReminder(args, deps)
+  const deps = depsOverride ?? (await defaultDeps())
+  const rendered = await renderReminder(args, deps)
   if (!rendered.ok) return rendered
   const { reminder, composed, user } = rendered
   const { subject, body, to, ccEmails } = composed
