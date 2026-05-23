@@ -22,21 +22,11 @@ import { getCurrentUser } from '@/lib/auth/session'
 import { canEditFinanceData } from '@/lib/access'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
 import { recordReceipt } from '@/lib/payment/recordReceipt'
-import type {
-  MOU,
-  Payment,
-  PaymentLog,
-  School,
-} from '@/lib/types'
-import schoolsJson from '@/data/schools.json'
-import mousJson from '@/data/mous.json'
-import paymentsJson from '@/data/payments.json'
-import paymentLogsJson from '@/data/payment_logs.json'
-
-const allSchools = schoolsJson as unknown as School[]
-const allMous = mousJson as unknown as MOU[]
-const allPayments = paymentsJson as unknown as Payment[]
-const allLogs = paymentLogsJson as unknown as PaymentLog[]
+import type { PaymentLog } from '@/lib/types'
+import { schoolRepo } from '@/lib/db/repos/school'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { paymentRepo } from '@/lib/db/repos/payment'
+import { paymentLogRepo } from '@/lib/db/repos/leafRepos'
 
 interface IncomingRow {
   bankRef: string
@@ -82,6 +72,12 @@ export async function POST(request: Request) {
     )
   }
 
+  const [allSchools, allMous, allPayments, allLogs] = await Promise.all([
+    schoolRepo.findAll(),
+    mouRepo.findAll(),
+    paymentRepo.findAll(),
+    paymentLogRepo.findAll() as unknown as Promise<PaymentLog[]>,
+  ])
   const existingRefs = new Set(
     allLogs
       .map((l) => (l.reference ?? '').trim().toUpperCase())

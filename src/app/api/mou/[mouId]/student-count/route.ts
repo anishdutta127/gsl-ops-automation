@@ -13,23 +13,20 @@ import {
   applyCountChange,
   type ApplyCountChangeDeps,
 } from '@/lib/mou/applyCountChange'
-import type { MOU, Payment, StudentCountEvent, User } from '@/lib/types'
-import mousJson from '@/data/mous.json'
-import paymentsJson from '@/data/payments.json'
-import usersJson from '@/data/users.json'
-import eventsJson from '@/data/student_count_events.json'
+import type { StudentCountEvent } from '@/lib/types'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { paymentRepo } from '@/lib/db/repos/payment'
+import { userRepo } from '@/lib/db/repos/user'
+import { studentCountEventRepo } from '@/lib/db/repos/leafRepos'
 
-const allMous = mousJson as unknown as MOU[]
-const allPayments = paymentsJson as unknown as Payment[]
-const allUsers = usersJson as unknown as User[]
-const allEvents = eventsJson as unknown as StudentCountEvent[]
-
-const deps: ApplyCountChangeDeps = {
-  mous: allMous,
-  payments: allPayments,
-  users: allUsers,
-  events: allEvents,
-  now: () => new Date(),
+async function buildDeps(): Promise<ApplyCountChangeDeps> {
+  const [mous, payments, users, events] = await Promise.all([
+    mouRepo.findAll(),
+    paymentRepo.findAll(),
+    userRepo.findAll(),
+    studentCountEventRepo.findAll() as unknown as Promise<StudentCountEvent[]>,
+  ])
+  return { mous, payments, users, events, now: () => new Date() }
 }
 
 interface RouteParams {
@@ -64,6 +61,7 @@ export async function POST(request: Request, { params }: RouteParams) {
     return errorTo('reason-too-short')
   }
 
+  const deps = await buildDeps()
   const result = applyCountChange(
     {
       mouId,

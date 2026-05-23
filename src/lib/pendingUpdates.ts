@@ -156,11 +156,50 @@ async function dispatchToRepo(params: {
       else throw new Error(`vexProduct ${operation} is not supported via repo`)
       return
     }
-    // Leaf entities + miscellaneous: not yet dispatched to repo in
-    // postgres mode. Fall back to the queue (works because the cron
-    // would still drain into JSON, but in postgres mode we want
-    // postgres writes - flag this as a TODO so the cutover surfaces
-    // any usage during verification).
+    case 'adjustment': {
+      const { adjustmentRepo } = await import('./db/repos/leafRepos')
+      if (operation === 'create') await adjustmentRepo.create(payload as never, { queuedBy })
+      else if (operation === 'update') await adjustmentRepo.update(payload as never, { queuedBy })
+      else throw new Error(`adjustment ${operation} is not supported via repo`)
+      return
+    }
+    case 'agreement': {
+      const { agreementRepo } = await import('./db/repos/leafRepos')
+      if (operation === 'create') await agreementRepo.create(payload as never, { queuedBy })
+      else if (operation === 'update') await agreementRepo.update(payload as never, { queuedBy })
+      else throw new Error(`agreement ${operation} is not supported via repo`)
+      return
+    }
+    case 'magicLinkToken': {
+      const { magicLinkTokenRepo } = await import('./db/repos/leafRepos')
+      if (operation === 'create') await magicLinkTokenRepo.create(payload as never, { queuedBy })
+      else if (operation === 'update') await magicLinkTokenRepo.update(payload as never, { queuedBy })
+      else throw new Error(`magicLinkToken ${operation} is not supported via repo`)
+      return
+    }
+    case 'paymentLog': {
+      const { paymentLogRepo } = await import('./db/repos/leafRepos')
+      if (operation === 'create') await paymentLogRepo.create(payload as never, { queuedBy })
+      else if (operation === 'update') await paymentLogRepo.update(payload as never, { queuedBy })
+      else throw new Error(`paymentLog ${operation} is not supported via repo`)
+      return
+    }
+    case 'studentCountEvent': {
+      const { studentCountEventRepo } = await import('./db/repos/leafRepos')
+      if (operation === 'create') await studentCountEventRepo.create(payload as never, { queuedBy })
+      else throw new Error(`studentCountEvent ${operation} is not supported via repo`)
+      return
+    }
+    case 'vexDispatch': {
+      const { vexDispatchRepo } = await import('./db/repos/leafRepos')
+      if (operation === 'create') await vexDispatchRepo.create(payload as never, { queuedBy })
+      else if (operation === 'update') await vexDispatchRepo.update(payload as never, { queuedBy })
+      else throw new Error(`vexDispatch ${operation} is not supported via repo`)
+      return
+    }
+    // Remaining leaf entities not yet exercised by any unmigrated write
+    // call site. Flag with throw so cutover-mode usage surfaces during
+    // verification; falls back to queue via the outer catch.
     default: {
       throw new Error(`postgres dispatch not implemented for entity=${entity}`)
     }

@@ -22,9 +22,7 @@ import type {
   VexDispatch,
   VexDispatchStatusV3,
 } from '@/lib/mouSystem/types'
-import vexDispatchesJson from '@/data/vex_dispatches.json'
-
-const allDispatches = vexDispatchesJson as unknown as VexDispatch[]
+import { vexDispatchRepo } from '@/lib/db/repos/leafRepos'
 
 const ALLOWED: VexDispatchStatusV3[] = [
   'Requested',
@@ -62,8 +60,8 @@ export async function POST(request: Request, ctx: RouteContext) {
     )
   }
 
-  const dispatch = allDispatches.find((d) => d.id === dispatchId && d.piId === id)
-  if (!dispatch) {
+  const dispatch = (await vexDispatchRepo.findById(dispatchId)) as VexDispatch | null
+  if (!dispatch || dispatch.piId !== id) {
     return NextResponse.json({ error: 'not-found' }, { status: 404 })
   }
 

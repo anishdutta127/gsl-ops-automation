@@ -555,7 +555,191 @@ const FUNCTIONS = [
   },
 
   // -------------------------------------------------------------------------
-  // 6. MOU registry read: page renders count matches SQL
+  // Priority 1: bridge-dispatch proof for each of the 6 newly-bridged entities.
+  // Each function: INSERT (simulating the bridge's repo.create() dispatch)
+  // -> SQL verify the row exists with the right value -> cleanup.
+  // For routes that do JSONB RMW (agreement edit, vex dispatch transition),
+  // also assert audit_log || concat works.
+  // -------------------------------------------------------------------------
+  {
+    name: 'bridge-adjustment: INSERT lands in postgres',
+    category: 'write',
+    run: async () => {
+      const id = `ADJ-P5BTEST-${Date.now().toString(36).slice(-6).toUpperCase()}`
+      const mou = (await sql`
+        SELECT m.id, m.school_id, p.id AS payment_id
+        FROM mous m INNER JOIN payments p ON p.mou_id = m.id
+        WHERE m.cohort_status = 'active' LIMIT 1
+      `)[0]
+      await sql`
+        INSERT INTO adjustments (id, mou_id, school_id, triggered_by_event,
+          triggered_at, triggered_by, original_installment_id,
+          applied_to_installment_id, amount_delta, reason,
+          before_amount, after_amount, status)
+        VALUES (${id}, ${mou.id}, ${mou.school_id}, 'manual',
+          ${new Date().toISOString()}, 'parity-test',
+          ${mou.payment_id}, NULL, -100, 'P1 bridge proof', 1000, 900, 'Active')
+      `
+      const r = await sql`SELECT id, amount_delta, status FROM adjustments WHERE id = ${id}`
+      const ok = r.length === 1 && Number(r[0].amount_delta) === -100
+      await sql`DELETE FROM adjustments WHERE id = ${id}`
+      return {
+        layer1: { drove: 'INSERT adjustments (simulates bridge dispatch)' },
+        layer2: { foundCount: r.length, amountDelta: r[0]?.amount_delta, status: r[0]?.status },
+        layer3: { ok },
+        pass: ok,
+        notes: `adjustment ${id}: write lands in postgres`,
+      }
+    },
+  },
+
+  {
+    name: 'bridge-agreement: INSERT + audit-append (JSONB || concat)',
+    category: 'write',
+    run: async () => {
+      const id = `AGR-P5BTEST-${Date.now().toString(36).slice(-6).toUpperCase()}`
+      await sql`
+        INSERT INTO agreements (id, type, party_name, nature_of_agreement, start_date, audit_log)
+        VALUES (${id}, 'Vendor', 'P1 Vendor', 'NDA test', '2026-01-01',
+          ${sql.json([{ timestamp: new Date().toISOString(), user: 'parity-test', action: 'create' }])}::jsonb)
+      `
+      await sql`
+        UPDATE agreements SET audit_log = audit_log || ${sql.json([{ timestamp: new Date().toISOString(), user: 'parity-test', action: 'update' }])}::jsonb
+        WHERE id = ${id}
+      `
+      const r = await sql`SELECT jsonb_array_length(audit_log) AS len FROM agreements WHERE id = ${id}`
+      const ok = r[0].len === 2
+      await sql`DELETE FROM agreements WHERE id = ${id}`
+      return {
+        layer1: { drove: 'INSERT + UPDATE audit_log || concat' },
+        layer2: { auditLen: r[0].len },
+        layer3: { ok },
+        pass: ok,
+        notes: `agreement ${id}: write lands; atomic audit-append works`,
+      }
+    },
+  },
+
+  {
+    name: 'bridge-magicLinkToken: INSERT + view-count update',
+    category: 'write',
+    run: async () => {
+      const id = `MLT-P5BTEST-${Date.now().toString(36).slice(-6).toUpperCase()}`
+      const mou = (await sql`SELECT id FROM mous WHERE cohort_status = 'active' LIMIT 1`)[0]
+      const now = new Date().toISOString()
+      await sql`
+        INSERT INTO magic_link_tokens (id, purpose, mou_id, instalment_seq,
+          spoc_email, issued_at, expires_at, view_count)
+        VALUES (${id}, 'status-view', ${mou.id}, 1, 'test@example.com', ${now}, ${now}, 0)
+      `
+      await sql`
+        UPDATE magic_link_tokens SET view_count = view_count + 1, last_viewed_at = ${now}
+        WHERE id = ${id}
+      `
+      const r = await sql`SELECT view_count FROM magic_link_tokens WHERE id = ${id}`
+      const ok = r[0].view_count === 1
+      await sql`DELETE FROM magic_link_tokens WHERE id = ${id}`
+      return {
+        layer1: { drove: 'INSERT + view_count atomic increment' },
+        layer2: { viewCount: r[0].view_count },
+        layer3: { ok },
+        pass: ok,
+        notes: `magicLinkToken ${id}: usage-tracking write lands`,
+      }
+    },
+  },
+
+  {
+    name: 'bridge-paymentLog: INSERT + audit-append',
+    category: 'write',
+    run: async () => {
+      const id = `PL-P5BTEST-${Date.now().toString(36).slice(-6).toUpperCase()}`
+      await sql`
+        INSERT INTO payment_logs (id, date, amount, mode, reference, unmatched, audit_log)
+        VALUES (${id}, '2026-05-23', 12345.67, 'Bank Transfer', 'P1-TEST', TRUE,
+          ${sql.json([{ timestamp: new Date().toISOString(), user: 'parity-test', action: 'create' }])}::jsonb)
+      `
+      await sql`
+        UPDATE payment_logs SET audit_log = audit_log || ${sql.json([{ timestamp: new Date().toISOString(), user: 'parity-test', action: 'update' }])}::jsonb
+        WHERE id = ${id}
+      `
+      const r = await sql`SELECT amount, jsonb_array_length(audit_log) AS len FROM payment_logs WHERE id = ${id}`
+      const ok = Number(r[0].amount) === 12345.67 && r[0].len === 2
+      await sql`DELETE FROM payment_logs WHERE id = ${id}`
+      return {
+        layer1: { drove: 'INSERT + audit_log || concat' },
+        layer2: { amount: Number(r[0].amount), auditLen: r[0].len },
+        layer3: { ok },
+        pass: ok,
+        notes: `paymentLog ${id}: financial write lands; atomic audit-append works`,
+      }
+    },
+  },
+
+  {
+    name: 'bridge-studentCountEvent: INSERT event ledger',
+    category: 'write',
+    run: async () => {
+      const id = `SCE-P5BTEST-${Date.now().toString(36).slice(-6).toUpperCase()}`
+      const mou = (await sql`SELECT id, students_mou FROM mous WHERE cohort_status = 'active' AND students_mou IS NOT NULL LIMIT 1`)[0]
+      await sql`
+        INSERT INTO student_count_events (id, mou_id, new_count, previous_count,
+          effective_date, recorded_at, recorded_by, reason, recalc_impact, audit_log)
+        VALUES (${id}, ${mou.id}, 400, ${mou.students_mou},
+          '2026-05-23', ${new Date().toISOString()}, 'parity-test',
+          'P1 bridge proof: simulated count change for verification',
+          ${sql.json({ studentsRecalc: { from: mou.students_mou, to: 400 } })}::jsonb,
+          ${sql.json([{ timestamp: new Date().toISOString(), user: 'parity-test', action: 'create' }])}::jsonb)
+      `
+      const r = await sql`SELECT new_count, previous_count FROM student_count_events WHERE id = ${id}`
+      const ok = r[0].new_count === 400 && r[0].previous_count === mou.students_mou
+      await sql`DELETE FROM student_count_events WHERE id = ${id}`
+      return {
+        layer1: { drove: 'INSERT student_count_events' },
+        layer2: { newCount: r[0].new_count, previousCount: r[0].previous_count },
+        layer3: { ok },
+        pass: ok,
+        notes: `studentCountEvent ${id}: event ledger write lands`,
+      }
+    },
+  },
+
+  {
+    name: 'bridge-vexDispatch: INSERT + status transition (JSONB || concat)',
+    category: 'write',
+    run: async () => {
+      const id = `VEXD-P5BTEST-${Date.now().toString(36).slice(-6).toUpperCase()}`
+      const pi = (await sql`SELECT id FROM vex_pis LIMIT 1`)[0]
+      await sql`
+        INSERT INTO vex_dispatches (id, pi_id, items, freight, mode, status,
+          requested_by, requested_at, audit_log)
+        VALUES (${id}, ${pi.id},
+          ${sql.json([{ partNumber: 'TEST-001', qty: 5 }])}::jsonb,
+          100, 'Surface', 'Requested', 'parity-test',
+          ${new Date().toISOString()},
+          ${sql.json([{ timestamp: new Date().toISOString(), user: 'parity-test', action: 'create' }])}::jsonb)
+      `
+      await sql`
+        UPDATE vex_dispatches SET
+          status = 'Request Raised to Warehouse',
+          audit_log = audit_log || ${sql.json([{ timestamp: new Date().toISOString(), user: 'parity-test', action: 'status_change' }])}::jsonb
+        WHERE id = ${id}
+      `
+      const r = await sql`SELECT status, items, jsonb_array_length(audit_log) AS len FROM vex_dispatches WHERE id = ${id}`
+      const ok = r[0].status === 'Request Raised to Warehouse' && r[0].items?.length === 1 && r[0].len === 2
+      await sql`DELETE FROM vex_dispatches WHERE id = ${id}`
+      return {
+        layer1: { drove: 'INSERT + UPDATE status + audit_log || concat' },
+        layer2: { status: r[0].status, itemsLen: r[0].items?.length, auditLen: r[0].len },
+        layer3: { ok },
+        pass: ok,
+        notes: `vexDispatch ${id}: dispatch + transition write lands`,
+      }
+    },
+  },
+
+  // -------------------------------------------------------------------------
+  // 7. MOU registry read: page renders count matches SQL
   // -------------------------------------------------------------------------
   {
     name: 'mou-registry: page row count matches SQL count',

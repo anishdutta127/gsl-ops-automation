@@ -21,30 +21,17 @@
 import { redirect } from 'next/navigation'
 import type {
   Communication,
-  Dispatch,
   Feedback,
-  MOU,
-  MagicLinkToken,
-  School,
 } from '@/lib/types'
-import magicLinkTokensJson from '@/data/magic_link_tokens.json'
-import mousJson from '@/data/mous.json'
-import schoolsJson from '@/data/schools.json'
-import communicationsJson from '@/data/communications.json'
-import feedbackJson from '@/data/feedback.json'
-import dispatchesJson from '@/data/dispatches.json'
+import { magicLinkTokenRepo, communicationRepo, feedbackRepo } from '@/lib/db/repos/leafRepos'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { schoolRepo } from '@/lib/db/repos/school'
+import { dispatchRepo } from '@/lib/db/repos/dispatch'
 import { verifyMagicLink } from '@/lib/magicLink'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
 import { computeLifecycle } from '@/lib/portal/lifecycleProgress'
 import { LifecycleProgress } from '@/components/ops/LifecycleProgress'
 import { formatRs, formatDate, formatPct } from '@/lib/format'
-
-const tokens = magicLinkTokensJson as unknown as MagicLinkToken[]
-const mous = mousJson as unknown as MOU[]
-const schools = schoolsJson as unknown as School[]
-const communications = communicationsJson as unknown as Communication[]
-const feedbacks = feedbackJson as unknown as Feedback[]
-const dispatches = dispatchesJson as unknown as Dispatch[]
 
 function pickFirstDate(comms: Communication[], type: Communication['type']): string | null {
   const matching = comms.filter((c) => c.type === type)
@@ -72,7 +59,7 @@ export default async function StatusPortalPage({
   const sp = await searchParams
   const hmac = typeof sp.h === 'string' ? sp.h : ''
 
-  const token = tokens.find((t) => t.id === tokenId)
+  const token = await magicLinkTokenRepo.findById(tokenId)
   if (!token || token.purpose !== 'status-view') {
     redirect('/portal/status/link-expired')
   }
@@ -96,17 +83,22 @@ export default async function StatusPortalPage({
     redirect('/portal/status/link-expired')
   }
 
-  const mou = mous.find((m) => m.id === token.mouId)
+  const mou = await mouRepo.findById(token.mouId)
   if (!mou) {
     redirect('/portal/status/link-expired')
   }
 
-  const school = schools.find((s) => s.id === mou.schoolId)
-  const mouComms = communications.filter((c) => c.mouId === token.mouId)
-  const mouFeedback = feedbacks.find(
+  const [school, allCommunications, allFeedback, allDispatches] = await Promise.all([
+    schoolRepo.findById(mou.schoolId),
+    communicationRepo.findAll() as unknown as Promise<Communication[]>,
+    feedbackRepo.findAll() as unknown as Promise<Feedback[]>,
+    dispatchRepo.findAll(),
+  ])
+  const mouComms = allCommunications.filter((c) => c.mouId === token.mouId)
+  const mouFeedback = allFeedback.find(
     (f) => f.mouId === token.mouId && f.installmentSeq === token.installmentSeq,
   )
-  const mouDispatches = dispatches.filter((d) => d.mouId === token.mouId)
+  const mouDispatches = allDispatches.filter((d) => d.mouId === token.mouId)
 
   const lifecycle = computeLifecycle({
     mouSignedDate: mou.startDate, postSigningIntakeDate: null,

@@ -21,12 +21,9 @@ import { NextResponse } from 'next/server'
 import { getCurrentSession, getCurrentUser } from '@/lib/auth/session'
 import { canEditFinanceData } from '@/lib/access'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
-import type { Adjustment, AuditEntry, MOU, Payment } from '@/lib/types'
-import mousJson from '@/data/mous.json'
-import paymentsJson from '@/data/payments.json'
-
-const allMous = mousJson as unknown as MOU[]
-const allPayments = paymentsJson as unknown as Payment[]
+import type { Adjustment, AuditEntry } from '@/lib/types'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { paymentRepo } from '@/lib/db/repos/payment'
 
 export async function POST(request: Request) {
   const form = await request.formData()
@@ -62,8 +59,8 @@ export async function POST(request: Request) {
   if (!canEditFinanceData(user)) return errorTo('permission')
   if (!mouId || !paymentId) return errorTo('payment-not-found')
 
-  const payment = allPayments.find((p) => p.id === paymentId && p.mouId === mouId)
-  if (!payment) return errorTo('payment-not-found')
+  const payment = await paymentRepo.findById(paymentId)
+  if (!payment || payment.mouId !== mouId) return errorTo('payment-not-found')
 
   const dueDateIso = String(form.get('dueDateIso') ?? '')
   if (!/^\d{4}-\d{2}-\d{2}$/.test(dueDateIso)) return errorTo('invalid-date')
@@ -80,7 +77,7 @@ export async function POST(request: Request) {
   try {
     if (piIssued && Math.abs(expectedAmount - payment.expectedAmount) > 0.01) {
       // Preserve the original expectedAmount; queue an Adjustment.
-      const mou = allMous.find((m) => m.id === mouId)
+      const mou = await mouRepo.findById(mouId)
       const schoolId = mou?.schoolId ?? ''
       const adjustment: Adjustment = {
         id: `ADJ-${crypto.randomUUID().slice(0, 8).toUpperCase()}`,

@@ -22,20 +22,10 @@ import { getCurrentUser } from '@/lib/auth/session'
 import { canEditFinanceData } from '@/lib/access'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
 import { recordReceipt } from '@/lib/payment/recordReceipt'
-import type {
-  MOU,
-  Payment,
-  PaymentLog,
-  PaymentMode,
-  School,
-} from '@/lib/types'
-import schoolsJson from '@/data/schools.json'
-import mousJson from '@/data/mous.json'
-import paymentsJson from '@/data/payments.json'
-
-const allSchools = schoolsJson as unknown as School[]
-const allMous = mousJson as unknown as MOU[]
-const allPayments = paymentsJson as unknown as Payment[]
+import type { PaymentLog, PaymentMode } from '@/lib/types'
+import { schoolRepo } from '@/lib/db/repos/school'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { paymentRepo } from '@/lib/db/repos/payment'
 
 const VALID_MODES: ReadonlyArray<PaymentMode> = [
   'Bank Transfer',
@@ -107,7 +97,7 @@ export async function POST(request: Request) {
 
   const schoolId = String(form.get('schoolId') ?? '').trim()
   if (!schoolId) return errorTo('missing-school')
-  const school = allSchools.find((s) => s.id === schoolId)
+  const school = await schoolRepo.findById(schoolId)
   if (!school) return errorTo('school-not-found')
 
   const mouId = String(form.get('mouId') ?? '').trim()
@@ -125,8 +115,8 @@ export async function POST(request: Request) {
 
   // Branch 1: full chain selected, attempt auto-match via recordReceipt.
   if (mouId && paymentId) {
-    const payment = allPayments.find((p) => p.id === paymentId)
-    const mou = allMous.find((m) => m.id === mouId)
+    const payment = await paymentRepo.findById(paymentId)
+    const mou = await mouRepo.findById(mouId)
     if (!payment || !mou || mou.schoolId !== schoolId) {
       // Selection inconsistent; fall through to park path.
     } else if (Math.abs(payment.expectedAmount - receivedAmount) < 0.01) {

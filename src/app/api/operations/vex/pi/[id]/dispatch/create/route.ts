@@ -21,11 +21,8 @@ import type {
   VexDispatchMode,
   VexPi,
 } from '@/lib/mouSystem/types'
-import vexPisJson from '@/data/vex_pis.json'
-import vexDispatchesJson from '@/data/vex_dispatches.json'
-
-const allPis = vexPisJson as unknown as VexPi[]
-const allDispatches = vexDispatchesJson as unknown as VexDispatch[]
+import { vexPiRepo } from '@/lib/db/repos/vexPi'
+import { vexDispatchRepo } from '@/lib/db/repos/leafRepos'
 
 interface IncomingItem {
   partNumber?: unknown
@@ -81,7 +78,7 @@ export async function POST(request: Request, ctx: RouteContext) {
       { status: 403 },
     )
   }
-  const pi = allPis.find((p) => p.id === id)
+  const pi = await vexPiRepo.findById(id)
   if (!pi) return NextResponse.json({ error: 'not-found' }, { status: 404 })
 
   let body: IncomingPayload
@@ -118,6 +115,7 @@ export async function POST(request: Request, ctx: RouteContext) {
   }
 
   // Compute already-dispatched per-SKU + value from the canonical store.
+  const allDispatches = (await vexDispatchRepo.findAll()) as unknown as VexDispatch[]
   const piDispatches = allDispatches.filter((d) => d.piId === pi.id)
   const dispatchedByPart = new Map<string, number>()
   let alreadyDispatchedValue = 0

@@ -14,10 +14,8 @@ import { NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canEditFinanceData } from '@/lib/access'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
-import type { Agreement, AuditEntry } from '@/lib/types'
-import agreementsJson from '@/data/agreements.json'
-
-const allAgreements = agreementsJson as unknown as Agreement[]
+import type { AuditEntry } from '@/lib/types'
+import { agreementRepo } from '@/lib/db/repos/leafRepos'
 
 interface RouteContext {
   params: Promise<{ id: string }>
@@ -34,7 +32,7 @@ export async function POST(request: Request, ctx: RouteContext) {
     url.searchParams.set('error', 'permission')
     return NextResponse.redirect(url, { status: 303 })
   }
-  const existing = allAgreements.find((a) => a.id === id)
+  const existing = await agreementRepo.findById(id)
   if (!existing) {
     return NextResponse.json({ error: 'not-found' }, { status: 404 })
   }

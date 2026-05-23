@@ -21,9 +21,7 @@ import type {
   AgreementType,
   AuditEntry,
 } from '@/lib/types'
-import agreementsJson from '@/data/agreements.json'
-
-const allAgreements = agreementsJson as unknown as Agreement[]
+import { agreementRepo } from '@/lib/db/repos/leafRepos'
 
 function asStringOrNull(v: FormDataEntryValue | null): string | null {
   if (typeof v !== 'string') return null
@@ -115,7 +113,7 @@ export async function POST(request: Request) {
     // Renewal-link audit: append a 'renewed by ${id}' entry on the
     // source via a queue update (full-record replacement).
     if (renewedFrom) {
-      const source = allAgreements.find((a) => a.id === renewedFrom)
+      const source = await agreementRepo.findById(renewedFrom)
       if (source) {
         const sourceAudit: AuditEntry = {
           timestamp: ts,

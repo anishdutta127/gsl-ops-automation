@@ -18,9 +18,7 @@ import type {
   AgreementType,
   AuditEntry,
 } from '@/lib/types'
-import agreementsJson from '@/data/agreements.json'
-
-const allAgreements = agreementsJson as unknown as Agreement[]
+import { agreementRepo } from '@/lib/db/repos/leafRepos'
 
 function asStringOrNull(v: unknown): string | null {
   if (typeof v !== 'string') return null
@@ -52,7 +50,7 @@ export async function POST(request: Request, ctx: RouteContext) {
       { status: 403 },
     )
   }
-  const existing = allAgreements.find((a) => a.id === id)
+  const existing = await agreementRepo.findById(id)
   if (!existing) return NextResponse.json({ error: 'not-found' }, { status: 404 })
 
   let body: Record<string, unknown>

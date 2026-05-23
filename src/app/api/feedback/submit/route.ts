@@ -31,11 +31,10 @@ import type {
   Feedback,
   FeedbackCategory,
   FeedbackRating,
-  MOU,
   MagicLinkToken,
 } from '@/lib/types'
-import magicLinkTokensJson from '@/data/magic_link_tokens.json'
-import mousJson from '@/data/mous.json'
+import { magicLinkTokenRepo } from '@/lib/db/repos/leafRepos'
+import { mouRepo } from '@/lib/db/repos/mou'
 import { verifyMagicLink } from '@/lib/magicLink'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
 import { feedbackAutoEscalation } from '@/lib/feedback/autoEscalation'
@@ -121,8 +120,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'missing-credentials' }, { status: 400 })
   }
 
-  const tokens = magicLinkTokensJson as unknown as MagicLinkToken[]
-  const token = tokens.find((t) => t.id === tokenId)
+  const token = await magicLinkTokenRepo.findById(tokenId)
   if (!token) {
     return NextResponse.json({ error: 'token-not-found' }, { status: 404 })
   }
@@ -162,8 +160,7 @@ export async function POST(request: Request) {
   // hook fires on the same request and reads Feedback.schoolId; if we
   // left it blank for a queue consumer to fill, the resulting
   // Escalation would carry the wrong school reference.
-  const mous = mousJson as unknown as MOU[]
-  const mou = mous.find((m) => m.id === token.mouId)
+  const mou = await mouRepo.findById(token.mouId)
   if (!mou) {
     return NextResponse.json({ error: 'mou-not-found' }, { status: 404 })
   }

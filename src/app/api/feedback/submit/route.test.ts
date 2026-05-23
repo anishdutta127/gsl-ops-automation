@@ -19,14 +19,35 @@ vi.mock('@/lib/feedback/autoEscalation', () => ({
 }))
 
 const mockTokens = vi.hoisted(() => ({ value: [] as unknown[] }))
-vi.mock('@/data/magic_link_tokens.json', () => ({
-  get default() { return mockTokens.value },
-}))
-
 const mockMous = vi.hoisted(() => ({ value: [] as unknown[] }))
-vi.mock('@/data/mous.json', () => ({
-  get default() { return mockMous.value },
-}))
+
+// Mock at the repo level rather than the JSON level: the repo's
+// internal json-mode binding is static so JSON mocks don't propagate
+// to its findById once the module is loaded. Mocking the repo gives
+// us live-binding semantics.
+vi.mock('@/lib/db/repos/leafRepos', async (importActual) => {
+  const actual = await importActual<typeof import('@/lib/db/repos/leafRepos')>()
+  return {
+    ...actual,
+    magicLinkTokenRepo: {
+      findAll: async () => mockTokens.value,
+      findById: async (id: string) =>
+        (mockTokens.value as unknown[]).find((t) => (t as { id: string }).id === id) ?? null,
+    },
+  }
+})
+vi.mock('@/lib/db/repos/mou', async (importActual) => {
+  const actual = await importActual<typeof import('@/lib/db/repos/mou')>()
+  return {
+    ...actual,
+    mouRepo: {
+      ...actual.mouRepo,
+      findAll: async () => mockMous.value,
+      findById: async (id: string) =>
+        (mockMous.value as unknown[]).find((m) => (m as { id: string }).id === id) ?? null,
+    },
+  }
+})
 
 import { POST } from './route'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
