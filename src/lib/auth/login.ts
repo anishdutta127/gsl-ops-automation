@@ -17,7 +17,7 @@
 
 import bcrypt from 'bcryptjs'
 import type { User } from '@/lib/types'
-import usersJson from '@/data/users.json'
+import { userRepo } from '@/lib/db/repos/user'
 
 export interface AuthenticateArgs {
   email: string
@@ -39,15 +39,18 @@ export interface AuthenticateDeps {
   bcryptCompare: (password: string, hash: string) => Promise<boolean>
 }
 
-const defaultDeps: AuthenticateDeps = {
-  users: usersJson as unknown as User[],
-  bcryptCompare: (password, hash) => bcrypt.compare(password, hash),
+async function defaultDeps(): Promise<AuthenticateDeps> {
+  return {
+    users: await userRepo.findAll(),
+    bcryptCompare: (password, hash) => bcrypt.compare(password, hash),
+  }
 }
 
 export async function authenticateLogin(
   args: AuthenticateArgs,
-  deps: AuthenticateDeps = defaultDeps,
+  deps?: AuthenticateDeps,
 ): Promise<AuthenticateResult> {
+  const d = deps ?? (await defaultDeps())
   const email = (args.email ?? '').trim()
   const password = args.password ?? ''
   if (email === '' || password === '') {
@@ -55,13 +58,13 @@ export async function authenticateLogin(
   }
 
   const lookup = email.toLowerCase()
-  const user = deps.users.find((u) => u.email.toLowerCase() === lookup)
+  const user = d.users.find((u) => u.email.toLowerCase() === lookup)
   if (!user) return { ok: false, reason: 'unknown-user' }
   if (!user.active) return { ok: false, reason: 'inactive' }
 
   let verified = false
   try {
-    verified = await deps.bcryptCompare(password, user.passwordHash)
+    verified = await d.bcryptCompare(password, user.passwordHash)
   } catch {
     verified = false
   }

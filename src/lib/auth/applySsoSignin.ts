@@ -26,12 +26,10 @@
  * to disk directly (Vercel runtime is read-only).
  */
 
-import usersJson from '@/data/users.json'
 import type { AuditEntry, User, UserRole } from '@/lib/types'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
+import { userRepo } from '@/lib/db/repos/user'
 import { isEmailDomainAllowed, parseAllowedDomains } from './ssoEnv'
-
-const allUsers = usersJson as unknown as User[]
 
 export interface ApplySsoSigninInput {
   email: string
@@ -64,10 +62,12 @@ export interface ApplySsoSigninDeps {
   now: () => Date
 }
 
-const defaultDeps: ApplySsoSigninDeps = {
-  users: allUsers,
-  enqueue: enqueueUpdate,
-  now: () => new Date(),
+async function defaultDeps(): Promise<ApplySsoSigninDeps> {
+  return {
+    users: await userRepo.findAll(),
+    enqueue: enqueueUpdate,
+    now: () => new Date(),
+  }
 }
 
 /**
@@ -83,11 +83,12 @@ function deriveUserId(email: string): string {
 
 export async function applySsoSignin(
   input: ApplySsoSigninInput,
-  deps: ApplySsoSigninDeps = defaultDeps,
+  deps?: ApplySsoSigninDeps,
 ): Promise<ApplySsoSigninResult> {
+  const d = deps ?? (await defaultDeps())
   const lowered = input.email.toLowerCase()
-  const existing = deps.users.find((u) => u.email.toLowerCase() === lowered)
-  const ts = deps.now().toISOString()
+  const existing = d.users.find((u) => u.email.toLowerCase() === lowered)
+  const ts = d.now().toISOString()
 
   // Branch dispatch (Anish 2026-05-21 follow-up GO):
   //   (a) email domain is in the allowlist (or allowlist empty) -> proceed.
@@ -121,7 +122,7 @@ export async function applySsoSignin(
       notes: `Phase 6G SSO sign-in for existing user (${input.userPrincipalName}).`,
     }
     if (oidChanged || (existing.auditLog ?? []).length === 0) {
-      await deps.enqueue({
+      await d.enqueue({
         queuedBy: existing.id,
         entity: 'user',
         operation: 'update',
@@ -137,7 +138,7 @@ export async function applySsoSignin(
       // handles the unconditional-enqueue case; this else handles
       // the common return-trip when nothing changes shape but the
       // sign-in event must still be recorded.
-      await deps.enqueue({
+      await d.enqueue({
         queuedBy: existing.id,
         entity: 'user',
         operation: 'update',
@@ -186,7 +187,7 @@ export async function applySsoSignin(
     azureAdObjectId: input.azureAdObjectId,
     requiresAdminReview: true,
   }
-  await deps.enqueue({
+  await d.enqueue({
     queuedBy: newId,
     entity: 'user',
     operation: 'create',

@@ -17,9 +17,7 @@
 import { cookies } from 'next/headers'
 import type { SessionClaims, User } from '@/lib/types'
 import { SESSION_COOKIE_NAME, verifySessionToken } from '@/lib/crypto/jwt'
-import usersJson from '@/data/users.json'
-
-const users = usersJson as unknown as User[]
+import { userRepo } from '@/lib/db/repos/user'
 
 export async function getCurrentSession(): Promise<SessionClaims | null> {
   const cookieStore = await cookies()
@@ -31,5 +29,5 @@ export async function getCurrentSession(): Promise<SessionClaims | null> {
 export async function getCurrentUser(): Promise<User | null> {
   const session = await getCurrentSession()
   if (!session) return null
-  return users.find((u) => u.id === session.sub) ?? null
+  return userRepo.findById(session.sub)
 }
