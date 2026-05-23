@@ -109,8 +109,59 @@ function jsonbDefault(v, fallback) {
 // on dry-run.
 // ---------------------------------------------------------------------------
 
+// Demo-cohort orphans, signed off by Anish 2026-05-23 as "accept the
+// loss". Six fictional schools (Greenfield/Pune, Oakwood/Delhi, etc.)
+// were created for Phase 1 UI demos and never wired into the real
+// schools master; rows in mous/dispatches/communications/feedback/
+// escalations/dispatch_requests/magic_link_tokens that reference them
+// are intentional discards. The allowlist below lets the dry-run +
+// staging-apply runs read "1,205 inserted, 38 intentionally skipped"
+// rather than "38 failed", so the eventual production-cutover run
+// is unambiguously green and nobody has to re-triage these 38 rows
+// under pressure.
+const EXPECTED_ORPHAN_IDS = {
+  mous: new Set([
+    'MOU-STEAM-2627-DRAFT-001','MOU-STEAM-2627-DRAFT-002',
+    'MOU-YP-2627-DRAFT-001','MOU-YP-2627-DRAFT-002',
+    'MOU-YP-2627-DRAFT-003','MOU-YP-2627-DRAFT-004',
+  ]),
+  signed_values: new Set([
+    'MOU-YP-2627-DRAFT-003',
+  ]),
+  dispatch_requests: new Set([
+    'DR-MOU-STEAM-2627-001-i1-20260427100000',
+    'DR-MOU-STEAM-2627-009-i1-20260426093000',
+  ]),
+  dispatches: new Set(['DIS-001','DIS-002','DIS-004','DIS-005']),
+  communications: new Set([
+    'COM-WLC-001','COM-T30-001','COM-T14-001','COM-T7-001','COM-ACR-001',
+    'COM-PIS-001','COM-PRC-001','COM-DSR-001','COM-DAR-001','COM-FBR-001',
+    'COM-CLT-001','COM-WAD-001','COM-WAD-002','COM-BNC-001',
+  ]),
+  magic_link_tokens: new Set(['MLT-FB-001','MLT-SV-001']),
+  feedback: new Set(['FBK-001','FBK-002','FBK-005','FBK-006','FBK-007']),
+  escalations: new Set(['ESC-001','ESC-003','ESC-004','ESC-005']),
+}
+
+function rowKey(name, row) {
+  if (name === 'signed_values') return row.mouId
+  if (name === 'lifecycle_rules') return `${row.stageFromKey}>${row.stageToKey}`
+  if (name === 'stage_responsibility') return row.stage
+  if (name === 'reminder_thresholds') return row.kind
+  if (name === 'counters') return row.key
+  if (name === 'chain_dismissals') return row.schoolId
+  if (name === 'vex_products') return row.partNumber
+  return row.id
+}
+
+function isExpectedOrphan(name, row) {
+  const set = EXPECTED_ORPHAN_IDS[name]
+  if (!set) return false
+  return set.has(rowKey(name, row))
+}
+
 async function seedTable(sql, name, rows, perRow) {
-  let inserted = 0, skipped = 0, failed = 0
+  let inserted = 0, skipped = 0, expectedSkipped = 0, failed = 0
   const failedExamples = []
   let savepointN = 0
   for (const row of rows) {
@@ -123,19 +174,21 @@ async function seedTable(sql, name, rows, perRow) {
       else skipped += 1
       await sql.unsafe(`RELEASE SAVEPOINT ${spName}`)
     } catch (err) {
-      failed += 1
-      // Roll back to the savepoint so the transaction stays usable
-      // for the next row.
       await sql.unsafe(`ROLLBACK TO SAVEPOINT ${spName}`)
-      if (failedExamples.length < 3) {
-        failedExamples.push({
-          id: row.id ?? row.partNumber ?? row.stage ?? row.mouId ?? row.kind ?? row.schoolId ?? '(no-id)',
-          error: err.message.slice(0, 240),
-        })
+      if (isExpectedOrphan(name, row)) {
+        expectedSkipped += 1
+      } else {
+        failed += 1
+        if (failedExamples.length < 3) {
+          failedExamples.push({
+            id: rowKey(name, row) ?? '(no-id)',
+            error: err.message.slice(0, 240),
+          })
+        }
       }
     }
   }
-  return { table: name, source: rows.length, inserted, skipped, failed, failedExamples }
+  return { table: name, source: rows.length, inserted, skipped, expectedSkipped, failed, failedExamples }
 }
 
 // ---------------------------------------------------------------------------
@@ -371,9 +424,41 @@ seeders.push(async (sql) => {
 })
 
 // Layer 3: mous (FK to schools, school_groups, sales_team)
+//
+// Phase 7 Part 3 Pause 2 follow-up: 5 historical 2025-26 MOUs were
+// stripped from src/data/mous.json but their payment rows (and PIs:
+// MTPL/25-26/1, /2, /4) still reference them in src/data/payments.json.
+// Restore them from src/data/_snapshots/mou-system/mous.json (the
+// pre-W4-A.2 snapshot of 152 rows) tagged with cohortStatus='archived'
+// so they land before their payments and the FK chain holds.
+//
+// Counter safety: the seed never calls issuePiNumberAtomic. It only
+// INSERTs the pi_number field verbatim from the source JSON. The
+// pi_counter / pi_counter_map values get copied into the `counters`
+// table as JSONB blobs at the end of the seed, including their
+// priorFiscalYears['2526'] entries. No PI number is minted by the
+// seed; restoring historical PI records is data import, not issuance.
+
+const RESTORE_ARCHIVED_MOU_IDS = new Set([
+  'MOU-STEAM-2526-001',
+  'MOU-STEAM-2526-027',
+  'MOU-YP-2526-001',
+  'MOU-YP-2526-002',
+  'MOU-YP-2526-003',
+])
 
 seeders.push(async (sql) => {
-  const rows = loadJson('mous.json')
+  const current = loadJson('mous.json')
+  const currentIds = new Set(current.map((m) => m.id))
+  const snapshot = loadJson('_snapshots/mou-system/mous.json')
+  const restored = snapshot
+    .filter((m) => RESTORE_ARCHIVED_MOU_IDS.has(m.id) && !currentIds.has(m.id))
+    .map((m) => ({
+      ...m,
+      cohortStatus: 'archived',
+      importNotes: 'Phase 7 archive recovery: restored from _snapshots/mou-system pre-W4-A.2 snapshot. Parent of payment rows that survived in payments.json.',
+    }))
+  const rows = [...current, ...restored]
   return seedTable(sql, 'mous', rows, async (sql, m) => {
     return await sql`
       INSERT INTO mous (
@@ -633,8 +718,14 @@ seeders.push(async (sql) => {
 
 // Layer 8: feedback (FK to schools, mous, magic_link_tokens), escalations, notifications
 
+// FBK-004 is fixture data: schoolId references the demo SCH-CEDARHEIGHTS-CHN
+// orphan cohort, submitterEmail uses the RFC-reserved example.test domain,
+// no auditLog or magicLinkTokenId. Skip at read time per Anish 2026-05-23 GO.
+// Do not modify source feedback.json.
+const SKIP_FEEDBACK_IDS = new Set(['FBK-004'])
+
 seeders.push(async (sql) => {
-  const rows = loadJson('feedback.json')
+  const rows = loadJson('feedback.json').filter((f) => !SKIP_FEEDBACK_IDS.has(f.id))
   return seedTable(sql, 'feedback', rows, async (sql, f) => {
     return await sql`
       INSERT INTO feedback (id, school_id, mou_id, instalment_seq, submitted_at, submitted_by,
@@ -938,7 +1029,9 @@ try {
       const r = await fn(tx)
       results.push(r)
       const ok = r.failed === 0 ? 'ok' : `FAIL(${r.failed})`
-      console.log(`  ${r.table}: source=${r.source} inserted=${r.inserted} skipped=${r.skipped} failed=${r.failed} [${ok}]`)
+      console.log(
+        `  ${r.table}: source=${r.source} inserted=${r.inserted} expected-skip=${r.expectedSkipped} failed=${r.failed} [${ok}]`,
+      )
       if (r.failedExamples.length > 0) {
         for (const ex of r.failedExamples) {
           console.log(`    - ${ex.id}: ${ex.error}`)
@@ -962,13 +1055,18 @@ try {
   const totalSource = results.reduce((s, r) => s + r.source, 0)
   const totalInserted = results.reduce((s, r) => s + r.inserted, 0)
   const totalSkipped = results.reduce((s, r) => s + r.skipped, 0)
+  const totalExpectedSkipped = results.reduce((s, r) => s + r.expectedSkipped, 0)
   const totalFailed = results.reduce((s, r) => s + r.failed, 0)
   console.log('')
-  console.log('| Table | Source rows | Inserted | Skipped | Failed |')
+  console.log('| Table | Source | Inserted | Expected-skip | Failed |')
   console.log('|---|---:|---:|---:|---:|')
   for (const r of results) {
-    console.log(`| ${r.table} | ${r.source} | ${r.inserted} | ${r.skipped} | ${r.failed} |`)
+    console.log(`| ${r.table} | ${r.source} | ${r.inserted} | ${r.expectedSkipped} | ${r.failed} |`)
   }
-  console.log(`| **Totals** | **${totalSource}** | **${totalInserted}** | **${totalSkipped}** | **${totalFailed}** |`)
+  console.log(`| **Totals** | **${totalSource}** | **${totalInserted}** | **${totalExpectedSkipped}** | **${totalFailed}** |`)
+  if (totalSkipped > 0) {
+    console.log('')
+    console.log(`(${totalSkipped} additional rows were ON CONFLICT-skipped due to existing ids; re-run idempotency.)`)
+  }
   await sql.end({ timeout: 5 })
 }
