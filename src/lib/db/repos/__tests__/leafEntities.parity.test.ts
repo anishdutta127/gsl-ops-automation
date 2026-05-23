@@ -1,3 +1,7 @@
+/**
+ * @vitest-environment node
+ */
+
 /*
  * Combined parity tests for the leaf entities (no FKs):
  *   vendor, inventoryItem, vexProduct

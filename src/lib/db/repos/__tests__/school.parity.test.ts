@@ -1,3 +1,7 @@
+/**
+ * @vitest-environment node
+ */
+
 /*
  * schoolRepo parity (Phase 7). Read-only; skips when DATABASE_URL is
  * unset. Asserts findAll + findById + findByRegion return deep-equal

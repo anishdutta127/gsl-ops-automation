@@ -1,3 +1,7 @@
+/**
+ * @vitest-environment node
+ */
+
 /*
  * mouRepo parity (Phase 7).
  *

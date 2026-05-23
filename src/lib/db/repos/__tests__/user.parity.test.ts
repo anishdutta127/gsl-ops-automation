@@ -1,3 +1,7 @@
+/**
+ * @vitest-environment node
+ */
+
 /*
  * userRepo parity test: with DATABASE_URL set, run each read through
  * both backends and assert the results are deep-equal (after

@@ -1,3 +1,7 @@
+/**
+ * @vitest-environment node
+ */
+
 /*
  * Counter atomicity test (Phase 7).
  *

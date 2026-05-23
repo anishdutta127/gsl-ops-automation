@@ -1,3 +1,7 @@
+/**
+ * @vitest-environment node
+ */
+
 /*
  * appendAudit concurrency test (Phase 7).
  *

@@ -1,3 +1,7 @@
+/**
+ * @vitest-environment node
+ */
+
 /*
  * salesTeamRepo parity (Phase 7). Read-only.
  */
