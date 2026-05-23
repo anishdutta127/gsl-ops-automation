@@ -72,9 +72,8 @@ async function dispatchToRepo(params: {
   switch (entity) {
     case 'mou': {
       const { mouRepo } = await import('./db/repos/mou')
-      if (operation === 'create') await mouRepo.create(payload as never)
-      else if (operation === 'update') await mouRepo.update(payload as never, { queuedBy })
-      else throw new Error('mou delete is not supported via repo')
+      if (operation === 'update') await mouRepo.update(payload as never, { queuedBy })
+      else throw new Error(`mou ${operation} is not supported via repo`)
       return
     }
     case 'user': {
@@ -86,9 +85,8 @@ async function dispatchToRepo(params: {
     }
     case 'school': {
       const { schoolRepo } = await import('./db/repos/school')
-      if (operation === 'create') await schoolRepo.create(payload as never)
-      else if (operation === 'update') await schoolRepo.update(payload as never, { queuedBy })
-      else throw new Error('school delete is not supported via repo')
+      if (operation === 'update') await schoolRepo.update(payload as never, { queuedBy })
+      else throw new Error(`school ${operation} is not supported via repo`)
       return
     }
     case 'payment': {
@@ -132,15 +130,13 @@ async function dispatchToRepo(params: {
     }
     case 'vendor': {
       const { vendorRepo } = await import('./db/repos/vendor')
-      if (operation === 'create') await vendorRepo.create(payload as never)
-      else if (operation === 'update') await vendorRepo.update(payload as never, { queuedBy })
+      if (operation === 'update') await vendorRepo.update(payload as never, { queuedBy })
       else throw new Error(`vendor ${operation} is not supported via repo`)
       return
     }
     case 'inventoryItem': {
       const { inventoryItemRepo } = await import('./db/repos/inventoryItem')
-      if (operation === 'create') await inventoryItemRepo.create(payload as never)
-      else if (operation === 'update') await inventoryItemRepo.update(payload as never, { queuedBy })
+      if (operation === 'update') await inventoryItemRepo.update(payload as never, { queuedBy })
       else throw new Error(`inventoryItem ${operation} is not supported via repo`)
       return
     }

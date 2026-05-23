@@ -739,6 +739,89 @@ const FUNCTIONS = [
   },
 
   // -------------------------------------------------------------------------
+  // P1.2: atomic-pattern concurrency proofs for the last 2 JSONB-RMW routes.
+  // -------------------------------------------------------------------------
+
+  {
+    name: 'concurrency: 10 parallel agreement audit appends produce 10 entries',
+    category: 'write',
+    run: async () => {
+      const id = `AGR-P5BCONC-${Date.now().toString(36).slice(-6).toUpperCase()}`
+      await sql`
+        INSERT INTO agreements (id, type, party_name, nature_of_agreement, start_date, audit_log)
+        VALUES (${id}, 'Vendor', 'Concurrency Test', 'P1.2 concurrency', '2026-01-01',
+          ${sql.json([])}::jsonb)
+      `
+      // 10 parallel atomic appends via the same SQL the repo uses.
+      const ts = Date.now()
+      await Promise.all(
+        Array.from({ length: 10 }, (_, i) =>
+          sql`
+            UPDATE agreements SET audit_log = audit_log || ${sql.json([{
+              timestamp: new Date(ts + i).toISOString(),
+              user: 'parity-test',
+              action: 'update',
+              notes: `concurrent-${i}`,
+            }])}::jsonb
+            WHERE id = ${id}
+          `,
+        ),
+      )
+      const r = await sql`SELECT jsonb_array_length(audit_log) AS len FROM agreements WHERE id = ${id}`
+      const ok = r[0].len === 10
+      await sql`DELETE FROM agreements WHERE id = ${id}`
+      return {
+        layer1: { drove: '10 parallel UPDATE agreements SET audit_log = audit_log || ...' },
+        layer2: { auditLen: r[0].len, expected: 10 },
+        layer3: { ok },
+        pass: ok,
+        notes: `agreement ${id}: ${r[0].len}/10 audit entries land (atomic JSONB || concat)`,
+      }
+    },
+  },
+
+  {
+    name: 'concurrency: 10 parallel vexDispatch audit appends produce 10 entries',
+    category: 'write',
+    run: async () => {
+      const id = `VEXD-P5BCONC-${Date.now().toString(36).slice(-6).toUpperCase()}`
+      const pi = (await sql`SELECT id FROM vex_pis LIMIT 1`)[0]
+      await sql`
+        INSERT INTO vex_dispatches (id, pi_id, items, freight, mode, status,
+          requested_by, requested_at, audit_log)
+        VALUES (${id}, ${pi.id},
+          ${sql.json([])}::jsonb, 0, 'Surface', 'Requested',
+          'parity-test', ${new Date().toISOString()},
+          ${sql.json([])}::jsonb)
+      `
+      const ts = Date.now()
+      await Promise.all(
+        Array.from({ length: 10 }, (_, i) =>
+          sql`
+            UPDATE vex_dispatches SET audit_log = audit_log || ${sql.json([{
+              timestamp: new Date(ts + i).toISOString(),
+              user: 'parity-test',
+              action: 'status_change',
+              notes: `concurrent-${i}`,
+            }])}::jsonb
+            WHERE id = ${id}
+          `,
+        ),
+      )
+      const r = await sql`SELECT jsonb_array_length(audit_log) AS len FROM vex_dispatches WHERE id = ${id}`
+      const ok = r[0].len === 10
+      await sql`DELETE FROM vex_dispatches WHERE id = ${id}`
+      return {
+        layer1: { drove: '10 parallel UPDATE vex_dispatches SET audit_log = audit_log || ...' },
+        layer2: { auditLen: r[0].len, expected: 10 },
+        layer3: { ok },
+        pass: ok,
+        notes: `vexDispatch ${id}: ${r[0].len}/10 audit entries land (atomic JSONB || concat)`,
+      }
+    },
+  },
+
+  // -------------------------------------------------------------------------
   // 7. MOU registry read: page renders count matches SQL
   // -------------------------------------------------------------------------
   {

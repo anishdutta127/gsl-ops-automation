@@ -16,7 +16,6 @@
 import { NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canEditFinanceData, canRaiseDispatch } from '@/lib/access'
-import { enqueueUpdate } from '@/lib/pendingUpdates'
 import type {
   AuditEntry,
   VexDispatch,
@@ -134,21 +133,20 @@ export async function POST(request: Request, ctx: RouteContext) {
     after: { status },
     notes: warehouseEmailSent ? 'warehouse email button clicked' : undefined,
   }
-  const nextDispatch: VexDispatch = {
-    ...dispatch,
+  // ATOMIC PATTERN (Part 5.B Priority 1 part 2): partial-update on
+  // scalar fields (status + warehouseEmail* + invoicedAt) + atomic
+  // JSONB || concat on audit_log via appendAudit. Two parallel
+  // operators no longer race on audit_log.
+  const patch: Partial<VexDispatch> = {
     status,
     warehouseEmailSentAt: warehouseEmailSent ? now : dispatch.warehouseEmailSentAt,
     warehouseEmailSentBy: warehouseEmailSent ? user.name : dispatch.warehouseEmailSentBy,
     invoicedAt: status === 'Invoiced' ? now : dispatch.invoicedAt,
-    auditLog: [...(dispatch.auditLog ?? []), auditEntry],
   }
 
   try {
-    await enqueueUpdate({
+    await vexDispatchRepo.updateWithAudit(dispatch.id, patch, auditEntry, {
       queuedBy: user.id,
-      entity: 'vexDispatch',
-      operation: 'update',
-      payload: nextDispatch as unknown as Record<string, unknown>,
     })
   } catch (e) {
     return NextResponse.json(

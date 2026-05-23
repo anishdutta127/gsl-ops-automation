@@ -11,7 +11,6 @@
 import { NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canEditFinanceData } from '@/lib/access'
-import { enqueueUpdate } from '@/lib/pendingUpdates'
 import type {
   Agreement,
   AgreementCustody,
@@ -119,17 +118,27 @@ export async function POST(request: Request, ctx: RouteContext) {
     after: nextWithoutAudit as unknown as Record<string, unknown>,
     notes: `Agreement ${existing.id} updated.`,
   }
-  const next: Agreement = {
-    ...nextWithoutAudit,
-    auditLog: [...nextWithoutAudit.auditLog, auditEntry],
+  // ATOMIC PATTERN (Part 5.B Priority 1 part 2): partial-update on
+  // scalar fields + JSONB || concat for audit_log. Two parallel
+  // operators no longer race on the audit_log array.
+  const patch: Partial<Agreement> = {
+    type, partyName,
+    vendorId: nextWithoutAudit.vendorId,
+    natureOfAgreement,
+    product: nextWithoutAudit.product,
+    department: nextWithoutAudit.department,
+    keyTerms: nextWithoutAudit.keyTerms,
+    startDate, endDate,
+    tenure: nextWithoutAudit.tenure,
+    noticePeriod: nextWithoutAudit.noticePeriod,
+    vendorLocation: nextWithoutAudit.vendorLocation,
+    physicalCustody: nextWithoutAudit.physicalCustody,
+    documentUrl: nextWithoutAudit.documentUrl,
   }
 
   try {
-    await enqueueUpdate({
+    await agreementRepo.updateWithAudit(existing.id, patch, auditEntry, {
       queuedBy: user.id,
-      entity: 'agreement',
-      operation: 'update',
-      payload: next as unknown as Record<string, unknown>,
     })
   } catch (e) {
     return NextResponse.json(

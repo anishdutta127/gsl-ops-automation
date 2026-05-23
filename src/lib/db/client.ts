@@ -79,7 +79,30 @@ export function getSql(): ReturnType<typeof postgres> {
     )
   }
   installDnsFallback()
+  // Neon free-tier + Vercel serverless tuning:
+  //   max: 1            One connection per function invocation. Neon's
+  //                     pgbouncer pooler multiplexes; max>1 wastes the
+  //                     pool's per-tenant connection budget (free tier
+  //                     caps direct connections at 10 per project).
+  //   idle_timeout: 30  Close idle connections after 30s. Vercel
+  //                     functions are short-lived; idle connections
+  //                     in a stale function consume the pool slot.
+  //   connect_timeout: 30  Neon free tier auto-suspends after ~5 min
+  //                     idle. First request post-wake takes 3-10s
+  //                     for compute to spin up. Default 30s is too
+  //                     short for cold-start; bump to 30.
+  //   prepare: false    Neon's default pgbouncer mode is TRANSACTION,
+  //                     which doesn't share prepared-statement state
+  //                     across pooled clients. postgres.js's default
+  //                     `prepare: true` causes intermittent
+  //                     "prepared statement does not exist" under
+  //                     concurrent load. False is the recommended
+  //                     setting for any pgbouncer-fronted Postgres.
   cached = postgres(url, {
+    max: 1,
+    idle_timeout: 30,
+    connect_timeout: 30,
+    prepare: false,
     onnotice: () => {},
   })
   return cached

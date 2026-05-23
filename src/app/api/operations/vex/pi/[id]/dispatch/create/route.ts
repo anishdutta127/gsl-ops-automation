@@ -78,7 +78,11 @@ export async function POST(request: Request, ctx: RouteContext) {
       { status: 403 },
     )
   }
-  const pi = await vexPiRepo.findById(id)
+  // vexPiRepo returns @/lib/types/VexPi; the mouSystem helpers below
+   // expect @/lib/mouSystem/types/VexPi (an extended local shape with
+   // narrower AuditAction). Cast through unknown - the runtime
+   // shape matches, only the AuditAction enum differs.
+  const pi = (await vexPiRepo.findById(id)) as unknown as VexPi | null
   if (!pi) return NextResponse.json({ error: 'not-found' }, { status: 404 })
 
   let body: IncomingPayload

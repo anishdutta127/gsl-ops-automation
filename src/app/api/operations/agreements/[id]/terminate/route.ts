@@ -14,7 +14,7 @@ import { NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canEditFinanceData } from '@/lib/access'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
-import type { AuditEntry } from '@/lib/types'
+import type { Agreement, AuditEntry } from '@/lib/types'
 import { agreementRepo } from '@/lib/db/repos/leafRepos'
 
 interface RouteContext {

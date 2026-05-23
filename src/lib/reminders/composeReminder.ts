@@ -172,7 +172,7 @@ async function defaultDeps(): Promise<ComposeReminderDeps> {
   const thresholds = thresholdsRows.reduce<ComposeReminderDeps['thresholds']>(
     (acc, r) => {
       const k = (r as unknown as { kind?: string }).kind ?? null
-      if (k) (acc as Record<string, unknown>)[k] = r
+      if (k) (acc as unknown as Record<string, unknown>)[k] = r
       return acc
     },
     {} as ComposeReminderDeps['thresholds'],

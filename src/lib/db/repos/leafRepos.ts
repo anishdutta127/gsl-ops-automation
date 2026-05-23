@@ -506,6 +506,71 @@ export const vexDispatchRepo = {
       `
     }
   },
+  async updatePartial(
+    id: string,
+    patch: Partial<VexDispatch>,
+    opts?: { queuedBy?: string },
+  ): Promise<void> {
+    if (currentBackend() === 'postgres') {
+      const sql = getSql()
+      const CAMEL_TO_SNAKE: Record<string, string> = {
+        piId: 'pi_id', freight: 'freight', mode: 'mode', status: 'status',
+        requestedBy: 'requested_by', requestedAt: 'requested_at',
+        taxInvoiceNumber: 'tax_invoice_number',
+        taxInvoicePath: 'tax_invoice_path', invoicedAt: 'invoiced_at',
+        notes: 'notes', supportingDocPath: 'supporting_doc_path',
+        warehouseEmailSentAt: 'warehouse_email_sent_at',
+        warehouseEmailSentBy: 'warehouse_email_sent_by',
+      }
+      const JSONB_COLS = new Set(['items'])
+      const setObj: Record<string, unknown> = {}
+      for (const [k, v] of Object.entries(patch)) {
+        if (k === 'id' || k === 'auditLog') continue
+        if (k === 'items') {
+          setObj['items'] = v == null ? null : sql.json(v as never)
+          continue
+        }
+        const col = CAMEL_TO_SNAKE[k]
+        if (!col) continue
+        setObj[col] = v ?? null
+        void JSONB_COLS
+      }
+      if (Object.keys(setObj).length === 0) return
+      await sql`UPDATE vex_dispatches SET ${sql(setObj)} WHERE id = ${id}`
+      return
+    }
+    const cur = (vexDispatchesJson as unknown[] as VexDispatch[]).find((d) => d.id === id)
+    if (!cur) return
+    await enqueueUpdate({
+      queuedBy: opts?.queuedBy ?? 'system',
+      entity: 'vexDispatch',
+      operation: 'update',
+      payload: { ...cur, ...patch } as unknown as Record<string, unknown>,
+    })
+  },
+  async updateWithAudit(
+    id: string,
+    patch: Partial<VexDispatch>,
+    audit: AuditEntry,
+    opts?: { queuedBy?: string },
+  ): Promise<void> {
+    if (currentBackend() === 'postgres') {
+      await this.updatePartial(id, patch, opts)
+      await this.appendAudit(id, audit)
+      return
+    }
+    const cur = (vexDispatchesJson as unknown[] as VexDispatch[]).find((d) => d.id === id)
+    if (!cur) return
+    await enqueueUpdate({
+      queuedBy: opts?.queuedBy ?? 'system',
+      entity: 'vexDispatch',
+      operation: 'update',
+      payload: {
+        ...cur, ...patch,
+        auditLog: [...(cur.auditLog ?? []), audit],
+      } as unknown as Record<string, unknown>,
+    })
+  },
 }
 
 export const vexOrderRepo = makeLeafRepo({
@@ -595,6 +660,81 @@ export const agreementRepo = {
         WHERE id = ${id}
       `
     }
+  },
+  /**
+   * Partial-field update. Same atomic-friendly pattern as
+   * mouRepo.updatePartial: in postgres mode, UPDATEs ONLY the listed
+   * scalar/JSONB columns (touching audit_log only when explicitly
+   * passed). In json mode, reads + merges + enqueues a full payload
+   * (drainer semantics unchanged).
+   *
+   * Pair with appendAudit() to close the JSONB RMW race: two parallel
+   * callers no longer collide because (a) updatePartial only touches
+   * the patched columns, and (b) appendAudit uses server-side
+   * audit_log || concat.
+   */
+  async updatePartial(
+    id: string,
+    patch: Partial<Agreement>,
+    opts?: { queuedBy?: string },
+  ): Promise<void> {
+    if (currentBackend() === 'postgres') {
+      const sql = getSql()
+      const CAMEL_TO_SNAKE: Record<string, string> = {
+        type: 'type', partyName: 'party_name', vendorId: 'vendor_id',
+        natureOfAgreement: 'nature_of_agreement', product: 'product',
+        department: 'department', keyTerms: 'key_terms',
+        startDate: 'start_date', endDate: 'end_date', tenure: 'tenure',
+        noticePeriod: 'notice_period', vendorLocation: 'vendor_location',
+        physicalCustody: 'physical_custody', documentUrl: 'document_url',
+        daysToExpiry: 'days_to_expiry',
+      }
+      const setObj: Record<string, unknown> = {}
+      for (const [k, v] of Object.entries(patch)) {
+        if (k === 'id' || k === 'auditLog') continue
+        const col = CAMEL_TO_SNAKE[k]
+        if (!col) continue
+        setObj[col] = v ?? null
+      }
+      if (Object.keys(setObj).length === 0) return
+      await sql`UPDATE agreements SET ${sql(setObj)} WHERE id = ${id}`
+      return
+    }
+    const cur = (agreementsJson as unknown[] as Agreement[]).find((a) => a.id === id)
+    if (!cur) return
+    await enqueueUpdate({
+      queuedBy: opts?.queuedBy ?? 'system',
+      entity: 'agreement',
+      operation: 'update',
+      payload: { ...cur, ...patch } as unknown as Record<string, unknown>,
+    })
+  },
+  /**
+   * Atomic update + audit in one call. See mouRepo.updateWithAudit
+   * for full pattern docs.
+   */
+  async updateWithAudit(
+    id: string,
+    patch: Partial<Agreement>,
+    audit: AuditEntry,
+    opts?: { queuedBy?: string },
+  ): Promise<void> {
+    if (currentBackend() === 'postgres') {
+      await this.updatePartial(id, patch, opts)
+      await this.appendAudit(id, audit)
+      return
+    }
+    const cur = (agreementsJson as unknown[] as Agreement[]).find((a) => a.id === id)
+    if (!cur) return
+    await enqueueUpdate({
+      queuedBy: opts?.queuedBy ?? 'system',
+      entity: 'agreement',
+      operation: 'update',
+      payload: {
+        ...cur, ...patch,
+        auditLog: [...(cur.auditLog ?? []), audit],
+      } as unknown as Record<string, unknown>,
+    })
   },
 }
 

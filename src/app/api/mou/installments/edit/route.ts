@@ -21,7 +21,7 @@ import { NextResponse } from 'next/server'
 import { getCurrentSession, getCurrentUser } from '@/lib/auth/session'
 import { canEditFinanceData } from '@/lib/access'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
-import type { Adjustment, AuditEntry } from '@/lib/types'
+import type { Adjustment, AuditEntry, Payment } from '@/lib/types'
 import { mouRepo } from '@/lib/db/repos/mou'
 import { paymentRepo } from '@/lib/db/repos/payment'
 
