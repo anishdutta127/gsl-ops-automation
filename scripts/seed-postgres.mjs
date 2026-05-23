@@ -163,18 +163,18 @@ function isExpectedOrphan(name, row) {
 async function seedTable(sql, name, rows, perRow) {
   let inserted = 0, skipped = 0, expectedSkipped = 0, failed = 0
   const failedExamples = []
-  let savepointN = 0
   for (const row of rows) {
-    savepointN += 1
-    const spName = `sp_${name}_${savepointN}`
-    await sql.unsafe(`SAVEPOINT ${spName}`)
     try {
-      const res = await perRow(sql, row)
-      if (res && res.count > 0) inserted += 1
-      else skipped += 1
-      await sql.unsafe(`RELEASE SAVEPOINT ${spName}`)
+      // sql.savepoint() is the postgres.js-native way to scope a
+      // potential failure to a single row. On throw it ROLLBACKs to
+      // the savepoint AND clears the per-connection error state so
+      // the outer transaction can still commit.
+      await sql.savepoint(async (sql) => {
+        const res = await perRow(sql, row)
+        if (res && res.count > 0) inserted += 1
+        else skipped += 1
+      })
     } catch (err) {
-      await sql.unsafe(`ROLLBACK TO SAVEPOINT ${spName}`)
       if (isExpectedOrphan(name, row)) {
         expectedSkipped += 1
       } else {
@@ -1048,6 +1048,9 @@ try {
     console.log(`[seed] dry-run rollback complete in ${Date.now() - startedAt}ms (no rows persisted)`)
   } else {
     console.error('[seed] FAILED:', err.message)
+    console.error('  stack:', err.stack?.split('\n').slice(0, 8).join('\n  '))
+    console.error('  code:', err.code, 'detail:', err.detail, 'constraint:', err.constraint_name)
+    console.error('  query:', err.query?.slice(0, 200))
     process.exit(1)
   }
 } finally {

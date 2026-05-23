@@ -1099,7 +1099,19 @@ Step-by-step migration during Part 4 (after the schema lands and the repos exist
 3. Lib helpers (`src/lib/dispatch/raiseDispatch.ts`, `src/lib/pi/generatePi.ts`, etc.) come last, since they fan out to many entity types per operation.
 4. Each step keeps `DATA_BACKEND=json` as the default and tests must stay green.
 
-### 4.5 Boundary outside `src/lib/db/`
+### 4.5 Rule: per-row savepoints use `sql.savepoint()`, not `sql.unsafe('SAVEPOINT ...')`
+
+Surfaced during Part 3 (2026-05-23) and made permanent in Part 4.
+
+When writing a batch operation that needs per-row error isolation inside a single transaction (the seed pass is the canonical case; any future bulk-import script that wants to surface per-row diagnostics without aborting the whole batch is the same shape), use postgres.js's `sql.savepoint(async (sql) => { ... })` API rather than emitting raw `SAVEPOINT`/`ROLLBACK TO SAVEPOINT`/`RELEASE SAVEPOINT` via `sql.unsafe(...)`.
+
+Why: a manual `ROLLBACK TO SAVEPOINT` via `sql.unsafe` rolls back the PG state but does NOT clear postgres.js's per-connection "error" flag. The next `sql.begin` COMMIT then catches a deferred error even though every per-row failure looked clean in the loop. We hit exactly this during the first `--apply` of the seed: per-table tracking showed `failed=0` for every row, then `[seed] FAILED: ...mous_school_id_fkey` fired on COMMIT because a rolled-back savepoint left the lib's state believing the connection was poisoned.
+
+`sql.savepoint()` is the documented postgres.js mechanism. It RELEASEs on success, ROLLBACKs to the savepoint on throw, AND clears the per-connection error flag in both cases. The seed script switched to this pattern in commit `e39b603`; the staging seed then committed cleanly.
+
+The corollary: any operation that behaves differently between a rolled-back transaction and a committed write must be tested against an actual committed write, not just a transaction that rolls back at the end. Dry-runs are a useful filter but not a substitute for an `--apply` smoke test. The Part 3 dry-run gave a false-clean signal on the savepoint bug because the dry-run always throws `__dry_run_rollback__` and bypasses the COMMIT path where the latent error would have surfaced.
+
+### 4.6 Boundary outside `src/lib/db/`
 
 Scripts under `scripts/` that currently do direct `fs.writeFileSync` (seed-dev, backfills) keep their direct-write path for the `json` backend. For the `postgres` backend they are either:
 - Skipped (`seed-dev.mjs` is dev-only; never used in production)
