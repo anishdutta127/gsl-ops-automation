@@ -14,20 +14,15 @@
 import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
 import { AlertCircle } from 'lucide-react'
-import type { MOU, SalesPerson, School } from '@/lib/types'
-import schoolsJson from '@/data/schools.json'
-import mousJson from '@/data/mous.json'
-import salesTeamJson from '@/data/sales_team.json'
+import { schoolRepo } from '@/lib/db/repos/school'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { salesTeamRepo } from '@/lib/db/repos/salesTeam'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canEditFinanceData, canEditMOU } from '@/lib/access'
 import { getCurrentSalesRepForSchool } from '@/lib/schools/currentSalesRep'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { opsButtonClass } from '@/components/ops/OpsButton'
-
-const allSchools = schoolsJson as unknown as School[]
-const allMous = mousJson as unknown as MOU[]
-const allSalesTeam = salesTeamJson as unknown as SalesPerson[]
 
 const ERROR_COPY: Record<string, string> = {
   'invalid-scope': 'Pick which scope to apply (future MOUs or all MOUs).',
@@ -57,6 +52,12 @@ export default async function ReassignSalesRepPage({ params, searchParams }: Pag
   if (!canEditMOU(user) && !canEditFinanceData(user)) {
     redirect(`/schools/${schoolId}?notice=sales-rep-reassign-forbidden`)
   }
+
+  const [allSchools, allMous, allSalesTeam] = await Promise.all([
+    schoolRepo.findAll(),
+    mouRepo.findAll(),
+    salesTeamRepo.findAll(),
+  ])
 
   const school = allSchools.find((s) => s.id === schoolId)
   if (!school) notFound()

@@ -14,15 +14,11 @@
  */
 
 import { NextResponse } from 'next/server'
-import mousJson from '@/data/mous.json'
-import schoolsJson from '@/data/schools.json'
-import intakeRecordsJson from '@/data/intake_records.json'
-import type { IntakeRecord, MOU, School } from '@/lib/types'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { schoolRepo } from '@/lib/db/repos/school'
+import { intakeRecordRepo } from '@/lib/db/repos/leafRepos'
+import type { IntakeRecord } from '@/lib/types'
 import { getCurrentSession } from '@/lib/auth/session'
-
-const allMous = mousJson as unknown as MOU[]
-const allSchools = schoolsJson as unknown as School[]
-const allIntakeRecords = intakeRecordsJson as unknown as IntakeRecord[]
 
 function csvEscape(value: string | number | null | undefined): string {
   if (value === null || value === undefined) return ''
@@ -50,11 +46,14 @@ export async function GET(
     return NextResponse.redirect(url, { status: 303 })
   }
 
+  const allMous = await mouRepo.findAll()
   const mou = allMous.find((m) => m.id === mouId)
   if (!mou) {
     return NextResponse.json({ error: 'mou-not-found' }, { status: 404 })
   }
 
+  const allSchools = await schoolRepo.findAll()
+  const allIntakeRecords = (await intakeRecordRepo.findAll()) as unknown as IntakeRecord[]
   const school = allSchools.find((s) => s.id === mou.schoolId) ?? null
   const intake = allIntakeRecords.find((r) => r.mouId === mou.id) ?? null
 

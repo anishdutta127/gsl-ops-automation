@@ -11,14 +11,12 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { Bell, CheckCircle2 } from 'lucide-react'
-import notificationsJson from '@/data/notifications.json'
-import type { Notification, NotificationKind } from '@/lib/types'
+import { notificationRepo } from '@/lib/db/repos/notification'
+import type { NotificationKind } from '@/lib/types'
 import { getCurrentUser } from '@/lib/auth/session'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { markAllReadAction } from './actions'
-
-const allNotifications = notificationsJson as unknown as Notification[]
 
 const KIND_LABEL: Record<NotificationKind | 'all' | 'unread', string> = {
   all: 'All',
@@ -72,6 +70,7 @@ export default async function NotificationsPage({ searchParams }: PageProps) {
     : 'all'
   const markedCount = typeof sp.marked === 'string' ? Number(sp.marked) : null
 
+  const allNotifications = await notificationRepo.findAll()
   const own = allNotifications
     .filter((n) => n.recipientUserId === user.id)
     .sort((a, b) => b.createdAt.localeCompare(a.createdAt))

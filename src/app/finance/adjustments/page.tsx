@@ -23,9 +23,10 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { Info } from 'lucide-react'
-import type { Adjustment, AdjustmentTrigger, MOU } from '@/lib/types'
-import adjustmentsJson from '@/data/adjustments.json'
-import mousJson from '@/data/mous.json'
+import type { Adjustment, AdjustmentTrigger } from '@/lib/types'
+// P4 batch 3a (2026-05-24): live repo reads.
+import { mouRepo } from '@/lib/db/repos/mou'
+import { adjustmentRepo } from '@/lib/db/repos/leafRepos'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canAccessFinance, canEditFinanceData } from '@/lib/access'
 import { TopNav } from '@/components/ops/TopNav'
@@ -34,9 +35,6 @@ import { EmptyState } from '@/components/ops/EmptyState'
 import { StatusChip, type StatusChipTone } from '@/components/ops/StatusChip'
 import { opsButtonClass } from '@/components/ops/OpsButton'
 import { formatRs, formatDate } from '@/lib/format'
-
-const allAdjustments = adjustmentsJson as unknown as Adjustment[]
-const allMous = mousJson as unknown as MOU[]
 
 type StatusFilter = 'all' | 'Active' | 'Reversed'
 type TriggerFilter = 'all' | AdjustmentTrigger
@@ -98,6 +96,11 @@ export default async function AdjustmentsPage({ searchParams }: PageProps) {
   const expandId = typeof sp.expand === 'string' ? sp.expand : null
   const errorKey = typeof sp.error === 'string' ? sp.error : null
   const errorMessage = errorKey ? ERROR_COPY[errorKey] ?? `Failed: ${errorKey}` : null
+
+  const [allAdjustments, allMous] = await Promise.all([
+    adjustmentRepo.findAll() as Promise<Adjustment[]>,
+    mouRepo.findAll(),
+  ])
 
   const mouById = new Map(allMous.map((m) => [m.id, m]))
 

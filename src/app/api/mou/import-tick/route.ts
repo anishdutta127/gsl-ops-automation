@@ -17,15 +17,12 @@
  */
 
 import { NextResponse } from 'next/server'
-import type { User } from '@/lib/types'
-import usersJson from '@/data/users.json'
+import { userRepo } from '@/lib/db/repos/user'
 import { importOnce } from '@/lib/importer/fromMou'
 import { canPerform } from '@/lib/auth/permissions'
 import { getCurrentSession } from '@/lib/auth/session'
 import { appendSyncHealth, type SyncHealthEntry } from '@/lib/syncHealth/appendEntry'
 import { emitMouUploaded } from '@/lib/notifications/workflowTriggers'
-
-const users = usersJson as unknown as User[]
 
 export async function POST(request: Request) {
   const session = await getCurrentSession()
@@ -35,6 +32,7 @@ export async function POST(request: Request) {
     return NextResponse.redirect(url, { status: 303 })
   }
 
+  const users = await userRepo.findAll()
   const user = users.find((u) => u.id === session.sub)
   if (!user || !canPerform(user, 'system:trigger-sync')) {
     const url = new URL('/admin', request.url)

@@ -24,12 +24,9 @@ import {
   isPiParallelBuildLocked,
   parallelBuildLockMessage,
 } from '@/lib/pi/parallelBuildLock'
-import type { VexProduct } from '@/lib/mouSystem/types'
-import vexProductsJson from '@/data/vex_products.json'
+import { vexProductRepo } from '@/lib/db/repos/vexProduct'
 import { company } from '@/lib/mouSystem/company'
 import { VexPiForm } from './VexPiForm'
-
-const vexProducts = vexProductsJson as unknown as VexProduct[]
 
 export default async function NewVexPiPage() {
   const user = await getCurrentUser()
@@ -39,6 +36,7 @@ export default async function NewVexPiPage() {
   }
 
   const parallelBuildLocked = isPiParallelBuildLocked()
+  const vexProducts = await vexProductRepo.findAll()
   const activeProducts = vexProducts.filter((p) => p.active)
 
   return (

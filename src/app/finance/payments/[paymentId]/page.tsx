@@ -14,9 +14,9 @@
 
 import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
-import type { MOU, Payment } from '@/lib/types'
-import paymentsJson from '@/data/payments.json'
-import mousJson from '@/data/mous.json'
+// P4 batch 3a (2026-05-24): live repo reads.
+import { paymentRepo } from '@/lib/db/repos/payment'
+import { mouRepo } from '@/lib/db/repos/mou'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { DetailHeaderCard } from '@/components/ops/DetailHeaderCard'
@@ -24,9 +24,6 @@ import { StatusChip } from '@/components/ops/StatusChip'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canEditFinanceData } from '@/lib/access'
 import { formatRs, formatDate } from '@/lib/format'
-
-const allPayments = paymentsJson as unknown as Payment[]
-const allMous = mousJson as unknown as MOU[]
 
 interface PageProps {
   params: Promise<{ paymentId: string }>
@@ -65,6 +62,10 @@ export default async function PaymentDetailPage({ params, searchParams }: PagePr
   const sp = await searchParams
   const user = await getCurrentUser()
   if (!user) redirect(`/login?next=${encodeURIComponent(`/finance/payments/${paymentId}`)}`)
+  const [allPayments, allMous] = await Promise.all([
+    paymentRepo.findAll(),
+    mouRepo.findAll(),
+  ])
   const payment = allPayments.find((p) => p.id === paymentId)
   if (!payment) notFound()
   const mou = allMous.find((m) => m.id === payment.mouId)

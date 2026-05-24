@@ -15,9 +15,9 @@
  */
 
 import { NextResponse } from 'next/server'
-import type { AuditEntry, MOU } from '@/lib/types'
+import type { AuditEntry } from '@/lib/types'
 import type { ProductSelection } from '@/lib/mouSystem/types'
-import mousJson from '@/data/mous.json'
+import { mouRepo } from '@/lib/db/repos/mou'
 import { getCurrentSession, getCurrentUser } from '@/lib/auth/session'
 import { canEditMOU } from '@/lib/access'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
@@ -45,7 +45,7 @@ export async function POST(request: Request) {
   if (!canEditMOU(user)) return errorTo('permission')
 
   const form = await request.formData()
-  const mous = mousJson as unknown as MOU[]
+  const mous = await mouRepo.findAll()
   const mouById = new Map(mous.map((m) => [m.id, m]))
 
   const ts = new Date().toISOString()

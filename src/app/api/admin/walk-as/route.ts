@@ -21,7 +21,7 @@
  */
 
 import { NextResponse } from 'next/server'
-import usersJson from '@/data/users.json'
+import { userRepo } from '@/lib/db/repos/user'
 import type { AuditEntry, User } from '@/lib/types'
 import { getCurrentUser } from '@/lib/auth/session'
 import {
@@ -31,8 +31,6 @@ import {
 } from '@/lib/crypto/jwt'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
 import { getDepartment } from '@/lib/access'
-
-const allUsers = usersJson as unknown as User[]
 
 function isImpersonationCaller(user: User): boolean {
   if (user.id === 'anish.d') return true
@@ -54,6 +52,7 @@ export async function POST(request: Request) {
   if (!targetId) {
     return NextResponse.json({ error: 'missing-target' }, { status: 400 })
   }
+  const allUsers = await userRepo.findAll()
   const target = allUsers.find((u) => u.id === targetId)
   if (!target) {
     return NextResponse.json({ error: 'unknown-target' }, { status: 404 })

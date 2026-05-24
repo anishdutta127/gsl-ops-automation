@@ -6,19 +6,17 @@
 
 import { getCurrentUser } from '@/lib/auth/session'
 import { NextResponse } from 'next/server'
-import type { KitDispatch, MOU, School } from '@/lib/types'
-import mousJson from '@/data/mous.json'
-import kitDispatchesJson from '@/data/kit_dispatches.json'
-import schoolsJson from '@/data/schools.json'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { kitDispatchRepo } from '@/lib/db/repos/kitDispatch'
+import { schoolRepo } from '@/lib/db/repos/school'
 import { deriveSummaryRows, rowsToCsv } from '@/lib/kitDispatch/summaryView'
-
-const mous = mousJson as unknown as MOU[]
-const kitDispatches = kitDispatchesJson as unknown as KitDispatch[]
-const schools = schoolsJson as unknown as School[]
 
 export async function GET() {
   const user = await getCurrentUser()
   if (!user) return NextResponse.json({ error: 'unauthenticated' }, { status: 401 })
+  const mous = await mouRepo.findAll()
+  const kitDispatches = await kitDispatchRepo.findAll()
+  const schools = await schoolRepo.findAll()
   const rows = deriveSummaryRows({ kitDispatches, mous, schools })
   const csv = rowsToCsv(rows)
   return new NextResponse(csv, {

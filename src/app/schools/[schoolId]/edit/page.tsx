@@ -18,14 +18,11 @@
  */
 
 import { notFound, redirect } from 'next/navigation'
-import type { School } from '@/lib/types'
-import schoolsJson from '@/data/schools.json'
+import { schoolRepo } from '@/lib/db/repos/school'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canEditFinanceSchoolFields } from '@/lib/schoolFieldConfig'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
-
-const allSchools = schoolsJson as unknown as School[]
 
 interface PageProps {
   params: Promise<{ schoolId: string }>
@@ -58,6 +55,7 @@ export default async function SchoolEditPage({ params, searchParams }: PageProps
   const sp = await searchParams
   const user = await getCurrentUser()
   if (!user) redirect(`/login?next=%2Fschools%2F${encodeURIComponent(schoolId)}%2Fedit`)
+  const allSchools = await schoolRepo.findAll()
   const school = allSchools.find((s) => s.id === schoolId)
   if (!school) notFound()
   // Gate 1 Step 4 (MM4 extended): GSTIN + PAN + billing block hidden

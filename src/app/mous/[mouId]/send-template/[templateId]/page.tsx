@@ -29,25 +29,19 @@ import type {
   TemplateRecipient,
   User,
 } from '@/lib/types'
-import mousJson from '@/data/mous.json'
-import schoolsJson from '@/data/schools.json'
-import intakeRecordsJson from '@/data/intake_records.json'
-import dispatchesJson from '@/data/dispatches.json'
-import paymentsJson from '@/data/payments.json'
-import salesTeamJson from '@/data/sales_team.json'
-import templatesJson from '@/data/communication_templates.json'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { schoolRepo } from '@/lib/db/repos/school'
+import { dispatchRepo } from '@/lib/db/repos/dispatch'
+import { paymentRepo } from '@/lib/db/repos/payment'
+import { salesTeamRepo } from '@/lib/db/repos/salesTeam'
+import {
+  intakeRecordRepo,
+  communicationTemplateRepo,
+} from '@/lib/db/repos/leafRepos'
 import { getCurrentUser } from '@/lib/auth/session'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { applyVariables } from '@/lib/templates/applyVariables'
-
-const allMous = mousJson as unknown as MOU[]
-const allSchools = schoolsJson as unknown as School[]
-const allIntakeRecords = intakeRecordsJson as unknown as IntakeRecord[]
-const allDispatches = dispatchesJson as unknown as Dispatch[]
-const allPayments = paymentsJson as unknown as Payment[]
-const allSalesTeam = salesTeamJson as unknown as SalesPerson[]
-const allTemplates = templatesJson as unknown as CommunicationTemplate[]
 
 interface PageProps {
   params: Promise<{ mouId: string; templateId: string }>
@@ -100,6 +94,24 @@ export default async function SendTemplatePage({ params, searchParams }: PagePro
   if (!user) {
     redirect(`/login?next=%2Fmous%2F${encodeURIComponent(mouId)}%2Fsend-template%2F${encodeURIComponent(templateId)}`)
   }
+
+  const [
+    allMous,
+    allSchools,
+    allIntakeRecords,
+    allDispatches,
+    allPayments,
+    allSalesTeam,
+    allTemplates,
+  ] = await Promise.all([
+    mouRepo.findAll(),
+    schoolRepo.findAll(),
+    intakeRecordRepo.findAll() as Promise<IntakeRecord[]>,
+    dispatchRepo.findAll(),
+    paymentRepo.findAll(),
+    salesTeamRepo.findAll() as Promise<SalesPerson[]>,
+    communicationTemplateRepo.findAll() as Promise<CommunicationTemplate[]>,
+  ])
 
   const mou = allMous.find((m) => m.id === mouId)
   if (!mou || !isVisibleToUser(mou, user)) notFound()

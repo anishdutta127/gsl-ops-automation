@@ -32,19 +32,14 @@ import type {
   VexPi,
   VexProduct,
 } from '@/lib/mouSystem/types'
-import vexProductsJson from '@/data/vex_products.json'
-import vexPisJson from '@/data/vex_pis.json'
-import vexDispatchesJson from '@/data/vex_dispatches.json'
-import vexOrdersJson from '@/data/vex_orders.json'
+// P4 batch 2 (2026-05-24): live repo reads.
+import { vexProductRepo } from '@/lib/db/repos/vexProduct'
+import { vexPiRepo } from '@/lib/db/repos/vexPi'
+import { vexDispatchRepo, vexOrderRepo } from '@/lib/db/repos/leafRepos'
 import { VexProductsTable } from './VexProductsTable'
 import { VexPiList } from './VexPiList'
 import { VexOrdersTable } from './VexOrdersTable'
 import { VexDispatchesTable } from './VexDispatchesTable'
-
-const vexProducts = vexProductsJson as unknown as VexProduct[]
-const vexPis = vexPisJson as unknown as VexPi[]
-const vexDispatches = vexDispatchesJson as unknown as VexDispatch[]
-const vexOrders = vexOrdersJson as unknown as VexOrder[]
 
 export default async function OperationsVexPage() {
   const user = await getCurrentUser()
@@ -52,6 +47,13 @@ export default async function OperationsVexPage() {
   const accent = accentFor('ops')
   const canCreatePi = canEditFinanceData(user)
   const canEditProducts = canManageInventory(user)
+  // P4 batch 2 (2026-05-24): live repo reads.
+  const [vexProducts, vexPis, vexDispatches, vexOrders] = await Promise.all([
+    vexProductRepo.findAll() as unknown as Promise<VexProduct[]>,
+    vexPiRepo.findAll() as unknown as Promise<VexPi[]>,
+    vexDispatchRepo.findAll() as Promise<VexDispatch[]>,
+    vexOrderRepo.findAll() as Promise<VexOrder[]>,
+  ])
 
   // VEX PI rollups (Round 3 Step 10a/10c semantics).
   const totalReceived = vexPis.reduce(

@@ -17,10 +17,9 @@ import Link from 'next/link'
 import { Info } from 'lucide-react'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canManageUsers } from '@/lib/access'
-import type { School } from '@/lib/types'
-import schoolsJson from '@/data/schools.json'
+import { schoolRepo } from '@/lib/db/repos/school'
+import { chainDismissalRepo } from '@/lib/db/repos/leafRepos'
 import snapshotMetaJson from '@/data/_snapshots/mou-system/_meta.json'
-import chainDismissalsJson from '@/data/chain_dismissals.json'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import {
@@ -28,11 +27,8 @@ import {
   suggestChainName,
 } from '@/lib/admin/chainReconciliation'
 
-const allSchools = schoolsJson as unknown as School[]
 const snapshotCandidates =
   (snapshotMetaJson as { chainCandidates?: Array<{ schoolId: string; name: string }> }).chainCandidates ?? []
-const dismissedSchoolIds =
-  (chainDismissalsJson as { dismissedSchoolIds?: string[] }).dismissedSchoolIds ?? []
 
 interface PageProps {
   searchParams: Promise<Record<string, string | string[] | undefined>>
@@ -46,6 +42,12 @@ export default async function ChainMouReconciliationPage({ searchParams }: PageP
   const sp = await searchParams
   const flash = typeof sp.flash === 'string' ? sp.flash : null
   const error = typeof sp.error === 'string' ? sp.error : null
+
+  const [allSchools, dismissedRows] = await Promise.all([
+    schoolRepo.findAll(),
+    chainDismissalRepo.findAll(),
+  ])
+  const dismissedSchoolIds = dismissedRows.map((r) => String(r.schoolId))
 
   const candidates = buildChainCandidates({
     snapshotCandidates,

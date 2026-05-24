@@ -19,16 +19,14 @@ import { PageHeader } from '@/components/ops/PageHeader'
 import { EmptyState } from '@/components/ops/EmptyState'
 import { StatusChip } from '@/components/ops/StatusChip'
 import { opsButtonClass } from '@/components/ops/OpsButton'
-import type { Vendor } from '@/lib/types'
-import vendorsJson from '@/data/vendors.json'
-
-const vendors = vendorsJson as unknown as Vendor[]
+import { vendorRepo } from '@/lib/db/repos/vendor'
 
 export default async function VendorsPage() {
   const user = await getCurrentUser()
   if (!user) redirect('/login?next=%2Foperations%2Fvendors')
   const canEdit = canEditFinanceData(user)
 
+  const vendors = await vendorRepo.findAll()
   const sorted = vendors
     .slice()
     .sort((a, b) => a.name.localeCompare(b.name))

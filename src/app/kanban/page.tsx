@@ -32,17 +32,19 @@ import type {
   StageResponsibility,
   User,
 } from '@/lib/types'
-import mousJson from '@/data/mous.json'
-import dispatchesJson from '@/data/dispatches.json'
-import paymentsJson from '@/data/payments.json'
-import communicationsJson from '@/data/communications.json'
-import feedbackJson from '@/data/feedback.json'
-import intakeRecordsJson from '@/data/intake_records.json'
-import schoolsJson from '@/data/schools.json'
-import salesTeamJson from '@/data/sales_team.json'
-import kitDispatchesJson from '@/data/kit_dispatches.json'
-import usersJson from '@/data/users.json'
-import stageResponsibilityJson from '@/data/stage_responsibility.json'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { dispatchRepo } from '@/lib/db/repos/dispatch'
+import { paymentRepo } from '@/lib/db/repos/payment'
+import { schoolRepo } from '@/lib/db/repos/school'
+import { salesTeamRepo } from '@/lib/db/repos/salesTeam'
+import { kitDispatchRepo } from '@/lib/db/repos/kitDispatch'
+import { userRepo } from '@/lib/db/repos/user'
+import {
+  communicationRepo,
+  feedbackRepo,
+  intakeRecordRepo,
+  stageResponsibilityRepo,
+} from '@/lib/db/repos/leafRepos'
 import { getCurrentUser } from '@/lib/auth/session'
 import { KANBAN_COLUMNS, type KanbanStageKey } from '@/lib/kanban/deriveStage'
 import { bucketByLifecycle } from '@/lib/kanban/columnBuckets'
@@ -71,17 +73,19 @@ import {
 } from '@/lib/filterParsing'
 import { SUPER_REGION_MEMBERS } from '@/lib/regions'
 
-const allMous = mousJson as unknown as MOU[]
-const allDispatches = dispatchesJson as unknown as Dispatch[]
-const allPayments = paymentsJson as unknown as Payment[]
-const allCommunications = communicationsJson as unknown as Communication[]
-const allFeedback = feedbackJson as unknown as Feedback[]
-const allIntakeRecords = intakeRecordsJson as unknown as IntakeRecord[]
-const allSchools = schoolsJson as unknown as School[]
-const allSalesTeam = salesTeamJson as unknown as SalesPerson[]
-const allKitDispatches = kitDispatchesJson as unknown as KitDispatch[]
-const allUsers = usersJson as unknown as User[]
-const allStageResponsibility = stageResponsibilityJson as unknown as StageResponsibility[]
+interface KanbanData {
+  allMous: MOU[]
+  allDispatches: Dispatch[]
+  allPayments: Payment[]
+  allCommunications: Communication[]
+  allFeedback: Feedback[]
+  allIntakeRecords: IntakeRecord[]
+  allSchools: School[]
+  allSalesTeam: SalesPerson[]
+  allKitDispatches: KitDispatch[]
+  allUsers: User[]
+  allStageResponsibility: StageResponsibility[]
+}
 
 const DIMENSION_KEYS = ['region', 'programme', 'salesRep', 'status'] as const
 
@@ -117,17 +121,70 @@ export default async function KanbanPage({ searchParams }: PageProps) {
   const sp = await searchParams
   const view = parseView(sp)
 
-  if (view === 'operations') {
-    return renderOperationsView(sp)
+  const [
+    allMous,
+    allDispatches,
+    allPayments,
+    allCommunications,
+    allFeedback,
+    allIntakeRecords,
+    allSchools,
+    allSalesTeam,
+    allKitDispatches,
+    allUsers,
+    allStageResponsibility,
+  ] = await Promise.all([
+    mouRepo.findAll(),
+    dispatchRepo.findAll(),
+    paymentRepo.findAll(),
+    communicationRepo.findAll() as unknown as Promise<Communication[]>,
+    feedbackRepo.findAll() as unknown as Promise<Feedback[]>,
+    intakeRecordRepo.findAll() as unknown as Promise<IntakeRecord[]>,
+    schoolRepo.findAll(),
+    salesTeamRepo.findAll(),
+    kitDispatchRepo.findAll(),
+    userRepo.findAll(),
+    stageResponsibilityRepo.findAll() as unknown as Promise<StageResponsibility[]>,
+  ])
+
+  const data: KanbanData = {
+    allMous,
+    allDispatches,
+    allPayments,
+    allCommunications,
+    allFeedback,
+    allIntakeRecords,
+    allSchools,
+    allSalesTeam,
+    allKitDispatches,
+    allUsers,
+    allStageResponsibility,
   }
-  return renderLifecycleView(sp)
+
+  if (view === 'operations') {
+    return renderOperationsView(sp, data)
+  }
+  return renderLifecycleView(sp, data)
 }
 
 // ===========================================================================
 // Lifecycle view (formerly the only /kanban view)
 // ===========================================================================
 
-function renderLifecycleView(sp: Record<string, string | string[] | undefined>) {
+function renderLifecycleView(
+  sp: Record<string, string | string[] | undefined>,
+  data: KanbanData,
+) {
+  const {
+    allMous,
+    allDispatches,
+    allPayments,
+    allCommunications,
+    allFeedback,
+    allIntakeRecords,
+    allSchools,
+    allSalesTeam,
+  } = data
   const active = parseDimensions(sp, DIMENSION_KEYS as unknown as string[])
 
   const deps = {
@@ -257,7 +314,19 @@ function renderLifecycleView(sp: Record<string, string | string[] | undefined>) 
 // Operations view (formerly /dashboard/ops/kanban)
 // ===========================================================================
 
-function renderOperationsView(sp: Record<string, string | string[] | undefined>) {
+function renderOperationsView(
+  sp: Record<string, string | string[] | undefined>,
+  data: KanbanData,
+) {
+  const {
+    allMous,
+    allPayments,
+    allKitDispatches,
+    allUsers,
+    allSalesTeam,
+    allStageResponsibility,
+    allSchools,
+  } = data
   const augmentFilters = parseOpsAugmentFilters(sp)
   const kanbanFilters = parseKanbanFilters(sp)
   const now = new Date()

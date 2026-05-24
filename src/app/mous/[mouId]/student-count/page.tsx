@@ -18,11 +18,11 @@
 import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
 import { AlertCircle } from 'lucide-react'
-import type { MOU, Payment, StudentCountEvent, User } from '@/lib/types'
-import mousJson from '@/data/mous.json'
-import paymentsJson from '@/data/payments.json'
-import usersJson from '@/data/users.json'
-import eventsJson from '@/data/student_count_events.json'
+import type { StudentCountEvent } from '@/lib/types'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { paymentRepo } from '@/lib/db/repos/payment'
+import { userRepo } from '@/lib/db/repos/user'
+import { studentCountEventRepo } from '@/lib/db/repos/leafRepos'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canEditFinanceData, canEditMOU } from '@/lib/access'
 import { TopNav } from '@/components/ops/TopNav'
@@ -31,11 +31,6 @@ import { opsButtonClass } from '@/components/ops/OpsButton'
 import { formatRs, formatDate } from '@/lib/format'
 import { getCurrentStudentCountFor } from '@/lib/mou/applyCountChange'
 import { recalcInstallments } from '@/lib/mou/studentCountRecalc'
-
-const allMous = mousJson as unknown as MOU[]
-const allPayments = paymentsJson as unknown as Payment[]
-const allUsers = usersJson as unknown as User[]
-const allEvents = eventsJson as unknown as StudentCountEvent[]
 
 const ERROR_COPY: Record<string, string> = {
   permission: 'You do not have permission to update the student count for this MOU.',
@@ -66,6 +61,13 @@ export default async function StudentCountChangePage({ params, searchParams }: P
   if (!canEditMOU(user) && !canEditFinanceData(user)) {
     redirect(`/mous/${mouId}?notice=student-count-forbidden`)
   }
+
+  const [allMous, allPayments, allUsers, allEvents] = await Promise.all([
+    mouRepo.findAll(),
+    paymentRepo.findAll(),
+    userRepo.findAll(),
+    studentCountEventRepo.findAll() as Promise<StudentCountEvent[]>,
+  ])
 
   const mou = allMous.find((m) => m.id === mouId)
   if (!mou) notFound()

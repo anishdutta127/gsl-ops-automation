@@ -11,11 +11,12 @@
 
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
-import type { MOU, Payment, PaymentLog, School } from '@/lib/types'
-import mousJson from '@/data/mous.json'
-import paymentsJson from '@/data/payments.json'
-import paymentLogsJson from '@/data/payment_logs.json'
-import schoolsJson from '@/data/schools.json'
+import type { MOU, Payment, PaymentLog } from '@/lib/types'
+// P4 batch 3a (2026-05-24): live repo reads.
+import { mouRepo } from '@/lib/db/repos/mou'
+import { paymentRepo } from '@/lib/db/repos/payment'
+import { paymentLogRepo } from '@/lib/db/repos/leafRepos'
+import { schoolRepo } from '@/lib/db/repos/school'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canEditFinanceData } from '@/lib/access'
 import { TopNav } from '@/components/ops/TopNav'
@@ -24,16 +25,15 @@ import { opsButtonClass } from '@/components/ops/OpsButton'
 import { formatDate } from '@/lib/format'
 import { LogBatchForm, type BatchInstallmentLite, type SchoolLite } from './LogBatchForm'
 
-const allMous = mousJson as unknown as MOU[]
-const allPayments = paymentsJson as unknown as Payment[]
-const allPaymentLogs = paymentLogsJson as unknown as PaymentLog[]
-const allSchools = schoolsJson as unknown as School[]
-
 interface PageProps {
   searchParams?: Promise<Record<string, string | string[] | undefined>>
 }
 
-function outstandingForSchool(schoolId: string): {
+function outstandingForSchool(
+  schoolId: string,
+  allMous: MOU[],
+  allPayments: Payment[],
+): {
   installments: BatchInstallmentLite[]
   schoolMous: MOU[]
 } {
@@ -81,12 +81,19 @@ export default async function LogBatchPage({ searchParams }: PageProps) {
     redirect('/finance/payments?notice=batch-finance-only')
   }
 
+  const [allMous, allPayments, allPaymentLogs, allSchools] = await Promise.all([
+    mouRepo.findAll(),
+    paymentRepo.findAll(),
+    paymentLogRepo.findAll() as Promise<PaymentLog[]>,
+    schoolRepo.findAll(),
+  ])
+
   const schoolIdParam = typeof sp.schoolId === 'string' ? sp.schoolId : null
   const selectedSchool = schoolIdParam
     ? allSchools.find((s) => s.id === schoolIdParam) ?? null
     : null
   const { installments, schoolMous } = selectedSchool
-    ? outstandingForSchool(selectedSchool.id)
+    ? outstandingForSchool(selectedSchool.id, allMous, allPayments)
     : { installments: [], schoolMous: [] }
 
   // School picker option set: every active school that has at least

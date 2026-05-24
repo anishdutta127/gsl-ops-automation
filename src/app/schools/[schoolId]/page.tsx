@@ -22,14 +22,14 @@ import type {
   SchoolGroup,
   User,
 } from '@/lib/types'
-import schoolsJson from '@/data/schools.json'
-import schoolGroupsJson from '@/data/school_groups.json'
-import mousJson from '@/data/mous.json'
-import paymentsJson from '@/data/payments.json'
-import kitDispatchesJson from '@/data/kit_dispatches.json'
-import salesTeamJson from '@/data/sales_team.json'
-import escalationsJson from '@/data/escalations.json'
-import type { Escalation, SalesPerson } from '@/lib/types'
+import { schoolRepo } from '@/lib/db/repos/school'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { paymentRepo } from '@/lib/db/repos/payment'
+import { kitDispatchRepo } from '@/lib/db/repos/kitDispatch'
+import { salesTeamRepo } from '@/lib/db/repos/salesTeam'
+import { escalationRepo } from '@/lib/db/repos/escalation'
+import { schoolGroupRepo } from '@/lib/db/repos/leafRepos'
+import type { Escalation } from '@/lib/types'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canEditFinanceData, canEditMOU } from '@/lib/access'
 import { getCurrentSalesRepForSchool } from '@/lib/schools/currentSalesRep'
@@ -44,14 +44,6 @@ import { AuditLogPanel } from '@/components/ops/AuditLogPanel'
 import { StatusTracker } from '@/components/StatusTracker'
 import { computeStage } from '@/lib/statusTracker'
 import { isCriticalAudit } from '@/lib/criticalChanges'
-
-const allSchools = schoolsJson as unknown as School[]
-const allSchoolGroups = schoolGroupsJson as unknown as SchoolGroup[]
-const allMous = mousJson as unknown as MOU[]
-const allPayments = paymentsJson as unknown as Payment[]
-const allKitDispatches = kitDispatchesJson as unknown as KitDispatch[]
-const allSalesTeam = salesTeamJson as unknown as SalesPerson[]
-const allEscalations = escalationsJson as unknown as Escalation[]
 
 type TabKey = 'overview' | 'mous' | 'payments' | 'dispatches' | 'activity'
 const TABS: { key: TabKey; label: string }[] = [
@@ -111,6 +103,24 @@ export default async function SchoolDetailPage({ params, searchParams }: PagePro
       : 'overview'
   // Gate 4.7 Step 5: Critical-only filter toggle on Activity tab.
   const criticalOnly = sp.critical === '1' || sp.critical === 'true'
+
+  const [
+    allSchools,
+    allSchoolGroups,
+    allMous,
+    allPayments,
+    allKitDispatches,
+    allSalesTeam,
+    allEscalations,
+  ] = await Promise.all([
+    schoolRepo.findAll(),
+    schoolGroupRepo.findAll() as unknown as Promise<SchoolGroup[]>,
+    mouRepo.findAll(),
+    paymentRepo.findAll(),
+    kitDispatchRepo.findAll(),
+    salesTeamRepo.findAll(),
+    escalationRepo.findAll(),
+  ])
 
   const school = allSchools.find((s) => s.id === schoolId)
   if (!school) notFound()

@@ -14,25 +14,17 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import type {
   DispatchRequest,
-  MOU,
-  SalesPerson,
-  User,
 } from '@/lib/types'
-import dispatchRequestsJson from '@/data/dispatch_requests.json'
-import mousJson from '@/data/mous.json'
-import salesTeamJson from '@/data/sales_team.json'
-import usersJson from '@/data/users.json'
+import { dispatchRequestRepo } from '@/lib/db/repos/leafRepos'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { salesTeamRepo } from '@/lib/db/repos/salesTeam'
+import { userRepo } from '@/lib/db/repos/user'
 import { getCurrentUser } from '@/lib/auth/session'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { StatusChip, type StatusChipTone } from '@/components/ops/StatusChip'
 import { opsButtonClass } from '@/components/ops/OpsButton'
 import { formatSkuBreakdown } from '@/lib/dispatch/formatLineItems'
-
-const allRequests = dispatchRequestsJson as unknown as DispatchRequest[]
-const allMous = mousJson as unknown as MOU[]
-const allSalesTeam = salesTeamJson as unknown as SalesPerson[]
-const allUsers = usersJson as unknown as User[]
 
 type StatusFilter = 'all' | 'pending-approval' | 'approved' | 'rejected' | 'cancelled'
 
@@ -67,6 +59,13 @@ export default async function DispatchRequestsQueuePage({ searchParams }: PagePr
     ? (rawStatus as StatusFilter)
     : 'all'
   const search = typeof sp.q === 'string' ? sp.q.toLowerCase() : ''
+
+  const [allRequests, allMous, allSalesTeam, allUsers] = await Promise.all([
+    dispatchRequestRepo.findAll() as unknown as Promise<DispatchRequest[]>,
+    mouRepo.findAll(),
+    salesTeamRepo.findAll(),
+    userRepo.findAll(),
+  ])
 
   // Filter
   const matched = allRequests

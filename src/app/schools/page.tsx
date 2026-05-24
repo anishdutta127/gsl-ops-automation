@@ -15,8 +15,8 @@
  */
 
 import type { School, SchoolGroup } from '@/lib/types'
-import schoolsJson from '@/data/schools.json'
-import schoolGroupsJson from '@/data/school_groups.json'
+import { schoolRepo } from '@/lib/db/repos/school'
+import { schoolGroupRepo } from '@/lib/db/repos/leafRepos'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { FilterRail, type FilterDimension } from '@/components/ops/FilterRail'
@@ -30,9 +30,6 @@ import {
 } from '@/lib/filterParsing'
 import { SUPER_REGION_MEMBERS } from '@/lib/regions'
 
-const allSchools = schoolsJson as unknown as School[]
-const allSchoolGroups = schoolGroupsJson as unknown as SchoolGroup[]
-
 const DIMENSION_KEYS = ['region', 'group', 'gstin'] as const
 
 interface PageProps {
@@ -43,6 +40,11 @@ export default async function SchoolsListPage({ searchParams }: PageProps) {
   const sp = await searchParams
   const active = parseDimensions(sp, DIMENSION_KEYS as unknown as string[])
   const search = typeof sp.q === 'string' ? sp.q : ''
+
+  const [allSchools, allSchoolGroups] = await Promise.all([
+    schoolRepo.findAll(),
+    schoolGroupRepo.findAll() as unknown as Promise<SchoolGroup[]>,
+  ])
 
   const memberSchoolIds = new Set(
     allSchoolGroups.flatMap((g) => g.memberSchoolIds),

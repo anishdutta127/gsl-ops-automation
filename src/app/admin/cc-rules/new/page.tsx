@@ -16,14 +16,11 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { getCurrentUser } from '@/lib/auth/session'
 import type { SalesPerson, User } from '@/lib/types'
-import usersJson from '@/data/users.json'
-import salesTeamJson from '@/data/sales_team.json'
+import { userRepo } from '@/lib/db/repos/user'
+import { salesTeamRepo } from '@/lib/db/repos/salesTeam'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { OpsButton, opsButtonClass } from '@/components/ops/OpsButton'
-
-const users = usersJson as unknown as User[]
-const salesTeam = salesTeamJson as unknown as SalesPerson[]
 
 const SHEETS = ['South-West', 'East', 'North', 'derived'] as const
 const SCOPES = [
@@ -68,9 +65,13 @@ export default async function NewCcRulePage({
   const errorKey = typeof sp.error === 'string' ? sp.error : null
   const errorMessage = errorKey ? ERROR_MESSAGES[errorKey] ?? `Failed: ${errorKey}` : null
 
+  const [users, salesTeam] = await Promise.all([
+    userRepo.findAll(),
+    salesTeamRepo.findAll(),
+  ])
   const ccUserOptions: Array<{ id: string; label: string; group: 'Users' | 'Sales team' }> = [
-    ...users.map((u) => ({ id: u.id, label: `${u.name} (${u.id})`, group: 'Users' as const })),
-    ...salesTeam.map((s) => ({ id: s.id, label: `${s.name} (${s.id})`, group: 'Sales team' as const })),
+    ...users.map((u: User) => ({ id: u.id, label: `${u.name} (${u.id})`, group: 'Users' as const })),
+    ...salesTeam.map((s: SalesPerson) => ({ id: s.id, label: `${s.name} (${s.id})`, group: 'Sales team' as const })),
   ]
 
   return (

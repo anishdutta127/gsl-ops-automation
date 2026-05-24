@@ -18,32 +18,22 @@
  */
 
 import { redirect } from 'next/navigation'
-import type {
-  Dispatch,
-  DispatchRequest,
-  Escalation,
-  InventoryItem,
-  KitDispatch,
-  MOU,
-  Payment,
-  SalesOpportunity,
-  SalesPerson,
-  School,
-  StageResponsibility,
-  User,
-} from '@/lib/types'
-import mousJson from '@/data/mous.json'
-import schoolsJson from '@/data/schools.json'
-import dispatchesJson from '@/data/dispatches.json'
-import dispatchRequestsJson from '@/data/dispatch_requests.json'
-import escalationsJson from '@/data/escalations.json'
-import inventoryItemsJson from '@/data/inventory_items.json'
-import salesOpportunitiesJson from '@/data/sales_opportunities.json'
-import salesTeamJson from '@/data/sales_team.json'
-import kitDispatchesJson from '@/data/kit_dispatches.json'
-import paymentsJson from '@/data/payments.json'
-import usersJson from '@/data/users.json'
-import stageResponsibilityJson from '@/data/stage_responsibility.json'
+import type { DispatchRequest, SalesOpportunity, StageResponsibility } from '@/lib/types'
+// P4 batch 2 (2026-05-24): live repo reads.
+import { mouRepo } from '@/lib/db/repos/mou'
+import { schoolRepo } from '@/lib/db/repos/school'
+import { dispatchRepo } from '@/lib/db/repos/dispatch'
+import { escalationRepo } from '@/lib/db/repos/escalation'
+import { inventoryItemRepo } from '@/lib/db/repos/inventoryItem'
+import { kitDispatchRepo } from '@/lib/db/repos/kitDispatch'
+import { paymentRepo } from '@/lib/db/repos/payment'
+import { userRepo } from '@/lib/db/repos/user'
+import { salesTeamRepo } from '@/lib/db/repos/salesTeam'
+import {
+  dispatchRequestRepo,
+  salesOpportunityRepo,
+  stageResponsibilityRepo,
+} from '@/lib/db/repos/leafRepos'
 import { getCurrentUser } from '@/lib/auth/session'
 import { TopNav } from '@/components/ops/TopNav'
 import {
@@ -79,18 +69,8 @@ import { OpsFilterBar } from '@/components/dashboard/OpsFilterBar'
 import { OpsProgrammeBreakdown } from '@/components/dashboard/OpsProgrammeBreakdown'
 import { OpsKanbanTile } from '@/components/dashboard/OpsKanbanTile'
 
-const allMous = mousJson as unknown as MOU[]
-const allSchools = schoolsJson as unknown as School[]
-const allDispatches = dispatchesJson as unknown as Dispatch[]
-const allDispatchRequests = dispatchRequestsJson as unknown as DispatchRequest[]
-const allEscalations = escalationsJson as unknown as Escalation[]
-const allInventoryItems = inventoryItemsJson as unknown as InventoryItem[]
-const allOpportunities = salesOpportunitiesJson as unknown as SalesOpportunity[]
-const allSalesTeam = salesTeamJson as unknown as SalesPerson[]
-const allKitDispatches = kitDispatchesJson as unknown as KitDispatch[]
-const allPayments = paymentsJson as unknown as Payment[]
-const allUsers = usersJson as unknown as User[]
-const allStageResponsibility = stageResponsibilityJson as unknown as StageResponsibility[]
+// Module-scope consts removed; everything loaded inside the server
+// component below via Promise.all([...repo.findAll()]).
 
 const DATE_DISPLAY = new Intl.DateTimeFormat('en-GB', {
   day: '2-digit',
@@ -107,6 +87,25 @@ export default async function OpsDashboardPage({ searchParams }: PageProps) {
   if (!user) redirect('/login?next=%2Fdashboard%2Fops')
 
   const sp = await searchParams
+  // P4 batch 2 (2026-05-24): live repo reads.
+  const [
+    allMous, allSchools, allDispatches, allDispatchRequests, allEscalations,
+    allInventoryItems, allOpportunities, allSalesTeam, allKitDispatches,
+    allPayments, allUsers, allStageResponsibility,
+  ] = await Promise.all([
+    mouRepo.findAll(),
+    schoolRepo.findAll(),
+    dispatchRepo.findAll(),
+    dispatchRequestRepo.findAll() as Promise<DispatchRequest[]>,
+    escalationRepo.findAll(),
+    inventoryItemRepo.findAll(),
+    salesOpportunityRepo.findAll() as Promise<SalesOpportunity[]>,
+    salesTeamRepo.findAll(),
+    kitDispatchRepo.findAll(),
+    paymentRepo.findAll(),
+    userRepo.findAll(),
+    stageResponsibilityRepo.findAll() as Promise<StageResponsibility[]>,
+  ])
   const filters = parseDashboardFilters(sp)
   const augmentFilters = parseOpsAugmentFilters(sp)
   const now = new Date()

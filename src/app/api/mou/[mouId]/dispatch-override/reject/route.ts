@@ -16,12 +16,8 @@ import { getCurrentSession } from '@/lib/auth/session'
 import { canApproveDispatchOverride } from '@/lib/access'
 import { enqueueReject } from '@/lib/mou/dispatchOverride'
 import { getDispatchOverrideApproverUserId } from '@/lib/mou/overrideApprover'
-import usersJson from '@/data/users.json'
-import mousJson from '@/data/mous.json'
-import type { MOU, User } from '@/lib/types'
-
-const users = usersJson as unknown as User[]
-const mous = mousJson as unknown as MOU[]
+import { userRepo } from '@/lib/db/repos/user'
+import { mouRepo } from '@/lib/db/repos/mou'
 
 interface Ctx {
   params: Promise<{ mouId: string }>
@@ -36,6 +32,7 @@ export async function POST(request: Request, ctx: Ctx) {
     return NextResponse.redirect(url, { status: 303 })
   }
 
+  const users = await userRepo.findAll()
   const user = users.find((u) => u.id === session.sub)
   const approverUserId = await getDispatchOverrideApproverUserId()
   if (!user || !canApproveDispatchOverride(user, approverUserId)) {
@@ -44,6 +41,7 @@ export async function POST(request: Request, ctx: Ctx) {
     return NextResponse.redirect(url, { status: 303 })
   }
 
+  const mous = await mouRepo.findAll()
   const mou = mous.find((m) => m.id === mouId)
   if (!mou) {
     const url = new URL('/mous', request.url)

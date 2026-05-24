@@ -24,19 +24,15 @@
 
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
-import type { Dispatch, MOU } from '@/lib/types'
+import type { Dispatch } from '@/lib/types'
 import type { ProductSelection } from '@/lib/mouSystem/types'
-import mousJson from '@/data/mous.json'
-import dispatchesJson from '@/data/dispatches.json'
-import inventoryItemsJson from '@/data/inventory_items.json'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { dispatchRepo } from '@/lib/db/repos/dispatch'
+import { inventoryItemRepo } from '@/lib/db/repos/inventoryItem'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canEditMOU } from '@/lib/access'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
-
-const allMous = mousJson as unknown as MOU[]
-const allDispatches = dispatchesJson as unknown as Dispatch[]
-const inventory = inventoryItemsJson as Array<{ skuName: string; category: string; active: boolean }>
 
 interface PageProps {
   searchParams?: Promise<Record<string, string | string[] | undefined>>
@@ -52,7 +48,9 @@ const SUCCESS_COPY: Record<string, string> = {
   saved: 'Saved. The updates will appear after the next sync.',
 }
 
-function buildSkuCategoryMap() {
+function buildSkuCategoryMap(
+  inventory: Array<{ skuName: string; category: string; active: boolean }>,
+) {
   const map = new Map<string, 'Cretile' | 'TinkRworks' | 'Other'>()
   for (const i of inventory) {
     if (i.category === 'Cretile' || i.category === 'TinkRworks' || i.category === 'Other') {
@@ -92,17 +90,23 @@ export default async function ProductBackfillPage({ searchParams }: PageProps) {
   const successKey = typeof sp.saved === 'string' ? 'saved' : null
   const canSave = canEditMOU(user)
 
+  const [allMous, allDispatches, inventory] = await Promise.all([
+    mouRepo.findAll(),
+    dispatchRepo.findAll(),
+    inventoryItemRepo.findAll(),
+  ])
+
   const targets = allMous.filter(
     (m) => m.productSelection === null || m.productSelection === undefined,
   )
 
-  const skuMap = buildSkuCategoryMap()
+  const skuMap = buildSkuCategoryMap(inventory)
   const rows = targets.map((m) => ({
     mouId: m.id,
     schoolId: m.schoolId,
     schoolName: m.schoolName,
     programme: m.programme,
-    inferred: inferProductFromDispatches(m.id, allDispatches, skuMap),
+    inferred: inferProductFromDispatches(m.id, allDispatches as Dispatch[], skuMap),
   }))
 
   // Group by school for the operator's reading order.

@@ -18,15 +18,13 @@ import type {
   CommunicationTemplate,
   TemplateUseCase,
 } from '@/lib/types'
-import templatesJson from '@/data/communication_templates.json'
+import { communicationTemplateRepo } from '@/lib/db/repos/leafRepos'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canPerform } from '@/lib/auth/permissions'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { EmptyState } from '@/components/ops/EmptyState'
 import { StatusChip } from '@/components/ops/StatusChip'
-
-const allTemplates = templatesJson as unknown as CommunicationTemplate[]
 
 const USE_CASES: ReadonlyArray<TemplateUseCase> = [
   'welcome', 'thank-you', 'follow-up', 'payment-reminder',
@@ -74,6 +72,7 @@ export default async function TemplatesListPage({ searchParams }: PageProps) {
   const flashKey = createdId ? 'created' : editedId ? 'edited' : null
   const flashMessage = flashKey && flashId ? FLASH_MESSAGES[flashKey]!(flashId) : null
 
+  const allTemplates = await communicationTemplateRepo.findAll() as unknown as CommunicationTemplate[]
   const rows = useCaseFilter
     ? allTemplates.filter((t) => t.useCase === useCaseFilter)
     : allTemplates

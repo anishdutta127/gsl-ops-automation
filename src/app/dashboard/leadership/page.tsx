@@ -7,12 +7,12 @@
  */
 
 import { redirect } from 'next/navigation'
-import type { Escalation, KitDispatch, MOU, Payment, School } from '@/lib/types'
-import mousJson from '@/data/mous.json'
-import paymentsJson from '@/data/payments.json'
-import schoolsJson from '@/data/schools.json'
-import escalationsJson from '@/data/escalations.json'
-import kitDispatchesJson from '@/data/kit_dispatches.json'
+// P4 batch 2 (2026-05-24): live repo reads replace static JSON imports.
+import { mouRepo } from '@/lib/db/repos/mou'
+import { paymentRepo } from '@/lib/db/repos/payment'
+import { schoolRepo } from '@/lib/db/repos/school'
+import { escalationRepo } from '@/lib/db/repos/escalation'
+import { kitDispatchRepo } from '@/lib/db/repos/kitDispatch'
 import { getCurrentUser } from '@/lib/auth/session'
 import { TopNav } from '@/components/ops/TopNav'
 import {
@@ -22,12 +22,6 @@ import {
 } from '@/lib/dashboard/leadershipData'
 import { LeadershipOverview } from '@/components/dashboard/LeadershipOverview'
 
-const allMous = mousJson as unknown as MOU[]
-const allPayments = paymentsJson as unknown as Payment[]
-const allSchools = schoolsJson as unknown as School[]
-const allEscalations = escalationsJson as unknown as Escalation[]
-const allKitDispatches = kitDispatchesJson as unknown as KitDispatch[]
-
 const CURRENT_FY = '2026-27'
 
 export default async function LeadershipDashboard() {
@@ -35,6 +29,14 @@ export default async function LeadershipDashboard() {
   if (!user) redirect('/login?next=%2Fdashboard%2Fleadership')
 
   const now = new Date()
+  const [allMous, allPayments, allSchools, allEscalations, allKitDispatches] =
+    await Promise.all([
+      mouRepo.findAll(),
+      paymentRepo.findAll(),
+      schoolRepo.findAll(),
+      escalationRepo.findAll(),
+      kitDispatchRepo.findAll(),
+    ])
   const financial = computeFinancialHealth({
     mous: allMous,
     payments: allPayments,

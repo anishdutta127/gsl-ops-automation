@@ -12,15 +12,12 @@
 
 import { notFound, redirect } from 'next/navigation'
 import Link from 'next/link'
-import type { InventoryItem } from '@/lib/types'
-import inventoryItemsJson from '@/data/inventory_items.json'
+import { inventoryItemRepo } from '@/lib/db/repos/inventoryItem'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canPerform } from '@/lib/auth/permissions'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { opsButtonClass, OpsButton } from '@/components/ops/OpsButton'
-
-const items = inventoryItemsJson as unknown as InventoryItem[]
 
 const ERROR_MESSAGES: Record<string, string> = {
   permission: 'You do not have permission to edit inventory.',
@@ -45,6 +42,7 @@ export default async function InventoryDetailPage({
   const user = await getCurrentUser()
   if (!user) redirect(`/login?next=%2Fadmin%2Finventory%2F${encodeURIComponent(id)}`)
 
+  const items = await inventoryItemRepo.findAll()
   const item = items.find((it) => it.id === id)
   if (!item) notFound()
 

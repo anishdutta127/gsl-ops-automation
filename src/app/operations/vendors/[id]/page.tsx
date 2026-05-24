@@ -14,12 +14,9 @@ import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { formatDate } from '@/lib/format'
 import type { Agreement, Vendor } from '@/lib/types'
-import vendorsJson from '@/data/vendors.json'
-import agreementsJson from '@/data/agreements.json'
+import { vendorRepo } from '@/lib/db/repos/vendor'
+import { agreementRepo } from '@/lib/db/repos/leafRepos'
 import { VendorEditForm } from './VendorEditForm'
-
-const allVendors = vendorsJson as unknown as Vendor[]
-const allAgreements = agreementsJson as unknown as Agreement[]
 
 interface PageProps {
   params: Promise<{ id: string }>
@@ -29,6 +26,10 @@ export default async function VendorDetailPage({ params }: PageProps) {
   const { id } = await params
   const user = await getCurrentUser()
   if (!user) redirect(`/login?next=${encodeURIComponent(`/operations/vendors/${id}`)}`)
+  const [allVendors, allAgreements] = await Promise.all([
+    vendorRepo.findAll(),
+    agreementRepo.findAll() as unknown as Promise<Agreement[]>,
+  ])
   const vendor = allVendors.find((v) => v.id === id)
   if (!vendor) notFound()
   const canEdit = canEditFinanceData(user)

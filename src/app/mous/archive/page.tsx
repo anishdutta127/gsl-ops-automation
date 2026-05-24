@@ -21,9 +21,9 @@
 
 import Link from 'next/link'
 import { Archive, RotateCcw } from 'lucide-react'
-import type { MOU, Payment } from '@/lib/types'
-import mousJson from '@/data/mous.json'
-import paymentsJson from '@/data/payments.json'
+import type { MOU } from '@/lib/types'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { paymentRepo } from '@/lib/db/repos/payment'
 import { getCurrentUser } from '@/lib/auth/session'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
@@ -35,9 +35,6 @@ import {
   getAllRelevantFinancialYears,
   getCurrentFinancialYear,
 } from '@/lib/mou/yearMembership'
-
-const allMous = mousJson as unknown as MOU[]
-const allPayments = paymentsJson as unknown as Payment[]
 
 interface PageProps {
   searchParams: Promise<Record<string, string | string[] | undefined>>
@@ -79,6 +76,11 @@ export default async function MousArchivePage({ searchParams }: PageProps) {
   const errorMessage = errorKey ? ERROR_MESSAGES[errorKey] ?? `Failed: ${errorKey}` : null
   const flipped = typeof sp.flipped === 'string' ? sp.flipped : null
   const flippedTo = typeof sp.to === 'string' ? sp.to : null
+
+  const [allMous, allPayments] = await Promise.all([
+    mouRepo.findAll(),
+    paymentRepo.findAll(),
+  ])
 
   // Phase 6C.1: year picker on archive, mirroring /mous behaviour.
   // Cohort filter is fixed to 'archived'; the active year defaults

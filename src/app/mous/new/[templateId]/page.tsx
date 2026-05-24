@@ -13,17 +13,14 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import type { SalesPerson, School } from '@/lib/mouSystem/types'
-import schoolsJson from '@/data/schools.json'
-import salesTeamJson from '@/data/sales_team.json'
+import { schoolRepo } from '@/lib/db/repos/school'
+import { salesTeamRepo } from '@/lib/db/repos/salesTeam'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canEditMOU } from '@/lib/access'
 import { getTemplate, listTemplates } from '@/lib/mouSystem/templates'
 import { GeneratorWizard } from '@/components/mou-system/GeneratorWizard'
-
-const allSchools = schoolsJson as unknown as School[]
-const allSalesTeam = salesTeamJson as unknown as SalesPerson[]
 
 export function generateStaticParams() {
   return listTemplates().map((t) => ({ templateId: t.id }))
@@ -42,6 +39,11 @@ export default async function GeneratorPage({ params, searchParams }: PageProps)
   }
   const template = getTemplate(decodeURIComponent(templateId))
   if (!template) notFound()
+
+  const [allSchools, allSalesTeam] = await Promise.all([
+    schoolRepo.findAll() as unknown as Promise<School[]>,
+    salesTeamRepo.findAll() as unknown as Promise<SalesPerson[]>,
+  ])
 
   const minAcceptable = template.placeholders.PRICE_PER_STUDENT?.minAcceptable ?? null
   // Gate 3.5 Step 4: pre-fill school when the wizard is reached via a

@@ -7,11 +7,10 @@
  */
 
 import { redirect } from 'next/navigation'
-import type { KitDispatch, MOU, Payment, School } from '@/lib/types'
-import mousJson from '@/data/mous.json'
-import paymentsJson from '@/data/payments.json'
-import kitDispatchesJson from '@/data/kit_dispatches.json'
-import schoolsJson from '@/data/schools.json'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { paymentRepo } from '@/lib/db/repos/payment'
+import { kitDispatchRepo } from '@/lib/db/repos/kitDispatch'
+import { schoolRepo } from '@/lib/db/repos/school'
 import { getCurrentUser } from '@/lib/auth/session'
 import { TopNav } from '@/components/ops/TopNav'
 import { formatRs } from '@/lib/format'
@@ -26,11 +25,6 @@ import {
 import { computeFySummary } from '@/lib/reports/fySummary'
 import { ReportFilterRail } from '@/components/reports/ReportFilterRail'
 import { CsvExportLink } from '@/components/reports/CsvExportLink'
-
-const allMous = mousJson as unknown as MOU[]
-const allPayments = paymentsJson as unknown as Payment[]
-const allDispatches = kitDispatchesJson as unknown as KitDispatch[]
-const allSchools = schoolsJson as unknown as School[]
 
 function pct(n: number): string {
   return `${n.toFixed(1)}%`
@@ -49,6 +43,12 @@ export default async function FySummaryReport({
 
   const now = new Date()
   const filters = parseReportFilters(searchParams ?? {})
+  const [allMous, allPayments, allDispatches, allSchools] = await Promise.all([
+    mouRepo.findAll(),
+    paymentRepo.findAll(),
+    kitDispatchRepo.findAll(),
+    schoolRepo.findAll(),
+  ])
   const fyOptions = defaultFyOptions(allMous, now)
   // Fallback so the dropdown still shows historical FY data even when
   // pruned. defaultFyOptions is current+prior 2; if filters.fy is older

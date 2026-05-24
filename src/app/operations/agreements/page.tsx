@@ -22,15 +22,14 @@ import { PageHeader } from '@/components/ops/PageHeader'
 import { EmptyState } from '@/components/ops/EmptyState'
 import { opsButtonClass } from '@/components/ops/OpsButton'
 import type { Agreement } from '@/lib/types'
-import agreementsJson from '@/data/agreements.json'
+import { agreementRepo } from '@/lib/db/repos/leafRepos'
 import { AgreementsClient } from './AgreementsClient'
-
-const agreements = agreementsJson as unknown as Agreement[]
 
 export default async function AgreementsPage() {
   const user = await getCurrentUser()
   if (!user) redirect('/login?next=%2Foperations%2Fagreements')
   const canEdit = canEditFinanceData(user)
+  const agreements = (await agreementRepo.findAll()) as unknown as Agreement[]
 
   return (
     <>

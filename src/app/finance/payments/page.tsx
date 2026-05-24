@@ -24,13 +24,12 @@ import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { Plus, Upload } from 'lucide-react'
 import type {
-  MOU,
-  Payment,
   PaymentLog,
 } from '@/lib/types'
-import mousJson from '@/data/mous.json'
-import paymentsJson from '@/data/payments.json'
-import paymentLogsJson from '@/data/payment_logs.json'
+// P4 batch 3a (2026-05-24): live repo reads.
+import { mouRepo } from '@/lib/db/repos/mou'
+import { paymentRepo } from '@/lib/db/repos/payment'
+import { paymentLogRepo } from '@/lib/db/repos/leafRepos'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canAccessFinance, canEditFinanceData } from '@/lib/access'
 import { TopNav } from '@/components/ops/TopNav'
@@ -38,10 +37,6 @@ import { PageHeader } from '@/components/ops/PageHeader'
 import { formatRs, formatDate } from '@/lib/format'
 import { opsButtonClass } from '@/components/ops/OpsButton'
 import { PaymentMatcher } from './PaymentMatcher'
-
-const allMous = mousJson as unknown as MOU[]
-const allPayments = paymentsJson as unknown as Payment[]
-const allLogs = paymentLogsJson as unknown as PaymentLog[]
 
 interface PageProps {
   searchParams: Promise<Record<string, string | string[] | undefined>>
@@ -86,6 +81,12 @@ export default async function FinancePaymentsPage({ searchParams }: PageProps) {
       ? Number(sp.skipped)
       : 0
   const flashSchool = typeof sp.school === 'string' ? sp.school : null
+
+  const [allMous, allPayments, allLogs] = await Promise.all([
+    mouRepo.findAll(),
+    paymentRepo.findAll(),
+    paymentLogRepo.findAll() as Promise<PaymentLog[]>,
+  ])
 
   const unmatchedCount = allLogs.filter((l) => l.unmatched).length
   const recentMatched = allLogs

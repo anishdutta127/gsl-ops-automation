@@ -24,22 +24,16 @@ import type {
   IntakeRecord,
   MOU,
   SalesPerson,
-  School,
   User,
 } from '@/lib/types'
-import mousJson from '@/data/mous.json'
-import schoolsJson from '@/data/schools.json'
-import salesTeamJson from '@/data/sales_team.json'
-import intakeRecordsJson from '@/data/intake_records.json'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { schoolRepo } from '@/lib/db/repos/school'
+import { salesTeamRepo } from '@/lib/db/repos/salesTeam'
+import { intakeRecordRepo } from '@/lib/db/repos/leafRepos'
 import { getCurrentUser } from '@/lib/auth/session'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { DetailHeaderCard } from '@/components/ops/DetailHeaderCard'
-
-const allMous = mousJson as unknown as MOU[]
-const allSchools = schoolsJson as unknown as School[]
-const allSalesTeam = salesTeamJson as unknown as SalesPerson[]
-const allIntakeRecords = intakeRecordsJson as unknown as IntakeRecord[]
 
 interface PageProps {
   params: Promise<{ mouId: string }>
@@ -81,6 +75,12 @@ export default async function IntakePage({ params, searchParams }: PageProps) {
   const { mouId } = await params
   const sp = await searchParams
   const user = await getCurrentUser()
+  const [allMous, allSchools, allSalesTeam, allIntakeRecords] = await Promise.all([
+    mouRepo.findAll(),
+    schoolRepo.findAll(),
+    salesTeamRepo.findAll() as Promise<SalesPerson[]>,
+    intakeRecordRepo.findAll() as Promise<IntakeRecord[]>,
+  ])
   const mou = allMous.find((m) => m.id === mouId)
   if (!mou || !isVisibleToUser(mou, user)) notFound()
 

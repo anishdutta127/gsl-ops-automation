@@ -18,8 +18,9 @@ import { redirect } from 'next/navigation'
 import { Activity, AlertTriangle, CheckCircle2, CircleDashed, UserCheck } from 'lucide-react'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canManageUsers } from '@/lib/access'
-import usersJson from '@/data/users.json'
-import type { PendingUpdate, User } from '@/lib/types'
+// P4 batch 2 (2026-05-24): live repo read replaces static JSON.
+import { userRepo } from '@/lib/db/repos/user'
+import type { PendingUpdate } from '@/lib/types'
 import type { SyncHealthEntry } from '@/lib/syncHealth/appendEntry'
 import {
   computeFreshnessState,
@@ -63,7 +64,7 @@ export default async function QueueStatusPage() {
   // requiresAdminReview=true; admin promotes them by editing
   // users.json. JSON dump at /api/admin/pending-user-reviews lets
   // an admin see the full list until a real approval UI ships.
-  const allUsers = usersJson as unknown as User[]
+  const allUsers = await userRepo.findAll()
   const pendingReviewCount = allUsers.filter((u) => u.requiresAdminReview === true).length
 
   return (

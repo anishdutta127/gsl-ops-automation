@@ -7,35 +7,30 @@
  * ("View all exceptions").
  */
 
-import type {
-  Communication,
-  Dispatch,
-  Feedback,
-  MOU,
-  Payment,
-  School,
-} from '@/lib/types'
-import mousJson from '@/data/mous.json'
-import schoolsJson from '@/data/schools.json'
-import dispatchesJson from '@/data/dispatches.json'
-import paymentsJson from '@/data/payments.json'
-import communicationsJson from '@/data/communications.json'
-import feedbackJson from '@/data/feedback.json'
+import type { Communication, Feedback } from '@/lib/types'
+// P4 batch 2 (2026-05-24): live repo reads.
+import { mouRepo } from '@/lib/db/repos/mou'
+import { schoolRepo } from '@/lib/db/repos/school'
+import { dispatchRepo } from '@/lib/db/repos/dispatch'
+import { paymentRepo } from '@/lib/db/repos/payment'
+import { communicationRepo, feedbackRepo } from '@/lib/db/repos/leafRepos'
 import { getCurrentUser } from '@/lib/auth/session'
 import { buildExceptionFeed } from '@/lib/dashboard/exceptions'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { ExceptionRow } from '@/components/ops/ExceptionRow'
 
-const mous = mousJson as unknown as MOU[]
-const schools = schoolsJson as unknown as School[]
-const dispatches = dispatchesJson as unknown as Dispatch[]
-const payments = paymentsJson as unknown as Payment[]
-const communications = communicationsJson as unknown as Communication[]
-const feedback = feedbackJson as unknown as Feedback[]
-
 export default async function ExceptionsPage() {
   const user = await getCurrentUser()
+  const [mous, schools, dispatches, payments, communications, feedback] =
+    await Promise.all([
+      mouRepo.findAll(),
+      schoolRepo.findAll(),
+      dispatchRepo.findAll(),
+      paymentRepo.findAll(),
+      communicationRepo.findAll() as Promise<Communication[]>,
+      feedbackRepo.findAll() as Promise<Feedback[]>,
+    ])
   const exceptions = buildExceptionFeed({
     mous, schools, dispatches, payments, communications, feedback, user,
   })

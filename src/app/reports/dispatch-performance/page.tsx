@@ -6,9 +6,8 @@
  */
 
 import { redirect } from 'next/navigation'
-import type { KitDispatch, MOU } from '@/lib/types'
-import mousJson from '@/data/mous.json'
-import kitDispatchesJson from '@/data/kit_dispatches.json'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { kitDispatchRepo } from '@/lib/db/repos/kitDispatch'
 import { getCurrentUser } from '@/lib/auth/session'
 import { TopNav } from '@/components/ops/TopNav'
 import { canAccessReport } from '@/lib/reports/access'
@@ -22,9 +21,6 @@ import {
 import { computeDispatchPerformance } from '@/lib/reports/dispatchPerformance'
 import { ReportFilterRail } from '@/components/reports/ReportFilterRail'
 import { CsvExportLink } from '@/components/reports/CsvExportLink'
-
-const allMous = mousJson as unknown as MOU[]
-const allDispatches = kitDispatchesJson as unknown as KitDispatch[]
 
 function fmtDays(n: number | null): string {
   return n === null ? 'n/a' : `${n.toFixed(1)} days`
@@ -43,6 +39,10 @@ export default async function DispatchPerformanceReport({
 
   const now = new Date()
   const filters = parseReportFilters(searchParams ?? {})
+  const [allMous, allDispatches] = await Promise.all([
+    mouRepo.findAll(),
+    kitDispatchRepo.findAll(),
+  ])
   const fyOptions = defaultFyOptions(allMous, now)
   if (filters.fy && !fyOptions.includes(filters.fy)) {
     const widened = fyOptionsFor(allMous, now)

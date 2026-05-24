@@ -19,10 +19,9 @@ import path from 'node:path'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canEditMOU } from '@/lib/access'
 import type { AuditEntry, MOU } from '@/lib/types'
-import mousJson from '@/data/mous.json'
+import { mouRepo } from '@/lib/db/repos/mou'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
 
-const allMous = mousJson as unknown as MOU[]
 const SIGNED_DIR = path.join(process.cwd(), 'public', 'signed-mous')
 
 const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/
@@ -43,6 +42,7 @@ export async function POST(request: Request, ctx: RouteContext) {
     return redirectWith(request, mouId, { error: 'permission' })
   }
 
+  const allMous = await mouRepo.findAll()
   const mou = allMous.find((m) => m.id === mouId)
   if (!mou) {
     return redirectWith(request, mouId, { error: 'mou-not-found' })

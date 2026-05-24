@@ -12,10 +12,9 @@
  */
 
 import { redirect } from 'next/navigation'
-import mousJson from '@/data/mous.json'
-import paymentsJson from '@/data/payments.json'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { paymentRepo } from '@/lib/db/repos/payment'
 import importJson from '@/data/imports/fy-2025-26-import.json'
-import type { MOU, Payment } from '@/lib/types'
 import { getCurrentUser } from '@/lib/auth/session'
 import { buildBackfillPlan } from '@/lib/imports/piBackfill'
 import { applyBackfillRow } from '@/lib/imports/piBackfillApply'
@@ -36,13 +35,17 @@ export async function applyAllAutoMatches(): Promise<void> {
   const user = await getCurrentUser()
   if (!user) return // unreachable after requireAdmin
   const file = importJson as unknown as ImportFile
+  const [allPayments, allMous] = await Promise.all([
+    paymentRepo.findAll(),
+    mouRepo.findAll(),
+  ])
   const plan = buildBackfillPlan({
-    payments: paymentsJson as unknown as Payment[],
-    mous: mousJson as unknown as MOU[],
+    payments: allPayments,
+    mous: allMous,
     importRecords: file.records,
   })
   const mouById = new Map(
-    (mousJson as unknown as MOU[]).map((m) => [m.id, m]),
+    allMous.map((m) => [m.id, m]),
   )
   let applied = 0
   let failed = 0
@@ -73,12 +76,15 @@ export async function applySingleRow(formData: FormData): Promise<void> {
   const paymentId = String(formData.get('paymentId') ?? '')
   const manual = String(formData.get('manualPi') ?? '').trim() || null
   const matchNotes = String(formData.get('matchNotes') ?? '(manual entry)')
-  const payments = paymentsJson as unknown as Payment[]
+  const [payments, mous] = await Promise.all([
+    paymentRepo.findAll(),
+    mouRepo.findAll(),
+  ])
   const payment = payments.find((p) => p.id === paymentId)
   if (!payment) {
     redirect(`${PAGE}?error=payment-not-found`)
   }
-  const mou = (mousJson as unknown as MOU[]).find(
+  const mou = mous.find(
     (m) => m.id === payment!.mouId,
   ) ?? null
   const result = await applyBackfillRow({

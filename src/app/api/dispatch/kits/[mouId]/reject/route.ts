@@ -7,15 +7,10 @@
 import { NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canApproveDispatch } from '@/lib/access'
-import type { KitDispatch, MOU, School } from '@/lib/types'
-import mousJson from '@/data/mous.json'
-import kitDispatchesJson from '@/data/kit_dispatches.json'
-import schoolsJson from '@/data/schools.json'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { kitDispatchRepo } from '@/lib/db/repos/kitDispatch'
+import { schoolRepo } from '@/lib/db/repos/school'
 import { rejectKitDispatch } from '@/lib/kitDispatch/approve'
-
-const mous = mousJson as unknown as MOU[]
-const kitDispatches = kitDispatchesJson as unknown as KitDispatch[]
-const schools = schoolsJson as unknown as School[]
 
 interface Body {
   reason?: unknown
@@ -41,6 +36,9 @@ export async function POST(
   if (reason.trim() === '') {
     return NextResponse.json({ error: 'rejection-reason-required' }, { status: 400 })
   }
+  const mous = await mouRepo.findAll()
+  const kitDispatches = await kitDispatchRepo.findAll()
+  const schools = await schoolRepo.findAll()
   const result = await rejectKitDispatch(
     { mouId, user: { id: user.id, name: user.name }, reason },
     { mous, kitDispatches, schools },

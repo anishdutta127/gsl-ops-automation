@@ -11,16 +11,13 @@
  */
 
 import { redirect } from 'next/navigation'
-import type { IntakeRecord, MOU } from '@/lib/types'
-import mousJson from '@/data/mous.json'
-import intakeRecordsJson from '@/data/intake_records.json'
+import type { IntakeRecord } from '@/lib/types'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { intakeRecordRepo } from '@/lib/db/repos/leafRepos'
 import { getCurrentUser } from '@/lib/auth/session'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { DispatchRequestForm } from '@/components/ops/DispatchRequestForm'
-
-const allMous = mousJson as unknown as MOU[]
-const allIntakeRecords = intakeRecordsJson as unknown as IntakeRecord[]
 
 function totalInstallmentsFor(paymentSchedule: string): number {
   const numbers = paymentSchedule.match(/\d+/g)
@@ -35,6 +32,11 @@ export default async function DispatchRequestPage({
   const user = await getCurrentUser()
   if (!user) redirect('/login?next=/dispatch/request')
   const sp = await searchParams
+
+  const [allMous, allIntakeRecords] = await Promise.all([
+    mouRepo.findAll(),
+    intakeRecordRepo.findAll() as unknown as Promise<IntakeRecord[]>,
+  ])
 
   const activeMous = allMous
     .filter((m) => m.cohortStatus === 'active')

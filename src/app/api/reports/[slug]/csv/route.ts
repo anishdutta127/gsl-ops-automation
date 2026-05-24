@@ -7,19 +7,12 @@
  */
 
 import { NextResponse } from 'next/server'
-import type {
-  Escalation,
-  KitDispatch,
-  MOU,
-  Payment,
-  School,
-} from '@/lib/types'
-import mousJson from '@/data/mous.json'
-import paymentsJson from '@/data/payments.json'
-import schoolsJson from '@/data/schools.json'
-import kitDispatchesJson from '@/data/kit_dispatches.json'
-import escalationsJson from '@/data/escalations.json'
-import salesTeamJson from '@/data/sales_team.json'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { paymentRepo } from '@/lib/db/repos/payment'
+import { schoolRepo } from '@/lib/db/repos/school'
+import { kitDispatchRepo } from '@/lib/db/repos/kitDispatch'
+import { escalationRepo } from '@/lib/db/repos/escalation'
+import { salesTeamRepo } from '@/lib/db/repos/salesTeam'
 import { getCurrentUser } from '@/lib/auth/session'
 import {
   canAccessReport,
@@ -32,18 +25,6 @@ import { csvForSalesPerformance } from '@/lib/reports/salesPerformance'
 import { csvForDispatchPerformance } from '@/lib/reports/dispatchPerformance'
 import { csvForPaymentAging } from '@/lib/reports/paymentAging'
 import { csvForEscalationsReport } from '@/lib/reports/escalations'
-
-const allMous = mousJson as unknown as MOU[]
-const allPayments = paymentsJson as unknown as Payment[]
-const allSchools = schoolsJson as unknown as School[]
-const allDispatches = kitDispatchesJson as unknown as KitDispatch[]
-const allEscalations = escalationsJson as unknown as Escalation[]
-const allSalesTeam = salesTeamJson as unknown as Array<{
-  id: string
-  name: string
-  email?: string
-  active?: boolean
-}>
 
 function fileSuffix(searchParams: URLSearchParams): string {
   const fy = searchParams.get('fy')
@@ -79,6 +60,13 @@ export async function GET(
   })
   const filters = parseReportFilters(params)
   const now = new Date()
+
+  const allMous = await mouRepo.findAll()
+  const allPayments = await paymentRepo.findAll()
+  const allSchools = await schoolRepo.findAll()
+  const allDispatches = await kitDispatchRepo.findAll()
+  const allEscalations = await escalationRepo.findAll()
+  const allSalesTeam = await salesTeamRepo.findAll()
 
   let csv = ''
   if (slug === 'fy-summary') {

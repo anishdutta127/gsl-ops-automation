@@ -13,12 +13,10 @@
  */
 
 import { NextResponse } from 'next/server'
-import intakeRecordsJson from '@/data/intake_records.json'
+import { intakeRecordRepo } from '@/lib/db/repos/leafRepos'
 import type { IntakeRecord } from '@/lib/types'
 import { editIntake, type EditIntakePatch } from '@/lib/intake/editIntake'
 import { getCurrentSession } from '@/lib/auth/session'
-
-const allIntakeRecords = intakeRecordsJson as unknown as IntakeRecord[]
 
 export async function POST(
   request: Request,
@@ -38,6 +36,7 @@ export async function POST(
     return NextResponse.redirect(url, { status: 303 })
   }
 
+  const allIntakeRecords = (await intakeRecordRepo.findAll()) as unknown as IntakeRecord[]
   const intake = allIntakeRecords.find((r) => r.mouId === mouId)
   if (!intake) return errorTo('intake-not-found')
 

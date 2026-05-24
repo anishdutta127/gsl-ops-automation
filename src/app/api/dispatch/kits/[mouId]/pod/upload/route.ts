@@ -11,12 +11,9 @@ import { promises as fs } from 'node:fs'
 import path from 'node:path'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canUploadPOD } from '@/lib/access'
-import type { KitDispatch } from '@/lib/types'
-import kitDispatchesJson from '@/data/kit_dispatches.json'
+import { kitDispatchRepo } from '@/lib/db/repos/kitDispatch'
 import { recordPOD } from '@/lib/kitDispatch/shipment'
 import { emitPodUploaded } from '@/lib/notifications/workflowTriggers'
-
-const kitDispatches = kitDispatchesJson as unknown as KitDispatch[]
 
 const POD_DIR = path.join(process.cwd(), 'public', 'delivery-pods')
 const ALLOWED_EXT = new Set(['pdf', 'jpg', 'jpeg', 'png'])
@@ -31,6 +28,7 @@ export async function POST(
   if (!canUploadPOD(user)) {
     return NextResponse.json({ error: 'forbidden' }, { status: 403 })
   }
+  const kitDispatches = await kitDispatchRepo.findAll()
   const kd = kitDispatches.find((k) => k.mouId === mouId)
   if (!kd) return NextResponse.json({ error: 'dispatch-not-found' }, { status: 404 })
 

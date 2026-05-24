@@ -28,10 +28,7 @@ import { NextResponse } from 'next/server'
 import { drainQueue } from '@/lib/sync/drainQueue'
 import { getCurrentSession } from '@/lib/auth/session'
 import { checkSyncTriggerRate } from '@/lib/sync/rateLimit'
-import usersJson from '@/data/users.json'
-import type { User } from '@/lib/types'
-
-const users = usersJson as unknown as User[]
+import { userRepo } from '@/lib/db/repos/user'
 
 export async function POST() {
   const session = await getCurrentSession()
@@ -42,6 +39,7 @@ export async function POST() {
     )
   }
 
+  const users = await userRepo.findAll()
   const user = users.find((u) => u.id === session.sub)
   if (!user || !user.active) {
     return NextResponse.json(

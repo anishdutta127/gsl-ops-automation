@@ -21,10 +21,10 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { AlertCircle, ArrowRight, Receipt } from 'lucide-react'
-import type { MOU, Payment, School } from '@/lib/types'
-import mousJson from '@/data/mous.json'
-import paymentsJson from '@/data/payments.json'
-import schoolsJson from '@/data/schools.json'
+// P4 batch 3a (2026-05-24): live repo reads.
+import { mouRepo } from '@/lib/db/repos/mou'
+import { paymentRepo } from '@/lib/db/repos/payment'
+import { schoolRepo } from '@/lib/db/repos/school'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canAccessFinance } from '@/lib/access'
 import {
@@ -37,14 +37,16 @@ import { EmptyState } from '@/components/ops/EmptyState'
 import { formatRs, formatDate } from '@/lib/format'
 import { computePendingPi } from '@/lib/finance/computePendingPi'
 
-const allMous = mousJson as unknown as MOU[]
-const allPayments = paymentsJson as unknown as Payment[]
-const allSchools = schoolsJson as unknown as School[]
-
 export default async function PendingPiPage() {
   const user = await getCurrentUser()
   if (!user) redirect('/login?next=%2Ffinance%2Fpi%2Fpending')
   if (!canAccessFinance(user)) redirect('/?notice=finance-access-required')
+
+  const [allMous, allPayments, allSchools] = await Promise.all([
+    mouRepo.findAll(),
+    paymentRepo.findAll(),
+    schoolRepo.findAll(),
+  ])
 
   const now = new Date()
   const rows = computePendingPi({

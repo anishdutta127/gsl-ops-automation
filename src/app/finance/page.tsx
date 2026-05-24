@@ -21,14 +21,10 @@ import { getCurrentUser } from '@/lib/auth/session'
 import { canAccessFinance } from '@/lib/access'
 import { TopNav } from '@/components/ops/TopNav'
 import { accentFor } from '@/lib/departmentAccents'
-import paymentLogsJson from '@/data/payment_logs.json'
-import adjustmentsJson from '@/data/adjustments.json'
-import paymentsJson from '@/data/payments.json'
-import type { Adjustment, Payment, PaymentLog } from '@/lib/types'
-
-const allLogs = paymentLogsJson as unknown as PaymentLog[]
-const allAdjustments = adjustmentsJson as unknown as Adjustment[]
-const allPayments = paymentsJson as unknown as Payment[]
+// P4 batch 3a (2026-05-24): live repo reads.
+import { paymentRepo } from '@/lib/db/repos/payment'
+import { paymentLogRepo, adjustmentRepo } from '@/lib/db/repos/leafRepos'
+import type { Adjustment, PaymentLog } from '@/lib/types'
 
 interface QuickLink {
   href: string
@@ -45,6 +41,12 @@ export default async function FinanceIndexPage() {
   if (!canAccessFinance(user)) redirect('/?notice=finance-access-required')
 
   const accent = accentFor('finance')
+
+  const [allLogs, allAdjustments, allPayments] = await Promise.all([
+    paymentLogRepo.findAll() as Promise<PaymentLog[]>,
+    adjustmentRepo.findAll() as Promise<Adjustment[]>,
+    paymentRepo.findAll(),
+  ])
 
   const unmatchedCount = allLogs.filter((l) => l.unmatched).length
   const activeAdjustments = allAdjustments.filter((a) => a.status === 'Active').length

@@ -23,10 +23,11 @@
 import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
 import { Download, Info } from 'lucide-react'
-import type { MOU, Payment, School } from '@/lib/types'
-import mousJson from '@/data/mous.json'
-import paymentsJson from '@/data/payments.json'
-import schoolsJson from '@/data/schools.json'
+import type { Payment } from '@/lib/types'
+// P4 batch 3a (2026-05-24): live repo reads.
+import { mouRepo } from '@/lib/db/repos/mou'
+import { paymentRepo } from '@/lib/db/repos/payment'
+import { schoolRepo } from '@/lib/db/repos/school'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canAccessFinance, canEditFinanceData } from '@/lib/access'
 import {
@@ -40,10 +41,6 @@ import { DetailHeaderCard } from '@/components/ops/DetailHeaderCard'
 import { StatusChip, type StatusChipTone } from '@/components/ops/StatusChip'
 import { formatRs, formatDate } from '@/lib/format'
 import { ReissueButton } from './ReissueButton'
-
-const allMous = mousJson as unknown as MOU[]
-const allPayments = paymentsJson as unknown as Payment[]
-const allSchools = schoolsJson as unknown as School[]
 
 interface PageProps {
   params: Promise<{ paymentId: string }>
@@ -76,6 +73,12 @@ export default async function FinancePiViewPage({ params, searchParams }: PagePr
   const user = await getCurrentUser()
   if (!user) redirect(`/login?next=${encodeURIComponent(`/finance/pi/${paymentId}`)}`)
   if (!canAccessFinance(user)) redirect('/?notice=finance-access-required')
+
+  const [allMous, allPayments, allSchools] = await Promise.all([
+    mouRepo.findAll(),
+    paymentRepo.findAll(),
+    schoolRepo.findAll(),
+  ])
 
   const payment = allPayments.find((p) => p.id === paymentId)
   if (!payment) notFound()

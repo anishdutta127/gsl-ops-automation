@@ -16,12 +16,9 @@ import { canEditFinanceData } from '@/lib/access'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { opsButtonClass } from '@/components/ops/OpsButton'
-import type { Agreement, Vendor } from '@/lib/types'
-import agreementsJson from '@/data/agreements.json'
-import vendorsJson from '@/data/vendors.json'
-
-const allAgreements = agreementsJson as unknown as Agreement[]
-const allVendors = vendorsJson as unknown as Vendor[]
+import type { Agreement } from '@/lib/types'
+import { vendorRepo } from '@/lib/db/repos/vendor'
+import { agreementRepo } from '@/lib/db/repos/leafRepos'
 
 interface PageProps {
   searchParams?: Promise<Record<string, string | string[] | undefined>>
@@ -55,6 +52,12 @@ export default async function NewAgreementPage({ searchParams }: PageProps) {
   const errorMessage = errorKey ? ERROR_COPY[errorKey] ?? `Failed: ${errorKey}` : null
 
   const renewedFrom = typeof sp.renewedFrom === 'string' ? sp.renewedFrom : null
+
+  const [allAgreements, allVendors] = await Promise.all([
+    agreementRepo.findAll() as unknown as Promise<Agreement[]>,
+    vendorRepo.findAll(),
+  ])
+
   const source = renewedFrom
     ? allAgreements.find((a) => a.id === renewedFrom) ?? null
     : null

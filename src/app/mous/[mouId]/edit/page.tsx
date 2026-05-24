@@ -14,22 +14,15 @@
 
 import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
-import type { MOU, School, User } from '@/lib/types'
-import mousJson from '@/data/mous.json'
-import schoolsJson from '@/data/schools.json'
-import paymentsJson from '@/data/payments.json'
+import type { MOU, User } from '@/lib/types'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { schoolRepo } from '@/lib/db/repos/school'
+import { paymentRepo } from '@/lib/db/repos/payment'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { DetailHeaderCard } from '@/components/ops/DetailHeaderCard'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canEditMOU } from '@/lib/access'
-
-const allMous = mousJson as unknown as MOU[]
-const allSchools = schoolsJson as unknown as School[]
-const allPayments = paymentsJson as unknown as Array<{
-  mouId: string
-  piNumber: string | null
-}>
 
 interface PageProps {
   params: Promise<{ mouId: string }>
@@ -67,6 +60,11 @@ export default async function MouEditPage({ params, searchParams }: PageProps) {
   const sp = await searchParams
   const user = await getCurrentUser()
   if (!user) redirect(`/login?next=${encodeURIComponent(`/mous/${mouId}/edit`)}`)
+  const [allMous, allSchools, allPayments] = await Promise.all([
+    mouRepo.findAll(),
+    schoolRepo.findAll(),
+    paymentRepo.findAll(),
+  ])
   const mou = allMous.find((m) => m.id === mouId)
   if (!mou || !isVisibleToUser(mou, user)) notFound()
   if (!canEditMOU(user)) {

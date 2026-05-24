@@ -15,10 +15,11 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { CheckCircle2 } from 'lucide-react'
-import type { MOU, Payment, SalesPerson } from '@/lib/types'
-import mousJson from '@/data/mous.json'
-import paymentsJson from '@/data/payments.json'
-import salesTeamJson from '@/data/sales_team.json'
+import type { MOU, SalesPerson } from '@/lib/types'
+// P4 batch 3a (2026-05-24): live repo reads.
+import { mouRepo } from '@/lib/db/repos/mou'
+import { paymentRepo } from '@/lib/db/repos/payment'
+import { salesTeamRepo } from '@/lib/db/repos/salesTeam'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canAccessFinance } from '@/lib/access'
 import { TopNav } from '@/components/ops/TopNav'
@@ -39,10 +40,6 @@ import {
   type RenewalRow,
   type RenewalStatusComputed,
 } from '@/lib/finance/renewalsData'
-
-const allMous = mousJson as unknown as MOU[]
-const allPayments = paymentsJson as unknown as Payment[]
-const allSalesTeam = salesTeamJson as unknown as SalesPerson[]
 
 const BUCKET_ORDER: RenewalBucket[] = [
   'expired',
@@ -150,6 +147,12 @@ export default async function FinanceRenewalsPage({
   const user = await getCurrentUser()
   if (!user) redirect('/login?next=%2Ffinance%2Frenewals')
   if (!canAccessFinance(user)) redirect('/?notice=finance-access-required')
+
+  const [allMous, allPayments, allSalesTeam] = await Promise.all([
+    mouRepo.findAll(),
+    paymentRepo.findAll(),
+    salesTeamRepo.findAll(),
+  ])
 
   const now = new Date()
   const filters = parseFinanceFilters(searchParams ?? {})

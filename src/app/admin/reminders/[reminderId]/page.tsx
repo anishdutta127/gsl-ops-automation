@@ -20,14 +20,12 @@ import { ArrowLeft, Mail } from 'lucide-react'
 import { getCurrentUser } from '@/lib/auth/session'
 import { detectDueReminders } from '@/lib/reminders/detectDueReminders'
 import { renderReminder } from '@/lib/reminders/composeReminder'
-import communicationsJson from '@/data/communications.json'
+import { communicationRepo } from '@/lib/db/repos/leafRepos'
 import type { Communication } from '@/lib/types'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { opsButtonClass } from '@/components/ops/OpsButton'
 import { composeReminderAction, markReminderSentAction } from '../actions'
-
-const allCommunications = communicationsJson as unknown as Communication[]
 
 interface PageProps {
   params: Promise<{ reminderId: string }>
@@ -43,12 +41,13 @@ export default async function RemindersComposePage({ params, searchParams }: Pag
   const communicationId = typeof sp.communicationId === 'string' ? sp.communicationId : null
 
   if (communicationId) {
-    return renderPostComposePanel(reminderId, communicationId)
+    return await renderPostComposePanel(reminderId, communicationId)
   }
   return await renderPreviewPanel(reminderId, user.id)
 }
 
-function renderPostComposePanel(reminderId: string, communicationId: string) {
+async function renderPostComposePanel(reminderId: string, communicationId: string) {
+  const allCommunications = await communicationRepo.findAll() as unknown as Communication[]
   const comm = allCommunications.find((c) => c.id === communicationId)
   if (!comm) return notFound()
 

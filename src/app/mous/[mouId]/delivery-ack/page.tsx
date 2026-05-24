@@ -25,15 +25,12 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { AlertTriangle, CheckCircle, Info } from 'lucide-react'
 import type { Dispatch, MOU, User } from '@/lib/types'
-import mousJson from '@/data/mous.json'
-import dispatchesJson from '@/data/dispatches.json'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { dispatchRepo } from '@/lib/db/repos/dispatch'
 import { getCurrentUser } from '@/lib/auth/session'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { DetailHeaderCard } from '@/components/ops/DetailHeaderCard'
-
-const allMous = mousJson as unknown as MOU[]
-const allDispatches = dispatchesJson as unknown as Dispatch[]
 
 const ELIGIBLE_FOR_ACK: ReadonlyArray<Dispatch['stage']> = [
   'po-raised',
@@ -75,6 +72,10 @@ export default async function DeliveryAckPage({ params, searchParams }: PageProp
   const { mouId } = await params
   const sp = await searchParams
   const user = await getCurrentUser()
+  const [allMous, allDispatches] = await Promise.all([
+    mouRepo.findAll(),
+    dispatchRepo.findAll(),
+  ])
   const mou = allMous.find((m) => m.id === mouId)
   if (!mou || !isVisibleToUser(mou, user)) notFound()
 

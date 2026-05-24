@@ -16,14 +16,10 @@
  */
 
 import { redirect } from 'next/navigation'
-import type { MOU, MagicLinkToken } from '@/lib/types'
-import magicLinkTokensJson from '@/data/magic_link_tokens.json'
-import mousJson from '@/data/mous.json'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { magicLinkTokenRepo } from '@/lib/db/repos/leafRepos'
 import { verifyMagicLink } from '@/lib/magicLink'
 import { FeedbackForm } from '@/components/ops/FeedbackForm'
-
-const tokens = magicLinkTokensJson as unknown as MagicLinkToken[]
-const mous = mousJson as unknown as MOU[]
 
 export default async function FeedbackTokenPage({
   params,
@@ -35,6 +31,11 @@ export default async function FeedbackTokenPage({
   const { tokenId } = await params
   const sp = await searchParams
   const hmac = typeof sp.h === 'string' ? sp.h : ''
+
+  const [tokens, mous] = await Promise.all([
+    magicLinkTokenRepo.findAll(),
+    mouRepo.findAll(),
+  ])
 
   const token = tokens.find((t) => t.id === tokenId)
   if (!token || token.purpose !== 'feedback-submit') {

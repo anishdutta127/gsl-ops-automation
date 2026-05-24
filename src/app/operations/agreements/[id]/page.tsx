@@ -11,13 +11,10 @@ import { getCurrentUser } from '@/lib/auth/session'
 import { canEditFinanceData } from '@/lib/access'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
-import type { Agreement, Vendor } from '@/lib/types'
-import agreementsJson from '@/data/agreements.json'
-import vendorsJson from '@/data/vendors.json'
+import type { Agreement } from '@/lib/types'
+import { vendorRepo } from '@/lib/db/repos/vendor'
+import { agreementRepo } from '@/lib/db/repos/leafRepos'
 import { AgreementEditForm } from './AgreementEditForm'
-
-const allAgreements = agreementsJson as unknown as Agreement[]
-const allVendors = vendorsJson as unknown as Vendor[]
 
 interface PageProps {
   params: Promise<{ id: string }>
@@ -29,6 +26,10 @@ export default async function AgreementDetailPage({ params }: PageProps) {
   if (!user) {
     redirect(`/login?next=${encodeURIComponent(`/operations/agreements/${id}`)}`)
   }
+  const [allAgreements, allVendors] = await Promise.all([
+    agreementRepo.findAll() as unknown as Promise<Agreement[]>,
+    vendorRepo.findAll(),
+  ])
   const agreement = allAgreements.find((a) => a.id === id)
   if (!agreement) notFound()
   const canEdit = canEditFinanceData(user)

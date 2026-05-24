@@ -16,9 +16,7 @@ import type {
   InventoryCategory,
   InventoryItem,
 } from '@/lib/types'
-import inventoryItemsJson from '@/data/inventory_items.json'
-
-const allItems = inventoryItemsJson as unknown as InventoryItem[]
+import { inventoryItemRepo } from '@/lib/db/repos/inventoryItem'
 
 const CATEGORIES: ReadonlyArray<InventoryCategory> = [
   'TinkRworks',
@@ -86,6 +84,7 @@ export async function POST(request: Request) {
   const baseId = cretileGrade !== null
     ? `INV-${slugify(skuName)}-G${cretileGrade}`
     : `INV-${slugify(skuName)}`
+  const allItems = await inventoryItemRepo.findAll()
   if (allItems.some((i) => i.id === baseId)) return errorTo('duplicate-id')
 
   const ts = new Date().toISOString()

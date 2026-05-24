@@ -15,19 +15,12 @@
 
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
-import type {
-  KitDispatch,
-  MOU,
-  Payment,
-  PaymentStatus,
-  School,
-  SalesPerson,
-} from '@/lib/types'
-import mousJson from '@/data/mous.json'
-import kitDispatchesJson from '@/data/kit_dispatches.json'
-import paymentsJson from '@/data/payments.json'
-import schoolsJson from '@/data/schools.json'
-import salesTeamJson from '@/data/sales_team.json'
+import type { PaymentStatus } from '@/lib/types'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { kitDispatchRepo } from '@/lib/db/repos/kitDispatch'
+import { paymentRepo } from '@/lib/db/repos/payment'
+import { schoolRepo } from '@/lib/db/repos/school'
+import { salesTeamRepo } from '@/lib/db/repos/salesTeam'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { EmptyState } from '@/components/ops/EmptyState'
@@ -35,12 +28,6 @@ import { StatusChip, type StatusChipTone } from '@/components/ops/StatusChip'
 import { accentFor } from '@/lib/departmentAccents'
 import { getCurrentUser } from '@/lib/auth/session'
 import { deriveKitDispatchListRows } from '@/lib/kitDispatch/derive'
-
-const mous = mousJson as unknown as MOU[]
-const kitDispatches = kitDispatchesJson as unknown as KitDispatch[]
-const payments = paymentsJson as unknown as Payment[]
-const schools = schoolsJson as unknown as School[]
-const salesTeam = salesTeamJson as unknown as SalesPerson[]
 
 interface PageProps {
   searchParams: Promise<Record<string, string | string[] | undefined>>
@@ -84,6 +71,14 @@ export default async function KitsForDispatchListPage({ searchParams }: PageProp
   const productFilter = readParam(sp, 'product')
   const salesRepFilter = readParam(sp, 'salesRep')
   const regionFilter = readParam(sp, 'region')
+
+  const [mous, kitDispatches, payments, schools, salesTeam] = await Promise.all([
+    mouRepo.findAll(),
+    kitDispatchRepo.findAll(),
+    paymentRepo.findAll(),
+    schoolRepo.findAll(),
+    salesTeamRepo.findAll(),
+  ])
 
   const schoolRegionByMouId: Record<string, string | null> = {}
   const schoolById = new Map(schools.map((s) => [s.id, s]))

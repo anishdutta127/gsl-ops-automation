@@ -19,8 +19,8 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, AlertTriangle } from 'lucide-react'
-import salesTeamJson from '@/data/sales_team.json'
-import type { SalesPerson, SalesProgramme } from '@/lib/types'
+import { salesTeamRepo } from '@/lib/db/repos/salesTeam'
+import type { SalesProgramme } from '@/lib/types'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canPerform } from '@/lib/auth/permissions'
 import { TopNav } from '@/components/ops/TopNav'
@@ -28,8 +28,6 @@ import { PageHeader } from '@/components/ops/PageHeader'
 import { OpsButton, opsButtonClass } from '@/components/ops/OpsButton'
 import { REGION_OPTIONS } from '@/lib/salesOpportunity/createOpportunity'
 import { createOpportunityAction } from '../actions'
-
-const allSalesTeam = salesTeamJson as unknown as SalesPerson[]
 
 const ALL_PROGRAMMES: ReadonlyArray<SalesProgramme> = [
   'STEAM',
@@ -65,6 +63,7 @@ export default async function SalesPipelineNewPage({ searchParams }: PageProps) 
   const errorKey = typeof sp.error === 'string' ? sp.error : null
 
   const isSalesRep = user.role === 'SalesRep'
+  const allSalesTeam = await salesTeamRepo.findAll()
   // Match the session user to a SalesPerson by email (same heuristic as
   // W4-E.5 fan-out). When SalesRep + match found, pre-fill the form;
   // otherwise the dropdown defaults to first active rep.

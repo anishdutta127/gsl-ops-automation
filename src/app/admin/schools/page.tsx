@@ -17,16 +17,13 @@
 
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import type { School } from '@/lib/types'
-import schoolsJson from '@/data/schools.json'
+import { schoolRepo } from '@/lib/db/repos/school'
 import { getCurrentUser } from '@/lib/auth/session'
 import { applyTextSearch } from '@/lib/filterParsing'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { StatusChip } from '@/components/ops/StatusChip'
 import { opsButtonClass } from '@/components/ops/OpsButton'
-
-const schools = schoolsJson as unknown as School[]
 
 interface PageProps {
   searchParams: Promise<Record<string, string | string[] | undefined>>
@@ -39,6 +36,7 @@ export default async function SchoolsAdminListPage({ searchParams }: PageProps) 
   const sp = await searchParams
   const q = typeof sp.q === 'string' ? sp.q : ''
 
+  const schools = await schoolRepo.findAll()
   const filtered = applyTextSearch(
     schools,
     q,

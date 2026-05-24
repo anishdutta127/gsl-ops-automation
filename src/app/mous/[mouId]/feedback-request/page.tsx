@@ -25,25 +25,18 @@ import { notFound } from 'next/navigation'
 import { AlertTriangle, Info, CheckCircle } from 'lucide-react'
 import type {
   Communication,
-  Dispatch,
   MOU,
-  School,
   User,
 } from '@/lib/types'
-import mousJson from '@/data/mous.json'
-import schoolsJson from '@/data/schools.json'
-import dispatchesJson from '@/data/dispatches.json'
-import communicationsJson from '@/data/communications.json'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { schoolRepo } from '@/lib/db/repos/school'
+import { dispatchRepo } from '@/lib/db/repos/dispatch'
+import { communicationRepo } from '@/lib/db/repos/leafRepos'
 import { getCurrentUser } from '@/lib/auth/session'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { DetailHeaderCard } from '@/components/ops/DetailHeaderCard'
 import { ComposedFeedbackRequestPanel } from '@/components/ops/ComposedFeedbackRequestPanel'
-
-const allMous = mousJson as unknown as MOU[]
-const allSchools = schoolsJson as unknown as School[]
-const allDispatches = dispatchesJson as unknown as Dispatch[]
-const allCommunications = communicationsJson as unknown as Communication[]
 
 interface PageProps {
   params: Promise<{ mouId: string }>
@@ -78,6 +71,12 @@ export default async function FeedbackRequestPage({ params, searchParams }: Page
   const { mouId } = await params
   const sp = await searchParams
   const user = await getCurrentUser()
+  const [allMous, allSchools, allDispatches, allCommunications] = await Promise.all([
+    mouRepo.findAll(),
+    schoolRepo.findAll(),
+    dispatchRepo.findAll(),
+    communicationRepo.findAll() as Promise<Communication[]>,
+  ])
   const mou = allMous.find((m) => m.id === mouId)
   if (!mou || !isVisibleToUser(mou, user)) notFound()
 

@@ -21,8 +21,8 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { CheckCircle2, FileText, IndianRupee, ListPlus, Pencil, Send, Users } from 'lucide-react'
 import type { MOU, Payment, User } from '@/lib/types'
-import mousJson from '@/data/mous.json'
-import paymentsJson from '@/data/payments.json'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { paymentRepo } from '@/lib/db/repos/payment'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { DetailHeaderCard } from '@/components/ops/DetailHeaderCard'
@@ -33,9 +33,6 @@ import { canEditFinanceData, canEditMOU, canGeneratePI } from '@/lib/access'
 import { deriveScheduleSummary } from '@/lib/mou/scheduleSummary'
 import { formatInstalmentPercent } from '@/lib/mou/instalmentPercent'
 import { formatRs, formatDate } from '@/lib/format'
-
-const allMous = mousJson as unknown as MOU[]
-const allPayments = paymentsJson as unknown as Payment[]
 
 interface PageProps {
   params: Promise<{ mouId: string }>
@@ -87,6 +84,10 @@ export default async function InstallmentsPage({ params, searchParams }: PagePro
   // the registry and the same year tab on the MOU detail.
   const fyParam = typeof sp.fy === 'string' ? sp.fy : null
   const user = await getCurrentUser()
+  const [allMous, allPayments] = await Promise.all([
+    mouRepo.findAll(),
+    paymentRepo.findAll(),
+  ])
   const mou = allMous.find((m) => m.id === mouId)
   if (!mou || !isVisibleToUser(mou, user)) notFound()
   if (!user) notFound()

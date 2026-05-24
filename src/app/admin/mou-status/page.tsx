@@ -25,13 +25,10 @@
 
 import Link from 'next/link'
 import { ArrowLeft, RotateCcw, Archive, CheckSquare } from 'lucide-react'
-import type { MOU } from '@/lib/types'
-import mousJson from '@/data/mous.json'
+import { mouRepo } from '@/lib/db/repos/mou'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { EmptyState } from '@/components/ops/EmptyState'
-
-const allMous = mousJson as unknown as MOU[]
 
 type CohortFilter = 'all' | 'active' | 'archived'
 
@@ -66,6 +63,7 @@ export default async function AdminMouStatusPage({ searchParams }: PageProps) {
   const bulkCount = typeof sp.bulkCount === 'string' ? sp.bulkCount : null
   const bulkTarget = typeof sp.bulkTarget === 'string' ? sp.bulkTarget : null
 
+  const allMous = await mouRepo.findAll()
   const matched = allMous
     .filter((m) => {
       if (cohort === 'active') return m.cohortStatus === 'active'

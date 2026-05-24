@@ -23,14 +23,10 @@ import type {
   User,
 } from '@/lib/types'
 import type { ProductSelection } from '@/lib/mouSystem/types'
-import mousJson from '@/data/mous.json'
-import schoolsJson from '@/data/schools.json'
-import usersJson from '@/data/users.json'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { schoolRepo } from '@/lib/db/repos/school'
+import { userRepo } from '@/lib/db/repos/user'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
-
-const allMous = mousJson as unknown as MOU[]
-const allSchools = schoolsJson as unknown as Array<{ id: string; name: string }>
-const allUsers = usersJson as unknown as User[]
 
 const VALID_PROGRAMMES: Programme[] = ['STEAM', 'Young Pioneers', 'Harvard HBPE', 'Robotics']
 const VALID_TRAINERS: TrainerModel[] = ['Bootcamp', 'GSL-T', 'TT', 'AIQ', 'Other']
@@ -53,13 +49,16 @@ export async function POST(request: Request, ctx: RouteContext) {
     url.searchParams.set('next', `/mous/${mouId}/edit`)
     return NextResponse.redirect(url, { status: 303 })
   }
+  const allUsers = await userRepo.findAll()
   const user = allUsers.find((u) => u.id === session.sub)
   if (!user) return redirectTo(request, mouId, { error: 'unknown-user' })
   if (!canEditMOU(user)) {
     return redirectTo(request, mouId, { error: 'permission' })
   }
+  const allMous = await mouRepo.findAll()
   const mou = allMous.find((m) => m.id === mouId)
   if (!mou) return redirectTo(request, mouId, { error: 'mou-not-found' })
+  const allSchools = await schoolRepo.findAll()
 
   const form = await request.formData()
   const isAdmin = isAdminWildcard(user)

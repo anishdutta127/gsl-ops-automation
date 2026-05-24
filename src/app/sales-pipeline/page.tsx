@@ -26,9 +26,10 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { Briefcase, Plus, AlertTriangle, CheckCircle2 } from 'lucide-react'
-import salesOpportunitiesJson from '@/data/sales_opportunities.json'
-import salesTeamJson from '@/data/sales_team.json'
-import type { SalesOpportunity, SalesPerson, SalesProgramme } from '@/lib/types'
+// P4 batch 2 (2026-05-24): live repo reads.
+import { salesOpportunityRepo } from '@/lib/db/repos/leafRepos'
+import { salesTeamRepo } from '@/lib/db/repos/salesTeam'
+import type { SalesOpportunity, SalesProgramme } from '@/lib/types'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canPerform } from '@/lib/auth/permissions'
 import { TopNav } from '@/components/ops/TopNav'
@@ -45,9 +46,7 @@ import {
 } from '@/lib/filterParsing'
 import { SUPER_REGION_MEMBERS } from '@/lib/regions'
 
-const allOpportunities = salesOpportunitiesJson as unknown as SalesOpportunity[]
-const allSalesTeam = salesTeamJson as unknown as SalesPerson[]
-
+// Module-scope consts removed; loaded inside the async server component.
 const DIMENSION_KEYS = ['region', 'programme'] as const
 
 const PROGRAMME_OPTIONS: ReadonlyArray<SalesProgramme> = [
@@ -77,6 +76,12 @@ interface PageProps {
 export default async function SalesPipelinePage({ searchParams }: PageProps) {
   const user = await getCurrentUser()
   if (!user) redirect('/login?next=%2Fsales-pipeline')
+
+  // P4 batch 2 (2026-05-24): live repo reads.
+  const [allOpportunities, allSalesTeam] = await Promise.all([
+    salesOpportunityRepo.findAll() as Promise<SalesOpportunity[]>,
+    salesTeamRepo.findAll(),
+  ])
 
   const sp = await searchParams
   const isSalesRep = user.role === 'SalesRep'

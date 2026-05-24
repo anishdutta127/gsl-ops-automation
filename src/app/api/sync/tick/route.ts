@@ -21,8 +21,8 @@
 import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 import { NextResponse } from 'next/server'
-import type { PendingUpdate, PiCounter, User } from '@/lib/types'
-import usersJson from '@/data/users.json'
+import type { PendingUpdate, PiCounter } from '@/lib/types'
+import { userRepo } from '@/lib/db/repos/user'
 import { canPerform } from '@/lib/auth/permissions'
 import { getCurrentSession } from '@/lib/auth/session'
 import { checkHealth } from '@/lib/syncHealth/checkHealth'
@@ -30,8 +30,6 @@ import {
   appendSyncHealth,
   type SyncHealthEntry,
 } from '@/lib/syncHealth/appendEntry'
-
-const users = usersJson as unknown as User[]
 
 const PI_COUNTER_PATH = 'src/data/pi_counter.json'
 const PENDING_UPDATES_PATH = 'src/data/pending_updates.json'
@@ -72,6 +70,7 @@ export async function POST(request: Request) {
     return NextResponse.redirect(url, { status: 303 })
   }
 
+  const users = await userRepo.findAll()
   const user = users.find((u) => u.id === session.sub)
   if (!user || !canPerform(user, 'system:trigger-sync')) {
     const url = new URL('/admin', request.url)

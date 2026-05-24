@@ -14,15 +14,11 @@
 
 import { NextResponse } from 'next/server'
 import { getCurrentSession } from '@/lib/auth/session'
-import type { AuditEntry, MOU, SalesPerson, User } from '@/lib/types'
-import mousJson from '@/data/mous.json'
-import salesTeamJson from '@/data/sales_team.json'
-import usersJson from '@/data/users.json'
+import type { AuditEntry, MOU } from '@/lib/types'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { salesTeamRepo } from '@/lib/db/repos/salesTeam'
+import { userRepo } from '@/lib/db/repos/user'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
-
-const allMous = mousJson as unknown as MOU[]
-const allReps = salesTeamJson as unknown as SalesPerson[]
-const allUsers = usersJson as unknown as User[]
 
 export async function POST(request: Request) {
   const session = await getCurrentSession()
@@ -31,6 +27,9 @@ export async function POST(request: Request) {
     url.searchParams.set('next', '/admin/sales-team/reassign')
     return NextResponse.redirect(url, { status: 303 })
   }
+  const allMous = await mouRepo.findAll()
+  const allReps = await salesTeamRepo.findAll()
+  const allUsers = await userRepo.findAll()
   const user = allUsers.find((u) => u.id === session.sub)
   if (!user || user.role !== 'Admin') {
     return redirectBack(request, { error: 'permission' })

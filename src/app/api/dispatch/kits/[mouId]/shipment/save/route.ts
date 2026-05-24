@@ -8,11 +8,8 @@
 import { NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canUploadPOD } from '@/lib/access'
-import type { KitDispatch } from '@/lib/types'
-import kitDispatchesJson from '@/data/kit_dispatches.json'
+import { kitDispatchRepo } from '@/lib/db/repos/kitDispatch'
 import { saveShipmentTracking } from '@/lib/kitDispatch/shipment'
-
-const kitDispatches = kitDispatchesJson as unknown as KitDispatch[]
 
 interface Body {
   courierName?: unknown
@@ -47,6 +44,7 @@ export async function POST(
       ? body.deliveryStatus
       : 'In Transit'
 
+  const kitDispatches = await kitDispatchRepo.findAll()
   const result = await saveShipmentTracking(
     {
       mouId,

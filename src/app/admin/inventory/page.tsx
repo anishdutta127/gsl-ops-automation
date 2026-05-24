@@ -15,7 +15,8 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { Plus, Sliders } from 'lucide-react'
 import type { InventoryCategory, InventoryItem } from '@/lib/types'
-import inventoryItemsJson from '@/data/inventory_items.json'
+// P4 batch 2 (2026-05-24): live repo read.
+import { inventoryItemRepo } from '@/lib/db/repos/inventoryItem'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canPerform } from '@/lib/auth/permissions'
 import { canManageInventory } from '@/lib/access'
@@ -24,8 +25,6 @@ import { PageHeader } from '@/components/ops/PageHeader'
 import { EmptyState } from '@/components/ops/EmptyState'
 import { StatusChip, type StatusChipTone } from '@/components/ops/StatusChip'
 import { opsButtonClass } from '@/components/ops/OpsButton'
-
-const items = inventoryItemsJson as unknown as InventoryItem[]
 
 const CATEGORY_VALUES: ReadonlyArray<'all' | InventoryCategory> = [
   'all', 'TinkRworks', 'Cretile', 'Other',
@@ -57,6 +56,9 @@ export default async function InventoryListPage({ searchParams }: PageProps) {
   const sp = await searchParams
   const user = await getCurrentUser()
   if (!user) redirect('/login?next=%2Fadmin%2Finventory')
+
+  // P4 batch 2 (2026-05-24): live repo read.
+  const items = await inventoryItemRepo.findAll()
 
   const canEdit = canPerform(user, 'inventory:edit')
   const canManage = canManageInventory(user)

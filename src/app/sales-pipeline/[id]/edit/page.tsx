@@ -10,13 +10,9 @@
 import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, AlertTriangle } from 'lucide-react'
-import salesOpportunitiesJson from '@/data/sales_opportunities.json'
-import salesTeamJson from '@/data/sales_team.json'
-import type {
-  SalesOpportunity,
-  SalesPerson,
-  SalesProgramme,
-} from '@/lib/types'
+import { salesTeamRepo } from '@/lib/db/repos/salesTeam'
+import { salesOpportunityRepo } from '@/lib/db/repos/leafRepos'
+import type { SalesOpportunity, SalesProgramme } from '@/lib/types'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canPerform } from '@/lib/auth/permissions'
 import { TopNav } from '@/components/ops/TopNav'
@@ -24,9 +20,6 @@ import { PageHeader } from '@/components/ops/PageHeader'
 import { OpsButton, opsButtonClass } from '@/components/ops/OpsButton'
 import { REGION_OPTIONS } from '@/lib/salesOpportunity/createOpportunity'
 import { editOpportunityAction } from '../../actions'
-
-const allOpportunities = salesOpportunitiesJson as unknown as SalesOpportunity[]
-const allSalesTeam = salesTeamJson as unknown as SalesPerson[]
 
 const ALL_PROGRAMMES: ReadonlyArray<SalesProgramme> = [
   'STEAM',
@@ -63,6 +56,11 @@ export default async function OpportunityEditPage({ params, searchParams }: Page
   if (!canPerform(user, 'sales-opportunity:edit')) {
     redirect(`/sales-pipeline/${encodeURIComponent(id)}?error=permission`)
   }
+
+  const [allOpportunities, allSalesTeam] = await Promise.all([
+    salesOpportunityRepo.findAll() as unknown as Promise<SalesOpportunity[]>,
+    salesTeamRepo.findAll(),
+  ])
 
   const opp = allOpportunities.find((o) => o.id === id)
   if (!opp) return notFound()

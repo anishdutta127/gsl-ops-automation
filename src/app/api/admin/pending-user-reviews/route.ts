@@ -11,8 +11,7 @@
  */
 
 import { NextResponse } from 'next/server'
-import usersJson from '@/data/users.json'
-import type { User } from '@/lib/types'
+import { userRepo } from '@/lib/db/repos/user'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canManageUsers } from '@/lib/access'
 
@@ -24,7 +23,7 @@ export async function GET() {
   if (!canManageUsers(user)) {
     return NextResponse.json({ error: 'forbidden' }, { status: 403 })
   }
-  const all = usersJson as unknown as User[]
+  const all = await userRepo.findAll()
   const pending = all
     .filter((u) => u.requiresAdminReview === true)
     .map((u) => ({

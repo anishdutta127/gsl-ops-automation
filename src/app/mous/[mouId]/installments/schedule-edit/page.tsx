@@ -17,8 +17,8 @@
 
 import { notFound, redirect } from 'next/navigation'
 import type { MOU, Payment, User } from '@/lib/types'
-import mousJson from '@/data/mous.json'
-import paymentsJson from '@/data/payments.json'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { paymentRepo } from '@/lib/db/repos/payment'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { DetailHeaderCard } from '@/components/ops/DetailHeaderCard'
@@ -26,9 +26,6 @@ import { getCurrentUser } from '@/lib/auth/session'
 import { canEditFinanceData, canEditMOU } from '@/lib/access'
 import { formatRs } from '@/lib/format'
 import { ScheduleEditorForm } from './ScheduleEditorForm'
-
-const allMous = mousJson as unknown as MOU[]
-const allPayments = paymentsJson as unknown as Payment[]
 
 interface PageProps {
   params: Promise<{ mouId: string }>
@@ -67,6 +64,10 @@ export default async function ScheduleEditorPage({ params, searchParams }: PageP
   const sp = await searchParams
   const user = await getCurrentUser()
   if (!user) redirect(`/login?next=${encodeURIComponent(`/mous/${mouId}/installments/schedule-edit`)}`)
+  const [allMous, allPayments] = await Promise.all([
+    mouRepo.findAll(),
+    paymentRepo.findAll(),
+  ])
   const mou = allMous.find((m) => m.id === mouId)
   if (!mou || !isVisibleToUser(mou, user)) notFound()
 

@@ -19,7 +19,7 @@ import {
   broadcastNotification,
   recipientsByRole,
 } from '@/lib/notifications/createNotification'
-import usersJson from '@/data/users.json'
+import { userRepo } from '@/lib/db/repos/user'
 import type {
   EscalationCategory,
   EscalationSeverity,
@@ -27,8 +27,6 @@ import type {
   EscalationType,
   User,
 } from '@/lib/types'
-
-const allUsers = usersJson as unknown as User[]
 
 const VALID_STATUSES: ReadonlyArray<EscalationStatus> = [
   'Open', 'WIP', 'Closed', 'Transferred',
@@ -223,6 +221,7 @@ export async function createEscalationAction(formData: FormData): Promise<void> 
   // out to that user only (single-recipient); otherwise broadcast to
   // every active member of the department's role set. The createNotif
   // helper dedups self + inactive recipients.
+  const allUsers = await userRepo.findAll()
   const recipientUserIds = assignedTo
     ? [assignedTo]
     : recipientsByRole(allUsers, DEPT_ROLE_FANOUT[ownedByDepartment])

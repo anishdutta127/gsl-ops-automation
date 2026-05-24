@@ -15,16 +15,13 @@
  */
 
 import { notFound, redirect } from 'next/navigation'
-import type { School, SchoolGroup } from '@/lib/types'
-import schoolGroupsJson from '@/data/school_groups.json'
-import schoolsJson from '@/data/schools.json'
+import type { SchoolGroup } from '@/lib/types'
+import { schoolGroupRepo } from '@/lib/db/repos/leafRepos'
+import { schoolRepo } from '@/lib/db/repos/school'
 import { getCurrentUser } from '@/lib/auth/session'
 import { FormCard, type FormCardField } from '@/components/ops/FormCard'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
-
-const groups = schoolGroupsJson as unknown as SchoolGroup[]
-const schools = schoolsJson as unknown as School[]
 
 const ERROR_MESSAGES: Record<string, string> = {
   permission: 'You do not have permission to edit school group members.',
@@ -47,6 +44,10 @@ export default async function SchoolGroupEditPage({
   const user = await getCurrentUser()
   if (!user) redirect(`/login?next=%2Fadmin%2Fschool-groups%2F${encodeURIComponent(groupId)}`)
 
+  const [groups, schools] = await Promise.all([
+    schoolGroupRepo.findAll() as unknown as Promise<SchoolGroup[]>,
+    schoolRepo.findAll(),
+  ])
   const group = groups.find((g) => g.id === groupId)
   if (!group) notFound()
 

@@ -8,13 +8,9 @@
 import { NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canApproveDispatch } from '@/lib/access'
-import type { KitDispatch, School } from '@/lib/types'
-import kitDispatchesJson from '@/data/kit_dispatches.json'
-import schoolsJson from '@/data/schools.json'
+import { kitDispatchRepo } from '@/lib/db/repos/kitDispatch'
+import { schoolRepo } from '@/lib/db/repos/school'
 import { saveDispatchSummary } from '@/lib/kitDispatch/summary'
-
-const kitDispatches = kitDispatchesJson as unknown as KitDispatch[]
-const schools = schoolsJson as unknown as School[]
 
 interface Body {
   schoolName?: unknown
@@ -44,6 +40,8 @@ export async function POST(
   } catch {
     return NextResponse.json({ error: 'invalid-json' }, { status: 400 })
   }
+  const kitDispatches = await kitDispatchRepo.findAll()
+  const schools = await schoolRepo.findAll()
   const result = await saveDispatchSummary(
     {
       mouId,

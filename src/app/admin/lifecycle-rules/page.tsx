@@ -19,15 +19,12 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import type { LifecycleRule, User } from '@/lib/types'
-import lifecycleRulesJson from '@/data/lifecycle_rules.json'
-import usersJson from '@/data/users.json'
+import { lifecycleRuleRepo } from '@/lib/db/repos/leafRepos'
+import { userRepo } from '@/lib/db/repos/user'
 import { getCurrentUser } from '@/lib/auth/session'
 import { KANBAN_COLUMNS } from '@/lib/kanban/deriveStage'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
-
-const allRules = lifecycleRulesJson as unknown as LifecycleRule[]
-const allUsers = usersJson as unknown as User[]
 
 const STAGE_LABEL_BY_KEY: Record<string, string> = {
   ...Object.fromEntries(KANBAN_COLUMNS.map((c) => [c.key, c.label])),
@@ -47,9 +44,11 @@ interface PageProps {
   searchParams: Promise<Record<string, string | string[] | undefined>>
 }
 
-function userNameById(id: string): string {
-  const u = allUsers.find((x) => x.id === id)
-  return u ? u.name : id
+function makeUserNameById(allUsers: User[]) {
+  return function userNameById(id: string): string {
+    const u = allUsers.find((x) => x.id === id)
+    return u ? u.name : id
+  }
 }
 
 function relativeTime(iso: string, now: Date): string {
@@ -77,6 +76,12 @@ export default async function LifecycleRulesPage({ searchParams }: PageProps) {
   const errorMessage = errorKey ? ERROR_MESSAGES[errorKey] ?? `Failed: ${errorKey}` : null
 
   const savedStage = typeof sp.saved === 'string' ? sp.saved : null
+
+  const [allRules, allUsers] = await Promise.all([
+    lifecycleRuleRepo.findAll() as unknown as Promise<LifecycleRule[]>,
+    userRepo.findAll(),
+  ])
+  const userNameById = makeUserNameById(allUsers)
 
   const now = new Date()
 

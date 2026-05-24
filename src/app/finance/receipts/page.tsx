@@ -9,9 +9,9 @@
 
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
-import type { MOU, Payment } from '@/lib/types'
-import mousJson from '@/data/mous.json'
-import paymentsJson from '@/data/payments.json'
+// P4 batch 3a (2026-05-24): live repo reads.
+import { mouRepo } from '@/lib/db/repos/mou'
+import { paymentRepo } from '@/lib/db/repos/payment'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canAccessFinance } from '@/lib/access'
 import { TopNav } from '@/components/ops/TopNav'
@@ -31,9 +31,6 @@ import {
   type ReceiptSortKey,
   type ReceiptStatus,
 } from '@/lib/finance/receiptsData'
-
-const allMous = mousJson as unknown as MOU[]
-const allPayments = paymentsJson as unknown as Payment[]
 
 const SORT_LABEL: Record<ReceiptSortKey, string> = {
   'due-asc': 'Due date (earliest first)',
@@ -81,6 +78,11 @@ export default async function FinanceReceiptsPage({
   const user = await getCurrentUser()
   if (!user) redirect('/login?next=%2Ffinance%2Freceipts')
   if (!canAccessFinance(user)) redirect('/?notice=finance-access-required')
+
+  const [allMous, allPayments] = await Promise.all([
+    mouRepo.findAll(),
+    paymentRepo.findAll(),
+  ])
 
   const now = new Date()
   const filters = parseFinanceFilters(searchParams ?? {})

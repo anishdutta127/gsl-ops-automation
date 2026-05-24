@@ -9,9 +9,10 @@
  * roles see no escalations (Phase 1 scope).
  */
 
-import type { Escalation, School, User } from '@/lib/types'
-import escalationsJson from '@/data/escalations.json'
-import schoolsJson from '@/data/schools.json'
+import type { Escalation, User } from '@/lib/types'
+// P4 batch 2 (2026-05-24): live repo reads.
+import { escalationRepo } from '@/lib/db/repos/escalation'
+import { schoolRepo } from '@/lib/db/repos/school'
 import { getCurrentUser } from '@/lib/auth/session'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
@@ -30,8 +31,7 @@ import {
   applyTextSearch,
 } from '@/lib/filterParsing'
 
-const allEscalations = escalationsJson as unknown as Escalation[]
-const allSchools = schoolsJson as unknown as School[]
+// Module-scope consts removed; loaded inside the async server component.
 
 const DIMENSION_KEYS = ['lane', 'level', 'status', 'assignedTo'] as const
 
@@ -55,6 +55,11 @@ interface PageProps {
 export default async function EscalationsListPage({ searchParams }: PageProps) {
   const sp = await searchParams
   const user = await getCurrentUser()
+  // P4 batch 2 (2026-05-24): live repo reads.
+  const [allEscalations, allSchools] = await Promise.all([
+    escalationRepo.findAll(),
+    schoolRepo.findAll(),
+  ])
   const schoolById = new Map(allSchools.map((s) => [s.id, s]))
   const scoped = scopeForUser(allEscalations, user)
 

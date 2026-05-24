@@ -25,10 +25,10 @@
 import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
 import { AlertCircle, Info } from 'lucide-react'
-import type { MOU, Payment, School, User } from '@/lib/types'
-import mousJson from '@/data/mous.json'
-import schoolsJson from '@/data/schools.json'
-import paymentsJson from '@/data/payments.json'
+import type { MOU, User } from '@/lib/types'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { schoolRepo } from '@/lib/db/repos/school'
+import { paymentRepo } from '@/lib/db/repos/payment'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canGeneratePI } from '@/lib/access'
 import { TopNav } from '@/components/ops/TopNav'
@@ -40,10 +40,6 @@ import {
   isPiParallelBuildLocked,
   parallelBuildLockMessage,
 } from '@/lib/pi/parallelBuildLock'
-
-const allMous = mousJson as unknown as MOU[]
-const allSchools = schoolsJson as unknown as School[]
-const allPayments = paymentsJson as unknown as Payment[]
 
 // 2026-05-19 stabilisation: /api/pi/generate redirects every failure
 // back here with `?error=<reason>`. Map each reason to friendly copy so
@@ -88,6 +84,11 @@ export default async function PiPage({ params, searchParams }: PageProps) {
   const errorKey = typeof sp.error === 'string' ? sp.error : null
   const errorMessage = errorKey ? ERROR_COPY[errorKey] ?? null : null
   const user = await getCurrentUser()
+  const [allMous, allSchools, allPayments] = await Promise.all([
+    mouRepo.findAll(),
+    schoolRepo.findAll(),
+    paymentRepo.findAll(),
+  ])
   const mou = allMous.find((m) => m.id === mouId)
   if (!mou || !isVisibleToUser(mou, user)) notFound()
   // Gate 1 Step 4 (MM2): Ops/SalesRep/etc. cannot generate PI.

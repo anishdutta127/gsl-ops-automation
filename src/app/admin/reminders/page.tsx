@@ -23,9 +23,9 @@ import Link from 'next/link'
 import { Bell, AlertTriangle, CheckCircle2 } from 'lucide-react'
 import { getCurrentUser } from '@/lib/auth/session'
 import { detectDueReminders, type ReminderKind } from '@/lib/reminders/detectDueReminders'
-import salesTeamJson from '@/data/sales_team.json'
-import mousJson from '@/data/mous.json'
-import type { MOU, SalesPerson } from '@/lib/types'
+import { salesTeamRepo } from '@/lib/db/repos/salesTeam'
+import { mouRepo } from '@/lib/db/repos/mou'
+import type { SalesPerson } from '@/lib/types'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { StatusChip, type StatusChipTone } from '@/components/ops/StatusChip'
@@ -89,8 +89,10 @@ export default async function RemindersListPage({ searchParams }: PageProps) {
   const sentId = typeof sp.sent === 'string' ? sp.sent : null
 
   const reminders = detectDueReminders()
-  const allMous = mousJson as unknown as MOU[]
-  const allSalesTeam = salesTeamJson as unknown as SalesPerson[]
+  const [allMous, allSalesTeam] = await Promise.all([
+    mouRepo.findAll(),
+    salesTeamRepo.findAll(),
+  ])
   const mouById = new Map(allMous.map((m) => [m.id, m]))
 
   const ownerOptions = Array.from(

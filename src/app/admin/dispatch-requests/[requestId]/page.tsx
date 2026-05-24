@@ -17,24 +17,16 @@ import { notFound, redirect } from 'next/navigation'
 import Link from 'next/link'
 import type {
   DispatchRequest,
-  MOU,
-  School,
-  User,
 } from '@/lib/types'
-import dispatchRequestsJson from '@/data/dispatch_requests.json'
-import mousJson from '@/data/mous.json'
-import schoolsJson from '@/data/schools.json'
-import usersJson from '@/data/users.json'
+import { dispatchRequestRepo } from '@/lib/db/repos/leafRepos'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { schoolRepo } from '@/lib/db/repos/school'
+import { userRepo } from '@/lib/db/repos/user'
 import { getCurrentUser } from '@/lib/auth/session'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { OpsButton } from '@/components/ops/OpsButton'
 import { DetailHeaderCard } from '@/components/ops/DetailHeaderCard'
-
-const allRequests = dispatchRequestsJson as unknown as DispatchRequest[]
-const allMous = mousJson as unknown as MOU[]
-const allSchools = schoolsJson as unknown as School[]
-const allUsers = usersJson as unknown as User[]
 
 interface PageProps {
   params: Promise<{ requestId: string }>
@@ -65,6 +57,13 @@ export default async function DispatchRequestDetailPage({ params, searchParams }
 
   const { requestId } = await params
   const sp = await searchParams
+
+  const [allRequests, allMous, allSchools, allUsers] = await Promise.all([
+    dispatchRequestRepo.findAll() as unknown as Promise<DispatchRequest[]>,
+    mouRepo.findAll(),
+    schoolRepo.findAll(),
+    userRepo.findAll(),
+  ])
 
   const request = allRequests.find((r) => r.id === requestId)
   if (!request) notFound()

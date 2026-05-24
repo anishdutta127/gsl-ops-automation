@@ -16,8 +16,8 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import type { MOU, User } from '@/lib/types'
 import type { SignedValues } from '@/lib/mouSystem/types'
-import mousJson from '@/data/mous.json'
-import signedValuesJson from '@/data/signed_values.json'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { signedValueRepo } from '@/lib/db/repos/leafRepos'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { DetailHeaderCard } from '@/components/ops/DetailHeaderCard'
@@ -25,9 +25,6 @@ import { opsButtonClass } from '@/components/ops/OpsButton'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canEditMOU } from '@/lib/access'
 import { formatRs, formatDate } from '@/lib/format'
-
-const allMous = mousJson as unknown as MOU[]
-const allSignedValues = signedValuesJson as unknown as SignedValues[]
 
 interface PageProps {
   params: Promise<{ mouId: string }>
@@ -56,6 +53,10 @@ export default async function SignedValuesPage({ params, searchParams }: PagePro
   const { mouId } = await params
   const sp = (await searchParams) ?? {}
   const user = await getCurrentUser()
+  const [allMous, allSignedValues] = await Promise.all([
+    mouRepo.findAll(),
+    signedValueRepo.findAll() as unknown as Promise<SignedValues[]>,
+  ])
   const mou = allMous.find((m) => m.id === mouId)
   if (!mou || !isVisibleToUser(mou, user)) notFound()
   if (!user || !canEditMOU(user)) notFound()

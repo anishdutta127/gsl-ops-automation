@@ -12,19 +12,18 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import type { CcRule } from '@/lib/types'
-import ccRulesJson from '@/data/cc_rules.json'
+import { ccRuleRepo } from '@/lib/db/repos/leafRepos'
 import { getCurrentUser } from '@/lib/auth/session'
 import { CcRuleToggleRow } from '@/components/ops/CcRuleToggleRow'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { opsButtonClass } from '@/components/ops/OpsButton'
 
-const rules = ccRulesJson as unknown as CcRule[]
-
 export default async function CcRulesListPage() {
   const user = await getCurrentUser()
   if (!user) redirect('/login?next=%2Fadmin%2Fcc-rules')
 
+  const rules = await ccRuleRepo.findAll() as unknown as CcRule[]
   const canCreate = true
   const enabledCount = rules.filter((r) => r.enabled).length
 

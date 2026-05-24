@@ -26,14 +26,11 @@ import { PageHeader } from '@/components/ops/PageHeader'
 import { formatDate, formatRs } from '@/lib/format'
 import { company } from '@/lib/mouSystem/company'
 import type { VexDispatch, VexPi } from '@/lib/mouSystem/types'
-import vexPisJson from '@/data/vex_pis.json'
-import vexDispatchesJson from '@/data/vex_dispatches.json'
+import { vexPiRepo } from '@/lib/db/repos/vexPi'
+import { vexDispatchRepo } from '@/lib/db/repos/leafRepos'
 import { VexPiActions } from './VexPiActions'
 import { VexPiStatusBar } from './VexPiStatusBar'
 import { DispatchRowActions } from './DispatchRowActions'
-
-const allPis = vexPisJson as unknown as VexPi[]
-const allDispatches = vexDispatchesJson as unknown as VexDispatch[]
 
 interface PageProps {
   params: Promise<{ id: string }>
@@ -43,6 +40,10 @@ export default async function VexPiDetailPage({ params }: PageProps) {
   const { id } = await params
   const user = await getCurrentUser()
   if (!user) redirect(`/login?next=${encodeURIComponent(`/operations/vex/pi/${id}`)}`)
+  const [allPis, allDispatches] = await Promise.all([
+    vexPiRepo.findAll() as unknown as Promise<VexPi[]>,
+    vexDispatchRepo.findAll() as unknown as Promise<VexDispatch[]>,
+  ])
   const pi = allPis.find((p) => p.id === id)
   if (!pi) notFound()
   const dispatches = allDispatches

@@ -23,14 +23,12 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { AlertTriangle } from 'lucide-react'
 import type { MOU, User } from '@/lib/types'
-import mousJson from '@/data/mous.json'
+import { mouRepo } from '@/lib/db/repos/mou'
 import { getCurrentUser } from '@/lib/auth/session'
 import { isDriftReviewRequired } from '@/lib/mou/confirmActuals'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { DetailHeaderCard } from '@/components/ops/DetailHeaderCard'
-
-const allMous = mousJson as unknown as MOU[]
 
 interface PageProps {
   params: Promise<{ mouId: string }>
@@ -60,6 +58,7 @@ export default async function ActualsPage({ params, searchParams }: PageProps) {
   const { mouId } = await params
   const { error } = await searchParams
   const user = await getCurrentUser()
+  const allMous = await mouRepo.findAll()
   const mou = allMous.find((m) => m.id === mouId)
   if (!mou || !isVisibleToUser(mou, user)) notFound()
 

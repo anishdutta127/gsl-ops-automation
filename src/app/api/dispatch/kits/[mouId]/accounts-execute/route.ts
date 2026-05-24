@@ -12,16 +12,11 @@ import { getCurrentUser } from '@/lib/auth/session'
 import { canExecuteDispatch } from '@/lib/access'
 import type {
   AccountsDispatchEntry,
-  InventoryItem,
-  KitDispatch,
 } from '@/lib/types'
-import kitDispatchesJson from '@/data/kit_dispatches.json'
-import inventoryItemsJson from '@/data/inventory_items.json'
+import { kitDispatchRepo } from '@/lib/db/repos/kitDispatch'
+import { inventoryItemRepo } from '@/lib/db/repos/inventoryItem'
 import { executeAccountsDispatch } from '@/lib/kitDispatch/accountsExecute'
 import { emitDispatchExecuted } from '@/lib/notifications/workflowTriggers'
-
-const kitDispatches = kitDispatchesJson as unknown as KitDispatch[]
-const inventory = inventoryItemsJson as unknown as InventoryItem[]
 
 interface Body {
   accountsEntries?: unknown
@@ -74,6 +69,8 @@ export async function POST(
   if (entries === null) {
     return NextResponse.json({ error: 'invalid-rows' }, { status: 400 })
   }
+  const kitDispatches = await kitDispatchRepo.findAll()
+  const inventory = await inventoryItemRepo.findAll()
   const result = await executeAccountsDispatch(
     {
       mouId,

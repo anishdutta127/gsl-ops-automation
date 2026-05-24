@@ -13,12 +13,9 @@
 
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import notificationsJson from '@/data/notifications.json'
-import type { Notification } from '@/lib/types'
+import { notificationRepo } from '@/lib/db/repos/notification'
 import { getCurrentUser } from '@/lib/auth/session'
 import { markRead } from '@/lib/notifications/markRead'
-
-const allNotifications = notificationsJson as unknown as Notification[]
 
 export async function GET(
   request: NextRequest,
@@ -31,6 +28,7 @@ export async function GET(
     return NextResponse.redirect(loginUrl)
   }
 
+  const allNotifications = await notificationRepo.findAll()
   const n = allNotifications.find((x) => x.id === notificationId)
   if (!n) {
     // Notification gone; bounce to the list so the user has somewhere

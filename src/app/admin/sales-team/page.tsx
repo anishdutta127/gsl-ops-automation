@@ -9,19 +9,17 @@
 
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import type { SalesPerson } from '@/lib/types'
-import salesTeamJson from '@/data/sales_team.json'
+import { salesTeamRepo } from '@/lib/db/repos/salesTeam'
 import { getCurrentUser } from '@/lib/auth/session'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { opsButtonClass } from '@/components/ops/OpsButton'
 
-const reps = salesTeamJson as unknown as SalesPerson[]
-
 export default async function SalesTeamListPage() {
   const user = await getCurrentUser()
   if (!user) redirect('/login?next=%2Fadmin%2Fsales-team')
 
+  const reps = await salesTeamRepo.findAll()
   const activeCount = reps.filter((r) => r.active).length
 
   return (

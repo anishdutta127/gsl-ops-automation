@@ -17,10 +17,7 @@ import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { DetailHeaderCard } from '@/components/ops/DetailHeaderCard'
 import { opsButtonClass } from '@/components/ops/OpsButton'
-import type { InventoryItem } from '@/lib/types'
-import inventoryItemsJson from '@/data/inventory_items.json'
-
-const allItems = inventoryItemsJson as unknown as InventoryItem[]
+import { inventoryItemRepo } from '@/lib/db/repos/inventoryItem'
 
 interface PageProps {
   params: Promise<{ id: string }>
@@ -48,6 +45,7 @@ export default async function AdjustInventoryPage({ params, searchParams }: Page
     redirect(`/login?next=${encodeURIComponent(`/admin/inventory/${id}/adjust`)}`)
   }
   if (!canManageInventory(user)) notFound()
+  const allItems = await inventoryItemRepo.findAll()
   const item = allItems.find((i) => i.id === id)
   if (!item) notFound()
 

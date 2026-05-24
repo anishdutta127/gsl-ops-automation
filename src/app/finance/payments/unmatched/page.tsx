@@ -16,9 +16,10 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { Plus } from 'lucide-react'
-import type { PaymentLog, SalesPerson } from '@/lib/types'
-import paymentLogsJson from '@/data/payment_logs.json'
-import salesTeamJson from '@/data/sales_team.json'
+import type { PaymentLog } from '@/lib/types'
+// P4 batch 3a (2026-05-24): live repo reads.
+import { paymentLogRepo } from '@/lib/db/repos/leafRepos'
+import { salesTeamRepo } from '@/lib/db/repos/salesTeam'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canAccessFinance, canEditFinanceData } from '@/lib/access'
 import { TopNav } from '@/components/ops/TopNav'
@@ -26,9 +27,6 @@ import { PageHeader } from '@/components/ops/PageHeader'
 import { EmptyState } from '@/components/ops/EmptyState'
 import { formatRs, formatDate } from '@/lib/format'
 import { opsButtonClass } from '@/components/ops/OpsButton'
-
-const allLogs = paymentLogsJson as unknown as PaymentLog[]
-const allSalesTeam = salesTeamJson as unknown as SalesPerson[]
 
 type SortKey = 'date-desc' | 'date-asc' | 'amount-desc' | 'amount-asc' | 'reference-asc'
 
@@ -77,6 +75,11 @@ export default async function UnmatchedPaymentsPage({ searchParams }: PageProps)
   const canLog = canEditFinanceData(user)
   const parkedId = typeof sp.parked === 'string' ? sp.parked : null
   const flashSchool = typeof sp.school === 'string' ? sp.school : null
+
+  const [allLogs, allSalesTeam] = await Promise.all([
+    paymentLogRepo.findAll() as Promise<PaymentLog[]>,
+    salesTeamRepo.findAll(),
+  ])
 
   const unmatched = sortLogs(allLogs.filter((l) => l.unmatched), sort)
   const salesById = new Map(allSalesTeam.map((s) => [s.id, s]))

@@ -12,10 +12,10 @@
 
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import type { Escalation, MOU, School, User } from '@/lib/types'
-import escalationsJson from '@/data/escalations.json'
-import schoolsJson from '@/data/schools.json'
-import mousJson from '@/data/mous.json'
+import type { Escalation, User } from '@/lib/types'
+import { escalationRepo } from '@/lib/db/repos/escalation'
+import { schoolRepo } from '@/lib/db/repos/school'
+import { mouRepo } from '@/lib/db/repos/mou'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canPerform } from '@/lib/auth/permissions'
 import { canManageEscalations, getDepartment } from '@/lib/access'
@@ -35,10 +35,6 @@ import {
   claimEscalationAction,
   transferEscalationAction,
 } from '../actions'
-
-const allEscalations = escalationsJson as unknown as Escalation[]
-const allSchools = schoolsJson as unknown as School[]
-const allMous = mousJson as unknown as MOU[]
 
 interface PageProps {
   params: Promise<{ escalationId: string }>
@@ -86,6 +82,11 @@ export default async function EscalationDetailPage({ params, searchParams }: Pag
   const errorKey = typeof sp.error === 'string' ? sp.error : null
   const errorMessage = errorKey ? ERROR_COPY[errorKey] ?? `Failed: ${errorKey}` : null
   const user = await getCurrentUser()
+  const [allEscalations, allSchools, allMous] = await Promise.all([
+    escalationRepo.findAll(),
+    schoolRepo.findAll(),
+    mouRepo.findAll(),
+  ])
   const esc = allEscalations.find((e) => e.id === escalationId)
   if (!esc || !isVisibleToUser(esc, user)) notFound()
 

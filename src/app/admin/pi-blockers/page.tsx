@@ -10,7 +10,7 @@
 
 import { notFound, redirect } from 'next/navigation'
 import type { Payment } from '@/lib/types'
-import paymentsJson from '@/data/payments.json'
+import { paymentRepo } from '@/lib/db/repos/payment'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canManageUsers } from '@/lib/access'
 import { TopNav } from '@/components/ops/TopNav'
@@ -21,8 +21,6 @@ import {
   type PiBlocker,
 } from '@/lib/pi/blockers'
 
-const allPayments = paymentsJson as unknown as Payment[]
-
 interface PiMissingRow {
   paymentId: string
   mouId: string | null
@@ -31,7 +29,7 @@ interface PiMissingRow {
   instalmentSeq: number
 }
 
-function piMissingBackfillCandidates(): PiMissingRow[] {
+function piMissingBackfillCandidates(allPayments: Payment[]): PiMissingRow[] {
   const out: PiMissingRow[] = []
   for (const p of allPayments) {
     if (!((p.receivedAmount ?? 0) > 0)) continue
@@ -98,7 +96,8 @@ export default async function PiBlockersPage() {
   const financeCorrectnessIncorrectlyBypassed = PI_BLOCKERS.filter(
     (b) => b.category === 'finance-correctness' && b.bypassed === 'yes',
   )
-  const backfillCandidates = piMissingBackfillCandidates()
+  const allPayments = await paymentRepo.findAll()
+  const backfillCandidates = piMissingBackfillCandidates(allPayments)
 
   return (
     <>

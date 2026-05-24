@@ -9,7 +9,7 @@
 import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, AlertTriangle, XCircle } from 'lucide-react'
-import salesOpportunitiesJson from '@/data/sales_opportunities.json'
+import { salesOpportunityRepo } from '@/lib/db/repos/leafRepos'
 import type { SalesOpportunity } from '@/lib/types'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canPerform } from '@/lib/auth/permissions'
@@ -17,8 +17,6 @@ import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { OpsButton, opsButtonClass } from '@/components/ops/OpsButton'
 import { markOpportunityLostAction } from '../../actions'
-
-const allOpportunities = salesOpportunitiesJson as unknown as SalesOpportunity[]
 
 const ERROR_FLASH: Record<string, string> = {
   permission: 'You do not have permission to mark this opportunity as lost.',
@@ -41,6 +39,7 @@ export default async function OpportunityMarkLostPage({ params, searchParams }: 
     redirect(`/sales-pipeline/${encodeURIComponent(id)}?error=permission`)
   }
 
+  const allOpportunities = (await salesOpportunityRepo.findAll()) as unknown as SalesOpportunity[]
   const opp = allOpportunities.find((o) => o.id === id)
   if (!opp) return notFound()
 

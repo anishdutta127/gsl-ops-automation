@@ -7,11 +7,10 @@
  */
 
 import { notFound, redirect } from 'next/navigation'
-import schoolsJson from '@/data/schools.json'
-import mousJson from '@/data/mous.json'
-import paymentsJson from '@/data/payments.json'
+import { schoolRepo } from '@/lib/db/repos/school'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { paymentRepo } from '@/lib/db/repos/payment'
 import importJson from '@/data/imports/fy-2025-26-import.json'
-import type { MOU, Payment, School } from '@/lib/types'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canManageUsers } from '@/lib/access'
 import { TopNav } from '@/components/ops/TopNav'
@@ -46,11 +45,16 @@ export default async function Fy2526ImportPage({ searchParams }: PageProps) {
   const appliedErrors = Number(sp.errors ?? 0)
 
   const file = importJson as unknown as ImportFile
+  const [existingSchools, existingMous, existingPayments] = await Promise.all([
+    schoolRepo.findAll(),
+    mouRepo.findAll(),
+    paymentRepo.findAll(),
+  ])
   const plan = buildImportPlan({
     records: file.records,
-    existingSchools: schoolsJson as unknown as School[],
-    existingMous: mousJson as unknown as MOU[],
-    existingPayments: paymentsJson as unknown as Payment[],
+    existingSchools,
+    existingMous,
+    existingPayments,
     programme: 'STEAM',
     now: () => new Date(),
     createdBy: user.id,

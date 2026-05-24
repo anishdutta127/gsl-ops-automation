@@ -13,27 +13,29 @@
 
 import { redirect } from 'next/navigation'
 import { getCurrentUser } from '@/lib/auth/session'
-import type { MOU, Payment, School } from '@/lib/types'
-import schoolsJson from '@/data/schools.json'
-import mousJson from '@/data/mous.json'
-import paymentsJson from '@/data/payments.json'
-import paymentLogsJson from '@/data/payment_logs.json'
+// P4 batch 3a (2026-05-24): live repo reads.
+import { schoolRepo } from '@/lib/db/repos/school'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { paymentRepo } from '@/lib/db/repos/payment'
+import { paymentLogRepo } from '@/lib/db/repos/leafRepos'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { canEditFinanceData } from '@/lib/access'
 import { BulkUploadClient } from './BulkUploadClient'
 import type { PaymentLog } from '@/lib/types'
 
-const allSchools = schoolsJson as unknown as School[]
-const allMous = mousJson as unknown as MOU[]
-const allPayments = paymentsJson as unknown as Payment[]
-const allLogs = paymentLogsJson as unknown as PaymentLog[]
-
 export default async function BulkUploadPage() {
   const user = await getCurrentUser()
   if (!user) redirect('/login?next=%2Ffinance%2Fpayments%2Fbulk')
 
   const canSubmit = canEditFinanceData(user)
+
+  const [allSchools, allMous, allPayments, allLogs] = await Promise.all([
+    schoolRepo.findAll(),
+    mouRepo.findAll(),
+    paymentRepo.findAll(),
+    paymentLogRepo.findAll() as Promise<PaymentLog[]>,
+  ])
 
   const schools = allSchools
     .filter((s) => s.active !== false)

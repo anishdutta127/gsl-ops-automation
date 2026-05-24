@@ -18,13 +18,15 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { CheckCircle, Clock, Package } from 'lucide-react'
-import type { Dispatch, DispatchLineItem, DispatchRequest, IntakeRecord, InventoryItem, MOU, School, User } from '@/lib/types'
-import mousJson from '@/data/mous.json'
-import dispatchesJson from '@/data/dispatches.json'
-import dispatchRequestsJson from '@/data/dispatch_requests.json'
-import inventoryItemsJson from '@/data/inventory_items.json'
-import intakeRecordsJson from '@/data/intake_records.json'
-import schoolsJson from '@/data/schools.json'
+import type { DispatchLineItem, DispatchRequest, IntakeRecord, InventoryItem, MOU, User } from '@/lib/types'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { dispatchRepo } from '@/lib/db/repos/dispatch'
+import { schoolRepo } from '@/lib/db/repos/school'
+import { inventoryItemRepo } from '@/lib/db/repos/inventoryItem'
+import {
+  dispatchRequestRepo,
+  intakeRecordRepo,
+} from '@/lib/db/repos/leafRepos'
 import { getCurrentUser } from '@/lib/auth/session'
 import { isGateUnblocked } from '@/lib/dispatch/overrideAudit'
 import { TopNav } from '@/components/ops/TopNav'
@@ -33,13 +35,6 @@ import { DetailHeaderCard } from '@/components/ops/DetailHeaderCard'
 import { InventoryStatusPanel } from '@/components/ops/InventoryStatusPanel'
 import { KitAllocationTable } from '@/components/ops/KitAllocationTable'
 import { formatSkuBreakdown } from '@/lib/dispatch/formatLineItems'
-
-const allMous = mousJson as unknown as MOU[]
-const allDispatches = dispatchesJson as unknown as Dispatch[]
-const allRequests = dispatchRequestsJson as unknown as DispatchRequest[]
-const allInventoryItems = inventoryItemsJson as unknown as InventoryItem[]
-const allIntakeRecords = intakeRecordsJson as unknown as IntakeRecord[]
-const allSchools = schoolsJson as unknown as School[]
 
 interface PageProps {
   params: Promise<{ mouId: string }>
@@ -92,6 +87,21 @@ export default async function DispatchPage({ params, searchParams }: PageProps) 
   const { mouId } = await params
   const sp = await searchParams
   const user = await getCurrentUser()
+  const [
+    allMous,
+    allDispatches,
+    allRequests,
+    allInventoryItems,
+    allIntakeRecords,
+    allSchools,
+  ] = await Promise.all([
+    mouRepo.findAll(),
+    dispatchRepo.findAll(),
+    dispatchRequestRepo.findAll() as Promise<DispatchRequest[]>,
+    inventoryItemRepo.findAll(),
+    intakeRecordRepo.findAll() as Promise<IntakeRecord[]>,
+    schoolRepo.findAll(),
+  ])
   const mou = allMous.find((m) => m.id === mouId)
   if (!mou || !isVisibleToUser(mou, user)) notFound()
 

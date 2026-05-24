@@ -38,33 +38,25 @@ import {
   Sparkles,
   Truck,
 } from 'lucide-react'
-import type {
-  Adjustment,
-  AuditEntry,
-  CommunicationTemplate,
-  Dispatch,
-  Escalation,
-  Feedback,
-  IntakeRecord,
-  KitDispatch,
-  MOU,
-  Payment,
-  School,
-  StudentCountEvent,
-  User,
-} from '@/lib/types'
+import type { Adjustment, AuditEntry, CommunicationTemplate, Feedback, IntakeRecord, MOU, StudentCountEvent, User } from '@/lib/types'
 import { formatSkuBreakdown } from '@/lib/dispatch/formatLineItems'
-import mousJson from '@/data/mous.json'
-import schoolsJson from '@/data/schools.json'
-import dispatchesJson from '@/data/dispatches.json'
-import kitDispatchesJson from '@/data/kit_dispatches.json'
-import paymentsJson from '@/data/payments.json'
-import feedbackJson from '@/data/feedback.json'
-import intakeRecordsJson from '@/data/intake_records.json'
-import templatesJson from '@/data/communication_templates.json'
-import escalationsJson from '@/data/escalations.json'
-import usersJson from '@/data/users.json'
-import adjustmentsJson from '@/data/adjustments.json'
+// P4 batch 2: static JSON imports → live repo reads inside the server
+// component below so postgres mode sees fresh data. Pattern proven on
+// /dashboard/finance/page.tsx; parity-tested in verify-p4-money-parity.mjs.
+import { mouRepo } from '@/lib/db/repos/mou'
+import { schoolRepo } from '@/lib/db/repos/school'
+import { dispatchRepo } from '@/lib/db/repos/dispatch'
+import { kitDispatchRepo } from '@/lib/db/repos/kitDispatch'
+import { paymentRepo } from '@/lib/db/repos/payment'
+import { escalationRepo } from '@/lib/db/repos/escalation'
+import { userRepo } from '@/lib/db/repos/user'
+import {
+  feedbackRepo,
+  intakeRecordRepo,
+  communicationTemplateRepo,
+  adjustmentRepo,
+  studentCountEventRepo,
+} from '@/lib/db/repos/leafRepos'
 import { RecalcSummary } from '@/components/mou-system/RecalcSummary'
 import { canEditMOU } from '@/lib/access'
 import { deriveScheduleSummary } from '@/lib/mou/scheduleSummary'
@@ -75,7 +67,6 @@ import {
   getYearSpecificInstalments,
 } from '@/lib/mou/yearMembership'
 import { getCurrentStudentCountFor } from '@/lib/mou/applyCountChange'
-import studentCountEventsJson from '@/data/student_count_events.json'
 import { getCurrentUser } from '@/lib/auth/session'
 import {
   canApproveDispatchOverride,
@@ -106,21 +97,13 @@ import { opsButtonClass } from '@/components/ops/OpsButton'
 import { getSmartTemplateSuggestions } from '@/lib/templates/smartSuggestions'
 import { mouStatusTone } from '@/lib/ui/mouStatusTone'
 
-const allMous = mousJson as unknown as MOU[]
-const allSchools = schoolsJson as unknown as School[]
-const allDispatches = dispatchesJson as unknown as Dispatch[]
-const allKitDispatches = kitDispatchesJson as unknown as KitDispatch[]
-const allPayments = paymentsJson as unknown as Payment[]
-const allFeedback = feedbackJson as unknown as Feedback[]
-const allUsers = usersJson as unknown as User[]
-const allIntakeRecords = intakeRecordsJson as unknown as IntakeRecord[]
-const allTemplates = templatesJson as unknown as CommunicationTemplate[]
-const allEscalations = escalationsJson as unknown as Escalation[]
-const allAdjustments = adjustmentsJson as unknown as Adjustment[]
-const allStudentCountEvents = studentCountEventsJson as unknown as StudentCountEvent[]
+// P4 batch 2 (2026-05-24): module-scope consts removed; all data loaded
+// inside the async server component below via repo.findAll(). The closure
+// pattern below (lastDelayNotesUpdate accepts users as an arg) replaces
+// the module-scope `allUsers` reference.
 
-function lastDelayNotesUpdate(mou: MOU): string | null {
-  const usersById = new Map(allUsers.map((u) => [u.id, u.name]))
+function lastDelayNotesUpdate(mou: MOU, users: User[]): string | null {
+  const usersById = new Map(users.map((u) => [u.id, u.name]))
   for (let i = mou.auditLog.length - 1; i >= 0; i -= 1) {
     const entry = mou.auditLog[i]
     if (entry?.action !== 'mou-delay-notes-updated') continue
@@ -268,6 +251,30 @@ export default async function MouDetailPage({ params, searchParams }: PageProps)
   const errorKey = typeof sp.error === 'string' ? sp.error : null
   const errorMessage = errorKey ? ERROR_COPY[errorKey] ?? null : null
   const user = await getCurrentUser()
+
+  // P4 batch 2 (2026-05-24): live repo reads replace the static seed
+  // JSON imports. In postgres mode every value comes from the live DB;
+  // in json mode the repos fall through to the seed (no behavior change
+  // for tests / dev).
+  const [
+    allMous, allSchools, allDispatches, allKitDispatches, allPayments,
+    allFeedback, allUsers, allIntakeRecords, allTemplates, allEscalations,
+    allAdjustments, allStudentCountEvents,
+  ] = await Promise.all([
+    mouRepo.findAll(),
+    schoolRepo.findAll(),
+    dispatchRepo.findAll(),
+    kitDispatchRepo.findAll(),
+    paymentRepo.findAll(),
+    feedbackRepo.findAll() as Promise<Feedback[]>,
+    userRepo.findAll(),
+    intakeRecordRepo.findAll() as Promise<IntakeRecord[]>,
+    communicationTemplateRepo.findAll() as Promise<CommunicationTemplate[]>,
+    escalationRepo.findAll(),
+    adjustmentRepo.findAll() as Promise<Adjustment[]>,
+    studentCountEventRepo.findAll() as Promise<StudentCountEvent[]>,
+  ])
+
   const mou = allMous.find((m) => m.id === mouId)
   if (!mou || !isVisibleToUser(mou, user)) {
     notFound()
@@ -595,7 +602,7 @@ export default async function MouDetailPage({ params, searchParams }: PageProps)
             <StatusNotesSection
               mouId={mou.id}
               initialNotes={mou.delayNotes}
-              initialMetaLine={lastDelayNotesUpdate(mou)}
+              initialMetaLine={lastDelayNotesUpdate(mou, allUsers)}
             />
             {isMultiYearMou ? (
               <nav

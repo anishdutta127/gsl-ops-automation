@@ -16,15 +16,12 @@
 
 import { redirect } from 'next/navigation'
 import type { Communication, PiCounter } from '@/lib/types'
-import piCounterJson from '@/data/pi_counter.json'
-import communicationsJson from '@/data/communications.json'
+import { counterRepo } from '@/lib/db/repos/counter'
+import { communicationRepo } from '@/lib/db/repos/leafRepos'
 import { getCurrentUser } from '@/lib/auth/session'
 import { checkMonotonicity } from '@/lib/piCounter/monotonicity'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
-
-const counter = piCounterJson as PiCounter
-const communications = communicationsJson as unknown as Communication[]
 
 function lastIssuedPi(comms: Communication[]): Communication | null {
   const piComms = comms.filter((c) => c.type === 'pi-sent')
@@ -37,6 +34,12 @@ function lastIssuedPi(comms: Communication[]): Communication | null {
 export default async function PiCounterPage() {
   const user = await getCurrentUser()
   if (!user) redirect('/login?next=%2Fadmin%2Fpi-counter')
+
+  const [counterValue, communications] = await Promise.all([
+    counterRepo.get('pi_counter'),
+    communicationRepo.findAll() as unknown as Promise<Communication[]>,
+  ])
+  const counter = counterValue as PiCounter
 
   const monotonicity = checkMonotonicity(communications)
   const lastIssued = lastIssuedPi(communications)

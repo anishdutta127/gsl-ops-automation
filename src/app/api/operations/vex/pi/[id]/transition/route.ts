@@ -13,10 +13,8 @@ import { NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canEditFinanceData } from '@/lib/access'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
+import { vexPiRepo } from '@/lib/db/repos/vexPi'
 import type { AuditEntry, VexPi, VexPiStatus } from '@/lib/mouSystem/types'
-import vexPisJson from '@/data/vex_pis.json'
-
-const allPis = vexPisJson as unknown as VexPi[]
 
 const ALLOWED: VexPiStatus[] = [
   'Generated',
@@ -48,7 +46,9 @@ export async function POST(request: Request, ctx: RouteContext) {
       { status: 403 },
     )
   }
-  const pi = allPis.find((p) => p.id === id)
+  // vexPiRepo returns @/lib/types/VexPi; the mouSystem flavour here is
+  // structurally compatible but nominally distinct, so cast on read.
+  const pi = (await vexPiRepo.findById(id)) as unknown as VexPi | null
   if (!pi) {
     return NextResponse.json({ error: 'not-found' }, { status: 404 })
   }

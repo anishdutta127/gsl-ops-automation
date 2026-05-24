@@ -26,16 +26,11 @@ import {
   XCircle,
   ExternalLink,
 } from 'lucide-react'
-import salesOpportunitiesJson from '@/data/sales_opportunities.json'
-import salesTeamJson from '@/data/sales_team.json'
-import schoolsJson from '@/data/schools.json'
-import usersJson from '@/data/users.json'
-import type {
-  SalesOpportunity,
-  SalesPerson,
-  School,
-  User,
-} from '@/lib/types'
+import { salesTeamRepo } from '@/lib/db/repos/salesTeam'
+import { schoolRepo } from '@/lib/db/repos/school'
+import { userRepo } from '@/lib/db/repos/user'
+import { salesOpportunityRepo } from '@/lib/db/repos/leafRepos'
+import type { SalesOpportunity } from '@/lib/types'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canPerform } from '@/lib/auth/permissions'
 import { TopNav } from '@/components/ops/TopNav'
@@ -46,11 +41,6 @@ import {
   linkExistingSchoolAction,
   dismissSchoolMatchAction,
 } from '../actions'
-
-const allOpportunities = salesOpportunitiesJson as unknown as SalesOpportunity[]
-const allSalesTeam = salesTeamJson as unknown as SalesPerson[]
-const allSchools = schoolsJson as unknown as School[]
-const allUsers = usersJson as unknown as User[]
 
 const FLASH_MESSAGES: Record<string, string> = {
   created: 'Opportunity created.',
@@ -82,6 +72,13 @@ export default async function OpportunityDetailPage({ params, searchParams }: Pa
   if (!user) {
     redirect(`/login?next=%2Fsales-pipeline%2F${encodeURIComponent(id)}`)
   }
+
+  const [allOpportunities, allSalesTeam, allSchools, allUsers] = await Promise.all([
+    salesOpportunityRepo.findAll() as unknown as Promise<SalesOpportunity[]>,
+    salesTeamRepo.findAll(),
+    schoolRepo.findAll(),
+    userRepo.findAll(),
+  ])
 
   const opp = allOpportunities.find((o) => o.id === id)
   if (!opp) return notFound()

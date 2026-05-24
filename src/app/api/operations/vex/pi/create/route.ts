@@ -28,12 +28,10 @@ import { issuePiNumberAtomic } from '@/lib/mouSystem/piCounterAtomic'
 import { company } from '@/lib/mouSystem/company'
 import type { EntityKey } from '@/lib/mouSystem/company'
 import type { AuditEntry, VexPi, VexPiLineItem } from '@/lib/mouSystem/types'
-import vexProductsJson from '@/data/vex_products.json'
-import vexPisJson from '@/data/vex_pis.json'
+import { vexProductRepo } from '@/lib/db/repos/vexProduct'
+import { vexPiRepo } from '@/lib/db/repos/vexPi'
 import type { VexProduct } from '@/lib/mouSystem/types'
 
-const vexProducts = vexProductsJson as unknown as VexProduct[]
-const allVexPis = vexPisJson as unknown as VexPi[]
 const GST_PCT = 0.18
 
 interface IncomingLineItem {
@@ -63,7 +61,7 @@ function parseEntityKey(v: unknown): EntityKey | null {
   return v === 'MH' || v === 'UP' ? v : null
 }
 
-function parseLineItems(raw: unknown): VexPiLineItem[] | null {
+function parseLineItems(raw: unknown, vexProducts: VexProduct[]): VexPiLineItem[] | null {
   if (!Array.isArray(raw)) return null
   const out: VexPiLineItem[] = []
   for (const item of raw) {
@@ -103,7 +101,7 @@ function makeVexPiId(entityKey: EntityKey, seq: number): string {
 // 0008,0009,0010,0015 -- the gap proves programme PIs filled 0011..0014
 // while VEX seq advanced 003 -> 004. Same scan-existing pattern as
 // nextDispatchSeq below in the dispatch create route.
-function nextVexPiSeq(entityKey: EntityKey): number {
+function nextVexPiSeq(entityKey: EntityKey, allVexPis: VexPi[]): number {
   const prefix = `VEXPI-${entityKey}-${fiscalYearTag()}-`
   let highest = 0
   for (const p of allVexPis) {
@@ -177,7 +175,8 @@ export async function POST(request: Request) {
     )
   }
   const schoolGstNumber = asString(body.schoolGstNumber) || null
-  const lineItems = parseLineItems(body.lineItems)
+  const vexProducts = await vexProductRepo.findAll()
+  const lineItems = parseLineItems(body.lineItems, vexProducts)
   if (!lineItems) {
     return NextResponse.json(
       { error: 'invalid-line-items', message: 'Add at least one valid product row.' },
@@ -189,7 +188,10 @@ export async function POST(request: Request) {
   // (4) Mint VEX-only id seq from existing PIs, then advance the shared
   // counter atomically for the piNumber. The id seq is VEX-only per
   // entity; the piNumber sequence is shared with programme PIs.
-  const vexSeq = nextVexPiSeq(entityKey)
+  // vexPiRepo returns @/lib/types/VexPi; cast to the mouSystem flavour
+  // used by the nextVexPiSeq helper for id-string scanning only.
+  const allVexPis = (await vexPiRepo.findAll()) as unknown as VexPi[]
+  const vexSeq = nextVexPiSeq(entityKey, allVexPis)
   let piNumber: string
   try {
     const { piNumber: minted } = await issuePiNumberAtomic(entityKey)

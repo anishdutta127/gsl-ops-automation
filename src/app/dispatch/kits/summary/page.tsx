@@ -7,23 +7,19 @@
 
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
-import type { KitDispatch, MOU, School } from '@/lib/types'
-import mousJson from '@/data/mous.json'
-import kitDispatchesJson from '@/data/kit_dispatches.json'
-import schoolsJson from '@/data/schools.json'
-import salesTeamJson from '@/data/sales_team.json'
+// P4 batch 2 (2026-05-24): live repo reads.
+import { mouRepo } from '@/lib/db/repos/mou'
+import { kitDispatchRepo } from '@/lib/db/repos/kitDispatch'
+import { schoolRepo } from '@/lib/db/repos/school'
+import { salesTeamRepo } from '@/lib/db/repos/salesTeam'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { EmptyState } from '@/components/ops/EmptyState'
 import { StatusChip, type StatusChipTone } from '@/components/ops/StatusChip'
 import { getCurrentUser } from '@/lib/auth/session'
 import { deriveSummaryRows } from '@/lib/kitDispatch/summaryView'
-import type { SalesPerson } from '@/lib/types'
 
-const mous = mousJson as unknown as MOU[]
-const kitDispatches = kitDispatchesJson as unknown as KitDispatch[]
-const schools = schoolsJson as unknown as School[]
-const salesTeam = salesTeamJson as unknown as SalesPerson[]
+// Module-scope consts removed; loaded inside the async server component.
 
 const DISPATCH_STATUS_TONE: Record<string, StatusChipTone> = {
   'Not Started': 'neutral',
@@ -46,6 +42,13 @@ function readParam(
 }
 
 export default async function FinalDispatchSummaryPage({ searchParams }: PageProps) {
+  // P4 batch 2 (2026-05-24): live repo reads.
+  const [mous, kitDispatches, schools, salesTeam] = await Promise.all([
+    mouRepo.findAll(),
+    kitDispatchRepo.findAll(),
+    schoolRepo.findAll(),
+    salesTeamRepo.findAll(),
+  ])
   const user = await getCurrentUser()
   if (!user) redirect('/login?next=%2Fdispatch%2Fkits%2Fsummary')
   const sp = await searchParams

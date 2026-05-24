@@ -17,10 +17,9 @@
 
 import { redirect } from 'next/navigation'
 import { AlertCircle } from 'lucide-react'
-import type { MOU, School, User } from '@/lib/types'
-import mousJson from '@/data/mous.json'
-import schoolsJson from '@/data/schools.json'
-import usersJson from '@/data/users.json'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { schoolRepo } from '@/lib/db/repos/school'
+import { userRepo } from '@/lib/db/repos/user'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canPerform } from '@/lib/auth/permissions'
 import { TopNav } from '@/components/ops/TopNav'
@@ -28,10 +27,6 @@ import { PageHeader } from '@/components/ops/PageHeader'
 import { OpsButton, opsButtonClass } from '@/components/ops/OpsButton'
 import { slaWindowHours } from '@/lib/escalations/sla'
 import { createEscalationAction } from '../actions'
-
-const allMous = mousJson as unknown as MOU[]
-const allSchools = schoolsJson as unknown as School[]
-const allUsers = usersJson as unknown as User[]
 
 const ERROR_COPY: Record<string, string> = {
   'missing-description': 'Description is required.',
@@ -59,6 +54,12 @@ export default async function NewEscalationPage({ searchParams }: PageProps) {
 
   const presetSchoolId = typeof sp.schoolId === 'string' ? sp.schoolId : ''
   const presetMouId = typeof sp.mouId === 'string' ? sp.mouId : ''
+
+  const [allMous, allSchools, allUsers] = await Promise.all([
+    mouRepo.findAll(),
+    schoolRepo.findAll(),
+    userRepo.findAll(),
+  ])
 
   const activeMous = allMous
     .filter((m) => m.cohortStatus === 'active')

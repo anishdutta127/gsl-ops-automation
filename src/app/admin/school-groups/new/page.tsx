@@ -11,14 +11,11 @@
  */
 
 import { redirect } from 'next/navigation'
-import type { School } from '@/lib/types'
-import schoolsJson from '@/data/schools.json'
+import { schoolRepo } from '@/lib/db/repos/school'
 import { getCurrentUser } from '@/lib/auth/session'
 import { FormCard, type FormCardField } from '@/components/ops/FormCard'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
-
-const schools = schoolsJson as unknown as School[]
 
 const REGIONS = [
   { value: 'East', label: 'East' },
@@ -48,6 +45,7 @@ export default async function NewSchoolGroupPage({
   const errorKey = typeof sp.error === 'string' ? sp.error : null
   const errorMessage = errorKey ? ERROR_MESSAGES[errorKey] ?? `Failed: ${errorKey}` : null
 
+  const schools = await schoolRepo.findAll()
   const schoolOptions = schools.map((s) => ({
     value: s.id,
     label: `${s.name} (${s.id})`,

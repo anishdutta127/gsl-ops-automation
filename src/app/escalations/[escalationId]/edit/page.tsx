@@ -10,18 +10,15 @@
 import { notFound, redirect } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft, AlertTriangle } from 'lucide-react'
-import escalationsJson from '@/data/escalations.json'
-import schoolsJson from '@/data/schools.json'
-import type { Escalation, School, User } from '@/lib/types'
+import { escalationRepo } from '@/lib/db/repos/escalation'
+import { schoolRepo } from '@/lib/db/repos/school'
+import type { Escalation, User } from '@/lib/types'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canPerform } from '@/lib/auth/permissions'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { ESCALATION_STATUS_TONE } from '@/lib/ui/escalationTones'
 import { editEscalationAction } from '../../actions'
-
-const allEscalations = escalationsJson as unknown as Escalation[]
-const allSchools = schoolsJson as unknown as School[]
 
 const STATUS_OPTIONS: ReadonlyArray<Escalation['status']> = [
   'Open', 'WIP', 'Closed', 'Transferred',
@@ -65,6 +62,11 @@ export default async function EscalationEditPage({ params, searchParams }: PageP
   if (!canPerform(user, 'escalation:resolve')) {
     redirect(`/escalations/${encodeURIComponent(escalationId)}?error=permission`)
   }
+
+  const [allEscalations, allSchools] = await Promise.all([
+    escalationRepo.findAll(),
+    schoolRepo.findAll(),
+  ])
 
   const esc = allEscalations.find((e) => e.id === escalationId)
   if (!esc || !isVisibleToUser(esc, user)) notFound()

@@ -12,10 +12,10 @@
 
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
-import type { MOU, Payment, School } from '@/lib/types'
-import mousJson from '@/data/mous.json'
-import paymentsJson from '@/data/payments.json'
-import schoolsJson from '@/data/schools.json'
+// P4 batch 3a (2026-05-24): live repo reads.
+import { mouRepo } from '@/lib/db/repos/mou'
+import { paymentRepo } from '@/lib/db/repos/payment'
+import { schoolRepo } from '@/lib/db/repos/school'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canAccessFinance } from '@/lib/access'
 import { TopNav } from '@/components/ops/TopNav'
@@ -34,10 +34,6 @@ import {
   type SchoolReceiptSortKey,
   type SchoolReceiptStatus,
 } from '@/lib/finance/schoolsReceiptsData'
-
-const allMous = mousJson as unknown as MOU[]
-const allPayments = paymentsJson as unknown as Payment[]
-const allSchools = schoolsJson as unknown as School[]
 
 const SORT_LABEL: Record<SchoolReceiptSortKey, string> = {
   'contract-desc': 'Contract value (high to low)',
@@ -76,6 +72,12 @@ export default async function FinanceSchoolsReceiptsPage({
   const user = await getCurrentUser()
   if (!user) redirect('/login?next=%2Ffinance%2Fschools-receipts')
   if (!canAccessFinance(user)) redirect('/?notice=finance-access-required')
+
+  const [allMous, allPayments, allSchools] = await Promise.all([
+    mouRepo.findAll(),
+    paymentRepo.findAll(),
+    schoolRepo.findAll(),
+  ])
 
   const now = new Date()
   const filters = parseFinanceFilters(searchParams ?? {})

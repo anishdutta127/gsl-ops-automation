@@ -24,21 +24,21 @@
 
 import type {
   Communication,
-  Dispatch,
   Feedback,
   MOU,
-  Payment,
   School,
   SchoolGroup,
   User,
 } from '@/lib/types'
-import mousJson from '@/data/mous.json'
-import schoolsJson from '@/data/schools.json'
-import dispatchesJson from '@/data/dispatches.json'
-import paymentsJson from '@/data/payments.json'
-import communicationsJson from '@/data/communications.json'
-import feedbackJson from '@/data/feedback.json'
-import schoolGroupsJson from '@/data/school_groups.json'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { schoolRepo } from '@/lib/db/repos/school'
+import { dispatchRepo } from '@/lib/db/repos/dispatch'
+import { paymentRepo } from '@/lib/db/repos/payment'
+import {
+  communicationRepo,
+  feedbackRepo,
+  schoolGroupRepo,
+} from '@/lib/db/repos/leafRepos'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canEditMOU } from '@/lib/access'
 import { TopNav } from '@/components/ops/TopNav'
@@ -67,13 +67,6 @@ import {
 import Link from 'next/link'
 import { Archive, FileEdit, Plus } from 'lucide-react'
 
-const allMous = mousJson as unknown as MOU[]
-const allSchools = schoolsJson as unknown as School[]
-const allDispatches = dispatchesJson as unknown as Dispatch[]
-const allPayments = paymentsJson as unknown as Payment[]
-const allCommunications = communicationsJson as unknown as Communication[]
-const allFeedback = feedbackJson as unknown as Feedback[]
-const allSchoolGroups = schoolGroupsJson as unknown as SchoolGroup[]
 const KANBAN_STAGE_KEYS = new Set<string>(KANBAN_COLUMNS.map((c) => c.key))
 
 // Step 5: extra Gate 2 dimensions (school-group, year).
@@ -101,6 +94,23 @@ interface PageProps {
 export default async function MousListPage({ searchParams }: PageProps) {
   const sp = await searchParams
   const user = await getCurrentUser()
+  const [
+    allMous,
+    allSchools,
+    allDispatches,
+    allPayments,
+    allCommunications,
+    allFeedback,
+    allSchoolGroups,
+  ] = await Promise.all([
+    mouRepo.findAll(),
+    schoolRepo.findAll(),
+    dispatchRepo.findAll(),
+    paymentRepo.findAll(),
+    communicationRepo.findAll() as Promise<Communication[]>,
+    feedbackRepo.findAll() as Promise<Feedback[]>,
+    schoolGroupRepo.findAll() as Promise<SchoolGroup[]>,
+  ])
   const schoolById = new Map(allSchools.map((s) => [s.id, s]))
   // W4-A.3: cohort default is 'active'. Operators visit /mous/archive for
   // archived rows; the main /mous list never shows them, even via filter.

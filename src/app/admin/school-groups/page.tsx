@@ -12,17 +12,17 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import type { SchoolGroup } from '@/lib/types'
-import schoolGroupsJson from '@/data/school_groups.json'
+import { schoolGroupRepo } from '@/lib/db/repos/leafRepos'
 import { getCurrentUser } from '@/lib/auth/session'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { opsButtonClass } from '@/components/ops/OpsButton'
 
-const groups = schoolGroupsJson as unknown as SchoolGroup[]
-
 export default async function SchoolGroupsListPage() {
   const user = await getCurrentUser()
   if (!user) redirect('/login?next=%2Fadmin%2Fschool-groups')
+
+  const groups = await schoolGroupRepo.findAll() as unknown as SchoolGroup[]
 
   return (
     <>

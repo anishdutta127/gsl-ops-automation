@@ -25,18 +25,14 @@
 
 import { redirect } from 'next/navigation'
 import { getCurrentUser } from '@/lib/auth/session'
-import type { MOU, Payment, School } from '@/lib/types'
-import schoolsJson from '@/data/schools.json'
-import mousJson from '@/data/mous.json'
-import paymentsJson from '@/data/payments.json'
+// P4 batch 3a (2026-05-24): live repo reads.
+import { schoolRepo } from '@/lib/db/repos/school'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { paymentRepo } from '@/lib/db/repos/payment'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { canEditFinanceData } from '@/lib/access'
 import { PaymentLogForm } from './PaymentLogForm'
-
-const allSchools = schoolsJson as unknown as School[]
-const allMous = mousJson as unknown as MOU[]
-const allPayments = paymentsJson as unknown as Payment[]
 
 interface PageProps {
   searchParams: Promise<Record<string, string | string[] | undefined>>
@@ -60,6 +56,12 @@ export default async function NewPaymentPage({ searchParams }: PageProps) {
   if (!user) redirect('/login?next=%2Ffinance%2Fpayments%2Fnew')
 
   const canSubmit = canEditFinanceData(user)
+
+  const [allSchools, allMous, allPayments] = await Promise.all([
+    schoolRepo.findAll(),
+    mouRepo.findAll(),
+    paymentRepo.findAll(),
+  ])
 
   const activeSchools = allSchools
     .filter((s) => s.active !== false)

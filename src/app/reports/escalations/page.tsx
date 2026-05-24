@@ -7,9 +7,8 @@
  */
 
 import { redirect } from 'next/navigation'
-import type { Escalation, MOU } from '@/lib/types'
-import escalationsJson from '@/data/escalations.json'
-import mousJson from '@/data/mous.json'
+import { escalationRepo } from '@/lib/db/repos/escalation'
+import { mouRepo } from '@/lib/db/repos/mou'
 import { getCurrentUser } from '@/lib/auth/session'
 import { TopNav } from '@/components/ops/TopNav'
 import { canAccessReport } from '@/lib/reports/access'
@@ -23,9 +22,6 @@ import {
 import { computeEscalationsReport } from '@/lib/reports/escalations'
 import { ReportFilterRail } from '@/components/reports/ReportFilterRail'
 import { CsvExportLink } from '@/components/reports/CsvExportLink'
-
-const allEscalations = escalationsJson as unknown as Escalation[]
-const allMous = mousJson as unknown as MOU[]
 
 const DEPT_COLS: ReadonlyArray<'sales' | 'ops' | 'finance'> = [
   'sales',
@@ -59,6 +55,10 @@ export default async function EscalationsReportPage({
 
   const now = new Date()
   const filters = parseReportFilters(searchParams ?? {})
+  const [allEscalations, allMous] = await Promise.all([
+    escalationRepo.findAll(),
+    mouRepo.findAll(),
+  ])
   const fyOptions = defaultFyOptions(allMous, now)
   if (filters.fy && !fyOptions.includes(filters.fy)) {
     const widened = fyOptionsFor(allMous, now)

@@ -7,9 +7,8 @@
  */
 
 import { redirect } from 'next/navigation'
-import type { MOU, Payment } from '@/lib/types'
-import mousJson from '@/data/mous.json'
-import paymentsJson from '@/data/payments.json'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { paymentRepo } from '@/lib/db/repos/payment'
 import { getCurrentUser } from '@/lib/auth/session'
 import { TopNav } from '@/components/ops/TopNav'
 import { formatRs } from '@/lib/format'
@@ -25,9 +24,6 @@ import { computePaymentAging } from '@/lib/reports/paymentAging'
 import { ReportFilterRail } from '@/components/reports/ReportFilterRail'
 import { CsvExportLink } from '@/components/reports/CsvExportLink'
 
-const allMous = mousJson as unknown as MOU[]
-const allPayments = paymentsJson as unknown as Payment[]
-
 export default async function PaymentAgingReport({
   searchParams,
 }: {
@@ -41,6 +37,10 @@ export default async function PaymentAgingReport({
 
   const now = new Date()
   const filters = parseReportFilters(searchParams ?? {})
+  const [allMous, allPayments] = await Promise.all([
+    mouRepo.findAll(),
+    paymentRepo.findAll(),
+  ])
   const fyOptions = defaultFyOptions(allMous, now)
   if (filters.fy && !fyOptions.includes(filters.fy)) {
     const widened = fyOptionsFor(allMous, now)

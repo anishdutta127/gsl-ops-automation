@@ -39,31 +39,25 @@ import {
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { getCurrentUser } from '@/lib/auth/session'
-import syncHealthJson from '@/data/sync_health.json'
-import dispatchRequestsJson from '@/data/dispatch_requests.json'
-import inventoryItemsJson from '@/data/inventory_items.json'
-import mouImportReviewJson from '@/data/mou_import_review.json'
-import templatesJson from '@/data/communication_templates.json'
+// P4 read-parity migration (2026-05-24): static JSON imports replaced
+// with live repo reads inside the server component below.
+import {
+  syncHealthRepo,
+  dispatchRequestRepo,
+  mouImportReviewRepo,
+  communicationTemplateRepo,
+} from '@/lib/db/repos/leafRepos'
+import { inventoryItemRepo } from '@/lib/db/repos/inventoryItem'
 // Gate 3.5 Step 8: Admin landing prepends the Leadership three-section
 // overview + Finance/Ops health tiles before the existing admin
 // toolbox. Data fed from the same canonical files as
 // /dashboard/leadership.
-import mousJson from '@/data/mous.json'
-import paymentsJson from '@/data/payments.json'
-import schoolsJson from '@/data/schools.json'
-import escalationsJson from '@/data/escalations.json'
-import kitDispatchesJson from '@/data/kit_dispatches.json'
-import type {
-  CommunicationTemplate,
-  DispatchRequest,
-  InventoryItem,
-  MOU,
-  MouImportReviewItem,
-  Payment,
-  School,
-  Escalation,
-  KitDispatch,
-} from '@/lib/types'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { paymentRepo } from '@/lib/db/repos/payment'
+import { schoolRepo } from '@/lib/db/repos/school'
+import { escalationRepo } from '@/lib/db/repos/escalation'
+import { kitDispatchRepo } from '@/lib/db/repos/kitDispatch'
+import type { CommunicationTemplate, DispatchRequest, MouImportReviewItem } from '@/lib/types'
 import {
   computeAttentionItems,
   computeDeliveryHealth,
@@ -75,12 +69,6 @@ import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { OpsButton } from '@/components/ops/OpsButton'
 import { detectDueReminders } from '@/lib/reminders/detectDueReminders'
-
-const syncHealth = syncHealthJson as unknown as SyncHealthEntry[]
-const allDispatchRequests = dispatchRequestsJson as unknown as DispatchRequest[]
-const allInventoryItems = inventoryItemsJson as unknown as InventoryItem[]
-const allImportReview = mouImportReviewJson as unknown as MouImportReviewItem[]
-const allTemplates = templatesJson as unknown as CommunicationTemplate[]
 
 interface MetricTile {
   href: string
@@ -148,6 +136,30 @@ export default async function AdminIndexPage({ searchParams }: PageProps) {
   const errorKey = typeof sp.error === 'string' ? sp.error : null
   const syncFlash = syncedKey ? SYNC_FLASH[syncedKey] ?? null : null
   const errorMessage = errorKey ? ERROR_FLASH[errorKey] ?? `Failed: ${errorKey}` : null
+
+  const [
+    syncHealth,
+    allDispatchRequests,
+    allInventoryItems,
+    allImportReview,
+    allTemplates,
+    allMous,
+    allPayments,
+    allSchools,
+    allEscalations,
+    allKitDispatches,
+  ] = await Promise.all([
+    syncHealthRepo.findAll() as unknown as Promise<SyncHealthEntry[]>,
+    dispatchRequestRepo.findAll() as unknown as Promise<DispatchRequest[]>,
+    inventoryItemRepo.findAll(),
+    mouImportReviewRepo.findAll() as unknown as Promise<MouImportReviewItem[]>,
+    communicationTemplateRepo.findAll() as unknown as Promise<CommunicationTemplate[]>,
+    mouRepo.findAll(),
+    paymentRepo.findAll(),
+    schoolRepo.findAll(),
+    escalationRepo.findAll(),
+    kitDispatchRepo.findAll(),
+  ])
 
   const latest: SyncHealthEntry | null =
     syncHealth.length > 0 ? syncHealth[syncHealth.length - 1] ?? null : null
@@ -288,11 +300,6 @@ export default async function AdminIndexPage({ searchParams }: PageProps) {
   // Gate 3.5 Step 8: compute Leadership overview data to prepend
   // before the Admin toolbox. Same helpers as /dashboard/leadership
   // so both surfaces stay in sync.
-  const allMous = (mousJson as unknown as MOU[])
-  const allPayments = (paymentsJson as unknown as Payment[])
-  const allSchools = (schoolsJson as unknown as School[])
-  const allEscalations = (escalationsJson as unknown as Escalation[])
-  const allKitDispatches = (kitDispatchesJson as unknown as KitDispatch[])
   const now = new Date()
   const financial = computeFinancialHealth({
     mous: allMous,

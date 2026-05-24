@@ -12,9 +12,9 @@
 
 import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
-import type { MOU, Payment, User } from '@/lib/types'
-import mousJson from '@/data/mous.json'
-import paymentsJson from '@/data/payments.json'
+import type { MOU, User } from '@/lib/types'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { paymentRepo } from '@/lib/db/repos/payment'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { DetailHeaderCard } from '@/components/ops/DetailHeaderCard'
@@ -22,9 +22,6 @@ import { opsButtonClass } from '@/components/ops/OpsButton'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canEditFinanceData } from '@/lib/access'
 import { formatRs, formatDate } from '@/lib/format'
-
-const allMous = mousJson as unknown as MOU[]
-const allPayments = paymentsJson as unknown as Payment[]
 
 interface PageProps {
   params: Promise<{ mouId: string; paymentId: string }>
@@ -70,6 +67,10 @@ export default async function MarkPaidPage({ params, searchParams }: PageProps) 
       `/login?next=${encodeURIComponent(`/mous/${mouId}/installments/${paymentId}/mark-paid`)}`,
     )
   }
+  const [allMous, allPayments] = await Promise.all([
+    mouRepo.findAll(),
+    paymentRepo.findAll(),
+  ])
   const mou = allMous.find((m) => m.id === mouId)
   if (!mou || !isVisibleToUser(mou, user)) notFound()
   const payment = allPayments.find((p) => p.id === paymentId && p.mouId === mou.id)

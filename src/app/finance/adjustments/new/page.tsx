@@ -11,18 +11,15 @@
 
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import type { MOU, Payment } from '@/lib/types'
-import mousJson from '@/data/mous.json'
-import paymentsJson from '@/data/payments.json'
+// P4 batch 3a (2026-05-24): live repo reads.
+import { mouRepo } from '@/lib/db/repos/mou'
+import { paymentRepo } from '@/lib/db/repos/payment'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canEditFinanceData } from '@/lib/access'
 import { formatRs } from '@/lib/format'
 import { AdjustmentEntryClient } from './AdjustmentEntryClient'
-
-const allMous = mousJson as unknown as MOU[]
-const allPayments = paymentsJson as unknown as Payment[]
 
 interface PageProps {
   searchParams: Promise<Record<string, string | string[] | undefined>>
@@ -80,6 +77,11 @@ export default async function NewAdjustmentPage({ searchParams }: PageProps) {
     ? ERROR_MESSAGES[errorKey] ?? `Failed: ${errorKey}`
     : null
   const preselectMouId = typeof sp.mouId === 'string' ? sp.mouId : null
+
+  const [allMous, allPayments] = await Promise.all([
+    mouRepo.findAll(),
+    paymentRepo.findAll(),
+  ])
 
   const mouOptions: MouOption[] = allMous
     .filter((m) => m.cohortStatus === 'active')

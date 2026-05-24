@@ -12,17 +12,13 @@
 
 import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
-import type { IntakeRecord, MOU, School, User } from '@/lib/types'
-import mousJson from '@/data/mous.json'
-import schoolsJson from '@/data/schools.json'
-import intakeRecordsJson from '@/data/intake_records.json'
+import type { IntakeRecord, MOU, User } from '@/lib/types'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { schoolRepo } from '@/lib/db/repos/school'
+import { intakeRecordRepo } from '@/lib/db/repos/leafRepos'
 import { getCurrentUser } from '@/lib/auth/session'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
-
-const allMous = mousJson as unknown as MOU[]
-const allSchools = schoolsJson as unknown as School[]
-const allIntakeRecords = intakeRecordsJson as unknown as IntakeRecord[]
 
 interface PageProps {
   params: Promise<{ mouId: string }>
@@ -59,6 +55,11 @@ export default async function IntakeEditPage({ params, searchParams }: PageProps
   const sp = await searchParams
   const user = await getCurrentUser()
   if (!user) redirect(`/login?next=%2Fmous%2F${encodeURIComponent(mouId)}%2Fintake%2Fedit`)
+  const [allMous, allSchools, allIntakeRecords] = await Promise.all([
+    mouRepo.findAll(),
+    schoolRepo.findAll(),
+    intakeRecordRepo.findAll() as Promise<IntakeRecord[]>,
+  ])
   const mou = allMous.find((m) => m.id === mouId)
   if (!mou || !isVisibleToUser(mou, user)) notFound()
 

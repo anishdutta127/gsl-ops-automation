@@ -14,24 +14,19 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { ArrowRight, CheckCircle2 } from 'lucide-react'
-import type {
-  Adjustment,
-  Escalation,
-  MOU,
-  Payment,
-  PaymentLog,
-  School,
-  VexDispatch,
-  VexPi,
-} from '@/lib/types'
-import mousJson from '@/data/mous.json'
-import paymentsJson from '@/data/payments.json'
-import paymentLogsJson from '@/data/payment_logs.json'
-import adjustmentsJson from '@/data/adjustments.json'
-import escalationsJson from '@/data/escalations.json'
-import schoolsJson from '@/data/schools.json'
-import vexPisJson from '@/data/vex_pis.json'
-import vexDispatchesJson from '@/data/vex_dispatches.json'
+import type { Adjustment, Payment, PaymentLog, VexDispatch } from '@/lib/types'
+// P4 read-parity migration (2026-05-24): static JSON imports replaced
+// with live repo reads inside the server component below so postgres
+// mode sees the up-to-date data (writes that landed via the bridge
+// since the seed). The compute lib's algorithm is parity-proven against
+// SQL truth (verify-p4-money-parity.mjs + verify-p4-aggregate-parity.mjs);
+// this migration just ensures the inputs are live.
+import { mouRepo } from '@/lib/db/repos/mou'
+import { paymentRepo } from '@/lib/db/repos/payment'
+import { paymentLogRepo, adjustmentRepo, vexDispatchRepo } from '@/lib/db/repos/leafRepos'
+import { escalationRepo } from '@/lib/db/repos/escalation'
+import { schoolRepo } from '@/lib/db/repos/school'
+import { vexPiRepo } from '@/lib/db/repos/vexPi'
 import { getCurrentUser } from '@/lib/auth/session'
 import { TopNav } from '@/components/ops/TopNav'
 import { formatRs } from '@/lib/format'
@@ -59,14 +54,8 @@ import { VexKitOrdersTile } from '@/components/dashboard/finance/VexKitOrdersTil
 import { ProgrammeBreakdown } from '@/components/dashboard/finance/ProgrammeBreakdown'
 import { EmptyState } from '@/components/ops/EmptyState'
 
-const allMous = mousJson as unknown as MOU[]
-const allPayments = paymentsJson as unknown as Payment[]
-const allPaymentLogs = paymentLogsJson as unknown as PaymentLog[]
-const allAdjustments = adjustmentsJson as unknown as Adjustment[]
-const allEscalations = escalationsJson as unknown as Escalation[]
-const allSchools = schoolsJson as unknown as School[]
-const allVexPis = vexPisJson as unknown as VexPi[]
-const allVexDispatches = vexDispatchesJson as unknown as VexDispatch[]
+// Module-scope JSON consts removed - everything is loaded fresh per
+// request inside the server component below.
 
 function daysBetween(from: string | null, to: Date): number | null {
   if (!from) return null
@@ -110,6 +99,23 @@ export default async function FinanceDashboard({
 
   const now = new Date()
   const filters = parseFinanceFilters(searchParams ?? {})
+
+  // P4: live repo reads. In postgres mode these hit the live DB; in
+  // json mode they fall through to the seed JSON. The compute libs
+  // see fresh data either way.
+  const [
+    allMous, allPayments, allPaymentLogs, allAdjustments,
+    allEscalations, allSchools, allVexPis, allVexDispatches,
+  ] = await Promise.all([
+    mouRepo.findAll(),
+    paymentRepo.findAll(),
+    paymentLogRepo.findAll() as Promise<PaymentLog[]>,
+    adjustmentRepo.findAll() as Promise<Adjustment[]>,
+    escalationRepo.findAll(),
+    schoolRepo.findAll(),
+    vexPiRepo.findAll(),
+    vexDispatchRepo.findAll() as Promise<VexDispatch[]>,
+  ])
   const fyOptions = fyOptionsList(allMous, now)
   const subtitle = filterSubtitle(filters, now)
 

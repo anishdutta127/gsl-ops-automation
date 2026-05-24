@@ -7,10 +7,9 @@
  */
 
 import { notFound, redirect } from 'next/navigation'
-import mousJson from '@/data/mous.json'
-import paymentsJson from '@/data/payments.json'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { paymentRepo } from '@/lib/db/repos/payment'
 import importJson from '@/data/imports/fy-2025-26-import.json'
-import type { MOU, Payment } from '@/lib/types'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canManageUsers } from '@/lib/access'
 import { TopNav } from '@/components/ops/TopNav'
@@ -45,9 +44,13 @@ export default async function PiBackfillPage({ searchParams }: PageProps) {
   const rowErr = typeof sp.err === 'string' ? sp.err : null
 
   const file = importJson as unknown as ImportFile
+  const [allPayments, allMous] = await Promise.all([
+    paymentRepo.findAll(),
+    mouRepo.findAll(),
+  ])
   const plan = buildBackfillPlan({
-    payments: paymentsJson as unknown as Payment[],
-    mous: mousJson as unknown as MOU[],
+    payments: allPayments,
+    mous: allMous,
     importRecords: file.records,
   })
 

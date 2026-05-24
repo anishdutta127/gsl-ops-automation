@@ -37,7 +37,7 @@ import {
 import { AuditFilterRail } from '@/components/ops/AuditFilterRail'
 import { AuditRow } from '@/components/ops/AuditRow'
 import type { User } from '@/lib/types'
-import usersData from '@/data/users.json'
+import { userRepo } from '@/lib/db/repos/user'
 
 const PAGE_SIZE = 50
 const ENTITY_TYPES = [
@@ -68,9 +68,11 @@ const KNOWN_ACTIONS = [
   'auto-create-from-feedback',
 ]
 
-function lookupUser(userId: string): User | null {
-  const found = (usersData as User[]).find((u) => u.id === userId)
-  return found ?? null
+function makeLookupUser(allUsers: User[]) {
+  return function lookupUser(userId: string): User | null {
+    const found = allUsers.find((u) => u.id === userId)
+    return found ?? null
+  }
 }
 
 function emailVisibleToRole(user: User): boolean {
@@ -109,6 +111,8 @@ export default async function AuditPage({
     )
   }
 
+  const allUsers = await userRepo.findAll()
+  const lookupUser = makeLookupUser(allUsers)
   const user = lookupUser(claims.sub)
   if (!user) {
     return (
@@ -170,7 +174,7 @@ export default async function AuditPage({
               ))}
             </ul>
           ) : null}
-          <ExportCsvLink rows={pageRows} showEmail={showEmail} />
+          <ExportCsvLink rows={pageRows} showEmail={showEmail} lookupUser={lookupUser} />
         </header>
 
         {pageRows.length === 0 ? (
@@ -245,9 +249,11 @@ function loadOlderHref(filters: ParsedFilters, cursor: string): string {
 function ExportCsvLink({
   rows,
   showEmail,
+  lookupUser,
 }: {
   rows: AuditRowData[]
   showEmail: boolean
+  lookupUser: (userId: string) => User | null
 }) {
   const header = ['timestamp', 'user', showEmail ? 'email' : '', 'action', 'entity_type', 'entity_id', 'entity_label', 'notes']
     .filter(Boolean)

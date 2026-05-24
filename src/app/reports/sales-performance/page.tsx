@@ -8,10 +8,9 @@
  */
 
 import { redirect } from 'next/navigation'
-import type { MOU, Payment } from '@/lib/types'
-import mousJson from '@/data/mous.json'
-import paymentsJson from '@/data/payments.json'
-import salesTeamJson from '@/data/sales_team.json'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { paymentRepo } from '@/lib/db/repos/payment'
+import { salesTeamRepo } from '@/lib/db/repos/salesTeam'
 import { getCurrentUser } from '@/lib/auth/session'
 import { TopNav } from '@/components/ops/TopNav'
 import { formatRs } from '@/lib/format'
@@ -27,15 +26,6 @@ import { computeSalesPerformance } from '@/lib/reports/salesPerformance'
 import { ReportFilterRail } from '@/components/reports/ReportFilterRail'
 import { CsvExportLink } from '@/components/reports/CsvExportLink'
 
-const allMous = mousJson as unknown as MOU[]
-const allPayments = paymentsJson as unknown as Payment[]
-const allSalesTeam = salesTeamJson as unknown as Array<{
-  id: string
-  name: string
-  email?: string
-  active?: boolean
-}>
-
 export default async function SalesPerformanceReport({
   searchParams,
 }: {
@@ -49,6 +39,11 @@ export default async function SalesPerformanceReport({
 
   const now = new Date()
   const filters = parseReportFilters(searchParams ?? {})
+  const [allMous, allPayments, allSalesTeam] = await Promise.all([
+    mouRepo.findAll(),
+    paymentRepo.findAll(),
+    salesTeamRepo.findAll(),
+  ])
   const fyOptions = defaultFyOptions(allMous, now)
   if (filters.fy && !fyOptions.includes(filters.fy)) {
     const widened = fyOptionsFor(allMous, now)

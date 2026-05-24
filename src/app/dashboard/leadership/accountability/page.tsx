@@ -20,16 +20,12 @@
 import Link from 'next/link'
 import { redirect, notFound } from 'next/navigation'
 import { AlertCircle, ArrowRight, ClipboardList, UserCog } from 'lucide-react'
-import type {
-  KitDispatch,
-  MOU,
-  Payment,
-  User,
-} from '@/lib/types'
-import mousJson from '@/data/mous.json'
-import paymentsJson from '@/data/payments.json'
-import kitDispatchesJson from '@/data/kit_dispatches.json'
-import usersJson from '@/data/users.json'
+import type { KitDispatch, MOU, Payment } from '@/lib/types'
+// P4 batch 2 (2026-05-24): live repo reads.
+import { mouRepo } from '@/lib/db/repos/mou'
+import { paymentRepo } from '@/lib/db/repos/payment'
+import { kitDispatchRepo } from '@/lib/db/repos/kitDispatch'
+import { userRepo } from '@/lib/db/repos/user'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canPerform } from '@/lib/auth/permissions'
 import { TopNav } from '@/components/ops/TopNav'
@@ -48,10 +44,7 @@ import {
   type LifecycleStage,
 } from '@/lib/statusTracker'
 
-const allMous = mousJson as unknown as MOU[]
-const allPayments = paymentsJson as unknown as Payment[]
-const allKitDispatches = kitDispatchesJson as unknown as KitDispatch[]
-const allUsers = usersJson as unknown as User[]
+// Module-scope consts removed; loaded inside the async server component.
 
 const STALL_THRESHOLD_MS = 7 * 24 * 60 * 60 * 1000
 
@@ -103,7 +96,13 @@ export default async function LeadershipAccountabilityPage() {
   if (!canPerform(user, 'stage-responsibility:configure')) {
     notFound()
   }
-
+  // P4 batch 2 (2026-05-24): live repo reads.
+  const [allMous, allPayments, allKitDispatches, allUsers] = await Promise.all([
+    mouRepo.findAll(),
+    paymentRepo.findAll(),
+    kitDispatchRepo.findAll(),
+    userRepo.findAll(),
+  ])
   const matrix = getResponsibilityMatrix()
   const overrideCount = userOverrideCount(matrix)
   const totalConfigured = STAGE_ORDER.length

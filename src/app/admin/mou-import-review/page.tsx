@@ -17,13 +17,11 @@
 
 import { redirect } from 'next/navigation'
 import type { MouImportReviewItem } from '@/lib/types'
-import mouImportReviewJson from '@/data/mou_import_review.json'
+import { mouImportReviewRepo } from '@/lib/db/repos/leafRepos'
 import { getCurrentUser } from '@/lib/auth/session'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { OpsButton } from '@/components/ops/OpsButton'
-
-const items = mouImportReviewJson as unknown as MouImportReviewItem[]
 
 const REJECTION_REASON_OPTIONS: Array<{ value: string; label: string }> = [
   { value: 'data-quality-issue', label: 'Data quality issue' },
@@ -68,6 +66,7 @@ export default async function MouImportReviewPage({
   const errorKey = typeof sp.error === 'string' ? sp.error : null
   const errorMessage = errorKey ? ERROR_MESSAGES[errorKey] ?? `Failed: ${errorKey}` : null
 
+  const items = await mouImportReviewRepo.findAll() as unknown as MouImportReviewItem[]
   const unresolved = items.filter((i) => i.resolution === null)
   const resolved = items.filter((i) => i.resolution !== null)
 

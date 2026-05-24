@@ -11,17 +11,14 @@
 
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
-import type { MOU, SalesPerson, User } from '@/lib/types'
-import mousJson from '@/data/mous.json'
-import salesTeamJson from '@/data/sales_team.json'
+import type { User } from '@/lib/types'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { salesTeamRepo } from '@/lib/db/repos/salesTeam'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canManageUsers } from '@/lib/access'
 import { formatRs } from '@/lib/format'
-
-const allMous = mousJson as unknown as MOU[]
-const allReps = salesTeamJson as unknown as SalesPerson[]
 
 interface PageProps {
   searchParams: Promise<Record<string, string | string[] | undefined>>
@@ -52,6 +49,11 @@ export default async function ReassignMousPage({ searchParams }: PageProps) {
   const errorMessage = errorKey ? ERROR_MESSAGES[errorKey] ?? `Failed: ${errorKey}` : null
   const reassignedCount = typeof sp.reassigned === 'string' ? Number(sp.reassigned) : 0
   const toRep = typeof sp.toRepName === 'string' ? sp.toRepName : null
+
+  const [allMous, allReps] = await Promise.all([
+    mouRepo.findAll(),
+    salesTeamRepo.findAll(),
+  ])
 
   const activeReps = allReps
     .filter((r) => r.active !== false)

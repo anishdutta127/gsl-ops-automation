@@ -13,8 +13,7 @@
 
 import { notFound, redirect } from 'next/navigation'
 import { AlertCircle, CheckCircle2 } from 'lucide-react'
-import type { User } from '@/lib/types'
-import usersJson from '@/data/users.json'
+import { userRepo } from '@/lib/db/repos/user'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canPerform } from '@/lib/auth/permissions'
 import { TopNav } from '@/components/ops/TopNav'
@@ -24,8 +23,6 @@ import { getResponsibilityMatrix } from '@/lib/stageResponsibility'
 import { STAGE_LABEL, STAGE_ORDER } from '@/lib/statusTracker'
 import type { ResponsibilityDepartment } from '@/lib/types'
 import { saveStageResponsibilityAction, resetStageResponsibilityAction } from './actions'
-
-const allUsers = usersJson as unknown as User[]
 
 const DEPT_OPTIONS: ResponsibilityDepartment[] = [
   'sales',
@@ -59,6 +56,7 @@ export default async function StageResponsibilityPage({ searchParams }: PageProp
   const errorRaw = typeof sp.error === 'string' ? sp.error : null
 
   const matrix = getResponsibilityMatrix()
+  const allUsers = await userRepo.findAll()
   const activeUsers = allUsers
     .filter((u) => u.active)
     .sort((a, b) => a.name.localeCompare(b.name))
