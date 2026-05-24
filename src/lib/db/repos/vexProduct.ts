@@ -15,6 +15,7 @@ interface VexProductRow {
   name: string
   default_unit_price: string | number | null
   active: boolean
+  version: number
 }
 
 function rowToProduct(r: VexProductRow): VexProduct {
@@ -23,6 +24,7 @@ function rowToProduct(r: VexProductRow): VexProduct {
     name: r.name,
     defaultUnitPrice: r.default_unit_price === null ? null : Number(r.default_unit_price),
     active: !!r.active,
+    version: r.version ?? 1,
   } as VexProduct
 }
 
@@ -76,5 +78,53 @@ export const vexProductRepo = {
       operation: 'update',
       payload: p as unknown as Record<string, unknown>,
     })
+  },
+
+  /**
+   * P3 OCC (2026-05-24): /admin/operations/vex/products/[partNumber]/edit
+   * is a real admin edit form. Two wildcard admins editing the same
+   * product concurrently would otherwise clobber. Version-OCC same
+   * pattern as cc_rules.
+   */
+  async updateOCC(
+    partNumber: string,
+    expectedVersion: number,
+    patch: Partial<Pick<VexProduct, 'name' | 'defaultUnitPrice' | 'active'>>,
+    opts?: { queuedBy?: string },
+  ): Promise<{ ok: true; newVersion: number } | { ok: false; conflictVersion: number }> {
+    if (currentBackend() === 'postgres') {
+      const sql = getSql()
+      const setObj: Record<string, unknown> = {}
+      if (patch.name !== undefined) setObj.name = patch.name
+      if (patch.defaultUnitPrice !== undefined) setObj.default_unit_price = patch.defaultUnitPrice ?? null
+      if (patch.active !== undefined) setObj.active = patch.active
+      // Always bump version. If no scalar fields changed (audit-only?), the
+      // statement still version-checks - acceptable for OCC contract.
+      const rows = await sql<{ version: number }[]>`
+        UPDATE vex_products SET
+          ${Object.keys(setObj).length > 0 ? sql`${sql(setObj)},` : sql``}
+          version = version + 1
+        WHERE part_number = ${partNumber} AND version = ${expectedVersion}
+        RETURNING version
+      `
+      if (rows.length === 1) return { ok: true, newVersion: rows[0]!.version }
+      const cur = await sql<{ version: number }[]>`
+        SELECT version FROM vex_products WHERE part_number = ${partNumber}
+      `
+      return { ok: false, conflictVersion: cur[0]?.version ?? -1 }
+    }
+    // json mode: in-memory version compare + queue enqueue.
+    const cur = jsonProducts.find((p) => p.partNumber === partNumber)
+    if (!cur) return { ok: false, conflictVersion: -1 }
+    const curVersion = cur.version ?? 1
+    if (curVersion !== expectedVersion) return { ok: false, conflictVersion: curVersion }
+    const merged: VexProduct = { ...cur, ...patch, version: curVersion + 1 }
+    await enqueueUpdate({
+      queuedBy: opts?.queuedBy ?? 'system',
+      entity: 'vexProduct',
+      operation: 'update',
+      payload: merged as unknown as Record<string, unknown>,
+    })
+    return { ok: true, newVersion: curVersion + 1 }
   },
 }

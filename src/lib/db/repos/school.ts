@@ -120,7 +120,7 @@ export const schoolRepo = {
     })
   },
 
-  async appendAudit(id: string, entry: AuditEntry): Promise<void> {
+  async appendAudit(id: string, entry: AuditEntry, opts?: { queuedBy?: string }): Promise<void> {
     if (currentBackend() === 'postgres') {
       const sql = getSql()
       await sql`
@@ -134,10 +134,73 @@ export const schoolRepo = {
     if (!s) return
     const updated: School = { ...s, auditLog: [...(s.auditLog ?? []), entry] }
     await enqueueUpdate({
-      queuedBy: 'system',
+      queuedBy: opts?.queuedBy ?? 'system',
       entity: 'school',
       operation: 'update',
       payload: updated as unknown as Record<string, unknown>,
+    })
+  },
+
+  async updatePartial(
+    id: string,
+    patch: Partial<School>,
+    opts?: { queuedBy?: string },
+  ): Promise<void> {
+    if (currentBackend() === 'postgres') {
+      const sql = getSql()
+      const CAMEL_TO_SNAKE: Record<string, string> = {
+        name: 'name', legalEntity: 'legal_entity', city: 'city',
+        state: 'state', region: 'region', pinCode: 'pin_code',
+        contactPerson: 'contact_person', email: 'email', phone: 'phone',
+        billingName: 'billing_name', billingAddress: 'billing_address',
+        gstNumber: 'gst_number', pan: 'pan',
+        bankAccount: 'bank_account', ifsc: 'ifsc',
+        salesPersonId: 'sales_person_id', notes: 'notes',
+        billingPeriod: 'billing_period', mouNumber: 'mou_number',
+        srNo: 'sr_no',
+      }
+      const setObj: Record<string, unknown> = {}
+      for (const [k, v] of Object.entries(patch)) {
+        if (k === 'id' || k === 'auditLog') continue
+        const col = CAMEL_TO_SNAKE[k]
+        if (!col) continue
+        setObj[col] = v ?? null
+      }
+      if (Object.keys(setObj).length === 0) return
+      await sql`UPDATE schools SET ${sql(setObj)} WHERE id = ${id}`
+      return
+    }
+    const cur = jsonSchools.find((x) => x.id === id)
+    if (!cur) return
+    await enqueueUpdate({
+      queuedBy: opts?.queuedBy ?? 'system',
+      entity: 'school',
+      operation: 'update',
+      payload: { ...cur, ...patch } as unknown as Record<string, unknown>,
+    })
+  },
+
+  async updateWithAudit(
+    id: string,
+    patch: Partial<School>,
+    audit: AuditEntry,
+    opts?: { queuedBy?: string },
+  ): Promise<void> {
+    if (currentBackend() === 'postgres') {
+      await this.updatePartial(id, patch, opts)
+      await this.appendAudit(id, audit, opts)
+      return
+    }
+    const cur = jsonSchools.find((x) => x.id === id)
+    if (!cur) return
+    await enqueueUpdate({
+      queuedBy: opts?.queuedBy ?? 'system',
+      entity: 'school',
+      operation: 'update',
+      payload: {
+        ...cur, ...patch,
+        auditLog: [...(cur.auditLog ?? []), audit],
+      } as unknown as Record<string, unknown>,
     })
   },
 }

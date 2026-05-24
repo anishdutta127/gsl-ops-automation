@@ -117,23 +117,222 @@ function makeLeafRepo<T>(cfg: LeafConfig<T>) {
   }
 }
 
+/**
+ * Audited-leaf-repo factory (P2b). Extends makeLeafRepo with the
+ * atomic write surface (updatePartial / updateWithAudit / appendAudit)
+ * that libs migrating from deps.enqueue can call directly.
+ *
+ * cfg.camelToSnake: per-entity column rename map for snake_case
+ * cfg.jsonbCols: column names that need sql.json() wrapping
+ * cfg.entity: PendingUpdateEntity for the json-mode enqueue fallback
+ */
+interface AuditedLeafConfig<T> extends LeafConfig<T> {
+  entity: string
+  camelToSnake: Record<string, string>
+  jsonbCols?: ReadonlySet<string>
+}
+
+function makeAuditedLeafRepo<T extends { id?: string; auditLog?: AuditEntry[] }>(
+  cfg: AuditedLeafConfig<T>,
+) {
+  const base = makeLeafRepo<T>(cfg)
+  const jsonbCols = cfg.jsonbCols ?? new Set<string>()
+  return {
+    ...base,
+    async appendAudit(id: string, entry: AuditEntry, opts?: { queuedBy?: string }): Promise<void> {
+      if (currentBackend() === 'postgres') {
+        const sql = getSql()
+        await sql`
+          UPDATE ${sql(cfg.table)} SET audit_log = audit_log || ${sql.json([entry] as never)}::jsonb
+          WHERE id = ${id}
+        `
+        return
+      }
+      const cur = (cfg.json as Row[]).find((r) => r.id === id) as T | undefined
+      if (!cur) return
+      const updated = { ...cur, auditLog: [...(cur.auditLog ?? []), entry] }
+      await enqueueUpdate({
+        queuedBy: opts?.queuedBy ?? 'system',
+        entity: cfg.entity as never,
+        operation: 'update',
+        payload: updated as unknown as Record<string, unknown>,
+      })
+    },
+    async updatePartial(
+      id: string,
+      patch: Partial<T>,
+      opts?: { queuedBy?: string },
+    ): Promise<void> {
+      if (currentBackend() === 'postgres') {
+        const sql = getSql()
+        const setObj: Record<string, unknown> = {}
+        for (const [k, v] of Object.entries(patch)) {
+          if (k === 'id' || k === 'auditLog') continue
+          const col = cfg.camelToSnake[k]
+          if (!col) continue
+          if (jsonbCols.has(k)) {
+            setObj[col] = v == null ? null : sql.json(v as never)
+          } else {
+            setObj[col] = v ?? null
+          }
+        }
+        if (Object.keys(setObj).length === 0) return
+        await sql`UPDATE ${sql(cfg.table)} SET ${sql(setObj)} WHERE id = ${id}`
+        return
+      }
+      const cur = (cfg.json as Row[]).find((r) => r.id === id) as T | undefined
+      if (!cur) return
+      await enqueueUpdate({
+        queuedBy: opts?.queuedBy ?? 'system',
+        entity: cfg.entity as never,
+        operation: 'update',
+        payload: { ...cur, ...patch } as unknown as Record<string, unknown>,
+      })
+    },
+    async updateWithAudit(
+      id: string,
+      patch: Partial<T>,
+      audit: AuditEntry,
+      opts?: { queuedBy?: string },
+    ): Promise<void> {
+      if (currentBackend() === 'postgres') {
+        await this.updatePartial(id, patch, opts)
+        await this.appendAudit(id, audit, opts)
+        return
+      }
+      const cur = (cfg.json as Row[]).find((r) => r.id === id) as T | undefined
+      if (!cur) return
+      await enqueueUpdate({
+        queuedBy: opts?.queuedBy ?? 'system',
+        entity: cfg.entity as never,
+        operation: 'update',
+        payload: {
+          ...cur, ...patch,
+          auditLog: [...(cur.auditLog ?? []), audit],
+        } as unknown as Record<string, unknown>,
+      })
+    },
+    /**
+     * P2b.X OCC (2026-05-24): version-checked atomic update + audit
+     * append. For REPLACE-on-update form-submit fields where two
+     * editors can clobber each other silently. The caller supplies
+     * the version they loaded; we UPDATE only if the row still has
+     * that version, bumping on success.
+     *
+     * Returns `{ok:true, newVersion}` if the conditional UPDATE
+     * matched 1 row (RETURNING), else `{ok:false, conflictVersion}`
+     * read from a follow-up SELECT so the route can surface a 409.
+     *
+     * Requires the table to have a `version INTEGER NOT NULL DEFAULT 1`
+     * column. Audit + scalar/JSONB updates land in the same UPDATE
+     * statement; on conflict NOTHING lands (the loser's audit is NOT
+     * recorded - correct: their write didn't happen).
+     *
+     * Json mode: enqueues a full payload through the same shape.
+     */
+    async updateWithAuditOCC(
+      id: string,
+      expectedVersion: number,
+      patch: Partial<T>,
+      audit: AuditEntry,
+      opts?: { queuedBy?: string },
+    ): Promise<{ ok: true; newVersion: number } | { ok: false; conflictVersion: number }> {
+      if (currentBackend() === 'postgres') {
+        const sql = getSql()
+        const setObj: Record<string, unknown> = {}
+        for (const [k, v] of Object.entries(patch)) {
+          if (k === 'id' || k === 'auditLog' || k === 'version') continue
+          const col = cfg.camelToSnake[k]
+          if (!col) continue
+          if (jsonbCols.has(k)) {
+            setObj[col] = v == null ? null : sql.json(v as never)
+          } else {
+            setObj[col] = v ?? null
+          }
+        }
+        // Always include audit_log and version updates; scalar patch
+        // may be empty (e.g., audit-only retry from UI), still OCC-checked.
+        const rows = await sql<{ version: number }[]>`
+          UPDATE ${sql(cfg.table)} SET
+            ${Object.keys(setObj).length > 0 ? sql`${sql(setObj)},` : sql``}
+            audit_log = audit_log || ${sql.json([audit] as never)}::jsonb,
+            version = version + 1
+          WHERE id = ${id} AND version = ${expectedVersion}
+          RETURNING version
+        `
+        if (rows.length === 1) {
+          return { ok: true, newVersion: rows[0]!.version }
+        }
+        const cur = await sql<{ version: number }[]>`
+          SELECT version FROM ${sql(cfg.table)} WHERE id = ${id}
+        `
+        return { ok: false, conflictVersion: cur[0]?.version ?? -1 }
+      }
+      // json mode: in-memory version compare + queue enqueue.
+      const cur = (cfg.json as Row[]).find((r) => r.id === id) as (T & { version?: number }) | undefined
+      if (!cur) return { ok: false, conflictVersion: -1 }
+      const curVersion = cur.version ?? 1
+      if (curVersion !== expectedVersion) {
+        return { ok: false, conflictVersion: curVersion }
+      }
+      const merged = {
+        ...cur, ...patch,
+        auditLog: [...((cur.auditLog as AuditEntry[]) ?? []), audit],
+        version: curVersion + 1,
+      }
+      await enqueueUpdate({
+        queuedBy: opts?.queuedBy ?? 'system',
+        entity: cfg.entity as never,
+        operation: 'update',
+        payload: merged as unknown as Record<string, unknown>,
+      })
+      return { ok: true, newVersion: curVersion + 1 }
+    },
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Standard array-shaped, id-keyed leaf entities (15 of 24)
 // ---------------------------------------------------------------------------
 
-export const communicationTemplateRepo = makeLeafRepo({
+export const communicationTemplateRepo = makeAuditedLeafRepo({
   table: 'communication_templates',
   json: communicationTemplatesJson as unknown[] as Row[],
+  entity: 'communicationTemplate',
+  camelToSnake: {
+    name: 'name', useCase: 'use_case', subject: 'subject',
+    bodyMarkdown: 'body_markdown', defaultRecipient: 'default_recipient',
+    defaultCcRules: 'default_cc_rules', variables: 'variables',
+    lastEditedBy: 'last_edited_by', lastEditedAt: 'last_edited_at',
+    active: 'active',
+  },
+  jsonbCols: new Set(['defaultCcRules', 'variables']),
 })
 
-export const ccRuleRepo = makeLeafRepo({
+export const ccRuleRepo = makeAuditedLeafRepo({
   table: 'cc_rules',
   json: ccRulesJson as unknown[] as Row[],
+  entity: 'ccRule',
+  camelToSnake: {
+    sheet: 'sheet', scope: 'scope', scopeValue: 'scope_value',
+    contexts: 'contexts', ccUserIds: 'cc_user_ids',
+    enabled: 'enabled', sourceRuleText: 'source_rule_text',
+    disabledAt: 'disabled_at', disabledBy: 'disabled_by',
+    disabledReason: 'disabled_reason',
+  },
+  jsonbCols: new Set(['contexts', 'ccUserIds']),
 })
 
-export const schoolGroupRepo = makeLeafRepo({
+export const schoolGroupRepo = makeAuditedLeafRepo({
   table: 'school_groups',
   json: schoolGroupsJson as unknown[] as Row[],
+  entity: 'schoolGroup',
+  camelToSnake: {
+    name: 'name', region: 'region', memberSchoolIds: 'member_school_ids',
+    groupMouId: 'group_mou_id', notes: 'notes',
+    primaryContact: 'primary_contact', primaryEmail: 'primary_email',
+    primaryPhone: 'primary_phone', gstNumber: 'gst_number',
+  },
 })
 
 export const schoolSpocRepo = makeLeafRepo({
@@ -338,24 +537,86 @@ export const adjustmentRepo = {
   },
 }
 
-export const dispatchRequestRepo = makeLeafRepo({
+export const dispatchRequestRepo = makeAuditedLeafRepo({
   table: 'dispatch_requests',
   json: dispatchRequestsJson as unknown[] as Row[],
+  entity: 'dispatchRequest',
+  camelToSnake: {
+    mouId: 'mou_id', schoolId: 'school_id', requestedBy: 'requested_by',
+    requestedAt: 'requested_at', requestReason: 'request_reason',
+    instalmentSeq: 'instalment_seq', lineItems: 'line_items', status: 'status',
+    conversionDispatchId: 'conversion_dispatch_id',
+    rejectionReason: 'rejection_reason', reviewedBy: 'reviewed_by',
+    reviewedAt: 'reviewed_at', notes: 'notes',
+  },
+  jsonbCols: new Set(['lineItems']),
 })
 
-export const intakeRecordRepo = makeLeafRepo({
+export const intakeRecordRepo = makeAuditedLeafRepo({
   table: 'intake_records',
   json: intakeRecordsJson as unknown[] as Row[],
+  entity: 'intakeRecord',
+  camelToSnake: {
+    mouId: 'mou_id', completedAt: 'completed_at',
+    completedBy: 'completed_by', salesOwnerId: 'sales_owner_id',
+    location: 'location', grades: 'grades',
+    recipientName: 'recipient_name',
+    recipientDesignation: 'recipient_designation',
+    recipientEmail: 'recipient_email',
+    studentsAtIntake: 'students_at_intake',
+    durationYears: 'duration_years',
+    startDate: 'start_date', endDate: 'end_date',
+    physicalSubmissionStatus: 'physical_submission_status',
+    softCopySubmissionStatus: 'soft_copy_submission_status',
+    productConfirmed: 'product_confirmed',
+    gslTrainingMode: 'gsl_training_mode',
+    schoolPointOfContactName: 'school_point_of_contact_name',
+    schoolPointOfContactPhone: 'school_point_of_contact_phone',
+    signedMouUrl: 'signed_mou_url',
+    thankYouEmailSentAt: 'thank_you_email_sent_at',
+    gradeBreakdown: 'grade_breakdown',
+    rechargeableBatteries: 'rechargeable_batteries',
+  },
+  jsonbCols: new Set(['grades', 'gradeBreakdown']),
 })
 
-export const communicationRepo = makeLeafRepo({
+export const communicationRepo = makeAuditedLeafRepo({
   table: 'communications',
   json: communicationsJson as unknown[] as Row[],
+  entity: 'communication',
+  camelToSnake: {
+    type: 'type', schoolId: 'school_id', mouId: 'mou_id',
+    instalmentSeq: 'instalment_seq', channel: 'channel',
+    subject: 'subject', bodyEmail: 'body_email',
+    bodyWhatsApp: 'body_whats_app',
+    toEmail: 'to_email', toPhone: 'to_phone',
+    ccEmails: 'cc_emails', queuedAt: 'queued_at',
+    queuedBy: 'queued_by', sentAt: 'sent_at',
+    copiedAt: 'copied_at', status: 'status',
+    bounceDetail: 'bounce_detail',
+  },
+  jsonbCols: new Set(['ccEmails']),
 })
 
 // magicLinkToken: short-lived auth primitive. create() + update() for
 // usage tracking (status-view increments view_count; feedback-submit
 // flips used_at + used_by_ip).
+//
+// P3 OCC trace 2026-05-24: view_count is a non-billing counter; two
+// simultaneous status-view clicks on the same magic link race the
+// increment and produce an off-by-one (e.g., count goes 3 -> 4
+// instead of 3 -> 5). This is a DELIBERATE ACCEPT, not an oversight:
+//   - view_count is not security-relevant (auth gating is on
+//     used_at / expires_at, not on count).
+//   - off-by-one in an audit-trail counter has zero material impact.
+//   - the writers (status-view route, feedback-submit) are single-click
+//     events per recipient; the race window is bounded to genuine
+//     double-clicks within ~50ms.
+// used_at and used_by_ip: writers set deterministic values
+// (ts = now(); ip = request IP); concurrent writes are idempotent.
+// No fix planned. If view_count ever becomes billing-relevant, this
+// note tells the future dev where to add the atomic-increment fix
+// (`UPDATE ... SET view_count = view_count + 1 WHERE id = ...`).
 export const magicLinkTokenRepo = {
   async findAll(): Promise<MagicLinkToken[]> {
     if (currentBackend() === 'postgres') {
@@ -738,9 +999,23 @@ export const agreementRepo = {
   },
 }
 
-export const salesOpportunityRepo = makeLeafRepo({
+export const salesOpportunityRepo = makeAuditedLeafRepo({
   table: 'sales_opportunities',
   json: salesOpportunitiesJson as unknown[] as Row[],
+  entity: 'salesOpportunity',
+  camelToSnake: {
+    schoolName: 'school_name', schoolId: 'school_id',
+    city: 'city', state: 'state', region: 'region',
+    salesRepId: 'sales_rep_id',
+    programmeProposed: 'programme_proposed',
+    gslModel: 'gsl_model', commitmentsMade: 'commitments_made',
+    outOfScopeRequirements: 'out_of_scope_requirements',
+    recceStatus: 'recce_status',
+    recceCompletedAt: 'recce_completed_at', status: 'status',
+    approvalNotes: 'approval_notes',
+    conversionMouId: 'conversion_mou_id', lossReason: 'loss_reason',
+    schoolMatchDismissed: 'school_match_dismissed',
+  },
 })
 
 // homepage_action_log: composite PK (date, user_id, item_id) - no `id`.
@@ -763,13 +1038,101 @@ export const homepageActionLogRepo = {
 // Non-array or non-standard-PK leaf entities (5 of 24)
 // ---------------------------------------------------------------------------
 
-// mou_import_review: array shape; PK is `queued_at`
-export const mouImportReviewRepo = makeLeafRepo({
-  table: 'mou_import_review',
-  json: mouImportReviewJson as unknown[] as Row[],
-  idColumn: 'queued_at',
-  orderBy: 'queued_at',
-})
+// mou_import_review: array shape; PK is `queued_at`. P3 OCC adds
+// NULL-check resolution guard.
+export const mouImportReviewRepo = {
+  ...makeLeafRepo({
+    table: 'mou_import_review',
+    json: mouImportReviewJson as unknown[] as Row[],
+    idColumn: 'queued_at',
+    orderBy: 'queued_at',
+  }),
+  /**
+   * P3 OCC (2026-05-24): /admin/mou-import-review queue admin page is
+   * a per-entry resolve flow (rejectImportReview / approveImportReview).
+   * Two admins resolving the same review entry concurrently would
+   * otherwise both pass the in-memory `if (item.resolution !== null)`
+   * check and both write a resolution silently.
+   *
+   * NULL-check OCC: conditional UPDATE matches only when both
+   * `resolution IS NULL AND resolved_at IS NULL`. Same pattern as
+   * dispatches.override_event setOverrideEventIfNull.
+   *
+   * **Important**: this REPLACES the in-memory `already-resolved` check
+   * in the lib (which becomes a fast-path UX check). The data-layer
+   * guard is the binding correctness check.
+   *
+   * Matching rows: queued_at + a raw_record id sentinel. The lib reads
+   * the item by (queuedAt, rawRecordId); we accept queuedAt as the
+   * primary key and rely on the in-memory dedup match for rawRecordId
+   * (rawRecordId only varies when the queue has duplicate timestamps,
+   * which is rare in practice but possible at sub-millisecond rates).
+   */
+  async resolveIfPending(
+    queuedAt: string,
+    rawRecordId: string | null,
+    resolution: 'imported' | 'rejected' | 'punted-upstream' | 'approved-as-single',
+    fields: {
+      resolvedAt: string
+      resolvedBy: string
+      rejectionReason?: string | null
+      rejectionNotes?: string | null
+    },
+  ): Promise<{ ok: true } | { ok: false; reason: 'already-resolved' | 'item-not-found' }> {
+    if (currentBackend() === 'postgres') {
+      const sql = getSql()
+      // mou_import_review uses BIGSERIAL `id` PK in postgres but the
+      // lib keys by (queued_at + rawRecordId) so we filter by the
+      // composite. The data-layer guard adds resolution IS NULL.
+      const rows = await sql<{ id: number }[]>`
+        UPDATE mou_import_review SET
+          resolution = ${resolution},
+          resolved_at = ${fields.resolvedAt},
+          resolved_by = ${fields.resolvedBy},
+          rejection_reason = ${fields.rejectionReason ?? null},
+          rejection_notes = ${fields.rejectionNotes ?? null}
+        WHERE queued_at = ${queuedAt}
+          ${rawRecordId !== null ? sql`AND raw_record->>'id' = ${rawRecordId}` : sql``}
+          AND resolution IS NULL
+          AND resolved_at IS NULL
+        RETURNING id
+      `
+      if (rows.length === 1) return { ok: true }
+      const exists = await sql<{ id: number; resolution: string | null }[]>`
+        SELECT id, resolution FROM mou_import_review
+        WHERE queued_at = ${queuedAt}
+        ${rawRecordId !== null ? sql`AND raw_record->>'id' = ${rawRecordId}` : sql``}
+      `
+      if (exists.length === 0) return { ok: false, reason: 'item-not-found' }
+      return { ok: false, reason: 'already-resolved' }
+    }
+    // json mode: in-memory atomic snapshot.
+    const items = mouImportReviewJson as unknown[] as Array<{
+      queuedAt: string; rawRecord?: { id?: unknown }; resolution: string | null
+    }>
+    const item = items.find((i) => {
+      const rrid = (i.rawRecord && typeof i.rawRecord === 'object'
+        && typeof i.rawRecord.id === 'string') ? i.rawRecord.id : null
+      return i.queuedAt === queuedAt && (rawRecordId === null || rrid === rawRecordId)
+    })
+    if (!item) return { ok: false, reason: 'item-not-found' }
+    if (item.resolution !== null) return { ok: false, reason: 'already-resolved' }
+    // The full-row update goes through the queue.
+    const updated = {
+      ...item,
+      resolution, resolvedAt: fields.resolvedAt, resolvedBy: fields.resolvedBy,
+      rejectionReason: fields.rejectionReason ?? null,
+      rejectionNotes: fields.rejectionNotes ?? null,
+    }
+    await enqueueUpdate({
+      queuedBy: fields.resolvedBy,
+      entity: 'mouImportReview',
+      operation: 'update',
+      payload: updated as unknown as Record<string, unknown>,
+    })
+    return { ok: true }
+  },
+}
 
 // sync_health: BIGSERIAL id; ordered by 'at' for stability
 export const syncHealthRepo = makeLeafRepo({
@@ -805,15 +1168,175 @@ export const lifecycleRuleRepo = {
       ) ?? null
     )
   },
+  /**
+   * Atomic appendAudit by composite PK. Concurrent appends via the
+   * audit_log || jsonb concat are race-safe.
+   */
+  async appendAuditByKey(
+    stageFromKey: string,
+    stageToKey: string,
+    entry: AuditEntry,
+    opts?: { queuedBy?: string },
+  ): Promise<void> {
+    if (currentBackend() === 'postgres') {
+      const sql = getSql()
+      await sql`
+        UPDATE lifecycle_rules
+        SET audit_log = audit_log || ${sql.json([entry] as never)}::jsonb
+        WHERE stage_from_key = ${stageFromKey} AND stage_to_key = ${stageToKey}
+      `
+      return
+    }
+    const cur = (lifecycleRulesJson as unknown[] as Row[]).find(
+      (r) => r.stageFromKey === stageFromKey && r.stageToKey === stageToKey,
+    )
+    if (!cur) return
+    const updated = { ...cur, auditLog: [...(cur.auditLog ?? []), entry] }
+    await enqueueUpdate({
+      queuedBy: opts?.queuedBy ?? 'system',
+      entity: 'lifecycleRule',
+      operation: 'update',
+      payload: updated as unknown as Record<string, unknown>,
+    })
+  },
+  async updatePartialByKey(
+    stageFromKey: string,
+    stageToKey: string,
+    patch: Record<string, unknown>,
+    opts?: { queuedBy?: string },
+  ): Promise<void> {
+    if (currentBackend() === 'postgres') {
+      const sql = getSql()
+      const CAMEL_TO_SNAKE: Record<string, string> = {
+        defaultDays: 'default_days', customNotes: 'custom_notes',
+        lastEditedAt: 'last_edited_at', lastEditedBy: 'last_edited_by',
+      }
+      const setObj: Record<string, unknown> = {}
+      for (const [k, v] of Object.entries(patch)) {
+        const col = CAMEL_TO_SNAKE[k]
+        if (!col) continue
+        setObj[col] = v ?? null
+      }
+      if (Object.keys(setObj).length === 0) return
+      await sql`UPDATE lifecycle_rules SET ${sql(setObj)}
+        WHERE stage_from_key = ${stageFromKey} AND stage_to_key = ${stageToKey}`
+      return
+    }
+    const cur = (lifecycleRulesJson as unknown[] as Row[]).find(
+      (r) => r.stageFromKey === stageFromKey && r.stageToKey === stageToKey,
+    )
+    if (!cur) return
+    await enqueueUpdate({
+      queuedBy: opts?.queuedBy ?? 'system',
+      entity: 'lifecycleRule',
+      operation: 'update',
+      payload: { ...cur, ...patch } as unknown as Record<string, unknown>,
+    })
+  },
+  async updateWithAuditByKey(
+    stageFromKey: string,
+    stageToKey: string,
+    patch: Record<string, unknown>,
+    audit: AuditEntry,
+    opts?: { queuedBy?: string },
+  ): Promise<void> {
+    if (currentBackend() === 'postgres') {
+      await this.updatePartialByKey(stageFromKey, stageToKey, patch, opts)
+      await this.appendAuditByKey(stageFromKey, stageToKey, audit, opts)
+      return
+    }
+    const cur = (lifecycleRulesJson as unknown[] as Row[]).find(
+      (r) => r.stageFromKey === stageFromKey && r.stageToKey === stageToKey,
+    )
+    if (!cur) return
+    await enqueueUpdate({
+      queuedBy: opts?.queuedBy ?? 'system',
+      entity: 'lifecycleRule',
+      operation: 'update',
+      payload: {
+        ...cur, ...patch,
+        auditLog: [...(cur.auditLog ?? []), audit],
+      } as unknown as Record<string, unknown>,
+    })
+  },
 }
 
-// stage_responsibility: PK is `stage`
-export const stageResponsibilityRepo = makeLeafRepo({
-  table: 'stage_responsibility',
-  json: stageResponsibilityJson as unknown[] as Row[],
-  idColumn: 'stage',
-  orderBy: 'stage',
-})
+// stage_responsibility: PK is `stage`. P3 OCC adds version + audit-on-update.
+export const stageResponsibilityRepo = {
+  ...makeLeafRepo({
+    table: 'stage_responsibility',
+    json: stageResponsibilityJson as unknown[] as Row[],
+    idColumn: 'stage',
+    orderBy: 'stage',
+  }),
+  /**
+   * P3 OCC (2026-05-24): /admin/stage-responsibility is leadership-only
+   * config. Two leadership members editing the same stage's
+   * responsible_department + responsible_user_id concurrently would
+   * otherwise clobber. Version-OCC same pattern as cc_rules.
+   *
+   * stage_responsibility's audit JSONB column is named just `audit`
+   * (not `audit_log`), so this method targets that column directly.
+   * The PK is `stage` (TEXT), not `id`.
+   */
+  async updateWithAuditOCC(
+    stage: string,
+    expectedVersion: number,
+    patch: {
+      responsibleDepartment?: string | null
+      responsibleUserId?: string | null
+      escalationDepartment?: string | null
+      notes?: string | null
+      updatedAt?: string | null
+      updatedBy?: string | null
+    },
+    audit: AuditEntry,
+    opts?: { queuedBy?: string },
+  ): Promise<{ ok: true; newVersion: number } | { ok: false; conflictVersion: number }> {
+    if (currentBackend() === 'postgres') {
+      const sql = getSql()
+      const setObj: Record<string, unknown> = {}
+      if (patch.responsibleDepartment !== undefined) setObj.responsible_department = patch.responsibleDepartment ?? null
+      if (patch.responsibleUserId !== undefined) setObj.responsible_user_id = patch.responsibleUserId ?? null
+      if (patch.escalationDepartment !== undefined) setObj.escalation_department = patch.escalationDepartment ?? null
+      if (patch.notes !== undefined) setObj.notes = patch.notes ?? null
+      if (patch.updatedAt !== undefined) setObj.updated_at = patch.updatedAt ?? null
+      if (patch.updatedBy !== undefined) setObj.updated_by = patch.updatedBy ?? null
+      const rows = await sql<{ version: number }[]>`
+        UPDATE stage_responsibility SET
+          ${Object.keys(setObj).length > 0 ? sql`${sql(setObj)},` : sql``}
+          audit = audit || ${sql.json([audit] as never)}::jsonb,
+          version = version + 1
+        WHERE stage = ${stage} AND version = ${expectedVersion}
+        RETURNING version
+      `
+      if (rows.length === 1) return { ok: true, newVersion: rows[0]!.version }
+      const cur = await sql<{ version: number }[]>`
+        SELECT version FROM stage_responsibility WHERE stage = ${stage}
+      `
+      return { ok: false, conflictVersion: cur[0]?.version ?? -1 }
+    }
+    // json mode: in-memory version compare + queue enqueue.
+    const cur = (stageResponsibilityJson as unknown[] as Row[]).find(
+      (r) => r.stage === stage,
+    )
+    if (!cur) return { ok: false, conflictVersion: -1 }
+    const curVersion = (cur.version as number | undefined) ?? 1
+    if (curVersion !== expectedVersion) return { ok: false, conflictVersion: curVersion }
+    const merged = {
+      ...cur, ...patch,
+      audit: [...(Array.isArray(cur.audit) ? cur.audit : []), audit],
+      version: curVersion + 1,
+    }
+    await enqueueUpdate({
+      queuedBy: opts?.queuedBy ?? 'system',
+      entity: 'stageResponsibility',
+      operation: 'update',
+      payload: { ...merged, id: stage } as Record<string, unknown>,
+    })
+    return { ok: true, newVersion: curVersion + 1 }
+  },
+}
 
 // signed_values: PK is `mou_id`
 export const signedValueRepo = makeLeafRepo({

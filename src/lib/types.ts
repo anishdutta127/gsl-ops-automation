@@ -917,6 +917,11 @@ export interface CommunicationTemplate {
   lastEditedAt: string           // ISO
   active: boolean
   auditLog: AuditEntry[]
+  /**
+   * P2b.X OCC (2026-05-24): version for optimistic concurrency on
+   * /admin/templates/[id]/edit. Same shape as CcRule.version.
+   */
+  version?: number
 }
 
 // ============================================================================
@@ -1172,6 +1177,15 @@ export interface CcRule {
   disabledBy: string | null
   disabledReason: string | null
   auditLog: AuditEntry[]
+  /**
+   * P2b.X OCC (2026-05-24): version for optimistic concurrency on
+   * /admin/cc-rules/[ruleId] edits. cc_user_ids + contexts are
+   * REPLACE-on-update form-submit fields; two wildcard admins editing
+   * the same rule would otherwise clobber each other silently.
+   * Defaults to 1 (column default in postgres); optional in the type
+   * for pre-postgres records.
+   */
+  version?: number
 }
 
 // ============================================================================
@@ -1845,6 +1859,12 @@ export interface VexProduct {
   /** Unit price set per PI; null until accounts captures one. */
   defaultUnitPrice: number | null
   active: boolean
+  /**
+   * P3 OCC (2026-05-24): version for optimistic concurrency on
+   * /admin/operations/vex/products/[partNumber]/edit. Same pattern as
+   * CcRule.version / CommunicationTemplate.version.
+   */
+  version?: number
 }
 
 export interface VexLineItem {
@@ -2171,6 +2191,17 @@ export interface KitDispatch {
    * from an Excel import.
    */
   importNotes?: string | null
+  /**
+   * P2b.X OCC (2026-05-24): optimistic-concurrency version. Incremented
+   * on every UPDATE that touches the replace-on-update fields
+   * (allocations, dispatch_summary, shipment_tracking, pod). The lib
+   * loads `version` with the record; the route passes it back in the
+   * write request; the repo's atomic update checks `WHERE version=$1`
+   * and bumps. If 0 rows affected, the route returns 409 Conflict and
+   * the UI prompts the operator to reload. Optional in the type for
+   * pre-postgres records and tests; defaults to 1 in postgres.
+   */
+  version?: number
 }
 
 // ============================================================================
@@ -2213,5 +2244,11 @@ export interface StageResponsibility {
   updatedBy: string
   /** Append-only history of leadership edits. */
   audit: AuditEntry[]
+  /**
+   * P3 OCC (2026-05-24): version for optimistic concurrency on
+   * /admin/stage-responsibility. Two leadership members editing the
+   * same stage concurrently would otherwise clobber.
+   */
+  version?: number
 }
 

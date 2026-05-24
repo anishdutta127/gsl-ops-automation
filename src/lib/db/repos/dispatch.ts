@@ -215,4 +215,111 @@ export const dispatchRepo = {
       } as unknown as Record<string, unknown>,
     })
   },
+
+  /**
+   * P2b.X OCC #3 (2026-05-24): set override_event with a NULL-check
+   * guard. The state machine is single-step (null -> object) so a
+   * full version column is overkill. Instead the conditional UPDATE
+   * fires only when override_event IS NULL; if another writer landed
+   * first the UPDATE affects 0 rows and we surface { ok: false,
+   * reason: 'already-overridden' } so the route returns 409.
+   *
+   * **Important**: this method REPLACES the in-memory idempotency
+   * check that previously lived in overrideAudit.writeP2Override
+   * (line 105). That check was bypassable by concurrent reads
+   * (deps.dispatches snapshot). This data-layer guard is enforced
+   * by postgres regardless of what the lib snapshot sees.
+   *
+   * Audit + scalar field updates land in the same UPDATE. On
+   * conflict NOTHING lands (loser's audit not recorded - correct,
+   * their override didn't happen).
+   */
+  async setOverrideEventIfNull(
+    id: string,
+    overrideEvent: import('@/lib/types').DispatchOverrideEvent,
+    audit: AuditEntry,
+    opts?: { queuedBy?: string },
+  ): Promise<{ ok: true } | { ok: false; reason: 'already-overridden' | 'dispatch-not-found' }> {
+    if (currentBackend() === 'postgres') {
+      const sql = getSql()
+      const rows = await sql<{ id: string }[]>`
+        UPDATE dispatches SET
+          override_event = ${sql.json(overrideEvent as never)}::jsonb,
+          audit_log = audit_log || ${sql.json([audit] as never)}::jsonb
+        WHERE id = ${id} AND override_event IS NULL
+        RETURNING id
+      `
+      if (rows.length === 1) return { ok: true }
+      // Distinguish "row doesn't exist" from "row exists but already overridden".
+      const exists = await sql<{ id: string }[]>`SELECT id FROM dispatches WHERE id = ${id}`
+      if (exists.length === 0) return { ok: false, reason: 'dispatch-not-found' }
+      return { ok: false, reason: 'already-overridden' }
+    }
+    // json mode: in-memory atomic snapshot (queue serialises).
+    const d = jsonDispatches.find((x) => x.id === id)
+    if (!d) return { ok: false, reason: 'dispatch-not-found' }
+    if (d.overrideEvent !== null) return { ok: false, reason: 'already-overridden' }
+    const updated: Dispatch = {
+      ...d, overrideEvent,
+      auditLog: [...(d.auditLog ?? []), audit],
+    }
+    await enqueueUpdate({
+      queuedBy: opts?.queuedBy ?? 'system',
+      entity: 'dispatch',
+      operation: 'update',
+      payload: updated as unknown as Record<string, unknown>,
+    })
+    return { ok: true }
+  },
+
+  /**
+   * P2b.X OCC #3: acknowledge an existing override with a JSONB-key
+   * NULL-check. Conditional UPDATE matches only when override_event
+   * is set AND override_event->>'acknowledgedBy' IS NULL. Same data-
+   * layer guard as setOverrideEventIfNull - replaces the in-memory
+   * idempotency check at overrideAudit.writeOverrideAcknowledgement
+   * line 223.
+   */
+  async acknowledgeOverrideIfUnacknowledged(
+    id: string,
+    updatedOverrideEvent: import('@/lib/types').DispatchOverrideEvent,
+    audit: AuditEntry,
+    opts?: { queuedBy?: string },
+  ): Promise<{ ok: true } | { ok: false; reason: 'no-override' | 'already-acknowledged' | 'dispatch-not-found' }> {
+    if (currentBackend() === 'postgres') {
+      const sql = getSql()
+      const rows = await sql<{ id: string }[]>`
+        UPDATE dispatches SET
+          override_event = ${sql.json(updatedOverrideEvent as never)}::jsonb,
+          audit_log = audit_log || ${sql.json([audit] as never)}::jsonb
+        WHERE id = ${id}
+          AND override_event IS NOT NULL
+          AND override_event->>'acknowledgedBy' IS NULL
+        RETURNING id
+      `
+      if (rows.length === 1) return { ok: true }
+      // Diagnose which precondition failed.
+      const cur = await sql<{ override_event: Json | null }[]>`
+        SELECT override_event FROM dispatches WHERE id = ${id}
+      `
+      if (cur.length === 0) return { ok: false, reason: 'dispatch-not-found' }
+      if (cur[0]!.override_event == null) return { ok: false, reason: 'no-override' }
+      return { ok: false, reason: 'already-acknowledged' }
+    }
+    const d = jsonDispatches.find((x) => x.id === id)
+    if (!d) return { ok: false, reason: 'dispatch-not-found' }
+    if (d.overrideEvent == null) return { ok: false, reason: 'no-override' }
+    if (d.overrideEvent.acknowledgedBy != null) return { ok: false, reason: 'already-acknowledged' }
+    const updated: Dispatch = {
+      ...d, overrideEvent: updatedOverrideEvent,
+      auditLog: [...(d.auditLog ?? []), audit],
+    }
+    await enqueueUpdate({
+      queuedBy: opts?.queuedBy ?? 'system',
+      entity: 'dispatch',
+      operation: 'update',
+      payload: updated as unknown as Record<string, unknown>,
+    })
+    return { ok: true }
+  },
 }

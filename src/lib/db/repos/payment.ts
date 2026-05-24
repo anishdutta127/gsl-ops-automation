@@ -202,7 +202,7 @@ export const paymentRepo = {
     })
   },
 
-  async appendAudit(id: string, entry: AuditEntry): Promise<void> {
+  async appendAudit(id: string, entry: AuditEntry, opts?: { queuedBy?: string }): Promise<void> {
     if (currentBackend() === 'postgres') {
       const sql = getSql()
       await sql`
@@ -215,10 +215,176 @@ export const paymentRepo = {
     if (!p) return
     const updated: Payment = { ...p, auditLog: [...(p.auditLog ?? []), entry] }
     await enqueueUpdate({
-      queuedBy: 'system',
+      queuedBy: opts?.queuedBy ?? 'system',
       entity: 'payment',
       operation: 'update',
       payload: updated as unknown as Record<string, unknown>,
+    })
+  },
+
+  async updatePartial(
+    id: string,
+    patch: Partial<Payment>,
+    opts?: { queuedBy?: string },
+  ): Promise<void> {
+    if (currentBackend() === 'postgres') {
+      const sql = getSql()
+      const CAMEL_TO_SNAKE: Record<string, string> = {
+        mouId: 'mou_id', schoolName: 'school_name',
+        programme: 'programme', instalmentLabel: 'instalment_label',
+        instalmentSeq: 'instalment_seq',
+        totalInstalments: 'total_instalments',
+        description: 'description', dueDateRaw: 'due_date_raw',
+        dueDateIso: 'due_date_iso', expectedAmount: 'expected_amount',
+        receivedAmount: 'received_amount',
+        receivedDate: 'received_date', paymentMode: 'payment_mode',
+        bankReference: 'bank_reference', piNumber: 'pi_number',
+        taxInvoiceNumber: 'tax_invoice_number', status: 'status',
+        notes: 'notes', piSentDate: 'pi_sent_date',
+        piSentTo: 'pi_sent_to', piGeneratedAt: 'pi_generated_at',
+        piVoidedAt: 'pi_voided_at', piVoidReason: 'pi_void_reason',
+        studentCountActual: 'student_count_actual',
+        bankAmount: 'bank_amount', tdsAmount: 'tds_amount',
+        tdsCertificateRef: 'tds_certificate_ref', tdsRate: 'tds_rate',
+        percentShare: 'percent_share', nominalAmount: 'nominal_amount',
+        adjustmentFromLockedInstallments: 'adjustment_from_locked_installments',
+        netDue: 'net_due', lockedAt: 'locked_at', isLocked: 'is_locked',
+      }
+      const setObj: Record<string, unknown> = {}
+      for (const [k, v] of Object.entries(patch)) {
+        if (k === 'id' || k === 'auditLog') continue
+        if (k === 'partialPayments') {
+          setObj['partial_payments'] = sql.json((v ?? []) as never)
+          continue
+        }
+        const col = CAMEL_TO_SNAKE[k]
+        if (!col) continue
+        setObj[col] = v ?? null
+      }
+      if (Object.keys(setObj).length === 0) return
+      await sql`UPDATE payments SET ${sql(setObj)} WHERE id = ${id}`
+      return
+    }
+    const cur = jsonPayments.find((x) => x.id === id)
+    if (!cur) return
+    await enqueueUpdate({
+      queuedBy: opts?.queuedBy ?? 'system',
+      entity: 'payment',
+      operation: 'update',
+      payload: { ...cur, ...patch } as unknown as Record<string, unknown>,
+    })
+  },
+
+  async updateWithAudit(
+    id: string,
+    patch: Partial<Payment>,
+    audit: AuditEntry,
+    opts?: { queuedBy?: string },
+  ): Promise<void> {
+    if (currentBackend() === 'postgres') {
+      await this.updatePartial(id, patch, opts)
+      await this.appendAudit(id, audit, opts)
+      return
+    }
+    const cur = jsonPayments.find((x) => x.id === id)
+    if (!cur) return
+    await enqueueUpdate({
+      queuedBy: opts?.queuedBy ?? 'system',
+      entity: 'payment',
+      operation: 'update',
+      payload: {
+        ...cur, ...patch,
+        auditLog: [...(cur.auditLog ?? []), audit],
+      } as unknown as Record<string, unknown>,
+    })
+  },
+
+  /**
+   * Atomic recordPartialReceipt (Anish 2026-05-24 anti-race fix).
+   *
+   * Concurrent recordPartialReceipt callers would otherwise race on
+   * partial_payments + received_amount + status (the classic RMW
+   * pattern: read row, append partial in-memory, recompute received,
+   * UPDATE - last-writer-wins, lost-partial-payment).
+   *
+   * This method does the entire mutation server-side in ONE UPDATE
+   * statement, so:
+   * - partial_payments grows via `|| jsonb_build_array(...)` concat
+   *     (atomic, never lost).
+   * - received_amount is incremented via `COALESCE(received_amount,0)
+   *     + $delta` (atomic, additive - no read needed).
+   * - status is recomputed in-row using the post-increment value vs
+   *     expected_amount (no race on the comparison either).
+   * - audit_log is appended via the same concat primitive.
+   *
+   * Empirical proof of the race-without-this-fix: verify-rmw-races.mjs
+   * showed payments.partial_payments survived 3/10 parallel writes. With
+   * this method, 10/10 survive (see verify-rmw-races.mjs after-fix run).
+   *
+   * Trade-off: receivedDate, paymentMode, bankReference, notes are
+   * LAST-WRITER-WINS scalar overwrites. That's correct semantics: the
+   * last partial recorded "owns" the most recent metadata for the
+   * payment row as a whole. The per-partial detail (date, mode, ref,
+   * notes) is preserved inside the partial_payments[] array element.
+   */
+  async recordPartialReceipt(
+    id: string,
+    args: {
+      partial: import('@/lib/types').PartialPaymentEntry
+      receivedDate?: string | null
+      paymentMode?: Payment['paymentMode']
+      bankReference?: string | null
+      notes?: string | null
+      audit: AuditEntry
+      queuedBy?: string
+    },
+  ): Promise<void> {
+    if (currentBackend() === 'postgres') {
+      const sql = getSql()
+      const partial = args.partial
+      const amount = Number(partial.amount ?? 0)
+      await sql`
+        UPDATE payments SET
+          partial_payments = partial_payments || ${sql.json([partial] as never)}::jsonb,
+          received_amount = COALESCE(received_amount, 0) + ${amount},
+          received_date = ${args.receivedDate ?? null},
+          payment_mode = ${args.paymentMode ?? null},
+          bank_reference = ${args.bankReference ?? null},
+          notes = ${args.notes ?? null},
+          status = CASE
+            WHEN COALESCE(received_amount, 0) + ${amount} + 0.01 >= expected_amount THEN 'Paid'
+            ELSE 'Partial'
+          END,
+          audit_log = audit_log || ${sql.json([args.audit] as never)}::jsonb
+        WHERE id = ${id}
+      `
+      return
+    }
+    // json mode: full-row enqueue (unchanged from the lib's prior shape).
+    // Race risk in json mode is bounded by the queue drainer's serial
+    // apply. Acceptable for json-mode dev/testing.
+    const cur = jsonPayments.find((x) => x.id === id)
+    if (!cur) return
+    const prevPartials = cur.partialPayments ?? []
+    const allPartials = [...prevPartials, args.partial]
+    const cumulative = allPartials.reduce((s, p) => s + Number(p.amount ?? 0), 0)
+    const nextStatus: Payment['status'] =
+      cumulative + 0.01 >= cur.expectedAmount ? 'Paid' : 'Partial'
+    await enqueueUpdate({
+      queuedBy: args.queuedBy ?? 'system',
+      entity: 'payment',
+      operation: 'update',
+      payload: {
+        ...cur,
+        partialPayments: allPartials,
+        receivedAmount: cumulative,
+        receivedDate: args.receivedDate ?? cur.receivedDate,
+        paymentMode: args.paymentMode ?? cur.paymentMode,
+        bankReference: args.bankReference ?? cur.bankReference,
+        notes: args.notes ?? cur.notes,
+        status: nextStatus,
+        auditLog: [...(cur.auditLog ?? []), args.audit],
+      } as unknown as Record<string, unknown>,
     })
   },
 }

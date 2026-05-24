@@ -211,4 +211,82 @@ export const vexPiRepo = {
       payload: updated as unknown as Record<string, unknown>,
     })
   },
+
+  /**
+   * Atomic recordVexPayment (Anish 2026-05-24 RMW-race fix - MONEY route).
+   *
+   * Concurrent payment-recording on the same VexPi would otherwise race
+   * on payment_log_ids + payment_received_amount + status: classic RMW
+   * pattern - read pi, push logId, recompute amount + status, write
+   * back, last-writer-wins, lost payment_log_id.
+   *
+   * This method does the entire mutation server-side in ONE UPDATE:
+   *   - payment_log_ids grows via `|| jsonb_build_array(logId)` (atomic).
+   *   - payment_received_amount += $amount (atomic additive).
+   *   - status is recomputed in-row using the post-increment value vs
+   *     pi.total (no race on the comparison).
+   *   - audit_log is appended via the same concat primitive.
+   *
+   * Empirical proof of the race-without-this-fix: verify-rmw-races.mjs
+   * showed vex_pis.payment_log_ids survived 1/10 parallel writes.
+   * With this method: 10/10 (see verify-vex-payment-atomic.mjs).
+   *
+   * Status transition rules mirror the route's pre-fix logic:
+   *   - If new_received >= total AND status was 'Completed': keep 'Completed'.
+   *   - If new_received >= total AND status was anything else: 'Delivery Pending'.
+   *   - If new_received < total AND status was 'Generated': 'Payment Pending'.
+   *   - Otherwise: preserve current status.
+   */
+  async recordVexPayment(
+    id: string,
+    args: {
+      logId: string
+      amount: number
+      audit: AuditEntry
+      queuedBy?: string
+    },
+  ): Promise<void> {
+    if (currentBackend() === 'postgres') {
+      const sql = getSql()
+      await sql`
+        UPDATE vex_pis SET
+          payment_log_ids = payment_log_ids || ${sql.json([args.logId] as never)}::jsonb,
+          payment_received_amount = ROUND(
+            (COALESCE(payment_received_amount, 0) + ${args.amount})::numeric, 2
+          ),
+          status = CASE
+            WHEN COALESCE(payment_received_amount, 0) + ${args.amount} >= total
+              THEN CASE WHEN status = 'Completed' THEN 'Completed' ELSE 'Delivery Pending' END
+            WHEN status = 'Generated' THEN 'Payment Pending'
+            ELSE status
+          END,
+          audit_log = audit_log || ${sql.json([args.audit] as never)}::jsonb
+        WHERE id = ${id}
+      `
+      return
+    }
+    // json mode: full-row enqueue (drainer serialises).
+    const v = jsonVexPis.find((x) => x.id === id)
+    if (!v) return
+    const newAmount = Math.round((v.paymentReceivedAmount + args.amount) * 100) / 100
+    let newStatus: VexPi['status'] = v.status
+    if (newAmount >= v.total) {
+      newStatus = v.status === 'Completed' ? 'Completed' : 'Delivery Pending'
+    } else if (v.status === 'Generated') {
+      newStatus = 'Payment Pending'
+    }
+    const updated: VexPi = {
+      ...v,
+      paymentLogIds: [...(v.paymentLogIds ?? []), args.logId],
+      paymentReceivedAmount: newAmount,
+      status: newStatus,
+      auditLog: [...(v.auditLog ?? []), args.audit],
+    }
+    await enqueueUpdate({
+      queuedBy: args.queuedBy ?? 'system',
+      entity: 'vexPi',
+      operation: 'update',
+      payload: updated as unknown as Record<string, unknown>,
+    })
+  },
 }

@@ -96,7 +96,7 @@ Some entities still need updatePartial + updateWithAudit added to their repos:
 - userRepo (no current need based on these lib files, but adding for consistency)
 - paymentRepo (only update + appendAudit; needs updatePartial + updateWithAudit for reissuePi/confirmMatch)
 - communicationRepo (leafRepos, needs append-style methods)
-- ccRuleRepo, salesOpportunityRepo, schoolGroupRepo, intakeRecordRepo, lifecycleRuleRepo, communicationTemplateRepo — same
+- ccRuleRepo, salesOpportunityRepo, schoolGroupRepo, intakeRecordRepo, lifecycleRuleRepo, communicationTemplateRepo - same
 
 Plan: add all required repo methods in P2b commit 1, then route migrations in P2b commits 2+.
 

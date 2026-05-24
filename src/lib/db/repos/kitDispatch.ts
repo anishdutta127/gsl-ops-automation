@@ -40,6 +40,7 @@ interface KitDispatchRow {
   import_notes: string | null
   created_at: string
   audit_log: Json
+  version: number
 }
 
 function rowToKitDispatch(r: KitDispatchRow): KitDispatch {
@@ -61,6 +62,7 @@ function rowToKitDispatch(r: KitDispatchRow): KitDispatch {
     auditLog: Array.isArray(r.audit_log) ? r.audit_log : [],
     createdAt: r.created_at,
     importNotes: r.import_notes ?? null,
+    version: r.version ?? 1,
   } as KitDispatch
 }
 
@@ -254,5 +256,126 @@ export const kitDispatchRepo = {
         auditLog: [...(cur.auditLog ?? []), audit],
       } as unknown as Record<string, unknown>,
     })
+  },
+
+  /**
+   * P2b.X OCC update (2026-05-24): optimistic-concurrency mutation of
+   * the REPLACE-on-update fields (allocations, dispatchSummary,
+   * shipmentTracking, pod, plus the related scalar fields). The
+   * caller supplies the version it loaded; we UPDATE only if the row
+   * still has that version. Bumps version on success. On conflict
+   * (0 rows affected), returns `{ ok: false, conflictVersion }` so
+   * the route can surface a 409 to the UI; the operator reloads and
+   * retries with the fresh state.
+   *
+   * Why OCC and not row-lock or atomic-append: these fields are
+   * form-replace by intent (the user submits the WHOLE allocations
+   * array, not "add one item"). Row-lock would still let the second
+   * writer's REPLACE silently overwrite the first; only OCC fails the
+   * loser cleanly so we can show them the conflict before their work
+   * is lost.
+   *
+   * Audit_log on the row is appended atomically inside the same
+   * statement via `audit_log || jsonb` - both editors' audit entries
+   * survive even on the loser's 409 (the loser's audit lands first,
+   * then their UPDATE fails the version check, then we explicitly
+   * REVERT the audit append below... actually no, simpler: don't
+   * append the audit if the conflict check fails. Implemented below).
+   *
+   * Empirical proof: scripts/verify-allocations-occ.mjs - 10 parallel
+   * writers, 1 winner + 9 clean conflicts, no silent overwrite.
+   */
+  async updateAllocationsOCC(
+    id: string,
+    expectedVersion: number,
+    patch: Partial<Pick<KitDispatch,
+      'allocations' | 'dispatchSummary' | 'shipmentTracking' | 'pod'
+      | 'dispatchStatus' | 'salesApprovalStatus' | 'salesApprovedBy'
+      | 'salesApprovedAt' | 'salesRejectionReason' | 'productSelected'
+    >>,
+    audit: AuditEntry,
+    opts?: { queuedBy?: string },
+  ): Promise<{ ok: true; newVersion: number } | { ok: false; conflictVersion: number }> {
+    if (currentBackend() === 'postgres') {
+      const sql = getSql()
+      const allocations = patch.allocations === undefined
+        ? null : sql.json((patch.allocations ?? []) as never)
+      const dispatchSummary = patch.dispatchSummary === undefined
+        ? null : (patch.dispatchSummary == null ? null : sql.json(patch.dispatchSummary as never))
+      const shipmentTracking = patch.shipmentTracking === undefined
+        ? null : (patch.shipmentTracking == null ? null : sql.json(patch.shipmentTracking as never))
+      const pod = patch.pod === undefined
+        ? null : (patch.pod == null ? null : sql.json(patch.pod as never))
+      // Conditional UPDATE: only changes fields the caller supplied.
+      // postgres COALESCE keeps current value when the parameter is the
+      // explicit sentinel (we use NULL + a parallel "should-update" flag).
+      // To avoid a complex CASE matrix, we just always include the column
+      // and use the new value when supplied, else keep current via a
+      // sub-expression. This is verbose but correct.
+      const rows = await sql<{ version: number }[]>`
+        UPDATE kit_dispatches SET
+          allocations = ${patch.allocations === undefined
+            ? sql`allocations`
+            : sql`${allocations}::jsonb`},
+          dispatch_summary = ${patch.dispatchSummary === undefined
+            ? sql`dispatch_summary`
+            : sql`${dispatchSummary}::jsonb`},
+          shipment_tracking = ${patch.shipmentTracking === undefined
+            ? sql`shipment_tracking`
+            : sql`${shipmentTracking}::jsonb`},
+          pod = ${patch.pod === undefined
+            ? sql`pod`
+            : sql`${pod}::jsonb`},
+          dispatch_status = ${patch.dispatchStatus === undefined
+            ? sql`dispatch_status`
+            : sql`${patch.dispatchStatus}`},
+          sales_approval_status = ${patch.salesApprovalStatus === undefined
+            ? sql`sales_approval_status`
+            : sql`${patch.salesApprovalStatus}`},
+          sales_approved_by = ${patch.salesApprovedBy === undefined
+            ? sql`sales_approved_by`
+            : sql`${patch.salesApprovedBy ?? null}`},
+          sales_approved_at = ${patch.salesApprovedAt === undefined
+            ? sql`sales_approved_at`
+            : sql`${patch.salesApprovedAt ?? null}`},
+          sales_rejection_reason = ${patch.salesRejectionReason === undefined
+            ? sql`sales_rejection_reason`
+            : sql`${patch.salesRejectionReason ?? null}`},
+          product_selected = ${patch.productSelected === undefined
+            ? sql`product_selected`
+            : sql`${patch.productSelected ?? null}`},
+          audit_log = audit_log || ${sql.json([audit] as never)}::jsonb,
+          version = version + 1
+        WHERE id = ${id} AND version = ${expectedVersion}
+        RETURNING version
+      `
+      if (rows.length === 1) {
+        return { ok: true, newVersion: rows[0]!.version }
+      }
+      // Conflict: read current version so the route can surface it to
+      // the UI.
+      const cur = await sql<{ version: number }[]>`SELECT version FROM kit_dispatches WHERE id = ${id}`
+      return { ok: false, conflictVersion: cur[0]?.version ?? -1 }
+    }
+    // json mode: OCC by version compare; serialised by queue drainer.
+    const cur = jsonKitDispatches.find((x) => x.id === id)
+    if (!cur) return { ok: false, conflictVersion: -1 }
+    const curVersion = cur.version ?? 1
+    if (curVersion !== expectedVersion) {
+      return { ok: false, conflictVersion: curVersion }
+    }
+    const merged: KitDispatch = {
+      ...cur,
+      ...patch,
+      auditLog: [...(cur.auditLog ?? []), audit],
+      version: curVersion + 1,
+    }
+    await enqueueUpdate({
+      queuedBy: opts?.queuedBy ?? 'system',
+      entity: 'kitDispatch',
+      operation: 'update',
+      payload: merged as unknown as Record<string, unknown>,
+    })
+    return { ok: true, newVersion: curVersion + 1 }
   },
 }
