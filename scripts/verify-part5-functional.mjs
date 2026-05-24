@@ -882,14 +882,15 @@ const FUNCTIONS = [
       const r = await sql`SELECT jsonb_array_length(audit_log) AS len FROM dispatches WHERE id = ${d.id}`
       const afterLen = Number(r[0].len)
       const ok = afterLen === beforeLen + 10
-      // Trim back to baseline
+      // Trim back to baseline (COALESCE guards the beforeLen=0 case
+      // where jsonb_agg on zero rows returns NULL, not '[]')
       await sql`
-        UPDATE dispatches SET audit_log = (
+        UPDATE dispatches SET audit_log = COALESCE((
           SELECT jsonb_agg(elem) FROM (
             SELECT elem FROM jsonb_array_elements(audit_log) WITH ORDINALITY AS x(elem, n)
             ORDER BY n LIMIT ${beforeLen}
           ) y
-        ) WHERE id = ${d.id}
+        ), '[]'::jsonb) WHERE id = ${d.id}
       `
       return {
         layer1: { drove: '10 parallel UPDATE dispatches audit_log || ...' },

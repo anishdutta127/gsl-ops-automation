@@ -286,6 +286,9 @@ export const mouRepo = {
         gradewiseDistribution: 'gradewise_distribution',
         studentCountEventIds: 'student_count_event_ids',
       }
+      const TIMESTAMP_COLS = new Set([
+        'effective_date', 'start_date', 'end_date', 'generated_at',
+      ])
       const updates: { col: string; val: unknown; jsonb: boolean }[] = []
       for (const [k, v] of Object.entries(patch)) {
         if (k === 'id' || k === 'auditLog') continue
@@ -297,11 +300,16 @@ export const mouRepo = {
       // postgres.js: build the SET clause via the sql() helper. JSONB
       // columns must be wrapped with sql.json() so they're sent as
       // JSONB, not as text. Scalars pass through unchanged.
+      // Timestamp columns: empty strings from rowToMou's null fallback
+      // must be converted back to null, otherwise postgres.js throws
+      // RangeError: Invalid time value during Date serialization.
       const setObj: Record<string, unknown> = {}
       for (const u of updates) {
         if (u.jsonb) {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           setObj[u.col] = u.val == null ? null : sql.json(u.val as never)
+        } else if (TIMESTAMP_COLS.has(u.col) && u.val === '') {
+          setObj[u.col] = null
         } else {
           setObj[u.col] = u.val ?? null
         }
