@@ -17,25 +17,14 @@
  */
 
 import { redirect } from 'next/navigation'
-import type {
-  Dispatch,
-  Escalation,
-  KitDispatch,
-  MOU,
-  Payment,
-  PaymentLog,
-  School,
-  User,
-} from '@/lib/types'
-import mousJson from '@/data/mous.json'
-import paymentsJson from '@/data/payments.json'
-import paymentLogsJson from '@/data/payment_logs.json'
-import schoolsJson from '@/data/schools.json'
-import escalationsJson from '@/data/escalations.json'
-import dispatchesJson from '@/data/dispatches.json'
-import kitDispatchesJson from '@/data/kit_dispatches.json'
-import homepageActionLogJson from '@/data/homepage_action_log.json'
-import usersJson from '@/data/users.json'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { paymentRepo } from '@/lib/db/repos/payment'
+import { schoolRepo } from '@/lib/db/repos/school'
+import { escalationRepo } from '@/lib/db/repos/escalation'
+import { dispatchRepo } from '@/lib/db/repos/dispatch'
+import { kitDispatchRepo } from '@/lib/db/repos/kitDispatch'
+import { userRepo } from '@/lib/db/repos/user'
+import { paymentLogRepo, homepageActionLogRepo } from '@/lib/db/repos/leafRepos'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canEditMOU } from '@/lib/access'
 import { TopNav } from '@/components/ops/TopNav'
@@ -61,18 +50,29 @@ import {
   type ActionLogEntry,
 } from '@/lib/homepage/rollover'
 
-const allMous = mousJson as unknown as MOU[]
-const allPayments = paymentsJson as unknown as Payment[]
-const allPaymentLogs = paymentLogsJson as unknown as PaymentLog[]
-const allSchools = schoolsJson as unknown as School[]
-const allEscalations = escalationsJson as unknown as Escalation[]
-const allDispatches = dispatchesJson as unknown as Dispatch[]
-const allKitDispatches = kitDispatchesJson as unknown as KitDispatch[]
-const allUsers = usersJson as unknown as User[]
-
 export default async function HomePage() {
   const user = await getCurrentUser()
   if (!user) redirect('/login?next=%2F')
+
+  const [
+    allMous,
+    allPayments,
+    allPaymentLogs,
+    allSchools,
+    allEscalations,
+    allDispatches,
+    allKitDispatches,
+    allUsers,
+  ] = await Promise.all([
+    mouRepo.findAll(),
+    paymentRepo.findAll(),
+    paymentLogRepo.findAll(),
+    schoolRepo.findAll(),
+    escalationRepo.findAll(),
+    dispatchRepo.findAll(),
+    kitDispatchRepo.findAll(),
+    userRepo.findAll(),
+  ])
 
   const now = new Date()
   const fy = currentFiscalYear(now)
@@ -151,7 +151,7 @@ export default async function HomePage() {
     NO_OP_AI_INSIGHTS,
   )
   const todayIso = now.toISOString().slice(0, 10)
-  const log = homepageActionLogJson as unknown as ActionLogEntry[]
+  const log = (await homepageActionLogRepo.findAll()) as unknown as ActionLogEntry[]
   const promoted = applyRollover(rawItems, { todayIso, user: { id: user.id }, log })
   const stripItems = applyDismissals(promoted, {
     todayIso,

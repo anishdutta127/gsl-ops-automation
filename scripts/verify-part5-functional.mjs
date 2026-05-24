@@ -995,36 +995,38 @@ const FUNCTIONS = [
     name: 'P2a-concurrency: 10 parallel vendor audit appends',
     category: 'write',
     run: async () => {
-      const v = (await sql`SELECT id FROM vendors LIMIT 1`)[0]
-      if (!v) return { layer1: {}, layer2: {}, layer3: {}, pass: true, notes: 'skipped - no vendors seeded' }
-      const before = await sql`SELECT jsonb_array_length(audit_log) AS len FROM vendors WHERE id = ${v.id}`
-      const beforeLen = Number(before[0].len)
-      const ts = Date.now()
-      await Promise.all(
-        Array.from({ length: 10 }, (_, idx) =>
-          sql`UPDATE vendors SET audit_log = audit_log || ${sql.json([{
-            timestamp: new Date(ts + idx).toISOString(), user: 'p2a-test',
-            action: 'update', notes: `vendor-conc-${idx}`,
-          }])}::jsonb WHERE id = ${v.id}`,
-        ),
-      )
-      const r = await sql`SELECT jsonb_array_length(audit_log) AS len FROM vendors WHERE id = ${v.id}`
-      const afterLen = Number(r[0].len)
-      const ok = afterLen - beforeLen === 10
+      // FIXTURE SEED: vendors table is empty in staging; create a
+      // temp row so the concurrency test actually runs. Tear down
+      // in finally{}. This is the "no silent-skip" pattern - a test
+      // that passes by not running is not proof.
+      const id = `VND-P2BFIX-${Date.now().toString(36).slice(-6).toUpperCase()}`
       await sql`
-        UPDATE vendors SET audit_log = (
-          SELECT jsonb_agg(elem) FROM (
-            SELECT elem FROM jsonb_array_elements(audit_log) WITH ORDINALITY AS x(elem, n)
-            ORDER BY n LIMIT ${beforeLen}
-          ) y
-        ) WHERE id = ${v.id}
+        INSERT INTO vendors (id, name, legal_entity, category, active, audit_log)
+        VALUES (${id}, 'P2b Concurrency Fixture', 'Test Pvt Ltd', 'Test', TRUE,
+          ${sql.json([])}::jsonb)
       `
-      return {
-        layer1: { drove: '10 parallel UPDATE vendors audit_log || ...' },
-        layer2: { beforeLen, afterLen, grew: afterLen - beforeLen },
-        layer3: { ok },
-        pass: ok,
-        notes: `vendor ${v.id}: grew by ${afterLen - beforeLen}/10 (covers vendors/edit route)`,
+      try {
+        const ts = Date.now()
+        await Promise.all(
+          Array.from({ length: 10 }, (_, idx) =>
+            sql`UPDATE vendors SET audit_log = audit_log || ${sql.json([{
+              timestamp: new Date(ts + idx).toISOString(), user: 'p2a-test',
+              action: 'update', notes: `vendor-conc-${idx}`,
+            }])}::jsonb WHERE id = ${id}`,
+          ),
+        )
+        const r = await sql`SELECT jsonb_array_length(audit_log) AS len FROM vendors WHERE id = ${id}`
+        const afterLen = Number(r[0].len)
+        const ok = afterLen === 10
+        return {
+          layer1: { drove: '10 parallel UPDATE vendors audit_log || ... (FIXTURE-seeded)' },
+          layer2: { afterLen, expected: 10 },
+          layer3: { ok },
+          pass: ok,
+          notes: `vendor ${id} (temp fixture): ${afterLen}/10 (covers vendors/edit route)`,
+        }
+      } finally {
+        await sql`DELETE FROM vendors WHERE id = ${id}`
       }
     },
   },
@@ -1087,6 +1089,353 @@ const FUNCTIONS = [
         layer3: { renderedOk, screenshot: shotPath },
         pass: renderedOk && sqlCount > 0,
         notes: `${sqlCount} active MOUs in postgres; page rendered`,
+      }
+    },
+  },
+
+  // -------------------------------------------------------------------------
+  // P2b concurrency: 9 entity audit_log || concat proofs for the
+  // remaining audited entities the smart-bridge dispatches through.
+  // Each test seeds a TEMP fixture row, fires 10 parallel UPDATEs, then
+  // tears down in finally{}. The pattern matches vendor (P2b vendor fix).
+  //
+  // Why these prove smart-bridge correctness: the bridge translates a
+  // lib's full-row update into N atomic appendAudit calls (one per new
+  // entry in payload.auditLog). Each appendAudit uses the same
+  // `audit_log = audit_log || jsonb` pattern these tests exercise. If
+  // the primitive races, the bridge would too; if the primitive holds
+  // under N parallel writes, so does the bridge.
+  // -------------------------------------------------------------------------
+  {
+    name: 'P2b-concurrency: 10 parallel school audit appends',
+    category: 'write',
+    run: async () => {
+      const id = `SCH-P2BFIX-${Date.now().toString(36).slice(-6).toUpperCase()}`
+      await sql`
+        INSERT INTO schools (id, name, city, state, region, active, audit_log, created_at)
+        VALUES (${id}, 'P2b School Fixture', 'TestCity', 'TestState', 'south', TRUE,
+          ${sql.json([])}::jsonb, NOW())
+      `
+      try {
+        const ts = Date.now()
+        await Promise.all(
+          Array.from({ length: 10 }, (_, idx) =>
+            sql`UPDATE schools SET audit_log = audit_log || ${sql.json([{
+              timestamp: new Date(ts + idx).toISOString(), user: 'p2b-test',
+              action: 'school-edited', notes: `school-conc-${idx}`,
+            }])}::jsonb WHERE id = ${id}`,
+          ),
+        )
+        const r = await sql`SELECT jsonb_array_length(audit_log) AS len FROM schools WHERE id = ${id}`
+        const afterLen = Number(r[0].len)
+        const ok = afterLen === 10
+        return {
+          layer1: { drove: '10 parallel UPDATE schools audit_log || ... (FIXTURE-seeded)' },
+          layer2: { afterLen, expected: 10 },
+          layer3: { ok },
+          pass: ok,
+          notes: `school ${id} (temp fixture): ${afterLen}/10 (covers editSchool / reassignSalesRep libs)`,
+        }
+      } finally {
+        await sql`DELETE FROM schools WHERE id = ${id}`
+      }
+    },
+  },
+
+  {
+    name: 'P2b-concurrency: 10 parallel payment audit appends',
+    category: 'write',
+    run: async () => {
+      const id = `PAY-P2BFIX-${Date.now().toString(36).slice(-6).toUpperCase()}`
+      // Need a real mou_id for FK; use any existing one.
+      const mou = (await sql`SELECT id, school_name, programme FROM mous LIMIT 1`)[0]
+      await sql`
+        INSERT INTO payments (id, mou_id, school_name, programme, instalment_label,
+          instalment_seq, total_instalments, expected_amount, status, audit_log)
+        VALUES (${id}, ${mou.id}, ${mou.school_name}, ${mou.programme},
+          'P2b Fixture Instalment', 1, 1, 100, 'Pending', ${sql.json([])}::jsonb)
+      `
+      try {
+        const ts = Date.now()
+        await Promise.all(
+          Array.from({ length: 10 }, (_, idx) =>
+            sql`UPDATE payments SET audit_log = audit_log || ${sql.json([{
+              timestamp: new Date(ts + idx).toISOString(), user: 'p2b-test',
+              action: 'payment-matched', notes: `payment-conc-${idx}`,
+            }])}::jsonb WHERE id = ${id}`,
+          ),
+        )
+        const r = await sql`SELECT jsonb_array_length(audit_log) AS len FROM payments WHERE id = ${id}`
+        const afterLen = Number(r[0].len)
+        const ok = afterLen === 10
+        return {
+          layer1: { drove: '10 parallel UPDATE payments audit_log || ... (FIXTURE-seeded)' },
+          layer2: { afterLen, expected: 10 },
+          layer3: { ok },
+          pass: ok,
+          notes: `payment ${id} (temp fixture, FK→${mou.id}): ${afterLen}/10 (covers confirmMatch / reissuePi / reverseAdjustment - MONEY ROUTES)`,
+        }
+      } finally {
+        await sql`DELETE FROM payments WHERE id = ${id}`
+      }
+    },
+  },
+
+  {
+    name: 'P2b-concurrency: 10 parallel vexPi audit appends',
+    category: 'write',
+    run: async () => {
+      const id = `VPI-P2BFIX-${Date.now().toString(36).slice(-6).toUpperCase()}`
+      await sql`
+        INSERT INTO vex_pis (id, pi_number, status, line_items, audit_log)
+        VALUES (${id}, ${`P2BFIX-${Date.now()}`}, 'draft',
+          ${sql.json([])}::jsonb, ${sql.json([])}::jsonb)
+      `
+      try {
+        const ts = Date.now()
+        await Promise.all(
+          Array.from({ length: 10 }, (_, idx) =>
+            sql`UPDATE vex_pis SET audit_log = audit_log || ${sql.json([{
+              timestamp: new Date(ts + idx).toISOString(), user: 'p2b-test',
+              action: 'vex-pi-edited', notes: `vexpi-conc-${idx}`,
+            }])}::jsonb WHERE id = ${id}`,
+          ),
+        )
+        const r = await sql`SELECT jsonb_array_length(audit_log) AS len FROM vex_pis WHERE id = ${id}`
+        const afterLen = Number(r[0].len)
+        const ok = afterLen === 10
+        return {
+          layer1: { drove: '10 parallel UPDATE vex_pis audit_log || ... (FIXTURE-seeded)' },
+          layer2: { afterLen, expected: 10 },
+          layer3: { ok },
+          pass: ok,
+          notes: `vexPi ${id} (temp fixture): ${afterLen}/10 (covers vex/pi/edit lib paths)`,
+        }
+      } finally {
+        await sql`DELETE FROM vex_pis WHERE id = ${id}`
+      }
+    },
+  },
+
+  {
+    name: 'P2b-concurrency: 10 parallel ccRule audit appends',
+    category: 'write',
+    run: async () => {
+      const id = `CC-P2BFIX-${Date.now().toString(36).slice(-6).toUpperCase()}`
+      await sql`
+        INSERT INTO cc_rules (id, sheet, scope, scope_value, contexts, cc_user_ids,
+          enabled, audit_log)
+        VALUES (${id}, 'payments', 'school', 'SCH-P2BFIX',
+          ${sql.json([])}::jsonb, ${sql.json([])}::jsonb, TRUE,
+          ${sql.json([])}::jsonb)
+      `
+      try {
+        const ts = Date.now()
+        await Promise.all(
+          Array.from({ length: 10 }, (_, idx) =>
+            sql`UPDATE cc_rules SET audit_log = audit_log || ${sql.json([{
+              timestamp: new Date(ts + idx).toISOString(), user: 'p2b-test',
+              action: 'cc-rule-edited', notes: `ccrule-conc-${idx}`,
+            }])}::jsonb WHERE id = ${id}`,
+          ),
+        )
+        const r = await sql`SELECT jsonb_array_length(audit_log) AS len FROM cc_rules WHERE id = ${id}`
+        const afterLen = Number(r[0].len)
+        const ok = afterLen === 10
+        return {
+          layer1: { drove: '10 parallel UPDATE cc_rules audit_log || ... (FIXTURE-seeded)' },
+          layer2: { afterLen, expected: 10 },
+          layer3: { ok },
+          pass: ok,
+          notes: `ccRule ${id} (temp fixture): ${afterLen}/10 (covers editCcRule / toggleCcRule libs)`,
+        }
+      } finally {
+        await sql`DELETE FROM cc_rules WHERE id = ${id}`
+      }
+    },
+  },
+
+  {
+    name: 'P2b-concurrency: 10 parallel schoolGroup audit appends',
+    category: 'write',
+    run: async () => {
+      const id = `SG-P2BFIX-${Date.now().toString(36).slice(-6).toUpperCase()}`
+      await sql`
+        INSERT INTO school_groups (id, name, member_school_ids, audit_log)
+        VALUES (${id}, 'P2b SchoolGroup Fixture', ARRAY[]::text[],
+          ${sql.json([])}::jsonb)
+      `
+      try {
+        const ts = Date.now()
+        await Promise.all(
+          Array.from({ length: 10 }, (_, idx) =>
+            sql`UPDATE school_groups SET audit_log = audit_log || ${sql.json([{
+              timestamp: new Date(ts + idx).toISOString(), user: 'p2b-test',
+              action: 'school-group-edited', notes: `sg-conc-${idx}`,
+            }])}::jsonb WHERE id = ${id}`,
+          ),
+        )
+        const r = await sql`SELECT jsonb_array_length(audit_log) AS len FROM school_groups WHERE id = ${id}`
+        const afterLen = Number(r[0].len)
+        const ok = afterLen === 10
+        return {
+          layer1: { drove: '10 parallel UPDATE school_groups audit_log || ... (FIXTURE-seeded)' },
+          layer2: { afterLen, expected: 10 },
+          layer3: { ok },
+          pass: ok,
+          notes: `schoolGroup ${id} (temp fixture): ${afterLen}/10 (covers schoolGroup lib)`,
+        }
+      } finally {
+        await sql`DELETE FROM school_groups WHERE id = ${id}`
+      }
+    },
+  },
+
+  {
+    name: 'P2b-concurrency: 10 parallel communicationTemplate audit appends',
+    category: 'write',
+    run: async () => {
+      const id = `CT-P2BFIX-${Date.now().toString(36).slice(-6).toUpperCase()}`
+      await sql`
+        INSERT INTO communication_templates (id, name, use_case, body_markdown,
+          active, audit_log)
+        VALUES (${id}, 'P2b Template', 'fixture', 'Body markdown', TRUE,
+          ${sql.json([])}::jsonb)
+      `
+      try {
+        const ts = Date.now()
+        await Promise.all(
+          Array.from({ length: 10 }, (_, idx) =>
+            sql`UPDATE communication_templates SET audit_log = audit_log || ${sql.json([{
+              timestamp: new Date(ts + idx).toISOString(), user: 'p2b-test',
+              action: 'comm-template-edited', notes: `ct-conc-${idx}`,
+            }])}::jsonb WHERE id = ${id}`,
+          ),
+        )
+        const r = await sql`SELECT jsonb_array_length(audit_log) AS len FROM communication_templates WHERE id = ${id}`
+        const afterLen = Number(r[0].len)
+        const ok = afterLen === 10
+        return {
+          layer1: { drove: '10 parallel UPDATE communication_templates audit_log || ... (FIXTURE-seeded)' },
+          layer2: { afterLen, expected: 10 },
+          layer3: { ok },
+          pass: ok,
+          notes: `communicationTemplate ${id} (temp fixture): ${afterLen}/10 (covers editTemplate lib)`,
+        }
+      } finally {
+        await sql`DELETE FROM communication_templates WHERE id = ${id}`
+      }
+    },
+  },
+
+  {
+    name: 'P2b-concurrency: 10 parallel intakeRecord audit appends',
+    category: 'write',
+    run: async () => {
+      const id = `IR-P2BFIX-${Date.now().toString(36).slice(-6).toUpperCase()}`
+      const mou = (await sql`SELECT id FROM mous LIMIT 1`)[0]
+      await sql`
+        INSERT INTO intake_records (id, mou_id, completed_at, audit_log)
+        VALUES (${id}, ${mou.id}, NOW(), ${sql.json([])}::jsonb)
+      `
+      try {
+        const ts = Date.now()
+        await Promise.all(
+          Array.from({ length: 10 }, (_, idx) =>
+            sql`UPDATE intake_records SET audit_log = audit_log || ${sql.json([{
+              timestamp: new Date(ts + idx).toISOString(), user: 'p2b-test',
+              action: 'intake-edited', notes: `ir-conc-${idx}`,
+            }])}::jsonb WHERE id = ${id}`,
+          ),
+        )
+        const r = await sql`SELECT jsonb_array_length(audit_log) AS len FROM intake_records WHERE id = ${id}`
+        const afterLen = Number(r[0].len)
+        const ok = afterLen === 10
+        return {
+          layer1: { drove: '10 parallel UPDATE intake_records audit_log || ... (FIXTURE-seeded)' },
+          layer2: { afterLen, expected: 10 },
+          layer3: { ok },
+          pass: ok,
+          notes: `intakeRecord ${id} (temp fixture, FK→${mou.id}): ${afterLen}/10 (covers recordIntake / editIntake libs)`,
+        }
+      } finally {
+        await sql`DELETE FROM intake_records WHERE id = ${id}`
+      }
+    },
+  },
+
+  {
+    name: 'P2b-concurrency: 10 parallel communication audit appends',
+    category: 'write',
+    run: async () => {
+      const id = `COMM-P2BFIX-${Date.now().toString(36).slice(-6).toUpperCase()}`
+      const mou = (await sql`SELECT id, school_id FROM mous LIMIT 1`)[0]
+      await sql`
+        INSERT INTO communications (id, type, school_id, mou_id, channel,
+          cc_emails, queued_at, status, audit_log)
+        VALUES (${id}, 'p2b-fixture', ${mou.school_id}, ${mou.id}, 'email',
+          ${sql.json([])}::jsonb, NOW(), 'queued', ${sql.json([])}::jsonb)
+      `
+      try {
+        const ts = Date.now()
+        await Promise.all(
+          Array.from({ length: 10 }, (_, idx) =>
+            sql`UPDATE communications SET audit_log = audit_log || ${sql.json([{
+              timestamp: new Date(ts + idx).toISOString(), user: 'p2b-test',
+              action: 'comm-marked-sent', notes: `comm-conc-${idx}`,
+            }])}::jsonb WHERE id = ${id}`,
+          ),
+        )
+        const r = await sql`SELECT jsonb_array_length(audit_log) AS len FROM communications WHERE id = ${id}`
+        const afterLen = Number(r[0].len)
+        const ok = afterLen === 10
+        return {
+          layer1: { drove: '10 parallel UPDATE communications audit_log || ... (FIXTURE-seeded)' },
+          layer2: { afterLen, expected: 10 },
+          layer3: { ok },
+          pass: ok,
+          notes: `communication ${id} (temp fixture, FK→${mou.id}): ${afterLen}/10 (covers markCommunicationSent / markSent / markReminderSent libs)`,
+        }
+      } finally {
+        await sql`DELETE FROM communications WHERE id = ${id}`
+      }
+    },
+  },
+
+  {
+    name: 'P2b-concurrency: 10 parallel salesOpportunity audit appends',
+    category: 'write',
+    run: async () => {
+      const id = `OPP-P2BFIX-${Date.now().toString(36).slice(-6).toUpperCase()}`
+      const rep = (await sql`SELECT id FROM sales_team LIMIT 1`)[0]
+      await sql`
+        INSERT INTO sales_opportunities (id, school_name, sales_rep_id, status,
+          audit_log)
+        VALUES (${id}, 'P2b Opportunity Fixture', ${rep.id}, 'lead',
+          ${sql.json([])}::jsonb)
+      `
+      try {
+        const ts = Date.now()
+        await Promise.all(
+          Array.from({ length: 10 }, (_, idx) =>
+            sql`UPDATE sales_opportunities SET audit_log = audit_log || ${sql.json([{
+              timestamp: new Date(ts + idx).toISOString(), user: 'p2b-test',
+              action: 'opportunity-edited', notes: `opp-conc-${idx}`,
+            }])}::jsonb WHERE id = ${id}`,
+          ),
+        )
+        const r = await sql`SELECT jsonb_array_length(audit_log) AS len FROM sales_opportunities WHERE id = ${id}`
+        const afterLen = Number(r[0].len)
+        const ok = afterLen === 10
+        return {
+          layer1: { drove: '10 parallel UPDATE sales_opportunities audit_log || ... (FIXTURE-seeded)' },
+          layer2: { afterLen, expected: 10 },
+          layer3: { ok },
+          pass: ok,
+          notes: `salesOpportunity ${id} (temp fixture): ${afterLen}/10 (covers editOpportunity / markOpportunityLost libs)`,
+        }
+      } finally {
+        await sql`DELETE FROM sales_opportunities WHERE id = ${id}`
       }
     },
   },
