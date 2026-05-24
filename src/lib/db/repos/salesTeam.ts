@@ -7,6 +7,34 @@
  *
  * Two reps (sp-brij-singh, sp-kranthi) have null email -- the
  * 002-fixups.sql migration relaxed the NOT NULL.
+ *
+ * ============================================================================
+ * !!! CONDITIONALLY SAFE - NO ADMIN-EDIT FORM EXISTS !!!  (P3 trace 2026-05-24)
+ * ============================================================================
+ *
+ * Sales reps are created via /admin/sales-team/new and `reassign` is a
+ * per-MOU reassignment route, NOT a sales-team-row edit. There is NO
+ * /admin/sales-team/[id]/edit page. The SalesPerson row is read-mostly
+ * by design.
+ *
+ * That absence is the ONLY thing protecting the SalesPerson row from a
+ * real concurrent-diff race. If a future dev adds a sales-team-edit
+ * page (e.g., for region reassignment, email correction), two wildcard
+ * admins could clobber each other silently.
+ *
+ * **Mandatory before adding any SalesPerson edit UI: adopt the OCC
+ * pattern proven in src/lib/db/repos/vexProduct.ts (updateOCC):**
+ *   1. Add `version INTEGER NOT NULL DEFAULT 1` to public.sales_team.
+ *   2. Add `updateSalesPersonOCC(id, expectedVersion, patch, opts)`
+ *      mirroring vexProductRepo.updateOCC.
+ *   3. Wire the new admin form to pass `expectedVersion` and surface
+ *      409 conflict with the reload prompt UX.
+ *   4. Concurrency-prove: 10 parallel writers -> 1 winner + 9 clean 409s.
+ *
+ * This comment is intentionally loud. Do NOT silently add a sales-team
+ * edit route without OCC. The cutover-ready gate report 2026-05-24
+ * flags this as a known conditional-safety; future regressions are not
+ * "discovered" - they are "reintroduced".
  */
 
 import type { SalesPerson, AuditEntry } from '@/lib/types'

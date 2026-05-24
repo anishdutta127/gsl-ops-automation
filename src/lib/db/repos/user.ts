@@ -12,6 +12,37 @@
  *
  * Parity tests at src/lib/db/repos/__tests__/user.parity.test.ts assert
  * that both backends agree on read-shape for the seeded staging data.
+ *
+ * ============================================================================
+ * !!! CONDITIONALLY SAFE - NO ADMIN-EDIT FORM EXISTS !!!  (P3 trace 2026-05-24)
+ * ============================================================================
+ *
+ * The User row has scalar UPDATE writers (applySsoSignin sets
+ * sso_provider_user_id; the seed loader and a few admin scripts mutate
+ * role/department) but there is NO /admin/users edit page in the
+ * codebase. The src/app/admin directory has no `users` subdirectory.
+ *
+ * That absence is the ONLY thing protecting the User row from a real
+ * concurrent-diff race. If a future dev adds an /admin/users edit form,
+ * two wildcard admins could clobber each other's role/department edits
+ * silently.
+ *
+ * **Mandatory before adding any User edit UI: adopt the OCC pattern
+ * proven in src/lib/db/repos/leafRepos.ts (makeAuditedLeafRepo.
+ * updateWithAuditOCC) or src/lib/db/repos/vexProduct.ts (updateOCC):**
+ *   1. Add `version INTEGER NOT NULL DEFAULT 1` to public.users
+ *      (alongside the existing audit_log JSONB).
+ *   2. Add an `updateUserOCC(id, expectedVersion, patch, audit, opts)`
+ *      method here, mirroring vexProductRepo.updateOCC.
+ *   3. Wire the new admin form to pass `expectedVersion` and surface
+ *      409 conflict with the reload prompt UX.
+ *   4. Concurrency-prove: 10 parallel writers -> 1 winner + 9 clean 409s
+ *      (mirror scripts/verify-occ-123-proofs.mjs).
+ *
+ * This comment is intentionally loud. Do NOT silently add a user edit
+ * route without OCC. The cutover-ready gate report 2026-05-24 flags
+ * this as a known conditional-safety; future regressions are not
+ * "discovered" - they are "reintroduced".
  */
 
 import type { User, AuditEntry } from '@/lib/types'
