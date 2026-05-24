@@ -32,11 +32,14 @@ import type {
   KitDispatchStatus,
 } from '@/lib/types'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
+import { kitDispatchRepo } from '@/lib/db/repos/kitDispatch'
+import { currentBackend } from '@/lib/db/backend'
 
 export interface AccountsExecuteArgs {
   mouId: string
   user: { id: string; name: string }
   accountsEntries: AccountsDispatchEntry[]
+  expectedVersion?: number
 }
 
 export interface AccountsExecuteDeps {
@@ -44,6 +47,8 @@ export interface AccountsExecuteDeps {
   inventory: InventoryItem[]
   enqueue?: typeof enqueueUpdate
   now?: () => Date
+  /** P2b.X OCC #4: stub for tests. */
+  updateAllocationsOCC?: typeof kitDispatchRepo.updateAllocationsOCC
 }
 
 export type AccountsFailureReason =
@@ -52,6 +57,7 @@ export type AccountsFailureReason =
   | 'no-summary'
   | 'invalid-rows'
   | 'qty-over-requested'
+  | 'version-conflict'
 
 export type AccountsExecuteResult =
   | {
@@ -60,7 +66,7 @@ export type AccountsExecuteResult =
       newDispatchStatus: KitDispatchStatus
       inventoryDecrements: Array<{ skuName: string; qty: number; newStock: number }>
     }
-  | { ok: false; reason: AccountsFailureReason; offendingRow?: number }
+  | { ok: false; reason: AccountsFailureReason; offendingRow?: number; conflictVersion?: number }
 
 function computeStatus(
   entries: AccountsDispatchEntry[],
@@ -143,16 +149,27 @@ export async function executeAccountsDispatch(
     auditLog: [...kd.auditLog, dispatchAudit],
   }
 
-  await enqueue({
-    queuedBy: args.user.id,
-    entity: 'kitDispatch',
-    operation: 'update',
-    payload: {
-      id: kd.id,
-      mouId: args.mouId,
-      record: nextRecord as unknown as Record<string, unknown>,
-    },
-  })
+  if (deps.updateAllocationsOCC || currentBackend() === 'postgres') {
+    const occ = deps.updateAllocationsOCC ?? kitDispatchRepo.updateAllocationsOCC.bind(kitDispatchRepo)
+    const expectedVersion = args.expectedVersion ?? kd.version ?? 1
+    const r = await occ(kd.id, expectedVersion, {
+      dispatchStatus: newStatus,
+      dispatchSummary: summary,
+    }, dispatchAudit, { queuedBy: args.user.id })
+    if (!r.ok) return { ok: false, reason: 'version-conflict', conflictVersion: r.conflictVersion }
+    nextRecord.version = r.newVersion
+  } else {
+    await enqueue({
+      queuedBy: args.user.id,
+      entity: 'kitDispatch',
+      operation: 'update',
+      payload: {
+        id: kd.id,
+        mouId: args.mouId,
+        record: nextRecord as unknown as Record<string, unknown>,
+      },
+    })
+  }
 
   // Inventory decrement: one queue entry per affected SKU.
   const totalsBySku = aggregateBySku(args.accountsEntries)

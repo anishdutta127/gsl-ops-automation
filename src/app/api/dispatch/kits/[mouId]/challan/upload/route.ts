@@ -80,10 +80,14 @@ export async function POST(
     notes: 'Delivery challan uploaded.',
   }
   try {
-    // ATOMIC: updateWithAudit (partial UPDATE on dispatch_summary + JSONB
-    // || concat on audit_log). Race-safe vs concurrent uploads.
-    await kitDispatchRepo.updateWithAudit(
+    // P2b.X OCC #4: dispatch_summary is REPLACE-on-update. 6 writers
+    // across 4 sub-flows (approve / accountsExecute / summary edit /
+    // challan / warehouse-email) can overlap on the same kd. The OCC
+    // method version-checks the row; a concurrent winner forces this
+    // writer to 409 and reload.
+    const r = await kitDispatchRepo.updateAllocationsOCC(
       kd.id,
+      kd.version ?? 1,
       {
         dispatchSummary: {
           ...kd.dispatchSummary,
@@ -93,6 +97,16 @@ export async function POST(
       audit,
       { queuedBy: user.id },
     )
+    if (!r.ok) {
+      return NextResponse.json(
+        {
+          error: 'version-conflict',
+          conflictVersion: r.conflictVersion,
+          message: 'Another user updated this kit_dispatch (summary, allocation, warehouse-email, or accounts) while you were uploading. Reload to see the latest version and re-upload.',
+        },
+        { status: 409 },
+      )
+    }
   } catch (e) {
     return NextResponse.json(
       {

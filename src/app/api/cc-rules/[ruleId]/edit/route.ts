@@ -74,13 +74,33 @@ export async function POST(
   if (typeof sourceRuleText === 'string' && sourceRuleText.trim().length > 0) {
     patch.sourceRuleText = sourceRuleText.trim()
   }
+  // P2b.X OCC: form-submit includes the version the operator loaded.
+  // Missing -> editCcRule falls back to the snapshot, race-vulnerable.
+  const expectedVersionRaw = form.get('expectedVersion')
+  const expectedVersion =
+    typeof expectedVersionRaw === 'string' && expectedVersionRaw.trim() !== ''
+      ? Number(expectedVersionRaw)
+      : undefined
 
   const result = await editCcRule({
     ruleId,
     editedBy: session.sub,
     patch,
+    expectedVersion: Number.isFinite(expectedVersion) ? expectedVersion : undefined,
   })
-  if (!result.ok) return errorTo(result.reason)
+  if (!result.ok) {
+    if (result.reason === 'version-conflict') {
+      // 409 Conflict surfaces to the admin page as ?error=version-conflict
+      // &conflictVersion=N so the UI shows the reload prompt.
+      const url = new URL(`/admin/cc-rules/${ruleId}`, request.url)
+      url.searchParams.set('error', 'version-conflict')
+      if (result.conflictVersion != null) {
+        url.searchParams.set('conflictVersion', String(result.conflictVersion))
+      }
+      return NextResponse.redirect(url, { status: 303 })
+    }
+    return errorTo(result.reason)
+  }
 
   const url = new URL(`/admin/cc-rules/${ruleId}`, request.url)
   return NextResponse.redirect(url, { status: 303 })

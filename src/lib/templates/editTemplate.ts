@@ -25,6 +25,8 @@ import communicationTemplatesJson from '@/data/communication_templates.json'
 import usersJson from '@/data/users.json'
 import { canPerform } from '@/lib/auth/permissions'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
+import { communicationTemplateRepo } from '@/lib/db/repos/leafRepos'
+import { currentBackend } from '@/lib/db/backend'
 
 const VALID_RECIPIENTS: ReadonlyArray<TemplateRecipient> = [
   'spoc', 'sales-owner', 'school-email', 'custom',
@@ -45,6 +47,8 @@ export interface EditTemplateArgs {
   patch: EditTemplatePatch
   editedBy: string
   notes?: string | null
+  /** P2b.X OCC: version the operator loaded; missing -> falls back to snapshot. */
+  expectedVersion?: number
 }
 
 export type EditTemplateFailureReason =
@@ -56,10 +60,11 @@ export type EditTemplateFailureReason =
   | 'missing-body'
   | 'invalid-recipient'
   | 'no-changes'
+  | 'version-conflict'
 
 export type EditTemplateResult =
   | { ok: true; template: CommunicationTemplate; changedFields: string[] }
-  | { ok: false; reason: EditTemplateFailureReason }
+  | { ok: false; reason: EditTemplateFailureReason; conflictVersion?: number }
 
 export interface EditTemplateDeps {
   templates: CommunicationTemplate[]
@@ -71,6 +76,8 @@ export interface EditTemplateDeps {
     payload: Record<string, unknown>
   }) => Promise<PendingUpdate>
   now: () => Date
+  /** P2b.X OCC: override-able atomic update for tests. */
+  updateWithAuditOCC?: typeof communicationTemplateRepo.updateWithAuditOCC
 }
 
 const defaultDeps: EditTemplateDeps = {
@@ -184,12 +191,35 @@ export async function editTemplate(
     auditLog: [...existing.auditLog, audit],
   }
 
+  // P2b.X OCC: version-checked atomic update + audit append.
+  const expectedVersion = args.expectedVersion ?? existing.version ?? 1
+  const scalarPatch: Partial<CommunicationTemplate> = {
+    name: next.name,
+    subject: next.subject,
+    bodyMarkdown: next.bodyMarkdown,
+    defaultRecipient: next.defaultRecipient,
+    defaultCcRules: next.defaultCcRules,
+    variables: next.variables,
+    active: next.active,
+    lastEditedBy: args.editedBy,
+    lastEditedAt: ts,
+  }
+  if (deps.updateWithAuditOCC || currentBackend() === 'postgres') {
+    const occ = deps.updateWithAuditOCC
+      ?? communicationTemplateRepo.updateWithAuditOCC.bind(communicationTemplateRepo)
+    const r = await occ(args.id, expectedVersion, scalarPatch, audit, { queuedBy: args.editedBy })
+    if (!r.ok) {
+      return { ok: false, reason: 'version-conflict', conflictVersion: r.conflictVersion }
+    }
+    return { ok: true, template: { ...updated, version: r.newVersion }, changedFields }
+  }
+  // Json mode fallback (test-compat): full-row enqueue with version
+  // bumped manually. Production never lands here.
   await deps.enqueue({
     queuedBy: args.editedBy,
     entity: 'communicationTemplate',
     operation: 'update',
-    payload: updated as unknown as Record<string, unknown>,
+    payload: { ...updated, version: expectedVersion + 1 } as unknown as Record<string, unknown>,
   })
-
-  return { ok: true, template: updated, changedFields }
+  return { ok: true, template: { ...updated, version: expectedVersion + 1 }, changedFields }
 }

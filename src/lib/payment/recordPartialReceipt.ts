@@ -121,10 +121,15 @@ export async function recordPartialReceipt(
   }
 
   const prevPartials = payment.partialPayments ?? []
-  const allPartials = [...prevPartials, newPartial]
-  const cumulative = allPartials.reduce((s, p) => s + (p.amount ?? 0), 0)
-  const nextStatus =
-    cumulative + 0.01 >= payment.expectedAmount ? 'Paid' : 'Partial'
+  // Cumulative reported in the audit + return value is INDICATIVE
+  // (computed from the read snapshot); the actual post-write cumulative
+  // comes out of the atomic SQL increment. Two parallel partial records
+  // may each report the same indicative-cumulative; that's fine - the
+  // server-side received_amount is the source of truth.
+  const indicativeCumulative = prevPartials.reduce((s, p) => s + (p.amount ?? 0), 0)
+    + args.receivedAmount
+  const indicativeStatus =
+    indicativeCumulative + 0.01 >= payment.expectedAmount ? 'Paid' : 'Partial'
 
   const auditEntry: AuditEntry = {
     timestamp: ts,
@@ -136,31 +141,38 @@ export async function recordPartialReceipt(
       status: payment.status,
     },
     after: {
-      receivedAmount: cumulative,
-      partialCount: allPartials.length,
-      status: nextStatus,
+      receivedAmount: indicativeCumulative,
+      partialCount: prevPartials.length + 1,
+      status: indicativeStatus,
     },
-    notes: `Partial payment Rs ${args.receivedAmount.toLocaleString('en-IN')} recorded. Cumulative ${cumulative.toLocaleString('en-IN')} of expected ${payment.expectedAmount.toLocaleString('en-IN')}.`,
+    notes: `Partial payment Rs ${args.receivedAmount.toLocaleString('en-IN')} recorded. Cumulative ${indicativeCumulative.toLocaleString('en-IN')} of expected ${payment.expectedAmount.toLocaleString('en-IN')}.`,
   }
 
-  const updated: Payment = {
-    ...payment,
-    receivedAmount: cumulative,
+  // ATOMIC RECORD: the entire mutation (partial append + received_amount
+  // increment + status recompute + audit append) is one server-side
+  // UPDATE statement. Concurrent recordPartialReceipt callers no longer
+  // race - see verify-rmw-races.mjs after-fix run (10/10 survived).
+  await paymentRepo.recordPartialReceipt(args.paymentId, {
+    partial: newPartial,
     receivedDate: args.receivedDate,
     paymentMode: args.paymentMode,
     bankReference: trimmedRef ?? payment.bankReference,
-    status: nextStatus,
-    partialPayments: allPartials,
+    notes: trimmedNotes ?? payment.notes,
+    audit: auditEntry,
+    queuedBy: args.recordedBy,
+  })
+  // Indicative shape returned to the caller. The true post-state lives
+  // in postgres; callers that need it should re-read via paymentRepo.findById.
+  const updated: Payment = {
+    ...payment,
+    receivedAmount: indicativeCumulative,
+    receivedDate: args.receivedDate,
+    paymentMode: args.paymentMode,
+    bankReference: trimmedRef ?? payment.bankReference,
+    status: indicativeStatus,
+    partialPayments: [...prevPartials, newPartial],
     notes: trimmedNotes ?? payment.notes,
     auditLog: [...(payment.auditLog ?? []), auditEntry],
   }
-
-  await deps.enqueue({
-    queuedBy: args.recordedBy,
-    entity: 'payment',
-    operation: 'update',
-    payload: updated as unknown as Record<string, unknown>,
-  })
-
-  return { ok: true, payment: updated, cumulativeReceived: cumulative }
+  return { ok: true, payment: updated, cumulativeReceived: indicativeCumulative }
 }

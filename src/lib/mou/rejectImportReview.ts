@@ -30,6 +30,7 @@ import { enqueueUpdate } from '@/lib/pendingUpdates'
 import { canPerform } from '@/lib/auth/permissions'
 import { mouImportReviewRepo } from '@/lib/db/repos/leafRepos'
 import { userRepo } from '@/lib/db/repos/user'
+import { currentBackend } from '@/lib/db/backend'
 
 const VALID_REASONS: ReadonlyArray<RejectionReason> = [
   'data-quality-issue',
@@ -105,6 +106,8 @@ export async function rejectImportReview(
   )
   if (!item) return { ok: false, reason: 'item-not-found' }
 
+  // P3 OCC: snapshot fast-path check (cheap UX feedback). The data-layer
+  // NULL-check below is the binding correctness check.
   if (item.resolution !== null) {
     return { ok: false, reason: 'already-resolved' }
   }
@@ -119,12 +122,29 @@ export async function rejectImportReview(
     rejectionNotes: trimmedNotes === '' ? null : trimmedNotes,
   }
 
-  await deps.enqueue({
-    queuedBy: args.rejectedBy,
-    entity: 'mouImportReview',
-    operation: 'update',
-    payload: updated as unknown as Record<string, unknown>,
-  })
-
+  // P3 OCC: data-layer NULL-check guard replaces the in-memory check
+  // (which becomes a fast-path UX hint). Two concurrent admins resolving
+  // the same review entry: both pass the snapshot check, but only one
+  // passes the data-layer `WHERE resolution IS NULL AND resolved_at IS
+  // NULL` guard. The loser gets 'already-resolved' and we return it.
+  if (currentBackend() === 'postgres') {
+    const r = await mouImportReviewRepo.resolveIfPending(
+      args.queuedAt, args.rawRecordId, 'rejected',
+      {
+        resolvedAt: ts,
+        resolvedBy: args.rejectedBy,
+        rejectionReason: args.rejectionReason,
+        rejectionNotes: trimmedNotes === '' ? null : trimmedNotes,
+      },
+    )
+    if (!r.ok) return { ok: false, reason: r.reason }
+  } else {
+    await deps.enqueue({
+      queuedBy: args.rejectedBy,
+      entity: 'mouImportReview',
+      operation: 'update',
+      payload: updated as unknown as Record<string, unknown>,
+    })
+  }
   return { ok: true, item: updated }
 }

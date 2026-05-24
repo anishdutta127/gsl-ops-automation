@@ -14,10 +14,7 @@ import { canManageInventory } from '@/lib/access'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { opsButtonClass } from '@/components/ops/OpsButton'
-import type { VexProduct } from '@/lib/types'
-import vexProductsJson from '@/data/vex_products.json'
-
-const allVexProducts = vexProductsJson as unknown as VexProduct[]
+import { vexProductRepo } from '@/lib/db/repos/vexProduct'
 
 interface PageProps {
   params: Promise<{ partNumber: string }>
@@ -30,6 +27,7 @@ const ERROR_COPY: Record<string, string> = {
   'invalid-price': 'Default unit price must be a number, or empty.',
   'product-not-found': 'VEX product not found.',
   'queue-failure': 'Failed to queue the edit. Retry.',
+  'version-conflict': 'Another user updated this product while you were editing. Reload to see the latest values, then re-submit your changes.',
 }
 
 const FIELD_INPUT_CLASS =
@@ -47,6 +45,7 @@ export default async function EditVexProductPage({ params, searchParams }: PageP
   }
   if (!canManageInventory(user)) notFound()
 
+  const allVexProducts = await vexProductRepo.findAll()
   const product = allVexProducts.find(
     (p) => p.partNumber === decodeURIComponent(partNumber),
   )
@@ -83,6 +82,10 @@ export default async function EditVexProductPage({ params, searchParams }: PageP
             method="POST"
             className="space-y-4 rounded-lg border border-border bg-card p-4 sm:p-6"
           >
+            {/* P3 OCC: version we loaded. Route returns 303 with
+                ?error=version-conflict if another admin saved in the
+                meantime. */}
+            <input type="hidden" name="expectedVersion" value={product.version ?? 1} />
             <div>
               <label className={FIELD_LABEL_CLASS}>Part number</label>
               <p className="font-mono text-sm text-foreground">{product.partNumber}</p>

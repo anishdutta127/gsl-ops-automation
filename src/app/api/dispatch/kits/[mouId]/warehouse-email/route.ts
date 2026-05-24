@@ -37,10 +37,11 @@ export async function POST(
     after: { warehouseEmailLoggedAt: isoNow },
     notes: `warehouse-email-intent: ${WAREHOUSE_EMAIL}`,
   }
-  // ATOMIC: partial UPDATE on dispatch_summary JSONB + atomic audit_log
-  // append. Two parallel callers no longer race on audit_log.
-  await kitDispatchRepo.updateWithAudit(
+  // P2b.X OCC #4: dispatch_summary cross-flow OCC (challan + warehouse-
+  // email + summary edit + accounts can overlap). Version-checked.
+  const r = await kitDispatchRepo.updateAllocationsOCC(
     kd.id,
+    kd.version ?? 1,
     {
       dispatchSummary: {
         ...kd.dispatchSummary,
@@ -50,5 +51,15 @@ export async function POST(
     audit,
     { queuedBy: user.id },
   )
+  if (!r.ok) {
+    return NextResponse.json(
+      {
+        error: 'version-conflict',
+        conflictVersion: r.conflictVersion,
+        message: 'Another user updated this kit_dispatch (summary, challan, accounts, or allocation) while you were logging the warehouse-email intent. Reload to see the latest and re-submit.',
+      },
+      { status: 409 },
+    )
+  }
   return NextResponse.json({ ok: true, loggedAt: isoNow })
 }

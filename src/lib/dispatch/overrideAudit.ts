@@ -46,6 +46,8 @@ import type {
 } from '@/lib/types'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
 import { canPerform, escalationLevelDefault } from '@/lib/auth/permissions'
+import { dispatchRepo } from '@/lib/db/repos/dispatch'
+import { currentBackend } from '@/lib/db/backend'
 import dispatchesJson from '@/data/dispatches.json'
 import usersJson from '@/data/users.json'
 
@@ -55,6 +57,16 @@ export interface OverrideAuditDeps {
   enqueue: typeof enqueueUpdate
   now: () => Date
   uuid: () => string
+  /**
+   * P2b.X OCC #3 (2026-05-24): the data-layer guards that REPLACE the
+   * old in-memory idempotency checks. The lib still does a fast-path
+   * read against deps.dispatches (cheap UX feedback / pre-validation),
+   * but the binding correctness guard is these two atomic methods.
+   * Tests stub these to control success/conflict outcomes without
+   * postgres.
+   */
+  setOverrideEventIfNull?: typeof dispatchRepo.setOverrideEventIfNull
+  acknowledgeOverrideIfUnacknowledged?: typeof dispatchRepo.acknowledgeOverrideIfUnacknowledged
 }
 
 const defaultDeps: OverrideAuditDeps = {
@@ -102,9 +114,15 @@ export async function writeOverrideAudit(
       `Dispatch ${dispatchId} gate is already unlocked (installment1Paid=true); override is not applicable`,
     )
   }
+  // P2b.X OCC #3: the in-memory idempotency check is now a FAST-PATH
+  // UX check only - returns early with a clear error if the snapshot
+  // already shows an overrideEvent. The DATA-LAYER guard below
+  // (setOverrideEventIfNull's WHERE override_event IS NULL) is the
+  // binding correctness check; it enforces the invariant even when
+  // two concurrent requests both see snapshot.overrideEvent === null.
   if (dispatch.overrideEvent !== null) {
     throw new OverrideAuditError(
-      `Dispatch ${dispatchId} already has an overrideEvent; idempotency guard`,
+      `Dispatch ${dispatchId} already has an overrideEvent; idempotency guard (snapshot)`,
     )
   }
   if (typeof reason !== 'string' || reason.trim() === '') {
@@ -139,10 +157,37 @@ export async function writeOverrideAudit(
     after: { overrideEvent },
   }
 
+  // P2b.X OCC #3: data-layer atomic guard. If a concurrent writer
+  // landed first, this returns { ok: false, reason: 'already-overridden' }
+  // and we throw - same shape as the snapshot-based pre-check above so
+  // route callers get a single failure path to map to 409.
   const updatedDispatch: Dispatch = {
     ...dispatch,
     overrideEvent,
     auditLog: [...dispatch.auditLog, dispatchAudit],
+  }
+  if (deps.setOverrideEventIfNull || currentBackend() === 'postgres') {
+    const setOverride = deps.setOverrideEventIfNull
+      ?? dispatchRepo.setOverrideEventIfNull.bind(dispatchRepo)
+    const setResult = await setOverride(dispatchId, overrideEvent, dispatchAudit, { queuedBy: overriddenBy })
+    if (!setResult.ok) {
+      if (setResult.reason === 'already-overridden') {
+        throw new OverrideAuditError(
+          `Dispatch ${dispatchId} already has an overrideEvent; data-layer guard rejected concurrent override`,
+        )
+      }
+      throw new OverrideAuditError(`Dispatch ${dispatchId} not found at the data layer`)
+    }
+  } else {
+    // Json mode fallback: full-row enqueue (the snapshot in-memory
+    // check above provides the only guard; production lands on the
+    // atomic data-layer branch above).
+    await deps.enqueue({
+      queuedBy: overriddenBy,
+      entity: 'dispatch',
+      operation: 'update',
+      payload: updatedDispatch as unknown as Record<string, unknown>,
+    })
   }
 
   const assignedTo = escalationLevelDefault('OPS', 'L2')
@@ -184,12 +229,8 @@ export async function writeOverrideAudit(
     ],
   }
 
-  await deps.enqueue({
-    queuedBy: overriddenBy,
-    entity: 'dispatch',
-    operation: 'update',
-    payload: updatedDispatch as unknown as Record<string, unknown>,
-  })
+  // Dispatch write already landed atomically via setOverrideEventIfNull
+  // above; only the escalation create still goes through the queue.
   await deps.enqueue({
     queuedBy: overriddenBy,
     entity: 'escalation',
@@ -215,14 +256,16 @@ export async function writeOverrideAcknowledgement(
   if (!dispatch) {
     throw new OverrideAuditError(`Dispatch not found: ${dispatchId}`)
   }
+  // P2b.X OCC #3: snapshot fast-path checks (cheap UX feedback). The
+  // data-layer atomic guard below is the binding correctness check.
   if (dispatch.overrideEvent === null) {
     throw new OverrideAuditError(
-      `Dispatch ${dispatchId} has no overrideEvent to acknowledge`,
+      `Dispatch ${dispatchId} has no overrideEvent to acknowledge (snapshot)`,
     )
   }
   if (dispatch.overrideEvent.acknowledgedBy !== null) {
     throw new OverrideAuditError(
-      `Dispatch ${dispatchId} overrideEvent is already acknowledged`,
+      `Dispatch ${dispatchId} overrideEvent is already acknowledged (snapshot)`,
     )
   }
   const user = deps.users.find((u) => u.id === acknowledgedBy)
@@ -255,13 +298,36 @@ export async function writeOverrideAcknowledgement(
     overrideEvent: updatedOverrideEvent,
     auditLog: [...dispatch.auditLog, auditEntry],
   }
-
-  await deps.enqueue({
-    queuedBy: acknowledgedBy,
-    entity: 'dispatch',
-    operation: 'update',
-    payload: updatedDispatch as unknown as Record<string, unknown>,
-  })
-
+  // P2b.X OCC #3: data-layer atomic guard. WHERE override_event IS NOT
+  // NULL AND override_event->>'acknowledgedBy' IS NULL ensures only ONE
+  // concurrent acknowledger wins.
+  if (deps.acknowledgeOverrideIfUnacknowledged || currentBackend() === 'postgres') {
+    const ackOverride = deps.acknowledgeOverrideIfUnacknowledged
+      ?? dispatchRepo.acknowledgeOverrideIfUnacknowledged.bind(dispatchRepo)
+    const ackResult = await ackOverride(
+      dispatchId, updatedOverrideEvent, auditEntry, { queuedBy: acknowledgedBy },
+    )
+    if (!ackResult.ok) {
+      if (ackResult.reason === 'already-acknowledged') {
+        throw new OverrideAuditError(
+          `Dispatch ${dispatchId} overrideEvent already acknowledged; data-layer guard rejected concurrent ack`,
+        )
+      }
+      if (ackResult.reason === 'no-override') {
+        throw new OverrideAuditError(
+          `Dispatch ${dispatchId} has no overrideEvent to acknowledge (data-layer)`,
+        )
+      }
+      throw new OverrideAuditError(`Dispatch ${dispatchId} not found at the data layer`)
+    }
+  } else {
+    // Json mode fallback (test-compat).
+    await deps.enqueue({
+      queuedBy: acknowledgedBy,
+      entity: 'dispatch',
+      operation: 'update',
+      payload: updatedDispatch as unknown as Record<string, unknown>,
+    })
+  }
   return updatedDispatch
 }

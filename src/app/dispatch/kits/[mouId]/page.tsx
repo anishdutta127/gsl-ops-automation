@@ -22,18 +22,11 @@
 
 import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
-import type {
-  InventoryItem,
-  KitDispatch,
-  MOU,
-  Payment,
-  School,
-} from '@/lib/types'
-import mousJson from '@/data/mous.json'
-import kitDispatchesJson from '@/data/kit_dispatches.json'
-import inventoryItemsJson from '@/data/inventory_items.json'
-import paymentsJson from '@/data/payments.json'
-import schoolsJson from '@/data/schools.json'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { kitDispatchRepo } from '@/lib/db/repos/kitDispatch'
+import { inventoryItemRepo } from '@/lib/db/repos/inventoryItem'
+import { paymentRepo } from '@/lib/db/repos/payment'
+import { schoolRepo } from '@/lib/db/repos/school'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { StatusChip, type StatusChipTone } from '@/components/ops/StatusChip'
@@ -54,12 +47,6 @@ import { SalesApprovalActions } from './SalesApprovalActions'
 import { DispatchSummaryEditor } from './DispatchSummaryEditor'
 import { AccountsExecutionForm } from './AccountsExecutionForm'
 import { ShipmentTrackingForm } from './ShipmentTrackingForm'
-
-const mous = mousJson as unknown as MOU[]
-const kitDispatches = kitDispatchesJson as unknown as KitDispatch[]
-const inventory = inventoryItemsJson as unknown as InventoryItem[]
-const payments = paymentsJson as unknown as Payment[]
-const schools = schoolsJson as unknown as School[]
 
 const DISPATCH_STATUS_TONE: Record<string, StatusChipTone> = {
   'Not Started': 'neutral',
@@ -90,6 +77,14 @@ export default async function KitDispatchDetailPage({
   if (!user) {
     redirect(`/login?next=${encodeURIComponent(`/dispatch/kits/${mouId}`)}`)
   }
+
+  const [mous, kitDispatches, inventory, payments, schools] = await Promise.all([
+    mouRepo.findAll(),
+    kitDispatchRepo.findAll(),
+    inventoryItemRepo.findAll(),
+    paymentRepo.findAll(),
+    schoolRepo.findAll(),
+  ])
 
   const mou = mous.find((m) => m.id === mouId)
   if (!mou || !isMouEligibleForKitDispatch(mou)) notFound()
@@ -239,6 +234,7 @@ export default async function KitDispatchDetailPage({
               }))}
               editable={allocationEditable}
               rejectionReason={kd?.salesRejectionReason ?? null}
+              initialVersion={kd?.version ?? null}
             />
           </section>
 

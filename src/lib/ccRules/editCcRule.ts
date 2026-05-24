@@ -25,6 +25,8 @@ import ccRulesJson from '@/data/cc_rules.json'
 import usersJson from '@/data/users.json'
 import salesTeamJson from '@/data/sales_team.json'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
+import { ccRuleRepo } from '@/lib/db/repos/leafRepos'
+import { currentBackend } from '@/lib/db/backend'
 import { canPerform } from '@/lib/auth/permissions'
 
 const VALID_SHEETS: ReadonlyArray<CcRule['sheet']> = [
@@ -64,6 +66,16 @@ export interface EditCcRuleArgs {
     sourceRuleText?: string
   }
   notes?: string
+  /**
+   * P2b.X OCC: the version the operator's browser loaded. Required for
+   * the OCC write path; if it mismatches the stored version, the route
+   * returns 409 with the current conflictVersion so the UI can prompt
+   * reload. Omit only for test/legacy paths that opt out (in which case
+   * the lib falls back to reading the row's current version - this is
+   * NOT race-safe and exists only for backward-compat with json-mode
+   * tests).
+   */
+  expectedVersion?: number
 }
 
 export type EditCcRuleFailureReason =
@@ -77,10 +89,11 @@ export type EditCcRuleFailureReason =
   | 'invalid-cc-user-ids'
   | 'missing-source-rule-text'
   | 'no-change'
+  | 'version-conflict'
 
 export type EditCcRuleResult =
   | { ok: true; rule: CcRule }
-  | { ok: false; reason: EditCcRuleFailureReason }
+  | { ok: false; reason: EditCcRuleFailureReason; conflictVersion?: number }
 
 export interface EditCcRuleDeps {
   rules: CcRule[]
@@ -88,6 +101,12 @@ export interface EditCcRuleDeps {
   salesTeam: SalesPerson[]
   enqueue: typeof enqueueUpdate
   now: () => Date
+  /**
+   * P2b.X OCC: override-able atomic update + audit for tests. Defaults
+   * to ccRuleRepo.updateWithAuditOCC which performs an atomic UPDATE
+   * with version check. Tests can pass a stub.
+   */
+  updateWithAuditOCC?: typeof ccRuleRepo.updateWithAuditOCC
 }
 
 const defaultDeps: EditCcRuleDeps = {
@@ -217,14 +236,40 @@ export async function editCcRule(
   }
   next.auditLog = [...rule.auditLog, auditEntry]
 
+  // P2b.X OCC: route through the version-checked atomic update so two
+  // wildcard admins editing the same rule can't silently clobber each
+  // other. The expected version is the one the operator's browser
+  // loaded; missing => fall back to the read snapshot's version (NOT
+  // race-safe but matches the pre-OCC contract for json-mode tests).
+  const expectedVersion = args.expectedVersion ?? rule.version ?? 1
+  // Build the scalar patch (omit id / auditLog / version - the OCC
+  // method handles audit_log || jsonb + version bump).
+  const scalarPatch: Partial<CcRule> = {}
+  if (after.sheet !== undefined) scalarPatch.sheet = next.sheet
+  if (after.scope !== undefined) scalarPatch.scope = next.scope
+  if (after.scopeValue !== undefined) scalarPatch.scopeValue = next.scopeValue
+  if (after.contexts !== undefined) scalarPatch.contexts = next.contexts
+  if (after.ccUserIds !== undefined) scalarPatch.ccUserIds = next.ccUserIds
+  if (after.sourceRuleText !== undefined) scalarPatch.sourceRuleText = next.sourceRuleText
+  if (deps.updateWithAuditOCC || currentBackend() === 'postgres') {
+    const occ = deps.updateWithAuditOCC
+      ?? ccRuleRepo.updateWithAuditOCC.bind(ccRuleRepo)
+    const r = await occ(args.ruleId, expectedVersion, scalarPatch, auditEntry, { queuedBy: args.editedBy })
+    if (!r.ok) {
+      return { ok: false, reason: 'version-conflict', conflictVersion: r.conflictVersion }
+    }
+    return { ok: true, rule: { ...next, version: r.newVersion } }
+  }
+  // Json mode fallback: full-row enqueue with version bumped manually.
+  // The queue drainer serialises so order is deterministic; production
+  // never lands here (DATA_BACKEND=postgres flips currentBackend()).
   await deps.enqueue({
     queuedBy: args.editedBy,
     entity: 'ccRule',
     operation: 'update',
-    payload: next as unknown as Record<string, unknown>,
+    payload: { ...next, version: expectedVersion + 1 } as unknown as Record<string, unknown>,
   })
-
-  return { ok: true, rule: next }
+  return { ok: true, rule: { ...next, version: expectedVersion + 1 } }
 }
 
 function arraysEqual<T>(a: T[], b: T[]): boolean {

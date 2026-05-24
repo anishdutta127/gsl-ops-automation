@@ -141,8 +141,16 @@ describe('allocateKits', () => {
       pod: null,
       auditLog: [],
       createdAt: FIXED_NOW.toISOString(),
+      version: 1,
     }
     const { fn } = makeEnqueue()
+    // P2b.X OCC: UPDATE path goes through kitDispatchRepo.updateAllocationsOCC,
+    // not deps.enqueue. Stub it here and assert against the stub.
+    const occCalls: Array<{ id: string; expectedVersion: number; patch: unknown }> = []
+    const occStub = vi.fn(async (id: string, expectedVersion: number, patch: unknown) => {
+      occCalls.push({ id, expectedVersion, patch })
+      return { ok: true as const, newVersion: expectedVersion + 1 }
+    })
     const r = await allocateKits(
       {
         mouId: 'MOU-STEAM-2627-001',
@@ -155,6 +163,7 @@ describe('allocateKits', () => {
         inventory: [inv()],
         enqueue: fn,
         now: () => FIXED_NOW,
+        updateAllocationsOCC: occStub as never,
       },
     )
     expect(r.ok).toBe(true)
@@ -162,7 +171,53 @@ describe('allocateKits', () => {
     expect(r.created).toBe(false)
     expect(r.dispatch.salesApprovalStatus).toBe('Pending')
     expect(r.dispatch.salesRejectionReason).toBeNull()
-    expect(fn.mock.calls[0]?.[0]?.operation).toBe('update')
+    expect(occStub).toHaveBeenCalledOnce()
+    expect(occCalls[0]?.expectedVersion).toBe(1)
+    expect(r.dispatch.version).toBe(2)
+  })
+
+  it('returns version-conflict when OCC mismatch (another user saved first)', async () => {
+    const existing: KitDispatch = {
+      id: 'DISPATCH-MOU-STEAM-2627-001',
+      mouId: 'MOU-STEAM-2627-001',
+      schoolId: 'SCH-DEMO',
+      schoolName: 'Demo School',
+      productSelected: 'TinkRworks',
+      dispatchStatus: 'Not Started',
+      allocations: [row({ kitsQty: 4 })],
+      salesApprovalStatus: 'Pending',
+      salesApprovedBy: null,
+      salesApprovedAt: null,
+      salesRejectionReason: null,
+      dispatchSummary: null,
+      shipmentTracking: null,
+      pod: null,
+      auditLog: [],
+      createdAt: FIXED_NOW.toISOString(),
+      version: 1,
+    }
+    const { fn } = makeEnqueue()
+    const occStub = vi.fn(async () => ({ ok: false as const, conflictVersion: 5 }))
+    const r = await allocateKits(
+      {
+        mouId: 'MOU-STEAM-2627-001',
+        user: { id: 'shashank.k', name: 'Shashank K.' },
+        allocations: [row({ kitsQty: 5 })],
+        expectedVersion: 1,
+      },
+      {
+        mous: [mou()],
+        kitDispatches: [existing],
+        inventory: [inv()],
+        enqueue: fn,
+        now: () => FIXED_NOW,
+        updateAllocationsOCC: occStub as never,
+      },
+    )
+    expect(r.ok).toBe(false)
+    if (r.ok) return
+    expect(r.reason).toBe('version-conflict')
+    expect(r.conflictVersion).toBe(5)
   })
 
   it('rejects when kitsQty exceeds inventory availability', async () => {

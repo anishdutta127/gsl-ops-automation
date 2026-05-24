@@ -14,17 +14,13 @@
 import { notFound, redirect } from 'next/navigation'
 import Link from 'next/link'
 import type { CcRule, SalesPerson, User } from '@/lib/types'
-import ccRulesJson from '@/data/cc_rules.json'
-import usersJson from '@/data/users.json'
-import salesTeamJson from '@/data/sales_team.json'
+import { ccRuleRepo } from '@/lib/db/repos/leafRepos'
+import { userRepo } from '@/lib/db/repos/user'
+import { salesTeamRepo } from '@/lib/db/repos/salesTeam'
 import { getCurrentUser } from '@/lib/auth/session'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { OpsButton, opsButtonClass } from '@/components/ops/OpsButton'
-
-const rules = ccRulesJson as unknown as CcRule[]
-const users = usersJson as unknown as User[]
-const salesTeam = salesTeamJson as unknown as SalesPerson[]
 
 const SHEETS = ['South-West', 'East', 'North', 'derived'] as const
 const SCOPES = [
@@ -55,6 +51,7 @@ const ERROR_MESSAGES: Record<string, string> = {
   'invalid-cc-user-ids': 'Cc user ids must all resolve in users or sales team.',
   'missing-source-rule-text': 'Source rule text is required.',
   'no-change': 'No fields were changed.',
+  'version-conflict': 'Another user updated this rule while you were editing. Reload to see the latest version, then re-submit your changes.',
 }
 
 function scopeValueToInput(value: string | string[]): string {
@@ -74,6 +71,11 @@ export default async function CcRuleDetailPage({
   const user = await getCurrentUser()
   if (!user) redirect(`/login?next=%2Fadmin%2Fcc-rules%2F${encodeURIComponent(ruleId)}`)
 
+  const [rules, users, salesTeam] = await Promise.all([
+    ccRuleRepo.findAll() as unknown as Promise<CcRule[]>,
+    userRepo.findAll(),
+    salesTeamRepo.findAll(),
+  ])
   const rule = rules.find((r) => r.id === ruleId)
   if (!rule) notFound()
 
@@ -81,8 +83,8 @@ export default async function CcRuleDetailPage({
   const errorMessage = errorKey ? ERROR_MESSAGES[errorKey] ?? `Failed: ${errorKey}` : null
 
   const ccUserOptions: Array<{ id: string; label: string }> = [
-    ...users.map((u) => ({ id: u.id, label: `${u.name} (${u.id})` })),
-    ...salesTeam.map((s) => ({ id: s.id, label: `${s.name} (${s.id})` })),
+    ...users.map((u: User) => ({ id: u.id, label: `${u.name} (${u.id})` })),
+    ...salesTeam.map((s: SalesPerson) => ({ id: s.id, label: `${s.name} (${s.id})` })),
   ]
 
   const contextSet = new Set(rule.contexts)
@@ -117,6 +119,11 @@ export default async function CcRuleDetailPage({
         action={`/api/cc-rules/${encodeURIComponent(rule.id)}/edit`}
         className="mt-6 space-y-5"
       >
+        {/* P2b.X OCC: send the version we loaded. Route returns 409 if
+            someone else has saved in the meantime and the admin page
+            renders a reload prompt from the ?error=version-conflict
+            query param. */}
+        <input type="hidden" name="expectedVersion" value={rule.version ?? 1} />
         <Field label="Sheet" htmlFor="cc-sheet">
           <select
             id="cc-sheet"

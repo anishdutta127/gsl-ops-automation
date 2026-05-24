@@ -15,15 +15,12 @@ import { NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canEditFinanceData } from '@/lib/access'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
+import { vexPiRepo } from '@/lib/db/repos/vexPi'
 import type {
   AuditEntry,
   PaymentMode,
-  VexPi,
   VexPiStatus,
 } from '@/lib/mouSystem/types'
-import vexPisJson from '@/data/vex_pis.json'
-
-const allPis = vexPisJson as unknown as VexPi[]
 
 const MODES: PaymentMode[] = [
   'Bank Transfer',
@@ -59,7 +56,7 @@ export async function POST(request: Request, ctx: RouteContext) {
       { status: 403 },
     )
   }
-  const pi = allPis.find((p) => p.id === id)
+  const pi = await vexPiRepo.findById(id)
   if (!pi) return NextResponse.json({ error: 'not-found' }, { status: 404 })
 
   let body: IncomingPayload
@@ -127,13 +124,6 @@ export async function POST(request: Request, ctx: RouteContext) {
     },
     notes: `Payment received Rs ${total} (bank ${bankAmount} + TDS ${tdsAmount}) via ${mode}.`,
   }
-  const nextPi: VexPi = {
-    ...pi,
-    paymentReceivedAmount: Math.round(newPaymentReceived * 100) / 100,
-    paymentLogIds: [...(pi.paymentLogIds ?? []), logId],
-    status: newStatus,
-    auditLog: [...(pi.auditLog ?? []), piAudit],
-  }
   const paymentLogRecord = {
     id: logId,
     scope: 'vex' as const,
@@ -149,14 +139,16 @@ export async function POST(request: Request, ctx: RouteContext) {
   }
 
   try {
-    // Two queue writes: the parent VexPi (so the balance + status
-    // reflect immediately on the next drain) and the paymentLog row
-    // (so /finance/payment-logs surfaces the receipt).
-    await enqueueUpdate({
+    // ATOMIC: the parent VexPi mutation (payment_log_ids append +
+    // payment_received_amount increment + status recompute + audit
+    // append) is one server-side UPDATE statement via
+    // vexPiRepo.recordVexPayment. Concurrent payment recordings no
+    // longer race (Anish 2026-05-24 anti-race fix).
+    await vexPiRepo.recordVexPayment(pi.id, {
+      logId,
+      amount: total,
+      audit: piAudit,
       queuedBy: user.id,
-      entity: 'vexPi',
-      operation: 'update',
-      payload: nextPi as unknown as Record<string, unknown>,
     })
     await enqueueUpdate({
       queuedBy: user.id,

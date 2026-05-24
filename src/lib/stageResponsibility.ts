@@ -27,6 +27,8 @@ import type {
 } from '@/lib/types'
 import { computeStage, type LifecycleStage, STAGE_ORDER } from './statusTracker'
 import { enqueueUpdate } from './pendingUpdates'
+import { stageResponsibilityRepo } from './db/repos/leafRepos'
+import { currentBackend } from './db/backend'
 import responsibilityJson from '@/data/stage_responsibility.json'
 
 const seededArray = responsibilityJson as unknown as StageResponsibility[]
@@ -208,16 +210,19 @@ export interface UpdateStageResponsibilityArgs {
   >
   actorUserId: string
   changeNotes?: string | null
+  /** P3 OCC: version the operator loaded; missing => snapshot fallback. */
+  expectedVersion?: number
 }
 
 export type UpdateStageResponsibilityFailureReason =
   | 'unknown-stage'
   | 'invalid-department'
   | 'no-changes'
+  | 'version-conflict'
 
 export type UpdateStageResponsibilityResult =
   | { ok: true; stage: LifecycleStage; updated: StageResponsibility; changedFields: string[] }
-  | { ok: false; reason: UpdateStageResponsibilityFailureReason }
+  | { ok: false; reason: UpdateStageResponsibilityFailureReason; conflictVersion?: number }
 
 const VALID_DEPARTMENTS: ReadonlyArray<ResponsibilityDepartment> = [
   'sales',
@@ -296,16 +301,38 @@ export async function updateStageResponsibility(
   }
   next.audit = [...(existing.audit ?? []), audit]
 
-  // Persist as an array element with id=stage. The drain (entityRegistry
-  // path stage_responsibility.json) upserts by `id` for arrays of
-  // objects; we synthesise the canonical id field below so the merge
-  // matches by stage name.
-  await deps.enqueue({
-    queuedBy: args.actorUserId,
-    entity: 'stageResponsibility',
-    operation: 'update',
-    payload: { ...next, id: args.stage } as Record<string, unknown>,
-  })
+  // P3 OCC: version-checked atomic update + audit append. Two leadership
+  // members editing the same stage concurrently get one winner, the
+  // other gets a clean conflict-version that the route surfaces as 409.
+  // Fall through to deps.enqueue in json-mode tests.
+  if (currentBackend() === 'postgres') {
+    const expectedVersion = args.expectedVersion ?? existing.version ?? 1
+    const r = await stageResponsibilityRepo.updateWithAuditOCC(
+      args.stage, expectedVersion, {
+        responsibleDepartment: next.responsibleDepartment,
+        responsibleUserId: next.responsibleUserId,
+        escalationDepartment: next.escalationDepartment,
+        notes: next.notes,
+        updatedAt: next.updatedAt,
+        updatedBy: next.updatedBy,
+      }, audit, { queuedBy: args.actorUserId },
+    )
+    if (!r.ok) {
+      return { ok: false, reason: 'version-conflict', conflictVersion: r.conflictVersion }
+    }
+    next.version = r.newVersion
+  } else {
+    // Persist as an array element with id=stage. The drain (entityRegistry
+    // path stage_responsibility.json) upserts by `id` for arrays of
+    // objects; we synthesise the canonical id field below so the merge
+    // matches by stage name.
+    await deps.enqueue({
+      queuedBy: args.actorUserId,
+      entity: 'stageResponsibility',
+      operation: 'update',
+      payload: { ...next, id: args.stage } as Record<string, unknown>,
+    })
+  }
 
   return { ok: true, stage: args.stage, updated: next, changedFields }
 }

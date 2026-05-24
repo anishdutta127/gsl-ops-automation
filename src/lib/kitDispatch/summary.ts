@@ -28,6 +28,8 @@ import type {
   School,
 } from '@/lib/types'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
+import { kitDispatchRepo } from '@/lib/db/repos/kitDispatch'
+import { currentBackend } from '@/lib/db/backend'
 
 export interface SummarySaveArgs {
   mouId: string
@@ -37,6 +39,8 @@ export interface SummarySaveArgs {
   contactPerson: string
   contactNumber: string
   salesRemarks: string | null
+  /** P2b.X OCC #4: version the operator loaded; 409 on mismatch. */
+  expectedVersion?: number
 }
 
 export interface SummarySaveDeps {
@@ -44,6 +48,8 @@ export interface SummarySaveDeps {
   schools: School[]
   enqueue?: typeof enqueueUpdate
   now?: () => Date
+  /** P2b.X OCC #4: stub for tests. */
+  updateAllocationsOCC?: typeof kitDispatchRepo.updateAllocationsOCC
 }
 
 export type SummaryFailureReason =
@@ -51,6 +57,7 @@ export type SummaryFailureReason =
   | 'not-approved'
   | 'no-summary'
   | 'empty-school-name'
+  | 'version-conflict'
 
 export type SummarySaveResult =
   | {
@@ -59,7 +66,7 @@ export type SummarySaveResult =
       schoolEdited: boolean
       schoolFieldsChanged: string[]
     }
-  | { ok: false; reason: SummaryFailureReason }
+  | { ok: false; reason: SummaryFailureReason; conflictVersion?: number }
 
 export async function saveDispatchSummary(
   args: SummarySaveArgs,
@@ -114,16 +121,30 @@ export async function saveDispatchSummary(
     auditLog: [...kd.auditLog, summaryAudit],
   }
 
-  await enqueue({
-    queuedBy: args.user.id,
-    entity: 'kitDispatch',
-    operation: 'update',
-    payload: {
-      id: kd.id,
-      mouId: args.mouId,
-      record: nextRecord as unknown as Record<string, unknown>,
-    },
-  })
+  // P2b.X OCC #4: cross-flow OCC on kit_dispatches.version. dispatch_summary
+  // is REPLACE-on-update and six writers (this lib + approve + accountsExecute
+  // + challan + warehouse-email + allocate) all need to coordinate.
+  if (deps.updateAllocationsOCC || currentBackend() === 'postgres') {
+    const occ = deps.updateAllocationsOCC
+      ?? kitDispatchRepo.updateAllocationsOCC.bind(kitDispatchRepo)
+    const expectedVersion = args.expectedVersion ?? kd.version ?? 1
+    const r = await occ(kd.id, expectedVersion, { dispatchSummary: nextSummary }, summaryAudit, { queuedBy: args.user.id })
+    if (!r.ok) {
+      return { ok: false, reason: 'version-conflict', conflictVersion: r.conflictVersion }
+    }
+    nextRecord.version = r.newVersion
+  } else {
+    await enqueue({
+      queuedBy: args.user.id,
+      entity: 'kitDispatch',
+      operation: 'update',
+      payload: {
+        id: kd.id,
+        mouId: args.mouId,
+        record: nextRecord as unknown as Record<string, unknown>,
+      },
+    })
+  }
 
   const school = deps.schools.find((s) => s.id === kd.schoolId) ?? null
   const fieldsChanged: string[] = []

@@ -10,11 +10,7 @@
 import { NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canManageInventory } from '@/lib/access'
-import { enqueueUpdate } from '@/lib/pendingUpdates'
-import type { VexProduct } from '@/lib/types'
-import vexProductsJson from '@/data/vex_products.json'
-
-const allVexProducts = vexProductsJson as unknown as VexProduct[]
+import { vexProductRepo } from '@/lib/db/repos/vexProduct'
 
 interface RouteContext {
   params: Promise<{ partNumber: string }>
@@ -38,7 +34,7 @@ export async function POST(request: Request, ctx: RouteContext) {
   }
   if (!canManageInventory(user)) return errorTo('permission')
 
-  const existing = allVexProducts.find((p) => p.partNumber === partNumber)
+  const existing = await vexProductRepo.findByPartNumber(partNumber)
   if (!existing) return errorTo('product-not-found')
 
   const name = String(form.get('name') ?? '').trim()
@@ -53,24 +49,31 @@ export async function POST(request: Request, ctx: RouteContext) {
   }
   const activeRaw = form.get('active')
   const active = activeRaw === 'true' || activeRaw === 'on'
-  // active-submitted marker means unchecked = false.
   const activeFinal =
     form.get('active-submitted') === '1' ? active : existing.active
-
-  const updated: VexProduct = {
-    ...existing,
-    name,
-    defaultUnitPrice,
-    active: activeFinal,
-  }
+  // P3 OCC: version the operator's browser loaded.
+  const expectedVersionRaw = form.get('expectedVersion')
+  const expectedVersion =
+    typeof expectedVersionRaw === 'string' && expectedVersionRaw.trim() !== ''
+      ? Number(expectedVersionRaw)
+      : (existing.version ?? 1)
 
   try {
-    await enqueueUpdate({
-      queuedBy: user.id,
-      entity: 'vexProduct',
-      operation: 'update',
-      payload: updated as unknown as Record<string, unknown>,
-    })
+    const r = await vexProductRepo.updateOCC(
+      partNumber,
+      expectedVersion,
+      { name, defaultUnitPrice, active: activeFinal },
+      { queuedBy: user.id },
+    )
+    if (!r.ok) {
+      const url = new URL(
+        `/operations/vex/products/${encodeURIComponent(partNumber)}/edit`,
+        request.url,
+      )
+      url.searchParams.set('error', 'version-conflict')
+      url.searchParams.set('conflictVersion', String(r.conflictVersion))
+      return NextResponse.redirect(url, { status: 303 })
+    }
   } catch {
     return errorTo('queue-failure')
   }

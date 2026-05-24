@@ -106,9 +106,23 @@ export async function editTemplateAction(formData: FormData): Promise<void> {
   // Checkboxes are absent when unchecked; treat absence as active=false
   // when the form rendered the input (it always does on the edit page).
   patch.active = formData.get('active') !== null
+  // P2b.X OCC: version the operator loaded.
+  const expectedVersionRaw = formData.get('expectedVersion')
+  const expectedVersion =
+    typeof expectedVersionRaw === 'string' && expectedVersionRaw.trim() !== ''
+      ? Number(expectedVersionRaw) : undefined
 
-  const result = await editTemplate({ id, patch, editedBy: user.id })
+  const result = await editTemplate({
+    id, patch, editedBy: user.id,
+    expectedVersion: Number.isFinite(expectedVersion) ? expectedVersion : undefined,
+  })
   if (!result.ok) {
+    if (result.reason === 'version-conflict') {
+      const q = result.conflictVersion != null
+        ? `version-conflict&conflictVersion=${result.conflictVersion}`
+        : 'version-conflict'
+      redirect(`/admin/templates/${encodeURIComponent(id)}/edit?error=${q}`)
+    }
     redirect(`/admin/templates/${encodeURIComponent(id)}/edit?error=${encodeURIComponent(result.reason)}`)
   }
   redirect(`/admin/templates?edited=${encodeURIComponent(id)}`)

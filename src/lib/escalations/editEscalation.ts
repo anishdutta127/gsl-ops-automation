@@ -32,10 +32,10 @@ import type {
   PendingUpdate,
   User,
 } from '@/lib/types'
-import escalationsJson from '@/data/escalations.json'
-import usersJson from '@/data/users.json'
 import { canPerform } from '@/lib/auth/permissions'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
+import { escalationRepo } from '@/lib/db/repos/escalation'
+import { userRepo } from '@/lib/db/repos/user'
 
 const VALID_STATUSES: ReadonlyArray<EscalationStatus> = [
   'Open',
@@ -119,11 +119,12 @@ export interface EditEscalationDeps {
   now: () => Date
 }
 
-const defaultDeps: EditEscalationDeps = {
-  escalations: escalationsJson as unknown as Escalation[],
-  users: usersJson as unknown as User[],
-  enqueue: enqueueUpdate,
-  now: () => new Date(),
+async function defaultDeps(): Promise<EditEscalationDeps> {
+  const [escalations, users] = await Promise.all([
+    escalationRepo.findAll(),
+    userRepo.findAll(),
+  ])
+  return { escalations, users, enqueue: enqueueUpdate, now: () => new Date() }
 }
 
 function nullIfBlank(value: string | null | undefined): string | null {
@@ -134,8 +135,9 @@ function nullIfBlank(value: string | null | undefined): string | null {
 
 export async function editEscalation(
   args: EditEscalationArgs,
-  deps: EditEscalationDeps = defaultDeps,
+  depsOverride?: EditEscalationDeps,
 ): Promise<EditEscalationResult> {
+  const deps = depsOverride ?? (await defaultDeps())
   const user = deps.users.find((u) => u.id === args.editedBy)
   if (!user) return { ok: false, reason: 'unknown-user' }
   if (!canPerform(user, 'escalation:resolve')) {

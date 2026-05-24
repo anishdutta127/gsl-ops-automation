@@ -16,12 +16,10 @@ import { getCurrentUser } from '@/lib/auth/session'
 import { canPerform } from '@/lib/auth/permissions'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
-import templatesJson from '@/data/communication_templates.json'
+import { communicationTemplateRepo } from '@/lib/db/repos/leafRepos'
 import { availableVariablesFor } from '@/lib/templates/applyVariables'
 import { editTemplateAction } from '../../actions'
 import type { CommunicationTemplate } from '@/lib/types'
-
-const allTemplates = templatesJson as unknown as CommunicationTemplate[]
 
 const RECIPIENTS = [
   { value: 'spoc', label: 'Intake / school SPOC' },
@@ -38,6 +36,7 @@ const ERROR_MESSAGES: Record<string, string> = {
   'missing-body': 'Body is required.',
   'invalid-recipient': 'Pick a valid default recipient.',
   'no-changes': 'No fields changed.',
+  'version-conflict': 'Another user updated this template while you were editing. Reload to see the latest version, then re-submit your changes.',
 }
 
 const FIELD_INPUT_CLASS =
@@ -58,6 +57,7 @@ export default async function TemplateEditPage({ params, searchParams }: PagePro
     redirect('/admin/templates?error=permission')
   }
 
+  const allTemplates = await communicationTemplateRepo.findAll() as unknown as CommunicationTemplate[]
   const template = allTemplates.find((t) => t.id === id)
   if (!template) notFound()
 
@@ -110,6 +110,10 @@ export default async function TemplateEditPage({ params, searchParams }: PagePro
             data-testid="template-edit-form"
           >
             <input type="hidden" name="id" value={template.id} />
+            {/* P2b.X OCC: version we loaded; action returns 409
+                (redirects with ?error=version-conflict) if someone
+                else has saved in the meantime. */}
+            <input type="hidden" name="expectedVersion" value={template.version ?? 1} />
 
             <div>
               <label htmlFor="name" className={FIELD_LABEL_CLASS}>

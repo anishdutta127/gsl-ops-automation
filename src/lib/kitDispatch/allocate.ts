@@ -27,12 +27,22 @@ import type {
   MOU,
 } from '@/lib/types'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
+import { kitDispatchRepo } from '@/lib/db/repos/kitDispatch'
 import { mintDispatchId } from './lookup'
 
 export interface AllocateArgs {
   mouId: string
   user: { id: string; name: string }
   allocations: KitAllocation[]
+  /**
+   * P2b.X OCC (2026-05-24): the version the operator's browser loaded.
+   * For UPDATE flows, the repo's OCC method checks `WHERE version=$1`
+   * and bumps on success. Mismatch -> 'version-conflict' result; the
+   * route returns 409 and the UI shows a reload prompt. For CREATE
+   * flows (first allocation, no existing kit_dispatch), version is
+   * undefined and the repo INSERTs at version=1 unconditionally.
+   */
+  expectedVersion?: number
 }
 
 export interface AllocateDeps {
@@ -41,6 +51,13 @@ export interface AllocateDeps {
   inventory: InventoryItem[]
   enqueue?: typeof enqueueUpdate
   now?: () => Date
+  /**
+   * P2b.X OCC: override-able OCC update for tests. Defaults to the
+   * real repo method which performs an atomic UPDATE with version
+   * check. Tests pass a stub that mirrors the success/conflict
+   * contract without hitting postgres.
+   */
+  updateAllocationsOCC?: typeof kitDispatchRepo.updateAllocationsOCC
 }
 
 export type AllocateFailureReason =
@@ -51,6 +68,7 @@ export type AllocateFailureReason =
   | 'unknown-sku'
   | 'sku-mismatch-product'
   | 'inventory-insufficient'
+  | 'version-conflict'
 
 export type AllocateResult =
   | { ok: true; dispatch: KitDispatch; created: boolean }
@@ -60,6 +78,8 @@ export type AllocateResult =
       offendingSkuName?: string
       requested?: number
       available?: number
+      /** Populated only when reason === 'version-conflict'. */
+      conflictVersion?: number
     }
 
 function validateRow(row: KitAllocation): boolean {
@@ -207,16 +227,52 @@ export async function allocateKits(
         createdAt: now.toISOString(),
       }
 
-  await enqueue({
-    queuedBy: args.user.id,
-    entity: 'kitDispatch',
-    operation: created ? 'create' : 'update',
-    payload: {
-      id,
-      mouId: args.mouId,
-      record: nextRecord as unknown as Record<string, unknown>,
-    },
-  })
+  if (created) {
+    // CREATE path: no version to check. The repo's create method INSERTs
+    // at version=1 (column default). Concurrent CREATEs for the same
+    // mouId are prevented by the UNIQUE(mou_id) constraint on
+    // kit_dispatches; only one of N parallel CREATE attempts will land.
+    await enqueue({
+      queuedBy: args.user.id,
+      entity: 'kitDispatch',
+      operation: 'create',
+      payload: {
+        id,
+        mouId: args.mouId,
+        record: nextRecord as unknown as Record<string, unknown>,
+      },
+    })
+    return { ok: true, dispatch: { ...nextRecord, version: 1 }, created }
+  }
 
-  return { ok: true, dispatch: nextRecord, created }
+  // UPDATE path: OCC. If the operator's browser loaded version=V and
+  // someone else has since saved, the UPDATE's WHERE version=V fails
+  // (0 rows affected); we surface a clean 409 to the route so the UI
+  // can prompt the operator to reload.
+  const expectedVersion = args.expectedVersion ?? existing!.version ?? 1
+  const occUpdate = deps.updateAllocationsOCC
+    ?? kitDispatchRepo.updateAllocationsOCC.bind(kitDispatchRepo)
+  const occResult = await occUpdate(
+    id,
+    expectedVersion,
+    {
+      allocations: rows,
+      salesApprovalStatus: 'Pending',
+      salesRejectionReason: null,
+    },
+    audit,
+    { queuedBy: args.user.id },
+  )
+  if (!occResult.ok) {
+    return {
+      ok: false,
+      reason: 'version-conflict',
+      conflictVersion: occResult.conflictVersion,
+    }
+  }
+  return {
+    ok: true,
+    dispatch: { ...nextRecord, version: occResult.newVersion },
+    created,
+  }
 }

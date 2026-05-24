@@ -8,24 +8,22 @@
 import { NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canAllocateKits } from '@/lib/access'
-import type {
-  InventoryItem,
-  KitAllocation,
-  KitDispatch,
-  MOU,
-} from '@/lib/types'
-import mousJson from '@/data/mous.json'
-import kitDispatchesJson from '@/data/kit_dispatches.json'
-import inventoryItemsJson from '@/data/inventory_items.json'
+import type { KitAllocation } from '@/lib/types'
+import { mouRepo } from '@/lib/db/repos/mou'
+import { kitDispatchRepo } from '@/lib/db/repos/kitDispatch'
+import { inventoryItemRepo } from '@/lib/db/repos/inventoryItem'
 import { allocateKits } from '@/lib/kitDispatch/allocate'
 import { emitKitsAllocatedForApproval } from '@/lib/notifications/workflowTriggers'
 
-const mous = mousJson as unknown as MOU[]
-const kitDispatches = kitDispatchesJson as unknown as KitDispatch[]
-const inventory = inventoryItemsJson as unknown as InventoryItem[]
-
 interface Body {
   allocations?: unknown
+  /**
+   * P2b.X OCC: the version the operator's browser loaded. Omit on
+   * first-submit (CREATE path - record does not exist yet). Required
+   * on subsequent edits; mismatch returns 409 with the current version
+   * so the UI can prompt for reload.
+   */
+  expectedVersion?: unknown
 }
 
 function parseAllocations(v: unknown): KitAllocation[] | null {
@@ -78,17 +76,43 @@ export async function POST(
   if (allocations === null) {
     return NextResponse.json({ error: 'invalid-rows' }, { status: 400 })
   }
+  const expectedVersion = typeof body.expectedVersion === 'number'
+    && Number.isFinite(body.expectedVersion)
+    ? body.expectedVersion
+    : undefined
+
+  // Load LIVE state via repos so the OCC version check sees current
+  // postgres data (not stale json bundle).
+  const [mous, kitDispatches, inventory] = await Promise.all([
+    mouRepo.findAll(),
+    kitDispatchRepo.findAll(),
+    inventoryItemRepo.findAll(),
+  ])
 
   const result = await allocateKits(
     {
       mouId,
       user: { id: user.id, name: user.name },
       allocations,
+      expectedVersion,
     },
     { mous, kitDispatches, inventory },
   )
 
   if (!result.ok) {
+    if (result.reason === 'version-conflict') {
+      // 409 Conflict: another operator updated this kit_dispatch since
+      // the page was loaded. UI shows "Another user updated this. Reload
+      // to see latest." and re-renders from the fresh GET.
+      return NextResponse.json(
+        {
+          error: 'version-conflict',
+          conflictVersion: result.conflictVersion,
+          message: 'Another user updated this kit_dispatch since you loaded the page. Reload to see the latest version and re-submit.',
+        },
+        { status: 409 },
+      )
+    }
     const status = result.reason === 'mou-not-found' ? 404 : 400
     return NextResponse.json(
       {
@@ -123,5 +147,10 @@ export async function POST(
     console.error('[allocate] notification fan-out failed:', notifyErr)
   }
 
-  return NextResponse.json({ ok: true, dispatchId: result.dispatch.id })
+  return NextResponse.json({
+    ok: true,
+    dispatchId: result.dispatch.id,
+    // P2b.X OCC: tell the UI the new version so the next save sends it.
+    version: result.dispatch.version ?? 1,
+  })
 }

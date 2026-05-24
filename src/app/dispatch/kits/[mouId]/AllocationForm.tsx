@@ -32,6 +32,14 @@ interface Props {
   eligibleSkus: SkuOption[]
   editable: boolean
   rejectionReason: string | null
+  /**
+   * P2b.X OCC (2026-05-24): the kit_dispatches.version this page was
+   * rendered with. Passed to /api/dispatch/kits/[mouId]/allocate so
+   * the OCC check can detect another operator's intervening save.
+   * `null` on first-submit (no kit_dispatch exists yet - CREATE path
+   * which is FK-constrained, not version-constrained).
+   */
+  initialVersion: number | null
 }
 
 const GRADES = Array.from({ length: 12 }, (_, i) => i + 1)
@@ -94,13 +102,18 @@ export function AllocationForm({
   eligibleSkus,
   editable,
   rejectionReason,
+  initialVersion,
 }: Props) {
   const router = useRouter()
   const [rows, setRows] = useState<RowState[]>(() =>
     buildInitialRows(initialAllocations, initialGradewiseDistribution),
   )
-  const [saveState, setSaveState] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle')
+  const [saveState, setSaveState] = useState<'idle' | 'saving' | 'saved' | 'error' | 'conflict'>('idle')
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  // P2b.X OCC: live version updates after each save so subsequent saves
+  // from the same page send the bumped version (no spurious 409 on the
+  // second save without reload).
+  const [currentVersion, setCurrentVersion] = useState<number | null>(initialVersion)
 
   const stockByName = useMemo(() => {
     const m = new Map<string, number>()
@@ -153,8 +166,27 @@ export function AllocationForm({
       const res = await fetch(`/api/dispatch/kits/${encodeURIComponent(mouId)}/allocate`, {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ allocations: payload }),
+        body: JSON.stringify({
+          allocations: payload,
+          // P2b.X OCC: send the version we loaded; route returns 409 if
+          // someone else has saved in the meantime.
+          ...(currentVersion != null ? { expectedVersion: currentVersion } : {}),
+        }),
       })
+      if (res.status === 409) {
+        // Another operator saved this kit_dispatch since this page was
+        // loaded. Show the reload prompt; do NOT silently overwrite.
+        const body = (await res.json().catch(() => ({}))) as {
+          conflictVersion?: number
+          message?: string
+        }
+        setSaveState('conflict')
+        setErrorMessage(
+          body.message
+          ?? `Another user updated this kit allocation (now at version ${body.conflictVersion ?? '?'}). Reload to see latest, then re-submit your changes.`,
+        )
+        return
+      }
       if (!res.ok) {
         const body = (await res.json().catch(() => ({}))) as {
           error?: string
@@ -164,6 +196,10 @@ export function AllocationForm({
           ? `${body.error}: ${body.offendingSkuName}`
           : (body.error ?? `Save failed (${res.status})`)
         throw new Error(msg)
+      }
+      const okBody = (await res.json().catch(() => ({}))) as { version?: number }
+      if (typeof okBody.version === 'number') {
+        setCurrentVersion(okBody.version)
       }
       setSaveState('saved')
       setTimeout(() => setSaveState('idle'), 6000)
@@ -319,7 +355,24 @@ export function AllocationForm({
         </div>
       )}
 
-      {errorMessage && (
+      {errorMessage && saveState === 'conflict' && (
+        <div
+          className="rounded-md border border-amber-400/60 bg-amber-50 px-4 py-3 text-sm text-amber-900"
+          data-testid="allocation-version-conflict"
+        >
+          <div className="font-semibold">Conflict: another user saved first</div>
+          <div className="mt-1">{errorMessage}</div>
+          <button
+            type="button"
+            onClick={() => router.refresh()}
+            className="mt-2 inline-flex min-h-9 items-center gap-2 rounded-md border border-amber-700 bg-white px-3 py-1.5 text-xs font-semibold text-amber-900 hover:bg-amber-100"
+            data-testid="allocation-reload"
+          >
+            Reload latest
+          </button>
+        </div>
+      )}
+      {errorMessage && saveState !== 'conflict' && (
         <div className="rounded-md border border-signal-alert/40 bg-red-50 px-4 py-2.5 text-sm text-signal-alert">
           {errorMessage}
         </div>

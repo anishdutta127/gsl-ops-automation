@@ -18,15 +18,19 @@ import type {
   School,
 } from '@/lib/types'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
+import { kitDispatchRepo } from '@/lib/db/repos/kitDispatch'
+import { currentBackend } from '@/lib/db/backend'
 
 export interface ApproveArgs {
   mouId: string
   user: { id: string; name: string }
+  expectedVersion?: number
 }
 export interface RejectArgs {
   mouId: string
   user: { id: string; name: string }
   reason: string
+  expectedVersion?: number
 }
 export interface ApproveDeps {
   mous: MOU[]
@@ -34,6 +38,8 @@ export interface ApproveDeps {
   schools: School[]
   enqueue?: typeof enqueueUpdate
   now?: () => Date
+  /** P2b.X OCC #4: stub for tests. */
+  updateAllocationsOCC?: typeof kitDispatchRepo.updateAllocationsOCC
 }
 
 export type ApproveFailureReason =
@@ -42,10 +48,11 @@ export type ApproveFailureReason =
   | 'not-pending'
   | 'no-allocations'
   | 'rejection-reason-required'
+  | 'version-conflict'
 
 export type ApproveResult =
   | { ok: true; dispatch: KitDispatch }
-  | { ok: false; reason: ApproveFailureReason }
+  | { ok: false; reason: ApproveFailureReason; conflictVersion?: number }
 
 function buildInitialDispatchSummary(args: {
   mou: MOU
@@ -113,17 +120,30 @@ export async function approveKitDispatch(
     auditLog: [...kd.auditLog, audit],
   }
 
-  await enqueue({
-    queuedBy: args.user.id,
-    entity: 'kitDispatch',
-    operation: 'update',
-    payload: {
-      id: kd.id,
-      mouId: args.mouId,
-      record: nextRecord as unknown as Record<string, unknown>,
-    },
-  })
-
+  if (deps.updateAllocationsOCC || currentBackend() === 'postgres') {
+    const occ = deps.updateAllocationsOCC ?? kitDispatchRepo.updateAllocationsOCC.bind(kitDispatchRepo)
+    const expectedVersion = args.expectedVersion ?? kd.version ?? 1
+    const r = await occ(kd.id, expectedVersion, {
+      salesApprovalStatus: 'Approved',
+      salesApprovedBy: args.user.id,
+      salesApprovedAt: isoNow,
+      salesRejectionReason: null,
+      dispatchSummary: nextRecord.dispatchSummary,
+    }, audit, { queuedBy: args.user.id })
+    if (!r.ok) return { ok: false, reason: 'version-conflict', conflictVersion: r.conflictVersion }
+    nextRecord.version = r.newVersion
+  } else {
+    await enqueue({
+      queuedBy: args.user.id,
+      entity: 'kitDispatch',
+      operation: 'update',
+      payload: {
+        id: kd.id,
+        mouId: args.mouId,
+        record: nextRecord as unknown as Record<string, unknown>,
+      },
+    })
+  }
   return { ok: true, dispatch: nextRecord }
 }
 
@@ -159,16 +179,26 @@ export async function rejectKitDispatch(
     auditLog: [...kd.auditLog, audit],
   }
 
-  await enqueue({
-    queuedBy: args.user.id,
-    entity: 'kitDispatch',
-    operation: 'update',
-    payload: {
-      id: kd.id,
-      mouId: args.mouId,
-      record: nextRecord as unknown as Record<string, unknown>,
-    },
-  })
-
+  if (deps.updateAllocationsOCC || currentBackend() === 'postgres') {
+    const occ = deps.updateAllocationsOCC ?? kitDispatchRepo.updateAllocationsOCC.bind(kitDispatchRepo)
+    const expectedVersion = args.expectedVersion ?? kd.version ?? 1
+    const r = await occ(kd.id, expectedVersion, {
+      salesApprovalStatus: 'Rejected',
+      salesRejectionReason: args.reason.trim(),
+    }, audit, { queuedBy: args.user.id })
+    if (!r.ok) return { ok: false, reason: 'version-conflict', conflictVersion: r.conflictVersion }
+    nextRecord.version = r.newVersion
+  } else {
+    await enqueue({
+      queuedBy: args.user.id,
+      entity: 'kitDispatch',
+      operation: 'update',
+      payload: {
+        id: kd.id,
+        mouId: args.mouId,
+        record: nextRecord as unknown as Record<string, unknown>,
+      },
+    })
+  }
   return { ok: true, dispatch: nextRecord }
 }
