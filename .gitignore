@@ -51,3 +51,4 @@ onedrive-data
 ops-data/*.xlsx
 
 .vercel
+tmp/
