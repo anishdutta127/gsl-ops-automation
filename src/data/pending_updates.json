@@ -1,1 +1,80 @@
-[]
+[
+  {
+    "id": "81b1b053-ef72-4f2a-8238-26761fb75196",
+    "queuedAt": "2026-05-24T12:08:54.834Z",
+    "queuedBy": "anish.d",
+    "entity": "mou",
+    "operation": "update",
+    "payload": {
+      "id": "MOU-STEAM-2627-057",
+      "schoolId": "sch-rt-nagar-public-school",
+      "schoolName": "RT Nagar Public School",
+      "programme": "STEAM",
+      "schoolScope": "SINGLE",
+      "schoolGroupId": null,
+      "status": "Pending Signature",
+      "cohortStatus": "active",
+      "academicYear": "2026-27",
+      "effectiveDate": "2026-04-01T00:00:00.000Z",
+      "startDate": "2026-04-01T00:00:00.000Z",
+      "endDate": "2027-03-31T00:00:00.000Z",
+      "numberOfYears": null,
+      "studentsMou": 1300,
+      "studentsActual": 0,
+      "studentsVariance": 0,
+      "studentsVariancePct": 0,
+      "spWithoutTax": 847.46,
+      "spWithTax": 1000,
+      "contractValue": 1300000,
+      "received": 0,
+      "tds": 0,
+      "balance": 1300000,
+      "receivedPct": 0,
+      "trainerModel": "TT",
+      "salesPersonId": "sp-balachandra",
+      "templateVersion": "",
+      "generatedAt": "",
+      "notes": "Created from Pranav refresh pranav-refresh-2026-05-13",
+      "delayNotes": "cutover-proof-1779624529200",
+      "daysToExpiry": null,
+      "salesChannel": null,
+      "schoolCrmId": null,
+      "signedMouPdfPath": null,
+      "importNotes": "acquisitionStatus=New; source=pranav-refresh-2026-05-13",
+      "productSelection": null,
+      "paymentSchedule": "",
+      "paymentSchedules": null,
+      "yearlyPricing": null,
+      "billingBlock": null,
+      "draftVariables": null,
+      "gradewiseDistribution": null,
+      "studentCountEventIds": [],
+      "auditLog": [
+        {
+          "user": "usr-anish",
+          "after": {
+            "schoolName": "RT Nagar Public School",
+            "studentsMou": 1300,
+            "trainerModel": "TT",
+            "contractValue": 1300000
+          },
+          "notes": "source: pranav-refresh-2026-05-13",
+          "action": "create",
+          "timestamp": "2026-05-14T03:33:15.807Z"
+        },
+        {
+          "timestamp": "2026-05-24T12:08:54.834Z",
+          "user": "anish.d",
+          "action": "mou-delay-notes-updated",
+          "before": {
+            "delayNotes": null
+          },
+          "after": {
+            "delayNotes": "cutover-proof-1779624529200"
+          }
+        }
+      ]
+    },
+    "retryCount": 0
+  }
+]
