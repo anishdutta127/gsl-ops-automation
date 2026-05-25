@@ -99,7 +99,7 @@ export function getSql(): ReturnType<typeof postgres> {
   //                     concurrent load. False is the recommended
   //                     setting for any pgbouncer-fronted Postgres.
   cached = postgres(url, {
-    max: 1,
+    max: 5,
     idle_timeout: 30,
     connect_timeout: 30,
     prepare: false,

@@ -38,7 +38,7 @@ import {
   Sparkles,
   Truck,
 } from 'lucide-react'
-import type { Adjustment, AuditEntry, CommunicationTemplate, Feedback, IntakeRecord, MOU, StudentCountEvent, User } from '@/lib/types'
+import type { Adjustment, AuditEntry, CommunicationTemplate, Feedback, IntakeRecord, KitDispatch, MOU, StudentCountEvent, User } from '@/lib/types'
 import { formatSkuBreakdown } from '@/lib/dispatch/formatLineItems'
 // P4 batch 2: static JSON imports → live repo reads inside the server
 // component below so postgres mode sees fresh data. Pattern proven on
@@ -256,32 +256,28 @@ export default async function MouDetailPage({ params, searchParams }: PageProps)
   // JSON imports. In postgres mode every value comes from the live DB;
   // in json mode the repos fall through to the seed (no behavior change
   // for tests / dev).
-  const [
-    allMous, allSchools, allDispatches, allKitDispatches, allPayments,
-    allFeedback, allUsers, allIntakeRecords, allTemplates, allEscalations,
-    allAdjustments, allStudentCountEvents,
-  ] = await Promise.all([
-    mouRepo.findAll(),
-    schoolRepo.findAll(),
-    dispatchRepo.findAll(),
-    kitDispatchRepo.findAll(),
-    paymentRepo.findAll(),
-    feedbackRepo.findAll() as Promise<Feedback[]>,
-    userRepo.findAll(),
-    intakeRecordRepo.findAll() as Promise<IntakeRecord[]>,
-    communicationTemplateRepo.findAll() as Promise<CommunicationTemplate[]>,
-    escalationRepo.findAll(),
-    adjustmentRepo.findAll() as Promise<Adjustment[]>,
-    studentCountEventRepo.findAll() as Promise<StudentCountEvent[]>,
-  ])
-
-  const mou = allMous.find((m) => m.id === mouId)
+  const mou = await mouRepo.findById(mouId)
   if (!mou || !isVisibleToUser(mou, user)) {
     notFound()
   }
 
-  const school = allSchools.find((s) => s.id === mou.schoolId)
-  const installments = allPayments.filter((p) => p.mouId === mou.id)
+  const [
+    school, installments, installmentDispatches_, mouKitDispatches_,
+    mouEscalations_, allFeedback, allUsers, allIntakeRecords, allTemplates,
+    allAdjustments, allStudentCountEvents,
+  ] = await Promise.all([
+    schoolRepo.findById(mou.schoolId),
+    paymentRepo.findByMouId(mouId),
+    dispatchRepo.findByMouId(mouId),
+    kitDispatchRepo.findByMouId(mouId).then(kd => kd ? [kd] : [] as KitDispatch[]),
+    escalationRepo.findByMouId(mouId),
+    feedbackRepo.findAll() as Promise<Feedback[]>,
+    userRepo.findAll(),
+    intakeRecordRepo.findAll() as Promise<IntakeRecord[]>,
+    communicationTemplateRepo.findAll() as Promise<CommunicationTemplate[]>,
+    adjustmentRepo.findAll() as Promise<Adjustment[]>,
+    studentCountEventRepo.findAll() as Promise<StudentCountEvent[]>,
+  ])
 
   // Phase 3 (2026-05-19): year tabs for multi-year MOUs. The MOU may
   // span multiple FYs via instalment due-dates (Apr 2026 - Mar 2028
@@ -289,20 +285,20 @@ export default async function MouDetailPage({ params, searchParams }: PageProps)
   // ?fy=<tag> param picks a tab; absence shows the "All years" view
   // which keeps the existing lifetime totals. Single-year MOUs render
   // without a tab strip.
-  const mouFys = getFinancialYearsForMou(mou, allPayments)
+  const mouFys = getFinancialYearsForMou(mou, installments)
   const isMultiYearMou = mouFys.length > 1
   const fyParam = typeof sp.fy === 'string' ? sp.fy : null
   const activeYearTab: string | null = isMultiYearMou && fyParam && mouFys.includes(fyParam)
     ? fyParam
     : null
   const displayedInstallments = activeYearTab
-    ? getYearSpecificInstalments(mou, activeYearTab, allPayments)
+    ? getYearSpecificInstalments(mou, activeYearTab, installments)
     : installments
 
-  const installmentDispatches = allDispatches.filter((d) => d.mouId === mou.id)
-  const mouKitDispatches = allKitDispatches.filter((d) => d.mouId === mou.id)
+  const installmentDispatches = installmentDispatches_
+  const mouKitDispatches = mouKitDispatches_
   const mouFeedback = allFeedback.filter((f) => f.mouId === mou.id)
-  const mouEscalations = allEscalations.filter((e) => e.mouId === mou.id)
+  const mouEscalations = mouEscalations_
 
   // Gate 4 Step 1 + 3 + 4: master status tracker stage + workflow banner +
   // top-5 critical change log surfaced at the head of the detail body so
