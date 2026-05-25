@@ -1,148 +1,5 @@
 [
   {
-    "at": "2026-05-20T19:51:15.275Z",
-    "kind": "sync",
-    "ok": true,
-    "triggeredBy": "github-actions",
-    "importSummary": null,
-    "healthChecks": null,
-    "anomalies": [
-      "drained=0 remaining=0 duration=118ms"
-    ]
-  },
-  {
-    "at": "2026-05-20T21:27:01.230Z",
-    "kind": "sync",
-    "ok": true,
-    "triggeredBy": "github-actions",
-    "importSummary": null,
-    "healthChecks": null,
-    "anomalies": [
-      "drained=6 remaining=0 duration=4005ms"
-    ]
-  },
-  {
-    "at": "2026-05-20T22:52:42.210Z",
-    "kind": "sync",
-    "ok": true,
-    "triggeredBy": "github-actions",
-    "importSummary": null,
-    "healthChecks": null,
-    "anomalies": [
-      "drained=0 remaining=0 duration=111ms"
-    ]
-  },
-  {
-    "at": "2026-05-21T00:00:24.173Z",
-    "kind": "sync",
-    "ok": true,
-    "triggeredBy": "github-actions",
-    "importSummary": null,
-    "healthChecks": null,
-    "anomalies": [
-      "drained=0 remaining=0 duration=173ms"
-    ]
-  },
-  {
-    "at": "2026-05-21T04:38:19.369Z",
-    "kind": "sync",
-    "ok": true,
-    "triggeredBy": "github-actions",
-    "importSummary": null,
-    "healthChecks": null,
-    "anomalies": [
-      "drained=0 remaining=0 duration=130ms"
-    ]
-  },
-  {
-    "at": "2026-05-21T07:05:23.402Z",
-    "kind": "sync",
-    "ok": true,
-    "triggeredBy": "manual:anita.c",
-    "importSummary": null,
-    "healthChecks": null,
-    "anomalies": [
-      "drained=0 remaining=0 duration=108ms"
-    ]
-  },
-  {
-    "at": "2026-05-21T07:29:00.348Z",
-    "kind": "sync",
-    "ok": true,
-    "triggeredBy": "manual:ajith.n",
-    "importSummary": null,
-    "healthChecks": null,
-    "anomalies": [
-      "drained=3 remaining=0 duration=2828ms"
-    ]
-  },
-  {
-    "at": "2026-05-21T07:47:03.643Z",
-    "kind": "sync",
-    "ok": true,
-    "triggeredBy": "manual:anita.c",
-    "importSummary": null,
-    "healthChecks": null,
-    "anomalies": [
-      "drained=1 remaining=0 duration=1932ms"
-    ]
-  },
-  {
-    "at": "2026-05-21T08:19:09.475Z",
-    "kind": "sync",
-    "ok": true,
-    "triggeredBy": "github-actions",
-    "importSummary": null,
-    "healthChecks": null,
-    "anomalies": [
-      "drained=0 remaining=0 duration=190ms"
-    ]
-  },
-  {
-    "at": "2026-05-21T11:40:15.890Z",
-    "kind": "sync",
-    "ok": true,
-    "triggeredBy": "github-actions",
-    "importSummary": null,
-    "healthChecks": null,
-    "anomalies": [
-      "drained=2 remaining=0 duration=4072ms"
-    ]
-  },
-  {
-    "at": "2026-05-21T14:23:50.958Z",
-    "kind": "sync",
-    "ok": true,
-    "triggeredBy": "github-actions",
-    "importSummary": null,
-    "healthChecks": null,
-    "anomalies": [
-      "drained=0 remaining=0 duration=209ms"
-    ]
-  },
-  {
-    "at": "2026-05-21T17:09:47.486Z",
-    "kind": "sync",
-    "ok": true,
-    "triggeredBy": "github-actions",
-    "importSummary": null,
-    "healthChecks": null,
-    "anomalies": [
-      "drained=0 remaining=0 duration=144ms"
-    ]
-  },
-  {
-    "at": "2026-05-21T19:16:18.245Z",
-    "kind": "sync",
-    "ok": true,
-    "triggeredBy": "github-actions",
-    "importSummary": null,
-    "healthChecks": null,
-    "anomalies": [
-      "drained=0 remaining=0 duration=186ms"
-    ]
-  },
-  {
     "at": "2026-05-21T20:58:43.805Z",
     "kind": "sync",
     "ok": true,
@@ -547,6 +404,149 @@
     "healthChecks": null,
     "anomalies": [
       "drained=0 remaining=0 duration=117ms"
+    ]
+  },
+  {
+    "at": "2026-05-24T12:46:04.456Z",
+    "kind": "sync",
+    "ok": true,
+    "triggeredBy": "github-actions",
+    "importSummary": null,
+    "healthChecks": null,
+    "anomalies": [
+      "drained=0 remaining=0 duration=117ms"
+    ]
+  },
+  {
+    "at": "2026-05-24T14:14:02.660Z",
+    "kind": "sync",
+    "ok": true,
+    "triggeredBy": "github-actions",
+    "importSummary": null,
+    "healthChecks": null,
+    "anomalies": [
+      "drained=0 remaining=0 duration=127ms"
+    ]
+  },
+  {
+    "at": "2026-05-24T15:35:16.163Z",
+    "kind": "sync",
+    "ok": true,
+    "triggeredBy": "github-actions",
+    "importSummary": null,
+    "healthChecks": null,
+    "anomalies": [
+      "drained=0 remaining=0 duration=121ms"
+    ]
+  },
+  {
+    "at": "2026-05-24T16:39:07.000Z",
+    "kind": "sync",
+    "ok": true,
+    "triggeredBy": "github-actions",
+    "importSummary": null,
+    "healthChecks": null,
+    "anomalies": [
+      "drained=0 remaining=0 duration=108ms"
+    ]
+  },
+  {
+    "at": "2026-05-24T17:40:08.581Z",
+    "kind": "sync",
+    "ok": true,
+    "triggeredBy": "github-actions",
+    "importSummary": null,
+    "healthChecks": null,
+    "anomalies": [
+      "drained=0 remaining=0 duration=120ms"
+    ]
+  },
+  {
+    "at": "2026-05-24T18:47:20.577Z",
+    "kind": "sync",
+    "ok": true,
+    "triggeredBy": "github-actions",
+    "importSummary": null,
+    "healthChecks": null,
+    "anomalies": [
+      "drained=0 remaining=0 duration=148ms"
+    ]
+  },
+  {
+    "at": "2026-05-24T19:55:00.164Z",
+    "kind": "sync",
+    "ok": true,
+    "triggeredBy": "github-actions",
+    "importSummary": null,
+    "healthChecks": null,
+    "anomalies": [
+      "drained=0 remaining=0 duration=117ms"
+    ]
+  },
+  {
+    "at": "2026-05-24T20:51:01.387Z",
+    "kind": "sync",
+    "ok": true,
+    "triggeredBy": "github-actions",
+    "importSummary": null,
+    "healthChecks": null,
+    "anomalies": [
+      "drained=0 remaining=0 duration=118ms"
+    ]
+  },
+  {
+    "at": "2026-05-24T21:41:42.285Z",
+    "kind": "sync",
+    "ok": true,
+    "triggeredBy": "github-actions",
+    "importSummary": null,
+    "healthChecks": null,
+    "anomalies": [
+      "drained=0 remaining=0 duration=119ms"
+    ]
+  },
+  {
+    "at": "2026-05-24T22:41:08.446Z",
+    "kind": "sync",
+    "ok": true,
+    "triggeredBy": "github-actions",
+    "importSummary": null,
+    "healthChecks": null,
+    "anomalies": [
+      "drained=0 remaining=0 duration=120ms"
+    ]
+  },
+  {
+    "at": "2026-05-24T23:43:18.760Z",
+    "kind": "sync",
+    "ok": true,
+    "triggeredBy": "github-actions",
+    "importSummary": null,
+    "healthChecks": null,
+    "anomalies": [
+      "drained=0 remaining=0 duration=119ms"
+    ]
+  },
+  {
+    "at": "2026-05-25T01:53:45.197Z",
+    "kind": "sync",
+    "ok": true,
+    "triggeredBy": "github-actions",
+    "importSummary": null,
+    "healthChecks": null,
+    "anomalies": [
+      "drained=0 remaining=0 duration=123ms"
+    ]
+  },
+  {
+    "at": "2026-05-25T06:20:24.546Z",
+    "kind": "sync",
+    "ok": true,
+    "triggeredBy": "github-actions",
+    "importSummary": null,
+    "healthChecks": null,
+    "anomalies": [
+      "drained=0 remaining=0 duration=163ms"
     ]
   }
 ]
