@@ -109,6 +109,10 @@ export default async function PiPage({ params, searchParams }: PageProps) {
   // W4-A.6: GSTIN-missing surfaces an inline note (not a block).
   const gstinMissing = !school || school.gstNumber === null || (school.gstNumber ?? '').trim() === ''
   const parallelBuildLocked = isPiParallelBuildLocked()
+  const statusNotActive = mou.status !== 'Active'
+  const missingStudents = !(mou.studentsActual ?? mou.studentsMou)
+  const missingPrice = !mou.spWithoutTax
+  const missingContract = !mou.contractValue
   // Step 5 re-wire: surface which GST entity (MH / UP) the PI will be
   // raised under so Finance sees the routing before clicking Generate.
   // Routing comes from config/company.json's programmeRouting block.
@@ -180,6 +184,33 @@ export default async function PiPage({ params, searchParams }: PageProps) {
               </span>
             </p>
           ) : null}
+
+          {statusNotActive && (
+            <p
+              role="status"
+              className="flex items-start gap-2 rounded-md border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900"
+            >
+              <Info aria-hidden className="size-4 shrink-0 text-amber-700" />
+              <span>
+                MOU status is <strong>{mou.status}</strong> (not Active). PI can still be generated but the document may reflect incomplete data.
+              </span>
+            </p>
+          )}
+          {(missingStudents || missingPrice || missingContract) && (
+            <p
+              role="status"
+              className="flex items-start gap-2 rounded-md border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900"
+            >
+              <Info aria-hidden className="size-4 shrink-0 text-amber-700" />
+              <span>
+                {[
+                  missingStudents && 'Student count is 0 or missing',
+                  missingPrice && 'Price per student (SP without tax) is 0',
+                  missingContract && 'Contract value is 0 or missing',
+                ].filter(Boolean).join('; ')}. PI amounts may be incorrect. Generation will proceed with available data.
+              </span>
+            </p>
+          )}
 
           {parallelBuildLocked ? (
             <div

@@ -107,6 +107,7 @@ export type GeneratePiResult =
        *  payment + piNumber already on record); no counter advance,
        *  no enqueue, no audit. False on first-ever issue. */
       reissued?: boolean
+      warnings?: string[]
     }
   | { ok: false; reason: GeneratePiFailureReason; templateError?: TemplateMissingError }
 
@@ -387,10 +388,16 @@ export async function issueAndRenderPi(
 
   const mou = deps.mous.find((m) => m.id === args.mouId)
   if (!mou) return { ok: false, reason: 'mou-not-found' }
-  if (mou.status !== 'Active') return { ok: false, reason: 'wrong-status' }
+  const warnings: string[] = []
+  if (mou.status !== 'Active') {
+    warnings.push(`MOU status is "${mou.status}" (not Active). PI generated anyway.`)
+  }
 
   const school = deps.schools.find((s) => s.id === mou.schoolId)
   if (!school) return { ok: false, reason: 'school-not-found' }
+  if (!school.gstNumber || school.gstNumber.trim() === '') {
+    warnings.push('School GSTIN is missing. Document shows "To be added".')
+  }
 
   // Idempotency check: if a Payment row already exists for this
   // (mouId, instalmentSeq) AND has a piNumber, short-circuit to a
@@ -438,11 +445,20 @@ export async function issueAndRenderPi(
 
   const totalInsts = totalInstallments(mou.paymentSchedule)
   const instalmentLabel = `${args.instalmentSeq} of ${totalInsts}`
-  const studentsForBilling = mou.studentsActual ?? mou.studentsMou
-  const subtotal = studentsForBilling * mou.spWithoutTax
+  const studentsForBilling = mou.studentsActual ?? mou.studentsMou ?? 0
+  if (!studentsForBilling) {
+    warnings.push('Student count is 0 or missing. PI amounts may be incorrect.')
+  }
+  if (!mou.spWithoutTax) {
+    warnings.push('Price per student (SP without tax) is 0 or missing. PI amounts may be incorrect.')
+  }
+  if (!mou.contractValue) {
+    warnings.push('Contract value is 0 or missing. Expected amount may be incorrect.')
+  }
+  const subtotal = studentsForBilling * (mou.spWithoutTax ?? 0)
   const gstAmount = Math.round(subtotal * deps.company.gstRate)
   const total = subtotal + gstAmount
-  const expectedAmount = Math.round(mou.contractValue / totalInsts)
+  const expectedAmount = totalInsts > 0 ? Math.round((mou.contractValue ?? 0) / totalInsts) : 0
 
   const allInstallmentsForMou = deps.payments.filter((p) => p.mouId === mou.id)
   // The PI being minted right now is not in `deps.payments` yet (it's
@@ -557,7 +573,7 @@ export async function issueAndRenderPi(
     payload: updatedMou as unknown as Record<string, unknown>,
   })
 
-  return { ok: true, piNumber, payment, docxBytes: r.docxBytes, reissued: false }
+  return { ok: true, piNumber, payment, docxBytes: r.docxBytes, reissued: false, warnings: warnings.length > 0 ? warnings : undefined }
 }
 
 /**
