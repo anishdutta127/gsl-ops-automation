@@ -1,16 +1,5 @@
 [
   {
-    "at": "2026-05-21T22:24:06.281Z",
-    "kind": "sync",
-    "ok": true,
-    "triggeredBy": "github-actions",
-    "importSummary": null,
-    "healthChecks": null,
-    "anomalies": [
-      "drained=0 remaining=0 duration=117ms"
-    ]
-  },
-  {
     "at": "2026-05-21T23:33:20.831Z",
     "kind": "sync",
     "ok": true,
@@ -547,6 +536,19 @@
     "healthChecks": null,
     "anomalies": [
       "drained=0 remaining=0 duration=789ms"
+    ]
+  },
+  {
+    "at": "2026-05-25T13:55:07.941Z",
+    "kind": "sync",
+    "ok": false,
+    "triggeredBy": "github-actions",
+    "importSummary": null,
+    "healthChecks": null,
+    "anomalies": [
+      "kitDispatch entry 22b04a4c-bab0-425b-aadb-848627623458 skipped: duplicate-create (operation=create)",
+      "payment entry 563bba7a-dcbb-48c0-a108-c4924918b6ea skipped: duplicate-create (operation=create)",
+      "drained=3 remaining=0 duration=7500ms"
     ]
   }
 ]
