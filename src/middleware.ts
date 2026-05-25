@@ -54,6 +54,7 @@ const PUBLIC_PATHS = [
   '/api/health',
   '/api/feedback/submit',
   '/api/admin/sync-queue',
+  '/api/cron/keep-warm',
 ]
 
 const PUBLIC_PREFIXES = [
