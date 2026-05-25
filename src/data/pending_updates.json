@@ -97,5 +97,104 @@
       }
     },
     "retryCount": 0
+  },
+  {
+    "id": "22b04a4c-bab0-425b-aadb-848627623458",
+    "queuedAt": "2026-05-25T11:05:18.155Z",
+    "queuedBy": "anita.c",
+    "entity": "kitDispatch",
+    "operation": "create",
+    "payload": {
+      "id": "DISPATCH-MOU-STEAM-2627-079",
+      "mouId": "MOU-STEAM-2627-079",
+      "record": {
+        "id": "DISPATCH-MOU-STEAM-2627-079",
+        "mouId": "MOU-STEAM-2627-079",
+        "schoolId": "SCH-CONTAI_PUBLIC_SCHOOL",
+        "schoolName": "Contai Public School",
+        "productSelected": "TinkRworks",
+        "dispatchStatus": "Not Started",
+        "allocations": [
+          {
+            "grade": 6,
+            "students": 148,
+            "kitsQty": 7,
+            "kitType": "Reusable",
+            "productName": "Tinkrexplorer"
+          },
+          {
+            "grade": 7,
+            "students": 170,
+            "kitsQty": 8,
+            "kitType": "Reusable",
+            "productName": "Tinkrexplorer"
+          },
+          {
+            "grade": 8,
+            "students": 140,
+            "kitsQty": 7,
+            "kitType": "Reusable",
+            "productName": "Tinkrpython"
+          }
+        ],
+        "salesApprovalStatus": "Pending",
+        "salesApprovedBy": null,
+        "salesApprovedAt": null,
+        "salesRejectionReason": null,
+        "dispatchSummary": null,
+        "shipmentTracking": null,
+        "pod": null,
+        "auditLog": [
+          {
+            "timestamp": "2026-05-25T11:05:18.154Z",
+            "user": "anita.c",
+            "action": "create",
+            "after": {
+              "id": "DISPATCH-MOU-STEAM-2627-079",
+              "mouId": "MOU-STEAM-2627-079",
+              "schoolId": "SCH-CONTAI_PUBLIC_SCHOOL",
+              "productSelected": "TinkRworks"
+            },
+            "notes": "KitDispatch record minted on first allocation submit."
+          },
+          {
+            "timestamp": "2026-05-25T11:05:18.154Z",
+            "user": "anita.c",
+            "action": "update",
+            "before": {
+              "allocations": []
+            },
+            "after": {
+              "allocations": [
+                {
+                  "grade": 6,
+                  "students": 148,
+                  "kitsQty": 7,
+                  "kitType": "Reusable",
+                  "productName": "Tinkrexplorer"
+                },
+                {
+                  "grade": 7,
+                  "students": 170,
+                  "kitsQty": 8,
+                  "kitType": "Reusable",
+                  "productName": "Tinkrexplorer"
+                },
+                {
+                  "grade": 8,
+                  "students": 140,
+                  "kitsQty": 7,
+                  "kitType": "Reusable",
+                  "productName": "Tinkrpython"
+                }
+              ]
+            },
+            "notes": "sales-approval-pending; notified sales rep sp-prodipto"
+          }
+        ],
+        "createdAt": "2026-05-25T11:05:18.154Z"
+      }
+    },
+    "retryCount": 0
   }
 ]
