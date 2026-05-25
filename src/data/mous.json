@@ -11542,5 +11542,61 @@
     "signedMouPdfPath": null,
     "productSelection": null,
     "gradewiseDistribution": null
+  },
+  {
+    "id": "MOU-STEAM-2627-DRAFT-003",
+    "schoolId": "",
+    "schoolName": "",
+    "programme": "STEAM",
+    "programmeSubType": null,
+    "schoolScope": "SINGLE",
+    "schoolGroupId": null,
+    "status": "Draft",
+    "cohortStatus": "active",
+    "delayNotes": null,
+    "academicYear": "2026-27",
+    "startDate": null,
+    "endDate": null,
+    "studentsMou": 497,
+    "studentsActual": null,
+    "studentsVariance": null,
+    "studentsVariancePct": null,
+    "spWithoutTax": 590,
+    "spWithTax": 590,
+    "contractValue": 293230,
+    "received": 0,
+    "tds": 0,
+    "balance": 293230,
+    "receivedPct": 0,
+    "paymentSchedule": "",
+    "trainerModel": null,
+    "notes": null,
+    "daysToExpiry": null,
+    "salesPersonId": null,
+    "templateVersion": "STEAM-v3",
+    "generatedAt": "2026-05-25T12:14:11.650Z",
+    "draftVariables": {
+      "STUDENT_COUNT": "497",
+      "PRICE_PER_STUDENT": "590",
+      "_ANNEXURE_HTML": ""
+    },
+    "auditLog": [
+      {
+        "timestamp": "2026-05-25T12:14:11.649Z",
+        "user": "Anita C.",
+        "action": "update",
+        "notes": "Save draft via STEAM-v3"
+      }
+    ],
+    "effectiveDate": null,
+    "numberOfYears": null,
+    "salesChannel": null,
+    "schoolCrmId": null,
+    "paymentSchedules": null,
+    "yearlyPricing": null,
+    "billingBlock": null,
+    "signedMouPdfPath": null,
+    "productSelection": null,
+    "gradewiseDistribution": null
   }
 ]
