@@ -1,7 +1,7 @@
 /*
  * Staff JWT signing + verification via jose (Edge-compatible).
  *
- * Tokens live in httpOnly SameSite=Strict cookies.
+ * Tokens live in httpOnly SameSite=Lax cookies.
  * Default TTL: 7 days. Refresh-on-activity happens in middleware (renews
  * exp if more than 1 day has passed since issued, silently rotating the
  * cookie).
@@ -72,7 +72,7 @@ export function sessionCookieOptions(maxAgeSeconds: number = DEFAULT_TTL_SECONDS
   return {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict' as const,
+    sameSite: 'lax' as const,
     path: '/',
     maxAge: maxAgeSeconds,
   }

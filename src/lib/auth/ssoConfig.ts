@@ -76,7 +76,7 @@ export const ssoConfig: NextAuthConfig = {
       options: {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict' as const,
+        sameSite: 'lax' as const,
         path: '/',
       },
     },
