@@ -43,6 +43,12 @@ interface KitDispatchRow {
   version: number
 }
 
+function dateStr(v: unknown): string | null {
+  if (v === null || v === undefined) return null
+  if (v instanceof Date) return v.toISOString()
+  return typeof v === 'string' && v !== '' ? v : null
+}
+
 function rowToKitDispatch(r: KitDispatchRow): KitDispatch {
   return {
     id: r.id,
@@ -54,13 +60,13 @@ function rowToKitDispatch(r: KitDispatchRow): KitDispatch {
     allocations: Array.isArray(r.allocations) ? r.allocations : [],
     salesApprovalStatus: (r.sales_approval_status ?? 'Pending') as KitDispatch['salesApprovalStatus'],
     salesApprovedBy: r.sales_approved_by,
-    salesApprovedAt: r.sales_approved_at,
+    salesApprovedAt: dateStr(r.sales_approved_at),
     salesRejectionReason: r.sales_rejection_reason,
     dispatchSummary: r.dispatch_summary ?? null,
     shipmentTracking: r.shipment_tracking ?? null,
     pod: r.pod ?? null,
     auditLog: Array.isArray(r.audit_log) ? r.audit_log : [],
-    createdAt: r.created_at,
+    createdAt: dateStr(r.created_at) ?? new Date().toISOString(),
     importNotes: r.import_notes ?? null,
     version: r.version ?? 1,
   } as KitDispatch

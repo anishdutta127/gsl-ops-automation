@@ -76,6 +76,12 @@ function num(v: string | number | null | undefined): number | null {
   return Number.isFinite(n) ? n : null
 }
 
+function dateStr(v: unknown): string | null {
+  if (v === null || v === undefined) return null
+  if (v instanceof Date) return v.toISOString().slice(0, 10)
+  return typeof v === 'string' && v !== '' ? v : null
+}
+
 function rowToMou(r: MouRow): MOU {
   return {
     id: r.id,
@@ -88,9 +94,9 @@ function rowToMou(r: MouRow): MOU {
     status: r.status,
     cohortStatus: r.cohort_status,
     academicYear: r.academic_year ?? '',
-    effectiveDate: r.effective_date ?? null,
-    startDate: r.start_date ?? '',
-    endDate: r.end_date ?? '',
+    effectiveDate: dateStr(r.effective_date),
+    startDate: dateStr(r.start_date) ?? '',
+    endDate: dateStr(r.end_date) ?? '',
     numberOfYears: r.number_of_years ?? null,
     studentsMou: r.students_mou ?? 0,
     studentsActual: r.students_actual ?? 0,
@@ -106,7 +112,7 @@ function rowToMou(r: MouRow): MOU {
     trainerModel: (r.trainer_model ?? null) as MOU['trainerModel'],
     salesPersonId: r.sales_person_id ?? '',
     templateVersion: r.template_version ?? '',
-    generatedAt: r.generated_at ?? '',
+    generatedAt: dateStr(r.generated_at) ?? '',
     notes: r.notes ?? '',
     delayNotes: r.delay_notes ?? null,
     daysToExpiry: r.days_to_expiry ?? null,

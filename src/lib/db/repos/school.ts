@@ -36,6 +36,12 @@ interface SchoolRow {
   created_at: string
 }
 
+function dateStr(v: unknown): string | null {
+  if (v === null || v === undefined) return null
+  if (v instanceof Date) return v.toISOString()
+  return typeof v === 'string' && v !== '' ? v : null
+}
+
 function rowToSchool(r: SchoolRow): School {
   return {
     id: r.id,
@@ -53,7 +59,7 @@ function rowToSchool(r: SchoolRow): School {
     gstNumber: r.gst_number ?? null,
     notes: r.notes ?? undefined,
     active: !!r.active,
-    createdAt: r.created_at,
+    createdAt: dateStr(r.created_at) ?? new Date().toISOString(),
     auditLog: Array.isArray(r.audit_log) ? r.audit_log : [],
   } as School
 }

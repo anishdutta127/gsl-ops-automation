@@ -31,6 +31,12 @@ interface NotificationRow {
   audit_log: Json
 }
 
+function dateStr(v: unknown): string | null {
+  if (v === null || v === undefined) return null
+  if (v instanceof Date) return v.toISOString()
+  return typeof v === 'string' && v !== '' ? v : null
+}
+
 function rowToNotification(r: NotificationRow): Notification {
   return {
     id: r.id,
@@ -41,8 +47,8 @@ function rowToNotification(r: NotificationRow): Notification {
     body: r.body ?? '',
     actionUrl: r.action_url ?? '',
     payload: (r.payload && typeof r.payload === 'object' && !Array.isArray(r.payload)) ? r.payload : {},
-    createdAt: typeof r.created_at === 'string' ? r.created_at : new Date(r.created_at as unknown as Date).toISOString(),
-    readAt: r.read_at,
+    createdAt: dateStr(r.created_at) ?? new Date().toISOString(),
+    readAt: dateStr(r.read_at),
     auditLog: Array.isArray(r.audit_log) ? r.audit_log : [],
   }
 }

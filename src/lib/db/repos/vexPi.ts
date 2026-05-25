@@ -53,12 +53,18 @@ function num(v: string | number | null | undefined): number {
   return Number.isFinite(n) ? n : 0
 }
 
+function dateStr(v: unknown): string | null {
+  if (v === null || v === undefined) return null
+  if (v instanceof Date) return v.toISOString().slice(0, 10)
+  return typeof v === 'string' && v !== '' ? v : null
+}
+
 function rowToVexPi(r: VexPiRow): VexPi {
   return {
     id: r.id,
     piNumber: r.pi_number ?? '',
     entityKey: (r.entity_key ?? 'MH') as VexPi['entityKey'],
-    issueDate: r.issue_date ?? '',
+    issueDate: dateStr(r.issue_date) ?? '',
     schoolName: r.school_name ?? '',
     shippingAddress: r.shipping_address ?? '',
     billingName: r.billing_name ?? '',
@@ -75,7 +81,7 @@ function rowToVexPi(r: VexPiRow): VexPi {
     total: num(r.total),
     status: (r.status ?? 'Generated') as VexPi['status'],
     generatedBy: r.generated_by ?? 'system',
-    generatedAt: r.generated_at ?? '',
+    generatedAt: dateStr(r.generated_at) ?? '',
     paymentReceivedAmount: num(r.payment_received_amount),
     paymentLogIds: Array.isArray(r.payment_log_ids) ? r.payment_log_ids : [],
     notes: r.notes,

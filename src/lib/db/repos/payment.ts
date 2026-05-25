@@ -66,6 +66,12 @@ function num(v: string | number | null | undefined): number | null {
   return Number.isFinite(n) ? n : null
 }
 
+function dateStr(v: unknown): string | null {
+  if (v === null || v === undefined) return null
+  if (v instanceof Date) return v.toISOString().slice(0, 10)
+  return typeof v === 'string' && v !== '' ? v : null
+}
+
 function rowToPayment(r: PaymentRow): Payment {
   return {
     id: r.id,
@@ -76,21 +82,21 @@ function rowToPayment(r: PaymentRow): Payment {
     instalmentSeq: r.instalment_seq,
     totalInstalments: r.total_instalments,
     description: r.description ?? '',
-    dueDateRaw: r.due_date_raw,
-    dueDateIso: r.due_date_iso,
+    dueDateRaw: dateStr(r.due_date_raw),
+    dueDateIso: dateStr(r.due_date_iso),
     expectedAmount: num(r.expected_amount) ?? 0,
     receivedAmount: num(r.received_amount),
-    receivedDate: r.received_date,
+    receivedDate: dateStr(r.received_date),
     paymentMode: r.payment_mode,
     bankReference: r.bank_reference,
     piNumber: r.pi_number,
     taxInvoiceNumber: r.tax_invoice_number,
     status: r.status,
     notes: r.notes,
-    piSentDate: r.pi_sent_date,
+    piSentDate: dateStr(r.pi_sent_date),
     piSentTo: r.pi_sent_to,
-    piGeneratedAt: r.pi_generated_at,
-    piVoidedAt: r.pi_voided_at,
+    piGeneratedAt: dateStr(r.pi_generated_at),
+    piVoidedAt: dateStr(r.pi_voided_at),
     piVoidReason: r.pi_void_reason,
     studentCountActual: r.student_count_actual,
     partialPayments: Array.isArray(r.partial_payments) ? r.partial_payments : null,
@@ -102,7 +108,7 @@ function rowToPayment(r: PaymentRow): Payment {
     nominalAmount: num(r.nominal_amount),
     adjustmentFromLockedInstallments: num(r.adjustment_from_locked_installments),
     netDue: num(r.net_due),
-    lockedAt: r.locked_at ?? null,
+    lockedAt: dateStr(r.locked_at),
     isLocked: !!r.is_locked,
     auditLog: Array.isArray(r.audit_log) ? r.audit_log : null,
   } as Payment

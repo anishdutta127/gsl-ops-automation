@@ -51,10 +51,16 @@ interface EscalationRow {
   audit_log: Json
 }
 
+function dateStr(v: unknown): string | null {
+  if (v === null || v === undefined) return null
+  if (v instanceof Date) return v.toISOString()
+  return typeof v === 'string' && v !== '' ? v : null
+}
+
 function rowToEscalation(r: EscalationRow): Escalation {
   return {
     id: r.id,
-    createdAt: typeof r.created_at === 'string' ? r.created_at : new Date(r.created_at as unknown as Date).toISOString(),
+    createdAt: dateStr(r.created_at) ?? new Date().toISOString(),
     createdBy: r.created_by ?? 'system',
     schoolId: r.school_id,
     mouId: r.mou_id,
@@ -73,13 +79,13 @@ function rowToEscalation(r: EscalationRow): Escalation {
     ownedByDepartment: r.owned_by_department ?? undefined,
     transferredFromDepartment: r.transferred_from_department ?? null,
     transferredToDepartment: r.transferred_to_department ?? null,
-    transferredAt: r.transferred_at,
+    transferredAt: dateStr(r.transferred_at),
     transferReason: r.transfer_reason,
-    slaTargetDate: r.sla_target_date ?? undefined,
+    slaTargetDate: dateStr(r.sla_target_date) ?? undefined,
     slaBreached: r.sla_breached ?? undefined,
     waitingOn: r.waiting_on,
     resolutionNotes: r.resolution_notes,
-    resolvedAt: r.resolved_at,
+    resolvedAt: dateStr(r.resolved_at),
     resolvedBy: r.resolved_by,
     auditLog: Array.isArray(r.audit_log) ? r.audit_log : [],
     comments: Array.isArray(r.comments) ? r.comments : [],

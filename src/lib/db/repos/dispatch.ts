@@ -39,6 +39,12 @@ interface DispatchRow {
   audit_log: Json
 }
 
+function dateStr(v: unknown): string | null {
+  if (v === null || v === undefined) return null
+  if (v instanceof Date) return v.toISOString().slice(0, 10)
+  return typeof v === 'string' && v !== '' ? v : null
+}
+
 function rowToDispatch(r: DispatchRow): Dispatch {
   return {
     id: r.id,
@@ -48,10 +54,10 @@ function rowToDispatch(r: DispatchRow): Dispatch {
     stage: r.stage,
     installment1Paid: !!r.installment1_paid,
     overrideEvent: r.override_event ?? null,
-    poRaisedAt: r.po_raised_at,
-    dispatchedAt: r.dispatched_at,
-    deliveredAt: r.delivered_at,
-    acknowledgedAt: r.acknowledged_at,
+    poRaisedAt: dateStr(r.po_raised_at),
+    dispatchedAt: dateStr(r.dispatched_at),
+    deliveredAt: dateStr(r.delivered_at),
+    acknowledgedAt: dateStr(r.acknowledged_at),
     acknowledgementUrl: r.acknowledgement_url,
     notes: r.notes,
     lineItems: Array.isArray(r.line_items) ? r.line_items : [],

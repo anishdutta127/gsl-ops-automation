@@ -57,6 +57,12 @@ interface SalesTeamRow {
   audit_log: AuditEntry[]
 }
 
+function dateStr(v: unknown): string | null {
+  if (v === null || v === undefined) return null
+  if (v instanceof Date) return v.toISOString().slice(0, 10)
+  return typeof v === 'string' && v !== '' ? v : null
+}
+
 function rowToSalesPerson(r: SalesTeamRow): SalesPerson {
   return {
     id: r.id,
@@ -66,7 +72,7 @@ function rowToSalesPerson(r: SalesTeamRow): SalesPerson {
     territories: r.territories ?? [],
     programmes: (r.programmes ?? []) as SalesPerson['programmes'],
     active: !!r.active,
-    joinedDate: r.joined_date ?? undefined,
+    joinedDate: dateStr(r.joined_date) ?? undefined,
   } as SalesPerson
 }
 

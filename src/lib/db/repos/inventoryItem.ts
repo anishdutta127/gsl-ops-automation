@@ -26,6 +26,12 @@ interface InventoryRow {
   audit_log: AuditEntry[]
 }
 
+function dateStr(v: unknown): string | null {
+  if (v === null || v === undefined) return null
+  if (v instanceof Date) return v.toISOString()
+  return typeof v === 'string' && v !== '' ? v : null
+}
+
 function rowToItem(r: InventoryRow): InventoryItem {
   return {
     id: r.id,
@@ -37,7 +43,7 @@ function rowToItem(r: InventoryRow): InventoryItem {
     reorderThreshold: r.reorder_threshold ?? null,
     notes: r.notes ?? null,
     active: !!r.active,
-    lastUpdatedAt: r.last_updated_at ?? '',
+    lastUpdatedAt: dateStr(r.last_updated_at) ?? '',
     lastUpdatedBy: r.last_updated_by ?? '',
     importNotes: r.import_notes ?? undefined,
     auditLog: Array.isArray(r.audit_log) ? r.audit_log : [],

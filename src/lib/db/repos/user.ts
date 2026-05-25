@@ -84,7 +84,7 @@ function rowToUser(r: UserRow): User {
     passwordHash: r.password_hash ?? '',
     azureAdObjectId: r.azure_ad_object_id ?? undefined,
     requiresAdminReview: !!r.requires_admin_review,
-    createdAt: typeof r.created_at === 'string' ? r.created_at : new Date(r.created_at as unknown as Date).toISOString(),
+    createdAt: typeof r.created_at === 'string' ? r.created_at : ((r.created_at as unknown) instanceof Date ? (r.created_at as unknown as Date).toISOString() : new Date().toISOString()),
     auditLog: Array.isArray(r.audit_log) ? r.audit_log : [],
   } as User
 }
