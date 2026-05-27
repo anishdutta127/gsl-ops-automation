@@ -61,22 +61,16 @@ export const NAV_STAGES: NavStage[] = [
   // navigate into a work surface from elsewhere.
   { href: '/mous', label: 'MOUs', department: 'cross-functional' },
   {
-    href: '/dispatch/kits',
-    label: 'Dispatch',
+    href: '/operations',
+    label: 'Operations',
     department: 'ops',
-    activePaths: ['/dispatch'],
+    activePaths: ['/operations', '/dispatch', '/dashboard/ops'],
   },
   {
     href: '/dashboard/finance',
     label: 'Finance',
     department: 'finance',
     activePaths: ['/finance'],
-  },
-  {
-    href: '/dashboard/ops',
-    label: 'Operations',
-    department: 'ops',
-    activePaths: ['/operations'],
   },
   { href: '/reports', label: 'Reports', department: 'neutral' },
   { href: '/admin', label: 'Admin', department: 'neutral' },

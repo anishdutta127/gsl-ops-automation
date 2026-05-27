@@ -15,6 +15,16 @@ import { accentFor } from '@/lib/departmentAccents'
 
 const ENTITIES = [
   {
+    label: 'Kit dispatch',
+    href: '/dispatch/kits',
+    description: 'Grade-wise allocation, sales approval, shipment tracking.',
+  },
+  {
+    label: 'Dispatch requests',
+    href: '/dispatch/request',
+    description: 'Raise and review dispatch requests from sales.',
+  },
+  {
     label: 'Schools',
     href: '/schools',
     description: 'Master data, contacts, billing block per school.',
@@ -76,7 +86,7 @@ export default async function OperationsStagePage() {
               Operations workspace
             </h1>
             <p className="mt-1 text-sm text-slate-700">
-              Schools, escalations, VEX, vendors, inventory in one place.
+              Dispatch, schools, escalations, VEX, vendors, inventory in one place.
             </p>
           </header>
           <ul className="grid gap-3 sm:grid-cols-2">

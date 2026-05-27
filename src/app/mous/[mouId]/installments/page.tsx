@@ -22,7 +22,9 @@ import { notFound } from 'next/navigation'
 import { CheckCircle2, FileText, IndianRupee, ListPlus, Pencil, Send, Users } from 'lucide-react'
 import { BackButton } from '@/components/ops/BackButton'
 import type { MOU, Payment, User } from '@/lib/types'
+import { AlertTriangle } from 'lucide-react'
 import { mouRepo } from '@/lib/db/repos/mou'
+import { schoolRepo } from '@/lib/db/repos/school'
 import { paymentRepo } from '@/lib/db/repos/payment'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
@@ -85,13 +87,15 @@ export default async function InstallmentsPage({ params, searchParams }: PagePro
   // the registry and the same year tab on the MOU detail.
   const fyParam = typeof sp.fy === 'string' ? sp.fy : null
   const user = await getCurrentUser()
-  const [allMous, allPayments] = await Promise.all([
+  const [allMous, allPayments, allSchools] = await Promise.all([
     mouRepo.findAll(),
     paymentRepo.findAll(),
+    schoolRepo.findAll(),
   ])
   const mou = allMous.find((m) => m.id === mouId)
   if (!mou || !isVisibleToUser(mou, user)) notFound()
   if (!user) notFound()
+  const school = allSchools.find((s) => s.id === mou.schoolId)
 
   const installments = allPayments
     .filter((p) => p.mouId === mou.id)
@@ -105,6 +109,12 @@ export default async function InstallmentsPage({ params, searchParams }: PagePro
   const canGenPi = canGeneratePI(user)
   const canSaveSchedule = canEditMOU(user) || canEditFinanceData(user)
   const isMouSigned = mou.status !== 'Pending Signature' && mou.status !== 'Draft'
+
+  const piWarnings: string[] = []
+  if (!school?.gstNumber?.trim()) piWarnings.push('School GSTIN missing; PI will show "To be added".')
+  if (!mou.studentsActual && !mou.studentsMou) piWarnings.push('Student count is 0 or unset; PI amounts may be zero.')
+  if (!mou.spWithTax) piWarnings.push('Price per student (incl GST) is 0 or unset.')
+  if (mou.status !== 'Active') piWarnings.push(`MOU status is "${mou.status}" (not Active).`)
 
   return (
     <>
@@ -128,6 +138,20 @@ export default async function InstallmentsPage({ params, searchParams }: PagePro
             >
               {flashAction} recorded for instalment <strong>{flashId}</strong>. Will reflect everywhere within ~5 minutes.
             </p>
+          ) : null}
+          {canGenPi && piWarnings.length > 0 ? (
+            <div
+              className="flex items-start gap-2 rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900"
+              data-testid="pi-data-warnings"
+            >
+              <AlertTriangle aria-hidden className="size-4 shrink-0 mt-0.5" />
+              <div>
+                <p className="font-medium">PI generation will proceed, but with incomplete data:</p>
+                <ul className="mt-1 list-disc pl-4 text-xs">
+                  {piWarnings.map((w) => <li key={w}>{w}</li>)}
+                </ul>
+              </div>
+            </div>
           ) : null}
           <DetailHeaderCard
             title={mou.id}

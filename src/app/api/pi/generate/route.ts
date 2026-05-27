@@ -42,7 +42,7 @@ export async function POST(request: Request) {
   const instalmentSeqRaw = String(form.get('instalmentSeq') ?? '')
 
   if (isPiParallelBuildLocked()) {
-    const url = new URL(mouId ? `/mous/${mouId}/pi` : '/', request.url)
+    const url = new URL(mouId ? `/mous/${mouId}/installments` : '/', request.url)
     url.searchParams.set('error', 'parallel-build-locked')
     return NextResponse.redirect(url, { status: 303 })
   }
@@ -55,7 +55,7 @@ export async function POST(request: Request) {
   }
 
   const errorTo = (reason: string) => {
-    const url = new URL(mouId ? `/mous/${mouId}/pi` : '/', request.url)
+    const url = new URL(mouId ? `/mous/${mouId}/installments` : '/', request.url)
     url.searchParams.set('error', reason)
     return NextResponse.redirect(url, { status: 303 })
   }
