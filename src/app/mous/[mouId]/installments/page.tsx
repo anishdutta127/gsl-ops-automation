@@ -20,6 +20,7 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { CheckCircle2, FileText, IndianRupee, ListPlus, Pencil, Send, Users } from 'lucide-react'
+import { BackButton } from '@/components/ops/BackButton'
 import type { MOU, Payment, User } from '@/lib/types'
 import { mouRepo } from '@/lib/db/repos/mou'
 import { paymentRepo } from '@/lib/db/repos/payment'
@@ -118,6 +119,7 @@ export default async function InstallmentsPage({ params, searchParams }: PagePro
           ]}
         />
         <div className="mx-auto flex max-w-screen-xl flex-col gap-4 px-4 py-6">
+          <BackButton />
           {flashAction && flashId ? (
             <p
               role="status"

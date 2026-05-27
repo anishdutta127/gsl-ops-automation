@@ -17,6 +17,7 @@
 
 import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
+import { BackButton } from '@/components/ops/BackButton'
 import { AlertCircle } from 'lucide-react'
 import type { StudentCountEvent } from '@/lib/types'
 import { mouRepo } from '@/lib/db/repos/mou'
@@ -125,6 +126,7 @@ export default async function StudentCountChangePage({ params, searchParams }: P
           ]}
         />
         <div className="mx-auto grid max-w-screen-xl gap-4 px-4 py-6 md:grid-cols-3">
+          <div className="md:col-span-3"><BackButton /></div>
           <section className="md:col-span-2 rounded-lg border border-border bg-card p-5" data-testid="student-count-form-section">
             {errorMessage ? (
               <div

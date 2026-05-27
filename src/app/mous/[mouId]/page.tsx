@@ -551,11 +551,24 @@ export default async function MouDetailPage({ params, searchParams }: PageProps)
                 </Link>
               </div>
             </div>
-            <StatusNotesSection
-              mouId={mou.id}
-              initialNotes={mou.delayNotes}
-              initialMetaLine={lastDelayNotesUpdate(mou, allUsers)}
-            />
+            <details data-testid="status-notes-collapsible">
+              <summary className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium text-brand-navy hover:bg-muted/50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy">
+                Status notes
+                {mou.delayNotes ? (
+                  <span className="truncate text-xs font-normal text-muted-foreground">
+                    {mou.delayNotes.split('\n')[0]?.slice(0, 60)}
+                    {(mou.delayNotes.split('\n')[0]?.length ?? 0) > 60 ? '...' : ''}
+                  </span>
+                ) : (
+                  <span className="text-xs font-normal text-muted-foreground">No notes yet</span>
+                )}
+              </summary>
+              <StatusNotesSection
+                mouId={mou.id}
+                initialNotes={mou.delayNotes}
+                initialMetaLine={lastDelayNotesUpdate(mou, allUsers)}
+              />
+            </details>
             {isMultiYearMou ? (
               <nav
                 aria-label="Financial year view"

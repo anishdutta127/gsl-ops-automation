@@ -23,8 +23,9 @@
  */
 
 import Link from 'next/link'
-import { LayoutGrid, LogOut } from 'lucide-react'
+import { IndianRupee, LayoutGrid, LogOut } from 'lucide-react'
 import { getCurrentUser } from '@/lib/auth/session'
+import { canEditFinanceData } from '@/lib/access'
 import type { Department, User } from '@/lib/types'
 import { accentFor, type StageDepartment } from '@/lib/departmentAccents'
 import { NotificationBell } from './NotificationBell'
@@ -196,6 +197,16 @@ export async function TopNav({ currentPath }: TopNavProps = {}) {
           <span aria-hidden className="hidden h-6 w-px bg-white/20 sm:inline-block" />
           {user ? <QueueFreshnessIndicator /> : null}
           {user ? <NotificationBell user={user} /> : null}
+          {user && canEditFinanceData(user) ? (
+            <Link
+              href="/finance/payments/new"
+              data-testid="topnav-log-payment"
+              className="hidden items-center gap-1.5 rounded-full bg-brand-teal px-3 py-1.5 text-xs font-semibold text-brand-navy hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-white sm:inline-flex"
+            >
+              <IndianRupee aria-hidden className="size-3.5" />
+              Log Payment
+            </Link>
+          ) : null}
           {user ? (
             <span className="hidden text-sm text-white/80 sm:inline" aria-label="Signed in as">
               {user.name}

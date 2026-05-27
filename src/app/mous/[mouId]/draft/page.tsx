@@ -16,6 +16,7 @@
 
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { BackButton } from '@/components/ops/BackButton'
 import type { MOU, User } from '@/lib/types'
 import { mouRepo } from '@/lib/db/repos/mou'
 import { TopNav } from '@/components/ops/TopNav'
@@ -66,7 +67,8 @@ export default async function DraftAnnexurePage({ params }: PageProps) {
           ]}
         />
         <div className="mx-auto max-w-screen-xl px-4 py-6">
-          <div className="mb-4 text-xs text-muted-foreground">
+          <BackButton />
+          <div className="mb-4 mt-3 text-xs text-muted-foreground">
             <Link
               href={`/mous/${mou.id}`}
               className="hover:text-brand-navy focus:outline-none focus:ring-2 focus:ring-brand-navy"

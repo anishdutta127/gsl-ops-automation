@@ -13,6 +13,7 @@
  */
 
 import Link from 'next/link'
+import { BackButton } from '@/components/ops/BackButton'
 import { notFound } from 'next/navigation'
 import type { MOU, User } from '@/lib/types'
 import type { SignedValues } from '@/lib/mouSystem/types'
@@ -99,6 +100,7 @@ export default async function SignedValuesPage({ params, searchParams }: PagePro
           ]}
         />
         <div className="mx-auto flex max-w-screen-md flex-col gap-4 px-4 py-6">
+          <BackButton />
           <DetailHeaderCard
             title={mou.id}
             subtitle="Capture what the school actually signed"
