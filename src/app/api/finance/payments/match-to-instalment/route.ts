@@ -94,7 +94,7 @@ export async function POST(request: Request) {
       {
         timestamp: ts,
         user: session.sub,
-        action: 'matched',
+        action: 'payment-matched',
         after: { instalmentId, amount },
         notes: `Allocated Rs ${amount.toLocaleString('en-IN')} to ${instalmentId}.`,
       },

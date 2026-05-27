@@ -1614,6 +1614,7 @@ export interface PaymentLog {
   loggedBy: string                 // User.id
   loggedAt: string                 // ISO
   notes: string | null
+  auditLog?: AuditEntry[] | null
 }
 
 // ============================================================================

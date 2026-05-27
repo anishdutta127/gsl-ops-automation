@@ -684,13 +684,17 @@ export async function upsertSignedValues(
   }
 
   if (currentBackend() === 'postgres') {
-    const { signedValueRepo } = await import('@/lib/db/repos/leafRepos')
-    const existing = await signedValueRepo.findById(mouId)
-    if (existing) {
-      await signedValueRepo.update(entry as never, { queuedBy: identityName })
-    } else {
-      await signedValueRepo.create(entry as never, { queuedBy: identityName })
-    }
+    const { getSql } = await import('@/lib/db/client')
+    const sql = getSql()
+    await sql`
+      INSERT INTO signed_values (mou_id, signed_date, signed_by, price_per_student, student_count, duration, signed_scan_url, captured_at, notes)
+      VALUES (${entry.mouId}, ${entry.signedDate}, ${entry.signedBy}, ${entry.pricePerStudent}, ${entry.studentCount}, ${1}, ${entry.signedScanUrl ?? null}, ${entry.capturedAt}, ${entry.notes ?? null})
+      ON CONFLICT (mou_id) DO UPDATE SET
+        signed_date = EXCLUDED.signed_date, signed_by = EXCLUDED.signed_by,
+        price_per_student = EXCLUDED.price_per_student, student_count = EXCLUDED.student_count,
+        duration = EXCLUDED.duration, signed_scan_url = EXCLUDED.signed_scan_url,
+        captured_at = EXCLUDED.captured_at, notes = EXCLUDED.notes
+    `
     return { commitSha: 'postgres-direct' }
   }
 
@@ -1007,7 +1011,7 @@ export async function applyInstallmentPatch(
     const { paymentRepo } = await import('@/lib/db/repos/payment')
     const prev = await paymentRepo.findById(installmentId)
     if (!prev) throw new Error(`Installment not found: ${installmentId}`)
-    const updated: Payment = { ...prev, ...patch, auditLog: [...(prev.auditLog ?? []), audit] }
+    const updated = { ...prev, ...patch, auditLog: [...((prev.auditLog ?? []) as AuditEntry[]), audit] } as Payment
     if ('partialPayments' in patch || 'receivedAmount' in patch || 'piSentDate' in patch) {
       updated.status = deriveStatus(updated)
     }

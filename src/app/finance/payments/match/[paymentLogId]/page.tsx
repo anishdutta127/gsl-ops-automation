@@ -54,18 +54,10 @@ export default async function MatchPaymentPage({ params, searchParams }: PagePro
   const log = allLogs.find((l) => l.id === paymentLogId)
   if (!log) notFound()
 
-  const allocatedSoFar = (log.matchedInstallmentIds ?? []).length > 0
-    ? allPayments
-        .filter((p) => (log.matchedInstallmentIds ?? []).includes(p.id))
-        .reduce((s, p) => {
-          const partials = p.partialPayments ?? []
-          const fromThisLog = partials.filter(
-            (pp: Record<string, unknown>) => pp.paymentLogId === log.id,
-          )
-          return s + fromThisLog.reduce((ss: number, pp: Record<string, unknown>) => ss + Number(pp.amount ?? 0), 0)
-        }, 0)
-    : 0
-  const remainingToMatch = Math.max(0, log.amount - allocatedSoFar)
+  const allocatedFromAudit = (log.auditLog ?? [])
+    .filter((e) => e.action === 'payment-matched')
+    .reduce((s, e) => s + Number((e.after as Record<string, unknown> | undefined)?.amount ?? 0), 0)
+  const remainingToMatch = Math.max(0, log.amount - allocatedFromAudit)
 
   const activeMous = allMous.filter(
     (m) => m.cohortStatus === 'active' && m.status === 'Active',
