@@ -1229,53 +1229,76 @@
     "schoolId": "SCH-BERHAMPORE_CITY_PUBL",
     "schoolName": "Berhampore City Public School",
     "programme": "STEAM",
-    "programmeSubType": null,
     "schoolScope": "SINGLE",
     "schoolGroupId": null,
     "status": "Active",
+    "cohortStatus": "active",
     "academicYear": "2025-26",
+    "effectiveDate": null,
     "startDate": "2025-04-01",
     "endDate": "2026-03-31",
+    "numberOfYears": null,
     "studentsMou": 200,
     "studentsActual": 183,
     "studentsVariance": -17,
     "studentsVariancePct": -0.085,
-    "spWithoutTax": 1016.94915254237,
+    "spWithoutTax": 1016.95,
     "spWithTax": 1200,
     "contractValue": 219600,
     "received": 109600,
     "tds": 0,
     "balance": 110000,
     "receivedPct": 49.9,
-    "paymentSchedule": "50-50 half-yearly",
     "trainerModel": null,
-    "salesPersonId": null,
-    "templateVersion": null,
-    "generatedAt": null,
-    "notes": null,
+    "salesPersonId": "",
+    "templateVersion": "",
+    "generatedAt": "",
+    "notes": "",
+    "delayNotes": null,
     "daysToExpiry": -21,
+    "salesChannel": null,
+    "schoolCrmId": null,
+    "signedMouPdfPath": null,
+    "importNotes": null,
+    "productSelection": null,
+    "paymentSchedule": "50-50 half-yearly",
+    "paymentSchedules": null,
+    "yearlyPricing": null,
+    "billingBlock": null,
+    "draftVariables": null,
+    "gradewiseDistribution": null,
+    "studentCountEventIds": [],
     "auditLog": [
       {
-        "timestamp": "2026-04-27T12:00:00.000Z",
         "user": "system",
+        "notes": "Imported from gsl-mou-system; auto-linked to school SCH-BERHAMPORE_CITY_PUBL.",
         "action": "auto-link-exact-match",
-        "notes": "Imported from gsl-mou-system; auto-linked to school SCH-BERHAMPORE_CITY_PUBL."
+        "timestamp": "2026-04-27T12:00:00.000Z"
       },
       {
-        "timestamp": "2026-04-27T18:01:00.000Z",
         "user": "system-w4-a-2",
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive.",
         "action": "mou-cohort-status-changed",
         "before": {
           "cohortStatus": null
         },
-        "after": {
+        "timestamp": "2026-04-27T18:01:00.000Z"
+      },
+      {
+        "timestamp": "2026-05-27T09:36:57.216Z",
+        "user": "pranav.b",
+        "action": "mou-cohort-status-changed",
+        "before": {
           "cohortStatus": "archived"
         },
-        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
+        "after": {
+          "cohortStatus": "active"
+        }
       }
-    ],
-    "cohortStatus": "archived",
-    "delayNotes": null
+    ]
   },
   {
     "id": "MOU-STEAM-2526-020",
