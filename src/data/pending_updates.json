@@ -1,1 +1,86 @@
-[]
+[
+  {
+    "id": "1b65e77d-6521-40fa-856e-51ac0f01763a",
+    "queuedAt": "2026-05-27T09:36:57.216Z",
+    "queuedBy": "pranav.b",
+    "entity": "mou",
+    "operation": "update",
+    "payload": {
+      "id": "MOU-STEAM-2526-019",
+      "schoolId": "SCH-BERHAMPORE_CITY_PUBL",
+      "schoolName": "Berhampore City Public School",
+      "programme": "STEAM",
+      "schoolScope": "SINGLE",
+      "schoolGroupId": null,
+      "status": "Active",
+      "cohortStatus": "active",
+      "academicYear": "2025-26",
+      "effectiveDate": null,
+      "startDate": "2025-04-01",
+      "endDate": "2026-03-31",
+      "numberOfYears": null,
+      "studentsMou": 200,
+      "studentsActual": 183,
+      "studentsVariance": -17,
+      "studentsVariancePct": -0.085,
+      "spWithoutTax": 1016.95,
+      "spWithTax": 1200,
+      "contractValue": 219600,
+      "received": 109600,
+      "tds": 0,
+      "balance": 110000,
+      "receivedPct": 49.9,
+      "trainerModel": null,
+      "salesPersonId": "",
+      "templateVersion": "",
+      "generatedAt": "",
+      "notes": "",
+      "delayNotes": null,
+      "daysToExpiry": -21,
+      "salesChannel": null,
+      "schoolCrmId": null,
+      "signedMouPdfPath": null,
+      "importNotes": null,
+      "productSelection": null,
+      "paymentSchedule": "50-50 half-yearly",
+      "paymentSchedules": null,
+      "yearlyPricing": null,
+      "billingBlock": null,
+      "draftVariables": null,
+      "gradewiseDistribution": null,
+      "studentCountEventIds": [],
+      "auditLog": [
+        {
+          "user": "system",
+          "notes": "Imported from gsl-mou-system; auto-linked to school SCH-BERHAMPORE_CITY_PUBL.",
+          "action": "auto-link-exact-match",
+          "timestamp": "2026-04-27T12:00:00.000Z"
+        },
+        {
+          "user": "system-w4-a-2",
+          "after": {
+            "cohortStatus": "archived"
+          },
+          "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive.",
+          "action": "mou-cohort-status-changed",
+          "before": {
+            "cohortStatus": null
+          },
+          "timestamp": "2026-04-27T18:01:00.000Z"
+        },
+        {
+          "timestamp": "2026-05-27T09:36:57.216Z",
+          "user": "pranav.b",
+          "action": "mou-cohort-status-changed",
+          "before": {
+            "cohortStatus": "archived"
+          },
+          "after": {
+            "cohortStatus": "active"
+          }
+        }
+      ]
+    },
+    "retryCount": 0
+  }
+]
