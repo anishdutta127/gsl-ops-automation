@@ -334,9 +334,9 @@ export default async function InstallmentsPage({ params, searchParams }: PagePro
                             ) : null}
                             {canEditPiSent ? (
                               <Link
-                                href={`/mous/${mou.id}/actuals`}
-                                title="Update Actual student count"
-                                aria-label="Update Actual student count"
+                                href={`/mous/${mou.id}/student-count`}
+                                title="Update student count"
+                                aria-label="Update student count"
                                 className="inline-flex min-h-9 min-w-9 items-center justify-center rounded-md border border-border bg-card px-1.5 py-0.5 text-foreground hover:border-brand-navy hover:text-brand-navy"
                                 data-testid={`action-update-students-${p.id}`}
                               >

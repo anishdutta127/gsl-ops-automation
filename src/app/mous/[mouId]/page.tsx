@@ -521,12 +521,6 @@ export default async function MouDetailPage({ params, searchParams }: PageProps)
                 testId="mou-detail-status-chip"
               />
               <div className="ml-auto flex flex-wrap items-center gap-2">
-                <Link href={`/mous/${mou.id}/actuals`} className={actionBtnClass}>
-                  Actuals
-                </Link>
-                {/* Phase 5 (2026-05-19, Pranav review #4): student-count
-                    change flow. Gated by canEditMOU || canEditFinanceData;
-                    the page route enforces the same. */}
                 {canEditMou || canEditFinanceData(user!) ? (
                   <Link
                     href={`/mous/${mou.id}/student-count`}

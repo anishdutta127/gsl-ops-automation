@@ -145,16 +145,28 @@ export default async function StudentCountChangePage({ params, searchParams }: P
               data-testid="student-count-form"
             >
               <div className="rounded-md border border-border bg-muted/30 p-3 text-sm">
-                <div className="text-xs uppercase tracking-wider text-muted-foreground">
-                  Current count
-                </div>
-                <div className="mt-1 text-lg font-semibold text-brand-navy" data-testid="student-count-current">
-                  {currentCount.toLocaleString('en-IN')}
-                </div>
-                <div className="mt-1 text-xs text-muted-foreground">
-                  Price per student (incl GST): {formatRs(mou.spWithTax)}.{' '}
-                  Contract value (signing): {formatRs(mou.contractValue)}.
-                </div>
+                <dl className="grid grid-cols-2 gap-x-4 gap-y-2">
+                  <div>
+                    <dt className="text-xs uppercase tracking-wider text-muted-foreground">Students (as per MOU)</dt>
+                    <dd className="mt-0.5 font-semibold text-foreground" data-testid="student-count-mou">{mou.studentsMou.toLocaleString('en-IN')}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-xs uppercase tracking-wider text-muted-foreground">Current actual count</dt>
+                    <dd className="mt-0.5 text-lg font-semibold text-brand-navy" data-testid="student-count-current">{currentCount.toLocaleString('en-IN')}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-xs uppercase tracking-wider text-muted-foreground">Variance</dt>
+                    <dd className="mt-0.5 text-foreground" data-testid="student-count-variance">
+                      {mou.studentsActual !== null
+                        ? `${((mou.studentsActual - mou.studentsMou) >= 0 ? '+' : '')}${mou.studentsActual - mou.studentsMou} (${mou.studentsMou > 0 ? (((mou.studentsActual - mou.studentsMou) / mou.studentsMou) * 100).toFixed(1) + '%' : 'n/a'})`
+                        : 'n/a'}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-xs uppercase tracking-wider text-muted-foreground">Price per student (incl GST)</dt>
+                    <dd className="mt-0.5 text-foreground">{formatRs(mou.spWithTax)}</dd>
+                  </div>
+                </dl>
               </div>
 
               <label className="block">
