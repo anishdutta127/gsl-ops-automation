@@ -195,12 +195,21 @@ export default async function UnmatchedPaymentsPage({ searchParams }: PageProps)
                           {sp ? <span className="block text-muted-foreground">via {sp.name}</span> : null}
                         </td>
                         <td className="px-3 py-2.5 text-right">
-                          <Link
-                            href={link}
-                            className="inline-flex min-h-9 items-center rounded-md bg-brand-navy px-2.5 py-1 text-xs font-semibold text-white hover:bg-brand-navy/90"
-                          >
-                            Re-attempt match
-                          </Link>
+                          <div className="flex flex-wrap items-center justify-end gap-1">
+                            <Link
+                              href={`/finance/payments/match/${encodeURIComponent(p.id)}`}
+                              className="inline-flex min-h-9 items-center rounded-md bg-brand-teal px-2.5 py-1 text-xs font-semibold text-brand-navy hover:opacity-90"
+                              data-testid={`match-to-instalment-${p.id}`}
+                            >
+                              Match to instalment
+                            </Link>
+                            <Link
+                              href={link}
+                              className="inline-flex min-h-9 items-center rounded-md border border-border bg-card px-2.5 py-1 text-xs font-medium hover:bg-muted"
+                            >
+                              Re-attempt PI match
+                            </Link>
+                          </div>
                         </td>
                       </tr>
                     )
