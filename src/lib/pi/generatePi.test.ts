@@ -46,9 +46,14 @@ function buildFixtureDocx(): Uint8Array {
   zip.file('word/document.xml', `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
 <w:body>
-<w:p><w:r><w:t>PI {PI_NUMBER} dated {PI_DATE}</w:t></w:r></w:p>
-<w:p><w:r><w:t>School: {SCHOOL_NAME} ({SCHOOL_GSTIN})</w:t></w:r></w:p>
-<w:p><w:r><w:t>Total: {TOTAL}</w:t></w:r></w:p>
+<w:p><w:r><w:t>PI {PI_NUMBER} dated {PI_DATE} FY {FISCAL_YEAR}</w:t></w:r></w:p>
+<w:p><w:r><w:t>{GSL_LEGAL_ENTITY} GSTIN {GSL_GSTIN} PAN {COMPANY_PAN}</w:t></w:r></w:p>
+<w:p><w:r><w:t>School: {SCHOOL_NAME} ({SCHOOL_GSTIN}) {SCHOOL_CITY_STATE}</w:t></w:r></w:p>
+<w:p><w:r><w:t>MOU: {MOU_ID} Instalment: {INSTALMENT_OF_TOTAL} Due: {INSTALMENT_DUE_DATE}</w:t></w:r></w:p>
+<w:p><w:r><w:t>Total: {TOTAL} GST: {GST_AMOUNT} Net: {NET_PAYMENT_DUE}</w:t></w:r></w:p>
+<w:p><w:r><w:t>{AMOUNT_IN_WORDS}</w:t></w:r></w:p>
+<w:p><w:r><w:t>{PROFORMA_DISCLAIMER}</w:t></w:r></w:p>
+<w:p><w:r><w:t>{COMPANY_EMAIL}</w:t></w:r></w:p>
 </w:body>
 </w:document>`)
   return zip.generate({ type: 'uint8array' })

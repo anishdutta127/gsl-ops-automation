@@ -155,13 +155,9 @@ export default async function InstallmentsPage({ params, searchParams }: PagePro
                 schedule is set.
               </p>
               {isMouSigned && canSaveSchedule ? (
-                <Link
-                  href={`/mous/${mou.id}/installments/schedule-edit`}
-                  className={opsButtonClass({ variant: 'primary', size: 'md' })}
-                  data-testid="empty-state-set-schedule"
-                >
-                  Set payment schedule {'→'}
-                </Link>
+                <p className="text-xs text-muted-foreground" data-testid="empty-state-set-schedule">
+                  Use the schedule editor (coming in the next gate) to configure instalments.
+                </p>
               ) : null}
               {!isMouSigned ? (
                 <p className="text-xs text-muted-foreground" data-testid="empty-state-unsigned-hint">

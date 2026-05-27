@@ -66,10 +66,12 @@ import { schoolRepo } from '@/lib/db/repos/school'
 import { paymentRepo } from '@/lib/db/repos/payment'
 import { userRepo } from '@/lib/db/repos/user'
 import {
+  company as mafCompany,
   fyFromAcademicYear,
   getEntityForProgramme,
   getEntity,
 } from '@/lib/mouSystem/company'
+import { amountInWordsInr } from '@/lib/mouSystem/pi'
 import { canPerform } from '@/lib/auth/permissions'
 import { formatRs, formatDate } from '@/lib/format'
 import { PI_TEMPLATE, TemplateMissingError } from './templates'
@@ -192,11 +194,18 @@ function buildPlaceholderBag(args: {
     ? school.gstNumber
     : 'To be added'
 
+  const ROMAN: Record<number, string> = { 1:'I',2:'II',3:'III',4:'IV',5:'V',6:'VI',7:'VII',8:'VIII',9:'IX',10:'X',11:'XI',12:'XII' }
+  const seqNum = parseInt(instalmentLabel.split(' ')[0] ?? '1', 10)
+  const romanLabel = ROMAN[seqNum] ?? String(seqNum)
+  const derivedRate = studentsForBilling > 0
+    ? Math.round(subtotal / studentsForBilling)
+    : 0
+
   const lineItems: LineItem[] = [
     {
-      description: `${mou.programme}${mou.programmeSubType ? ` (${mou.programmeSubType})` : ''} - Instalment ${instalmentLabel}`,
+      description: `${mou.programme} programme - Instalment ${romanLabel} (${instalmentLabel}) for ${mou.schoolName}`,
       students: studentsForBilling,
-      rate: mou.spWithoutTax,
+      rate: derivedRate,
       amount: subtotal,
     },
   ]
@@ -254,9 +263,24 @@ function buildPlaceholderBag(args: {
   }, 0)
   const totalReceivedToDate = sortedAll.reduce((s, p) => s + (p.receivedAmount ?? 0), 0)
 
+  const balanceDuePrevious = sortedAll
+    .filter((p) => p.id !== thisPaymentId && (p.receivedAmount ?? 0) > 0)
+    .reduce((s, p) => {
+      const expected = typeof p.netDue === 'number' && p.netDue !== p.expectedAmount ? p.netDue : p.expectedAmount
+      return s + Math.max(0, expected - (p.receivedAmount ?? 0))
+    }, 0)
+  const netPaymentDue = total + balanceDuePrevious
+
+  // Resolve fiscal year for the PI header
+  const piInstalment = sortedAll.find((p) => p.id === thisPaymentId)
+  const dueDate = piInstalment?.dueDateIso
+    ? formatDate(piInstalment.dueDateIso)
+    : piInstalment?.dueDateRaw ?? '-'
+
   return {
     PI_NUMBER: piNumber,
     PI_DATE: formatDate(piDateIso),
+    FISCAL_YEAR: mafCompany.fiscalYear,
     SCHOOL_NAME: school.legalEntity ?? school.name,
     SCHOOL_GSTIN: renderedGstin,
     SCHOOL_ADDRESS: [
@@ -264,13 +288,19 @@ function buildPlaceholderBag(args: {
       `${school.city}, ${school.state}`,
       school.pinCode ?? '',
     ].filter((s) => s !== '').join('\n'),
+    SCHOOL_CITY_STATE: `${school.city ?? ''}, ${school.state ?? ''}`,
     GSL_LEGAL_ENTITY: company.legalEntity,
     GSL_GSTIN: entity.gstin,
     GSL_ADDRESS: entity.address,
+    COMPANY_PAN: mafCompany.pan,
+    COMPANY_EMAIL: mafCompany.email,
     PROGRAMME: mou.programme,
     PROGRAMME_SUB_TYPE: mou.programmeSubType ?? '',
+    MOU_ID: mou.id,
+    HSN_CODE: entity.hsn,
     LINE_ITEMS: lineItems.map((li) => ({
       description: li.description,
+      hsn: entity.hsn,
       students: String(li.students),
       rate: formatRs(li.rate),
       amount: formatRs(li.amount),
@@ -278,8 +308,15 @@ function buildPlaceholderBag(args: {
     SUBTOTAL: formatRs(subtotal),
     GST_AMOUNT: formatRs(gstAmount),
     TOTAL: formatRs(total),
+    BALANCE_DUE_PREVIOUS_INSTALMENTS: formatRs(balanceDuePrevious),
+    NET_PAYMENT_DUE: formatRs(netPaymentDue),
+    AMOUNT_IN_WORDS: amountInWordsInr(netPaymentDue),
     INSTALLMENT_LABEL: `Instalment ${instalmentLabel}`,
+    INSTALMENT_LABEL_ROMAN: romanLabel,
+    INSTALMENT_OF_TOTAL: instalmentLabel,
+    INSTALMENT_DUE_DATE: dueDate,
     PAYMENT_TERMS: company.paymentTerms,
+    PROFORMA_DISCLAIMER: 'This is a Proforma Invoice and does not constitute a tax invoice. A GST tax invoice will be raised on receipt of payment.',
     ACCOUNT_DETAILS: company.accountDetails.join('\n'),
     INSTALMENT_SUMMARY: installmentSummary,
     CONTRACT_TOTAL_AT_CURRENT_COUNT: formatRs(contractTotalAtCurrentCount),

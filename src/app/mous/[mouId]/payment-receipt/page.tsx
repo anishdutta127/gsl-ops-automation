@@ -151,9 +151,9 @@ export default async function PaymentReceiptPage({ params, searchParams }: PageP
 
           {payments.length === 0 ? (
             <p className="rounded-md border border-border bg-card p-3 text-sm text-muted-foreground">
-              No instalments on file yet. Generate a PI on{' '}
-              <Link href={`/mous/${mou.id}/pi`} className="text-brand-navy hover:underline">
-                /mous/{mou.id}/pi
+              No instalments on file yet. Set a schedule on{' '}
+              <Link href={`/mous/${mou.id}/installments`} className="text-brand-navy hover:underline">
+                the instalments page
               </Link>{' '}
               first; the resulting Payment row appears here.
             </p>
