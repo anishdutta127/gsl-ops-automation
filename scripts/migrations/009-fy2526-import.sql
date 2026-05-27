@@ -1,59 +1,16 @@
 -- 009: FY 25-26 validated import (2026-05-27).
--- 2 inserts + 18 studentsMou fixes + 1 received fix.
+-- 18 studentsMou fixes + 1 received fix + 1 flag.
 -- Source: gsl_2526_import_ready.json (69 schools, validated by Anish).
+--
+-- NOTE: The original migration also inserted Laxmipat Singhania (-071)
+-- and NARAYANA SCHOOL (-072), but these already existed in production
+-- postgres as -001 and -027 (Phase 7 archive recovery, not in the JSON
+-- seed). The duplicate inserts were deleted on 2026-05-27 after
+-- side-by-side verification. The INSERTs are removed from this file so
+-- a future re-run is a clean no-op. Pricing discrepancies on -001 and
+-- -027 are flagged to Pranav for finance judgement.
 
 BEGIN;
-
--- ============================================================================
--- 1. INSERT: Laxmipat Singhania Academy (MOU-STEAM-2526-071)
--- ============================================================================
-INSERT INTO mous (
-  id, school_id, school_name, programme, programme_sub_type,
-  school_scope, school_group_id, status, cohort_status, academic_year,
-  start_date, end_date, students_mou, students_actual,
-  students_variance, students_variance_pct,
-  sp_without_tax, sp_with_tax, contract_value,
-  received, tds, balance, received_pct,
-  payment_schedule, audit_log
-) VALUES (
-  'MOU-STEAM-2526-071',
-  'SCH-LAXMIPAT_SINGHANIA_A',
-  'Laxmipat Singhania Academy',
-  'STEAM', NULL,
-  'SINGLE', NULL, 'Active', 'archived', '2025-26',
-  '2025-04-01', '2026-03-31', 420, 420,
-  0, 0,
-  1694.92, 2000, 769440,
-  704232, 0, 65208, 91.5,
-  '50-50 half-yearly',
-  '[{"timestamp":"2026-05-27T00:00:00Z","user":"anish.d","action":"create","notes":"FY 25-26 validated import. Source: gsl_2526_import_ready.json."}]'::jsonb
-) ON CONFLICT (id) DO NOTHING;
-
--- ============================================================================
--- 2. INSERT: NARAYANA SCHOOL (MOU-STEAM-2526-072)
--- ============================================================================
-INSERT INTO mous (
-  id, school_id, school_name, programme, programme_sub_type,
-  school_scope, school_group_id, status, cohort_status, academic_year,
-  start_date, end_date, students_mou, students_actual,
-  students_variance, students_variance_pct,
-  sp_without_tax, sp_with_tax, contract_value,
-  received, tds, balance, received_pct,
-  payment_schedule, notes, audit_log
-) VALUES (
-  'MOU-STEAM-2526-072',
-  'SCH-NARAYANA_SCHOOL',
-  'NARAYANA SCHOOL',
-  'STEAM', NULL,
-  'SINGLE', NULL, 'Active', 'archived', '2025-26',
-  '2025-04-01', '2026-03-31', 2000, 819,
-  -1181, -0.5905,
-  847.46, 1000, 966420,
-  180000, 0, 786420, 18.6,
-  '50-50 half-yearly',
-  NULL,
-  '[{"timestamp":"2026-05-27T00:00:00Z","user":"anish.d","action":"create","notes":"FY 25-26 validated import. Source: gsl_2526_import_ready.json."}]'::jsonb
-) ON CONFLICT (id) DO NOTHING;
 
 -- ============================================================================
 -- 3. FIX: studentsMou 0 -> NULL for 18 schools where source says "not specified"
