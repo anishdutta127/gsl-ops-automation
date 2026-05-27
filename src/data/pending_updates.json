@@ -82,5 +82,46 @@
       ]
     },
     "retryCount": 0
+  },
+  {
+    "id": "58bc1b1a-3959-480e-8d8c-c6fe5f09a7c4",
+    "queuedAt": "2026-05-27T09:47:16.149Z",
+    "queuedBy": "pranav.b",
+    "entity": "payment",
+    "operation": "create",
+    "payload": {
+      "id": "MOU-STEAM-2627-038-i1",
+      "mouId": "MOU-STEAM-2627-038",
+      "schoolName": "St. Paul’s Mission School",
+      "programme": "STEAM",
+      "instalmentLabel": "1 of 2",
+      "instalmentSeq": 1,
+      "totalInstalments": 2,
+      "description": "STEAM - Instalment 1 of 2",
+      "dueDateRaw": null,
+      "dueDateIso": null,
+      "expectedAmount": 400000,
+      "receivedAmount": null,
+      "receivedDate": null,
+      "paymentMode": null,
+      "bankReference": null,
+      "piNumber": "MTPL/UP/26-27/0021",
+      "taxInvoiceNumber": null,
+      "status": "PI Sent",
+      "notes": null,
+      "piSentDate": "2026-05-27T09:47:16.055Z",
+      "piGeneratedAt": "2026-05-27T09:47:16.055Z",
+      "studentCountActual": 372,
+      "partialPayments": null,
+      "auditLog": [
+        {
+          "timestamp": "2026-05-27T09:47:16.055Z",
+          "user": "pranav.b",
+          "action": "create",
+          "notes": "Auto-created from PI generation (MTPL/UP/26-27/0021)."
+        }
+      ]
+    },
+    "retryCount": 0
   }
 ]
