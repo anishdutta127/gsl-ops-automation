@@ -66,7 +66,7 @@ export default async function PendingPiPage() {
           subtitle="Installments due within 30 days or already overdue, awaiting PI generation."
           breadcrumb={[
             { label: 'Dashboard', href: '/' },
-            { label: 'Finance', href: '/dashboard/finance' },
+            { label: 'Finance', href: '/finance' },
             { label: 'Pending PIs' },
           ]}
         />

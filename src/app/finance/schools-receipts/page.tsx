@@ -107,7 +107,7 @@ export default async function FinanceSchoolsReceiptsPage({
           subtitle="Receipt status by school. Drill into the registry to action."
           breadcrumb={[
             { label: 'Dashboard', href: '/' },
-            { label: 'Finance', href: '/dashboard/finance' },
+            { label: 'Finance', href: '/finance' },
             { label: 'Schools and receipts' },
           ]}
         />

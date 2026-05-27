@@ -109,7 +109,7 @@ export default async function FinanceReceiptsPage({
           subtitle="Instalment-level receipt status."
           breadcrumb={[
             { label: 'Dashboard', href: '/' },
-            { label: 'Finance', href: '/dashboard/finance' },
+            { label: 'Finance', href: '/finance' },
             { label: 'Receipts' },
           ]}
         />

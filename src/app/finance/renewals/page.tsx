@@ -208,7 +208,7 @@ export default async function FinanceRenewalsPage({
           subtitle={`${actionable} MOUs need attention in the next 90 days. Renewals are owned by sales; this view is the accounts-team early warning.`}
           breadcrumb={[
             { label: 'Dashboard', href: '/' },
-            { label: 'Finance', href: '/dashboard/finance' },
+            { label: 'Finance', href: '/finance' },
             { label: 'Renewals' },
           ]}
         />
