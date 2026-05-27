@@ -43,6 +43,12 @@ export interface AllocateArgs {
    * undefined and the repo INSERTs at version=1 unconditionally.
    */
   expectedVersion?: number
+  /**
+   * When set, allows saving despite inventory shortfall. The remark is
+   * recorded in the audit trail. Used for kits delivered directly from
+   * vendor to school, bypassing the GSL warehouse.
+   */
+  inventoryOverrideReason?: string
 }
 
 export interface AllocateDeps {
@@ -149,6 +155,8 @@ export async function allocateKits(
   }
 
   const totalsBySku = aggregateBySku(rows)
+  const hasOverride = typeof args.inventoryOverrideReason === 'string'
+    && args.inventoryOverrideReason.trim().length > 0
   for (const [skuName, totalRequested] of Array.from(totalsBySku.entries())) {
     const sku = inventoryByName.get(skuName)
     if (!sku) {
@@ -158,7 +166,7 @@ export async function allocateKits(
         offendingSkuName: skuName,
       }
     }
-    if (totalRequested > sku.currentStock) {
+    if (totalRequested > sku.currentStock && !hasOverride) {
       return {
         ok: false,
         reason: 'inventory-insufficient',
@@ -175,15 +183,22 @@ export async function allocateKits(
   const product = productSelection ?? 'TinkRworks'
 
   const beforeAllocations = existing?.allocations ?? []
+  const overrideNote = hasOverride
+    ? ` INVENTORY OVERRIDE by ${args.user.name} (${args.user.id}): "${args.inventoryOverrideReason!.trim()}"`
+    : ''
   const audit: AuditEntry = {
     timestamp: now.toISOString(),
     user: args.user.id,
     action: 'update',
     before: { allocations: beforeAllocations as unknown as Record<string, unknown> },
-    after: { allocations: rows as unknown as Record<string, unknown> },
+    after: {
+      allocations: rows as unknown as Record<string, unknown>,
+      ...(hasOverride ? { inventoryOverrideReason: args.inventoryOverrideReason!.trim() } : {}),
+    },
     notes:
       'sales-approval-pending; notified sales rep '
-      + (mou.salesPersonId ?? 'unassigned'),
+      + (mou.salesPersonId ?? 'unassigned')
+      + overrideNote,
   }
 
   const nextRecord: KitDispatch = existing

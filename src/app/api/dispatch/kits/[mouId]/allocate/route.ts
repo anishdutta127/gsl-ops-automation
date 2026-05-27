@@ -24,6 +24,7 @@ interface Body {
    * so the UI can prompt for reload.
    */
   expectedVersion?: unknown
+  inventoryOverrideReason?: unknown
 }
 
 function parseAllocations(v: unknown): KitAllocation[] | null {
@@ -80,6 +81,10 @@ export async function POST(
     && Number.isFinite(body.expectedVersion)
     ? body.expectedVersion
     : undefined
+  const inventoryOverrideReason = typeof body.inventoryOverrideReason === 'string'
+    && body.inventoryOverrideReason.trim().length > 0
+    ? body.inventoryOverrideReason.trim()
+    : undefined
 
   // Load LIVE state via repos so the OCC version check sees current
   // postgres data (not stale json bundle).
@@ -95,6 +100,7 @@ export async function POST(
       user: { id: user.id, name: user.name },
       allocations,
       expectedVersion,
+      inventoryOverrideReason,
     },
     { mous, kitDispatches, inventory },
   )

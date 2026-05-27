@@ -43,6 +43,14 @@ export interface ApplyCountChangeArgs {
   relatedInstallmentId?: string | null
   notes?: string | null
   recordedBy: string                     // User.id
+  /**
+   * When true, skip the canEditMOU / canEditFinanceData permission
+   * check. Used by confirmActuals which has already verified the caller
+   * holds mou:confirm-actuals. An ops-department Admin passes that
+   * gate but fails the narrower canEditMOU || canEditFinanceData check,
+   * which was silently preventing the instalment recalc cascade.
+   */
+  skipPermissionCheck?: boolean
 }
 
 export interface ApplyCountChangePayloads {
@@ -135,7 +143,7 @@ export function applyCountChange(
 ): ApplyCountChangeResult {
   const user = deps.users.find((u) => u.id === args.recordedBy)
   if (!user) return { ok: false, reason: 'unknown-user' }
-  if (!canEditMOU(user) && !canEditFinanceData(user)) {
+  if (!args.skipPermissionCheck && !canEditMOU(user) && !canEditFinanceData(user)) {
     return { ok: false, reason: 'permission' }
   }
 
@@ -153,7 +161,7 @@ export function applyCountChange(
   if (!mou) return { ok: false, reason: 'mou-not-found' }
 
   const previousCount = getCurrentStudentCountFor(mou, deps.events)
-  if (args.newCount === previousCount) {
+  if (args.newCount === previousCount && !args.skipPermissionCheck) {
     return { ok: false, reason: 'no-change' }
   }
 

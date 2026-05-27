@@ -274,7 +274,7 @@ describe('generatePi', () => {
     expect(result).toEqual({ ok: false, reason: 'mou-not-found' })
   })
 
-  it('rejects wrong-status (MOU not Active)', async () => {
+  it('warns but still generates PI for non-Active MOU status', async () => {
     const u = user('Finance', 'shubhangi.g')
     const m = mou({ status: 'Completed' })
     const { deps } = makeDeps({ mous: [m], schools: [school()], users: [u] })
@@ -282,7 +282,10 @@ describe('generatePi', () => {
       { mouId: 'MOU-X', instalmentSeq: 1, generatedBy: 'shubhangi.g' },
       deps,
     )
-    expect(result).toEqual({ ok: false, reason: 'wrong-status' })
+    expect(result.ok).toBe(true)
+    if (result.ok) {
+      expect(result.warnings).toContain('MOU status is "Completed" (not Active). PI generated anyway.')
+    }
   })
 
   it('rejects school-not-found (data integrity issue)', async () => {

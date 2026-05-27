@@ -351,9 +351,9 @@ export async function renderPi(
   const totalInsts = totalInstallments(mou.paymentSchedule)
   const instalmentLabel = `${payment.instalmentSeq} of ${totalInsts}`
   const studentsForBilling = mou.studentsActual ?? mou.studentsMou
-  const subtotal = studentsForBilling * mou.spWithoutTax
-  const gstAmount = Math.round(subtotal * deps.company.gstRate)
-  const total = subtotal + gstAmount
+  const total = Math.round(studentsForBilling * (mou.spWithTax ?? 0))
+  const subtotal = Math.round(total / (1 + deps.company.gstRate))
+  const gstAmount = total - subtotal
 
   const allInstallmentsForMou = deps.payments.filter((p) => p.mouId === mou.id)
   const bag = buildPlaceholderBag({
@@ -449,16 +449,20 @@ export async function issueAndRenderPi(
   if (!studentsForBilling) {
     warnings.push('Student count is 0 or missing. PI amounts may be incorrect.')
   }
-  if (!mou.spWithoutTax) {
-    warnings.push('Price per student (SP without tax) is 0 or missing. PI amounts may be incorrect.')
+  if (!mou.spWithTax) {
+    warnings.push('Price per student (SP with tax) is 0 or missing. PI amounts may be incorrect.')
   }
-  if (!mou.contractValue) {
-    warnings.push('Contract value is 0 or missing. Expected amount may be incorrect.')
-  }
-  const subtotal = studentsForBilling * (mou.spWithoutTax ?? 0)
-  const gstAmount = Math.round(subtotal * deps.company.gstRate)
-  const total = subtotal + gstAmount
-  const expectedAmount = totalInsts > 0 ? Math.round((mou.contractValue ?? 0) / totalInsts) : 0
+  const total = Math.round(studentsForBilling * (mou.spWithTax ?? 0))
+  const subtotal = Math.round(total / (1 + deps.company.gstRate))
+  const gstAmount = total - subtotal
+  const existingPayment = deps.payments.find(
+    (p) => p.id === expectedPaymentId,
+  )
+  const expectedAmount = existingPayment
+    ? existingPayment.expectedAmount
+    : totalInsts > 0
+      ? Math.round((mou.contractValue ?? total) / totalInsts)
+      : 0
 
   const allInstallmentsForMou = deps.payments.filter((p) => p.mouId === mou.id)
   // The PI being minted right now is not in `deps.payments` yet (it's

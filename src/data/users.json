@@ -238,5 +238,24 @@
         "notes": "Added per Gate 5A.5 Step 5; cross-functional Admin (department null wildcard) for Phase 1 testing window."
       }
     ]
+  },
+  {
+    "id": "gsl-testing",
+    "name": "GSL Testing",
+    "email": "gsl-testing@getsetlearn.info",
+    "role": "Admin",
+    "department": null,
+    "testingOverride": false,
+    "active": true,
+    "passwordHash": "$2b$12$Efi/fU030f1rPqU4F4AwL.SZV48s17our6iclTiRhB7Gxza/GPreS",
+    "createdAt": "2026-05-27T00:00:00Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-05-27T00:00:00Z",
+        "user": "anish.d",
+        "action": "create",
+        "notes": "Shared test account for finance-team review. Cross-functional Admin (department null wildcard). SSO via getsetlearn.info domain."
+      }
+    ]
   }
 ]

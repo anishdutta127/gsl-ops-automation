@@ -114,6 +114,8 @@ export function AllocationForm({
   // from the same page send the bumped version (no spurious 409 on the
   // second save without reload).
   const [currentVersion, setCurrentVersion] = useState<number | null>(initialVersion)
+  const [overrideReason, setOverrideReason] = useState('')
+  const [showOverride, setShowOverride] = useState(false)
 
   const stockByName = useMemo(() => {
     const m = new Map<string, number>()
@@ -168,9 +170,8 @@ export function AllocationForm({
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({
           allocations: payload,
-          // P2b.X OCC: send the version we loaded; route returns 409 if
-          // someone else has saved in the meantime.
           ...(currentVersion != null ? { expectedVersion: currentVersion } : {}),
+          ...(overrideReason.trim() ? { inventoryOverrideReason: overrideReason.trim() } : {}),
         }),
       })
       if (res.status === 409) {
@@ -351,7 +352,34 @@ export function AllocationForm({
               {o.skuName}: requested {o.requested}, available {o.available}.
             </div>
           ))}
-          Adjust qty or pick a different SKU before submitting.
+          <p className="mt-1">Adjust qty or pick a different SKU before submitting.</p>
+          {!showOverride ? (
+            <button
+              type="button"
+              onClick={() => setShowOverride(true)}
+              className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-amber-900 underline hover:text-amber-700"
+              data-testid="show-override-btn"
+            >
+              Override with reason (e.g. direct vendor delivery)
+            </button>
+          ) : (
+            <div className="mt-2 space-y-2" data-testid="override-section">
+              <label className="block text-xs font-semibold text-amber-900">
+                Override reason (mandatory)
+              </label>
+              <textarea
+                value={overrideReason}
+                onChange={(e) => setOverrideReason(e.target.value)}
+                placeholder="e.g. Not from GSL Inventory/Warehouse; vendor delivers directly to school"
+                rows={2}
+                className="w-full rounded border border-amber-400 bg-white px-2 py-1.5 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                data-testid="override-reason-input"
+              />
+              {overrideReason.trim().length === 0 && (
+                <p className="text-[11px] text-signal-alert">A non-empty reason is required to override the stock check.</p>
+              )}
+            </div>
+          )}
         </div>
       )}
 
@@ -382,7 +410,7 @@ export function AllocationForm({
         <button
           type="button"
           onClick={() => void save()}
-          disabled={saveState === 'saving' || overAllocatedSkus.length > 0 || submittableRows.length === 0}
+          disabled={saveState === 'saving' || (overAllocatedSkus.length > 0 && !overrideReason.trim()) || submittableRows.length === 0}
           className="inline-flex min-h-11 items-center gap-2 rounded-md bg-brand-navy px-4 py-2 text-sm font-semibold text-white hover:bg-brand-navy/90 disabled:opacity-60"
           data-testid="submit-allocation"
         >

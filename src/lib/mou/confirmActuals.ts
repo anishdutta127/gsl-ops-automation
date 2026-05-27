@@ -142,7 +142,19 @@ export async function confirmActuals(
   const previousCount = mou.studentsActual ?? mou.studentsMou
   const countChanged = args.studentsActual !== previousCount
   const ownPayments = (deps.payments ?? []).filter((p) => p.mouId === mou.id)
-  const shouldCascade = countChanged && ownPayments.length > 0
+  // Also cascade when the count appears unchanged but payments are out
+  // of sync: covers the case where a prior cascade failed silently
+  // (e.g., permission gate bug fixed in 2026-05-27). We detect
+  // desync by comparing the expected contract total (count × spWithTax)
+  // against the sum of payment expectedAmounts.
+  const expectedTotal = mou.spWithTax > 0
+    ? Math.round(args.studentsActual * mou.spWithTax)
+    : 0
+  const paymentTotal = ownPayments.reduce((s, p) => s + p.expectedAmount, 0)
+  const paymentsOutOfSync = expectedTotal > 0
+    && ownPayments.length > 0
+    && Math.abs(paymentTotal - expectedTotal) > 1
+  const shouldCascade = (countChanged || paymentsOutOfSync) && ownPayments.length > 0
 
   let cascadeApplied = false
   let cascadeAuditEntry: AuditEntry | null = null
@@ -157,6 +169,7 @@ export async function confirmActuals(
         reason: `Actuals confirmation: count moved from ${previousCount} to ${args.studentsActual}.`,
         recordedBy: args.confirmedBy,
         notes: args.notes ?? null,
+        skipPermissionCheck: true,
       },
       {
         mous: deps.mous,
