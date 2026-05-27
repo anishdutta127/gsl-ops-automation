@@ -67,7 +67,7 @@ export const NAV_STAGES: NavStage[] = [
     activePaths: ['/operations', '/dispatch', '/dashboard/ops'],
   },
   {
-    href: '/dashboard/finance',
+    href: '/finance',
     label: 'Finance',
     department: 'finance',
     activePaths: ['/finance'],

@@ -13,6 +13,8 @@
 import { redirect } from 'next/navigation'
 import {
   BarChart3,
+  ClipboardList,
+  LayoutDashboard,
   Truck,
   Users,
   AlertTriangle,
@@ -84,9 +86,44 @@ export default async function ReportsIndex() {
               Reports
             </h1>
             <p className="mt-1 text-sm text-slate-600">
-              Five report views computed from live data.
+              Dashboards and analytical reports computed from live data.
             </p>
           </header>
+          <h2 className="font-heading text-lg font-semibold text-brand-navy">
+            Dashboards
+          </h2>
+          <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <li>
+              <ReportCard
+                href="/dashboard/finance"
+                title="Finance dashboard"
+                description="KPIs, alerts, top overdue, receipts summary, programme breakdown."
+                icon={LayoutDashboard}
+                testId="report-card-finance-dashboard"
+              />
+            </li>
+            <li>
+              <ReportCard
+                href="/dashboard/ops"
+                title="Operations dashboard"
+                description="Ops KPIs, action queue, orders tracker, communication panel."
+                icon={ClipboardList}
+                testId="report-card-ops-dashboard"
+              />
+            </li>
+            <li>
+              <ReportCard
+                href="/dashboard/leadership"
+                title="Leadership overview"
+                description="Cross-functional rollup for Ameet and leadership."
+                icon={BarChart3}
+                testId="report-card-leadership-dashboard"
+              />
+            </li>
+          </ul>
+          <h2 className="font-heading text-lg font-semibold text-brand-navy">
+            Analytical reports
+          </h2>
           {visible.length === 0 ? (
             <div className="rounded-md border border-border bg-card p-6 text-sm text-slate-600">
               No reports are available for your role. Ask an administrator
