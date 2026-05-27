@@ -133,7 +133,8 @@ async function dispatchToRepo(params: {
   switch (entity) {
     case 'mou': {
       const { mouRepo } = await import('./db/repos/mou')
-      if (operation === 'update') {
+      if (operation === 'create') await mouRepo.create(payload as never, { queuedBy })
+      else if (operation === 'update') {
         await dispatchAuditedUpdate(mouRepo as never, payload as never, queuedBy)
       } else throw new Error(`mou ${operation} is not supported via repo`)
       return
@@ -147,21 +148,24 @@ async function dispatchToRepo(params: {
     }
     case 'school': {
       const { schoolRepo } = await import('./db/repos/school')
-      if (operation === 'update') {
+      if (operation === 'create') await schoolRepo.create(payload as never, { queuedBy })
+      else if (operation === 'update') {
         await dispatchAuditedUpdate(schoolRepo as never, payload as never, queuedBy)
       } else throw new Error(`school ${operation} is not supported via repo`)
       return
     }
     case 'payment': {
       const { paymentRepo } = await import('./db/repos/payment')
-      if (operation === 'update') {
+      if (operation === 'create') await paymentRepo.create(payload as never, { queuedBy })
+      else if (operation === 'update') {
         await dispatchAuditedUpdate(paymentRepo as never, payload as never, queuedBy)
       } else throw new Error(`payment ${operation} is not supported via repo`)
       return
     }
     case 'dispatch': {
       const { dispatchRepo } = await import('./db/repos/dispatch')
-      if (operation === 'update') {
+      if (operation === 'create') await dispatchRepo.create(payload as never, { queuedBy })
+      else if (operation === 'update') {
         await dispatchAuditedUpdate(dispatchRepo as never, payload as never, queuedBy)
       } else throw new Error(`dispatch ${operation} is not supported via repo`)
       return
@@ -176,7 +180,8 @@ async function dispatchToRepo(params: {
     }
     case 'escalation': {
       const { escalationRepo } = await import('./db/repos/escalation')
-      if (operation === 'update') {
+      if (operation === 'create') await escalationRepo.create(payload as never, { queuedBy })
+      else if (operation === 'update') {
         await dispatchAuditedUpdate(escalationRepo as never, payload as never, queuedBy)
       } else throw new Error(`escalation ${operation} is not supported via repo`)
       return

@@ -133,6 +133,38 @@ export const escalationRepo = {
     return jsonEscalations.filter((e) => e.status !== 'Closed')
   },
 
+  async create(e: Escalation, opts?: { queuedBy?: string }): Promise<void> {
+    if (currentBackend() === 'postgres') {
+      const sql = getSql()
+      await sql`
+        INSERT INTO escalations (
+          id, created_by, school_id, mou_id, stage, lane, level, origin, origin_id,
+          severity, description, assigned_to, notified_emails, status, category, type,
+          owned_by_department, transferred_from_department, transferred_to_department,
+          transferred_at, transfer_reason, sla_target_date, sla_breached,
+          waiting_on, resolution_notes, resolved_at, resolved_by, comments, audit_log
+        ) VALUES (
+          ${e.id}, ${e.createdBy ?? null}, ${e.schoolId}, ${e.mouId ?? null},
+          ${e.stage ?? null}, ${e.lane ?? null}, ${e.level ?? null}, ${e.origin ?? null}, ${e.originId ?? null},
+          ${e.severity}, ${e.description ?? null}, ${e.assignedTo ?? null},
+          ${sql.json((e.notifiedEmails ?? []) as never)}::jsonb, ${e.status}, ${e.category ?? null}, ${e.type ?? null},
+          ${e.ownedByDepartment ?? null}, ${e.transferredFromDepartment ?? null}, ${e.transferredToDepartment ?? null},
+          ${e.transferredAt ?? null}, ${e.transferReason ?? null}, ${e.slaTargetDate ?? null}, ${e.slaBreached ?? null},
+          ${e.waitingOn ?? null}, ${e.resolutionNotes ?? null}, ${e.resolvedAt ?? null}, ${e.resolvedBy ?? null},
+          ${sql.json((e.comments ?? []) as never)}::jsonb,
+          ${sql.json((e.auditLog ?? []) as never)}::jsonb
+        ) ON CONFLICT (id) DO NOTHING
+      `
+      return
+    }
+    await enqueueUpdate({
+      queuedBy: opts?.queuedBy ?? 'system',
+      entity: 'escalation',
+      operation: 'create',
+      payload: e as unknown as Record<string, unknown>,
+    })
+  },
+
   async update(e: Escalation, opts?: { queuedBy?: string }): Promise<void> {
     if (currentBackend() === 'postgres') {
       const sql = getSql()

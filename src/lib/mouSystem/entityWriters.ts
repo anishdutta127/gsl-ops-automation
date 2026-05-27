@@ -21,6 +21,7 @@
 
 import crypto from 'node:crypto'
 import { atomicUpdateJson } from '@/lib/githubQueue'
+import { currentBackend } from '@/lib/db/backend'
 import { paidAmount, deriveStatus } from './installments'
 import type {
   Adjustment,
@@ -477,134 +478,111 @@ function nextDraftSequence(programme: Programme, list: MOU[]): string {
 export async function saveDraftMou(
   input: DraftMouInput,
 ): Promise<{ mou: MOU; commitSha: string }> {
+  const audit: AuditEntry = {
+    timestamp: nowIso(),
+    user: input.identityName,
+    action: input.draftMouId ? 'update' : 'create',
+    notes: `Save draft via ${input.templateId}`,
+  }
+  const fy = '2026-27'
+  const v = input.variables
+  const toNum = (s: string | undefined) => {
+    if (!s) return 0
+    const n = parseFloat(s.replace(/[^0-9.]/g, ''))
+    return Number.isFinite(n) ? n : 0
+  }
+  const studentsMou = toNum(v.NUMBER_OF_STUDENTS ?? v.STUDENTS ?? v.STUDENT_COUNT)
+  const spWithoutTax = toNum(v.PRICE_PER_STUDENT_BEFORE_TAX ?? v.PRICE_PER_STUDENT)
+  const spWithTax = toNum(v.PRICE_PER_STUDENT_INCL_GST ?? v.PRICE_PER_STUDENT)
+  const startDate = v.START_DATE ?? null
+  const endDate = v.END_DATE ?? null
+  let numberOfYears: number | null = null
+  if (startDate && endDate) {
+    const s = new Date(startDate)
+    const e = new Date(endDate)
+    if (!Number.isNaN(s.getTime()) && !Number.isNaN(e.getTime()) && e > s) {
+      numberOfYears = Math.max(1, Math.ceil((e.getTime() - s.getTime()) / (365.25 * 86400000)))
+    }
+  }
+  const contractValue = computeContractValue({
+    studentsMou, spWithoutTax, spWithTax, numberOfYears,
+    yearlyPricing: input.yearlyPricing ?? null,
+  })
+
+  function buildMou(targetId: string, prev: MOU | null): MOU {
+    const base: MOU = {
+      id: targetId,
+      schoolId: input.schoolId ?? '',
+      schoolName: input.schoolName,
+      programme: input.programme,
+      programmeSubType: null,
+      schoolScope: 'SINGLE',
+      schoolGroupId: null,
+      status: 'Draft' as MouStatus,
+      cohortStatus: 'active',
+      delayNotes: null,
+      academicYear: fy,
+      startDate, endDate, studentsMou,
+      studentsActual: null, studentsVariance: null, studentsVariancePct: null,
+      spWithoutTax, spWithTax, contractValue,
+      received: 0, tds: 0, balance: contractValue, receivedPct: 0,
+      paymentSchedule: v.PAYMENT_SCHEDULE ?? summarisePaymentSchedules(input.paymentSchedules ?? null),
+      trainerModel: input.trainerModel ?? null,
+      notes: null, daysToExpiry: null,
+      salesPersonId: input.salesPersonId ?? null,
+      templateVersion: input.templateVersion ?? input.templateId,
+      generatedAt: nowIso(),
+      draftVariables: v,
+      auditLog: [audit],
+      effectiveDate: v.EFFECTIVE_DATE ?? null,
+      numberOfYears,
+      salesChannel: input.salesChannel ?? null,
+      schoolCrmId: input.schoolCrmId ?? null,
+      paymentSchedules: input.paymentSchedules ?? null,
+      yearlyPricing: input.yearlyPricing ?? null,
+      billingBlock: input.billingBlock ?? null,
+      signedMouPdfPath: null,
+      productSelection: input.productSelection ?? null,
+      gradewiseDistribution: input.gradewiseDistribution ?? null,
+    }
+    let mou = prev ? { ...prev, ...base, auditLog: [...(prev.auditLog ?? []), audit] } : base
+    if (input.annexureHtml !== null) {
+      mou = { ...mou, draftVariables: { ...(mou.draftVariables ?? {}), _ANNEXURE_HTML: input.annexureHtml } }
+    }
+    return mou
+  }
+
+  if (currentBackend() === 'postgres') {
+    const { mouRepo } = await import('@/lib/db/repos/mou')
+    const allMous = await mouRepo.findAll()
+    const targetId =
+      input.draftMouId && allMous.some((m) => m.id === input.draftMouId && m.status === 'Draft')
+        ? input.draftMouId
+        : nextDraftSequence(input.programme, allMous)
+    const prev = allMous.find((m) => m.id === targetId) ?? null
+    const mou = buildMou(targetId, prev)
+    if (prev) {
+      await mouRepo.update(mou, { queuedBy: input.identityName })
+    } else {
+      await mouRepo.create(mou, { queuedBy: input.identityName })
+    }
+    return { mou, commitSha: 'postgres-direct' }
+  }
+
   let result: MOU | null = null
   const { commitSha } = await atomicUpdateJson<MOU[]>(
     MOUS_PATH,
     (current) => {
       const list = Array.isArray(current) ? current : []
-      const audit: AuditEntry = {
-        timestamp: nowIso(),
-        user: input.identityName,
-        action: input.draftMouId ? 'update' : 'create',
-        notes: `Save draft via ${input.templateId}`,
-      }
       const targetId =
-        input.draftMouId &&
-        list.some((m) => m.id === input.draftMouId && m.status === 'Draft')
+        input.draftMouId && list.some((m) => m.id === input.draftMouId && m.status === 'Draft')
           ? input.draftMouId
           : nextDraftSequence(input.programme, list)
+      const prev = list.find((m) => m.id === targetId) ?? null
+      result = buildMou(targetId, prev)
       const idx = list.findIndex((m) => m.id === targetId)
-      const fy = '2026-27'
-      const v = input.variables
-      const toNum = (s: string | undefined) => {
-        if (!s) return 0
-        const n = parseFloat(s.replace(/[^0-9.]/g, ''))
-        return Number.isFinite(n) ? n : 0
-      }
-      const studentsMou = toNum(v.NUMBER_OF_STUDENTS ?? v.STUDENTS ?? v.STUDENT_COUNT)
-      const spWithoutTax = toNum(v.PRICE_PER_STUDENT_BEFORE_TAX ?? v.PRICE_PER_STUDENT)
-      const spWithTax = toNum(v.PRICE_PER_STUDENT_INCL_GST ?? v.PRICE_PER_STUDENT)
-      const startDate = v.START_DATE ?? null
-      const endDate = v.END_DATE ?? null
-      let numberOfYears: number | null = null
-      if (startDate && endDate) {
-        const s = new Date(startDate)
-        const e = new Date(endDate)
-        if (!Number.isNaN(s.getTime()) && !Number.isNaN(e.getTime()) && e > s) {
-          numberOfYears = Math.max(1, Math.ceil((e.getTime() - s.getTime()) / (365.25 * 86400000)))
-        }
-      }
-      // Round 3 Step 2: contract value sums per-year revenue. Falls
-      // back to studentsMou * spWithTax * numberOfYears for legacy
-      // multi-year MOUs that ship without explicit yearlyPricing.
-      const contractValue = computeContractValue({
-        studentsMou,
-        spWithoutTax,
-        spWithTax,
-        numberOfYears,
-        yearlyPricing: input.yearlyPricing ?? null,
-      })
-      const mou: MOU = {
-        id: targetId,
-        schoolId: input.schoolId ?? '',
-        schoolName: input.schoolName,
-        programme: input.programme,
-        programmeSubType: null,
-        schoolScope: 'SINGLE',
-        schoolGroupId: null,
-        status: 'Draft' as MouStatus,
-        // Phase 6A (2026-05-20, Pranav review #2): brand-new drafts
-        // MUST carry cohortStatus: 'active' so they appear on the
-        // /mous list (which filters cohortFiltered === 'active'). Pre
-        // 6A the field was omitted, drafts were saved but never
-        // surfaced to the operator. cohortStatus is orthogonal to
-        // MouStatus; a Draft is always part of the current cohort
-        // unless an operator explicitly archives it.
-        cohortStatus: 'active',
-        delayNotes: null,
-        academicYear: fy,
-        startDate,
-        endDate,
-        studentsMou,
-        studentsActual: null,
-        studentsVariance: null,
-        studentsVariancePct: null,
-        spWithoutTax,
-        spWithTax,
-        contractValue,
-        received: 0,
-        tds: 0,
-        balance: contractValue,
-        receivedPct: 0,
-        paymentSchedule: v.PAYMENT_SCHEDULE ?? summarisePaymentSchedules(input.paymentSchedules ?? null),
-        trainerModel: input.trainerModel ?? null,
-        notes: null,
-        daysToExpiry: null,
-        salesPersonId: input.salesPersonId ?? null,
-        templateVersion: input.templateVersion ?? input.templateId,
-        generatedAt: nowIso(),
-        draftVariables: v,
-        auditLog: [audit],
-        effectiveDate: v.EFFECTIVE_DATE ?? null,
-        numberOfYears,
-        salesChannel: input.salesChannel ?? null,
-        schoolCrmId: input.schoolCrmId ?? null,
-        paymentSchedules: input.paymentSchedules ?? null,
-        yearlyPricing: input.yearlyPricing ?? null,
-        billingBlock: input.billingBlock ?? null,
-        signedMouPdfPath: null,
-        productSelection: input.productSelection ?? null,
-        gradewiseDistribution: input.gradewiseDistribution ?? null,
-      }
-      let nextList: MOU[]
-      if (idx >= 0) {
-        const prev = list[idx]!
-        const merged: MOU = {
-          ...prev,
-          ...mou,
-          auditLog: [...(prev.auditLog ?? []), audit],
-        }
-        nextList = [...list]
-        nextList[idx] = merged
-        result = merged
-      } else {
-        nextList = [...list, mou]
-        result = mou
-      }
-      // Annexure HTML lives in draftVariables._ANNEXURE_HTML so the
-      // generator can rehydrate it without a separate store.
-      if (input.annexureHtml !== null) {
-        result = {
-          ...result!,
-          draftVariables: { ...(result!.draftVariables ?? {}), _ANNEXURE_HTML: input.annexureHtml },
-        }
-        const finalIdx = nextList.findIndex((m) => m.id === targetId)
-        if (finalIdx >= 0) nextList[finalIdx] = result!
-      }
-      return {
-        next: nextList,
-        commitMessage: `feat(mou): save draft ${targetId}`,
-      }
+      const nextList = idx >= 0 ? [...list.slice(0, idx), result, ...list.slice(idx + 1)] : [...list, result]
+      return { next: nextList, commitMessage: `feat(mou): save draft ${targetId}` }
     },
     { defaultValue: [] as MOU[], maxRetries: 3 },
   )
@@ -693,29 +671,38 @@ export async function upsertSignedValues(
     notes: string | null
   },
 ): Promise<{ commitSha: string }> {
+  const entry: SignedValues = {
+    mouId,
+    signedDate: values.signedDate,
+    signedBy: identityName,
+    pricePerStudent: values.pricePerStudent,
+    studentCount: values.studentCount,
+    duration: values.duration,
+    signedScanUrl: values.signedScanUrl,
+    capturedAt: nowIso(),
+    notes: values.notes,
+  }
+
+  if (currentBackend() === 'postgres') {
+    const { signedValueRepo } = await import('@/lib/db/repos/leafRepos')
+    const existing = await signedValueRepo.findById(mouId)
+    if (existing) {
+      await signedValueRepo.update(entry as never, { queuedBy: identityName })
+    } else {
+      await signedValueRepo.create(entry as never, { queuedBy: identityName })
+    }
+    return { commitSha: 'postgres-direct' }
+  }
+
   const { commitSha } = await atomicUpdateJson<SignedValues[]>(
     SIGNED_VALUES_PATH,
     (current) => {
       const list = Array.isArray(current) ? current : []
-      const entry: SignedValues = {
-        mouId,
-        signedDate: values.signedDate,
-        signedBy: identityName,
-        pricePerStudent: values.pricePerStudent,
-        studentCount: values.studentCount,
-        duration: values.duration,
-        signedScanUrl: values.signedScanUrl,
-        capturedAt: nowIso(),
-        notes: values.notes,
-      }
       const idx = list.findIndex((s) => s.mouId === mouId)
       const next = [...list]
       if (idx >= 0) next[idx] = entry
       else next.push(entry)
-      return {
-        next,
-        commitMessage: `feat(signed-values): record signed values for ${mouId}`,
-      }
+      return { next, commitMessage: `feat(signed-values): record signed values for ${mouId}` }
     },
     { defaultValue: [] as SignedValues[], maxRetries: 3 },
   )
@@ -1009,6 +996,25 @@ export async function applyInstallmentPatch(
   patch: Partial<Payment>,
   notes?: string,
 ): Promise<{ payment: Payment; commitSha: string }> {
+  const audit: AuditEntry = {
+    timestamp: nowIso(),
+    user: identityName,
+    action: 'update',
+    notes,
+  }
+
+  if (currentBackend() === 'postgres') {
+    const { paymentRepo } = await import('@/lib/db/repos/payment')
+    const prev = await paymentRepo.findById(installmentId)
+    if (!prev) throw new Error(`Installment not found: ${installmentId}`)
+    const updated: Payment = { ...prev, ...patch, auditLog: [...(prev.auditLog ?? []), audit] }
+    if ('partialPayments' in patch || 'receivedAmount' in patch || 'piSentDate' in patch) {
+      updated.status = deriveStatus(updated)
+    }
+    await paymentRepo.update(updated, { queuedBy: identityName })
+    return { payment: updated, commitSha: 'postgres-direct' }
+  }
+
   let result: Payment | null = null
   const { commitSha } = await atomicUpdateJson<Payment[]>(
     PAYMENTS_PATH,
@@ -1017,28 +1023,14 @@ export async function applyInstallmentPatch(
       const idx = list.findIndex((p) => p.id === installmentId)
       if (idx < 0) throw new Error(`Installment not found: ${installmentId}`)
       const prev = list[idx]!
-      const audit: AuditEntry = {
-        timestamp: nowIso(),
-        user: identityName,
-        action: 'update',
-        notes,
-      }
-      const updated: Payment = {
-        ...prev,
-        ...patch,
-        auditLog: [...(prev.auditLog ?? []), audit],
-      }
-      // Always re-derive status if amounts/dates moved
+      const updated: Payment = { ...prev, ...patch, auditLog: [...(prev.auditLog ?? []), audit] }
       if ('partialPayments' in patch || 'receivedAmount' in patch || 'piSentDate' in patch) {
         updated.status = deriveStatus(updated)
       }
       const next = [...list]
       next[idx] = updated
       result = updated
-      return {
-        next,
-        commitMessage: `feat(installment): patch ${installmentId}`,
-      }
+      return { next, commitMessage: `feat(installment): patch ${installmentId}` }
     },
     { defaultValue: [] as Payment[], maxRetries: 3 },
   )

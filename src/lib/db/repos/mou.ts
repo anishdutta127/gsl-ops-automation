@@ -176,6 +176,52 @@ export const mouRepo = {
     return jsonMous.filter((m) => m.cohortStatus === 'active')
   },
 
+  async create(m: MOU, opts?: { queuedBy?: string }): Promise<void> {
+    if (currentBackend() === 'postgres') {
+      const sql = getSql()
+      await sql`
+        INSERT INTO mous (
+          id, school_id, school_name, programme, programme_sub_type,
+          school_scope, school_group_id, status, cohort_status, academic_year,
+          effective_date, start_date, end_date, number_of_years,
+          students_mou, students_actual, students_variance, students_variance_pct,
+          sp_without_tax, sp_with_tax, contract_value, received, tds, balance, received_pct,
+          trainer_model, sales_person_id, template_version, generated_at,
+          notes, delay_notes, days_to_expiry, sales_channel, school_crm_id,
+          signed_mou_pdf_path, import_notes, product_selection,
+          payment_schedule, payment_schedules, yearly_pricing, billing_block,
+          draft_variables, dispatch_override, gradewise_distribution,
+          student_count_event_ids, audit_log
+        ) VALUES (
+          ${m.id}, ${m.schoolId}, ${m.schoolName}, ${m.programme}, ${m.programmeSubType ?? null},
+          ${m.schoolScope ?? 'SINGLE'}, ${m.schoolGroupId ?? null}, ${m.status}, ${m.cohortStatus ?? 'active'}, ${m.academicYear ?? null},
+          ${m.effectiveDate ?? null}, ${m.startDate ?? null}, ${m.endDate ?? null}, ${m.numberOfYears ?? null},
+          ${m.studentsMou ?? null}, ${m.studentsActual ?? null}, ${m.studentsVariance ?? null}, ${m.studentsVariancePct ?? null},
+          ${m.spWithoutTax ?? null}, ${m.spWithTax ?? null}, ${m.contractValue ?? null}, ${m.received ?? null}, ${m.tds ?? null}, ${m.balance ?? null}, ${m.receivedPct ?? null},
+          ${m.trainerModel ?? null}, ${m.salesPersonId || null}, ${m.templateVersion || null}, ${m.generatedAt || null},
+          ${m.notes ?? null}, ${m.delayNotes ?? null}, ${m.daysToExpiry ?? null}, ${m.salesChannel ?? null}, ${m.schoolCrmId ?? null},
+          ${m.signedMouPdfPath ?? null}, ${m.importNotes ?? null}, ${m.productSelection ?? null},
+          ${m.paymentSchedule == null ? null : sql.json(m.paymentSchedule as never)}::jsonb,
+          ${m.paymentSchedules == null ? null : sql.json(m.paymentSchedules as never)}::jsonb,
+          ${m.yearlyPricing == null ? null : sql.json(m.yearlyPricing as never)}::jsonb,
+          ${m.billingBlock == null ? null : sql.json(m.billingBlock as never)}::jsonb,
+          ${m.draftVariables == null ? null : sql.json(m.draftVariables as never)}::jsonb,
+          ${m.dispatchOverride == null ? null : sql.json(m.dispatchOverride as never)}::jsonb,
+          ${m.gradewiseDistribution == null ? null : sql.json(m.gradewiseDistribution as never)}::jsonb,
+          ${sql.json((m.studentCountEventIds ?? []) as never)}::jsonb,
+          ${sql.json((m.auditLog ?? []) as never)}::jsonb
+        ) ON CONFLICT (id) DO NOTHING
+      `
+      return
+    }
+    await enqueueUpdate({
+      queuedBy: opts?.queuedBy ?? 'system',
+      entity: 'mou',
+      operation: 'create',
+      payload: m as unknown as Record<string, unknown>,
+    })
+  },
+
   async update(m: MOU, opts?: { queuedBy?: string }): Promise<void> {
     if (currentBackend() === 'postgres') {
       const sql = getSql()

@@ -155,6 +155,41 @@ export const paymentRepo = {
     return jsonPayments.filter((p) => p.status === status)
   },
 
+  async create(p: Payment, opts?: { queuedBy?: string }): Promise<void> {
+    if (currentBackend() === 'postgres') {
+      const sql = getSql()
+      await sql`
+        INSERT INTO payments (
+          id, mou_id, school_name, programme, instalment_label, instalment_seq,
+          total_instalments, description, due_date_raw, due_date_iso,
+          expected_amount, received_amount, received_date, payment_mode,
+          bank_reference, pi_number, tax_invoice_number, status, notes,
+          pi_sent_date, pi_sent_to, pi_generated_at, pi_voided_at, pi_void_reason,
+          student_count_actual, partial_payments, bank_amount, tds_amount,
+          tds_certificate_ref, tds_rate, percent_share, nominal_amount,
+          adjustment_from_locked_installments, net_due, locked_at, is_locked, audit_log
+        ) VALUES (
+          ${p.id}, ${p.mouId}, ${p.schoolName}, ${p.programme}, ${p.instalmentLabel}, ${p.instalmentSeq},
+          ${p.totalInstalments}, ${p.description ?? null}, ${p.dueDateRaw ?? null}, ${p.dueDateIso ?? null},
+          ${p.expectedAmount}, ${p.receivedAmount ?? null}, ${p.receivedDate ?? null}, ${p.paymentMode ?? null},
+          ${p.bankReference ?? null}, ${p.piNumber ?? null}, ${p.taxInvoiceNumber ?? null}, ${p.status}, ${p.notes ?? null},
+          ${p.piSentDate ?? null}, ${p.piSentTo ?? null}, ${p.piGeneratedAt ?? null}, ${p.piVoidedAt ?? null}, ${p.piVoidReason ?? null},
+          ${p.studentCountActual ?? null}, ${sql.json((p.partialPayments ?? []) as never)}::jsonb, ${p.bankAmount ?? null}, ${p.tdsAmount ?? null},
+          ${p.tdsCertificateRef ?? null}, ${p.tdsRate ?? null}, ${p.percentShare ?? null}, ${p.nominalAmount ?? null},
+          ${p.adjustmentFromLockedInstallments ?? null}, ${p.netDue ?? null}, ${p.lockedAt ?? null}, ${!!p.isLocked},
+          ${sql.json((p.auditLog ?? []) as never)}::jsonb
+        ) ON CONFLICT (id) DO NOTHING
+      `
+      return
+    }
+    await enqueueUpdate({
+      queuedBy: opts?.queuedBy ?? 'system',
+      entity: 'payment',
+      operation: 'create',
+      payload: p as unknown as Record<string, unknown>,
+    })
+  },
+
   async update(p: Payment, opts?: { queuedBy?: string }): Promise<void> {
     if (currentBackend() === 'postgres') {
       const sql = getSql()

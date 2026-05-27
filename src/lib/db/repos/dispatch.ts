@@ -98,6 +98,35 @@ export const dispatchRepo = {
     return jsonDispatches.filter((d) => d.mouId === mouId)
   },
 
+  async create(d: Dispatch, opts?: { queuedBy?: string }): Promise<void> {
+    if (currentBackend() === 'postgres') {
+      const sql = getSql()
+      await sql`
+        INSERT INTO dispatches (
+          id, mou_id, school_id, instalment_seq, stage, installment1_paid,
+          override_event, po_raised_at, dispatched_at, delivered_at,
+          acknowledged_at, acknowledgement_url, notes, line_items,
+          request_id, raised_by, raised_from, audit_log
+        ) VALUES (
+          ${d.id}, ${d.mouId ?? null}, ${d.schoolId}, ${d.installmentSeq ?? null}, ${d.stage}, ${!!d.installment1Paid},
+          ${d.overrideEvent == null ? null : sql.json(d.overrideEvent as never)}::jsonb,
+          ${d.poRaisedAt ?? null}, ${d.dispatchedAt ?? null}, ${d.deliveredAt ?? null},
+          ${d.acknowledgedAt ?? null}, ${d.acknowledgementUrl ?? null}, ${d.notes ?? null},
+          ${sql.json((d.lineItems ?? []) as never)}::jsonb,
+          ${d.requestId ?? null}, ${d.raisedBy ?? null}, ${d.raisedFrom ?? null},
+          ${sql.json((d.auditLog ?? []) as never)}::jsonb
+        ) ON CONFLICT (id) DO NOTHING
+      `
+      return
+    }
+    await enqueueUpdate({
+      queuedBy: opts?.queuedBy ?? 'system',
+      entity: 'dispatch',
+      operation: 'create',
+      payload: d as unknown as Record<string, unknown>,
+    })
+  },
+
   async update(d: Dispatch, opts?: { queuedBy?: string }): Promise<void> {
     if (currentBackend() === 'postgres') {
       const sql = getSql()

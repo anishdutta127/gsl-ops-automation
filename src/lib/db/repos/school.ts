@@ -94,6 +94,33 @@ export const schoolRepo = {
     return jsonSchools.filter((s) => s.region === region && s.active)
   },
 
+  async create(school: School, opts?: { queuedBy?: string }): Promise<void> {
+    if (currentBackend() === 'postgres') {
+      const sql = getSql()
+      await sql`
+        INSERT INTO schools (
+          id, name, legal_entity, city, state, region, pin_code,
+          contact_person, email, phone, billing_name, pan, gst_number,
+          notes, active, audit_log
+        ) VALUES (
+          ${school.id}, ${school.name}, ${school.legalEntity ?? null},
+          ${school.city ?? null}, ${school.state ?? null}, ${school.region ?? null}, ${school.pinCode ?? null},
+          ${school.contactPerson ?? null}, ${school.email ?? null}, ${school.phone ?? null},
+          ${school.billingName ?? null}, ${school.pan ?? null}, ${school.gstNumber ?? null},
+          ${school.notes ?? null}, ${!!school.active},
+          ${sql.json((school.auditLog ?? []) as never)}::jsonb
+        ) ON CONFLICT (id) DO NOTHING
+      `
+      return
+    }
+    await enqueueUpdate({
+      queuedBy: opts?.queuedBy ?? 'system',
+      entity: 'school',
+      operation: 'create',
+      payload: school as unknown as Record<string, unknown>,
+    })
+  },
+
   async update(school: School, opts?: { queuedBy?: string }): Promise<void> {
     if (currentBackend() === 'postgres') {
       const sql = getSql()
