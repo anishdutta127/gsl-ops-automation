@@ -71,7 +71,6 @@ import { getCurrentUser } from '@/lib/auth/session'
 import {
   canApproveDispatchOverride,
   canEditFinanceData,
-  canGeneratePI,
   canRequestDispatchOverride,
 } from '@/lib/access'
 import { readOverride } from '@/lib/mou/dispatchOverride'
@@ -366,21 +365,7 @@ export default async function MouDetailPage({ params, searchParams }: PageProps)
   const i1Feedback = mouFeedback.find((f) => f.installmentSeq === 1)
   const intakeRecord = allIntakeRecords.find((r) => r.mouId === mou.id)
   // Gate 1 Step 4 (MM2): hide the PI action button from roles that
-  // lack the canGeneratePI department gate. canGeneratePI catches the
-  // dept-scoped Admin case (Misba: Admin role + ops department) that
-  // the canPerform wildcard would miss. Server-side canPerform at
-  // lib/pi/generatePi.ts stays as defence in depth.
-  const canGeneratePi = user ? canGeneratePI(user) : false
   const canEditMou = user ? canEditMOU(user) : false
-  // Gate 5A.9 Step 1: schedule editor entry point. Either Sales or Finance
-  // edit-gates can save in no-PI mode; Finance is required to override
-  // once a PI is issued. Show the button whenever either gate passes, the
-  // schedule editor itself surfaces override-vs-no-PI mode at runtime.
-  const canSaveSchedule = user
-    ? canEditMOU(user) || canEditFinanceData(user)
-    : false
-  const isMouSigned =
-    mou.status !== 'Pending Signature' && mou.status !== 'Draft'
   const mouAdjustments = allAdjustments.filter(
     (a) => a.mouId === mou.id && a.status === 'Active',
   )
@@ -555,29 +540,6 @@ export default async function MouDetailPage({ params, searchParams }: PageProps)
                 >
                   Instalments
                 </Link>
-                {canSaveSchedule && isMouSigned && installments.length === 0 ? (
-                  <Link
-                    href={`/mous/${mou.id}/installments/schedule-edit${activeYearTab ? `?fy=${encodeURIComponent(activeYearTab)}` : ''}`}
-                    className={opsButtonClass({ variant: 'primary', size: 'md' })}
-                    data-testid="action-set-schedule"
-                  >
-                    Set schedule
-                  </Link>
-                ) : null}
-                {canSaveSchedule && installments.length > 0 ? (
-                  <Link
-                    href={`/mous/${mou.id}/installments/schedule-edit${activeYearTab ? `?fy=${encodeURIComponent(activeYearTab)}` : ''}`}
-                    className={actionBtnClass}
-                    data-testid="action-edit-schedule"
-                  >
-                    Edit schedule
-                  </Link>
-                ) : null}
-                {canGeneratePi ? (
-                  <Link href={`/mous/${mou.id}/pi`} className={actionBtnClass}>
-                    PI
-                  </Link>
-                ) : null}
                 <Link href={`/mous/${mou.id}/dispatch`} className={actionBtnClass}>
                   Dispatch
                 </Link>

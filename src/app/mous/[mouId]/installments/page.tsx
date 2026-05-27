@@ -257,17 +257,21 @@ export default async function InstallmentsPage({ params, searchParams }: PagePro
                               {p.piSentDate ? (
                                 <span className="block text-[11px] text-muted-foreground">
                                   Sent {formatDate(p.piSentDate)}
-                                  {p.piSentTo ? ` → ${p.piSentTo}` : ''}
+                                  {p.piSentTo ? ` to ${p.piSentTo}` : ''}
                                 </span>
                               ) : null}
                             </>
                           ) : canGenPi ? (
-                            <Link
-                              href={`/mous/${mou.id}/pi`}
-                              className="text-brand-navy underline-offset-2 hover:underline focus:outline-none focus:ring-2 focus:ring-brand-navy"
-                            >
-                              Generate PI
-                            </Link>
+                            <form method="POST" action="/api/pi/generate" className="inline" data-testid={`inline-pi-form-${p.id}`}>
+                              <input type="hidden" name="mouId" value={mou.id} />
+                              <input type="hidden" name="instalmentSeq" value={p.instalmentSeq} />
+                              <button
+                                type="submit"
+                                className="text-brand-navy underline-offset-2 hover:underline focus:outline-none focus:ring-2 focus:ring-brand-navy"
+                              >
+                                Generate PI
+                              </button>
+                            </form>
                           ) : (
                             <span className="text-muted-foreground">{'-'}</span>
                           )}
@@ -343,15 +347,19 @@ export default async function InstallmentsPage({ params, searchParams }: PagePro
                                 <Users aria-hidden className="size-4" />
                               </Link>
                             ) : null}
-                            {canGenPi ? (
-                              <Link
-                                href={`/mous/${mou.id}/pi`}
-                                title="Generate PI"
-                                aria-label="Generate PI"
-                                className="inline-flex min-h-9 min-w-9 items-center justify-center rounded-md border border-border bg-card px-1.5 py-0.5 text-foreground hover:border-brand-navy hover:text-brand-navy"
-                              >
-                                <FileText aria-hidden className="size-4" />
-                              </Link>
+                            {canGenPi && !p.piNumber ? (
+                              <form method="POST" action="/api/pi/generate" className="inline">
+                                <input type="hidden" name="mouId" value={mou.id} />
+                                <input type="hidden" name="instalmentSeq" value={p.instalmentSeq} />
+                                <button
+                                  type="submit"
+                                  title="Generate PI"
+                                  aria-label="Generate PI"
+                                  className="inline-flex min-h-9 min-w-9 items-center justify-center rounded-md border border-border bg-card px-1.5 py-0.5 text-foreground hover:border-brand-navy hover:text-brand-navy"
+                                >
+                                  <FileText aria-hidden className="size-4" />
+                                </button>
+                              </form>
                             ) : null}
                           </div>
                         </td>
