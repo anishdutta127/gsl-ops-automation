@@ -30,6 +30,7 @@ import type { PlaceholderSpec, TemplateSpec } from '@/lib/mouSystem/templates'
 import { SALES_CHANNELS, TRAINER_MODELS } from '@/lib/mouSystem/templates'
 import { formatRs } from '@/lib/format'
 import { monthsForYear, formatMonthLabel } from '@/lib/mouSystem/monthRange'
+import { deriveSpWithoutTax } from '@/lib/mouSystem/pricing'
 import type {
   GradewiseDistributionRow,
   MouBillingBlock,
@@ -219,15 +220,21 @@ export function GeneratorWizard({
     })
   }, [numberOfYears])
 
-  // Year 1 pricing tracks the PRICE_PER_STUDENT placeholder.
+  // Year 1 pricing tracks the PRICE_PER_STUDENT placeholder (which is
+  // labelled "incl. GST" in the template registry, so it is the
+  // with-GST value). The without-GST counterpart is derived top-down
+  // via deriveSpWithoutTax so it matches what generatePi.ts uses for
+  // the PI subtotal (Round 1 anchor). Round 4 Bug 2: prior code fell
+  // back to PRICE_PER_STUDENT for BOTH fields, so both showed the
+  // same Rs 1200 instead of Rs 1017 / Rs 1200.
   useEffect(() => {
     const num = (s: string | undefined) => {
       if (!s) return 0
       const n = parseFloat(s.replace(/[^0-9.]/g, ''))
       return Number.isFinite(n) ? n : 0
     }
-    const spWithoutTax = num(values.PRICE_PER_STUDENT_BEFORE_TAX ?? values.PRICE_PER_STUDENT)
-    const spWithTax = num(values.PRICE_PER_STUDENT_INCL_GST ?? values.PRICE_PER_STUDENT)
+    const spWithTax = num(values.PRICE_PER_STUDENT)
+    const spWithoutTax = deriveSpWithoutTax(spWithTax)
     setYearlyPricing((prev) => {
       if (prev.length === 0) return prev
       const cur = prev[0]!
@@ -244,9 +251,20 @@ export function GeneratorWizard({
     next: number,
   ) {
     setYearlyPricing((prev) =>
-      prev.map((row, i) =>
-        i === yearIdx ? { ...row, [field]: Number.isFinite(next) ? next : 0 } : row,
-      ),
+      prev.map((row, i) => {
+        if (i !== yearIdx) return row
+        const v = Number.isFinite(next) ? next : 0
+        // Round 4 Bug 2: editing the with-GST entry derives the
+        // without-GST counterpart so the two stay locked in the
+        // same Math.round(withTax / 1.18) ratio the PI generator
+        // uses. without-GST is read-only in the UI, so the
+        // 'spWithoutTax' branch only fires for legacy callers and
+        // also keeps the derivation invariant.
+        if (field === 'spWithTax') {
+          return { ...row, spWithTax: v, spWithoutTax: deriveSpWithoutTax(v) }
+        }
+        return { ...row, spWithoutTax: v }
+      }),
     )
   }
 
@@ -735,15 +753,10 @@ export function GeneratorWizard({
                     <input
                       type="number"
                       value={row.spWithoutTax || ''}
-                      onChange={(e) =>
-                        updateYearlyPricing(yearIdx, 'spWithoutTax', parseFloat(e.target.value) || 0)
-                      }
-                      aria-label={`Year ${row.year} price without GST`}
-                      readOnly={yearIdx === 0}
-                      className={
-                        'w-32 min-h-9 rounded border border-input bg-card px-2 py-1 text-right tabular-nums ' +
-                        (yearIdx === 0 ? 'opacity-70' : '')
-                      }
+                      readOnly
+                      aria-label={`Year ${row.year} price without GST (derived from with-GST)`}
+                      title="Auto-calculated from the with-GST price using the company GST rate."
+                      className="w-32 min-h-9 rounded border border-input bg-muted/40 px-2 py-1 text-right tabular-nums opacity-70"
                       min={0}
                     />
                   </td>

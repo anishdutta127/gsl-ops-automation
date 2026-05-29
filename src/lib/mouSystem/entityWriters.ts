@@ -55,7 +55,7 @@ import type {
   YearPaymentSchedule,
   YearlyPricingRow,
 } from './types'
-import { computeContractValue } from './pricing'
+import { computeContractValue, deriveSpWithoutTax } from './pricing'
 
 const MOUS_PATH = 'src/data/mous.json'
 const SCHOOLS_PATH = 'src/data/schools.json'
@@ -511,8 +511,12 @@ export async function saveDraftMou(
     return Number.isFinite(n) ? n : 0
   }
   const studentsMou = toNum(v.NUMBER_OF_STUDENTS ?? v.STUDENTS ?? v.STUDENT_COUNT)
-  const spWithoutTax = toNum(v.PRICE_PER_STUDENT_BEFORE_TAX ?? v.PRICE_PER_STUDENT)
+  // PRICE_PER_STUDENT is the with-GST entry in the template registry
+  // (placeholder label: "Price per student (incl. GST)"). Derive the
+  // without-GST counterpart top-down using the company GST rate so the
+  // value matches the PI subtotal anchor (see deriveSpWithoutTax).
   const spWithTax = toNum(v.PRICE_PER_STUDENT_INCL_GST ?? v.PRICE_PER_STUDENT)
+  const spWithoutTax = toNum(v.PRICE_PER_STUDENT_BEFORE_TAX) || deriveSpWithoutTax(spWithTax)
   const startDate = v.START_DATE ?? null
   const endDate = v.END_DATE ?? null
   let numberOfYears: number | null = null

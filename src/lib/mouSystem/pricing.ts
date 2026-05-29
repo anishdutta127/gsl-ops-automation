@@ -17,6 +17,30 @@
  */
 
 import type { MOU, YearlyPricingRow } from './types'
+import companyJson from '../../../config/company.json'
+
+const GST_RATE_FROM_CONFIG = (companyJson as { gstRate?: number }).gstRate ?? 0.18
+
+/**
+ * Round 4 Bug 2: derive the without-GST per-student price from the
+ * with-GST entry using the same top-down derivation generatePi.ts
+ * applies to PI subtotals (`Math.round(withTax / (1 + gstRate))`).
+ *
+ * Keeping a single derivation in one place prevents the spWithoutTax
+ * shown on the annexure pricing grid from drifting against the PI
+ * subtotal (which the Round 1 fix anchored to with-GST as the truth).
+ * Returns 0 when withTax is 0 or non-finite so callers can pass
+ * unparsed inputs straight through.
+ */
+export function deriveSpWithoutTax(
+  withTax: number,
+  gstRate: number = GST_RATE_FROM_CONFIG,
+): number {
+  if (!Number.isFinite(withTax) || withTax <= 0) return 0
+  return Math.round(withTax / (1 + gstRate))
+}
+
+export const DEFAULT_GST_RATE = GST_RATE_FROM_CONFIG
 
 export interface ResolvedYearlyPricing {
   rows: YearlyPricingRow[]
