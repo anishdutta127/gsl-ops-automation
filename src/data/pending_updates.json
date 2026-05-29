@@ -108,5 +108,133 @@
       ]
     },
     "retryCount": 0
+  },
+  {
+    "id": "74087f73-ac5d-42c9-b87e-992e48107209",
+    "queuedAt": "2026-05-29T05:32:00.854Z",
+    "queuedBy": "pranav.b",
+    "entity": "mou",
+    "operation": "update",
+    "payload": {
+      "id": "MOU-YP-2627-DRAFT-001",
+      "schoolId": "SCH-PLACEHOLDER-DRAFT",
+      "schoolName": "Gopi Birla Memorial School",
+      "programme": "Young Pioneers",
+      "schoolScope": "SINGLE",
+      "schoolGroupId": null,
+      "status": "Draft",
+      "cohortStatus": "active",
+      "academicYear": "2026-27",
+      "effectiveDate": null,
+      "startDate": "2026-04-01",
+      "endDate": "2027-03-31",
+      "numberOfYears": 1,
+      "studentsMou": 345,
+      "studentsActual": 345,
+      "studentsVariance": 0,
+      "studentsVariancePct": 0,
+      "spWithoutTax": 2500,
+      "spWithTax": 2500,
+      "contractValue": 862500,
+      "received": 0,
+      "tds": 0,
+      "balance": 862500,
+      "receivedPct": 0,
+      "trainerModel": "TTT",
+      "salesPersonId": "",
+      "templateVersion": "YP-v3",
+      "generatedAt": "2026-05-19",
+      "notes": "",
+      "delayNotes": null,
+      "daysToExpiry": null,
+      "salesChannel": null,
+      "schoolCrmId": null,
+      "signedMouPdfPath": null,
+      "importNotes": null,
+      "productSelection": null,
+      "paymentSchedule": "Y1: 50%-50%",
+      "paymentSchedules": [
+        {
+          "year": 1,
+          "instalments": [
+            {
+              "month": "2026-04",
+              "pctDue": 50
+            },
+            {
+              "month": "2026-09",
+              "pctDue": 50
+            }
+          ]
+        }
+      ],
+      "yearlyPricing": [
+        {
+          "year": 1,
+          "spWithTax": 2500,
+          "spWithoutTax": 2500
+        }
+      ],
+      "billingBlock": {
+        "gst": "",
+        "pan": "AAATB0010B",
+        "mobileNo": "7045491519",
+        "shipToName": "Gopi Birla Memorial School",
+        "billingName": "Gopi Birla Memorial School",
+        "designation": "Accountant",
+        "schoolEmail": "birlagopi@gbmschool.co.in",
+        "contactEmail": "accounts@gbmschool.co.in",
+        "shipToAddress": "68 Walkeshwar Road, Malabar Hill, Mumbai - 400006",
+        "billingAddress": "68 Walkeshwar Road, Malabar Hill, Mumbai - 400006",
+        "schoolContactNo": "9326095647",
+        "shipToCityState": "Mumbai",
+        "billingCityState": "Mumbai",
+        "contactPersonName": "Radhika Dave"
+      },
+      "draftVariables": {
+        "BOOK_SET": "Beginners Level",
+        "END_DATE": "2027-03-31",
+        "START_DATE": "2026-04-01",
+        "SCHOOL_NAME": "Gopi Birla Memorial School",
+        "STUDENT_COUNT": "345",
+        "EFFECTIVE_DATE": "2026-04-27",
+        "_ANNEXURE_HTML": "",
+        "PRICE_PER_STUDENT": "2500"
+      },
+      "gradewiseDistribution": null,
+      "studentCountEventIds": [
+        "SCE-2026-0004"
+      ],
+      "auditLog": [
+        {
+          "user": "Anita C.",
+          "notes": "Save draft via YP-v3",
+          "action": "create",
+          "timestamp": "2026-05-19T12:52:24.565Z"
+        },
+        {
+          "user": "Anita C.",
+          "notes": "Save draft via YP-v3",
+          "action": "update",
+          "timestamp": "2026-05-19T12:52:45.177Z"
+        },
+        {
+          "timestamp": "2026-05-29T05:32:00.805Z",
+          "user": "pranav.b",
+          "action": "student-count-changed",
+          "before": {
+            "studentsActual": 0,
+            "count": 0
+          },
+          "after": {
+            "studentsActual": 345,
+            "count": 345,
+            "eventId": "SCE-2026-0004"
+          },
+          "notes": "Count change to 345: Actual students"
+        }
+      ]
+    },
+    "retryCount": 0
   }
 ]
