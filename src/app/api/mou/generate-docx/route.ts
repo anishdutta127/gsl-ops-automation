@@ -25,7 +25,7 @@ import PizZip from 'pizzip'
 import { NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canEditMOU } from '@/lib/access'
-import { saveDraftMou } from '@/lib/mouSystem/entityWriters'
+import { saveDraftMou, type NewSchoolInlinePayload } from '@/lib/mouSystem/entityWriters'
 import { getTemplate } from '@/lib/mouSystem/templates'
 import type {
   GradewiseDistributionRow,
@@ -44,6 +44,7 @@ interface Body {
   programme?: Programme
   schoolId?: string | null
   schoolName?: string
+  newSchool?: NewSchoolInlinePayload | null
   variables?: Record<string, string>
   annexureHtml?: string | null
   trainerModel?: TrainerModel | null
@@ -98,6 +99,7 @@ export async function POST(request: Request) {
       programme: body.programme,
       schoolId: body.schoolId ?? null,
       schoolName: body.schoolName ?? '',
+      newSchool: body.newSchool ?? null,
       variables: body.variables ?? {},
       annexureHtml: body.annexureHtml ?? null,
       trainerModel: body.trainerModel ?? null,

@@ -56,6 +56,7 @@ import type {
   YearlyPricingRow,
 } from './types'
 import { computeContractValue, deriveSpWithoutTax } from './pricing'
+import type { School } from '@/lib/types'
 
 const MOUS_PATH = 'src/data/mous.json'
 const SCHOOLS_PATH = 'src/data/schools.json'
@@ -441,6 +442,105 @@ export interface DraftMouInput {
   // Gate 3 Step 1: kits-dispatch enhancements. Optional at draft time.
   productSelection?: ProductSelection | null
   gradewiseDistribution?: GradewiseDistributionRow[] | null
+  /**
+   * Round 4 follow-up: when the wizard's "+ Add new school" inline
+   * panel is active, this payload lets saveDraftMou create the
+   * school row atomically with the MOU. Region is required; city /
+   * state are optional and the row is flagged "incomplete" in notes
+   * when omitted so an admin cleanup view can find them later. The
+   * server generates the school id from the name (slugified, with
+   * a numeric suffix on collision), ignoring whatever the client
+   * may have proposed.
+   */
+  newSchool?: NewSchoolInlinePayload | null
+}
+
+/**
+ * Inline school-create payload (Round 4 follow-up).
+ *
+ * Drives the atomic-school-plus-MOU flow in saveDraftMou. Only Region
+ * is required; city / state are optional because Sales and Ops will
+ * not always know them at MOU-draft time for greenfield leads.
+ */
+export interface NewSchoolInlinePayload {
+  name: string
+  region: SchoolRegion
+  city?: string | null
+  state?: string | null
+  legalEntity?: string | null
+  pinCode?: string | null
+  billingName?: string | null
+  contactPerson?: string | null
+  email?: string | null
+  phone?: string | null
+  pan?: string | null
+  gstNumber?: string | null
+}
+
+export type SchoolRegion = 'East' | 'North' | 'South-West'
+
+export const SCHOOL_REGION_OPTIONS: SchoolRegion[] = ['East', 'North', 'South-West']
+
+/**
+ * Sentinel marker that surfaces an incomplete school row to admin
+ * cleanup views. Schools created via the inline panel with blank
+ * city / state get this string prepended to their `notes`; an admin
+ * dashboard can grep schools.notes LIKE '%INCOMPLETE_SCHOOL_DETAILS%'
+ * to find rows that need follow-up.
+ */
+export const INCOMPLETE_SCHOOL_MARKER = '[INCOMPLETE_SCHOOL_DETAILS]'
+
+/**
+ * Slugify a school name into the SCH-<TOKEN> id shape (Round 4
+ * follow-up). Matches the createSchool pattern (uppercase ASCII,
+ * underscores in place of spaces, prefix SCH-) and trims the token to
+ * 22 chars so the resulting id stays under the 28-char schools.id
+ * length used by the existing seed (e.g. 'SCH-LAXMIPAT_SINGHANIA').
+ *
+ * Returns the base id without any suffix; collision handling lives in
+ * the transactional save path where it can read postgres state.
+ */
+export function slugifySchoolId(name: string): string {
+  const token = name
+    .toUpperCase()
+    .replace(/[^A-Z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '')
+    .slice(0, 22)
+  if (!token) {
+    throw new Error('School name must contain at least one letter or digit.')
+  }
+  return `SCH-${token}`
+}
+
+/**
+ * Allocate the next free school id given a base slug. Tries the base,
+ * then `<base>-2`, `<base>-3`, up to `<base>-99` before giving up.
+ *
+ * The collision check + INSERT race is unlikely at our scale (single-
+ * digit writes per minute, 5-person tool) and a unique-violation on
+ * the subsequent INSERT inside the transaction would also bubble up
+ * as a transaction abort, so the worst case is a friendly error to
+ * the user rather than a silent corrupt write.
+ */
+// The TransactionSql / Sql types from postgres.js are awkward to
+// constrain here; both expose the same template-tag call signature,
+// so accept the loose shape and rely on the existing repo helpers
+// for typed reads / writes elsewhere.
+type AnySqlClient = (strings: TemplateStringsArray, ...values: unknown[]) => Promise<unknown[]>
+
+async function allocateUniqueSchoolId(
+  sql: AnySqlClient,
+  baseId: string,
+  limit = 99,
+): Promise<string> {
+  for (let i = 1; i <= limit; i++) {
+    const candidate = i === 1 ? baseId : `${baseId}-${i}`
+    const existing = (await sql`SELECT id FROM schools WHERE id = ${candidate}`) as { id: string }[]
+    if (existing.length === 0) return candidate
+  }
+  throw new Error(
+    `Could not allocate a unique school id for slug ${baseId}; ${limit} suffixes are taken. Use a more distinctive school name.`,
+  )
 }
 
 function summarisePaymentSchedules(
@@ -478,23 +578,99 @@ function nextDraftSequence(programme: Programme, list: MOU[]): string {
 export async function saveDraftMou(
   input: DraftMouInput,
 ): Promise<{ mou: MOU; commitSha: string }> {
-  // Postgres enforces the mous.school_id FK; an empty or non-existent
-  // schoolId surfaces as `mous_school_id_fkey` instead of a friendly
-  // error. Guard here so the API returns 400 with a clear message
-  // and the wizard's serverError surface shows it to the user.
-  const schoolIdTrimmed = (input.schoolId ?? '').trim()
-  if (!schoolIdTrimmed) {
-    throw new Error(
-      'Pick a school from the dropdown before saving. If the school is new, create it via Admin → Schools first.',
-    )
-  }
-  if (currentBackend() === 'postgres') {
-    const { schoolRepo } = await import('@/lib/db/repos/school')
-    const school = await schoolRepo.findById(schoolIdTrimmed)
-    if (!school) {
+  // School resolution has two modes:
+  //   (a) Dropdown path: input.schoolId names an existing school. The
+  //       MOU INSERT is independent.
+  //   (b) Inline-create path: input.newSchool carries the just-typed
+  //       school details. The server slugifies an id, allocates the
+  //       next free suffix on collision, and runs school INSERT + MOU
+  //       INSERT in one postgres transaction so the pair is atomic.
+  //
+  // Both modes converge on `resolvedSchoolId`, which buildMou writes
+  // into mous.school_id. The FK guard from Round 4 bug 1 still fires
+  // on the dropdown path; the inline path skips the existence check
+  // because the school row is created in the same transaction.
+  let resolvedSchoolId: string
+  let newSchoolRow: School | null = null
+  if (input.newSchool) {
+    const trimmedName = (input.newSchool.name ?? '').trim()
+    if (!trimmedName) {
+      throw new Error('School name is required when creating a new school inline.')
+    }
+    if (!input.newSchool.region) {
       throw new Error(
-        `School ${schoolIdTrimmed} not found. Pick a different school or create this one via Admin → Schools.`,
+        'Region is required when creating a new school inline. Pick East, North, or South-West.',
       )
+    }
+    if (!SCHOOL_REGION_OPTIONS.includes(input.newSchool.region)) {
+      throw new Error(
+        `Unknown region '${input.newSchool.region}'. Expected one of: ${SCHOOL_REGION_OPTIONS.join(', ')}.`,
+      )
+    }
+    const baseId = slugifySchoolId(trimmedName)
+    if (currentBackend() === 'postgres') {
+      const { getSql } = await import('@/lib/db/client')
+      resolvedSchoolId = await allocateUniqueSchoolId(
+        getSql() as unknown as AnySqlClient,
+        baseId,
+      )
+    } else {
+      resolvedSchoolId = baseId
+    }
+    const city = (input.newSchool.city ?? '').trim()
+    const state = (input.newSchool.state ?? '').trim()
+    const incomplete = !city || !state
+    const notesParts: string[] = []
+    if (incomplete) {
+      notesParts.push(
+        `${INCOMPLETE_SCHOOL_MARKER} City / state pending; entered via MOU wizard inline panel.`,
+      )
+    }
+    newSchoolRow = {
+      id: resolvedSchoolId,
+      name: trimmedName,
+      legalEntity: input.newSchool.legalEntity ?? null,
+      city: city,
+      state: state,
+      region: input.newSchool.region,
+      pinCode: input.newSchool.pinCode ?? null,
+      contactPerson: input.newSchool.contactPerson ?? null,
+      email: input.newSchool.email ?? null,
+      phone: input.newSchool.phone ?? null,
+      billingName: input.newSchool.billingName ?? null,
+      pan: input.newSchool.pan ?? null,
+      gstNumber: input.newSchool.gstNumber ?? null,
+      notes: notesParts.length ? notesParts.join(' ') : null,
+      active: true,
+      createdAt: nowIso(),
+      auditLog: [
+        {
+          timestamp: nowIso(),
+          user: input.identityName,
+          action: 'create',
+          notes: `Created via MOU wizard inline panel${incomplete ? ' (city/state incomplete)' : ''}`,
+        },
+      ],
+    }
+  } else {
+    // Postgres enforces the mous.school_id FK; an empty or non-existent
+    // schoolId surfaces as `mous_school_id_fkey` instead of a friendly
+    // error. Guard here so the API returns 400 with a clear message
+    // and the wizard's serverError surface shows it to the user.
+    resolvedSchoolId = (input.schoolId ?? '').trim()
+    if (!resolvedSchoolId) {
+      throw new Error(
+        'Pick a school from the dropdown before saving. If the school is new, use the "+ Add new school" panel or create it via Admin → Schools first.',
+      )
+    }
+    if (currentBackend() === 'postgres') {
+      const { schoolRepo } = await import('@/lib/db/repos/school')
+      const school = await schoolRepo.findById(resolvedSchoolId)
+      if (!school) {
+        throw new Error(
+          `School ${resolvedSchoolId} not found. Pick a different school or create this one via the "+ Add new school" panel.`,
+        )
+      }
     }
   }
   const audit: AuditEntry = {
@@ -535,8 +711,8 @@ export async function saveDraftMou(
   function buildMou(targetId: string, prev: MOU | null): MOU {
     const base: MOU = {
       id: targetId,
-      schoolId: schoolIdTrimmed,
-      schoolName: input.schoolName,
+      schoolId: resolvedSchoolId,
+      schoolName: input.schoolName || (newSchoolRow ? newSchoolRow.name : ''),
       programme: input.programme,
       programmeSubType: null,
       schoolScope: 'SINGLE',
@@ -584,6 +760,29 @@ export async function saveDraftMou(
         : nextDraftSequence(input.programme, allMous)
     const prev = allMous.find((m) => m.id === targetId) ?? null
     const mou = buildMou(targetId, prev)
+
+    if (newSchoolRow) {
+      // Round 4 follow-up: school INSERT + MOU INSERT inside one
+      // transaction so the pair is atomic. If the MOU insert raises
+      // (FK, NOT NULL, programmer error in buildMou), sql.begin
+      // ROLLBACKs the school INSERT too. This is the safety guarantee
+      // proved by scripts/proof-bug1b-inline-rollback.mjs.
+      const { getSql } = await import('@/lib/db/client')
+      const { schoolRepo } = await import('@/lib/db/repos/school')
+      const sqlInstance = getSql()
+      await sqlInstance.begin(async (tx) => {
+        await schoolRepo.create(newSchoolRow!, {
+          queuedBy: input.identityName,
+          sql: tx as unknown as ReturnType<typeof getSql>,
+        })
+        await mouRepo.create(mou, {
+          queuedBy: input.identityName,
+          sql: tx as unknown as ReturnType<typeof getSql>,
+        })
+      })
+      return { mou, commitSha: 'postgres-direct' }
+    }
+
     if (prev) {
       await mouRepo.update(mou, { queuedBy: input.identityName })
     } else {

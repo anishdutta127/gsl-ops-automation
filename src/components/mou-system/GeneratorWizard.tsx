@@ -148,6 +148,17 @@ export function GeneratorWizard({
   initialGradewiseDistribution,
 }: Props) {
   const [schoolId, setSchoolId] = useState<string>(initialSchoolId ?? '')
+  // Round 4 follow-up: inline school-create. When `addingSchool` is
+  // true the wizard hides the dropdown and shows a thin panel that
+  // captures Name, Region (required), City, State. The server slugs
+  // the id and runs the school + MOU insert in one postgres
+  // transaction (see saveDraftMou). The dropdown path (the 25%
+  // repeat-customer case) is unchanged.
+  const [addingSchool, setAddingSchool] = useState<boolean>(false)
+  const [newSchoolName, setNewSchoolName] = useState<string>('')
+  const [newSchoolRegion, setNewSchoolRegion] = useState<'' | 'East' | 'North' | 'South-West'>('')
+  const [newSchoolCity, setNewSchoolCity] = useState<string>('')
+  const [newSchoolState, setNewSchoolState] = useState<string>('')
   const [values, setValues] = useState<Record<string, string>>(() => initialValues ?? {})
   const [trainerModel, setTrainerModel] = useState<TrainerModel | ''>('')
   const [salesChannel, setSalesChannel] = useState<SalesChannel>('School Programs (Course)')
@@ -332,8 +343,15 @@ export function GeneratorWizard({
   }, [values, minAcceptable, rateCardVariant])
 
   const validationError = useMemo(() => {
-    if (!selectedSchool) {
-      return 'Pick a school from the dropdown. If the school is new, create it via Admin → Schools first.'
+    if (addingSchool) {
+      if (!newSchoolName.trim()) {
+        return 'Enter the new school’s name to continue.'
+      }
+      if (!newSchoolRegion) {
+        return 'Pick a region (East, North, or South-West) for the new school.'
+      }
+    } else if (!selectedSchool) {
+      return 'Pick a school from the dropdown, or use "+ Add new school" to create one inline.'
     }
     if (!values.EFFECTIVE_DATE) return 'Effective date is required.'
     if (!startDate || !endDate) return 'Start and end dates are required.'
@@ -357,7 +375,17 @@ export function GeneratorWizard({
       }
     }
     return null
-  }, [values, selectedSchool, startDate, endDate, trainerModel, schedules])
+  }, [
+    values,
+    selectedSchool,
+    startDate,
+    endDate,
+    trainerModel,
+    schedules,
+    addingSchool,
+    newSchoolName,
+    newSchoolRegion,
+  ])
 
   function updateSchedule(yearIdx: number, fn: (s: YearPaymentSchedule) => YearPaymentSchedule) {
     setSchedules((prev) => prev.map((y, i) => (i === yearIdx ? fn(y) : y)))
@@ -421,8 +449,25 @@ export function GeneratorWizard({
           draftMouId: draftId,
           templateId: template.id,
           programme: template.programme,
-          schoolId: selectedSchool?.id ?? null,
-          schoolName: values.SCHOOL_NAME ?? selectedSchool?.name ?? '',
+          schoolId: addingSchool ? null : (selectedSchool?.id ?? null),
+          schoolName:
+            (addingSchool ? newSchoolName : values.SCHOOL_NAME) ??
+            selectedSchool?.name ??
+            '',
+          newSchool: addingSchool
+            ? {
+                name: newSchoolName,
+                region: newSchoolRegion,
+                city: newSchoolCity || null,
+                state: newSchoolState || null,
+                billingName: billing.billingName || null,
+                contactPerson: billing.contactPersonName || null,
+                email: billing.contactEmail || null,
+                phone: billing.mobileNo || null,
+                pan: billing.pan || null,
+                gstNumber: billing.gst || null,
+              }
+            : null,
           variables: values,
           annexureHtml: annexureRaw,
           trainerModel,
@@ -453,6 +498,7 @@ export function GeneratorWizard({
     selectedSchool, annexureRaw, trainerModel, salesChannel, salesPersonId,
     crmSchoolId, schedules, yearlyPricing, billing, productSelection,
     gradewiseDistribution,
+    addingSchool, newSchoolName, newSchoolRegion, newSchoolCity, newSchoolState,
   ])
 
   const generateDocx = useCallback(async () => {
@@ -471,8 +517,25 @@ export function GeneratorWizard({
           draftMouId: draftId,
           templateId: template.id,
           programme: template.programme,
-          schoolId: selectedSchool?.id ?? null,
-          schoolName: values.SCHOOL_NAME ?? selectedSchool?.name ?? '',
+          schoolId: addingSchool ? null : (selectedSchool?.id ?? null),
+          schoolName:
+            (addingSchool ? newSchoolName : values.SCHOOL_NAME) ??
+            selectedSchool?.name ??
+            '',
+          newSchool: addingSchool
+            ? {
+                name: newSchoolName,
+                region: newSchoolRegion,
+                city: newSchoolCity || null,
+                state: newSchoolState || null,
+                billingName: billing.billingName || null,
+                contactPerson: billing.contactPersonName || null,
+                email: billing.contactEmail || null,
+                phone: billing.mobileNo || null,
+                pan: billing.pan || null,
+                gstNumber: billing.gst || null,
+              }
+            : null,
           variables: values,
           annexureHtml: annexureRaw,
           trainerModel,
@@ -529,6 +592,11 @@ export function GeneratorWizard({
     validationError,
     currentUserId,
     currentUserName,
+    addingSchool,
+    newSchoolName,
+    newSchoolRegion,
+    newSchoolCity,
+    newSchoolState,
   ])
 
   // Auto-created SalesPerson records (e.g. from the Pranav refresh import)
@@ -551,22 +619,122 @@ export function GeneratorWizard({
           School and dates
         </legend>
         <div className="grid gap-3 sm:grid-cols-2">
-          <label className="block sm:col-span-2">
-            <span className={labelClass}>School</span>
-            <select
-              value={schoolId}
-              onChange={(e) => setSchoolId(e.target.value)}
-              aria-label="Pick a school"
-              className={fieldClass}
-            >
-              <option value="">{'- Pick a school -'}</option>
-              {schools.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.name} {'·'} {s.city}, {s.state}
-                </option>
-              ))}
-            </select>
-          </label>
+          <div className="sm:col-span-2">
+            <div className="flex items-center justify-between">
+              <span className={labelClass}>School</span>
+              <button
+                type="button"
+                onClick={() => {
+                  setAddingSchool((prev) => {
+                    const next = !prev
+                    if (next) {
+                      // entering inline-create mode: clear the dropdown
+                      // selection so the form payload routes through
+                      // newSchool, not schoolId.
+                      setSchoolId('')
+                      if (!newSchoolName && values.SCHOOL_NAME) {
+                        setNewSchoolName(values.SCHOOL_NAME)
+                      }
+                    }
+                    return next
+                  })
+                }}
+                data-testid="toggle-inline-school-create"
+                className="text-xs font-semibold uppercase tracking-wider text-brand-navy underline-offset-2 hover:underline focus:outline-none focus:ring-2 focus:ring-brand-navy"
+              >
+                {addingSchool ? '← Back to dropdown' : '+ Add new school'}
+              </button>
+            </div>
+            {addingSchool ? (
+              <div
+                className="mt-1 grid gap-3 rounded-md border border-dashed border-brand-navy/30 bg-brand-teal/5 p-3 sm:grid-cols-2"
+                data-testid="inline-school-create-panel"
+              >
+                <label className="block sm:col-span-2">
+                  <span className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    New school name <span className="text-signal-alert">*</span>
+                  </span>
+                  <input
+                    type="text"
+                    value={newSchoolName}
+                    onChange={(e) => setNewSchoolName(e.target.value)}
+                    aria-label="New school name"
+                    data-testid="new-school-name"
+                    className={fieldClass}
+                  />
+                  <span className="mt-1 block text-xs text-muted-foreground">
+                    The id is generated from the name on save (e.g. Christ Mission School →
+                    {' '}SCH-CHRIST_MISSION_SCHOOL).
+                  </span>
+                </label>
+                <label className="block">
+                  <span className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Region <span className="text-signal-alert">*</span>
+                  </span>
+                  <select
+                    value={newSchoolRegion}
+                    onChange={(e) =>
+                      setNewSchoolRegion(e.target.value as '' | 'East' | 'North' | 'South-West')
+                    }
+                    aria-label="Region for new school"
+                    data-testid="new-school-region"
+                    className={fieldClass}
+                  >
+                    <option value="">{'- Pick a region -'}</option>
+                    <option value="East">East</option>
+                    <option value="North">North</option>
+                    <option value="South-West">South-West</option>
+                  </select>
+                </label>
+                <label className="block">
+                  <span className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    City <span className="text-xs font-normal italic text-muted-foreground">(optional)</span>
+                  </span>
+                  <input
+                    type="text"
+                    value={newSchoolCity}
+                    onChange={(e) => setNewSchoolCity(e.target.value)}
+                    aria-label="City for new school"
+                    data-testid="new-school-city"
+                    className={fieldClass}
+                  />
+                </label>
+                <label className="block">
+                  <span className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    State <span className="text-xs font-normal italic text-muted-foreground">(optional)</span>
+                  </span>
+                  <input
+                    type="text"
+                    value={newSchoolState}
+                    onChange={(e) => setNewSchoolState(e.target.value)}
+                    aria-label="State for new school"
+                    data-testid="new-school-state"
+                    className={fieldClass}
+                  />
+                </label>
+                {(!newSchoolCity || !newSchoolState) ? (
+                  <p className="sm:col-span-2 text-xs text-amber-700">
+                    City / state left blank will save as incomplete. The school will surface
+                    in the admin cleanup view for later editing.
+                  </p>
+                ) : null}
+              </div>
+            ) : (
+              <select
+                value={schoolId}
+                onChange={(e) => setSchoolId(e.target.value)}
+                aria-label="Pick a school"
+                className={'mt-1 ' + fieldClass}
+              >
+                <option value="">{'- Pick a school -'}</option>
+                {schools.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.name} {'·'} {s.city}, {s.state}
+                  </option>
+                ))}
+              </select>
+            )}
+          </div>
           <label className="block">
             <span className={labelClass}>Effective date</span>
             <input

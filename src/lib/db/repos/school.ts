@@ -94,9 +94,16 @@ export const schoolRepo = {
     return jsonSchools.filter((s) => s.region === region && s.active)
   },
 
-  async create(school: School, opts?: { queuedBy?: string }): Promise<void> {
+  async create(
+    school: School,
+    opts?: { queuedBy?: string; sql?: ReturnType<typeof getSql> },
+  ): Promise<void> {
     if (currentBackend() === 'postgres') {
-      const sql = getSql()
+      // Round 4 follow-up: opts.sql lets the caller pass a transaction-
+      // scoped client (sql.begin's callback param) so the school insert
+      // can be atomic with a downstream insert in the same transaction.
+      // When omitted, falls back to the shared pool.
+      const sql = opts?.sql ?? getSql()
       await sql`
         INSERT INTO schools (
           id, name, legal_entity, city, state, region, pin_code,

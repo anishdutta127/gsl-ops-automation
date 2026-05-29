@@ -18,7 +18,7 @@
 import { NextResponse } from 'next/server'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canEditMOU } from '@/lib/access'
-import { saveDraftMou } from '@/lib/mouSystem/entityWriters'
+import { saveDraftMou, type NewSchoolInlinePayload } from '@/lib/mouSystem/entityWriters'
 import type {
   GradewiseDistributionRow,
   MouBillingBlock,
@@ -36,6 +36,10 @@ interface Body {
   programme?: Programme
   schoolId?: string | null
   schoolName?: string
+  // Round 4 follow-up: inline-create payload from the wizard's
+  // "+ Add new school" panel. When present, saveDraftMou runs the
+  // school INSERT + MOU INSERT in one transaction.
+  newSchool?: NewSchoolInlinePayload | null
   variables?: Record<string, string>
   annexureHtml?: string | null
   trainerModel?: TrainerModel | null
@@ -82,6 +86,7 @@ export async function POST(request: Request) {
       programme: body.programme,
       schoolId: body.schoolId ?? null,
       schoolName: body.schoolName ?? '',
+      newSchool: body.newSchool ?? null,
       variables: body.variables ?? {},
       annexureHtml: body.annexureHtml ?? null,
       trainerModel: body.trainerModel ?? null,

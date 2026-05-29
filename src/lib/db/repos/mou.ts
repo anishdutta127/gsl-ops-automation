@@ -176,9 +176,15 @@ export const mouRepo = {
     return jsonMous.filter((m) => m.cohortStatus === 'active')
   },
 
-  async create(m: MOU, opts?: { queuedBy?: string }): Promise<void> {
+  async create(
+    m: MOU,
+    opts?: { queuedBy?: string; sql?: ReturnType<typeof getSql> },
+  ): Promise<void> {
     if (currentBackend() === 'postgres') {
-      const sql = getSql()
+      // Round 4 follow-up: opts.sql lets the caller pass a transaction-
+      // scoped client so the MOU insert can be atomic with a paired
+      // school insert (inline-create flow in saveDraftMou).
+      const sql = opts?.sql ?? getSql()
       await sql`
         INSERT INTO mous (
           id, school_id, school_name, programme, programme_sub_type,

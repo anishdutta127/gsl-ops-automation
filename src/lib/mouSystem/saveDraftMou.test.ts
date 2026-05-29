@@ -228,3 +228,110 @@ describe('saveDraftMou - regression: schoolId FK guard (Round 4 bug 1)', () => {
     ).rejects.toThrow(/Pick a school from the dropdown/)
   })
 })
+
+describe('slugifySchoolId (Round 4 inline-create)', () => {
+  it('uppercases and underscores spaces into SCH-<TOKEN> shape', async () => {
+    const { slugifySchoolId } = await import('./entityWriters')
+    expect(slugifySchoolId('Christ Mission School')).toBe('SCH-CHRIST_MISSION_SCHOOL')
+    expect(slugifySchoolId('Greenfield Public, Pune')).toBe('SCH-GREENFIELD_PUBLIC_PUNE')
+  })
+
+  it('caps the token at 22 characters so the id matches seed length', async () => {
+    const { slugifySchoolId } = await import('./entityWriters')
+    const id = slugifySchoolId('A very very very long school name with many words')
+    expect(id.startsWith('SCH-')).toBe(true)
+    expect(id.length).toBeLessThanOrEqual(26)
+  })
+
+  it('rejects a name that yields no alphanumerics', async () => {
+    const { slugifySchoolId } = await import('./entityWriters')
+    expect(() => slugifySchoolId('   ---   ')).toThrow(/at least one letter or digit/)
+  })
+
+  it('collapses multiple non-alphanumeric runs into a single underscore', async () => {
+    const { slugifySchoolId } = await import('./entityWriters')
+    expect(slugifySchoolId('Foo & Bar, Inc.')).toBe('SCH-FOO_BAR_INC')
+  })
+})
+
+describe('saveDraftMou - inline-create input validation (Round 4)', () => {
+  it('rejects newSchool without a region', async () => {
+    await expect(
+      saveDraftMou({
+        identityName: 'pranav.b',
+        draftMouId: null,
+        templateId: 'STEAM-v3',
+        templateVersion: 'STEAM-v3',
+        programme: 'STEAM',
+        schoolId: null,
+        schoolName: 'Christ Mission School',
+        // @ts-expect-error region intentionally omitted to assert guard
+        newSchool: { name: 'Christ Mission School' },
+        variables: {},
+        annexureHtml: null,
+        trainerModel: 'GSL-T',
+        salesChannel: 'School Programs (Course)',
+        salesPersonId: null,
+        schoolCrmId: null,
+        paymentSchedules: null,
+        yearlyPricing: null,
+        billingBlock: null,
+        productSelection: null,
+        gradewiseDistribution: null,
+      }),
+    ).rejects.toThrow(/Region is required/)
+  })
+
+  it('rejects newSchool with a region outside the East / North / South-West enum', async () => {
+    await expect(
+      saveDraftMou({
+        identityName: 'pranav.b',
+        draftMouId: null,
+        templateId: 'STEAM-v3',
+        templateVersion: 'STEAM-v3',
+        programme: 'STEAM',
+        schoolId: null,
+        schoolName: 'Christ Mission School',
+        // @ts-expect-error invalid region literal
+        newSchool: { name: 'Christ Mission School', region: 'Central' },
+        variables: {},
+        annexureHtml: null,
+        trainerModel: 'GSL-T',
+        salesChannel: 'School Programs (Course)',
+        salesPersonId: null,
+        schoolCrmId: null,
+        paymentSchedules: null,
+        yearlyPricing: null,
+        billingBlock: null,
+        productSelection: null,
+        gradewiseDistribution: null,
+      }),
+    ).rejects.toThrow(/Unknown region 'Central'/)
+  })
+
+  it('rejects newSchool with an empty name', async () => {
+    await expect(
+      saveDraftMou({
+        identityName: 'pranav.b',
+        draftMouId: null,
+        templateId: 'STEAM-v3',
+        templateVersion: 'STEAM-v3',
+        programme: 'STEAM',
+        schoolId: null,
+        schoolName: '',
+        newSchool: { name: '   ', region: 'East' },
+        variables: {},
+        annexureHtml: null,
+        trainerModel: 'GSL-T',
+        salesChannel: 'School Programs (Course)',
+        salesPersonId: null,
+        schoolCrmId: null,
+        paymentSchedules: null,
+        yearlyPricing: null,
+        billingBlock: null,
+        productSelection: null,
+        gradewiseDistribution: null,
+      }),
+    ).rejects.toThrow(/School name is required/)
+  })
+})
