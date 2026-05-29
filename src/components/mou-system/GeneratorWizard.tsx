@@ -314,7 +314,9 @@ export function GeneratorWizard({
   }, [values, minAcceptable, rateCardVariant])
 
   const validationError = useMemo(() => {
-    if (!values.SCHOOL_NAME && !selectedSchool?.name) return 'Pick a school or fill the School name field.'
+    if (!selectedSchool) {
+      return 'Pick a school from the dropdown. If the school is new, create it via Admin → Schools first.'
+    }
     if (!values.EFFECTIVE_DATE) return 'Effective date is required.'
     if (!startDate || !endDate) return 'Start and end dates are required.'
     if (new Date(startDate) >= new Date(endDate)) return 'End date must be after the start date.'

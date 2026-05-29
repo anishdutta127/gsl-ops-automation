@@ -171,3 +171,60 @@ describe('saveDraftMou - regression: cohortStatus + required fields (Pranav revi
     expect(mou.id).toBe('MOU-STEAM-2627-999')
   })
 })
+
+describe('saveDraftMou - regression: schoolId FK guard (Round 4 bug 1)', () => {
+  it('rejects an empty schoolId with a friendly message before any INSERT runs', async () => {
+    await expect(
+      saveDraftMou({
+        identityName: 'pranav.b',
+        draftMouId: null,
+        templateId: 'STEAM-v3',
+        templateVersion: 'STEAM-v3',
+        programme: 'STEAM',
+        schoolId: '',
+        schoolName: 'Christ Mission School',
+        variables: {
+          STUDENT_COUNT: '200',
+          PRICE_PER_STUDENT: '1200',
+          START_DATE: '2026-04-01',
+          END_DATE: '2027-03-31',
+        },
+        annexureHtml: null,
+        trainerModel: 'GSL-T',
+        salesChannel: 'School Programs (Course)',
+        salesPersonId: null,
+        schoolCrmId: null,
+        paymentSchedules: null,
+        yearlyPricing: null,
+        billingBlock: null,
+        productSelection: null,
+        gradewiseDistribution: null,
+      }),
+    ).rejects.toThrow(/Pick a school from the dropdown/)
+  })
+
+  it('rejects null schoolId with the same guard', async () => {
+    await expect(
+      saveDraftMou({
+        identityName: 'pranav.b',
+        draftMouId: null,
+        templateId: 'STEAM-v3',
+        templateVersion: 'STEAM-v3',
+        programme: 'STEAM',
+        schoolId: null,
+        schoolName: 'Christ Mission School',
+        variables: {},
+        annexureHtml: null,
+        trainerModel: 'GSL-T',
+        salesChannel: 'School Programs (Course)',
+        salesPersonId: null,
+        schoolCrmId: null,
+        paymentSchedules: null,
+        yearlyPricing: null,
+        billingBlock: null,
+        productSelection: null,
+        gradewiseDistribution: null,
+      }),
+    ).rejects.toThrow(/Pick a school from the dropdown/)
+  })
+})

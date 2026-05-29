@@ -478,6 +478,25 @@ function nextDraftSequence(programme: Programme, list: MOU[]): string {
 export async function saveDraftMou(
   input: DraftMouInput,
 ): Promise<{ mou: MOU; commitSha: string }> {
+  // Postgres enforces the mous.school_id FK; an empty or non-existent
+  // schoolId surfaces as `mous_school_id_fkey` instead of a friendly
+  // error. Guard here so the API returns 400 with a clear message
+  // and the wizard's serverError surface shows it to the user.
+  const schoolIdTrimmed = (input.schoolId ?? '').trim()
+  if (!schoolIdTrimmed) {
+    throw new Error(
+      'Pick a school from the dropdown before saving. If the school is new, create it via Admin → Schools first.',
+    )
+  }
+  if (currentBackend() === 'postgres') {
+    const { schoolRepo } = await import('@/lib/db/repos/school')
+    const school = await schoolRepo.findById(schoolIdTrimmed)
+    if (!school) {
+      throw new Error(
+        `School ${schoolIdTrimmed} not found. Pick a different school or create this one via Admin → Schools.`,
+      )
+    }
+  }
   const audit: AuditEntry = {
     timestamp: nowIso(),
     user: input.identityName,
@@ -512,7 +531,7 @@ export async function saveDraftMou(
   function buildMou(targetId: string, prev: MOU | null): MOU {
     const base: MOU = {
       id: targetId,
-      schoolId: input.schoolId ?? '',
+      schoolId: schoolIdTrimmed,
       schoolName: input.schoolName,
       programme: input.programme,
       programmeSubType: null,
