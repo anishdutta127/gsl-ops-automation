@@ -79,6 +79,14 @@ Reuse verbatim (do not reimplement):
 
 Do not inherit the HR candidate portal pattern. Phase 1 Ops is an internal tool; no external users.
 
+## End-of-session protocol (standing rule, established 2026-05-29)
+
+After any change set, once `npm run build` passes, ALWAYS run `git add -A && git commit && git push` automatically. Do not ask for confirmation to push to main. Pushing and triggering the Vercel production deploy is the desired default behaviour every time. Only pause if the build fails (fix the build, then push).
+
+Standing permission: `npm`, `git`, `vercel`, and `gh` may be invoked without per-command confirmation.
+
+Rationale: Vercel deploys are the only way changes reach the testers. Pausing to ask before each push gates the feedback loop on operator availability and turns the harness into a sequential queue. The build gate is the safety net; the push is the desired side-effect of any successful build.
+
 ## Planning discipline
 
 gstack skills, in order, pause between each: `/office-hours` → `/plan-ceo-review` → `/plan-eng-review` → `/plan-design-review` → `/plan-devex-review`. No auto-advance. Every decision that changes the plan lands in a plan doc in `plans/`, not in chat.
