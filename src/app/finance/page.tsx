@@ -15,7 +15,7 @@
 
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
-import { ArrowRight, Banknote, FileX2, Receipt, ScrollText } from 'lucide-react'
+import { ArrowRight, Banknote, FileX2, IndianRupee, Receipt, ScrollText } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canAccessFinance } from '@/lib/access'
@@ -55,6 +55,18 @@ export default async function FinanceIndexPage() {
   ).length
 
   const links: QuickLink[] = [
+    // Round 4 nav: Log Payment moved here from the global TopNav pill.
+    // First card so it leads the daily Finance workflow (log -> match
+    // -> unmatched).
+    {
+      href: '/finance/payments/new',
+      label: 'Log a payment',
+      description:
+        'Record what hit the bank. Narrow to school, MOU, instalment for an auto-match, or park as unmatched.',
+      icon: IndianRupee,
+      count: null,
+      unit: null,
+    },
     {
       href: '/finance/payments',
       label: 'Match a payment',

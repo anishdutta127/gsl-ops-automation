@@ -23,9 +23,8 @@
  */
 
 import Link from 'next/link'
-import { IndianRupee, LayoutGrid, LogOut } from 'lucide-react'
+import { LayoutGrid, LogOut } from 'lucide-react'
 import { getCurrentUser } from '@/lib/auth/session'
-import { canEditFinanceData } from '@/lib/access'
 import type { Department, User } from '@/lib/types'
 import { accentFor, type StageDepartment } from '@/lib/departmentAccents'
 import { NotificationBell } from './NotificationBell'
@@ -191,16 +190,12 @@ export async function TopNav({ currentPath }: TopNavProps = {}) {
           <span aria-hidden className="hidden h-6 w-px bg-white/20 sm:inline-block" />
           {user ? <QueueFreshnessIndicator /> : null}
           {user ? <NotificationBell user={user} /> : null}
-          {user && canEditFinanceData(user) ? (
-            <Link
-              href="/finance/payments/new"
-              data-testid="topnav-log-payment"
-              className="hidden items-center gap-1.5 rounded-full bg-brand-teal px-3 py-1.5 text-xs font-semibold text-brand-navy hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-white sm:inline-flex"
-            >
-              <IndianRupee aria-hidden className="size-3.5" />
-              Log Payment
-            </Link>
-          ) : null}
+          {/* Round 4 nav: "Log Payment" was a global top-nav pill but it
+              is a Finance task, not a cross-functional one. It now lives
+              as a prominent action on the Finance landing alongside
+              Match payment and the Unmatched queue, per the principle
+              that each team's execution tab surfaces THAT team's
+              frequent actions front-and-centre. */}
           {user ? (
             <span className="hidden text-sm text-white/80 sm:inline" aria-label="Signed in as">
               {user.name}
