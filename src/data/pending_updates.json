@@ -320,5 +320,89 @@
       ]
     },
     "retryCount": 0
+  },
+  {
+    "id": "4c52f1d2-d7dd-4543-bb39-9ffee14b9e5d",
+    "queuedAt": "2026-05-29T06:33:34.418Z",
+    "queuedBy": "anita.c",
+    "entity": "mou",
+    "operation": "update",
+    "payload": {
+      "id": "MOU-STEAM-2526-032",
+      "schoolId": "SCH-SUMANA_DUTTA_MEMORIA",
+      "schoolName": "Sumana Dutta Memorial Vivekananda International School",
+      "programme": "STEAM",
+      "schoolScope": "SINGLE",
+      "schoolGroupId": null,
+      "status": "Active",
+      "cohortStatus": "active",
+      "academicYear": "2025-26",
+      "effectiveDate": null,
+      "startDate": "2025-04-01",
+      "endDate": "2026-03-31",
+      "numberOfYears": null,
+      "studentsMou": 40,
+      "studentsActual": 31,
+      "studentsVariance": -9,
+      "studentsVariancePct": -0.225,
+      "spWithoutTax": 1016.95,
+      "spWithTax": 1200,
+      "contractValue": 37200,
+      "received": 18600,
+      "tds": 0,
+      "balance": 18600,
+      "receivedPct": 50,
+      "trainerModel": null,
+      "salesPersonId": "",
+      "templateVersion": "",
+      "generatedAt": "",
+      "notes": "",
+      "delayNotes": null,
+      "daysToExpiry": -21,
+      "salesChannel": null,
+      "schoolCrmId": null,
+      "signedMouPdfPath": null,
+      "importNotes": null,
+      "productSelection": null,
+      "paymentSchedule": "50-50 half-yearly",
+      "paymentSchedules": null,
+      "yearlyPricing": null,
+      "billingBlock": null,
+      "draftVariables": null,
+      "gradewiseDistribution": null,
+      "studentCountEventIds": [],
+      "auditLog": [
+        {
+          "user": "system",
+          "notes": "Imported from gsl-mou-system; auto-linked to school SCH-SUMANA_DUTTA_MEMORIA.",
+          "action": "auto-link-exact-match",
+          "timestamp": "2026-04-27T12:00:00.000Z"
+        },
+        {
+          "user": "system-w4-a-2",
+          "after": {
+            "cohortStatus": "archived"
+          },
+          "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive.",
+          "action": "mou-cohort-status-changed",
+          "before": {
+            "cohortStatus": null
+          },
+          "timestamp": "2026-04-27T18:01:00.000Z"
+        },
+        {
+          "timestamp": "2026-05-29T06:33:34.418Z",
+          "user": "anita.c",
+          "action": "mou-cohort-status-changed",
+          "before": {
+            "cohortStatus": "archived"
+          },
+          "after": {
+            "cohortStatus": "active"
+          }
+        }
+      ]
+    },
+    "retryCount": 0
   }
 ]
