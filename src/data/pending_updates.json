@@ -404,5 +404,115 @@
       ]
     },
     "retryCount": 0
+  },
+  {
+    "id": "d897f65c-e970-48e6-b064-fe43388b9d36",
+    "queuedAt": "2026-05-30T05:57:09.082Z",
+    "queuedBy": "pranav.b",
+    "entity": "mou",
+    "operation": "update",
+    "payload": {
+      "id": "MOU-STEAM-2526-004",
+      "schoolId": "SCH-LORETO_HOUSE_KOLKATA",
+      "schoolName": "Loreto House - Kolkata",
+      "programme": "STEAM",
+      "schoolScope": "SINGLE",
+      "schoolGroupId": null,
+      "status": "Active",
+      "cohortStatus": "active",
+      "academicYear": "2025-26",
+      "effectiveDate": null,
+      "startDate": "2025-04-01",
+      "endDate": "2026-03-31",
+      "numberOfYears": null,
+      "studentsMou": 500,
+      "studentsActual": 608,
+      "studentsVariance": 108,
+      "studentsVariancePct": 0.216,
+      "spWithoutTax": 2500,
+      "spWithTax": 2950,
+      "contractValue": 1734600,
+      "received": 1587600,
+      "tds": 147000,
+      "balance": 0,
+      "receivedPct": 91.5,
+      "trainerModel": null,
+      "salesPersonId": "",
+      "templateVersion": "",
+      "generatedAt": "",
+      "notes": "",
+      "delayNotes": null,
+      "daysToExpiry": -21,
+      "salesChannel": null,
+      "schoolCrmId": null,
+      "signedMouPdfPath": null,
+      "importNotes": null,
+      "productSelection": "TinkRworks",
+      "paymentSchedule": "25-25-25-25 quarterly",
+      "paymentSchedules": null,
+      "yearlyPricing": null,
+      "billingBlock": null,
+      "draftVariables": null,
+      "gradewiseDistribution": null,
+      "studentCountEventIds": [],
+      "auditLog": [
+        {
+          "user": "system",
+          "notes": "Imported from gsl-mou-system; auto-linked to school SCH-LORETO_HOUSE_KOLKATA.",
+          "action": "auto-link-exact-match",
+          "timestamp": "2026-04-27T12:00:00.000Z"
+        },
+        {
+          "user": "system-w4-a-2",
+          "after": {
+            "cohortStatus": "archived"
+          },
+          "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive.",
+          "action": "mou-cohort-status-changed",
+          "before": {
+            "cohortStatus": null
+          },
+          "timestamp": "2026-04-27T18:01:00.000Z"
+        },
+        {
+          "user": "system-pre-w4d",
+          "after": {
+            "sheet": "TWs",
+            "rowNumber": 5,
+            "confidence": "high",
+            "dispatchId": "DIS-BF-TWs-r5",
+            "lineItemCount": 7,
+            "totalQuantity": 81
+          },
+          "notes": "Mastersheet backfill landed historical delivery (TWs row 5).",
+          "action": "dispatch-backfilled-from-mastersheet",
+          "timestamp": "2026-04-28T15:30:00.000Z"
+        },
+        {
+          "user": "system",
+          "after": {
+            "productSelection": "TinkRworks"
+          },
+          "notes": "Phase 6E Finding 1: inferred productSelection=TinkRworks from existing dispatch lineItems via inventory_items.category mapping.",
+          "action": "product-selection-backfill-phase-6e",
+          "before": {
+            "productSelection": null
+          },
+          "timestamp": "2026-05-21T08:35:59.338Z"
+        },
+        {
+          "timestamp": "2026-05-30T05:57:09.082Z",
+          "user": "pranav.b",
+          "action": "mou-cohort-status-changed",
+          "before": {
+            "cohortStatus": "archived"
+          },
+          "after": {
+            "cohortStatus": "active"
+          }
+        }
+      ]
+    },
+    "retryCount": 0
   }
 ]
