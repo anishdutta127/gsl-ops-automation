@@ -111,23 +111,31 @@ export function accentFor(
 }
 
 /**
- * Maps a User's department to the post-login landing route.
+ * Maps a User's department to the post-login default landing route
+ * (Phase 1 platform redesign, see plans/platform-redesign-review.md
+ * Section 3.1 point 4).
  *
- * Gate 3.6 collapses every role + department to the consolidated
- * landing at `/`. The landing's drill-down tiles route each
- * department to its dedicated workspace one click away; the
- * per-department dashboard routes (/dashboard/sales,
- * /dashboard/ops, /dashboard/finance, /dashboard/leadership)
- * stay reachable for direct navigation. Production lockdown
- * would restore per-department routing here; the testing-mode
- * default is universal.
+ * Department sets the DEFAULT landing and the nav highlight; it does
+ * NOT hide sections (every zone stays reachable in the sidebar). A
+ * Finance user lands in the Finance workspace, an Ops user in the
+ * Operations workspace, and a cross-functional Admin / Leadership
+ * (department null) on Home. Sales has no dedicated workspace yet, so
+ * sales users also land on Home.
  *
- * `args` retained for call-site stability and future un-collapse;
- * the unused values are intentional during testing mode.
+ * `role` is retained for call-site stability and a future production
+ * lockdown that may re-scope landings by role as well as department.
  */
-export function dashboardPathForDepartment(_args: {
+export function dashboardPathForDepartment(args: {
   department: Department
   role: 'Admin' | 'Leadership' | string
 }): string {
-  return '/'
+  switch (args.department) {
+    case 'finance':
+      return '/finance'
+    case 'ops':
+      return '/operations'
+    default:
+      // sales (no workspace yet) and null (cross-functional) land on Home.
+      return '/'
+  }
 }

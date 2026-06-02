@@ -31,36 +31,37 @@ describe('departmentAccents: accentFor', () => {
   })
 })
 
-describe('departmentAccents: dashboardPathForDepartment (Gate 3.6 universal landing)', () => {
-  // Every role + department now routes to / during testing. The
-  // consolidated landing serves Sales / Ops / Finance / Leadership /
-  // Admin from the same surface; drill-down tiles route to the
-  // dedicated dept dashboards one click away.
-  it('routes sales to /', () => {
+describe('departmentAccents: dashboardPathForDepartment (Phase 1 role-aware landing)', () => {
+  // Phase 1 platform redesign: department sets the default landing (it
+  // does NOT hide sections). Finance -> Finance workspace, Ops -> Ops
+  // workspace, sales + null (cross-functional Admin / Leadership) -> Home.
+  it('routes finance to the Finance workspace', () => {
+    expect(
+      dashboardPathForDepartment({ department: 'finance', role: 'Admin' }),
+    ).toBe('/finance')
+  })
+
+  it('routes ops to the Operations workspace', () => {
+    expect(dashboardPathForDepartment({ department: 'ops', role: 'Admin' })).toBe(
+      '/operations',
+    )
+  })
+
+  it('routes sales to Home (no dedicated workspace yet)', () => {
     expect(dashboardPathForDepartment({ department: 'sales', role: 'Admin' })).toBe('/')
   })
 
-  it('routes ops to /', () => {
-    expect(dashboardPathForDepartment({ department: 'ops', role: 'Admin' })).toBe('/')
-  })
-
-  it('routes finance to /', () => {
-    expect(
-      dashboardPathForDepartment({ department: 'finance', role: 'Admin' }),
-    ).toBe('/')
-  })
-
-  it('routes Leadership (department null) to /', () => {
+  it('routes Leadership (department null) to Home', () => {
     expect(
       dashboardPathForDepartment({ department: null, role: 'Leadership' }),
     ).toBe('/')
   })
 
-  it('routes Admin (department null) to /', () => {
+  it('routes Admin (department null) to Home', () => {
     expect(dashboardPathForDepartment({ department: null, role: 'Admin' })).toBe('/')
   })
 
-  it('routes other roles with department null to /', () => {
+  it('routes other roles with department null to Home', () => {
     expect(
       dashboardPathForDepartment({ department: null, role: 'SalesRep' }),
     ).toBe('/')

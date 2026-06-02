@@ -1,218 +1,105 @@
 /*
- * TopNav (DESIGN.md "Surface 1" + cross-cutting nav).
+ * TopNav: app shell (Phase 1 platform redesign, see
+ * plans/platform-redesign-review.md Section 3.1).
  *
- * Gate 1 Step 3 rewrites the nav from a flat link list into a
- * workflow-stage bar. Gate 3.5 Step 3 hides the Sales Pipeline
- * stage entirely (routes stay reachable by direct URL; only the
- * nav surface is removed). Six stages today: Active MOUs, Dispatch,
- * Finance, Operations, Reports, Admin. The active stage shows a
- * department-coloured underline and bolder weight. Each stage
- * carries a small dot indicator when the current user's primary
- * department maps to that stage (e.g., an Ops user gets orange dots
- * under Dispatch and Operations).
+ * Replaces the former horizontal stage-bar (MOUs | Operations | Finance
+ * | Reports | Admin) with two pieces:
+ *   1. A thin global utility bar (this <header>): wordmark, a command-
+ *      palette placeholder (non-functional in Phase 1), queue-freshness
+ *      indicator, notification bell, signed-in name, sign out, and the
+ *      mobile nav trigger.
+ *   2. A left sidebar (SidebarDesktop on lg+, SidebarMobile drawer
+ *      below): the WATCH / WORK / RECORDS / ADMIN nav tree from
+ *      navModel.
  *
- * Three visual principles locked here for every subsequent gate:
- *   1. Workflow-stage navigation, not feature-module navigation.
- *   2. Department badge as visual filter, not hard wall: same nav
- *      for every role, with dept dots as orientation hints.
- *   3. Three-tier information density (overview / lane / detail);
- *      this nav is the overview-tier entry point.
+ * Call-site compatibility: every page still renders <TopNav /> (some
+ * pass a currentPath prop). The prop is retained for signature
+ * stability but active highlighting now derives from the real pathname
+ * inside the sidebar components (usePathname), so deep links highlight
+ * correctly without each page passing an accurate currentPath.
  *
- * The mobile drawer (TopNavMobile) renders the same structure under
- * a hamburger affordance.
+ * Content offset: SidebarDesktop carries the `.app-sidebar` class;
+ * globals.css shifts the following page content right of the fixed rail
+ * on lg+. Public pages render no TopNav, so they are never offset.
  */
 
 import Link from 'next/link'
-import { LayoutGrid, LogOut } from 'lucide-react'
+import { LayoutGrid, LogOut, Search } from 'lucide-react'
 import { getCurrentUser } from '@/lib/auth/session'
-import type { Department, User } from '@/lib/types'
-import { accentFor, type StageDepartment } from '@/lib/departmentAccents'
 import { NotificationBell } from './NotificationBell'
 import { QueueFreshnessIndicator } from './QueueFreshnessIndicator'
-import { TopNavMobile } from './TopNavMobile'
-
-interface NavStage {
-  href: string
-  label: string
-  /** Department this stage primarily belongs to; drives the dot indicator. */
-  department: StageDepartment
-  /** Extra path prefixes that should also light up this stage's active
-   *  state. Gate 4.95 Step 5 routes Finance + Operations tabs to their
-   *  dashboards but keeps the stage-page tree (`/finance/*`, `/operations/*`)
-   *  highlighted under the same tab so users do not feel the rug pulled
-   *  when they navigate into a work surface. */
-  activePaths?: string[]
-}
-
-export const NAV_STAGES: NavStage[] = [
-  // Gate 3.5 Step 3: Sales Pipeline removed from nav until Sales
-  // module returns. Routes under /sales-pipeline stay reachable
-  // via direct URL for Admin testing; docs/gate-3.5/HIDDEN_ROUTES.md
-  // tracks the un-hide path.
-  // Gate 3.5 Step 4: renamed from "Active MOUs" to "MOUs" so the
-  // stage reads as the destination for ALL MOU work, not just signed-
-  // and-active records. The /mous list page itself surfaces the
-  // primary "+ New MOU" affordance.
-  // Gate 4.95 Step 5: Finance + Operations tabs now route to the
-  // department dashboards (rich KPI overview). The stage-tree paths
-  // (/finance/*, /operations/*, /dispatch/*) still light up the tab
-  // via activePaths so the user lands somewhere coherent when they
-  // navigate into a work surface from elsewhere.
-  { href: '/mous', label: 'MOUs', department: 'cross-functional' },
-  {
-    href: '/operations',
-    label: 'Operations',
-    department: 'ops',
-    activePaths: ['/operations', '/dispatch', '/dashboard/ops'],
-  },
-  {
-    href: '/finance',
-    label: 'Finance',
-    department: 'finance',
-    activePaths: ['/finance'],
-  },
-  { href: '/reports', label: 'Reports', department: 'neutral' },
-  { href: '/admin', label: 'Admin', department: 'neutral' },
-]
-
-const HELP_HREF = '/help'
-
-function isStageActive(
-  currentPath: string | undefined,
-  stageOrHref: NavStage | string,
-): boolean {
-  if (!currentPath) return false
-  if (typeof stageOrHref === 'string') {
-    if (currentPath === stageOrHref) return true
-    return currentPath.startsWith(stageOrHref + '/')
-  }
-  if (currentPath === stageOrHref.href) return true
-  if (currentPath.startsWith(stageOrHref.href + '/')) return true
-  for (const extra of stageOrHref.activePaths ?? []) {
-    if (currentPath === extra) return true
-    if (currentPath.startsWith(extra + '/')) return true
-  }
-  return false
-}
-
-/**
- * A stage's dot indicator surfaces only when the current user's
- * department maps to that stage. Cross-functional and neutral
- * stages never carry a dot; null department (Admin / Leadership)
- * sees no dots either since their lane is "everything".
- */
-function shouldShowDeptDot(user: User | null, stageDept: StageDepartment): boolean {
-  if (!user || !user.active) return false
-  const userDept: Department = user.department ?? null
-  if (userDept === null) return false
-  return userDept === stageDept
-}
+import { SidebarDesktop } from './nav/SidebarDesktop'
+import { SidebarMobile } from './nav/SidebarMobile'
 
 interface TopNavProps {
+  /** Retained for call-site compatibility; active state now derives
+   *  from usePathname in the sidebar components. */
   currentPath?: string
 }
 
-export async function TopNav({ currentPath }: TopNavProps = {}) {
+export async function TopNav(_props: TopNavProps = {}) {
   const user = await getCurrentUser()
+  const department = user?.department ?? null
 
   return (
-    <nav
-      className="sticky top-0 z-40 border-b border-border bg-brand-navy text-white"
-      aria-label="Primary navigation"
-      data-testid="topnav"
-    >
-      <div className="mx-auto flex min-h-12 max-w-screen-xl items-stretch justify-between px-2 sm:px-4">
-        <div className="flex flex-1 items-center gap-1 overflow-hidden">
+    <>
+      <header
+        data-testid="topnav"
+        className="sticky top-0 z-40 flex min-h-12 items-stretch border-b border-border bg-brand-navy text-white"
+      >
+        <div className="flex w-full items-center gap-1 px-2 sm:px-4">
+          <SidebarMobile department={department} />
           <Link
             href="/"
             data-testid="topnav-wordmark"
             aria-label="GSL Ops home"
-            className="flex shrink-0 items-center gap-1.5 px-3 font-heading text-lg font-bold text-white focus:outline-none focus:ring-2 focus:ring-brand-teal"
+            className="flex shrink-0 items-center gap-1.5 px-2 font-heading text-lg font-bold text-white focus:outline-none focus:ring-2 focus:ring-brand-teal"
           >
             <LayoutGrid aria-hidden className="size-4 text-brand-teal" />
             <span>GSL Ops</span>
           </Link>
-          {/* Desktop stage list */}
-          <ul className="hidden items-stretch overflow-x-auto md:flex">
-            {NAV_STAGES.map((stage) => {
-              const active = isStageActive(currentPath, stage)
-              const accent = accentFor(stage.department)
-              const dot = shouldShowDeptDot(user, stage.department)
-              return (
-                <li key={stage.href} className="flex">
-                  <Link
-                    href={stage.href}
-                    aria-current={active ? 'page' : undefined}
-                    data-testid={`topnav-stage-${stage.label.replace(/\s+/g, '-').toLowerCase()}`}
-                    data-stage-active={active ? 'true' : 'false'}
-                    data-stage-dept={stage.department}
-                    className={
-                      'relative flex min-h-11 items-center gap-1.5 px-3 text-sm text-white hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-brand-teal ' +
-                      (active
-                        ? 'border-b-2 font-semibold ' + accent.navUnderlineClass
-                        : 'border-b-2 border-transparent font-medium')
-                    }
-                  >
-                    <span>{stage.label}</span>
-                    {dot ? (
-                      <span
-                        aria-hidden
-                        data-testid={`topnav-dept-dot-${stage.label.replace(/\s+/g, '-').toLowerCase()}`}
-                        className={'size-1.5 rounded-full ' + accent.navDotClass}
-                      />
-                    ) : null}
-                  </Link>
-                </li>
-              )
-            })}
-          </ul>
-          {/* Mobile drawer trigger */}
-          <TopNavMobile
-            stages={NAV_STAGES}
-            currentPath={currentPath}
-            userDepartment={user?.department ?? null}
-            helpHref={HELP_HREF}
-          />
-        </div>
-        <div className="flex items-center gap-1 sm:gap-3">
-          <Link
-            href={HELP_HREF}
-            aria-current={isStageActive(currentPath, HELP_HREF) ? 'page' : undefined}
-            className={
-              'hidden min-h-11 items-center px-3 text-sm font-medium text-white hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-brand-teal sm:flex ' +
-              (isStageActive(currentPath, HELP_HREF)
-                ? 'border-b-2 border-brand-teal'
-                : 'border-b-2 border-transparent')
-            }
-          >
-            Help
-          </Link>
-          <span aria-hidden className="hidden h-6 w-px bg-white/20 sm:inline-block" />
-          {user ? <QueueFreshnessIndicator /> : null}
-          {user ? <NotificationBell user={user} /> : null}
-          {/* Round 4 nav: "Log Payment" was a global top-nav pill but it
-              is a Finance task, not a cross-functional one. It now lives
-              as a prominent action on the Finance landing alongside
-              Match payment and the Unmatched queue, per the principle
-              that each team's execution tab surfaces THAT team's
-              frequent actions front-and-centre. */}
-          {user ? (
-            <span className="hidden text-sm text-white/80 sm:inline" aria-label="Signed in as">
-              {user.name}
-            </span>
-          ) : null}
-          <form action="/api/logout" method="POST" className="flex items-center">
+
+          {/* Command-palette placeholder. Non-functional in Phase 1; the
+              real palette ships in a later phase (Section 3.3, P6).
+              Disabled so it is not focusable or interactive, but labelled
+              for assistive tech. */}
+          <div role="search" className="ml-2 hidden min-w-0 flex-1 md:flex md:max-w-md">
             <button
-              type="submit"
-              className="flex min-h-11 items-center gap-2 px-3 text-sm font-medium text-white hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-brand-teal"
-              aria-label="Sign out"
+              type="button"
+              disabled
+              data-testid="command-palette-placeholder"
+              aria-label="Search or run a command (coming in a later phase)"
+              title="Search or run a command (coming soon)"
+              className="flex w-full items-center gap-2 rounded-md border border-white/20 bg-white/10 px-3 py-1.5 text-sm text-white/70"
             >
-              <LogOut aria-hidden className="size-4" />
-              <span className="hidden sm:inline">Sign out</span>
+              <Search aria-hidden className="size-4" />
+              <span>Search or run a command</span>
+              <kbd className="ml-auto rounded border border-white/30 px-1 text-[10px]">Ctrl K</kbd>
             </button>
-          </form>
+          </div>
+
+          <div className="ml-auto flex items-center gap-1 sm:gap-3">
+            {user ? <QueueFreshnessIndicator /> : null}
+            {user ? <NotificationBell user={user} /> : null}
+            {user ? (
+              <span className="hidden text-sm text-white/80 sm:inline" aria-label="Signed in as">
+                {user.name}
+              </span>
+            ) : null}
+            <form action="/api/logout" method="POST" className="flex items-center">
+              <button
+                type="submit"
+                aria-label="Sign out"
+                className="flex min-h-11 items-center gap-2 px-2 text-sm font-medium text-white hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-brand-teal"
+              >
+                <LogOut aria-hidden className="size-4" />
+                <span className="hidden sm:inline">Sign out</span>
+              </button>
+            </form>
+          </div>
         </div>
-      </div>
-    </nav>
+      </header>
+      <SidebarDesktop department={department} />
+    </>
   )
 }

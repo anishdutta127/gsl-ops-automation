@@ -76,6 +76,23 @@
   outline-offset: -4px;
 }
 
+/*
+ * App shell content offset (Phase 1 left-nav, see
+ * plans/platform-redesign-review.md Section 3.1).
+ *
+ * TopNav renders the fixed left rail (.app-sidebar) as a sibling
+ * immediately before the page content. On lg+ the content (every
+ * following sibling) is shifted right of the 16rem rail. Public pages
+ * (login, feedback, portal) render no TopNav, so there is no
+ * .app-sidebar and their content is never offset. The rail itself is
+ * hidden below lg, so the offset is gated to lg+ to match.
+ */
+@media (min-width: 1024px) {
+  .app-sidebar ~ * {
+    padding-left: 16rem;
+  }
+}
+
 @layer base {
   .theme {
     --font-heading: var(--font-montserrat);
