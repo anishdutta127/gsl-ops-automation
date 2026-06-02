@@ -66,6 +66,13 @@ export const NAV_ZONES: NavZone[] = [
         activePaths: ['/dashboard/ops/kanban'],
       },
       { href: '/dashboard/exceptions', label: 'Attention', testId: 'nav-attention' },
+      {
+        href: '/reports',
+        label: 'Reports',
+        testId: 'nav-reports',
+        interimNote:
+          'Phase 7 folds Reports into the Pulse surface; kept as its own WATCH item now so the existing /reports tree stays reachable.',
+      },
     ],
   },
   {

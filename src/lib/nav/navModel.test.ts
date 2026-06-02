@@ -33,6 +33,8 @@ describe('navModel: activeTestId longest-match resolution', () => {
     ['/kanban', 'nav-pipeline'],
     ['/dashboard/ops/kanban', 'nav-pipeline'],
     ['/dashboard/exceptions', 'nav-attention'],
+    ['/reports', 'nav-reports'],
+    ['/reports/fy-summary', 'nav-reports'],
     ['/dashboard/leadership', 'nav-pulse'],
     ['/dashboard/leadership/accountability', 'nav-pulse'],
     ['/finance', 'nav-fin-home'],
