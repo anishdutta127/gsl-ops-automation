@@ -505,6 +505,43 @@ export default async function MouDetailPage({ params, searchParams }: PageProps)
                 label={mou.status}
                 testId="mou-detail-status-chip"
               />
+              {/* Step 2 item 5: bifurcate the detail by product too (the list
+                  already bifurcates by year + product). Compact summary of
+                  the Step 1 products[] portfolio; year bifurcation is the
+                  tab strip below. */}
+              {mou.products && mou.products.length > 0 ? (
+                <span
+                  className="inline-flex items-center gap-1 rounded-full border border-border bg-white px-2.5 py-0.5 text-xs text-slate-700"
+                  data-testid="mou-detail-product-summary"
+                >
+                  Products:&nbsp;
+                  {mou.products
+                    .map((p) => {
+                      const grades = p.gradeSpecific
+                        ? (p.perGradeQuantity ?? []).map((x) => x.grade)
+                        : (p.grades ?? [])
+                      return `${p.skuName}${grades.length ? ` (G${grades.join('/')})` : ''}`
+                    })
+                    .join(', ')}
+                </span>
+              ) : mou.opsReviewStatus ? (
+                <span className="inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-2.5 py-0.5 text-xs text-amber-900" data-testid="mou-detail-ops-status">
+                  Ops: {mou.opsReviewStatus}
+                </span>
+              ) : null}
+              {/* Step 2 (2026-06-04, Pranav) MOU-detail restructure:
+                  - Annexure (/draft) + Signed values: REMOVED (repeated /
+                    redundant - only signed MOUs are entered now). Routes
+                    stay dormant; nothing else linked them.
+                  - Feedback: HIDDEN here (kept live - /feedback-request is
+                    still reached from the communications compose/mark-sent
+                    redirects).
+                  - Dispatch + Delivery ack: RELOCATED to Operations (the
+                    Ops review screen). Routes stay live (also linked from
+                    admin/dispatch-requests + intake/edit).
+                  Instalments stays (Finance track). The status-timeline
+                  tracker below still READS dispatch/feedback data - only the
+                  buttons moved, the reads are untouched. */}
               <div className="ml-auto flex flex-wrap items-center gap-2">
                 {canEditMou || canEditFinanceData(user!) ? (
                   <Link
@@ -515,24 +552,6 @@ export default async function MouDetailPage({ params, searchParams }: PageProps)
                     Update student count
                   </Link>
                 ) : null}
-                {canEditMou ? (
-                  <Link
-                    href={`/mous/${mou.id}/draft`}
-                    className={actionBtnClass}
-                    data-testid="action-draft-annexure"
-                  >
-                    Annexure
-                  </Link>
-                ) : null}
-                {canEditMou ? (
-                  <Link
-                    href={`/mous/${mou.id}/signed-values`}
-                    className={actionBtnClass}
-                    data-testid="action-signed-values"
-                  >
-                    Signed values
-                  </Link>
-                ) : null}
                 <Link
                   href={`/mous/${mou.id}/installments${activeYearTab ? `?fy=${encodeURIComponent(activeYearTab)}` : ''}`}
                   className={actionBtnClass}
@@ -540,14 +559,12 @@ export default async function MouDetailPage({ params, searchParams }: PageProps)
                 >
                   Instalments
                 </Link>
-                <Link href={`/mous/${mou.id}/dispatch`} className={actionBtnClass}>
-                  Dispatch
-                </Link>
-                <Link href={`/mous/${mou.id}/feedback-request`} className={actionBtnClass}>
-                  Feedback
-                </Link>
-                <Link href={`/mous/${mou.id}/delivery-ack`} className={actionBtnClass}>
-                  Delivery ack
+                <Link
+                  href={`/operations/review/${mou.id}`}
+                  className={actionBtnClass}
+                  data-testid="action-ops-review"
+                >
+                  Ops review
                 </Link>
               </div>
             </div>

@@ -40,7 +40,7 @@ import {
   schoolGroupRepo,
 } from '@/lib/db/repos/leafRepos'
 import { getCurrentUser } from '@/lib/auth/session'
-import { canEditMOU } from '@/lib/access'
+import { canEditFinanceData } from '@/lib/access'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { FilterRail, type FilterDimension } from '@/components/ops/FilterRail'
@@ -65,7 +65,7 @@ import {
   getCurrentFinancialYear,
 } from '@/lib/mou/yearMembership'
 import Link from 'next/link'
-import { Archive, FileEdit, Plus } from 'lucide-react'
+import { Plus } from 'lucide-react'
 
 const KANBAN_STAGE_KEYS = new Set<string>(KANBAN_COLUMNS.map((c) => c.key))
 
@@ -112,9 +112,12 @@ export default async function MousListPage({ searchParams }: PageProps) {
     schoolGroupRepo.findAll() as Promise<SchoolGroup[]>,
   ])
   const schoolById = new Map(allSchools.map((s) => [s.id, s]))
-  // W4-A.3: cohort default is 'active'. Operators visit /mous/archive for
-  // archived rows; the main /mous list never shows them, even via filter.
-  const cohortFiltered = allMous.filter((m) => m.cohortStatus === 'active')
+  // Step 2 (2026-06-04, Pranav): uniform data across all years - the
+  // active/archived cohort split is retired, so the list shows every MOU
+  // and bifurcates by the year picker below. cohortStatus stays on the
+  // record as a dormant field (its readers survive); we simply stop
+  // filtering on it. Past behaviour reached archived rows via /mous/archive.
+  const cohortFiltered = allMous
   const scoped = scopeMousForUser(cohortFiltered, user)
 
   // Phase 3 (2026-05-19): year picker. Resolve the active FY from
@@ -243,45 +246,22 @@ export default async function MousListPage({ searchParams }: PageProps) {
           otherParams={sp}
         />
         <div className="mx-auto flex max-w-screen-xl items-center justify-end gap-2 px-4 pt-2">
-          {/* The "+ New MOU" CTA is gated by canEditMOU so users without
-              MOU-edit rights (e.g. Finance / Ops department) do not see
-              a button that 404s on click. The /mous/new page itself
-              calls notFound() for the same set of users; this CTA gate
-              keeps the surface honest. */}
-          {user && canEditMOU(user) ? (
+          {/* Step 2 (2026-06-04, Pranav): the system is NOT opening to sales
+              for drafting. Finance enters signed MOUs only via upload+save.
+              The "Generate MOU" draft wizard entry is hidden (the wizard
+              code stays dormant), and the Drafts / View archived CTAs are
+              retired (uniform data across years - see cohort note above).
+              "Add MOU" is the new primary creation path, Finance-gated. */}
+          {user && canEditFinanceData(user) ? (
             <Link
-              href="/mous/new"
+              href="/mous/upload"
               className={opsButtonClass({ variant: 'primary', size: 'sm' })}
-              data-testid="new-mou-link"
+              data-testid="add-mou-link"
             >
               <Plus aria-hidden className="size-4" />
-              New MOU
+              Add MOU
             </Link>
           ) : null}
-          {/* 2026-05-19 stabilisation (Bug 9): drafts CTA. Pranav saved a
-              draft via the wizard and could not find it. This applies the
-              status=Draft filter so saved drafts surface immediately;
-              the existing chip in the filter rail clears it. Count comes
-              from the user-scoped + cohort-filtered set so a SalesRep
-              only sees their own draft count. */}
-          {user && canEditMOU(user) ? (
-            <Link
-              href="/mous?status=Draft"
-              className={opsButtonClass({ variant: 'outline', size: 'sm' })}
-              data-testid="drafts-link"
-            >
-              <FileEdit aria-hidden className="size-4" />
-              {`Drafts (${scoped.filter((m) => m.status === 'Draft').length})`}
-            </Link>
-          ) : null}
-          <Link
-            href="/mous/archive"
-            className={opsButtonClass({ variant: 'outline', size: 'sm' })}
-            data-testid="archive-link"
-          >
-            <Archive aria-hidden className="size-4" />
-            View archived
-          </Link>
         </div>
         <div className="mx-auto flex max-w-screen-xl flex-col gap-4 px-4 py-6 sm:flex-row">
           <FilterRail

@@ -625,6 +625,16 @@ export interface MOU {
    */
   products?: import('./mouSystem/types').MouProduct[] | null
   /**
+   * Step 2 two-process model (2026-06-04, Pranav Finance/Ops review).
+   * The Ops-side review track, INDEPENDENT of MouStatus and the money/PI
+   * gate (PI_BLOCKED_STATUSES reads MouStatus only, never this). When
+   * Finance enters a signed MOU it surfaces to Ops as 'Pending for review';
+   * Ops assigns products + aligns dispatch, then 'Submit to Finance for
+   * Dispatch' moves it to 'Submitted to Finance'. Null/undefined on MOUs
+   * that predate the flow (treated as not-in-review).
+   */
+  opsReviewStatus?: import('./mouSystem/types').OpsReviewStatus | null
+  /**
    * Gate 4.5: free-text bag for Excel-import context that does not fit
    * the schema cleanly (acquisitionStatus, ypLevel, termination, etc.).
    * Format: `key1=value1; key2=value2`. Set by the FY26-27 import

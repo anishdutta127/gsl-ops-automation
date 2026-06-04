@@ -140,14 +140,13 @@ describe('Flow 5: VEX PI page', () => {
   }, 30000)
 })
 
-describe('Flow 3+drafts: MOU registry surfaces drafts CTA', () => {
-  it('GET /mous lists drafts CTA when the user has canEditMOU', async () => {
+describe('Flow 3 - Step 2: drafts retired from the MOU registry', () => {
+  it('GET /mous no longer lists the Drafts CTA (drafts retired per Pranav)', async () => {
     const { default: Page } = await import('../app/mous/page')
     const html = renderToStaticMarkup(
       await Page({ searchParams: Promise.resolve({}) }),
     )
-    expect(html).toContain('data-testid="drafts-link"')
-    expect(html).toContain('Drafts (')
+    expect(html).not.toContain('data-testid="drafts-link"')
     expect(html).not.toContain('Application error')
   }, 30000)
 })

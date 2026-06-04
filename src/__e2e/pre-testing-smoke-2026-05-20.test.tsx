@@ -333,14 +333,16 @@ describe('Flow 8 - Salesperson reassignment', () => {
   }, 30000)
 })
 
-describe('Flow 9 - Saved drafts visibility', () => {
-  it('/mous registry exposes the Drafts CTA + Draft chip', async () => {
+describe('Flow 9 - Step 2: drafts retired from the MOU registry', () => {
+  it('/mous registry no longer exposes the Drafts CTA (drafts retired per Pranav)', async () => {
     const { default: Page } = await import('../app/mous/page')
     const html = renderToStaticMarkup(
       await Page({ searchParams: Promise.resolve({}) }),
     )
-    expect(html).toContain('data-testid="drafts-link"')
-    expect(html).toMatch(/Drafts \(\d+\)/)
+    // Step 2: the draft wizard + Drafts/Archive CTAs are retired; Finance
+    // enters signed MOUs via the upload+save "Add MOU" path.
+    expect(html).not.toContain('data-testid="drafts-link"')
+    expect(html).not.toContain('Application error')
   }, 30000)
 })
 

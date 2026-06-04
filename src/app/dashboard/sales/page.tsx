@@ -24,11 +24,9 @@ const PRIMARY_ACTIONS: PrimaryAction[] = [
     href: '/mous',
     description: 'Lifecycle hub for every signed MOU.',
   },
-  {
-    label: 'Draft new MOU',
-    href: '/mous/new',
-    description: 'Start a new MOU from scratch or for an existing school.',
-  },
+  // Step 2 (2026-06-04, Pranav): the "Draft new MOU" tile is retired -
+  // the system is not opening to sales for drafting; Finance enters signed
+  // MOUs via upload+save. The wizard route stays dormant.
   {
     label: 'Schools',
     href: '/schools',
@@ -60,15 +58,16 @@ export default async function SalesDashboard() {
                 <p className="font-medium">Sales module coming in next phase.</p>
                 <p className="mt-1 text-amber-800">
                   Pre-MOU pipeline tracking is paused while we settle the
-                  operations + finance core. For now, use{' '}
+                  operations + finance core. Signed MOUs are recorded by
+                  Finance via{' '}
                   <Link
-                    href="/mous/new"
+                    href="/mous"
                     className="font-semibold underline-offset-2 hover:underline"
                   >
-                    MOU drafting
+                    the MOU list
                     <ArrowRight aria-hidden className="ml-0.5 inline size-3" />
-                  </Link>{' '}
-                  to record signed MOUs.
+                  </Link>
+                  .
                 </p>
               </div>
             </div>

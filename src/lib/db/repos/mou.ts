@@ -58,6 +58,7 @@ interface MouRow {
   signed_mou_pdf_path: string | null
   import_notes: string | null
   product_selection: 'TinkRworks' | 'Cretile' | 'Both' | null
+  ops_review_status: MOU['opsReviewStatus'] | null
   payment_schedule: Json
   payment_schedules: Json
   yearly_pricing: Json
@@ -122,6 +123,7 @@ function rowToMou(r: MouRow): MOU {
     signedMouPdfPath: r.signed_mou_pdf_path ?? null,
     importNotes: r.import_notes ?? null,
     productSelection: r.product_selection ?? null,
+    opsReviewStatus: r.ops_review_status ?? null,
     paymentSchedule: r.payment_schedule ?? null,
     paymentSchedules: r.payment_schedules ?? null,
     yearlyPricing: r.yearly_pricing ?? null,
@@ -196,7 +198,7 @@ export const mouRepo = {
           sp_without_tax, sp_with_tax, contract_value, received, tds, balance, received_pct,
           trainer_model, sales_person_id, template_version, generated_at,
           notes, delay_notes, days_to_expiry, sales_channel, school_crm_id,
-          signed_mou_pdf_path, import_notes, product_selection,
+          signed_mou_pdf_path, import_notes, product_selection, ops_review_status,
           payment_schedule, payment_schedules, yearly_pricing, billing_block,
           draft_variables, dispatch_override, gradewise_distribution, products,
           student_count_event_ids, audit_log
@@ -208,7 +210,7 @@ export const mouRepo = {
           ${m.spWithoutTax ?? null}, ${m.spWithTax ?? null}, ${m.contractValue ?? null}, ${m.received ?? null}, ${m.tds ?? null}, ${m.balance ?? null}, ${m.receivedPct ?? null},
           ${m.trainerModel ?? null}, ${m.salesPersonId || null}, ${m.templateVersion || null}, ${m.generatedAt || null},
           ${m.notes ?? null}, ${m.delayNotes ?? null}, ${m.daysToExpiry ?? null}, ${m.salesChannel ?? null}, ${m.schoolCrmId ?? null},
-          ${m.signedMouPdfPath ?? null}, ${m.importNotes ?? null}, ${m.productSelection ?? null},
+          ${m.signedMouPdfPath ?? null}, ${m.importNotes ?? null}, ${m.productSelection ?? null}, ${m.opsReviewStatus ?? null},
           ${m.paymentSchedule == null ? null : sql.json(m.paymentSchedule as never)}::jsonb,
           ${m.paymentSchedules == null ? null : sql.json(m.paymentSchedules as never)}::jsonb,
           ${m.yearlyPricing == null ? null : sql.json(m.yearlyPricing as never)}::jsonb,
@@ -272,6 +274,7 @@ export const mouRepo = {
           signed_mou_pdf_path = ${m.signedMouPdfPath ?? null},
           import_notes = ${m.importNotes ?? null},
           product_selection = ${m.productSelection ?? null},
+          ops_review_status = ${m.opsReviewStatus ?? null},
           payment_schedule = ${m.paymentSchedule == null ? null : sql.json(m.paymentSchedule as never)}::jsonb,
           payment_schedules = ${m.paymentSchedules == null ? null : sql.json(m.paymentSchedules as never)}::jsonb,
           yearly_pricing = ${m.yearlyPricing == null ? null : sql.json(m.yearlyPricing as never)}::jsonb,
@@ -342,6 +345,7 @@ export const mouRepo = {
         daysToExpiry: 'days_to_expiry', salesChannel: 'sales_channel',
         schoolCrmId: 'school_crm_id', signedMouPdfPath: 'signed_mou_pdf_path',
         importNotes: 'import_notes', productSelection: 'product_selection',
+        opsReviewStatus: 'ops_review_status',
         paymentSchedule: 'payment_schedule', paymentSchedules: 'payment_schedules',
         yearlyPricing: 'yearly_pricing', billingBlock: 'billing_block',
         draftVariables: 'draft_variables', dispatchOverride: 'dispatch_override',

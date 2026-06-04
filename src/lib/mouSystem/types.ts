@@ -138,6 +138,18 @@ export type { MOU } from '@/lib/types'
 export type ProductSelection = 'TinkRworks' | 'Cretile' | 'Both'
 
 /**
+ * Step 2 two-process model. The Ops-side review lifecycle, deliberately
+ * SEPARATE from MouStatus so the Ops track never reaches the money/PI gate
+ * (PI_BLOCKED_STATUSES is MouStatus-only). 'Pending for review' is set when
+ * Finance enters a signed MOU; Ops works the review screen; 'Submit to
+ * Finance for Dispatch' advances to 'Submitted to Finance'.
+ */
+export type OpsReviewStatus =
+  | 'Pending for review'
+  | 'In Review'
+  | 'Submitted to Finance'
+
+/**
  * Step 1 product-portfolio rework (2026-06-04). Structured per-product
  * portfolio on the MOU, modelled on the proven legacy `DispatchLineItem`
  * union (flat vs per-grade). Supersedes the brand-only `ProductSelection`
