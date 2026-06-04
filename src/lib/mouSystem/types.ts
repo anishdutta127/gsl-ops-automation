@@ -138,6 +138,42 @@ export type { MOU } from '@/lib/types'
 export type ProductSelection = 'TinkRworks' | 'Cretile' | 'Both'
 
 /**
+ * Step 1 product-portfolio rework (2026-06-04). Structured per-product
+ * portfolio on the MOU, modelled on the proven legacy `DispatchLineItem`
+ * union (flat vs per-grade). Supersedes the brand-only `ProductSelection`
+ * by capturing WHICH specific SKU ships and (for grade-banded products)
+ * the per-grade quantities.
+ *
+ * DISPATCH TRACKING ONLY. Never read by pricing/PI - pricing stays
+ * per-student. A guard test (products-pricing-isolation) locks this.
+ *
+ * Field applicability is keyed by `gradeSpecific`:
+ * - gradeSpecific=false (grade-agnostic, e.g. TinkRworks): one SKU can
+ *   serve several grades. `grades` is the grade multi-select; `quantity`
+ *   is the total kits. Maps to a legacy `flat` DispatchLineItem.
+ * - gradeSpecific=true (grade-banded, e.g. Cretile): the kit is tied to a
+ *   grade. `perGradeQuantity` carries one row per grade. The inventory
+ *   SKU is resolved by (category, cretileGrade) - NEVER by the shared
+ *   generic skuName. Maps to a legacy `per-grade` DispatchLineItem.
+ */
+export interface MouProduct {
+  /** Brand / inventory category, e.g. 'TinkRworks' | 'Cretile'. */
+  product: string
+  /** Specific SKU within the brand, e.g. 'Smart Lamp' or, for Cretile, the
+   *  generic 'Cretile Grade-band kit' (grade resolved via perGradeQuantity). */
+  skuName: string
+  /** True for grade-banded kits (Cretile); false for grade-agnostic
+   *  kits (TinkRworks). Drives which of the fields below apply. */
+  gradeSpecific: boolean
+  /** Grade-agnostic only: grades this single SKU serves (multi-select). */
+  grades?: number[]
+  /** Grade-agnostic only: total kits to dispatch. */
+  quantity?: number
+  /** Grade-specific only: one quantity row per grade. */
+  perGradeQuantity?: { grade: number; quantity: number }[]
+}
+
+/**
  * Gate 3 Step 1: per-grade student count + kit return type. One row per
  * grade Sales fills in; the total is computed in the UI as sum(students).
  * Kit type captures whether the kit returns to GSL after the course

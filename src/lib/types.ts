@@ -616,6 +616,15 @@ export interface MOU {
     | import('./mouSystem/types').GradewiseDistributionRow[]
     | null
   /**
+   * Step 1 product-portfolio rework (2026-06-04): structured per-product
+   * portfolio (PRODUCT -> GRADE -> QUANTITY) for dispatch tracking, modelled
+   * on the legacy DispatchLineItem union. Supersedes the brand-only
+   * `productSelection`, which stays derivable from this during transition
+   * (see `deriveProductSelection`). DISPATCH TRACKING ONLY - never priced.
+   * Existing MOUs carry `undefined`.
+   */
+  products?: import('./mouSystem/types').MouProduct[] | null
+  /**
    * Gate 4.5: free-text bag for Excel-import context that does not fit
    * the schema cleanly (acquisitionStatus, ypLevel, termination, etc.).
    * Format: `key1=value1; key2=value2`. Set by the FY26-27 import

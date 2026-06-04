@@ -17,10 +17,14 @@ import { useRouter } from 'next/navigation'
 import { Save, CheckCircle, AlertTriangle } from 'lucide-react'
 import type { KitAllocation } from '@/lib/types'
 import type { GradewiseDistributionRow } from '@/lib/mouSystem/types'
+import { CRETILE_GENERIC_SKU } from '@/lib/inventory/resolveSku'
 
 interface SkuOption {
+  id: string
   skuName: string
   category: string
+  /** Non-null for grade-banded Cretile rows; null for grade-agnostic SKUs. */
+  cretileGrade: number | null
   currentStock: number
 }
 
@@ -44,6 +48,34 @@ interface Props {
 
 const GRADES = Array.from({ length: 12 }, (_, i) => i + 1)
 const KIT_TYPES: Array<'Reusable' | 'Consumable'> = ['Reusable', 'Consumable']
+
+/** SKUs offerable for a given grade row: grade-agnostic kits always, plus
+ *  the single grade-banded Cretile kit whose grade matches this row. This
+ *  is what makes Cretile options distinct (one per grade) instead of 8
+ *  identically-named entries in every row. */
+function optionsForGrade(opts: SkuOption[], grade: number): SkuOption[] {
+  return opts.filter((s) => s.cretileGrade == null || s.cretileGrade === grade)
+}
+
+/** Resolve a row's selected SKU option, mirroring the server-side unified
+ *  resolver: Cretile by (cretileGrade === row grade); everything else by
+ *  skuName. Used for the soft over-stock warning + per-row stock display. */
+function resolveOption(
+  opts: SkuOption[],
+  productName: string,
+  grade: number,
+): SkuOption | undefined {
+  if (productName === CRETILE_GENERIC_SKU) {
+    return opts.find((s) => s.cretileGrade === grade)
+  }
+  return opts.find((s) => s.skuName === productName)
+}
+
+function optionLabel(s: SkuOption): string {
+  return s.cretileGrade != null
+    ? `${s.skuName} - Grade ${s.cretileGrade} (stock ${s.currentStock})`
+    : `${s.skuName} (${s.category}, stock ${s.currentStock})`
+}
 
 interface RowState {
   grade: number
@@ -117,12 +149,6 @@ export function AllocationForm({
   const [overrideReason, setOverrideReason] = useState('')
   const [showOverride, setShowOverride] = useState(false)
 
-  const stockByName = useMemo(() => {
-    const m = new Map<string, number>()
-    for (const s of eligibleSkus) m.set(s.skuName, s.currentStock)
-    return m
-  }, [eligibleSkus])
-
   const submittableRows = useMemo(
     () =>
       rows.filter(
@@ -134,18 +160,28 @@ export function AllocationForm({
     [rows],
   )
 
+  // Aggregate requested kits per resolved InventoryItem (by id), so two
+  // grade rows that both pick the generic Cretile skuName are checked
+  // against their own grade's stock rather than summed onto one row.
   const overAllocatedSkus = useMemo(() => {
-    const totals = new Map<string, number>()
+    const totals = new Map<
+      string,
+      { skuName: string; requested: number; available: number }
+    >()
     for (const r of submittableRows) {
-      totals.set(r.productName, (totals.get(r.productName) ?? 0) + r.kitsQty)
+      const opt = resolveOption(eligibleSkus, r.productName, r.grade)
+      if (!opt) continue
+      const prev = totals.get(opt.id)
+      if (prev) prev.requested += r.kitsQty
+      else
+        totals.set(opt.id, {
+          skuName: optionLabel(opt),
+          requested: r.kitsQty,
+          available: opt.currentStock,
+        })
     }
-    const offenders: Array<{ skuName: string; requested: number; available: number }> = []
-    Array.from(totals.entries()).forEach(([skuName, requested]) => {
-      const available = stockByName.get(skuName) ?? 0
-      if (requested > available) offenders.push({ skuName, requested, available })
-    })
-    return offenders
-  }, [submittableRows, stockByName])
+    return Array.from(totals.values()).filter((o) => o.requested > o.available)
+  }, [submittableRows, eligibleSkus])
 
   function update(idx: number, partial: Partial<RowState>): void {
     setRows((prev) => prev.map((r, i) => (i === idx ? { ...r, ...partial } : r)))
@@ -259,8 +295,10 @@ export function AllocationForm({
           </thead>
           <tbody>
             {rows.map((r, idx) => {
-              const available = stockByName.get(r.productName)
+              const resolved = resolveOption(eligibleSkus, r.productName, r.grade)
+              const available = resolved?.currentStock
               const over = available !== undefined && r.kitsQty > available
+              const rowOptions = optionsForGrade(eligibleSkus, r.grade)
               return (
                 <tr key={r.grade} className="border-b border-border/60" data-testid={`row-grade-${r.grade}`}>
                   <td className="py-1.5 pr-3 font-medium text-slate-700">
@@ -325,12 +363,17 @@ export function AllocationForm({
                       data-testid={`product-select-${r.grade}`}
                     >
                       <option value="">: select :</option>
-                      {eligibleSkus.map((s) => (
-                        <option key={s.skuName + '|' + s.category} value={s.skuName}>
-                          {s.skuName} ({s.category}, stock {s.currentStock})
+                      {rowOptions.map((s) => (
+                        <option key={s.id} value={s.skuName}>
+                          {optionLabel(s)}
                         </option>
                       ))}
                     </select>
+                    {r.productName.trim() !== '' && resolved === undefined && (
+                      <p className="mt-0.5 text-xs text-signal-alert">
+                        No stocked kit for Grade {r.grade}. Pick another grade or SKU.
+                      </p>
+                    )}
                     {over && available !== undefined && (
                       <p className="mt-0.5 text-xs text-signal-alert">
                         Over by {r.kitsQty - available}. Stock: {available}.

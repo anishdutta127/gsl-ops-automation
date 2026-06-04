@@ -34,6 +34,7 @@ import type {
 import { enqueueUpdate } from '@/lib/pendingUpdates'
 import { kitDispatchRepo } from '@/lib/db/repos/kitDispatch'
 import { currentBackend } from '@/lib/db/backend'
+import { resolveInventoryItem } from '@/lib/inventory/resolveSku'
 
 export interface AccountsExecuteArgs {
   mouId: string
@@ -84,11 +85,30 @@ function computeStatus(
   return 'Pending'
 }
 
-function aggregateBySku(entries: AccountsDispatchEntry[]): Map<string, number> {
-  const out = new Map<string, number>()
+/**
+ * Aggregate actual-dispatched quantity per resolved InventoryItem. Uses
+ * the unified resolver so per-grade Cretile rows (sharing one skuName)
+ * decrement their own grade's stock instead of collapsing onto whichever
+ * Cretile row a name-only find() happened to return first.
+ */
+function aggregateByItem(
+  entries: AccountsDispatchEntry[],
+  inventory: InventoryItem[],
+): Map<string, { item: InventoryItem; qty: number }> {
+  const out = new Map<string, { item: InventoryItem; qty: number }>()
   for (const e of entries) {
     if (e.qtyActualDispatched <= 0) continue
-    out.set(e.productRequested, (out.get(e.productRequested) ?? 0) + e.qtyActualDispatched)
+    const item = resolveInventoryItem(inventory, {
+      productName: e.productRequested,
+      grade: e.grade,
+    })
+    // SKU vanished from inventory between allocation and execution (or a
+    // Cretile grade with no stocked kit): skip the decrement and let ops
+    // reconcile manually, same forgiving behaviour as before.
+    if (!item) continue
+    const existing = out.get(item.id)
+    if (existing) existing.qty += e.qtyActualDispatched
+    else out.set(item.id, { item, qty: e.qtyActualDispatched })
   }
   return out
 }
@@ -171,17 +191,12 @@ export async function executeAccountsDispatch(
     })
   }
 
-  // Inventory decrement: one queue entry per affected SKU.
-  const totalsBySku = aggregateBySku(args.accountsEntries)
+  // Inventory decrement: one queue entry per affected InventoryItem,
+  // resolved by (category, cretileGrade) for Cretile so each grade-band
+  // kit decrements its own stock row.
+  const totalsByItem = aggregateByItem(args.accountsEntries, deps.inventory)
   const inventoryDecrements: Array<{ skuName: string; qty: number; newStock: number }> = []
-  for (const [skuName, qty] of Array.from(totalsBySku.entries())) {
-    const item = deps.inventory.find((it) => it.skuName === skuName) ?? null
-    if (!item) {
-      // SKU vanished from inventory between allocation and execution;
-      // record an audit-only note and continue. The dispatch still
-      // moves forward; ops can reconcile manually.
-      continue
-    }
+  for (const { item, qty } of Array.from(totalsByItem.values())) {
     const newStock = Math.max(0, item.currentStock - qty)
     const invAudit: AuditEntry = {
       timestamp: isoNow,
@@ -191,14 +206,14 @@ export async function executeAccountsDispatch(
       after: { currentStock: newStock },
       notes: `Auto-outward ${qty} for ${kd.id} (${kd.schoolName})`,
     }
-    inventoryDecrements.push({ skuName, qty, newStock })
+    inventoryDecrements.push({ skuName: item.skuName, qty, newStock })
     await enqueue({
       queuedBy: args.user.id,
       entity: 'inventoryItem',
       operation: 'update',
       payload: {
         id: item.id,
-        skuName,
+        skuName: item.skuName,
         outward: {
           qty,
           dispatchId: kd.id,

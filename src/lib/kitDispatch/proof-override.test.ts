@@ -9,9 +9,12 @@ const mou: MOU = {
   salesPersonId: null, auditLog: [],
 } as unknown as MOU
 
+// cretileGrade is now meaningful: the unified resolver matches Cretile by
+// (category, cretileGrade), so the SKU's grade must match the allocation's
+// grade. (Pre-Step-1 this fixture relied on grade-blind skuName matching.)
 const sku: InventoryItem = {
   id: 'INV-1', skuName: 'Cretile Grade-band kit', category: 'Cretile',
-  currentStock: 12, reorderThreshold: 5, active: true, auditLog: [],
+  cretileGrade: 3, currentStock: 12, reorderThreshold: 5, active: true, auditLog: [],
 } as unknown as InventoryItem
 
 const allocation: KitAllocation = {
@@ -85,7 +88,7 @@ describe('dispatch inventory override proof', () => {
   })
 
   it('normal allocation (within stock) still works WITHOUT override', async () => {
-    const smallAlloc: KitAllocation = { grade: 1, students: 10, kitsQty: 10, kitType: 'Reusable', productName: 'Cretile Grade-band kit' }
+    const smallAlloc: KitAllocation = { grade: 3, students: 10, kitsQty: 10, kitType: 'Reusable', productName: 'Cretile Grade-band kit' }
     const r = await allocateKits(
       { mouId: 'MOU-OVR', user: { id: 'misba.m', name: 'Misba M.' }, allocations: [smallAlloc] },
       makeDeps(),

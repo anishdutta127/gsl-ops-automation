@@ -28,6 +28,7 @@ import type {
 } from '@/lib/types'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
 import { kitDispatchRepo } from '@/lib/db/repos/kitDispatch'
+import { resolveInventoryItem } from '@/lib/inventory/resolveSku'
 import { mintDispatchId } from './lookup'
 
 export interface AllocateArgs {
@@ -97,14 +98,6 @@ function validateRow(row: KitAllocation): boolean {
   return true
 }
 
-function aggregateBySku(rows: KitAllocation[]): Map<string, number> {
-  const out = new Map<string, number>()
-  for (const r of rows) {
-    out.set(r.productName, (out.get(r.productName) ?? 0) + r.kitsQty)
-  }
-  return out
-}
-
 export async function allocateKits(
   args: AllocateArgs,
   deps: AllocateDeps,
@@ -129,14 +122,22 @@ export async function allocateKits(
     (mou.productSelection as 'TinkRworks' | 'Cretile' | 'Both' | null | undefined) ??
     null
 
-  const inventoryByName = new Map<string, InventoryItem>()
-  for (const item of deps.inventory) {
-    if (item.active) inventoryByName.set(item.skuName, item)
-  }
+  // Active inventory only: sunset SKUs cannot be allocated fresh.
+  const activeInventory = deps.inventory.filter((it) => it.active)
 
+  // Resolve every row to its InventoryItem via the unified resolver.
+  // Cretile is matched by (category, cretileGrade) using the row's grade -
+  // NOT by the shared generic skuName "Cretile Grade-band kit". This kills
+  // the collision where the old skuName-keyed Map collapsed all 8 Cretile
+  // grade-band rows onto one (last-wins), checking every grade against a
+  // single grade's stock. TinkRworks / Other still match by skuName.
+  const resolvedByRow: InventoryItem[] = []
   for (const r of rows) {
-    const sku = inventoryByName.get(r.productName)
-    if (!sku) {
+    const item = resolveInventoryItem(activeInventory, {
+      productName: r.productName,
+      grade: r.grade,
+    })
+    if (!item) {
       return {
         ok: false,
         reason: 'unknown-sku',
@@ -144,7 +145,7 @@ export async function allocateKits(
       }
     }
     if (productSelection && productSelection !== 'Both') {
-      if (sku.category !== productSelection) {
+      if (item.category !== productSelection) {
         return {
           ok: false,
           reason: 'sku-mismatch-product',
@@ -152,27 +153,29 @@ export async function allocateKits(
         }
       }
     }
+    resolvedByRow.push(item)
   }
 
-  const totalsBySku = aggregateBySku(rows)
+  // Aggregate requested quantity per resolved InventoryItem id (NOT skuName),
+  // so per-grade Cretile kits sharing one skuName are each checked against
+  // their own grade's stock instead of collapsing onto one grade's row.
+  const totalsByItemId = new Map<string, number>()
+  for (let i = 0; i < rows.length; i += 1) {
+    const item = resolvedByRow[i]!
+    totalsByItemId.set(item.id, (totalsByItemId.get(item.id) ?? 0) + rows[i]!.kitsQty)
+  }
   const hasOverride = typeof args.inventoryOverrideReason === 'string'
     && args.inventoryOverrideReason.trim().length > 0
-  for (const [skuName, totalRequested] of Array.from(totalsBySku.entries())) {
-    const sku = inventoryByName.get(skuName)
-    if (!sku) {
-      return {
-        ok: false,
-        reason: 'unknown-sku',
-        offendingSkuName: skuName,
-      }
-    }
-    if (totalRequested > sku.currentStock && !hasOverride) {
+  const itemById = new Map(activeInventory.map((it) => [it.id, it]))
+  for (const [itemId, totalRequested] of Array.from(totalsByItemId.entries())) {
+    const item = itemById.get(itemId)!
+    if (totalRequested > item.currentStock && !hasOverride) {
       return {
         ok: false,
         reason: 'inventory-insufficient',
-        offendingSkuName: skuName,
+        offendingSkuName: item.skuName,
         requested: totalRequested,
-        available: sku.currentStock,
+        available: item.currentStock,
       }
     }
   }

@@ -228,8 +228,10 @@ export default async function KitDispatchDetailPage({
               initialGradewiseDistribution={mou.gradewiseDistribution ?? null}
               productSelection={productSelection}
               eligibleSkus={eligibleSkus.map((s) => ({
+                id: s.id,
                 skuName: s.skuName,
                 category: s.category,
+                cretileGrade: s.cretileGrade,
                 currentStock: s.currentStock,
               }))}
               editable={allocationEditable}

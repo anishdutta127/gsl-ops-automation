@@ -65,6 +65,7 @@ interface MouRow {
   draft_variables: Json
   dispatch_override: Json
   gradewise_distribution: Json
+  products: Json
   student_count_event_ids: Json
   audit_log: Json
 }
@@ -128,6 +129,7 @@ function rowToMou(r: MouRow): MOU {
     draftVariables: r.draft_variables ?? null,
     dispatchOverride: r.dispatch_override ?? undefined,
     gradewiseDistribution: r.gradewise_distribution ?? null,
+    products: r.products ?? null,
     studentCountEventIds: Array.isArray(r.student_count_event_ids)
       ? r.student_count_event_ids
       : [],
@@ -196,7 +198,7 @@ export const mouRepo = {
           notes, delay_notes, days_to_expiry, sales_channel, school_crm_id,
           signed_mou_pdf_path, import_notes, product_selection,
           payment_schedule, payment_schedules, yearly_pricing, billing_block,
-          draft_variables, dispatch_override, gradewise_distribution,
+          draft_variables, dispatch_override, gradewise_distribution, products,
           student_count_event_ids, audit_log
         ) VALUES (
           ${m.id}, ${m.schoolId}, ${m.schoolName}, ${m.programme}, ${m.programmeSubType ?? null},
@@ -214,6 +216,7 @@ export const mouRepo = {
           ${m.draftVariables == null ? null : sql.json(m.draftVariables as never)}::jsonb,
           ${m.dispatchOverride == null ? null : sql.json(m.dispatchOverride as never)}::jsonb,
           ${m.gradewiseDistribution == null ? null : sql.json(m.gradewiseDistribution as never)}::jsonb,
+          ${m.products == null ? null : sql.json(m.products as never)}::jsonb,
           ${sql.json((m.studentCountEventIds ?? []) as never)}::jsonb,
           ${sql.json((m.auditLog ?? []) as never)}::jsonb
         ) ON CONFLICT (id) DO NOTHING
@@ -276,6 +279,7 @@ export const mouRepo = {
           draft_variables = ${m.draftVariables == null ? null : sql.json(m.draftVariables as never)}::jsonb,
           dispatch_override = ${m.dispatchOverride == null ? null : sql.json(m.dispatchOverride as never)}::jsonb,
           gradewise_distribution = ${m.gradewiseDistribution == null ? null : sql.json(m.gradewiseDistribution as never)}::jsonb,
+          products = ${m.products == null ? null : sql.json(m.products as never)}::jsonb,
           student_count_event_ids = ${sql.json((m.studentCountEventIds ?? []) as never)}::jsonb,
           audit_log = ${sql.json((m.auditLog ?? []) as never)}::jsonb
         WHERE id = ${m.id}
@@ -320,7 +324,7 @@ export const mouRepo = {
       const JSONB_COLS = new Set([
         'payment_schedule', 'payment_schedules', 'yearly_pricing',
         'billing_block', 'draft_variables', 'dispatch_override',
-        'gradewise_distribution', 'student_count_event_ids',
+        'gradewise_distribution', 'products', 'student_count_event_ids',
       ])
       const CAMEL_TO_SNAKE: Record<string, string> = {
         schoolId: 'school_id', schoolName: 'school_name', programme: 'programme',
@@ -341,7 +345,7 @@ export const mouRepo = {
         paymentSchedule: 'payment_schedule', paymentSchedules: 'payment_schedules',
         yearlyPricing: 'yearly_pricing', billingBlock: 'billing_block',
         draftVariables: 'draft_variables', dispatchOverride: 'dispatch_override',
-        gradewiseDistribution: 'gradewise_distribution',
+        gradewiseDistribution: 'gradewise_distribution', products: 'products',
         studentCountEventIds: 'student_count_event_ids',
       }
       const TIMESTAMP_COLS = new Set([
