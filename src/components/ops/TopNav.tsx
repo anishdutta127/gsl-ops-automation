@@ -50,7 +50,7 @@ export async function TopNav(_props: TopNavProps = {}) {
         <div className="flex w-full items-center gap-1 px-2 sm:px-4">
           <SidebarMobile department={department} />
           <Link
-            href="/"
+            href="/work"
             data-testid="topnav-wordmark"
             aria-label="GSL Ops home"
             className="flex shrink-0 items-center gap-1.5 px-2 font-heading text-lg font-bold text-white focus:outline-none focus:ring-2 focus:ring-brand-teal"

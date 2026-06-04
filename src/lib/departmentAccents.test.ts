@@ -35,35 +35,36 @@ describe('departmentAccents: dashboardPathForDepartment (Phase 1 role-aware land
   // Phase 1 platform redesign: department sets the default landing (it
   // does NOT hide sections). Finance -> Finance workspace, Ops -> Ops
   // workspace, sales + null (cross-functional Admin / Leadership) -> Home.
-  it('routes finance to the Finance workspace', () => {
+  // Step 4 (2026-06-05): roles land on their Step-3 /work priority board.
+  it('routes finance to the Finance work board', () => {
     expect(
       dashboardPathForDepartment({ department: 'finance', role: 'Admin' }),
-    ).toBe('/finance')
+    ).toBe('/work/finance')
   })
 
-  it('routes ops to the Operations workspace', () => {
+  it('routes ops to the Ops work board', () => {
     expect(dashboardPathForDepartment({ department: 'ops', role: 'Admin' })).toBe(
-      '/operations',
+      '/work/ops',
     )
   })
 
-  it('routes sales to Home (no dedicated workspace yet)', () => {
-    expect(dashboardPathForDepartment({ department: 'sales', role: 'Admin' })).toBe('/')
+  it('routes sales to the admin oversight board (no dedicated workspace yet)', () => {
+    expect(dashboardPathForDepartment({ department: 'sales', role: 'Admin' })).toBe('/work/admin')
   })
 
-  it('routes Leadership (department null) to Home', () => {
+  it('routes Leadership (department null) to the admin oversight board', () => {
     expect(
       dashboardPathForDepartment({ department: null, role: 'Leadership' }),
-    ).toBe('/')
+    ).toBe('/work/admin')
   })
 
-  it('routes Admin (department null) to Home', () => {
-    expect(dashboardPathForDepartment({ department: null, role: 'Admin' })).toBe('/')
+  it('routes Admin (department null) to the admin oversight board', () => {
+    expect(dashboardPathForDepartment({ department: null, role: 'Admin' })).toBe('/work/admin')
   })
 
-  it('routes other roles with department null to Home', () => {
+  it('routes other roles with department null to the admin oversight board', () => {
     expect(
       dashboardPathForDepartment({ department: null, role: 'SalesRep' }),
-    ).toBe('/')
+    ).toBe('/work/admin')
   })
 })

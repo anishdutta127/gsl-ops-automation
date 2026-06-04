@@ -129,13 +129,17 @@ export function dashboardPathForDepartment(args: {
   department: Department
   role: 'Admin' | 'Leadership' | string
 }): string {
+  // Step 4 (2026-06-05): land each role on its Step-3 /work priority board
+  // (the new daily front door). /work itself also role-routes, so these are
+  // the resolved targets.
   switch (args.department) {
     case 'finance':
-      return '/finance'
+      return '/work/finance'
     case 'ops':
-      return '/operations'
+      return '/work/ops'
     default:
-      // sales (no workspace yet) and null (cross-functional) land on Home.
-      return '/'
+      // sales (no workspace yet) and null (cross-functional Admin/Leadership)
+      // land on the /work admin oversight board.
+      return '/work/admin'
   }
 }

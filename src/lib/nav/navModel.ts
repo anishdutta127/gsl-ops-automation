@@ -51,7 +51,11 @@ export const NAV_ZONES: NavZone[] = [
     label: 'Watch',
     testId: 'nav-zone-watch',
     items: [
-      { href: '/', label: 'Home', testId: 'nav-home', exact: true },
+      // Step 4 (2026-06-05): Home is the role-scoped daily landing - /work
+      // routes Finance/Ops/Admin to their Step-3 priority board. Highlights
+      // on /work and the /work/* boards (longest-match keeps the board items
+      // active when on them).
+      { href: '/work', label: 'Home', testId: 'nav-home' },
       {
         href: '/dashboard/leadership',
         label: 'Pulse',
@@ -81,13 +85,11 @@ export const NAV_ZONES: NavZone[] = [
     testId: 'nav-zone-finance',
     department: 'finance',
     items: [
+      // Step 4: the Step-3 Finance priority board is now the focus queue.
       {
-        href: '/finance',
+        href: '/work/finance',
         label: 'My finance work',
         testId: 'nav-fin-home',
-        exact: true,
-        interimNote:
-          'Phase 2 builds the finance focus queue; for now this is the Finance workspace index.',
       },
       {
         href: '/finance/payments',
@@ -95,6 +97,12 @@ export const NAV_ZONES: NavZone[] = [
         testId: 'nav-fin-payments',
         interimNote:
           'Phase 2 consolidates the five payment-entry routes into one Payments surface.',
+      },
+      {
+        // Step 4: the Step-2 Ops->Finance dispatch handoff.
+        href: '/finance/dispatch-requests',
+        label: 'Dispatch requests',
+        testId: 'nav-fin-dispatch-requests',
       },
       {
         href: '/finance/pi/pending',
@@ -114,13 +122,17 @@ export const NAV_ZONES: NavZone[] = [
     testId: 'nav-zone-operations',
     department: 'ops',
     items: [
+      // Step 4: the Step-3 Ops priority board is now the focus queue.
       {
-        href: '/operations',
+        href: '/work/ops',
         label: 'My ops work',
         testId: 'nav-ops-home',
-        exact: true,
-        interimNote:
-          'Phase 4 builds the ops focus queue; for now this is the Operations workspace index.',
+      },
+      {
+        // Step 4: the Step-2 two-process review queue.
+        href: '/operations/review',
+        label: 'Review queue',
+        testId: 'nav-ops-review',
       },
       {
         href: '/dispatch/kits',
@@ -134,6 +146,18 @@ export const NAV_ZONES: NavZone[] = [
         testId: 'nav-ops-deliveries',
         interimNote:
           'Phase 4 builds a dedicated Deliveries surface; for now this is the dispatch summary with POD links.',
+      },
+      {
+        // Step 3: Welcome Note tracking.
+        href: '/operations/welcome',
+        label: 'Welcome notes',
+        testId: 'nav-ops-welcome',
+      },
+      {
+        // Step 3: Recce reports.
+        href: '/operations/recce',
+        label: 'Recce',
+        testId: 'nav-ops-recce',
       },
       { href: '/escalations', label: 'Escalations', testId: 'nav-ops-escalations' },
       {

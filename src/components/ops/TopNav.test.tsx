@@ -55,10 +55,10 @@ async function renderNav(path = '/'): Promise<string> {
 }
 
 describe('TopNav shell: top utility bar', () => {
-  it('renders the GSL Ops wordmark linking to /', async () => {
+  it('renders the GSL Ops wordmark linking to /work', async () => {
     getCurrentUserMock.mockResolvedValue(makeUser())
     const html = await renderNav()
-    expect(html).toMatch(/data-testid="topnav-wordmark"[^>]*href="\/"/)
+    expect(html).toMatch(/data-testid="topnav-wordmark"[^>]*href="\/work"/)
     expect(html).toContain('GSL Ops')
   })
 
@@ -124,12 +124,20 @@ describe('TopNav shell: left-nav zones and items', () => {
   it('points work + records items at existing routes', async () => {
     getCurrentUserMock.mockResolvedValue(makeUser())
     const html = await renderNav()
+    // Step 4: Finance/Ops home items point at the Step-3 /work boards; the
+    // Step-2/3 surfaces (review queue, dispatch requests, welcome, recce)
+    // are now nav-reachable.
     for (const href of [
-      '/finance',
+      '/work',
+      '/work/finance',
       '/finance/payments',
+      '/finance/dispatch-requests',
       '/finance/pi/pending',
-      '/operations',
+      '/work/ops',
+      '/operations/review',
       '/dispatch/kits',
+      '/operations/welcome',
+      '/operations/recce',
       '/operations/vex',
       '/mous',
       '/schools',

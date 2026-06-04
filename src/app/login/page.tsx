@@ -56,7 +56,8 @@ export default async function LoginPage({ searchParams }: PageProps) {
   if (token) {
     const session = await verifySessionToken(token)
     if (session) {
-      redirect(validatedNext ?? '/')
+      // Step 4: /work is the role-scoped daily landing.
+      redirect(validatedNext ?? '/work')
     }
   }
 
