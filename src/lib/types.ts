@@ -2272,3 +2272,36 @@ export interface StageResponsibility {
   version?: number
 }
 
+
+/**
+ * Step 3 (2026-06-05): Welcome Note tracking. Ops triggers a templated
+ * welcome note to the school after Finance enters the MOU; the system
+ * tracks sent-vs-pending. One per MOU. Recorded-status only - no real
+ * email send infra exists yet (see RUNBOOK / follow-up).
+ */
+export interface WelcomeNote {
+  mouId: string
+  schoolId: string | null
+  noteText: string
+  status: 'pending' | 'sent'
+  sentAt: string | null
+  sentBy: string | null
+  updatedAt: string | null
+  auditLog: AuditEntry[]
+}
+
+/**
+ * Step 3 (2026-06-05): Recce report. A per-school record of lab
+ * facilities/requirements (what the school has or is missing).
+ * Record-keeping only, not a workflow. Multiple per school allowed.
+ */
+export interface RecceReport {
+  id: string
+  schoolId: string
+  mouId: string | null
+  requirements: string
+  status: 'draft' | 'recorded'
+  createdBy: string | null
+  createdAt: string | null
+  auditLog: AuditEntry[]
+}
