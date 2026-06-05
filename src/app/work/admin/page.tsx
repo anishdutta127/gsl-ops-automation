@@ -33,7 +33,7 @@ function TileRow({ tiles, basePath, label }: { tiles: QueueTile[]; basePath: str
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         {tiles.map((t) => (
           <Link key={t.key} href={`${basePath}?tile=${encodeURIComponent(t.key)}`}
-            className="flex flex-col rounded-lg border border-border bg-card p-4 hover:shadow-sm"
+            className="gsl-interactive flex flex-col rounded-lg border border-border bg-card p-4"
             data-testid={`admin-tile-${label.toLowerCase()}-${t.key}`}>
             <span className={'text-3xl font-semibold ' + COUNT_TONE[t.tone]}>{t.count}</span>
             <span className="mt-1 text-sm font-medium text-brand-navy">{t.label}</span>

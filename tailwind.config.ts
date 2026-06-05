@@ -33,8 +33,9 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        heading: ['var(--font-montserrat)', 'sans-serif'],
-        sans: ['var(--font-open-sans)', 'sans-serif'],
+        // Step 5: Roboto is the GSL brand primary for both headings + body.
+        heading: ['var(--font-roboto)', 'sans-serif'],
+        sans: ['var(--font-roboto)', 'sans-serif'],
       },
       colors: {
         // shadcn theme tokens
@@ -76,6 +77,10 @@ const config: Config = {
         brand: {
           teal: 'var(--brand-teal)',
           navy: 'var(--brand-navy)',
+          // Step 5 secondary palette (60/30/10). Fills / accents / tints only.
+          orange: 'var(--brand-orange)',
+          fuchsia: 'var(--brand-fuchsia)',
+          sky: 'var(--brand-sky)',
         },
 
         // Semantic signal palette (DESIGN.md Semantic signal palette)

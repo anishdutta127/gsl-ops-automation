@@ -96,7 +96,7 @@ export function SyncFreshnessTile({
       <div className="mt-2 flex items-baseline gap-2">
         <span
           className="text-3xl font-bold text-[var(--brand-navy)]"
-          style={{ fontFamily: 'var(--font-montserrat), sans-serif' }}
+          style={{ fontFamily: 'var(--font-roboto), sans-serif' }}
         >
           {primary}
         </span>

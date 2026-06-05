@@ -111,7 +111,7 @@ export function TriggerTile({
       <div className={cn('mt-1 flex items-center gap-2', STATUS_TEXT[status])}>
         <span
           className="text-2xl font-bold"
-          style={{ fontFamily: 'var(--font-montserrat), sans-serif' }}
+          style={{ fontFamily: 'var(--font-roboto), sans-serif' }}
         >
           {primary}
         </span>

@@ -20,8 +20,8 @@ import type { Department } from '@/lib/types'
 import { NAV_ZONES, activeTestId } from '@/lib/nav/navModel'
 
 const DEPT_DOT: Record<string, string> = {
-  finance: 'bg-violet-500',
-  ops: 'bg-orange-500',
+  finance: 'bg-brand-teal',
+  ops: 'bg-brand-orange',
 }
 
 interface SidebarMobileProps {
@@ -101,10 +101,10 @@ export function SidebarMobile({ department }: SidebarMobileProps) {
                           data-active={isActive ? 'true' : 'false'}
                           onClick={() => setOpen(false)}
                           className={
-                            'flex min-h-11 items-center gap-2 rounded-md border-l-2 px-3 text-base focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy ' +
+                            'flex min-h-11 items-center gap-2 rounded-md border-l-2 px-3 text-base transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy ' +
                             (isActive
-                              ? 'border-brand-teal bg-brand-navy/5 font-semibold text-brand-navy'
-                              : 'border-transparent font-medium text-slate-700 hover:bg-slate-100')
+                              ? 'border-brand-teal bg-brand-sky/30 font-semibold text-brand-navy'
+                              : 'border-transparent font-medium text-slate-700 hover:border-brand-teal/40 hover:bg-brand-sky/25 hover:text-brand-navy')
                           }
                         >
                           {item.label}

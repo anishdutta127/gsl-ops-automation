@@ -21,9 +21,10 @@ import { HelpCircle } from 'lucide-react'
 import type { Department } from '@/lib/types'
 import { NAV_ZONES, activeTestId } from '@/lib/nav/navModel'
 
+// Step 5: on-brand department orientation dots (was an off-brand violet).
 const DEPT_DOT: Record<string, string> = {
-  finance: 'bg-violet-500',
-  ops: 'bg-orange-500',
+  finance: 'bg-brand-teal',
+  ops: 'bg-brand-orange',
 }
 
 interface SidebarDesktopProps {
@@ -68,10 +69,10 @@ export function SidebarDesktop({ department }: SidebarDesktopProps) {
                       data-testid={item.testId}
                       data-active={isActive ? 'true' : 'false'}
                       className={
-                        'flex min-h-11 items-center gap-2 rounded-md border-l-2 px-3 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy ' +
+                        'flex min-h-11 items-center gap-2 rounded-md border-l-2 px-3 text-sm transition-colors duration-150 ease-[var(--ease-out)] focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy ' +
                         (isActive
-                          ? 'border-brand-teal bg-brand-navy/5 font-semibold text-brand-navy'
-                          : 'border-transparent font-medium text-slate-700 hover:bg-slate-100')
+                          ? 'border-brand-teal bg-brand-sky/30 font-semibold text-brand-navy'
+                          : 'border-transparent font-medium text-slate-700 hover:border-brand-teal/40 hover:bg-brand-sky/25 hover:text-brand-navy')
                       }
                     >
                       {item.label}
@@ -87,7 +88,7 @@ export function SidebarDesktop({ department }: SidebarDesktopProps) {
         <Link
           href="/help"
           data-testid="nav-help"
-          className="flex min-h-11 items-center gap-2 rounded-md px-3 text-sm font-medium text-slate-700 hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
+          className="flex min-h-11 items-center gap-2 rounded-md px-3 text-sm font-medium text-slate-700 transition-colors duration-150 hover:bg-brand-sky/25 hover:text-brand-navy focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
         >
           <HelpCircle aria-hidden className="size-4" />
           Help

@@ -8,19 +8,22 @@
 import Link from 'next/link'
 import type { QueueTile, TileTone } from '@/lib/dashboard/roleQueues'
 
-const TONE_RING: Record<TileTone, string> = {
-  alert: 'border-signal-alert/40',
-  attention: 'border-amber-300',
-  navy: 'border-brand-navy/30',
-  neutral: 'border-border',
-  ok: 'border-emerald-300',
+// Step 5 (60/30/10): a coloured left accent bar carries the tone; the
+// card stays calm white. Orange Peel = attention/due (the brand secondary),
+// teal = ready/ok, navy = primary, alert red reserved for true alerts.
+const TONE_ACCENT: Record<TileTone, string> = {
+  alert: 'border-l-signal-alert',
+  attention: 'border-l-brand-orange',
+  navy: 'border-l-brand-navy',
+  neutral: 'border-l-slate-300',
+  ok: 'border-l-brand-teal',
 }
 const TONE_COUNT: Record<TileTone, string> = {
   alert: 'text-signal-alert',
-  attention: 'text-amber-700',
+  attention: 'text-brand-navy',
   navy: 'text-brand-navy',
   neutral: 'text-slate-600',
-  ok: 'text-emerald-700',
+  ok: 'text-brand-navy',
 }
 
 export function RoleQueueBoard({
@@ -47,12 +50,12 @@ export function RoleQueueBoard({
               data-active={isActive ? 'true' : 'false'}
               aria-current={isActive ? 'true' : undefined}
               className={
-                'flex flex-col rounded-lg border bg-card p-4 transition hover:shadow-sm '
-                + (isActive ? 'ring-2 ring-brand-navy ' : '')
-                + TONE_RING[t.tone]
+                'gsl-interactive flex flex-col rounded-lg border border-l-[3px] border-border bg-card p-4 '
+                + TONE_ACCENT[t.tone] + ' '
+                + (isActive ? 'ring-2 ring-brand-navy bg-brand-sky/25 ' : '')
               }
             >
-              <span className={'text-3xl font-semibold ' + TONE_COUNT[t.tone]} data-testid={`tile-count-${t.key}`}>
+              <span className={'text-3xl font-semibold tabular-nums ' + TONE_COUNT[t.tone]} data-testid={`tile-count-${t.key}`}>
                 {t.count}
               </span>
               <span className="mt-1 text-sm font-medium text-brand-navy">{t.label}</span>
@@ -63,7 +66,9 @@ export function RoleQueueBoard({
       </div>
 
       {active && (
-        <section className="rounded-lg border border-border bg-card" data-testid="queue-list">
+        // key on the active tile so switching tiles remounts the region and
+        // replays the opacity-only fade (no transform -> no CLS).
+        <section key={active.key} className="gsl-fade-in rounded-lg border border-border bg-card" data-testid="queue-list">
           <header className="flex items-center justify-between border-b border-border px-4 py-3">
             <h2 className="font-heading text-sm font-semibold text-brand-navy">
               {active.label} <span className="ml-1 text-slate-400">({active.count})</span>
@@ -78,7 +83,7 @@ export function RoleQueueBoard({
             <ul className="divide-y divide-border/70">
               {active.items.map((it) => (
                 <li key={it.mouId + it.href}>
-                  <Link href={it.href} className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-muted/40" data-testid={`queue-row-${it.mouId}`}>
+                  <Link href={it.href} className="gsl-row flex items-center gap-3 px-4 py-2.5 text-sm" data-testid={`queue-row-${it.mouId}`}>
                     <span className="min-w-0 flex-1 truncate font-medium text-brand-navy">{it.schoolName}</span>
                     <span className="hidden shrink-0 text-xs text-slate-500 sm:inline">{it.programme} · {it.academicYear}</span>
                     <span className="shrink-0 text-xs text-slate-600">{it.meta}</span>

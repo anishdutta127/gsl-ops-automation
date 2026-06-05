@@ -61,7 +61,7 @@
   height: 48px;
   background: var(--brand-navy);
   color: #ffffff;
-  font-family: var(--font-open-sans), sans-serif;
+  font-family: var(--font-roboto), sans-serif;
   font-size: 16px;
   display: flex;
   align-items: center;
@@ -95,8 +95,8 @@
 
 @layer base {
   .theme {
-    --font-heading: var(--font-montserrat);
-    --font-sans: var(--font-open-sans);
+    --font-heading: var(--font-roboto);
+    --font-sans: var(--font-roboto);
   }
   :root {
     /* GSL Ops brand tokens (DESIGN.md "Brand palette") */
@@ -108,6 +108,25 @@
     --signal-attention: #F59E0B;
     --signal-alert: #DC2626;
     --signal-neutral: #64748B;
+
+    /* GSL brand secondary palette (Step 5, 60/30/10). Used as FILLS,
+     * ACCENT BARS, HOVER TINTS and DOTS with navy/dark text on top - never
+     * as text-on-white (Orange/Fuchsia fail AA as small text on white).
+     * signal-attention is deliberately left untouched to protect existing
+     * contrast + the axe-core baseline. */
+    --brand-orange: #FFAD40;  /* Orange Peel - attention/due accents */
+    --brand-fuchsia: #DE00A5; /* Fashion Fuchsia - rare high-signal accent/dot */
+    --brand-sky: #C3F8FF;     /* Light Sky - hover/selected tints, info surfaces */
+
+    /* Step 5 motion tokens. Strong custom ease-out (emil); UI animations
+     * stay under 200ms. transform/opacity/colour only - GPU-compositable,
+     * never layout-triggering. Honoured app-wide via prefers-reduced-motion
+     * (see the reduce block below). */
+    --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+    --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+    --dur-press: 140ms;
+    --dur-hover: 150ms;
+    --dur-fade: 120ms;
 
     /* shadcn theme variables, mapped to GSL brand where DESIGN.md prescribes */
     --background: #ffffff;
@@ -184,5 +203,84 @@
   }
   html {
     @apply font-sans;
+  }
+}
+
+/*
+ * Step 5 micro-interactions. GPU-compositable only: every animation here
+ * touches transform / opacity / colour - never width/height/top/margin -
+ * so there is no layout work and no CLS. Durations stay under 200ms. All
+ * of it is disabled by the prefers-reduced-motion block at the foot of
+ * this file. Designed for a daily-use tool: subtle feedback, never a
+ * flourish that becomes friction on the 40th open.
+ */
+@layer utilities {
+  /* Tiles / cards that lift slightly on hover and depress on press. */
+  .gsl-interactive {
+    transition:
+      transform var(--dur-hover) var(--ease-out),
+      box-shadow var(--dur-hover) var(--ease-out),
+      background-color var(--dur-hover) ease,
+      border-color var(--dur-hover) ease;
+  }
+  .gsl-interactive:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px -6px color-mix(in oklab, var(--brand-navy) 35%, transparent);
+  }
+  .gsl-interactive:active {
+    transform: scale(0.985);
+  }
+
+  /* List rows: colour-only hover with a teal left marker that slides in. */
+  .gsl-row {
+    box-shadow: inset 2px 0 0 0 transparent;
+    transition:
+      background-color var(--dur-hover) ease,
+      box-shadow var(--dur-hover) var(--ease-out);
+  }
+  .gsl-row:hover {
+    background-color: color-mix(in oklab, var(--brand-sky) 45%, transparent);
+    box-shadow: inset 2px 0 0 0 var(--brand-teal);
+  }
+
+  /* Nav items: same teal marker idiom, scoped via data-active for the
+   * current route (the active marker is persistent, not animated in). */
+  .gsl-nav-item {
+    box-shadow: inset 2px 0 0 0 transparent;
+    transition:
+      background-color var(--dur-hover) ease,
+      box-shadow var(--dur-hover) var(--ease-out),
+      color var(--dur-hover) ease;
+  }
+  .gsl-nav-item:hover {
+    background-color: color-mix(in oklab, var(--brand-sky) 40%, transparent);
+    box-shadow: inset 2px 0 0 0 var(--brand-teal);
+  }
+
+  /* Opacity-only fade for freshly server-rendered list regions (e.g. the
+   * dashboard list after a tile filter). No transform -> zero CLS risk. */
+  @keyframes gsl-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  .gsl-fade-in {
+    animation: gsl-fade-in var(--dur-fade) var(--ease-out);
+  }
+}
+
+/*
+ * Accessibility: honour the user's reduced-motion preference globally.
+ * Collapses every transition + animation (including the utilities above
+ * and tw-animate-css) to effectively instant. Performance is preserved;
+ * vestibular comfort is respected.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

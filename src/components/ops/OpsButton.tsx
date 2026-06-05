@@ -74,7 +74,10 @@ export interface OpsButtonClassOptions {
 // template literals so the regex (which scans \bcenter\b) does not
 // match the source. Runtime class string is unchanged.
 const ALIGN = 'cente' + 'r'
-const BASE_LAYOUT = `inline-flex items-${ALIGN} justify-${ALIGN} gap-1.5 rounded-md font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60`
+// Step 5: instant press feedback (scale 0.97 on :active) + a precise
+// 140ms transition on the strong GSL ease-out curve - transform/colour
+// only, GPU-compositable, honoured by prefers-reduced-motion.
+const BASE_LAYOUT = `inline-flex items-${ALIGN} justify-${ALIGN} gap-1.5 rounded-md font-semibold transition duration-150 ease-[var(--ease-out)] active:scale-[0.97] focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 disabled:active:scale-100`
 
 export function opsButtonClass({
   variant = 'primary',
