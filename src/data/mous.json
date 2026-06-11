@@ -137,13 +137,15 @@
     "schoolId": "SCH-LORETO_HOUSE_KOLKATA",
     "schoolName": "Loreto House - Kolkata",
     "programme": "STEAM",
-    "programmeSubType": null,
     "schoolScope": "SINGLE",
     "schoolGroupId": null,
     "status": "Active",
+    "cohortStatus": "active",
     "academicYear": "2025-26",
+    "effectiveDate": null,
     "startDate": "2025-04-01",
     "endDate": "2026-03-31",
+    "numberOfYears": null,
     "studentsMou": 500,
     "studentsActual": 608,
     "studentsVariance": 108,
@@ -155,62 +157,82 @@
     "tds": 147000,
     "balance": 0,
     "receivedPct": 91.5,
-    "paymentSchedule": "25-25-25-25 quarterly",
     "trainerModel": null,
-    "salesPersonId": null,
-    "templateVersion": null,
-    "generatedAt": null,
-    "notes": null,
+    "salesPersonId": "",
+    "templateVersion": "",
+    "generatedAt": "",
+    "notes": "",
+    "delayNotes": null,
     "daysToExpiry": -21,
+    "salesChannel": null,
+    "schoolCrmId": null,
+    "signedMouPdfPath": null,
+    "importNotes": null,
+    "productSelection": "TinkRworks",
+    "paymentSchedule": "25-25-25-25 quarterly",
+    "paymentSchedules": null,
+    "yearlyPricing": null,
+    "billingBlock": null,
+    "draftVariables": null,
+    "gradewiseDistribution": null,
+    "studentCountEventIds": [],
     "auditLog": [
       {
-        "timestamp": "2026-04-27T12:00:00.000Z",
         "user": "system",
+        "notes": "Imported from gsl-mou-system; auto-linked to school SCH-LORETO_HOUSE_KOLKATA.",
         "action": "auto-link-exact-match",
-        "notes": "Imported from gsl-mou-system; auto-linked to school SCH-LORETO_HOUSE_KOLKATA."
+        "timestamp": "2026-04-27T12:00:00.000Z"
       },
       {
-        "timestamp": "2026-04-27T18:01:00.000Z",
         "user": "system-w4-a-2",
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive.",
         "action": "mou-cohort-status-changed",
         "before": {
           "cohortStatus": null
         },
-        "after": {
-          "cohortStatus": "archived"
-        },
-        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
+        "timestamp": "2026-04-27T18:01:00.000Z"
       },
       {
-        "timestamp": "2026-04-28T15:30:00.000Z",
         "user": "system-pre-w4d",
-        "action": "dispatch-backfilled-from-mastersheet",
         "after": {
-          "dispatchId": "DIS-BF-TWs-r5",
           "sheet": "TWs",
           "rowNumber": 5,
+          "confidence": "high",
+          "dispatchId": "DIS-BF-TWs-r5",
           "lineItemCount": 7,
-          "totalQuantity": 81,
-          "confidence": "high"
+          "totalQuantity": 81
         },
-        "notes": "Mastersheet backfill landed historical delivery (TWs row 5)."
+        "notes": "Mastersheet backfill landed historical delivery (TWs row 5).",
+        "action": "dispatch-backfilled-from-mastersheet",
+        "timestamp": "2026-04-28T15:30:00.000Z"
       },
       {
-        "timestamp": "2026-05-21T08:35:59.338Z",
         "user": "system",
+        "after": {
+          "productSelection": "TinkRworks"
+        },
+        "notes": "Phase 6E Finding 1: inferred productSelection=TinkRworks from existing dispatch lineItems via inventory_items.category mapping.",
         "action": "product-selection-backfill-phase-6e",
         "before": {
           "productSelection": null
         },
-        "after": {
-          "productSelection": "TinkRworks"
+        "timestamp": "2026-05-21T08:35:59.338Z"
+      },
+      {
+        "timestamp": "2026-05-30T05:57:09.082Z",
+        "user": "pranav.b",
+        "action": "mou-cohort-status-changed",
+        "before": {
+          "cohortStatus": "archived"
         },
-        "notes": "Phase 6E Finding 1: inferred productSelection=TinkRworks from existing dispatch lineItems via inventory_items.category mapping."
+        "after": {
+          "cohortStatus": "active"
+        }
       }
-    ],
-    "cohortStatus": "archived",
-    "delayNotes": null,
-    "productSelection": "TinkRworks"
+    ]
   },
   {
     "id": "MOU-STEAM-2526-005",
@@ -1229,53 +1251,76 @@
     "schoolId": "SCH-BERHAMPORE_CITY_PUBL",
     "schoolName": "Berhampore City Public School",
     "programme": "STEAM",
-    "programmeSubType": null,
     "schoolScope": "SINGLE",
     "schoolGroupId": null,
     "status": "Active",
+    "cohortStatus": "active",
     "academicYear": "2025-26",
+    "effectiveDate": null,
     "startDate": "2025-04-01",
     "endDate": "2026-03-31",
+    "numberOfYears": null,
     "studentsMou": 200,
     "studentsActual": 183,
     "studentsVariance": -17,
     "studentsVariancePct": -0.085,
-    "spWithoutTax": 1016.94915254237,
+    "spWithoutTax": 1016.95,
     "spWithTax": 1200,
     "contractValue": 219600,
     "received": 109600,
     "tds": 0,
     "balance": 110000,
     "receivedPct": 49.9,
-    "paymentSchedule": "50-50 half-yearly",
     "trainerModel": null,
-    "salesPersonId": null,
-    "templateVersion": null,
-    "generatedAt": null,
-    "notes": null,
+    "salesPersonId": "",
+    "templateVersion": "",
+    "generatedAt": "",
+    "notes": "",
+    "delayNotes": null,
     "daysToExpiry": -21,
+    "salesChannel": null,
+    "schoolCrmId": null,
+    "signedMouPdfPath": null,
+    "importNotes": null,
+    "productSelection": null,
+    "paymentSchedule": "50-50 half-yearly",
+    "paymentSchedules": null,
+    "yearlyPricing": null,
+    "billingBlock": null,
+    "draftVariables": null,
+    "gradewiseDistribution": null,
+    "studentCountEventIds": [],
     "auditLog": [
       {
-        "timestamp": "2026-04-27T12:00:00.000Z",
         "user": "system",
+        "notes": "Imported from gsl-mou-system; auto-linked to school SCH-BERHAMPORE_CITY_PUBL.",
         "action": "auto-link-exact-match",
-        "notes": "Imported from gsl-mou-system; auto-linked to school SCH-BERHAMPORE_CITY_PUBL."
+        "timestamp": "2026-04-27T12:00:00.000Z"
       },
       {
-        "timestamp": "2026-04-27T18:01:00.000Z",
         "user": "system-w4-a-2",
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive.",
         "action": "mou-cohort-status-changed",
         "before": {
           "cohortStatus": null
         },
-        "after": {
+        "timestamp": "2026-04-27T18:01:00.000Z"
+      },
+      {
+        "timestamp": "2026-05-29T06:32:35.612Z",
+        "user": "anita.c",
+        "action": "mou-cohort-status-changed",
+        "before": {
           "cohortStatus": "archived"
         },
-        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
+        "after": {
+          "cohortStatus": "active"
+        }
       }
-    ],
-    "cohortStatus": "archived",
-    "delayNotes": null
+    ]
   },
   {
     "id": "MOU-STEAM-2526-020",
@@ -1865,13 +1910,15 @@
     "schoolId": "SCH-SUMANA_DUTTA_MEMORIA",
     "schoolName": "Sumana Dutta Memorial Vivekananda International School",
     "programme": "STEAM",
-    "programmeSubType": null,
     "schoolScope": "SINGLE",
     "schoolGroupId": null,
     "status": "Active",
+    "cohortStatus": "active",
     "academicYear": "2025-26",
+    "effectiveDate": null,
     "startDate": "2025-04-01",
     "endDate": "2026-03-31",
+    "numberOfYears": null,
     "studentsMou": 40,
     "studentsActual": 31,
     "studentsVariance": -9,
@@ -1883,35 +1930,56 @@
     "tds": 0,
     "balance": 18600,
     "receivedPct": 50,
-    "paymentSchedule": "50-50 half-yearly",
     "trainerModel": null,
-    "salesPersonId": null,
-    "templateVersion": null,
-    "generatedAt": null,
-    "notes": null,
+    "salesPersonId": "",
+    "templateVersion": "",
+    "generatedAt": "",
+    "notes": "",
+    "delayNotes": null,
     "daysToExpiry": -21,
+    "salesChannel": null,
+    "schoolCrmId": null,
+    "signedMouPdfPath": null,
+    "importNotes": null,
+    "productSelection": null,
+    "paymentSchedule": "50-50 half-yearly",
+    "paymentSchedules": null,
+    "yearlyPricing": null,
+    "billingBlock": null,
+    "draftVariables": null,
+    "gradewiseDistribution": null,
+    "studentCountEventIds": [],
     "auditLog": [
       {
-        "timestamp": "2026-04-27T12:00:00.000Z",
         "user": "system",
+        "notes": "Imported from gsl-mou-system; auto-linked to school SCH-SUMANA_DUTTA_MEMORIA.",
         "action": "auto-link-exact-match",
-        "notes": "Imported from gsl-mou-system; auto-linked to school SCH-SUMANA_DUTTA_MEMORIA."
+        "timestamp": "2026-04-27T12:00:00.000Z"
       },
       {
-        "timestamp": "2026-04-27T18:01:00.000Z",
         "user": "system-w4-a-2",
+        "after": {
+          "cohortStatus": "archived"
+        },
+        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive.",
         "action": "mou-cohort-status-changed",
         "before": {
           "cohortStatus": null
         },
-        "after": {
+        "timestamp": "2026-04-27T18:01:00.000Z"
+      },
+      {
+        "timestamp": "2026-05-29T06:33:34.418Z",
+        "user": "anita.c",
+        "action": "mou-cohort-status-changed",
+        "before": {
           "cohortStatus": "archived"
         },
-        "notes": "W4-A.2 fixture migration: tagged as archived cohort. Pre-2627 academic year; historical archive."
+        "after": {
+          "cohortStatus": "active"
+        }
       }
-    ],
-    "cohortStatus": "archived",
-    "delayNotes": null
+    ]
   },
   {
     "id": "MOU-STEAM-2526-033",
@@ -10971,17 +11039,22 @@
   },
   {
     "id": "MOU-YP-2627-DRAFT-001",
-    "schoolId": "",
+    "schoolId": "SCH-PLACEHOLDER-DRAFT",
     "schoolName": "Gopi Birla Memorial School",
     "programme": "Young Pioneers",
+    "schoolScope": "SINGLE",
+    "schoolGroupId": null,
     "status": "Draft",
+    "cohortStatus": "active",
     "academicYear": "2026-27",
+    "effectiveDate": null,
     "startDate": "2026-04-01",
     "endDate": "2027-03-31",
+    "numberOfYears": 1,
     "studentsMou": 345,
-    "studentsActual": null,
-    "studentsVariance": null,
-    "studentsVariancePct": null,
+    "studentsActual": 345,
+    "studentsVariance": 0,
+    "studentsVariancePct": 0,
     "spWithoutTax": 2500,
     "spWithTax": 2500,
     "contractValue": 862500,
@@ -10989,42 +11062,19 @@
     "tds": 0,
     "balance": 862500,
     "receivedPct": 0,
-    "paymentSchedule": "Y1: 50%-50%",
     "trainerModel": "TTT",
-    "salesRep": null,
-    "notes": null,
-    "daysToExpiry": null,
-    "salesPersonId": null,
+    "salesPersonId": "",
     "templateVersion": "YP-v3",
-    "generatedAt": "2026-05-19T12:52:45.177Z",
-    "draftVariables": {
-      "SCHOOL_NAME": "Gopi Birla Memorial School",
-      "EFFECTIVE_DATE": "2026-04-27",
-      "START_DATE": "2026-04-01",
-      "END_DATE": "2027-03-31",
-      "STUDENT_COUNT": "345",
-      "PRICE_PER_STUDENT": "2500",
-      "BOOK_SET": "Beginners Level",
-      "_ANNEXURE_HTML": ""
-    },
-    "auditLog": [
-      {
-        "timestamp": "2026-05-19T12:52:24.565Z",
-        "user": "Anita C.",
-        "action": "create",
-        "notes": "Save draft via YP-v3"
-      },
-      {
-        "timestamp": "2026-05-19T12:52:45.177Z",
-        "user": "Anita C.",
-        "action": "update",
-        "notes": "Save draft via YP-v3"
-      }
-    ],
-    "effectiveDate": "2026-04-27",
-    "numberOfYears": 1,
-    "salesChannel": "School Programs (Course)",
+    "generatedAt": "2026-05-19",
+    "notes": "",
+    "delayNotes": null,
+    "daysToExpiry": null,
+    "salesChannel": null,
     "schoolCrmId": null,
+    "signedMouPdfPath": null,
+    "importNotes": null,
+    "productSelection": null,
+    "paymentSchedule": "Y1: 50%-50%",
     "paymentSchedules": [
       {
         "year": 1,
@@ -11043,29 +11093,69 @@
     "yearlyPricing": [
       {
         "year": 1,
-        "spWithoutTax": 2500,
-        "spWithTax": 2500
+        "spWithTax": 2500,
+        "spWithoutTax": 2500
       }
     ],
     "billingBlock": {
-      "billingName": "Gopi Birla Memorial School",
-      "billingAddress": "68 Walkeshwar Road, Malabar Hill, Mumbai - 400006",
-      "billingCityState": "Mumbai",
-      "shipToName": "Gopi Birla Memorial School",
-      "shipToAddress": "68 Walkeshwar Road, Malabar Hill, Mumbai - 400006",
-      "shipToCityState": "Mumbai",
-      "schoolEmail": "birlagopi@gbmschool.co.in",
-      "contactPersonName": "Radhika Dave",
-      "designation": "Accountant",
-      "mobileNo": "7045491519",
-      "contactEmail": "accounts@gbmschool.co.in",
-      "schoolContactNo": "9326095647",
+      "gst": "",
       "pan": "AAATB0010B",
-      "gst": ""
+      "mobileNo": "7045491519",
+      "shipToName": "Gopi Birla Memorial School",
+      "billingName": "Gopi Birla Memorial School",
+      "designation": "Accountant",
+      "schoolEmail": "birlagopi@gbmschool.co.in",
+      "contactEmail": "accounts@gbmschool.co.in",
+      "shipToAddress": "68 Walkeshwar Road, Malabar Hill, Mumbai - 400006",
+      "billingAddress": "68 Walkeshwar Road, Malabar Hill, Mumbai - 400006",
+      "schoolContactNo": "9326095647",
+      "shipToCityState": "Mumbai",
+      "billingCityState": "Mumbai",
+      "contactPersonName": "Radhika Dave"
     },
-    "signedMouPdfPath": null,
-    "productSelection": null,
-    "gradewiseDistribution": null
+    "draftVariables": {
+      "BOOK_SET": "Beginners Level",
+      "END_DATE": "2027-03-31",
+      "START_DATE": "2026-04-01",
+      "SCHOOL_NAME": "Gopi Birla Memorial School",
+      "STUDENT_COUNT": "345",
+      "EFFECTIVE_DATE": "2026-04-27",
+      "_ANNEXURE_HTML": "",
+      "PRICE_PER_STUDENT": "2500"
+    },
+    "gradewiseDistribution": null,
+    "studentCountEventIds": [
+      "SCE-2026-0004"
+    ],
+    "auditLog": [
+      {
+        "user": "Anita C.",
+        "notes": "Save draft via YP-v3",
+        "action": "create",
+        "timestamp": "2026-05-19T12:52:24.565Z"
+      },
+      {
+        "user": "Anita C.",
+        "notes": "Save draft via YP-v3",
+        "action": "update",
+        "timestamp": "2026-05-19T12:52:45.177Z"
+      },
+      {
+        "timestamp": "2026-05-29T05:32:00.805Z",
+        "user": "pranav.b",
+        "action": "student-count-changed",
+        "before": {
+          "studentsActual": 0,
+          "count": 0
+        },
+        "after": {
+          "studentsActual": 345,
+          "count": 345,
+          "eventId": "SCE-2026-0004"
+        },
+        "notes": "Count change to 345: Actual students"
+      }
+    ]
   },
   {
     "id": "MOU-STEAM-2627-DRAFT-002",
