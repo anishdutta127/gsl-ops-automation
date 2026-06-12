@@ -1,11 +1,16 @@
 /*
- * /mous/upload (Step 2, Pranav Finance/Ops review).
+ * /mous/upload (Step 2, Pranav Finance/Ops review; reworked by the MOU
+ * form upgrade gate).
  *
- * The new PRIMARY MOU creation surface: Finance enters a SIGNED MOU -
- * pick the school, fill the core terms, upload the signed document, Save.
- * Posts to /api/mou/create-from-upload which creates an Active MOU and
- * stamps opsReviewStatus='Pending for review' for the Ops track. Replaces
- * the hidden draft wizard.
+ * The PRIMARY MOU creation surface: Finance enters a SIGNED MOU. School
+ * identity is free-text (name + address) with an optional link to an
+ * existing canonical school; core terms include the MOU duration
+ * (start + end), per-student sale price with a derived contract value,
+ * sales channel, and an instalment schedule that materialises Payment
+ * rows on save. The interactive form lives in AddMouForm (client);
+ * this server page hydrates the school list and renders redirect-path
+ * errors (login bounces, native-form fallbacks) including the real
+ * `detail` the API attaches.
  *
  * Permission: canEditFinanceData (Finance + Admin). Others are redirected.
  */
@@ -17,31 +22,32 @@ import { getCurrentUser } from '@/lib/auth/session'
 import { canEditFinanceData } from '@/lib/access'
 import { schoolRepo } from '@/lib/db/repos/school'
 import { getCurrentFinancialYear } from '@/lib/mou/yearMembership'
-
-const PROGRAMMES = ['STEAM', 'Young Pioneers', 'Harvard HBPE', 'Robotics'] as const
+import { AddMouForm } from './AddMouForm'
 
 const ERRORS: Record<string, string> = {
   permission: 'Only Finance and Admin can enter MOUs.',
   'invalid-form': 'The form payload was malformed. Retry.',
-  'missing-school': 'Select a school.',
+  'missing-school-name': 'Enter the school name.',
+  'missing-school-address': 'Enter the school address.',
   'school-not-found': 'That school was not found.',
   'invalid-programme': 'Select a valid programme.',
   'invalid-year': 'Enter the academic year as YYYY-YY (e.g. 2026-27).',
   'invalid-students': 'Enter a student count greater than zero.',
-  'invalid-price': 'Enter a price per student greater than zero.',
-  'invalid-date': 'Sign date must be YYYY-MM-DD.',
+  'invalid-price': 'Enter a sale price per student greater than zero.',
+  'missing-start-date': 'Enter the MOU start date.',
+  'missing-end-date': 'Enter the MOU end date.',
+  'date-order': 'The MOU end date must be on or after the start date.',
+  'invalid-date': 'Dates must be YYYY-MM-DD.',
+  'invalid-installments': 'Add at least one complete instalment row (due date and an amount greater than zero).',
+  'invalid-sales-channel': 'Select a valid sales channel.',
   'pdf-only': 'Only PDF files are accepted for the signed MOU.',
   'too-large': 'The signed PDF exceeds 10 MB.',
-  'save-failed': 'Failed to save the MOU. Retry.',
+  'save-failed': 'Failed to save the MOU.',
 }
 
 interface PageProps {
   searchParams: Promise<Record<string, string | string[] | undefined>>
 }
-
-const FIELD = 'block text-sm font-medium text-brand-navy'
-const INPUT =
-  'mt-1 w-full rounded-md border border-border bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-navy'
 
 export default async function UploadMouPage({ searchParams }: PageProps) {
   const sp = await searchParams
@@ -53,7 +59,16 @@ export default async function UploadMouPage({ searchParams }: PageProps) {
     .filter((s) => s.active !== false)
     .sort((a, b) => a.name.localeCompare(b.name))
   const currentFy = getCurrentFinancialYear()
+
+  // Redirect-path error rendering (native-form fallback, login bounce).
+  // The API attaches the real exception text as ?detail=, which the
+  // pre-gate page silently dropped; surface it so the operator and the
+  // person they escalate to see the actual cause, not a generic line.
   const errorKey = typeof sp.error === 'string' ? sp.error : null
+  const errorDetail = typeof sp.detail === 'string' ? sp.detail : null
+  const initialError = errorKey
+    ? [ERRORS[errorKey] ?? errorKey, errorDetail].filter(Boolean).join(' ')
+    : null
 
   return (
     <>
@@ -61,78 +76,15 @@ export default async function UploadMouPage({ searchParams }: PageProps) {
       <main id="main-content">
         <PageHeader
           title="Add MOU"
-          subtitle="Enter a signed MOU: pick the school, fill the terms, upload the signed document."
+          subtitle="Enter a signed MOU: school identity, core terms, instalment schedule, signed document."
           breadcrumb={[{ label: 'MOUs', href: '/mous' }, { label: 'Add MOU' }]}
         />
         <div className="mx-auto max-w-2xl px-4 py-6">
-          {errorKey && (
-            <div className="mb-4 rounded-md border border-signal-alert/40 bg-red-50 px-4 py-2.5 text-sm text-signal-alert" data-testid="upload-error">
-              {ERRORS[errorKey] ?? errorKey}
-            </div>
-          )}
-          <form
-            method="POST"
-            action="/api/mou/create-from-upload"
-            encType="multipart/form-data"
-            className="space-y-4 rounded-md border border-border bg-card p-5"
-            data-testid="add-mou-form"
-          >
-            <div>
-              <label htmlFor="schoolId" className={FIELD}>School</label>
-              <select id="schoolId" name="schoolId" required className={INPUT} data-testid="school-select" defaultValue="">
-                <option value="" disabled>: select a school :</option>
-                {schools.map((s) => (
-                  <option key={s.id} value={s.id}>{s.name}{s.city ? ` - ${s.city}` : ''}</option>
-                ))}
-              </select>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="programme" className={FIELD}>Programme</label>
-                <select id="programme" name="programme" required className={INPUT} defaultValue="STEAM">
-                  {PROGRAMMES.map((p) => <option key={p} value={p}>{p}</option>)}
-                </select>
-              </div>
-              <div>
-                <label htmlFor="academicYear" className={FIELD}>Academic year</label>
-                <input id="academicYear" name="academicYear" required defaultValue={currentFy} placeholder="2026-27" className={INPUT} />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="students" className={FIELD}>No. of students</label>
-                <input id="students" name="students" type="number" min={1} required className={INPUT} data-testid="students-input" />
-              </div>
-              <div>
-                <label htmlFor="pricePerStudent" className={FIELD}>Price per student (Rs)</label>
-                <input id="pricePerStudent" name="pricePerStudent" type="number" min={1} required className={INPUT} data-testid="price-input" />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="signDate" className={FIELD}>Sign date <span className="font-normal text-slate-500">(optional)</span></label>
-                <input id="signDate" name="signDate" type="date" className={INPUT} />
-              </div>
-              <div>
-                <label htmlFor="file" className={FIELD}>Signed MOU (PDF) <span className="font-normal text-slate-500">(optional)</span></label>
-                <input id="file" name="file" type="file" accept="application/pdf" className="mt-1 w-full text-sm" data-testid="file-input" />
-              </div>
-            </div>
-            <p className="text-xs text-slate-600">
-              Pricing is per student; products are assigned by Ops after entry.
-              On save, the MOU is created as <strong>Active</strong> and surfaces to
-              Ops as <strong>Pending for review</strong>.
-            </p>
-            <div className="flex items-center gap-3 pt-1">
-              <button
-                type="submit"
-                className="inline-flex min-h-11 items-center gap-2 rounded-md bg-brand-navy px-4 py-2 text-sm font-semibold text-white hover:bg-brand-navy/90"
-                data-testid="save-mou"
-              >
-                Save MOU
-              </button>
-            </div>
-          </form>
+          <AddMouForm
+            schools={schools.map((s) => ({ id: s.id, name: s.name, city: s.city }))}
+            defaultYear={currentFy}
+            initialError={initialError}
+          />
         </div>
       </main>
     </>

@@ -78,6 +78,17 @@ function num(v: string | number | null | undefined): number | null {
   return Number.isFinite(n) ? n : null
 }
 
+/**
+ * Outbound date binding guard. rowToMou's null fallback and several
+ * callers (create-from-upload, draftVariables-driven writers) carry ''
+ * for absent dates; postgres rejects '' on DATE / TIMESTAMPTZ columns
+ * (same failure class updatePartial's TIMESTAMP_COLS handling guards).
+ * Coerce empty strings to null before binding.
+ */
+function bindDate(v: string | null | undefined): string | null {
+  return v ? v : null
+}
+
 function dateStr(v: unknown): string | null {
   if (v === null || v === undefined) return null
   if (v instanceof Date) return v.toISOString().slice(0, 10)
@@ -205,7 +216,7 @@ export const mouRepo = {
         ) VALUES (
           ${m.id}, ${m.schoolId}, ${m.schoolName}, ${m.programme}, ${m.programmeSubType ?? null},
           ${m.schoolScope ?? 'SINGLE'}, ${m.schoolGroupId ?? null}, ${m.status}, ${m.cohortStatus ?? 'active'}, ${m.academicYear ?? null},
-          ${m.effectiveDate ?? null}, ${m.startDate ?? null}, ${m.endDate ?? null}, ${m.numberOfYears ?? null},
+          ${bindDate(m.effectiveDate)}, ${bindDate(m.startDate)}, ${bindDate(m.endDate)}, ${m.numberOfYears ?? null},
           ${m.studentsMou ?? null}, ${m.studentsActual ?? null}, ${m.studentsVariance ?? null}, ${m.studentsVariancePct ?? null},
           ${m.spWithoutTax ?? null}, ${m.spWithTax ?? null}, ${m.contractValue ?? null}, ${m.received ?? null}, ${m.tds ?? null}, ${m.balance ?? null}, ${m.receivedPct ?? null},
           ${m.trainerModel ?? null}, ${m.salesPersonId || null}, ${m.templateVersion || null}, ${m.generatedAt || null},
@@ -247,9 +258,9 @@ export const mouRepo = {
           status = ${m.status},
           cohort_status = ${m.cohortStatus ?? 'active'},
           academic_year = ${m.academicYear ?? null},
-          effective_date = ${m.effectiveDate ?? null},
-          start_date = ${m.startDate ?? null},
-          end_date = ${m.endDate ?? null},
+          effective_date = ${bindDate(m.effectiveDate)},
+          start_date = ${bindDate(m.startDate)},
+          end_date = ${bindDate(m.endDate)},
           number_of_years = ${m.numberOfYears ?? null},
           students_mou = ${m.studentsMou ?? null},
           students_actual = ${m.studentsActual ?? null},

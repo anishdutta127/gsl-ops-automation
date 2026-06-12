@@ -57,6 +57,7 @@ export type { TrainerModel } from '@/lib/types'
 export type SalesChannel =
   | 'School Programs (Course)'
   | 'Bootcamps'
+  | 'Workshop'
   | 'Partnerships - Govt Projects'
   | 'Others'
 

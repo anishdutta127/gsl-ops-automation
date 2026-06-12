@@ -52,3 +52,4 @@ ops-data/*.xlsx
 
 .vercel
 tmp/
+.gstack/

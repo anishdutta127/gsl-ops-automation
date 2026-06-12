@@ -235,3 +235,10 @@ The goal is enough context to make judgement calls without needing to ask, while
 Documents under `plans/` are the decision archive. They explain *why* a Phase 1 decision is the way it is. They are NOT implementation guides; once Phase 1 has landed, the code is the implementation guide and `plans/` answers historical questions only.
 
 Do not reference `plans/` line numbers in implementation code or docstrings; use code self-evidence and DESIGN.md cross-references instead. If you need to cite a plan in a code comment for context, name the section by title, not line number, so the reference survives plan edits.
+
+<!-- cc-brain-project:begin -->
+## Working memory (Obsidian vault), read first, persists across sessions
+@C:/Users/anish/obsidian/cc-brain/Projects/gsl-ops-automation/_index.md
+
+Memory protocol: read state.md before starting; append to decisions.md / learnings.md inline as you go; update state.md + write a session log at the end of every work batch.
+<!-- cc-brain-project:end -->

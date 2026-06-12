@@ -899,6 +899,10 @@ export default async function MouDetailPage({ params, searchParams }: PageProps)
                     value: `${formatDate(mou.startDate)} - ${formatDate(mou.endDate)}`,
                   },
                   {
+                    label: 'Sales channel',
+                    value: mou.salesChannel ?? 'not set',
+                  },
+                  {
                     label: 'Payment schedule',
                     value:
                       deriveScheduleSummary(installments, mou.contractValue, mou.paymentSchedule) ||

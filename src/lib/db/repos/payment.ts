@@ -155,9 +155,15 @@ export const paymentRepo = {
     return jsonPayments.filter((p) => p.status === status)
   },
 
-  async create(p: Payment, opts?: { queuedBy?: string }): Promise<void> {
+  async create(
+    p: Payment,
+    opts?: { queuedBy?: string; sql?: ReturnType<typeof getSql> },
+  ): Promise<void> {
     if (currentBackend() === 'postgres') {
-      const sql = getSql()
+      // opts.sql lets the caller pass a transaction-scoped client so a
+      // payment insert can be atomic with its parent MOU insert
+      // (create-from-upload instalment schedule). Mirrors mouRepo.create.
+      const sql = opts?.sql ?? getSql()
       await sql`
         INSERT INTO payments (
           id, mou_id, school_name, programme, instalment_label, instalment_seq,

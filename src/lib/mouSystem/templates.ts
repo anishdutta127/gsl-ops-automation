@@ -210,6 +210,7 @@ export function getTemplate(id: string): TemplateSpec | undefined {
 export const SALES_CHANNELS = [
   'School Programs (Course)',
   'Bootcamps',
+  'Workshop',
   'Partnerships - Govt Projects',
   'Others',
 ] as const

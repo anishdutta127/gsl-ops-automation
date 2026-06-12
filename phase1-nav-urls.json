@@ -1,0 +1,21 @@
+[
+  { "name": "01-home", "url": "/" },
+  { "name": "02-pulse-leadership", "url": "/dashboard/leadership" },
+  { "name": "03-pipeline-kanban", "url": "/kanban" },
+  { "name": "04-attention-exceptions", "url": "/dashboard/exceptions" },
+  { "name": "04b-reports", "url": "/reports" },
+  { "name": "05-fin-my-work", "url": "/finance" },
+  { "name": "06-fin-payments", "url": "/finance/payments" },
+  { "name": "07-fin-proforma", "url": "/finance/pi/pending" },
+  { "name": "08-fin-adjustments", "url": "/finance/adjustments" },
+  { "name": "09-fin-tally", "url": "/finance/tally-export" },
+  { "name": "10-ops-my-work", "url": "/operations" },
+  { "name": "11-ops-dispatch", "url": "/dispatch/kits" },
+  { "name": "12-ops-deliveries", "url": "/dispatch/kits/summary" },
+  { "name": "13-ops-escalations", "url": "/escalations" },
+  { "name": "14-ops-vex", "url": "/operations/vex" },
+  { "name": "15-records-mous", "url": "/mous" },
+  { "name": "16-records-schools", "url": "/schools" },
+  { "name": "17-admin", "url": "/admin" },
+  { "name": "18-help", "url": "/help" }
+]
