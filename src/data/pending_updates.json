@@ -1,1 +1,105 @@
-[]
+[
+  {
+    "id": "98b629e0-5f7a-4570-a64c-98f53b7fcdfc",
+    "queuedAt": "2026-06-22T09:39:52.840Z",
+    "queuedBy": "anita.c",
+    "entity": "mou",
+    "operation": "update",
+    "payload": {
+      "id": "MOU-STEAM-2627-085",
+      "schoolId": "SCH-TAKSHILAH_GLOBAL_SCHOO",
+      "schoolName": "Takshilah Global School - Vellore",
+      "programme": "STEAM",
+      "schoolScope": "SINGLE",
+      "schoolGroupId": null,
+      "status": "Active",
+      "cohortStatus": "active",
+      "academicYear": "2026-27",
+      "effectiveDate": "2026-04-01",
+      "startDate": "2026-04-01",
+      "endDate": "2028-03-31",
+      "numberOfYears": 1,
+      "studentsMou": 300,
+      "studentsActual": 224,
+      "studentsVariance": 0,
+      "studentsVariancePct": 0,
+      "spWithoutTax": 944,
+      "spWithTax": 944,
+      "contractValue": 283200,
+      "received": 0,
+      "tds": 0,
+      "balance": 283200,
+      "receivedPct": 0,
+      "trainerModel": null,
+      "salesPersonId": "",
+      "templateVersion": "",
+      "generatedAt": "2026-06-22",
+      "notes": "",
+      "delayNotes": null,
+      "daysToExpiry": null,
+      "salesChannel": "Others",
+      "schoolCrmId": null,
+      "signedMouPdfPath": null,
+      "importNotes": null,
+      "productSelection": null,
+      "opsReviewStatus": "Pending for review",
+      "paymentSchedule": "25-25-25-25",
+      "paymentSchedules": null,
+      "yearlyPricing": null,
+      "billingBlock": null,
+      "draftVariables": null,
+      "gradewiseDistribution": null,
+      "products": null,
+      "studentCountEventIds": [
+        "SCE-2026-0013"
+      ],
+      "auditLog": [
+        {
+          "user": "Anita C.",
+          "after": {
+            "id": "MOU-STEAM-2627-085",
+            "status": "Active",
+            "endDate": "2028-03-31",
+            "schoolId": "SCH-TAKSHILAH_GLOBAL_SCHOO",
+            "spWithTax": 944,
+            "startDate": "2026-04-01",
+            "schoolName": "Takshilah Global School - Vellore",
+            "studentsMou": 300,
+            "salesChannel": "Others",
+            "contractValue": 283200,
+            "schoolAddress": "Block No. 32, Ward III, Chennai - Bangalore,Bypass Road, North Vellore, 632001",
+            "opsReviewStatus": "Pending for review",
+            "installmentCount": 4,
+            "signedMouPdfPath": null
+          },
+          "notes": "Signed MOU entered via Add MOU form (Finance). School new school created (SCH-TAKSHILAH_GLOBAL_SCHOO). Pending Ops review.",
+          "action": "create",
+          "timestamp": "2026-06-22T09:39:14.374Z"
+        },
+        {
+          "timestamp": "2026-06-22T09:39:52.797Z",
+          "user": "anita.c",
+          "action": "student-count-changed",
+          "before": {
+            "studentsActual": 300,
+            "count": 300
+          },
+          "after": {
+            "studentsActual": 224,
+            "count": 224,
+            "eventId": "SCE-2026-0013",
+            "cumulativeDelta": 0,
+            "installmentsAffected": [
+              "MOU-STEAM-2627-085-i1",
+              "MOU-STEAM-2627-085-i2",
+              "MOU-STEAM-2627-085-i3",
+              "MOU-STEAM-2627-085-i4"
+            ]
+          },
+          "notes": "Count change to 224: Updated Count"
+        }
+      ]
+    },
+    "retryCount": 0
+  }
+]
