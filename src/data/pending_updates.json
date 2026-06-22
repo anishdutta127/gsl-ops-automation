@@ -101,5 +101,43 @@
       ]
     },
     "retryCount": 0
+  },
+  {
+    "id": "60c2b29c-b97b-46b6-9216-03374f75f2a7",
+    "queuedAt": "2026-06-22T12:22:03.871Z",
+    "queuedBy": "anita.c",
+    "entity": "inventoryItem",
+    "operation": "create",
+    "payload": {
+      "id": "INV-VIQRC-FULL-GAME-ELEMENT-2026-27-",
+      "skuName": "VIQRC Full Game Element 2026-27 (228-9258)",
+      "category": "Other",
+      "cretileGrade": null,
+      "mastersheetSourceName": null,
+      "currentStock": 15,
+      "reorderThreshold": null,
+      "notes": null,
+      "active": true,
+      "lastUpdatedAt": "2026-06-22T12:22:03.871Z",
+      "lastUpdatedBy": "anita.c",
+      "auditLog": [
+        {
+          "timestamp": "2026-06-22T12:22:03.871Z",
+          "user": "anita.c",
+          "action": "create",
+          "after": {
+            "id": "INV-VIQRC-FULL-GAME-ELEMENT-2026-27-",
+            "skuName": "VIQRC Full Game Element 2026-27 (228-9258)",
+            "category": "Other",
+            "cretileGrade": null,
+            "currentStock": 15,
+            "reorderThreshold": null,
+            "active": true
+          },
+          "notes": "Inventory item INV-VIQRC-FULL-GAME-ELEMENT-2026-27- created manually."
+        }
+      ]
+    },
+    "retryCount": 0
   }
 ]
