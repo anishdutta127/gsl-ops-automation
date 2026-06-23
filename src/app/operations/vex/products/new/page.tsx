@@ -41,7 +41,14 @@ export default async function NewVexProductPage({ searchParams }: PageProps) {
   if (!canManageInventory(user)) notFound()
 
   const errorKey = typeof sp.error === 'string' ? sp.error : null
-  const errorMessage = errorKey ? ERROR_COPY[errorKey] ?? `Failed: ${errorKey}` : null
+  const errorDetail = typeof sp.detail === 'string' ? sp.detail : null
+  const baseMessage = errorKey ? ERROR_COPY[errorKey] ?? `Failed: ${errorKey}` : null
+  // Surface the real server reason when present (W2: no generic "retry").
+  const errorMessage = baseMessage
+    ? errorDetail
+      ? `${baseMessage}: ${errorDetail}`
+      : baseMessage
+    : null
 
   return (
     <>

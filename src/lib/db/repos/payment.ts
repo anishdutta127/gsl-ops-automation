@@ -249,6 +249,25 @@ export const paymentRepo = {
     })
   },
 
+  // Hard-delete an installment row. Used by the schedule editor when a
+  // re-saved schedule no longer contains a previously-existing instalment
+  // (superseded rows). Mirrors the json-mode drain's delete-by-id semantics.
+  // Without a postgres path this threw in dispatchToRepo and the removal was
+  // silently dead-lettered, leaving the stale instalment in the DB.
+  async delete(id: string, opts?: { queuedBy?: string }): Promise<void> {
+    if (currentBackend() === 'postgres') {
+      const sql = getSql()
+      await sql`DELETE FROM payments WHERE id = ${id}`
+      return
+    }
+    await enqueueUpdate({
+      queuedBy: opts?.queuedBy ?? 'system',
+      entity: 'payment',
+      operation: 'delete',
+      payload: { id } as Record<string, unknown>,
+    })
+  },
+
   async appendAudit(id: string, entry: AuditEntry, opts?: { queuedBy?: string }): Promise<void> {
     if (currentBackend() === 'postgres') {
       const sql = getSql()

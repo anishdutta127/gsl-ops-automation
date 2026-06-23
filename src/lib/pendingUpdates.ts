@@ -45,11 +45,21 @@ export async function enqueueUpdate(params: {
     try {
       await dispatchToRepo(params)
     } catch (err) {
-      // If repo dispatch fails, fall back to the queue so the write
-      // is not lost. Surfaces in /admin/queue-status as an entry that
-      // didn't drain to postgres on the first attempt.
-      console.error('[enqueueUpdate] postgres dispatch failed; falling back to queue:', err)
-      await appendToQueue(entry)
+      // The drain cron is DISABLED (postgres is the source of truth), so the
+      // queue is a dead-letter: silently swallowing a dispatch failure here is
+      // exactly the "save succeeds but the row vanishes" bug. Keep a forensic
+      // copy in the queue (best-effort, for /admin/queue-status + recovery),
+      // then RE-THROW so the caller surfaces the real, specific error instead
+      // of a false success. Every active (entity, operation) is wired in
+      // dispatchToRepo, so in normal operation this only fires on a genuine
+      // repo/DB failure, which the user must see.
+      console.error('[enqueueUpdate] postgres dispatch failed; preserving for forensics + surfacing:', err)
+      try {
+        await appendToQueue(entry)
+      } catch (queueErr) {
+        console.error('[enqueueUpdate] forensic queue append also failed:', queueErr)
+      }
+      throw err instanceof Error ? err : new Error(String(err))
     }
     return entry
   }
@@ -159,6 +169,10 @@ async function dispatchToRepo(params: {
       if (operation === 'create') await paymentRepo.create(payload as never, { queuedBy })
       else if (operation === 'update') {
         await dispatchAuditedUpdate(paymentRepo as never, payload as never, queuedBy)
+      } else if (operation === 'delete') {
+        const id = (payload as { id?: string }).id
+        if (!id) throw new Error('payment delete requires payload.id')
+        await paymentRepo.delete(id, { queuedBy })
       } else throw new Error(`payment ${operation} is not supported via repo`)
       return
     }

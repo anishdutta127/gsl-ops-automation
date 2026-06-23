@@ -21,6 +21,8 @@ import type { User } from '@/lib/types'
 
 vi.mock('@/lib/auth/session', () => ({ getCurrentUser: vi.fn() }))
 vi.mock('@/lib/pendingUpdates', () => ({ enqueueUpdate: vi.fn() }))
+// revalidatePath needs Next's request store; stub it in the unit test.
+vi.mock('next/cache', () => ({ revalidatePath: vi.fn() }))
 
 const OPS_ADMIN: User = {
   id: 'misba.k',

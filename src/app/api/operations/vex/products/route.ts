@@ -22,9 +22,10 @@ export async function POST(request: Request) {
   if (!user) {
     return NextResponse.redirect(new URL('/login', request.url), { status: 303 })
   }
-  const errorTo = (reason: string) => {
+  const errorTo = (reason: string, detail?: string) => {
     const url = new URL('/operations/vex/products/new', request.url)
     url.searchParams.set('error', reason)
+    if (detail) url.searchParams.set('detail', detail.slice(0, 300))
     return NextResponse.redirect(url, { status: 303 })
   }
   if (!canManageInventory(user)) return errorTo('permission')
@@ -60,8 +61,11 @@ export async function POST(request: Request) {
       operation: 'create',
       payload: vexProduct as unknown as Record<string, unknown>,
     })
-  } catch {
-    return errorTo('queue-failure')
+  } catch (err) {
+    // Surface the real failure reason (W2: no silent dead-letter, no generic
+    // "retry" with no detail). enqueueUpdate now re-throws on a postgres
+    // dispatch/DB failure instead of swallowing it.
+    return errorTo('queue-failure', err instanceof Error ? err.message : String(err))
   }
 
   // Bust the App Router client cache for the SKU master so the new product

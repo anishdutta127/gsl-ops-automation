@@ -127,6 +127,23 @@ describe('enqueueUpdate inventoryItem create dispatch (postgres mode)', () => {
   })
 })
 
+describe('enqueueUpdate fail-loud (W2): a failed dispatch surfaces, never silently drops', () => {
+  it('re-throws the real error when the repo dispatch fails (and keeps a forensic queue copy)', async () => {
+    createSpy.mockRejectedValueOnce(new Error('insert into vex_products failed: connection reset'))
+    const { enqueueUpdate } = await import('./pendingUpdates')
+    await expect(
+      enqueueUpdate({
+        queuedBy: 'tester',
+        entity: 'vexProduct',
+        operation: 'create',
+        payload: { partNumber: 'TEST-FAIL', name: 'x', defaultUnitPrice: null, active: true },
+      }),
+    ).rejects.toThrow(/connection reset/)
+    // forensic copy preserved (best-effort), but the caller is NOT told it succeeded
+    expect(appendToQueueSpy).toHaveBeenCalledTimes(1)
+  })
+})
+
 describe('enqueueUpdate leaf-entity create dispatch (postgres mode)', () => {
   // These creates previously threw in dispatchToRepo and fell into the
   // disabled dead-letter queue. feedback = SPOC submissions lost;
