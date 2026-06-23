@@ -38,11 +38,31 @@ add one). The numerically-fallible part (the share maths and the tolerance gate)
 is unit-tested, and the JSX is a straight render of those values that typechecks.
 Confirm the on-screen rendering in the post-deploy browser pass.
 
-## Task 2: MOUs on dashboard but not in the MOUs list
+## Task 2: MOUs on dashboard but not in the MOUs list (DIAGNOSED)
 
-Diagnosed as part of the data-layer audit rather than fixed with a throwaway
-interim patch, because (a) the cause is the same build-time-JSON vs live-DB read
-split that the audit maps in full, and (b) the user has commissioned a complete
-migration to one live DB, which is the correct fix. See
-`docs/gate-db-migration/E2E_VERIFICATION_LOG.md` (and the audit summary) for the
-side-by-side read-path comparison and the single actual cause.
+Diagnosed in the data-layer audit (`docs/gate-db-migration/PHASE1-AUDIT.md`). The
+single actual cause is **a default financial-year filter on the list, not a
+freshness mismatch**:
+
+- Both surfaces read the SAME live source. `mouRepo.findAll()` runs against
+  postgres at request time in production (both pages are dynamic via
+  `getCurrentUser()`). There is NO build-time JSON read on any dashboard or
+  landing surface (verified: zero `@/data/` imports there). This contradicts the
+  DESIGN.md note that the dashboard breakdown is build-time JSON; that note is
+  stale.
+- The MOUs list (`src/app/mous/page.tsx` L127-135) defaults to the CURRENT
+  financial year (`getCurrentFinancialYear()`), overridable via `?year=` / the
+  year-picker pills. MOUs in another FY are hidden by default.
+- The programme breakdown (`computeProgrammeBreakdown`,
+  `src/lib/dashboard/financeDashboardData.ts`, on `/dashboard/finance` and
+  `/dashboard/ops`) aggregates ALL MOUs with no FY filter.
+
+So the 3 Young Pioneers MOUs are in a non-current FY: counted by the all-years
+breakdown, hidden by the list's current-FY default. The dashboard is not stale
+and the list is not wrong; they apply different default scopes.
+
+Fix (pending the Phase 2 go-ahead): make the list's FY scope obvious and
+clearable (e.g. an "All years" pill + a visible "showing FY 2026-27" affordance),
+or align the breakdown to the same FY default. Not yet implemented: the user has
+commissioned a broader data-layer pass and Phase 1 pauses for a plan decision
+before code changes (see PHASE1-AUDIT.md "Open decision").
