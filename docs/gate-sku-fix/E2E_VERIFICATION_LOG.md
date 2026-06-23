@@ -46,6 +46,12 @@ Ruled out by inspection:
    enqueue branch for symmetry with `update()`.
 2. `src/lib/pendingUpdates.ts`: wired `operation === 'create'` in the
    `vexProduct` dispatch case to `vexProductRepo.create`.
+3. **Twin bug (same root cause):** `inventoryItem.create` had the identical
+   gap (`dispatchToRepo` threw on create). Added `inventoryItemRepo.create()`
+   (postgres `INSERT` matching the `inventory_items` schema; json enqueue for
+   symmetry) and wired `operation === 'create'` in the `inventoryItem` dispatch
+   case. The reported session created BOTH a VEX product and an inventory item
+   for the same SKU `228-9258`; both were being lost.
 
 No data-layer re-architecture (CLAUDE.md rule #3). The JSON-queue fallback for
 other entities is untouched.
@@ -61,7 +67,41 @@ other entities is untouched.
 | 5 | Real postgres INSERT + read-back through `findAll`/`findByPartNumber` | `src/lib/db/repos/__tests__/vexProduct.create.parity.test.ts` (gated on `DATABASE_URL`, sentinel SKU, self-cleanup) | SKIPPED locally (no `DATABASE_URL`); runs wherever a DB is configured (CI/staging) |
 | 6 | Production build | `npm run build` | PASS: typecheck + Next build clean; `/operations/vex` and `/operations/vex/products/new` both `ƒ (Dynamic)` |
 
-Local test run: `4 passed | 1 skipped`.
+The dispatch-routing test also covers `inventoryItem` create (twin bug):
+`inventoryItemRepo.create` is called, `appendToQueue` is not.
+
+Local test run: `5 passed | 1 skipped`.
+
+## Related findings (live queue evidence, broader than this fix)
+
+Inspecting `src/data/pending_updates.json` on `main` after this fix gave live
+corroboration and surfaced a larger problem:
+
+- **The reported bug, in the wild.** User `anita.c` (and `pranav.b`) created VEX
+  product `228-9258` ("VIQRC Full Game Element 2026-27") **four times** between
+  22-Jun and 23-Jun; each fell into the queue fallback, so they retried. A
+  matching `inventoryItem.create` for the same SKU is stuck too. Both are the
+  deterministic-throw bug fixed here.
+- **The drain cron is intentionally disabled.** Commit `4d50d8e` (28-May-2026)
+  renamed `.github/workflows/sync-queue-cron.yml` to `.yml.disabled` with the
+  message "disable sync-queue-cron (postgres is truth source)". `gh run list`
+  confirms the last cron run was 27-May-2026. So the JSON queue **never drains**
+  now, and even if it did it writes to `src/data/*.json`, which postgres
+  production never reads.
+- **Therefore the queue fallback is a silent dead-letter.** Any write whose
+  postgres dispatch throws is swallowed into a queue that goes nowhere; the user
+  sees a success redirect and the data is lost. This fix closes the two
+  deterministic create gaps (`vexProduct`, `inventoryItem`), but **two stuck
+  `mou.update` entries** (`MOU-STEAM-2627-085`, `MOU-STEAM-2627-087`) show OTHER
+  writes are also hitting the fallback for non-deterministic reasons. A full
+  audit of every entity's dispatch coverage is warranted (now scoped as the
+  planned DB-migration work).
+- **Recovery of the already-lost rows.** The four `228-9258` creates + the
+  inventory item + the two MOU updates sit in the dead queue and will not appear
+  in production. After this fix deploys, the simplest recovery is to re-enter
+  them via the forms (the new write now lands in postgres). I did not write to
+  the production DB directly (prod writes are denied, and it is an outward,
+  hard-to-reverse action).
 
 ## Residual risk (stated per V4 standard)
 

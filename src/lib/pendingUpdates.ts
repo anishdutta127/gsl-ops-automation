@@ -210,7 +210,8 @@ async function dispatchToRepo(params: {
     }
     case 'inventoryItem': {
       const { inventoryItemRepo } = await import('./db/repos/inventoryItem')
-      if (operation === 'update') {
+      if (operation === 'create') await inventoryItemRepo.create(payload as never, { queuedBy })
+      else if (operation === 'update') {
         await dispatchAuditedUpdate(inventoryItemRepo as never, payload as never, queuedBy)
       } else throw new Error(`inventoryItem ${operation} is not supported via repo`)
       return

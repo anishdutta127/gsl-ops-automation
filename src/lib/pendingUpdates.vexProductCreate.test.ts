@@ -20,10 +20,14 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 const createSpy = vi.fn().mockResolvedValue(undefined)
 const updateSpy = vi.fn().mockResolvedValue(undefined)
+const invCreateSpy = vi.fn().mockResolvedValue(undefined)
 const appendToQueueSpy = vi.fn().mockResolvedValue(undefined)
 
 vi.mock('@/lib/db/repos/vexProduct', () => ({
   vexProductRepo: { create: createSpy, update: updateSpy },
+}))
+vi.mock('@/lib/db/repos/inventoryItem', () => ({
+  inventoryItemRepo: { create: invCreateSpy },
 }))
 vi.mock('@/lib/githubQueue', () => ({
   appendToQueue: appendToQueueSpy,
@@ -76,6 +80,34 @@ describe('enqueueUpdate vexProduct create dispatch (postgres mode)', () => {
       payload: { partNumber: 'TEST-PN-NEW', name: 'Renamed', defaultUnitPrice: null, active: false },
     })
     expect(updateSpy).toHaveBeenCalledTimes(1)
+    expect(appendToQueueSpy).not.toHaveBeenCalled()
+  })
+})
+
+describe('enqueueUpdate inventoryItem create dispatch (postgres mode)', () => {
+  // Twin of the vexProduct bug: inventoryItem create also threw inside
+  // dispatchToRepo and fell into the (disabled) JSON queue. Same SKU
+  // (228-9258) was lost in production alongside the VEX product.
+  it('routes a create to inventoryItemRepo.create, not the JSON queue', async () => {
+    const { enqueueUpdate } = await import('./pendingUpdates')
+    await enqueueUpdate({
+      queuedBy: 'tester',
+      entity: 'inventoryItem',
+      operation: 'create',
+      payload: {
+        id: 'INV-TEST-NEW',
+        skuName: 'Test inventory item',
+        category: 'Other',
+        currentStock: 15,
+        active: true,
+        auditLog: [],
+      },
+    })
+    expect(invCreateSpy).toHaveBeenCalledTimes(1)
+    expect(invCreateSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ id: 'INV-TEST-NEW', skuName: 'Test inventory item' }),
+      { queuedBy: 'tester' },
+    )
     expect(appendToQueueSpy).not.toHaveBeenCalled()
   })
 })

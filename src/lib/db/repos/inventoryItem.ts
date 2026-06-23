@@ -82,6 +82,42 @@ export const inventoryItemRepo = {
     return jsonItems.filter((i) => i.active && i.category === category)
   },
 
+  /**
+   * Create a new inventory item. Mirrors vexProductRepo.create: in
+   * postgres mode INSERT directly so the row is live on the next
+   * request-time read; the json-mode branch enqueues for symmetry with
+   * update(). Without this branch the create fell through
+   * `dispatchToRepo`'s throw into the JSON queue, which the (now disabled)
+   * drain cron never moves to postgres, so new items were invisible.
+   */
+  async create(item: InventoryItem, opts?: { queuedBy?: string }): Promise<void> {
+    if (currentBackend() === 'postgres') {
+      const sql = getSql()
+      await sql`
+        INSERT INTO inventory_items (
+          id, sku_name, category, cretile_grade, mastersheet_source_name,
+          current_stock, reorder_threshold, notes, active,
+          last_updated_at, last_updated_by, import_notes, audit_log
+        ) VALUES (
+          ${item.id}, ${item.skuName}, ${item.category},
+          ${item.cretileGrade ?? null}, ${item.mastersheetSourceName ?? null},
+          ${item.currentStock ?? 0}, ${item.reorderThreshold ?? null},
+          ${item.notes ?? null}, ${!!item.active},
+          ${item.lastUpdatedAt || null}, ${item.lastUpdatedBy || null},
+          ${item.importNotes ?? null},
+          ${sql.json((item.auditLog ?? []) as never)}::jsonb
+        )
+      `
+      return
+    }
+    await enqueueUpdate({
+      queuedBy: opts?.queuedBy ?? 'system',
+      entity: 'inventoryItem',
+      operation: 'create',
+      payload: item as unknown as Record<string, unknown>,
+    })
+  },
+
   async update(item: InventoryItem, opts?: { queuedBy?: string }): Promise<void> {
     if (currentBackend() === 'postgres') {
       const sql = getSql()
