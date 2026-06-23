@@ -195,5 +195,107 @@
       "active": true
     },
     "retryCount": 0
+  },
+  {
+    "id": "b8ae129b-f387-41dd-a933-44a69ec0101c",
+    "queuedAt": "2026-06-23T05:46:13.590Z",
+    "queuedBy": "anita.c",
+    "entity": "mou",
+    "operation": "update",
+    "payload": {
+      "id": "MOU-STEAM-2627-087",
+      "schoolId": "SCH-MUTAHHARY_EDUCATIONAL_",
+      "schoolName": "Mutahhary Educational Society",
+      "programme": "STEAM",
+      "schoolScope": "SINGLE",
+      "schoolGroupId": null,
+      "status": "Active",
+      "cohortStatus": "active",
+      "academicYear": "2026-27",
+      "effectiveDate": "2026-04-01",
+      "startDate": "2026-04-01",
+      "endDate": "2028-03-31",
+      "numberOfYears": 1,
+      "studentsMou": 900,
+      "studentsActual": 1135,
+      "studentsVariance": 0,
+      "studentsVariancePct": 0,
+      "spWithoutTax": 600,
+      "spWithTax": 600,
+      "contractValue": 540000,
+      "received": 0,
+      "tds": 0,
+      "balance": 540000,
+      "receivedPct": 0,
+      "trainerModel": null,
+      "salesPersonId": "",
+      "templateVersion": "",
+      "generatedAt": "2026-06-23",
+      "notes": "",
+      "delayNotes": null,
+      "daysToExpiry": null,
+      "salesChannel": null,
+      "schoolCrmId": null,
+      "signedMouPdfPath": null,
+      "importNotes": null,
+      "productSelection": null,
+      "opsReviewStatus": "Pending for review",
+      "paymentSchedule": "25-50-50",
+      "paymentSchedules": null,
+      "yearlyPricing": null,
+      "billingBlock": null,
+      "draftVariables": null,
+      "gradewiseDistribution": null,
+      "products": null,
+      "studentCountEventIds": [
+        "SCE-2026-0014"
+      ],
+      "auditLog": [
+        {
+          "user": "Anita C.",
+          "after": {
+            "id": "MOU-STEAM-2627-087",
+            "status": "Active",
+            "endDate": "2028-03-31",
+            "schoolId": "SCH-MUTAHHARY_EDUCATIONAL_",
+            "spWithTax": 600,
+            "startDate": "2026-04-01",
+            "schoolName": "Mutahhary Educational Society",
+            "studentsMou": 900,
+            "salesChannel": null,
+            "contractValue": 540000,
+            "schoolAddress": "Kargil Kashmir",
+            "opsReviewStatus": "Pending for review",
+            "installmentCount": 3,
+            "signedMouPdfPath": null
+          },
+          "notes": "Signed MOU entered via Add MOU form (Finance). School new school created (SCH-MUTAHHARY_EDUCATIONAL_). Pending Ops review.",
+          "action": "create",
+          "timestamp": "2026-06-23T05:44:01.254Z"
+        },
+        {
+          "timestamp": "2026-06-23T05:46:13.544Z",
+          "user": "anita.c",
+          "action": "student-count-changed",
+          "before": {
+            "studentsActual": 900,
+            "count": 900
+          },
+          "after": {
+            "studentsActual": 1135,
+            "count": 1135,
+            "eventId": "SCE-2026-0014",
+            "cumulativeDelta": 0,
+            "installmentsAffected": [
+              "MOU-STEAM-2627-087-i1",
+              "MOU-STEAM-2627-087-i2",
+              "MOU-STEAM-2627-087-i3"
+            ]
+          },
+          "notes": "Count change to 1135: Updated Student Count"
+        }
+      ]
+    },
+    "retryCount": 0
   }
 ]
