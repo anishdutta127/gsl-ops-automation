@@ -60,6 +60,34 @@ export const vexProductRepo = {
     return jsonProducts.filter((p) => p.active)
   },
 
+  /**
+   * Create a new SKU. partNumber is the PK; uniqueness is pre-checked by
+   * the caller (the create route does a findAll/find first), but the PK
+   * also enforces it at the DB. In postgres mode this INSERTs directly so
+   * the row is live on the next request-time read; the JSON-queue path
+   * (json mode) mirrors `update()` for symmetry.
+   *
+   * Without this branch the create fell through `dispatchToRepo`'s throw
+   * into the JSON queue and drained to vex_products.json, which postgres
+   * production never reads, so new products were invisible.
+   */
+  async create(p: VexProduct, opts?: { queuedBy?: string }): Promise<void> {
+    if (currentBackend() === 'postgres') {
+      const sql = getSql()
+      await sql`
+        INSERT INTO vex_products (part_number, name, default_unit_price, active, version)
+        VALUES (${p.partNumber}, ${p.name}, ${p.defaultUnitPrice ?? null}, ${!!p.active}, ${p.version ?? 1})
+      `
+      return
+    }
+    await enqueueUpdate({
+      queuedBy: opts?.queuedBy ?? 'system',
+      entity: 'vexProduct',
+      operation: 'create',
+      payload: p as unknown as Record<string, unknown>,
+    })
+  },
+
   async update(p: VexProduct, opts?: { queuedBy?: string }): Promise<void> {
     if (currentBackend() === 'postgres') {
       const sql = getSql()

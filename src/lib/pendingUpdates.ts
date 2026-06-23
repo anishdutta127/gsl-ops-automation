@@ -223,7 +223,8 @@ async function dispatchToRepo(params: {
     }
     case 'vexProduct': {
       const { vexProductRepo } = await import('./db/repos/vexProduct')
-      if (operation === 'update') await vexProductRepo.update(payload as never, { queuedBy })
+      if (operation === 'create') await vexProductRepo.create(payload as never, { queuedBy })
+      else if (operation === 'update') await vexProductRepo.update(payload as never, { queuedBy })
       else throw new Error(`vexProduct ${operation} is not supported via repo`)
       return
     }
