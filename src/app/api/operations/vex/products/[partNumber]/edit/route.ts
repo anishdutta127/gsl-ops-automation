@@ -8,6 +8,7 @@
  */
 
 import { NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canManageInventory } from '@/lib/access'
 import { vexProductRepo } from '@/lib/db/repos/vexProduct'
@@ -77,6 +78,8 @@ export async function POST(request: Request, ctx: RouteContext) {
   } catch {
     return errorTo('queue-failure')
   }
+
+  revalidatePath('/operations/vex')
 
   const url = new URL('/operations/vex', request.url)
   url.searchParams.set('product-edited', partNumber)

@@ -8,6 +8,7 @@
  */
 
 import { NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canManageInventory } from '@/lib/access'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
@@ -129,6 +130,8 @@ export async function POST(request: Request) {
   } catch {
     return errorTo('queue-failure')
   }
+
+  revalidatePath('/admin/inventory')
 
   const url = new URL('/admin/inventory', request.url)
   url.searchParams.set('created', baseId)

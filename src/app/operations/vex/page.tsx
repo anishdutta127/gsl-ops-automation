@@ -41,6 +41,11 @@ import { VexPiList } from './VexPiList'
 import { VexOrdersTable } from './VexOrdersTable'
 import { VexDispatchesTable } from './VexDispatchesTable'
 
+// Always render at request time against the live DB (no static/ISR cache), so a
+// freshly-created SKU shows on normal navigation. The page is already dynamic via
+// getCurrentUser(); this makes the intent explicit and refactor-proof.
+export const dynamic = 'force-dynamic'
+
 export default async function OperationsVexPage() {
   const user = await getCurrentUser()
   if (!user) redirect('/login?next=%2Foperations%2Fvex')

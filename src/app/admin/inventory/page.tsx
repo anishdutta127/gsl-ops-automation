@@ -52,6 +52,10 @@ function statusOf(item: InventoryItem): {
   return { label: null, tone: null }
 }
 
+// Request-time render against the live DB so newly-created items show on normal
+// navigation (no static/ISR cache). Mirrors the SKU master.
+export const dynamic = 'force-dynamic'
+
 export default async function InventoryListPage({ searchParams }: PageProps) {
   const sp = await searchParams
   const user = await getCurrentUser()

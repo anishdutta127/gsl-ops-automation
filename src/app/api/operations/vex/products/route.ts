@@ -9,6 +9,7 @@
  */
 
 import { NextResponse } from 'next/server'
+import { revalidatePath } from 'next/cache'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canManageInventory } from '@/lib/access'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
@@ -62,6 +63,11 @@ export async function POST(request: Request) {
   } catch {
     return errorTo('queue-failure')
   }
+
+  // Bust the App Router client cache for the SKU master so the new product
+  // shows on normal navigation without a manual "Sync now"/refresh. The write
+  // already lands in postgres synchronously; this only refreshes the read.
+  revalidatePath('/operations/vex')
 
   const url = new URL('/operations/vex', request.url)
   url.searchParams.set('product-created', partNumber)
