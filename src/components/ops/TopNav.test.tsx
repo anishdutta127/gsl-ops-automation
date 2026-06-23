@@ -113,35 +113,41 @@ describe('TopNav shell: left-nav zones and items', () => {
     expect(html).toContain('app-sidebar')
   })
 
-  it('unburies Pipeline (/kanban), Attention (/exceptions) and Pulse (/leadership)', async () => {
+  it('Phase 1.2: moved surfaces are OFF the everyday nav; Advanced is present', async () => {
     getCurrentUserMock.mockResolvedValue(makeUser())
     const html = await renderNav()
-    expect(html).toContain('href="/kanban"')
-    expect(html).toContain('href="/dashboard/exceptions"')
-    expect(html).toContain('href="/dashboard/leadership"')
-  })
-
-  it('points work + records items at existing routes', async () => {
-    getCurrentUserMock.mockResolvedValue(makeUser())
-    const html = await renderNav()
-    // Step 4: Finance/Ops home items point at the Step-3 /work boards; the
-    // Step-2/3 surfaces (review queue, dispatch requests, welcome, recce)
-    // are now nav-reachable.
+    // Consolidated Watch + hidden finance/ops machinery: these live in Advanced.
     for (const href of [
-      '/work',
-      '/work/finance',
-      '/finance/payments',
+      '/kanban',
+      '/dashboard/exceptions',
+      '/dashboard/leadership',
       '/finance/dispatch-requests',
       '/finance/pi/pending',
+      '/operations/welcome',
+      '/operations/recce',
+    ]) {
+      expect(html).not.toContain(`href="${href}"`)
+    }
+    expect(html).toContain('href="/admin/advanced"')
+  })
+
+  it('points the simplified work + records items at existing routes', async () => {
+    getCurrentUserMock.mockResolvedValue(makeUser())
+    const html = await renderNav()
+    for (const href of [
+      '/work',
+      '/reports',
+      '/work/finance',
+      '/finance/payments',
       '/work/ops',
       '/operations/review',
       '/dispatch/kits',
-      '/operations/welcome',
-      '/operations/recce',
+      '/escalations',
       '/operations/vex',
       '/mous',
       '/schools',
       '/admin',
+      '/admin/advanced',
     ]) {
       expect(html).toContain(`href="${href}"`)
     }
@@ -164,10 +170,17 @@ describe('TopNav shell: active highlighting (longest-match)', () => {
     )
   })
 
-  it('marks Pipeline active on /kanban', async () => {
+  it('marks Overview active on /work', async () => {
     getCurrentUserMock.mockResolvedValue(makeUser())
-    const html = await renderNav('/kanban')
-    expect(html).toMatch(/data-testid="nav-pipeline"[^>]*data-active="true"/)
+    const html = await renderNav('/work')
+    expect(html).toMatch(/data-testid="nav-home"[^>]*data-active="true"/)
+  })
+
+  it('marks Advanced active on /admin/advanced (not the Admin index)', async () => {
+    getCurrentUserMock.mockResolvedValue(makeUser())
+    const html = await renderNav('/admin/advanced')
+    expect(html).toMatch(/data-testid="nav-advanced"[^>]*data-active="true"/)
+    expect(html).toMatch(/data-testid="nav-admin"[^>]*data-active="false"/)
   })
 
   it('marks Payments (not the Finance index) active on /finance/payments', async () => {

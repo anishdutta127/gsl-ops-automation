@@ -17,11 +17,32 @@ describe('navModel: structure', () => {
     expect(new Set(ids).size).toBe(ids.length)
   })
 
-  it('unburies the three previously-orphaned routes', () => {
+  it('Phase 1.2: Watch is consolidated to Overview + Reports', () => {
+    const watch = NAV_ZONES.find((z) => z.id === 'watch')!
+    expect(watch.items.map((i) => i.label)).toEqual(['Overview', 'Reports'])
+  })
+
+  it('Phase 1.2: the moved surfaces are OFF the everyday nav (now in Advanced)', () => {
     const hrefs = NAV_ZONES.flatMap((z) => z.items.map((i) => i.href))
-    expect(hrefs).toContain('/kanban') // Pipeline
-    expect(hrefs).toContain('/dashboard/exceptions') // Attention
-    expect(hrefs).toContain('/dashboard/leadership') // Pulse
+    for (const moved of [
+      '/dashboard/leadership', // Pulse
+      '/kanban', // Pipeline
+      '/dashboard/exceptions', // Attention
+      '/finance/dispatch-requests',
+      '/finance/pi/pending',
+      '/finance/adjustments',
+      '/finance/tally-export',
+      '/dispatch/kits/summary', // Deliveries
+      '/operations/welcome',
+      '/operations/recce',
+    ]) {
+      expect(hrefs).not.toContain(moved)
+    }
+  })
+
+  it('Phase 1.2: Advanced is added under the Admin zone', () => {
+    const admin = NAV_ZONES.find((z) => z.id === 'admin')!
+    expect(admin.items.map((i) => i.href)).toContain('/admin/advanced')
   })
 })
 
@@ -31,39 +52,41 @@ describe('navModel: activeTestId longest-match resolution', () => {
     ['/work/admin', 'nav-home'],
     ['/mous', 'nav-mous'],
     ['/mous/MOU-STEAM-2526-001', 'nav-mous'],
-    ['/kanban', 'nav-pipeline'],
-    ['/dashboard/ops/kanban', 'nav-pipeline'],
-    ['/dashboard/exceptions', 'nav-attention'],
     ['/reports', 'nav-reports'],
     ['/reports/fy-summary', 'nav-reports'],
-    ['/dashboard/leadership', 'nav-pulse'],
-    ['/dashboard/leadership/accountability', 'nav-pulse'],
     ['/work/finance', 'nav-fin-home'],
     ['/finance/payments', 'nav-fin-payments'],
     ['/finance/payments/new', 'nav-fin-payments'],
-    ['/finance/dispatch-requests', 'nav-fin-dispatch-requests'],
-    ['/finance/pi/pending', 'nav-fin-pi'],
-    ['/finance/adjustments', 'nav-fin-adjustments'],
-    ['/finance/tally-export', 'nav-fin-tally'],
     ['/work/ops', 'nav-ops-home'],
     ['/operations/review', 'nav-ops-review'],
     ['/operations/review/MOU-1', 'nav-ops-review'],
-    ['/operations/welcome', 'nav-ops-welcome'],
-    ['/operations/welcome/MOU-1', 'nav-ops-welcome'],
-    ['/operations/recce', 'nav-ops-recce'],
     ['/operations/vex', 'nav-ops-vex'],
     ['/operations/vex/pi/new', 'nav-ops-vex'],
     ['/operations/vendors', 'nav-ops-vex'],
     ['/operations/agreements', 'nav-ops-vex'],
     ['/dispatch/kits', 'nav-ops-dispatch'],
     ['/dispatch/kits/MOU-1', 'nav-ops-dispatch'],
-    ['/dispatch/kits/summary', 'nav-ops-deliveries'],
     ['/dispatch/request', 'nav-ops-dispatch'],
     ['/escalations', 'nav-ops-escalations'],
     ['/schools', 'nav-schools'],
     ['/schools/S-1', 'nav-schools'],
     ['/admin', 'nav-admin'],
     ['/admin/users', 'nav-admin'],
+    ['/admin/advanced', 'nav-advanced'],
+    // Surfaces moved off the nav in Phase 1.2 no longer resolve to a nav item
+    // (their routes still work; they live under Admin -> Advanced).
+    ['/kanban', null],
+    ['/dashboard/exceptions', null],
+    ['/dashboard/leadership', null],
+    ['/finance/dispatch-requests', null],
+    ['/finance/pi/pending', null],
+    ['/finance/adjustments', null],
+    ['/finance/tally-export', null],
+    ['/operations/welcome', null],
+    ['/operations/recce', null],
+    // Deliveries is removed, but /dispatch/kits/summary still highlights the
+    // Dispatch item (it is under /dispatch/kits).
+    ['/dispatch/kits/summary', 'nav-ops-dispatch'],
     ['/login', null],
     ['/feedback/abc', null],
   ]

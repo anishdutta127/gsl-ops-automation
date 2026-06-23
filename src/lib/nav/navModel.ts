@@ -51,31 +51,16 @@ export const NAV_ZONES: NavZone[] = [
     label: 'Watch',
     testId: 'nav-zone-watch',
     items: [
-      // Step 4 (2026-06-05): Home is the role-scoped daily landing - /work
-      // routes Finance/Ops/Admin to their Step-3 priority board. Highlights
-      // on /work and the /work/* boards (longest-match keeps the board items
-      // active when on them).
-      { href: '/work', label: 'Home', testId: 'nav-home' },
-      {
-        href: '/dashboard/leadership',
-        label: 'Pulse',
-        testId: 'nav-pulse',
-        interimNote:
-          'Phase 7 builds the dedicated Pulse surface; for now this routes to the existing leadership health view.',
-      },
-      {
-        href: '/kanban',
-        label: 'Pipeline',
-        testId: 'nav-pipeline',
-        activePaths: ['/dashboard/ops/kanban'],
-      },
-      { href: '/dashboard/exceptions', label: 'Attention', testId: 'nav-attention' },
+      // Phase 1.2 (2026-06-24): Watch consolidated to a single Overview entry
+      // (the role-scoped daily landing at /work) plus Reports. Pulse
+      // (/dashboard/leadership), Pipeline (/kanban) and Attention
+      // (/dashboard/exceptions) are taken OFF the everyday nav; their routes +
+      // logic are intact and reachable from Admin -> Advanced and by deep link.
+      { href: '/work', label: 'Overview', testId: 'nav-home' },
       {
         href: '/reports',
         label: 'Reports',
         testId: 'nav-reports',
-        interimNote:
-          'Phase 7 folds Reports into the Pulse surface; kept as its own WATCH item now so the existing /reports tree stays reachable.',
       },
     ],
   },
@@ -98,22 +83,10 @@ export const NAV_ZONES: NavZone[] = [
         interimNote:
           'Phase 2 consolidates the five payment-entry routes into one Payments surface.',
       },
-      {
-        // Step 4: the Step-2 Ops->Finance dispatch handoff.
-        href: '/finance/dispatch-requests',
-        label: 'Dispatch requests',
-        testId: 'nav-fin-dispatch-requests',
-      },
-      {
-        href: '/finance/pi/pending',
-        label: 'Proforma invoices',
-        testId: 'nav-fin-pi',
-        activePaths: ['/finance/pi'],
-        interimNote:
-          'Phase 3 brings MOU PIs and VEX PIs under one Proforma invoices home.',
-      },
-      { href: '/finance/adjustments', label: 'Adjustments', testId: 'nav-fin-adjustments' },
-      { href: '/finance/tally-export', label: 'Tally export', testId: 'nav-fin-tally' },
+      // Phase 1.2: Dispatch requests, Proforma invoices, Adjustments and Tally
+      // export are moved off the everyday nav to Admin -> Advanced. Their
+      // routes + logic are intact (VEX orders, reports and Tally read this data
+      // directly, not via the nav), so nothing downstream breaks.
     ],
   },
   {
@@ -140,25 +113,9 @@ export const NAV_ZONES: NavZone[] = [
         testId: 'nav-ops-dispatch',
         activePaths: ['/dispatch'],
       },
-      {
-        href: '/dispatch/kits/summary',
-        label: 'Deliveries',
-        testId: 'nav-ops-deliveries',
-        interimNote:
-          'Phase 4 builds a dedicated Deliveries surface; for now this is the dispatch summary with POD links.',
-      },
-      {
-        // Step 3: Welcome Note tracking.
-        href: '/operations/welcome',
-        label: 'Welcome notes',
-        testId: 'nav-ops-welcome',
-      },
-      {
-        // Step 3: Recce reports.
-        href: '/operations/recce',
-        label: 'Recce',
-        testId: 'nav-ops-recce',
-      },
+      // Phase 1.2: Deliveries, Welcome notes and Recce moved off the everyday
+      // nav to Admin -> Advanced (routes + logic intact). Ops nav is provisional
+      // pending validation with Ops users.
       { href: '/escalations', label: 'Escalations', testId: 'nav-ops-escalations' },
       {
         href: '/operations/vex',
@@ -181,7 +138,13 @@ export const NAV_ZONES: NavZone[] = [
     id: 'admin',
     label: 'Admin',
     testId: 'nav-zone-admin',
-    items: [{ href: '/admin', label: 'Admin', testId: 'nav-admin' }],
+    items: [
+      { href: '/admin', label: 'Admin', testId: 'nav-admin' },
+      // Phase 1.2: directory of surfaces moved off the everyday nav. Reachable
+      // by any authenticated user (not admin-locked); each linked route keeps
+      // its own permission gate.
+      { href: '/admin/advanced', label: 'Advanced', testId: 'nav-advanced' },
+    ],
   },
 ]
 
