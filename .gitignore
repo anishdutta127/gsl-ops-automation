@@ -42,6 +42,10 @@ next-env.d.ts
 # Per-gate output that does not belong in source control.
 /.verification/
 
+# One-time stuck-data recovery backups (timestamped prod row dumps).
+# Production data; never commit.
+/.recovery-backup/
+
 # onedrive data (symlink to external OneDrive folder)
 onedrive-data
 
