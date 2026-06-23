@@ -181,5 +181,19 @@
       "active": true
     },
     "retryCount": 0
+  },
+  {
+    "id": "60b4764d-d65e-406e-9aae-289b572d54e8",
+    "queuedAt": "2026-06-23T05:19:37.598Z",
+    "queuedBy": "anita.c",
+    "entity": "vexProduct",
+    "operation": "create",
+    "payload": {
+      "partNumber": "228-9258",
+      "name": "VIQRC Full Game Element 2026-27",
+      "defaultUnitPrice": null,
+      "active": true
+    },
+    "retryCount": 0
   }
 ]
