@@ -21,6 +21,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 const createSpy = vi.fn().mockResolvedValue(undefined)
 const updateSpy = vi.fn().mockResolvedValue(undefined)
 const invCreateSpy = vi.fn().mockResolvedValue(undefined)
+const feedbackCreateSpy = vi.fn().mockResolvedValue(undefined)
+const communicationCreateSpy = vi.fn().mockResolvedValue(undefined)
 const appendToQueueSpy = vi.fn().mockResolvedValue(undefined)
 
 vi.mock('@/lib/db/repos/vexProduct', () => ({
@@ -28,6 +30,10 @@ vi.mock('@/lib/db/repos/vexProduct', () => ({
 }))
 vi.mock('@/lib/db/repos/inventoryItem', () => ({
   inventoryItemRepo: { create: invCreateSpy },
+}))
+vi.mock('@/lib/db/repos/leafRepos', () => ({
+  feedbackRepo: { create: feedbackCreateSpy },
+  communicationRepo: { create: communicationCreateSpy },
 }))
 vi.mock('@/lib/githubQueue', () => ({
   appendToQueue: appendToQueueSpy,
@@ -108,6 +114,39 @@ describe('enqueueUpdate inventoryItem create dispatch (postgres mode)', () => {
       expect.objectContaining({ id: 'INV-TEST-NEW', skuName: 'Test inventory item' }),
       { queuedBy: 'tester' },
     )
+    expect(appendToQueueSpy).not.toHaveBeenCalled()
+  })
+})
+
+describe('enqueueUpdate leaf-entity create dispatch (postgres mode)', () => {
+  // These creates previously threw in dispatchToRepo and fell into the
+  // disabled dead-letter queue. feedback = SPOC submissions lost;
+  // communication = sent-email/WhatsApp logs lost.
+  it('routes a feedback create to feedbackRepo.create, not the JSON queue', async () => {
+    const { enqueueUpdate } = await import('./pendingUpdates')
+    await enqueueUpdate({
+      queuedBy: 'system',
+      entity: 'feedback',
+      operation: 'create',
+      payload: { id: 'FB-TEST', schoolId: 'SCH-1', mouId: 'MOU-1', ratings: [], auditLog: [] },
+    })
+    expect(feedbackCreateSpy).toHaveBeenCalledTimes(1)
+    expect(feedbackCreateSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ id: 'FB-TEST' }),
+      { queuedBy: 'system' },
+    )
+    expect(appendToQueueSpy).not.toHaveBeenCalled()
+  })
+
+  it('routes a communication create to communicationRepo.create, not the JSON queue', async () => {
+    const { enqueueUpdate } = await import('./pendingUpdates')
+    await enqueueUpdate({
+      queuedBy: 'system',
+      entity: 'communication',
+      operation: 'create',
+      payload: { id: 'COMM-TEST', type: 'welcome-note', schoolId: 'SCH-1', status: 'queued', auditLog: [] },
+    })
+    expect(communicationCreateSpy).toHaveBeenCalledTimes(1)
     expect(appendToQueueSpy).not.toHaveBeenCalled()
   })
 })

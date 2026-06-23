@@ -22,7 +22,7 @@ import { currentBackend } from '../backend'
 import { getSql } from '../client'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
 import type {
-  Adjustment, Agreement, AuditEntry, MagicLinkToken, PaymentLog,
+  Adjustment, Agreement, AuditEntry, Feedback, MagicLinkToken, PaymentLog,
   StudentCountEvent, VexDispatch,
 } from '@/lib/types'
 
@@ -139,6 +139,40 @@ function makeAuditedLeafRepo<T extends { id?: string; auditLog?: AuditEntry[] }>
   const jsonbCols = cfg.jsonbCols ?? new Set<string>()
   return {
     ...base,
+    /**
+     * Insert a new row. In postgres mode this builds the INSERT from the
+     * same camelToSnake + jsonbCols config that drives updatePartial
+     * (proven row-building), so every audited-leaf entity gets a working
+     * create without a bespoke INSERT each. The id column and audit_log
+     * are always included; `version` is omitted so the DB default applies.
+     * json mode enqueues a create (drainer-shape unchanged).
+     *
+     * Without this, dispatchToRepo threw on create for these entities and
+     * the write fell into the disabled-cron dead-letter queue: silent loss.
+     */
+    async create(entity: T, opts?: { queuedBy?: string }): Promise<void> {
+      if (currentBackend() === 'postgres') {
+        const sql = getSql()
+        const e = entity as Row
+        const row: Record<string, unknown> = {}
+        const idCol = cfg.idColumn ?? 'id'
+        if (e.id !== undefined) row[idCol] = e.id
+        for (const [camel, col] of Object.entries(cfg.camelToSnake)) {
+          const v = e[camel]
+          if (v === undefined) continue
+          row[col] = jsonbCols.has(camel) ? (v == null ? null : sql.json(v as never)) : (v ?? null)
+        }
+        row['audit_log'] = sql.json(((e.auditLog as unknown[]) ?? []) as never)
+        await sql`INSERT INTO ${sql(cfg.table)} ${sql(row)}`
+        return
+      }
+      await enqueueUpdate({
+        queuedBy: opts?.queuedBy ?? 'system',
+        entity: cfg.entity as never,
+        operation: 'create',
+        payload: entity as unknown as Record<string, unknown>,
+      })
+    },
     async appendAudit(id: string, entry: AuditEntry, opts?: { queuedBy?: string }): Promise<void> {
       if (currentBackend() === 'postgres') {
         const sql = getSql()
@@ -680,10 +714,40 @@ export const magicLinkTokenRepo = {
   },
 }
 
-export const feedbackRepo = makeLeafRepo({
-  table: 'feedback',
-  json: feedbackJson as unknown[] as Row[],
-})
+export const feedbackRepo = {
+  ...makeLeafRepo({
+    table: 'feedback',
+    json: feedbackJson as unknown[] as Row[],
+  }),
+  // SPOC feedback submissions enqueue a feedback create; without a postgres
+  // create path the write threw in dispatchToRepo and fell into the disabled
+  // dead-letter queue (silent loss). Explicit INSERT (feedbackRepo is a plain
+  // read-only leaf, no camelToSnake config to drive a generic insert).
+  async create(f: Feedback, opts?: { queuedBy?: string }): Promise<void> {
+    if (currentBackend() === 'postgres') {
+      const sql = getSql()
+      await sql`
+        INSERT INTO feedback (id, school_id, mou_id, instalment_seq, submitted_at,
+          submitted_by, submitter_email, ratings, overall_comment,
+          magic_link_token_id, audit_log)
+        VALUES (
+          ${f.id}, ${f.schoolId}, ${f.mouId}, ${f.installmentSeq ?? null},
+          ${f.submittedAt}, ${f.submittedBy}, ${f.submitterEmail ?? null},
+          ${sql.json((f.ratings ?? []) as never)}::jsonb,
+          ${f.overallComment ?? null}, ${f.magicLinkTokenId ?? null},
+          ${sql.json((f.auditLog ?? []) as never)}::jsonb
+        )
+      `
+      return
+    }
+    await enqueueUpdate({
+      queuedBy: opts?.queuedBy ?? 'system',
+      entity: 'feedback',
+      operation: 'create',
+      payload: f as unknown as Record<string, unknown>,
+    })
+  },
+}
 
 // vexDispatch: VEX kit dispatch ledger. JSONB items + audit_log.
 export const vexDispatchRepo = {

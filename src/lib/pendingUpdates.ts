@@ -284,51 +284,64 @@ async function dispatchToRepo(params: {
     // entity-init flows).
     case 'ccRule': {
       const { ccRuleRepo } = await import('./db/repos/leafRepos')
-      if (operation === 'update') {
+      if (operation === 'create') await ccRuleRepo.create(payload as never, { queuedBy })
+      else if (operation === 'update') {
         await dispatchAuditedUpdate(ccRuleRepo as never, payload as never, queuedBy)
       } else throw new Error(`ccRule ${operation} not in repo - fall back to queue`)
       return
     }
     case 'schoolGroup': {
       const { schoolGroupRepo } = await import('./db/repos/leafRepos')
-      if (operation === 'update') {
+      if (operation === 'create') await schoolGroupRepo.create(payload as never, { queuedBy })
+      else if (operation === 'update') {
         await dispatchAuditedUpdate(schoolGroupRepo as never, payload as never, queuedBy)
       } else throw new Error(`schoolGroup ${operation} not in repo - fall back to queue`)
       return
     }
     case 'communicationTemplate': {
       const { communicationTemplateRepo } = await import('./db/repos/leafRepos')
-      if (operation === 'update') {
+      if (operation === 'create') await communicationTemplateRepo.create(payload as never, { queuedBy })
+      else if (operation === 'update') {
         await dispatchAuditedUpdate(communicationTemplateRepo as never, payload as never, queuedBy)
       } else throw new Error(`communicationTemplate ${operation} not in repo - fall back to queue`)
       return
     }
     case 'intakeRecord': {
       const { intakeRecordRepo } = await import('./db/repos/leafRepos')
-      if (operation === 'update') {
+      if (operation === 'create') await intakeRecordRepo.create(payload as never, { queuedBy })
+      else if (operation === 'update') {
         await dispatchAuditedUpdate(intakeRecordRepo as never, payload as never, queuedBy)
       } else throw new Error(`intakeRecord ${operation} not in repo - fall back to queue`)
       return
     }
     case 'communication': {
       const { communicationRepo } = await import('./db/repos/leafRepos')
-      if (operation === 'update') {
+      if (operation === 'create') await communicationRepo.create(payload as never, { queuedBy })
+      else if (operation === 'update') {
         await dispatchAuditedUpdate(communicationRepo as never, payload as never, queuedBy)
       } else throw new Error(`communication ${operation} not in repo - fall back to queue`)
       return
     }
     case 'salesOpportunity': {
       const { salesOpportunityRepo } = await import('./db/repos/leafRepos')
-      if (operation === 'update') {
+      if (operation === 'create') await salesOpportunityRepo.create(payload as never, { queuedBy })
+      else if (operation === 'update') {
         await dispatchAuditedUpdate(salesOpportunityRepo as never, payload as never, queuedBy)
       } else throw new Error(`salesOpportunity ${operation} not in repo - fall back to queue`)
       return
     }
     case 'dispatchRequest': {
       const { dispatchRequestRepo } = await import('./db/repos/leafRepos')
-      if (operation === 'update') {
+      if (operation === 'create') await dispatchRequestRepo.create(payload as never, { queuedBy })
+      else if (operation === 'update') {
         await dispatchAuditedUpdate(dispatchRequestRepo as never, payload as never, queuedBy)
       } else throw new Error(`dispatchRequest ${operation} not in repo - fall back to queue`)
+      return
+    }
+    case 'feedback': {
+      const { feedbackRepo } = await import('./db/repos/leafRepos')
+      if (operation === 'create') await feedbackRepo.create(payload as never, { queuedBy })
+      else throw new Error(`feedback ${operation} not in repo - fall back to queue`)
       return
     }
     // lifecycleRule has composite PK (stage_from_key + stage_to_key); the
