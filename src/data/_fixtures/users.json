@@ -156,7 +156,7 @@
     "auditLog": []
   },
   {
-    "id": "shubhangi.uj",
+    "id": "ujaccounts",
     "name": "Shubhangi",
     "email": "ujaccounts@getsetlearn.info",
     "role": "Admin",
@@ -172,7 +172,7 @@
         "action": "user-created",
         "before": {},
         "after": {
-          "id": "shubhangi.uj",
+          "id": "ujaccounts",
           "email": "ujaccounts@getsetlearn.info",
           "role": "Admin",
           "department": null,

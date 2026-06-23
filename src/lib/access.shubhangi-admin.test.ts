@@ -1,6 +1,6 @@
 /*
  * gate-add-admin (Phase 0.1): verify the new full-access admin Shubhangi
- * (shubhangi.uj / ujaccounts@getsetlearn.info) is a genuine cross-functional
+ * (ujaccounts / ujaccounts@getsetlearn.info) is a genuine cross-functional
  * wildcard. Asserted under PRODUCTION LOCKDOWN (TESTING_OPEN_ACCESS=false), the
  * strictest mode, so this proves she is unrestricted by role+department, not
  * merely because testing mode opens everything.
@@ -22,7 +22,7 @@ afterAll(() => {
   else process.env.TESTING_OPEN_ACCESS = SAVED
 })
 
-const shubhangi = (usersJson as unknown as User[]).find((u) => u.id === 'shubhangi.uj')!
+const shubhangi = (usersJson as unknown as User[]).find((u) => u.id === 'ujaccounts')!
 
 describe('Shubhangi (ujaccounts) is a full cross-functional wildcard admin', () => {
   it('has the wildcard-admin record shape (role Admin, department null, active)', () => {

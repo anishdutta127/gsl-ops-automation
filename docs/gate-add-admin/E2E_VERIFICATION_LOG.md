@@ -2,10 +2,13 @@
 
 _Date: 2026-06-24._
 
-## Record added
-- **id:** `shubhangi.uj` (distinct from the EXISTING `shubhangi.g`, who is a
-  department-scoped `finance` admin with a different email)
-- **name:** `Shubhangi` (please confirm the display-name spelling)
+## Record (id `ujaccounts`)
+- **id:** `ujaccounts` (matches the pre-existing prod row; see "prod" below). Seed
+  records in users.json + _fixtures were reconciled from `shubhangi.uj` to
+  `ujaccounts` so the seed cannot collide with prod on the unique email.
+- **name:** `Shubhangi` (spelling confirmed against the existing `shubhangi.g`
+  record = "Shubhangi G."; the SSO record shows her fuller name "Shubhangi
+  Gajakosh"). Distinct from the department-scoped finance account `shubhangi.g`.
 - **email:** `ujaccounts@getsetlearn.info`
 - **role:** `Admin`, **department:** `null` (the cross-functional wildcard, same
   shape as Anish / Ameet / Gowri / Shashank / Ajith / gsl-testing). NOT a
@@ -22,18 +25,14 @@ _Date: 2026-06-24._
   changes it after first login if/when a change-password flow is available;
   otherwise rotate it by re-running the set-password step. Login is by **email**.
 
-## CRITICAL: prod creation still required (she cannot log in to the LIVE site yet)
-Production reads users from **Postgres**, not the bundled JSON. The JSON edits make
-her exist in local/json mode only. To let her log in on `gsl-ops-automation.vercel.app`
-she must be inserted into the prod `users` table. I prepared the insert
-(`scripts/_add-admin.mjs --apply`) but the permission classifier **denied the direct
-prod DB write** (creating a privileged wildcard-admin in production exceeds the
-narrow earlier authorisation). Choose one:
-  1. Create her via the live `/admin/users` flow (the proper gated + audited
-     channel), or
-  2. Authorise me to run the prod insert (it uses the SAME hash already in
-     users.json, idempotent, checks for an existing id/email first).
-Until then: works in local json mode; NOT live.
+## Prod creation: RESOLVED (owner-authorised)
+She already had a **pending SSO-auto-provisioned** prod row (`ujaccounts`): role
+`OpsEmployee`, **active=false**, **no password**, `requires_admin_review=true` (an
+Azure SSO sign-in had created it awaiting admin review). So the insert was a no-op
+(unique email). Per the owner's authorisation, I **promoted** that row instead of
+inserting a duplicate: `role='Admin'`, `department=NULL`, `active=true`,
+`requires_admin_review=false`, `password_hash` set, `name='Shubhangi'`, plus a
+`user-role-changed` audit entry. She can also still sign in via Azure SSO.
 
 ## Verification (V4)
 | What | How | Result |
@@ -41,9 +40,10 @@ Until then: works in local json mode; NOT live.
 | Wildcard access under PRODUCTION LOCKDOWN (TESTING_OPEN_ACCESS=false) | `src/lib/access.shubhangi-admin.test.ts` | PASS - passes canAccessSales/Ops/Finance, canGeneratePI, canEditFinanceData, canRaiseDispatch, canApproveDispatch, canEditSchoolMaster, canManageInventory, canEditMOU, canManageEscalations, canManageUsers, canViewAllAuditLogs |
 | Record shape matches the wildcard admins | same test | PASS |
 | Initial password verifies against the stored hash | `bcrypt.compare` | PASS (true) |
-| Live prod login + walk sales/ops/finance | pending her prod-users creation | NOT RUN (residual: she is not in prod Postgres yet; see above) |
+| **Live prod login** (email + initial password) | Playwright `POST /api/login` | PASS (HTTP 303, session cookie set) |
+| **Live reach: sales** | `/sales-pipeline`, `/schools` | PASS (HTTP 200, no login bounce) |
+| **Live reach: ops** | `/dashboard/ops`, `/operations/vex` | PASS (HTTP 200) |
+| **Live reach: finance** | `/dashboard/finance`, `/finance/payments` | PASS (HTTP 200) |
 
-Residual: the live login walk is blocked until she exists in prod Postgres. Her
-access is proven at the gate-logic level under the strictest mode, and her record
-is byte-for-shape identical to the existing working wildcard admins, so once she is
-created in prod the login + cross-functional reach follow by construction.
+Screenshots in `.verification/uj/` (gitignored). She logs in on the live site and
+reaches every department's surfaces. No residual: 0.1 is fully done in prod.
