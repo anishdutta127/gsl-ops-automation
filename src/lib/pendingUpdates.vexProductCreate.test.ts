@@ -31,9 +31,18 @@ vi.mock('@/lib/db/repos/vexProduct', () => ({
 vi.mock('@/lib/db/repos/inventoryItem', () => ({
   inventoryItemRepo: { create: invCreateSpy },
 }))
+const salesTeamCreateSpy = vi.fn().mockResolvedValue(undefined)
+const vendorCreateSpy = vi.fn().mockResolvedValue(undefined)
+
 vi.mock('@/lib/db/repos/leafRepos', () => ({
   feedbackRepo: { create: feedbackCreateSpy },
   communicationRepo: { create: communicationCreateSpy },
+}))
+vi.mock('@/lib/db/repos/salesTeam', () => ({
+  salesTeamRepo: { create: salesTeamCreateSpy },
+}))
+vi.mock('@/lib/db/repos/vendor', () => ({
+  vendorRepo: { create: vendorCreateSpy },
 }))
 vi.mock('@/lib/githubQueue', () => ({
   appendToQueue: appendToQueueSpy,
@@ -147,6 +156,30 @@ describe('enqueueUpdate leaf-entity create dispatch (postgres mode)', () => {
       payload: { id: 'COMM-TEST', type: 'welcome-note', schoolId: 'SCH-1', status: 'queued', auditLog: [] },
     })
     expect(communicationCreateSpy).toHaveBeenCalledTimes(1)
+    expect(appendToQueueSpy).not.toHaveBeenCalled()
+  })
+
+  it('routes a salesTeam create to salesTeamRepo.create, not the JSON queue', async () => {
+    const { enqueueUpdate } = await import('./pendingUpdates')
+    await enqueueUpdate({
+      queuedBy: 'admin',
+      entity: 'salesTeam',
+      operation: 'create',
+      payload: { id: 'sp-test', name: 'Test Rep', email: 't@x.com', territories: [], programmes: [], active: true },
+    })
+    expect(salesTeamCreateSpy).toHaveBeenCalledTimes(1)
+    expect(appendToQueueSpy).not.toHaveBeenCalled()
+  })
+
+  it('routes a vendor create to vendorRepo.create, not the JSON queue', async () => {
+    const { enqueueUpdate } = await import('./pendingUpdates')
+    await enqueueUpdate({
+      queuedBy: 'admin',
+      entity: 'vendor',
+      operation: 'create',
+      payload: { id: 'VEN-TEST', name: 'Test Vendor', active: true, auditLog: [] },
+    })
+    expect(vendorCreateSpy).toHaveBeenCalledTimes(1)
     expect(appendToQueueSpy).not.toHaveBeenCalled()
   })
 })

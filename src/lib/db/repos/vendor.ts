@@ -84,6 +84,36 @@ export const vendorRepo = {
     return jsonVendors.filter((v) => v.active)
   },
 
+  // Vendors are created via /api/operations/vendors/create (enqueueUpdate
+  // create). Without a postgres create path the write threw in dispatchToRepo
+  // and fell into the disabled dead-letter queue (silent loss). created_at is
+  // omitted so the column DEFAULT NOW() applies (it is NOT NULL).
+  async create(v: Vendor, opts?: { queuedBy?: string }): Promise<void> {
+    if (currentBackend() === 'postgres') {
+      const sql = getSql()
+      await sql`
+        INSERT INTO vendors (id, name, legal_entity, category, primary_contact,
+          primary_email, primary_phone, address, pan, gst_number, bank_account,
+          ifsc, notes, active, audit_log)
+        VALUES (
+          ${v.id}, ${v.name}, ${v.legalEntity ?? null}, ${v.category ?? null},
+          ${v.primaryContact ?? null}, ${v.primaryEmail ?? null},
+          ${v.primaryPhone ?? null}, ${v.address ?? null}, ${v.pan ?? null},
+          ${v.gstNumber ?? null}, ${v.bankAccount ?? null}, ${v.ifsc ?? null},
+          ${v.notes ?? null}, ${v.active ?? true},
+          ${sql.json((v.auditLog ?? []) as never)}::jsonb
+        )
+      `
+      return
+    }
+    await enqueueUpdate({
+      queuedBy: opts?.queuedBy ?? 'system',
+      entity: 'vendor',
+      operation: 'create',
+      payload: v as unknown as Record<string, unknown>,
+    })
+  },
+
   async update(v: Vendor, opts?: { queuedBy?: string }): Promise<void> {
     if (currentBackend() === 'postgres') {
       const sql = getSql()

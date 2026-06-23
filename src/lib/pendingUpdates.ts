@@ -203,7 +203,8 @@ async function dispatchToRepo(params: {
     }
     case 'vendor': {
       const { vendorRepo } = await import('./db/repos/vendor')
-      if (operation === 'update') {
+      if (operation === 'create') await vendorRepo.create(payload as never, { queuedBy })
+      else if (operation === 'update') {
         await dispatchAuditedUpdate(vendorRepo as never, payload as never, queuedBy)
       } else throw new Error(`vendor ${operation} is not supported via repo`)
       return
@@ -218,7 +219,8 @@ async function dispatchToRepo(params: {
     }
     case 'salesTeam': {
       const { salesTeamRepo } = await import('./db/repos/salesTeam')
-      if (operation === 'update') await salesTeamRepo.update(payload as never, { queuedBy })
+      if (operation === 'create') await salesTeamRepo.create(payload as never, { queuedBy })
+      else if (operation === 'update') await salesTeamRepo.update(payload as never, { queuedBy })
       else throw new Error(`salesTeam ${operation} is not supported via repo`)
       return
     }

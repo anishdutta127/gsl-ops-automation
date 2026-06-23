@@ -106,6 +106,33 @@ export const salesTeamRepo = {
     return jsonSalesTeam.filter((s) => s.active)
   },
 
+  // Sales reps are created via /admin/sales-team/new (createSalesPerson ->
+  // enqueueUpdate create). Without a postgres create path the write threw in
+  // dispatchToRepo and fell into the disabled dead-letter queue (silent loss).
+  async create(rep: SalesPerson, opts?: { queuedBy?: string }): Promise<void> {
+    if (currentBackend() === 'postgres') {
+      const sql = getSql()
+      await sql`
+        INSERT INTO sales_team (id, name, email, phone, territories, programmes,
+          active, joined_date)
+        VALUES (
+          ${rep.id}, ${rep.name},
+          ${rep.email && rep.email !== '' ? rep.email : null},
+          ${rep.phone ?? null},
+          ${rep.territories ?? []}, ${rep.programmes ?? []},
+          ${rep.active ?? true}, ${rep.joinedDate ?? null}
+        )
+      `
+      return
+    }
+    await enqueueUpdate({
+      queuedBy: opts?.queuedBy ?? 'system',
+      entity: 'salesTeam',
+      operation: 'create',
+      payload: rep as unknown as Record<string, unknown>,
+    })
+  },
+
   async update(rep: SalesPerson, opts?: { queuedBy?: string }): Promise<void> {
     if (currentBackend() === 'postgres') {
       const sql = getSql()
