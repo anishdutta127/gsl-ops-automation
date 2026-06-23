@@ -34,3 +34,31 @@ export function formatInstalmentPercent(
     .replace(/\.?0+$/, '')
   return `${display}%`
 }
+
+/**
+ * Raw percent share of an instalment amount vs the contract value, as a
+ * number. Returns 0 when the contract value is zero or negative, matching
+ * the Add MOU form rule:
+ *   percent = contractValue > 0 ? (amount / contractValue) * 100 : 0
+ * The Add MOU schedule renders this with a fixed single decimal place.
+ */
+export function instalmentSharePct(amountRs: number, contractValueRs: number): number {
+  if (!Number.isFinite(contractValueRs) || contractValueRs <= 0) return 0
+  if (!Number.isFinite(amountRs)) return 0
+  return (amountRs / contractValueRs) * 100
+}
+
+/**
+ * Whether a schedule's summed amount lands on the contract value within a
+ * percentage tolerance (default 0.1%). Gates the "schedule does not add up"
+ * warning so a few rupees of rounding does not trip it. Returns false (does
+ * not add up) when the contract value is unknown.
+ */
+export function scheduleAddsUp(
+  scheduledTotalRs: number,
+  contractValueRs: number,
+  tolerancePct = 0.1,
+): boolean {
+  if (!Number.isFinite(contractValueRs) || contractValueRs <= 0) return false
+  return Math.abs(instalmentSharePct(scheduledTotalRs, contractValueRs) - 100) <= tolerancePct
+}

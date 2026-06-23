@@ -20,6 +20,7 @@ import { useMemo, useState } from 'react'
 import { AlertCircle, Plus, Trash2 } from 'lucide-react'
 import { SALES_CHANNELS } from '@/lib/mouSystem/templates'
 import { formatRs } from '@/lib/format'
+import { instalmentSharePct, scheduleAddsUp } from '@/lib/mou/instalmentPercent'
 
 const PROGRAMMES = ['STEAM', 'Young Pioneers', 'Harvard HBPE', 'Robotics'] as const
 
@@ -105,8 +106,18 @@ export function AddMouForm({
     (r) => r.dueDateIso !== '' && Number(r.amountRs) > 0,
   )
   const scheduledTotal = completeRows.reduce((s, r) => s + Number(r.amountRs), 0)
+  // Live percent share of the contract value. Display-only; entering a %
+  // to derive the amount is a possible follow-up.
+  const totalPct = instalmentSharePct(scheduledTotal, contractValue)
+  const rowPct = (amountRs: string): string | null => {
+    const amt = Number(amountRs)
+    if (contractValue <= 0 || !Number.isFinite(amt) || amt <= 0) return null
+    return `${instalmentSharePct(amt, contractValue).toFixed(1)}%`
+  }
   const scheduleMismatch =
-    contractValue > 0 && completeRows.length > 0 && Math.round(scheduledTotal) !== contractValue
+    contractValue > 0 &&
+    completeRows.length > 0 &&
+    !scheduleAddsUp(scheduledTotal, contractValue)
 
   function validate(): FieldErrors {
     const e: FieldErrors = {}
@@ -490,6 +501,14 @@ export function AddMouForm({
                   data-testid={`instalment-amount-${idx}`}
                   onChange={(ev) => updateRow(idx, { amountRs: ev.target.value })}
                 />
+                {rowPct(row.amountRs) ? (
+                  <p
+                    className="mt-1 text-right text-xs text-slate-500 tabular-nums"
+                    data-testid={`instalment-percent-${idx}`}
+                  >
+                    {rowPct(row.amountRs)} of contract value
+                  </p>
+                ) : null}
               </div>
               <button
                 type="button"
@@ -511,9 +530,18 @@ export function AddMouForm({
         >
           <Plus size={16} aria-hidden /> Add instalment
         </button>
-        <p className="mt-2 text-sm text-slate-600" data-testid="schedule-total-line">
-          Scheduled: {formatRs(scheduledTotal)}
-          {contractValue > 0 ? <> of {formatRs(contractValue)} contract value</> : null}
+        <p
+          className="mt-2 border-t border-border pt-2 text-sm font-medium text-slate-700"
+          data-testid="schedule-total-line"
+        >
+          Total scheduled: {formatRs(scheduledTotal)}
+          {contractValue > 0 ? (
+            <>
+              {' '}
+              <span className="tabular-nums">({totalPct.toFixed(1)}%)</span> of{' '}
+              {formatRs(contractValue)} contract value
+            </>
+          ) : null}
         </p>
         {scheduleMismatch ? (
           <p className="mt-1 text-sm text-amber-700" data-testid="schedule-mismatch-warning">
