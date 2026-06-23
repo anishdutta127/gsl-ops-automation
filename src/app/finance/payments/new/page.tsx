@@ -45,6 +45,7 @@ const ERROR_MESSAGES: Record<string, string> = {
   'invalid-date': 'Received date must be in yyyy-mm-dd format.',
   'invalid-mode': 'Pick a payment mode from the dropdown.',
   'missing-reference': 'Bank reference is required.',
+  'duplicate-reference': 'A payment with this bank reference, amount and date is already logged. The same receipt cannot be logged twice.',
   'missing-school': 'Pick the destination school.',
   'school-not-found': 'School not found in the master list.',
   'queue-failure': 'Failed to queue the payment. Retry.',
