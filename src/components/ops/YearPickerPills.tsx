@@ -81,6 +81,26 @@ export function YearPickerPills({
           </Link>
         )
       })}
+      {/* "All years": clears the FY scope so MOUs from any year are findable
+          (Task 2: the breakdown counts all years, the list defaulted to current). */}
+      {(() => {
+        const isActive = activeYear === 'all'
+        return (
+          <Link
+            href={buildHref(basePath, 'all', otherParams)}
+            data-testid="year-pill-all"
+            data-active={isActive ? 'true' : 'false'}
+            aria-current={isActive ? 'page' : undefined}
+            className={
+              isActive
+                ? 'inline-flex min-h-9 items-center rounded-full bg-brand-navy px-3 py-1 text-xs font-medium text-white hover:bg-brand-navy/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-teal'
+                : 'inline-flex min-h-9 items-center rounded-full border border-border bg-white px-3 py-1 text-xs text-slate-700 hover:bg-slate-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-teal'
+            }
+          >
+            All years
+          </Link>
+        )
+      })()}
     </nav>
   )
 }

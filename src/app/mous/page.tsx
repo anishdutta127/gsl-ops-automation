@@ -127,12 +127,20 @@ export default async function MousListPage({ searchParams }: PageProps) {
   const relevantYears = getAllRelevantFinancialYears(scoped, allPayments)
   const currentFy = getCurrentFinancialYear()
   const yearParam = typeof sp.year === 'string' ? sp.year : null
-  const activeYear = yearParam && relevantYears.includes(yearParam)
-    ? yearParam
-    : relevantYears.includes(currentFy)
-      ? currentFy
-      : relevantYears[0] ?? currentFy
-  const yearFiltered = filterMousByFinancialYear(scoped, allPayments, activeYear)
+  // Task 2 fix: `?year=all` clears the FY scope so MOUs from any year are
+  // findable (the dashboard breakdown counts all years; the list used to
+  // default to the current FY only, hiding other-year MOUs).
+  const showAllYears = yearParam === 'all'
+  const activeYear = showAllYears
+    ? 'all'
+    : yearParam && relevantYears.includes(yearParam)
+      ? yearParam
+      : relevantYears.includes(currentFy)
+        ? currentFy
+        : relevantYears[0] ?? currentFy
+  const yearFiltered = showAllYears
+    ? scoped
+    : filterMousByFinancialYear(scoped, allPayments, activeYear)
 
   const active = parseDimensions(sp, DIMENSION_KEYS as unknown as string[])
   const search = typeof sp.q === 'string' ? sp.q : ''
@@ -233,11 +241,19 @@ export default async function MousListPage({ searchParams }: PageProps) {
       <TopNav currentPath="/mous" />
       <main id="main-content">
         <PageHeader
-          title={stageLabel !== null ? `MOUs at ${stageLabel}` : `MOUs - FY ${activeYear}`}
+          title={
+            stageLabel !== null
+              ? `MOUs at ${stageLabel}`
+              : showAllYears
+                ? 'MOUs - all years'
+                : `MOUs - FY ${activeYear}`
+          }
           subtitle={
             stageLabel !== null
               ? `${filtered.length} MOUs at the ${stageLabel} stage. Filtered from the MOU Pipeline.`
-              : `${filtered.length} of ${yearFiltered.length} matching in FY ${activeYear}`
+              : showAllYears
+                ? `${filtered.length} of ${yearFiltered.length} matching across all years`
+                : `${filtered.length} of ${yearFiltered.length} matching in FY ${activeYear}`
           }
         />
         <YearPickerPills
