@@ -257,5 +257,32 @@
         "notes": "Shared test account for finance-team review. Cross-functional Admin (department null wildcard). SSO via getsetlearn.info domain."
       }
     ]
+  },
+  {
+    "id": "shubhangi.uj",
+    "name": "Shubhangi",
+    "email": "ujaccounts@getsetlearn.info",
+    "role": "Admin",
+    "department": null,
+    "testingOverride": false,
+    "active": true,
+    "passwordHash": "$2b$12$jkD/Mszhyty0mmRWeuSNEeJQ.Wczb7fll7nA61lu4QLKI1g3ar/2y",
+    "createdAt": "2026-06-24T00:00:00Z",
+    "auditLog": [
+      {
+        "timestamp": "2026-06-24T00:00:00Z",
+        "user": "anish.d",
+        "action": "user-created",
+        "before": {},
+        "after": {
+          "id": "shubhangi.uj",
+          "email": "ujaccounts@getsetlearn.info",
+          "role": "Admin",
+          "department": null,
+          "active": true
+        },
+        "notes": "Full cross-functional admin (role Admin, department null wildcard) created for ujaccounts@getsetlearn.info."
+      }
+    ]
   }
 ]
