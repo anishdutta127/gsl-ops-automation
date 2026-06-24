@@ -826,5 +826,99 @@
       "loggedAt": "2026-06-24T11:57:32.546Z"
     },
     "retryCount": 0
+  },
+  {
+    "id": "eb702f22-6a59-4a28-be31-eee330abb283",
+    "queuedAt": "2026-06-24T16:27:11.250Z",
+    "queuedBy": "anish.d",
+    "entity": "mou",
+    "operation": "update",
+    "payload": {
+      "id": "MOU-STEAM-2627-088",
+      "schoolId": "SCH-ZZ_CANCEL_VERIFY_SCHOO",
+      "schoolName": "ZZ Cancel Verify School",
+      "programme": "STEAM",
+      "schoolScope": "SINGLE",
+      "schoolGroupId": null,
+      "status": "Cancelled",
+      "cohortStatus": "archived",
+      "academicYear": "2026-27",
+      "effectiveDate": null,
+      "startDate": "2026-04-01",
+      "endDate": "2027-03-31",
+      "numberOfYears": 1,
+      "studentsMou": 10,
+      "studentsActual": 10,
+      "studentsVariance": 0,
+      "studentsVariancePct": 0,
+      "spWithoutTax": 5000,
+      "spWithTax": 5000,
+      "contractValue": 50000,
+      "received": 0,
+      "tds": 0,
+      "balance": 50000,
+      "receivedPct": 0,
+      "trainerModel": null,
+      "salesPersonId": "",
+      "templateVersion": "",
+      "generatedAt": "2026-06-24",
+      "notes": "",
+      "delayNotes": null,
+      "daysToExpiry": null,
+      "salesChannel": null,
+      "region": null,
+      "schoolCrmId": null,
+      "signedMouPdfPath": null,
+      "importNotes": null,
+      "productSelection": null,
+      "opsReviewStatus": "Pending for review",
+      "paymentSchedule": "100",
+      "paymentSchedules": null,
+      "yearlyPricing": null,
+      "billingBlock": null,
+      "draftVariables": null,
+      "gradewiseDistribution": null,
+      "products": null,
+      "studentCountEventIds": [],
+      "auditLog": [
+        {
+          "user": "Anish Dutta",
+          "after": {
+            "id": "MOU-STEAM-2627-088",
+            "region": null,
+            "status": "Active",
+            "endDate": "2027-03-31",
+            "schoolId": "SCH-ZZ_CANCEL_VERIFY_SCHOO",
+            "spWithTax": 5000,
+            "startDate": "2026-04-01",
+            "schoolName": "ZZ Cancel Verify School",
+            "studentsMou": 10,
+            "salesChannel": null,
+            "contractValue": 50000,
+            "salesPersonId": null,
+            "schoolAddress": "zz",
+            "opsReviewStatus": "Pending for review",
+            "installmentCount": 1,
+            "signedMouPdfPath": null
+          },
+          "notes": "Signed MOU entered via Add MOU form (Finance). School new school created (SCH-ZZ_CANCEL_VERIFY_SCHOO). Pending Ops review.",
+          "action": "create",
+          "timestamp": "2026-06-24T16:27:09.357Z"
+        },
+        {
+          "timestamp": "2026-06-24T16:27:11.232Z",
+          "user": "anish.d",
+          "action": "mou-cancelled",
+          "before": {
+            "status": "Active"
+          },
+          "after": {
+            "status": "Cancelled"
+          },
+          "notes": "MOU soft-cancelled by Admin. Reason: ZZ throwaway cancel verify run. Cascade soft-deleted 1 payment(s)."
+        }
+      ]
+    },
+    "retryCount": 0
   }
 ]
