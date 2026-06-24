@@ -111,5 +111,104 @@
       }
     },
     "retryCount": 0
+  },
+  {
+    "id": "9cdc97d1-1cf1-4d08-9265-b1ef382a2061",
+    "queuedAt": "2026-06-24T07:06:43.927Z",
+    "queuedBy": "misba.m",
+    "entity": "kitDispatch",
+    "operation": "create",
+    "payload": {
+      "id": "DISPATCH-MOU-STEAM-2627-085",
+      "mouId": "MOU-STEAM-2627-085",
+      "record": {
+        "id": "DISPATCH-MOU-STEAM-2627-085",
+        "mouId": "MOU-STEAM-2627-085",
+        "schoolId": "SCH-TAKSHILAH_GLOBAL_SCHOO",
+        "schoolName": "Takshilah Global School - Vellore",
+        "productSelected": "TinkRworks",
+        "dispatchStatus": "Not Started",
+        "allocations": [
+          {
+            "grade": 2,
+            "students": 10,
+            "kitsQty": 5,
+            "kitType": "Reusable",
+            "productName": "Launchpad"
+          },
+          {
+            "grade": 3,
+            "students": 10,
+            "kitsQty": 5,
+            "kitType": "Reusable",
+            "productName": "Launchpad"
+          },
+          {
+            "grade": 4,
+            "students": 10,
+            "kitsQty": 5,
+            "kitType": "Reusable",
+            "productName": "Launchpad"
+          }
+        ],
+        "salesApprovalStatus": "Pending",
+        "salesApprovedBy": null,
+        "salesApprovedAt": null,
+        "salesRejectionReason": null,
+        "dispatchSummary": null,
+        "shipmentTracking": null,
+        "pod": null,
+        "auditLog": [
+          {
+            "timestamp": "2026-06-24T07:06:43.927Z",
+            "user": "misba.m",
+            "action": "create",
+            "after": {
+              "id": "DISPATCH-MOU-STEAM-2627-085",
+              "mouId": "MOU-STEAM-2627-085",
+              "schoolId": "SCH-TAKSHILAH_GLOBAL_SCHOO",
+              "productSelected": "TinkRworks"
+            },
+            "notes": "KitDispatch record minted on first allocation submit."
+          },
+          {
+            "timestamp": "2026-06-24T07:06:43.927Z",
+            "user": "misba.m",
+            "action": "update",
+            "before": {
+              "allocations": []
+            },
+            "after": {
+              "allocations": [
+                {
+                  "grade": 2,
+                  "students": 10,
+                  "kitsQty": 5,
+                  "kitType": "Reusable",
+                  "productName": "Launchpad"
+                },
+                {
+                  "grade": 3,
+                  "students": 10,
+                  "kitsQty": 5,
+                  "kitType": "Reusable",
+                  "productName": "Launchpad"
+                },
+                {
+                  "grade": 4,
+                  "students": 10,
+                  "kitsQty": 5,
+                  "kitType": "Reusable",
+                  "productName": "Launchpad"
+                }
+              ]
+            },
+            "notes": "sales-approval-pending; notified sales rep "
+          }
+        ],
+        "createdAt": "2026-06-24T07:06:43.927Z"
+      }
+    },
+    "retryCount": 0
   }
 ]
