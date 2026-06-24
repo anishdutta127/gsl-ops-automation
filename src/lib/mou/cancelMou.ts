@@ -89,16 +89,18 @@ export async function cancelMou(
       after: { status: 'Cancelled' },
       notes: `Soft-deleted by MOU cancel ${mou.id}. Reason: ${reason}`,
     }
-    const nextP: Payment = {
-      ...p,
-      status: 'Cancelled',
-      auditLog: [...(p.auditLog ?? []), pAudit],
-    }
+    // Minimal patch: only the changed scalar + the full auditLog (the dispatch
+    // diffs auditLog by length to append the new entry). Avoids re-binding every
+    // field through updatePartial.
     await deps.enqueue({
       queuedBy: args.recordedBy,
       entity: 'payment',
       operation: 'update',
-      payload: nextP as unknown as Record<string, unknown>,
+      payload: {
+        id: p.id,
+        status: 'Cancelled',
+        auditLog: [...(p.auditLog ?? []), pAudit],
+      } as unknown as Record<string, unknown>,
     })
     cancelledPaymentIds.push(p.id)
   }
@@ -127,7 +129,12 @@ export async function cancelMou(
     queuedBy: args.recordedBy,
     entity: 'mou',
     operation: 'update',
-    payload: nextMou as unknown as Record<string, unknown>,
+    payload: {
+      id: mou.id,
+      status: 'Cancelled',
+      cohortStatus: 'archived',
+      auditLog: nextMou.auditLog,
+    } as unknown as Record<string, unknown>,
   })
 
   return { ok: true, mou: nextMou, cancelledPaymentIds }

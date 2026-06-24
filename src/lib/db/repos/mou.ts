@@ -370,6 +370,10 @@ export const mouRepo = {
       const TIMESTAMP_COLS = new Set([
         'effective_date', 'start_date', 'end_date', 'generated_at',
       ])
+      // Nullable FK columns: rowToMou maps a NULL FK to '' (string fallback);
+      // an empty string would violate the FK on a full-payload updatePartial
+      // (e.g. cancelMou, or editing a salesperson-less MOU). Coerce '' -> null.
+      const FK_NULLABLE_COLS = new Set(['sales_person_id', 'school_group_id'])
       const updates: { col: string; val: unknown; jsonb: boolean }[] = []
       for (const [k, v] of Object.entries(patch)) {
         if (k === 'id' || k === 'auditLog') continue
@@ -389,7 +393,7 @@ export const mouRepo = {
         if (u.jsonb) {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           setObj[u.col] = u.val == null ? null : sql.json(u.val as never)
-        } else if (TIMESTAMP_COLS.has(u.col) && u.val === '') {
+        } else if ((TIMESTAMP_COLS.has(u.col) || FK_NULLABLE_COLS.has(u.col)) && u.val === '') {
           setObj[u.col] = null
         } else {
           setObj[u.col] = u.val ?? null
