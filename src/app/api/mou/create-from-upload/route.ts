@@ -40,6 +40,8 @@ import { SALES_CHANNELS } from '@/lib/mouSystem/templates'
 import { mouRepo } from '@/lib/db/repos/mou'
 import { schoolRepo } from '@/lib/db/repos/school'
 import { paymentRepo } from '@/lib/db/repos/payment'
+import { salesTeamRepo } from '@/lib/db/repos/salesTeam'
+import { regionForSalesPerson } from '@/lib/regions'
 import { normaliseSchoolName } from '@/lib/importer/schoolMatcher'
 import { slugifySchoolId, INCOMPLETE_SCHOOL_MARKER } from '@/lib/mouSystem/entityWriters'
 import { currentBackend } from '@/lib/db/backend'
@@ -69,6 +71,8 @@ const MESSAGES: Record<string, string> = {
   'invalid-date': 'Dates must be YYYY-MM-DD.',
   'invalid-installments': 'Add at least one complete instalment row (due date and an amount greater than zero).',
   'invalid-sales-channel': 'Select a valid sales channel.',
+  'salesperson-not-found': 'The selected salesperson was not found.',
+  'salesperson-no-region': 'The selected salesperson has no region/territory set. Set it in Sales Team first, then retry.',
   'pdf-only': 'Only PDF files are accepted for the signed MOU.',
   'too-large': 'The signed PDF exceeds 10 MB.',
   'save-failed': 'Failed to save the MOU.',
@@ -182,6 +186,7 @@ export async function POST(request: Request) {
   const startDate = String(form.get('startDate') ?? '').trim()
   const endDate = String(form.get('endDate') ?? '').trim()
   const salesChannelRaw = String(form.get('salesChannel') ?? '').trim()
+  const salesPersonId = String(form.get('salesPersonId') ?? '').trim()
   const signDate = String(form.get('signDate') ?? '').trim()
   const installmentsRaw = String(form.get('installments') ?? '')
   const file = form.get('file')
@@ -205,6 +210,17 @@ export async function POST(request: Request) {
   const salesChannel = (salesChannelRaw || null) as SalesChannel | null
   const installments = parseInstalments(installmentsRaw)
   if (!installments) return fail(request, 'invalid-installments')
+
+  // Salesperson + derived region (do not free-type region). Optional field; but
+  // if a salesperson is chosen, its territory MUST yield a region - else fail
+  // loud rather than save a blank region.
+  let region: string | null = null
+  if (salesPersonId) {
+    const sp = await salesTeamRepo.findById(salesPersonId)
+    if (!sp) return fail(request, 'salesperson-not-found')
+    region = regionForSalesPerson(sp)
+    if (!region) return fail(request, 'salesperson-no-region', { detail: `(${sp.name})` })
+  }
 
   // ---- School resolution: linked / name-matched / inline-create ----
   const allSchools = await schoolRepo.findAll()
@@ -297,6 +313,8 @@ export async function POST(request: Request) {
       spWithTax: pricePerStudent,
       contractValue,
       salesChannel,
+      salesPersonId: salesPersonId || null,
+      region,
       installmentCount: installments.length,
       signedMouPdfPath,
     },
@@ -335,7 +353,8 @@ export async function POST(request: Request) {
     balance: contractValue,
     receivedPct: 0,
     trainerModel: null,
-    salesPersonId: '',
+    salesPersonId: salesPersonId || '',
+    region,
     templateVersion: '',
     generatedAt: ts,
     notes: '',

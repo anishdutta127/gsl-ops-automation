@@ -62,12 +62,20 @@ function FieldError({ id, msg }: { id: string; msg?: string }) {
   )
 }
 
+interface SalesPersonOption {
+  id: string
+  name: string
+  territories: string[]
+}
+
 export function AddMouForm({
   schools,
+  salesPeople,
   defaultYear,
   initialError,
 }: {
   schools: SchoolOption[]
+  salesPeople: SalesPersonOption[]
   defaultYear: string
   initialError: string | null
 }) {
@@ -81,6 +89,7 @@ export function AddMouForm({
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
   const [salesChannel, setSalesChannel] = useState('')
+  const [salesPersonId, setSalesPersonId] = useState('')
   const [signDate, setSignDate] = useState('')
   const [file, setFile] = useState<File | null>(null)
   const [installments, setInstallments] = useState<InstalmentRow[]>([
@@ -94,6 +103,17 @@ export function AddMouForm({
     () => schools.find((s) => s.id === existingSchoolId) ?? null,
     [schools, existingSchoolId],
   )
+
+  // Region is DERIVED from the chosen salesperson's territories; never typed.
+  const selectedSalesPerson = useMemo(
+    () => salesPeople.find((s) => s.id === salesPersonId) ?? null,
+    [salesPeople, salesPersonId],
+  )
+  const derivedRegion =
+    selectedSalesPerson && selectedSalesPerson.territories.length > 0
+      ? selectedSalesPerson.territories.map((t) => t.trim()).filter(Boolean).join(', ')
+      : null
+  const salesPersonNoRegion = !!selectedSalesPerson && !derivedRegion
 
   const studentsNum = Number(students)
   const priceNum = Number(pricePerStudent)
@@ -140,6 +160,10 @@ export function AddMouForm({
     if (completeRows.length === 0) {
       e.installments = 'Add at least one instalment with a due date and an amount.'
     }
+    if (salesPersonNoRegion) {
+      e.salesPersonId =
+        'This salesperson has no region/territory set. Set it in Sales Team first, or pick another, rather than saving a blank region.'
+    }
     if (file && !file.name.toLowerCase().endsWith('.pdf')) {
       e.file = 'Only PDF files are accepted for the signed MOU.'
     }
@@ -175,6 +199,7 @@ export function AddMouForm({
       fd.set('startDate', startDate)
       fd.set('endDate', endDate)
       fd.set('salesChannel', salesChannel)
+      fd.set('salesPersonId', salesPersonId)
       fd.set('signDate', signDate)
       fd.set(
         'installments',
@@ -335,6 +360,48 @@ export function AddMouForm({
             ))}
           </select>
         </div>
+      </div>
+
+      <div>
+        <label htmlFor="salesPersonId" className={FIELD}>
+          Salesperson <span className="font-normal text-slate-500">(optional)</span>
+        </label>
+        <select
+          id="salesPersonId"
+          className={INPUT}
+          value={salesPersonId}
+          aria-invalid={!!errors.salesPersonId}
+          aria-describedby={errors.salesPersonId ? 'salesPersonId-error' : undefined}
+          data-testid="salesperson-select"
+          onChange={(ev) => setSalesPersonId(ev.target.value)}
+        >
+          <option value="">: select a salesperson :</option>
+          {salesPeople.map((s) => (
+            <option key={s.id} value={s.id}>
+              {s.name}
+            </option>
+          ))}
+        </select>
+        {selectedSalesPerson ? (
+          derivedRegion ? (
+            <p className="mt-1 text-sm text-slate-700" data-testid="derived-region">
+              Region (from salesperson): <strong>{derivedRegion}</strong>
+            </p>
+          ) : (
+            <p
+              className="mt-1 flex items-center gap-1 text-sm text-signal-alert"
+              data-testid="region-missing"
+            >
+              <AlertCircle size={14} aria-hidden /> No region/territory set for{' '}
+              {selectedSalesPerson.name}. Set it in Sales Team, or choose another salesperson.
+            </p>
+          )
+        ) : (
+          <p className="mt-1 text-xs text-slate-500">
+            Region is set automatically from the salesperson; it is not typed.
+          </p>
+        )}
+        <FieldError id="salesPersonId-error" msg={errors.salesPersonId} />
       </div>
 
       <div className="grid grid-cols-2 gap-4">

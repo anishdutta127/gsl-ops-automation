@@ -54,6 +54,7 @@ interface MouRow {
   delay_notes: string | null
   days_to_expiry: number | null
   sales_channel: string | null
+  region: string | null
   school_crm_id: string | null
   signed_mou_pdf_path: string | null
   import_notes: string | null
@@ -130,6 +131,7 @@ function rowToMou(r: MouRow): MOU {
     delayNotes: r.delay_notes ?? null,
     daysToExpiry: r.days_to_expiry ?? null,
     salesChannel: (r.sales_channel ?? null) as MOU['salesChannel'],
+    region: r.region ?? null,
     schoolCrmId: r.school_crm_id ?? null,
     signedMouPdfPath: r.signed_mou_pdf_path ?? null,
     importNotes: r.import_notes ?? null,
@@ -208,7 +210,7 @@ export const mouRepo = {
           students_mou, students_actual, students_variance, students_variance_pct,
           sp_without_tax, sp_with_tax, contract_value, received, tds, balance, received_pct,
           trainer_model, sales_person_id, template_version, generated_at,
-          notes, delay_notes, days_to_expiry, sales_channel, school_crm_id,
+          notes, delay_notes, days_to_expiry, sales_channel, region, school_crm_id,
           signed_mou_pdf_path, import_notes, product_selection, ops_review_status,
           payment_schedule, payment_schedules, yearly_pricing, billing_block,
           draft_variables, dispatch_override, gradewise_distribution, products,
@@ -220,7 +222,7 @@ export const mouRepo = {
           ${m.studentsMou ?? null}, ${m.studentsActual ?? null}, ${m.studentsVariance ?? null}, ${m.studentsVariancePct ?? null},
           ${m.spWithoutTax ?? null}, ${m.spWithTax ?? null}, ${m.contractValue ?? null}, ${m.received ?? null}, ${m.tds ?? null}, ${m.balance ?? null}, ${m.receivedPct ?? null},
           ${m.trainerModel ?? null}, ${m.salesPersonId || null}, ${m.templateVersion || null}, ${m.generatedAt || null},
-          ${m.notes ?? null}, ${m.delayNotes ?? null}, ${m.daysToExpiry ?? null}, ${m.salesChannel ?? null}, ${m.schoolCrmId ?? null},
+          ${m.notes ?? null}, ${m.delayNotes ?? null}, ${m.daysToExpiry ?? null}, ${m.salesChannel ?? null}, ${m.region ?? null}, ${m.schoolCrmId ?? null},
           ${m.signedMouPdfPath ?? null}, ${m.importNotes ?? null}, ${m.productSelection ?? null}, ${m.opsReviewStatus ?? null},
           ${m.paymentSchedule == null ? null : sql.json(m.paymentSchedule as never)}::jsonb,
           ${m.paymentSchedules == null ? null : sql.json(m.paymentSchedules as never)}::jsonb,
@@ -281,6 +283,7 @@ export const mouRepo = {
           delay_notes = ${m.delayNotes ?? null},
           days_to_expiry = ${m.daysToExpiry ?? null},
           sales_channel = ${m.salesChannel ?? null},
+          region = ${m.region ?? null},
           school_crm_id = ${m.schoolCrmId ?? null},
           signed_mou_pdf_path = ${m.signedMouPdfPath ?? null},
           import_notes = ${m.importNotes ?? null},
@@ -354,6 +357,7 @@ export const mouRepo = {
         salesPersonId: 'sales_person_id', templateVersion: 'template_version',
         generatedAt: 'generated_at', notes: 'notes', delayNotes: 'delay_notes',
         daysToExpiry: 'days_to_expiry', salesChannel: 'sales_channel',
+        region: 'region',
         schoolCrmId: 'school_crm_id', signedMouPdfPath: 'signed_mou_pdf_path',
         importNotes: 'import_notes', productSelection: 'product_selection',
         opsReviewStatus: 'ops_review_status',

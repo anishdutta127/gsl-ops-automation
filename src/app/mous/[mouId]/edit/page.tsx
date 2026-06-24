@@ -18,6 +18,7 @@ import type { MOU, User } from '@/lib/types'
 import { mouRepo } from '@/lib/db/repos/mou'
 import { schoolRepo } from '@/lib/db/repos/school'
 import { paymentRepo } from '@/lib/db/repos/payment'
+import { salesTeamRepo } from '@/lib/db/repos/salesTeam'
 import { TopNav } from '@/components/ops/TopNav'
 import { PageHeader } from '@/components/ops/PageHeader'
 import { DetailHeaderCard } from '@/components/ops/DetailHeaderCard'
@@ -60,10 +61,11 @@ export default async function MouEditPage({ params, searchParams }: PageProps) {
   const sp = await searchParams
   const user = await getCurrentUser()
   if (!user) redirect(`/login?next=${encodeURIComponent(`/mous/${mouId}/edit`)}`)
-  const [allMous, allSchools, allPayments] = await Promise.all([
+  const [allMous, allSchools, allPayments, allSalesPeople] = await Promise.all([
     mouRepo.findAll(),
     schoolRepo.findAll(),
     paymentRepo.findAll(),
+    salesTeamRepo.findActive(),
   ])
   const mou = allMous.find((m) => m.id === mouId)
   if (!mou || !isVisibleToUser(mou, user)) notFound()
@@ -85,6 +87,9 @@ export default async function MouEditPage({ params, searchParams }: PageProps) {
 
   const sortedSchools = allSchools
     .filter((s) => s.active !== false)
+    .slice()
+    .sort((a, b) => a.name.localeCompare(b.name))
+  const sortedSalesPeople = allSalesPeople
     .slice()
     .sort((a, b) => a.name.localeCompare(b.name))
 
@@ -200,6 +205,28 @@ export default async function MouEditPage({ params, searchParams }: PageProps) {
                     ))}
                   </select>
                 </div>
+              </div>
+              <div>
+                <label htmlFor="salesPersonId" className={FIELD_LABEL_CLASS}>
+                  Salesperson
+                </label>
+                <select
+                  id="salesPersonId"
+                  name="salesPersonId"
+                  defaultValue={mou.salesPersonId ?? ''}
+                  className={FIELD_INPUT_CLASS}
+                  data-testid="salesperson-select"
+                >
+                  <option value="">(none)</option>
+                  {sortedSalesPeople.map((s) => (
+                    <option key={s.id} value={s.id}>{s.name}</option>
+                  ))}
+                </select>
+                <p className="mt-1 text-xs text-muted-foreground" data-testid="mou-region-line">
+                  Region (derived from salesperson, set on save):{' '}
+                  <strong>{mou.region ? mou.region : 'not set'}</strong>. If a chosen
+                  salesperson has no territory, the region is not saved and the edit is flagged.
+                </p>
               </div>
               <div>
                 <label htmlFor="importNotes" className={FIELD_LABEL_CLASS}>

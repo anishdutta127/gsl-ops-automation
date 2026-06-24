@@ -26,6 +26,8 @@ import type { ProductSelection } from '@/lib/mouSystem/types'
 import { mouRepo } from '@/lib/db/repos/mou'
 import { schoolRepo } from '@/lib/db/repos/school'
 import { userRepo } from '@/lib/db/repos/user'
+import { salesTeamRepo } from '@/lib/db/repos/salesTeam'
+import { regionForSalesPerson } from '@/lib/regions'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
 
 const VALID_PROGRAMMES: Programme[] = ['STEAM', 'Young Pioneers', 'Harvard HBPE', 'Robotics']
@@ -89,6 +91,33 @@ export async function POST(request: Request, ctx: RouteContext) {
   const notesRaw = form.get('notes')
   if (typeof notesRaw === 'string') {
     patch.notes = notesRaw.trim() === '' ? null : notesRaw.trim()
+  }
+
+  // Salesperson -> region (derived, never free-typed). Present in the form ->
+  // resolve: cleared removes both; a rep with no territory is surfaced via a
+  // warning rather than saving a blank region.
+  if (form.get('salesPersonId') !== null) {
+    const raw = String(form.get('salesPersonId') ?? '').trim()
+    if (raw === '' || raw === 'null') {
+      if (mou.salesPersonId) {
+        patch.salesPersonId = ''
+        patch.region = null
+      }
+    } else if (raw !== mou.salesPersonId || !mou.region) {
+      // changed, or unchanged-but-region-not-yet-backfilled
+      const sp = await salesTeamRepo.findById(raw)
+      if (!sp) {
+        warnings.push('salesperson-not-found')
+      } else {
+        const region = regionForSalesPerson(sp)
+        if (!region) {
+          warnings.push('salesperson-no-region')
+        } else {
+          patch.salesPersonId = raw
+          patch.region = region
+        }
+      }
+    }
   }
 
   // -- Admin only --

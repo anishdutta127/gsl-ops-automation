@@ -577,6 +577,13 @@ export interface MOU {
   paymentSchedule: string          // '25-25-25-25 quarterly'
   trainerModel: TrainerModel | null
   salesPersonId: string | null     // FK to sales_team.json
+  /**
+   * Region for this MOU, DERIVED from the salesperson's territories at write
+   * time (do not free-type). Null when no salesperson is set, or surfaced as an
+   * error when a chosen salesperson has no territory. See
+   * regionForSalesPerson() in src/lib/regions.ts. (migration 015)
+   */
+  region?: string | null
   templateVersion: string | null
   generatedAt: string | null
   notes: string | null

@@ -21,6 +21,7 @@ import { PageHeader } from '@/components/ops/PageHeader'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canEditFinanceData } from '@/lib/access'
 import { schoolRepo } from '@/lib/db/repos/school'
+import { salesTeamRepo } from '@/lib/db/repos/salesTeam'
 import { getCurrentFinancialYear } from '@/lib/mou/yearMembership'
 import { AddMouForm } from './AddMouForm'
 
@@ -58,6 +59,9 @@ export default async function UploadMouPage({ searchParams }: PageProps) {
   const schools = (await schoolRepo.findAll())
     .filter((s) => s.active !== false)
     .sort((a, b) => a.name.localeCompare(b.name))
+  const salesPeople = (await salesTeamRepo.findActive())
+    .map((s) => ({ id: s.id, name: s.name, territories: s.territories }))
+    .sort((a, b) => a.name.localeCompare(b.name))
   const currentFy = getCurrentFinancialYear()
 
   // Redirect-path error rendering (native-form fallback, login bounce).
@@ -82,6 +86,7 @@ export default async function UploadMouPage({ searchParams }: PageProps) {
         <div className="mx-auto max-w-2xl px-4 py-6">
           <AddMouForm
             schools={schools.map((s) => ({ id: s.id, name: s.name, city: s.city }))}
+            salesPeople={salesPeople}
             defaultYear={currentFy}
             initialError={initialError}
           />

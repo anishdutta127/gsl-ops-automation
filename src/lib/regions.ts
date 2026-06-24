@@ -1,3 +1,19 @@
+import type { SalesPerson } from '@/lib/types'
+
+/**
+ * Region for an MOU, DERIVED from its salesperson (do not free-type). The rep's
+ * `territories` are the source: a single territory is used as-is, multiple are
+ * joined with ", ". Returns null when the rep has no territory set - callers
+ * MUST surface that, not silently save a blank region. (salesperson->region slice)
+ */
+export function regionForSalesPerson(
+  sp: Pick<SalesPerson, 'territories'> | null | undefined,
+): string | null {
+  if (!sp || !Array.isArray(sp.territories) || sp.territories.length === 0) return null
+  const cleaned = sp.territories.map((t) => String(t).trim()).filter(Boolean)
+  return cleaned.length ? cleaned.join(', ') : null
+}
+
 /*
  * Region taxonomy + super-region overlay (Phase X filters).
  *
