@@ -81,6 +81,12 @@ describe('POST /api/operations/vex/pi/[id]/payment (Gate 5A.5 persistence fix)',
     )
     expect(typeof paymentLogCall![0].payload.id).toBe('string')
     expect(paymentLogCall![0].payload.id).toMatch(/^VEXPL-/)
-    expect(paymentLogCall![0].payload.vexPiId).toBe(samplePi.id)
+    // The paymentLog payload must match PaymentLog / the payment_logs table:
+    // `amount` (not `total`) is set, and the VexPi link + bank/TDS split live in
+    // narration (the table has no vexPiId/scope/total columns).
+    expect(paymentLogCall![0].payload.amount).toBe(1000)
+    expect(paymentLogCall![0].payload.unmatched).toBe(false)
+    expect(Array.isArray(paymentLogCall![0].payload.matchedInstallmentIds)).toBe(true)
+    expect(String(paymentLogCall![0].payload.narration)).toContain(samplePi.id)
   })
 })

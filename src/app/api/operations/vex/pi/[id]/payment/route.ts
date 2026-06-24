@@ -16,6 +16,7 @@ import { getCurrentUser } from '@/lib/auth/session'
 import { canEditFinanceData } from '@/lib/access'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
 import { vexPiRepo } from '@/lib/db/repos/vexPi'
+import { formatRs } from '@/lib/format'
 import type {
   AuditEntry,
   PaymentMode,
@@ -124,18 +125,33 @@ export async function POST(request: Request, ctx: RouteContext) {
     },
     notes: `Payment received Rs ${total} (bank ${bankAmount} + TDS ${tdsAmount}) via ${mode}.`,
   }
+  // Shape MUST match PaymentLog / the payment_logs table (paymentLogRepo.create
+  // binds `amount` raw; the VEX-only fields scope/vexPiId/bankAmount/tdsAmount
+  // have no columns). The VexPi<->log link is VexPi.paymentLogIds -> this id;
+  // the bank/TDS split + PI ref live in `narration` (no dedicated columns).
+  // `amount` is the total receipt; `unmatched: false` because a VEX receipt is
+  // tied to its PI, not awaiting instalment reconciliation.
   const paymentLogRecord = {
     id: logId,
-    scope: 'vex' as const,
-    vexPiId: pi.id,
     date,
-    bankAmount,
-    tdsAmount,
-    total,
+    amount: total,
     mode,
     reference,
+    narration: `VEX PI ${pi.id}: bank ${formatRs(bankAmount)} + TDS ${formatRs(tdsAmount)} via ${mode}.`,
+    salesPersonId: null,
+    matchedInstallmentIds: [],
+    unmatched: false,
     loggedBy: user.name,
     loggedAt,
+    notes: null,
+    auditLog: [
+      {
+        timestamp: loggedAt,
+        user: user.name,
+        action: 'create' as const,
+        notes: `VEX PI ${pi.id} payment receipt ${formatRs(total)} (bank ${formatRs(bankAmount)} + TDS ${formatRs(tdsAmount)}) via ${mode}.`,
+      },
+    ],
   }
 
   try {
