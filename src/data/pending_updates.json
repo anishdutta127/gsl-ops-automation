@@ -210,5 +210,105 @@
       }
     },
     "retryCount": 0
+  },
+  {
+    "id": "993eb5f5-7fdd-4e34-a4a7-bea8334a0266",
+    "queuedAt": "2026-06-24T10:19:18.367Z",
+    "queuedBy": "ujaccounts",
+    "entity": "mou",
+    "operation": "update",
+    "payload": {
+      "id": "MOU-YP-2627-007",
+      "schoolId": "SCH-21K_LEARNING_PRIVATE_L",
+      "schoolName": "21K Learning Private Limited",
+      "programme": "Young Pioneers",
+      "schoolScope": "SINGLE",
+      "schoolGroupId": null,
+      "status": "Active",
+      "cohortStatus": "active",
+      "academicYear": "2026-27",
+      "effectiveDate": "2026-04-01",
+      "startDate": "2026-04-01",
+      "endDate": "2027-03-31",
+      "numberOfYears": 1,
+      "studentsMou": 52,
+      "studentsActual": 1,
+      "studentsVariance": 0,
+      "studentsVariancePct": 0,
+      "spWithoutTax": 2950,
+      "spWithTax": 2950,
+      "contractValue": 153400,
+      "received": 0,
+      "tds": 0,
+      "balance": 153400,
+      "receivedPct": 0,
+      "trainerModel": null,
+      "salesPersonId": "",
+      "templateVersion": "",
+      "generatedAt": "2026-06-24",
+      "notes": "",
+      "delayNotes": null,
+      "daysToExpiry": null,
+      "salesChannel": null,
+      "schoolCrmId": null,
+      "signedMouPdfPath": null,
+      "importNotes": null,
+      "productSelection": null,
+      "opsReviewStatus": "Pending for review",
+      "paymentSchedule": "100",
+      "paymentSchedules": null,
+      "yearlyPricing": null,
+      "billingBlock": null,
+      "draftVariables": null,
+      "gradewiseDistribution": null,
+      "products": null,
+      "studentCountEventIds": [
+        "SCE-2026-0015"
+      ],
+      "auditLog": [
+        {
+          "user": "Shubhangi",
+          "after": {
+            "id": "MOU-YP-2627-007",
+            "status": "Active",
+            "endDate": "2027-03-31",
+            "schoolId": "SCH-21K_LEARNING_PRIVATE_L",
+            "spWithTax": 2950,
+            "startDate": "2026-04-01",
+            "schoolName": "21K Learning Private Limited",
+            "studentsMou": 52,
+            "salesChannel": null,
+            "contractValue": 153400,
+            "schoolAddress": "1-11-87 & 88, S.P. Road, Begumpet, Hyderabad, Telangana -500016",
+            "opsReviewStatus": "Pending for review",
+            "installmentCount": 1,
+            "signedMouPdfPath": null
+          },
+          "notes": "Signed MOU entered via Add MOU form (Finance). School new school created (SCH-21K_LEARNING_PRIVATE_L). Pending Ops review.",
+          "action": "create",
+          "timestamp": "2026-06-24T10:01:35.114Z"
+        },
+        {
+          "timestamp": "2026-06-24T10:19:18.360Z",
+          "user": "ujaccounts",
+          "action": "student-count-changed",
+          "before": {
+            "studentsActual": 52,
+            "count": 52
+          },
+          "after": {
+            "studentsActual": 1,
+            "count": 1,
+            "eventId": "SCE-2026-0015",
+            "cumulativeDelta": -153399.99,
+            "installmentsAffected": [
+              "MOU-YP-2627-007-i1"
+            ]
+          },
+          "notes": "Count change to 1: No. of students not known"
+        }
+      ]
+    },
+    "retryCount": 0
   }
 ]
