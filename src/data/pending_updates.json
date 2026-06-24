@@ -310,5 +310,160 @@
       ]
     },
     "retryCount": 0
+  },
+  {
+    "id": "7185284f-3245-469d-83bc-d1a4589295d3",
+    "queuedAt": "2026-06-24T10:28:58.327Z",
+    "queuedBy": "misba.m",
+    "entity": "kitDispatch",
+    "operation": "create",
+    "payload": {
+      "id": "DISPATCH-MOU-STEAM-2627-015",
+      "mouId": "MOU-STEAM-2627-015",
+      "record": {
+        "id": "DISPATCH-MOU-STEAM-2627-015",
+        "mouId": "MOU-STEAM-2627-015",
+        "schoolId": "SCH-BLUE_ANGELS_GLOBAL_S",
+        "schoolName": "Blue Angels Global School",
+        "productSelected": "Cretile",
+        "dispatchStatus": "Not Started",
+        "allocations": [
+          {
+            "grade": 3,
+            "students": 0,
+            "kitsQty": 12,
+            "kitType": "Reusable",
+            "productName": "Cretile Grade-band kit"
+          },
+          {
+            "grade": 4,
+            "students": 0,
+            "kitsQty": 12,
+            "kitType": "Reusable",
+            "productName": "Cretile Grade-band kit"
+          },
+          {
+            "grade": 5,
+            "students": 0,
+            "kitsQty": 10,
+            "kitType": "Reusable",
+            "productName": "Cretile Grade-band kit"
+          },
+          {
+            "grade": 6,
+            "students": 0,
+            "kitsQty": 10,
+            "kitType": "Reusable",
+            "productName": "Cretile Grade-band kit"
+          },
+          {
+            "grade": 7,
+            "students": 0,
+            "kitsQty": 21,
+            "kitType": "Reusable",
+            "productName": "Cretile Grade-band kit"
+          },
+          {
+            "grade": 8,
+            "students": 0,
+            "kitsQty": 10,
+            "kitType": "Reusable",
+            "productName": "Cretile Grade-band kit"
+          },
+          {
+            "grade": 9,
+            "students": 0,
+            "kitsQty": 10,
+            "kitType": "Reusable",
+            "productName": "Cretile Grade-band kit"
+          }
+        ],
+        "salesApprovalStatus": "Pending",
+        "salesApprovedBy": null,
+        "salesApprovedAt": null,
+        "salesRejectionReason": null,
+        "dispatchSummary": null,
+        "shipmentTracking": null,
+        "pod": null,
+        "auditLog": [
+          {
+            "timestamp": "2026-06-24T10:28:58.326Z",
+            "user": "misba.m",
+            "action": "create",
+            "after": {
+              "id": "DISPATCH-MOU-STEAM-2627-015",
+              "mouId": "MOU-STEAM-2627-015",
+              "schoolId": "SCH-BLUE_ANGELS_GLOBAL_S",
+              "productSelected": "Cretile"
+            },
+            "notes": "KitDispatch record minted on first allocation submit."
+          },
+          {
+            "timestamp": "2026-06-24T10:28:58.326Z",
+            "user": "misba.m",
+            "action": "update",
+            "before": {
+              "allocations": []
+            },
+            "after": {
+              "allocations": [
+                {
+                  "grade": 3,
+                  "students": 0,
+                  "kitsQty": 12,
+                  "kitType": "Reusable",
+                  "productName": "Cretile Grade-band kit"
+                },
+                {
+                  "grade": 4,
+                  "students": 0,
+                  "kitsQty": 12,
+                  "kitType": "Reusable",
+                  "productName": "Cretile Grade-band kit"
+                },
+                {
+                  "grade": 5,
+                  "students": 0,
+                  "kitsQty": 10,
+                  "kitType": "Reusable",
+                  "productName": "Cretile Grade-band kit"
+                },
+                {
+                  "grade": 6,
+                  "students": 0,
+                  "kitsQty": 10,
+                  "kitType": "Reusable",
+                  "productName": "Cretile Grade-band kit"
+                },
+                {
+                  "grade": 7,
+                  "students": 0,
+                  "kitsQty": 21,
+                  "kitType": "Reusable",
+                  "productName": "Cretile Grade-band kit"
+                },
+                {
+                  "grade": 8,
+                  "students": 0,
+                  "kitsQty": 10,
+                  "kitType": "Reusable",
+                  "productName": "Cretile Grade-band kit"
+                },
+                {
+                  "grade": 9,
+                  "students": 0,
+                  "kitsQty": 10,
+                  "kitType": "Reusable",
+                  "productName": "Cretile Grade-band kit"
+                }
+              ]
+            },
+            "notes": "sales-approval-pending; notified sales rep sp-roveena"
+          }
+        ],
+        "createdAt": "2026-06-24T10:28:58.326Z"
+      }
+    },
+    "retryCount": 0
   }
 ]
