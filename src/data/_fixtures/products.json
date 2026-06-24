@@ -1,0 +1,8 @@
+[
+  { "id": "stem-robotics", "name": "STEM - Robotics", "active": true, "sortOrder": 1, "legacyProgrammes": ["STEAM", "Robotics"], "createdAt": "2026-06-24T00:00:00Z", "createdBy": null, "auditLog": [] },
+  { "id": "yp", "name": "YP", "active": true, "sortOrder": 2, "legacyProgrammes": ["Young Pioneers"], "createdAt": "2026-06-24T00:00:00Z", "createdBy": null, "auditLog": [] },
+  { "id": "aiq", "name": "AIQ", "active": true, "sortOrder": 3, "legacyProgrammes": [], "createdAt": "2026-06-24T00:00:00Z", "createdBy": null, "auditLog": [] },
+  { "id": "bootcamps", "name": "Bootcamps", "active": true, "sortOrder": 4, "legacyProgrammes": [], "createdAt": "2026-06-24T00:00:00Z", "createdBy": null, "auditLog": [] },
+  { "id": "bootcamps-harvard", "name": "Bootcamps - Harvard", "active": true, "sortOrder": 5, "legacyProgrammes": ["Harvard HBPE"], "createdAt": "2026-06-24T00:00:00Z", "createdBy": null, "auditLog": [] },
+  { "id": "lab-setup-project", "name": "Lab Setup Project", "active": true, "sortOrder": 6, "legacyProgrammes": [], "createdAt": "2026-06-24T00:00:00Z", "createdBy": null, "auditLog": [] }
+]

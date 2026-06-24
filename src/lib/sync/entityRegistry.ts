@@ -63,6 +63,8 @@ export const ARRAY_ENTITY_TO_PATH: Record<
   // Drives rollover + urgency promotion + dismissal-vs-promotion
   // honour. Append-only; entries keyed by date + userId + itemId.
   homepageActionLog: 'src/data/homepage_action_log.json',
+  // Phase 1.4: admin-managed product registry.
+  product: 'src/data/products.json',
 }
 
 export function pathForEntity(entity: PendingUpdateEntity): string | null {

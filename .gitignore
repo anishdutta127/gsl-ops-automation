@@ -57,3 +57,6 @@ ops-data/*.xlsx
 .vercel
 tmp/
 .gstack/
+
+# Source-of-truth finance workbook (provided ad-hoc; not committed)
+/Anish Data - 23.06.26.xlsx

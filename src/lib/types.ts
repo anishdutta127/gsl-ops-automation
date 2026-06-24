@@ -31,6 +31,10 @@ export type AuditAction =
   | 'status_change'
   | 'reassignment'
   | 'file_upload'
+  // Phase 1.4 product registry (admin add/rename/retire)
+  | 'product-renamed'
+  | 'product-retired'
+  | 'product-reactivated'
   // Import + identity resolution (Q-A, Q-K)
   | 'auto-link-exact-match'
   | 'manual-relink'
@@ -1732,6 +1736,25 @@ export interface IntakeRecord {
 // Queue + counter primitives (inherited from MOU pattern)
 // ============================================================================
 
+/**
+ * Phase 1.4: admin-managed product registry (the FY26-27 finance taxonomy).
+ * `legacyProgrammes` maps the app's historical `mous.programme` value(s) onto
+ * this product so existing MOUs resolve without a data rewrite (migration 014).
+ * A MOU's programme matches a product's `name` (new MOUs) or one of its
+ * `legacyProgrammes` (existing MOUs). Distinct from `MouProduct` (the SKU
+ * portfolio on a single MOU).
+ */
+export interface Product {
+  id: string
+  name: string
+  active: boolean
+  sortOrder: number
+  legacyProgrammes: string[]
+  createdAt: string
+  createdBy?: string | null
+  auditLog: AuditEntry[]
+}
+
 export type PendingUpdateEntity =
   | 'salesTeam'
   | 'mou'
@@ -1771,6 +1794,7 @@ export type PendingUpdateEntity =
   | 'stageResponsibility'          // Gate 4.9 stage-level ownership config
   | 'studentCountEvent'            // Phase 5 (Pranav review #4): per-event log of count changes that re-price installments
   | 'homepageActionLog'            // Phase 6F Part 4: per-user/day/item seen/actioned/dismissed log for rollover semantics
+  | 'product'                      // Phase 1.4: admin-managed product registry (finance taxonomy)
 
 export interface PendingUpdate {
   id: string                       // UUID

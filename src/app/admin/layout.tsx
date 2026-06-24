@@ -7,6 +7,8 @@
 import Link from 'next/link'
 
 const ADMIN_NAV: Array<{ label: string; href: string }> = [
+  { label: 'Products', href: '/admin/products' },
+  { label: 'Advanced', href: '/admin/advanced' },
   { label: 'Audit', href: '/admin/audit' },
   { label: 'Schools', href: '/admin/schools' },
   { label: 'SPOCs', href: '/admin/spocs' },

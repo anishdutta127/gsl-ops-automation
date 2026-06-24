@@ -245,6 +245,13 @@ async function dispatchToRepo(params: {
       else throw new Error(`vexProduct ${operation} is not supported via repo`)
       return
     }
+    case 'product': {
+      const { productRepo } = await import('./db/repos/product')
+      if (operation === 'create') await productRepo.create(payload as never, { queuedBy })
+      else if (operation === 'update') await productRepo.update(payload as never, { queuedBy })
+      else throw new Error(`product ${operation} is not supported via repo`)
+      return
+    }
     case 'adjustment': {
       const { adjustmentRepo } = await import('./db/repos/leafRepos')
       if (operation === 'create') await adjustmentRepo.create(payload as never, { queuedBy })
