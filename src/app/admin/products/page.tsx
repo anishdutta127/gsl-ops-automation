@@ -80,6 +80,7 @@ export default async function ProductsAdminPage({ searchParams }: PageProps) {
                 <tr>
                   <th className="px-3 py-2 font-medium">Product</th>
                   <th className="px-3 py-2 font-medium">Status</th>
+                  <th className="px-3 py-2 font-medium">Kind</th>
                   <th className="px-3 py-2 font-medium">Legacy programmes</th>
                   <th className="px-3 py-2 font-medium">Rename</th>
                   <th className="px-3 py-2 font-medium" aria-label="retire" />
@@ -91,6 +92,13 @@ export default async function ProductsAdminPage({ searchParams }: PageProps) {
                     <td className="px-3 py-2 font-medium text-brand-navy">{p.name}</td>
                     <td className="px-3 py-2">
                       <StatusChip tone={p.active ? 'ok' : 'neutral'} label={p.active ? 'Active' : 'Retired'} withDot={false} />
+                    </td>
+                    <td className="px-3 py-2">
+                      {p.kind === 'project' ? (
+                        <StatusChip tone="neutral" label="Project (out of scope)" withDot={false} />
+                      ) : (
+                        <span className="text-xs text-muted-foreground">Per-student</span>
+                      )}
                     </td>
                     <td className="px-3 py-2 text-xs text-muted-foreground">
                       {p.legacyProgrammes.length ? p.legacyProgrammes.join(', ') : '-'}

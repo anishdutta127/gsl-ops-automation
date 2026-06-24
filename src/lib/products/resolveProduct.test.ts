@@ -3,9 +3,9 @@ import type { Product } from '@/lib/types'
 import { resolveProduct, isKnownProgramme } from './resolveProduct'
 
 const PRODUCTS: Product[] = [
-  { id: 'stem-robotics', name: 'STEM - Robotics', active: true, sortOrder: 1, legacyProgrammes: ['STEAM', 'Robotics'], createdAt: '', createdBy: null, auditLog: [] },
-  { id: 'yp', name: 'YP', active: true, sortOrder: 2, legacyProgrammes: ['Young Pioneers'], createdAt: '', createdBy: null, auditLog: [] },
-  { id: 'aiq', name: 'AIQ', active: false, sortOrder: 3, legacyProgrammes: [], createdAt: '', createdBy: null, auditLog: [] },
+  { id: 'stem-robotics', name: 'STEM - Robotics', active: true, sortOrder: 1, legacyProgrammes: ['STEAM', 'Robotics'], kind: 'per-student', createdAt: '', createdBy: null, auditLog: [] },
+  { id: 'yp', name: 'YP', active: true, sortOrder: 2, legacyProgrammes: ['Young Pioneers'], kind: 'per-student', createdAt: '', createdBy: null, auditLog: [] },
+  { id: 'aiq', name: 'AIQ', active: false, sortOrder: 3, legacyProgrammes: [], kind: 'per-student', createdAt: '', createdBy: null, auditLog: [] },
 ]
 
 describe('resolveProduct (Phase 1.4 validation)', () => {

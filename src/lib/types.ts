@@ -35,6 +35,7 @@ export type AuditAction =
   | 'product-renamed'
   | 'product-retired'
   | 'product-reactivated'
+  | 'product-kind-changed'         // migration 016: per-student vs project
   // Import + identity resolution (Q-A, Q-K)
   | 'auto-link-exact-match'
   | 'manual-relink'
@@ -1751,12 +1752,21 @@ export interface IntakeRecord {
  * `legacyProgrammes` (existing MOUs). Distinct from `MouProduct` (the SKU
  * portfolio on a single MOU).
  */
+/**
+ * 'per-student' = the platform's students x price model. 'project' = project-
+ * based work (e.g. lab setup) with no per-student model; tracked externally and
+ * NOT expected to carry per-student MOUs, so it does not read as a reconciliation
+ * gap. (migration 016)
+ */
+export type ProductKind = 'per-student' | 'project'
+
 export interface Product {
   id: string
   name: string
   active: boolean
   sortOrder: number
   legacyProgrammes: string[]
+  kind: ProductKind
   createdAt: string
   createdBy?: string | null
   auditLog: AuditEntry[]

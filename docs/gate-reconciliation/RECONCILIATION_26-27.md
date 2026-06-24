@@ -4,6 +4,26 @@ _Report-only. No DB writes were made. Snapshot: 2026-06-24. Source of truth for
 the target = `Anish Data - 23.06.26.xlsx` -> "Summary 26-27" (hand-kept; may
 itself be wrong - deltas are reported, not "fixed")._
 
+## Update 2026-06-24 (Pranav confirmations)
+- **Lab Setup Project (Rs 1,21,69,792 w/o GST, 0 students) is CONFIRMED project
+  work, intentionally OUT OF SCOPE** for the per-student MOU system (project-based
+  lab setup; the students x price model does not apply; tracked externally).
+  Marked `kind = 'project'` in the products registry (migration 016, audited) and
+  KEPT (not deleted). Therefore the app total is **expected to be ~Rs 1.22 cr
+  below the all-in sheet BY DESIGN** - this is not a discrepancy. Excluding Lab
+  Setup, the sheet target is ~Rs 4,77,28,451 w/o GST; the remaining ~Rs 21 L
+  shortfall vs the app is AIQ/Bootcamps/Bootcamps-Harvard (see below) + the legacy
+  STEAM lump (taxonomy), still being reconciled.
+- **Two assumptions now CONFIRMED:** (1) the sheet is **w/o GST**, so the app's
+  18% GST strip (`students x sp_without_tax`) is correct; (2) the sheet's "No. of
+  Students" is the **MOU / contracted** figure (compare to `students_mou`, not
+  `students_actual`).
+- **AIQ, Bootcamps, Bootcamps - Harvard** (~Rs 23 L combined) are CONFIRMED real
+  per-student programme sales that belong in the platform (active, `per-student`
+  in the registry) - they are real-but-unentered app data, NOT out of scope. The
+  ~10 unconfirmed re-tag rows remain pending Pranav. No prod data changed for
+  these; left for the gated re-classification write.
+
 ## Scope + method
 - **Target**: the "Summary 26-27" sheet, w/o GST, per product, plus the received
   buckets (advance-not-invoiced, received-&-invoiced, invoiced-not-received).

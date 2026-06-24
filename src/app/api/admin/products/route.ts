@@ -45,6 +45,7 @@ export async function POST(request: Request) {
     active: true,
     sortOrder: nextSort,
     legacyProgrammes: [],
+    kind: 'per-student',
     createdAt: ts,
     createdBy: user.id,
     auditLog: [
