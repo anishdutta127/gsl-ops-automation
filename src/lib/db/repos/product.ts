@@ -22,6 +22,7 @@ interface ProductRow {
   sort_order: number
   legacy_programmes: string[] | null
   kind: string | null
+  parent_id: string | null
   created_at: string | Date | null
   created_by: string | null
   audit_log: AuditEntry[] | null
@@ -35,6 +36,7 @@ function rowToProduct(r: ProductRow): Product {
     sortOrder: r.sort_order ?? 0,
     legacyProgrammes: Array.isArray(r.legacy_programmes) ? r.legacy_programmes : [],
     kind: (r.kind === 'project' ? 'project' : 'per-student') as ProductKind,
+    parentId: r.parent_id ?? null,
     createdAt: r.created_at instanceof Date ? r.created_at.toISOString() : (r.created_at ?? ''),
     createdBy: r.created_by ?? null,
     auditLog: Array.isArray(r.audit_log) ? r.audit_log : [],
@@ -69,10 +71,10 @@ export const productRepo = {
       const sql = getSql()
       // created_at omitted -> DEFAULT NOW() (NOT NULL column).
       await sql`
-        INSERT INTO products (id, name, active, sort_order, legacy_programmes, kind, created_by, audit_log)
+        INSERT INTO products (id, name, active, sort_order, legacy_programmes, kind, parent_id, created_by, audit_log)
         VALUES (
           ${p.id}, ${p.name}, ${p.active ?? true}, ${p.sortOrder ?? 0},
-          ${p.legacyProgrammes ?? []}, ${p.kind ?? 'per-student'}, ${p.createdBy ?? null},
+          ${p.legacyProgrammes ?? []}, ${p.kind ?? 'per-student'}, ${p.parentId ?? null}, ${p.createdBy ?? null},
           ${sql.json((p.auditLog ?? []) as never)}::jsonb
         )
       `
@@ -96,6 +98,7 @@ export const productRepo = {
           sort_order = ${p.sortOrder ?? 0},
           legacy_programmes = ${p.legacyProgrammes ?? []},
           kind = ${p.kind ?? 'per-student'},
+          parent_id = ${p.parentId ?? null},
           audit_log = ${sql.json((p.auditLog ?? []) as never)}::jsonb
         WHERE id = ${p.id}
       `

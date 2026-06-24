@@ -1767,6 +1767,13 @@ export interface Product {
   sortOrder: number
   legacyProgrammes: string[]
   kind: ProductKind
+  /**
+   * Two-level hierarchy (migration 017): null = top-level category/product; set
+   * = a sub-product under the category with this id. A product with a parent may
+   * not itself be a parent (two-level only, enforced app-side). MOUs sit on leaf
+   * products; categories are pure groupers.
+   */
+  parentId?: string | null
   createdAt: string
   createdBy?: string | null
   auditLog: AuditEntry[]
