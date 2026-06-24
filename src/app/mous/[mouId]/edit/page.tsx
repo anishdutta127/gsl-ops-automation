@@ -36,6 +36,10 @@ const ERROR_MESSAGES: Record<string, string> = {
   'mou-not-found': 'MOU not found.',
   'no-changes': 'No editable fields were supplied.',
   'queue-failure': 'Failed to persist the edit. Retry.',
+  // Phase 3 cancel
+  'already-cancelled': 'This MOU is already cancelled.',
+  'missing-reason': 'Enter a reason of at least 10 characters to cancel.',
+  'cancel-failed': 'Failed to cancel the MOU.',
 }
 
 const FIELD_LABEL_CLASS = 'block text-sm font-medium text-brand-navy mb-1'
@@ -75,13 +79,16 @@ export default async function MouEditPage({ params, searchParams }: PageProps) {
 
   const isAdmin = isAdminWildcard(user)
   const errorKey = typeof sp.error === 'string' ? sp.error : null
+  const errorDetail = typeof sp.detail === 'string' ? sp.detail : null
   const errorMessage = errorKey
-    ? ERROR_MESSAGES[errorKey] ?? `Failed: ${errorKey}`
+    ? [ERROR_MESSAGES[errorKey] ?? `Failed: ${errorKey}`, errorDetail].filter(Boolean).join(' ')
     : null
   const saved = typeof sp.saved === 'string' && sp.saved === '1'
   const fieldsSaved = typeof sp.fields === 'string' ? sp.fields : ''
   const warningsRaw = typeof sp.warnings === 'string' ? sp.warnings : ''
   const warnings = warningsRaw === '' ? [] : warningsRaw.split(',')
+  const cancelledOk = typeof sp.ok === 'string' && sp.ok === 'cancelled'
+  const cancelledPayments = typeof sp.payments === 'string' ? sp.payments : '0'
 
   const piIssued = allPayments.some((p) => p.mouId === mou.id && p.piNumber !== null)
 
@@ -124,6 +131,16 @@ export default async function MouEditPage({ params, searchParams }: PageProps) {
               className="rounded-md border border-signal-ok bg-card p-3 text-sm text-foreground"
             >
               Saved {fieldsSaved}. Will reflect everywhere within ~5 minutes.
+            </p>
+          ) : null}
+          {cancelledOk ? (
+            <p
+              role="status"
+              data-testid="mou-cancelled-flash"
+              className="rounded-md border border-signal-ok bg-card p-3 text-sm text-foreground"
+            >
+              MOU cancelled. {cancelledPayments} linked payment(s) soft-deleted. It is now excluded
+              from active lists and received totals.
             </p>
           ) : null}
           {warnings.length > 0 ? (
@@ -377,10 +394,65 @@ export default async function MouEditPage({ params, searchParams }: PageProps) {
                 href={`/mous/${mou.id}`}
                 className="inline-flex min-h-11 items-center rounded-md border border-border bg-card px-3 py-2 text-sm font-medium hover:bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
               >
-                Cancel
+                Discard edits
               </Link>
             </div>
           </form>
+
+          {mou.status === 'Cancelled' ? (
+            <p
+              data-testid="mou-cancelled-banner"
+              className="rounded-md border border-signal-neutral/40 bg-muted p-3 text-sm text-muted-foreground"
+            >
+              This MOU is <strong>Cancelled</strong>. It is excluded from active lists and from
+              received/outstanding totals (which count only non-cancelled payments).
+            </p>
+          ) : null}
+
+          {isAdmin && mou.status !== 'Cancelled' ? (
+            <details
+              className="rounded-lg border border-signal-alert/40 bg-card p-4 sm:p-6"
+              data-testid="mou-cancel-zone"
+            >
+              <summary className="cursor-pointer font-heading text-base font-semibold text-signal-alert">
+                Cancel (soft-delete) this MOU
+              </summary>
+              <form
+                method="POST"
+                action={`/api/mou/${mou.id}/cancel`}
+                className="mt-3 space-y-3"
+                data-testid="mou-cancel-form"
+              >
+                <p className="text-sm text-foreground">
+                  Sets the MOU to <strong>Cancelled</strong> and soft-deletes its linked payments.
+                  Received and outstanding then count only the remaining (non-cancelled) payments.
+                  Records are kept and audited; an admin can reverse it. Admin only.
+                </p>
+                <div>
+                  <label htmlFor="cancel-reason" className={FIELD_LABEL_CLASS}>
+                    Reason (minimum 10 characters)
+                  </label>
+                  <textarea
+                    id="cancel-reason"
+                    name="reason"
+                    rows={2}
+                    required
+                    minLength={10}
+                    placeholder="Why is this MOU being cancelled?"
+                    className={FIELD_INPUT_CLASS}
+                    data-testid="cancel-reason-input"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="inline-flex min-h-11 items-center rounded-md bg-signal-alert px-4 py-2 text-sm font-semibold text-white hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-navy"
+                  data-testid="cancel-mou-button"
+                >
+                  Cancel this MOU
+                </button>
+              </form>
+            </details>
+          ) : null}
         </div>
       </main>
     </>

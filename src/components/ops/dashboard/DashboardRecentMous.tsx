@@ -39,6 +39,7 @@ const STATUS_TONE: Record<MOU['status'], { tone: StatusChipTone; label: string }
   Renewed:              { tone: 'ok',        label: 'Renewed' },
   Expired:              { tone: 'alert',     label: 'Expired' },
   Completed:            { tone: 'neutral',   label: 'Completed' },
+  Cancelled:            { tone: 'neutral',   label: 'Cancelled' },
 }
 
 function MouStatusChip({ status }: { status: MOU['status'] }): ReactNode {

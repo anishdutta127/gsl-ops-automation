@@ -36,6 +36,7 @@ export type AuditAction =
   | 'product-retired'
   | 'product-reactivated'
   | 'product-kind-changed'         // migration 016: per-student vs project
+  | 'mou-cancelled'                // Phase 3: MOU soft-cancel/delete (cascade soft-deletes linked payments)
   // Import + identity resolution (Q-A, Q-K)
   | 'auto-link-exact-match'
   | 'manual-relink'
@@ -521,6 +522,8 @@ export type MouStatus =
   | 'Completed'
   | 'Expired'
   | 'Renewed'
+  | 'Cancelled' // Phase 3: finance soft-cancel/delete (migration 018). Excluded
+                // from active lists + received sums; distinct from cohort 'archived'.
 
 /**
  * Cohort status (W4-A.2) is orthogonal to MouStatus.

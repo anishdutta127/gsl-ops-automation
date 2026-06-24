@@ -369,7 +369,12 @@ export default async function MouDetailPage({ params, searchParams }: PageProps)
   const mouAdjustments = allAdjustments.filter(
     (a) => a.mouId === mou.id && a.status === 'Active',
   )
-  const totalReceivedRs = installments.reduce((s, p) => s + (p.receivedAmount ?? 0), 0)
+  // Phase 3: received/outstanding count only NON-Cancelled payments (a
+  // soft-deleted payment, or all payments under a Cancelled MOU, must not
+  // inflate the total). Never derive from the stale mou.received.
+  const totalReceivedRs = installments
+    .filter((p) => p.status !== 'Cancelled')
+    .reduce((s, p) => s + (p.receivedAmount ?? 0), 0)
   const totalAdjustmentsRs = mouAdjustments.reduce((s, a) => s + a.amountDelta, 0)
   const balanceDuePreviousInstalments = totalAdjustmentsRs
 
@@ -400,7 +405,9 @@ export default async function MouDetailPage({ params, searchParams }: PageProps)
   const contractValueForView = activeYearTab
     ? displayedInstallments.reduce((s, p) => s + p.expectedAmount, 0)
     : lifetimeContractFromCount
-  const receivedFromInstallments = displayedInstallments.reduce((s, p) => s + (p.receivedAmount ?? 0), 0)
+  const receivedFromInstallments = displayedInstallments
+    .filter((p) => p.status !== 'Cancelled')
+    .reduce((s, p) => s + (p.receivedAmount ?? 0), 0)
   const balanceFromInstallments = Math.max(0, contractValueForView - receivedFromInstallments)
   const receivedPctFromInstallments = contractValueForView > 0
     ? Math.round((receivedFromInstallments / contractValueForView) * 100)
