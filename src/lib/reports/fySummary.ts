@@ -129,9 +129,11 @@ export function computeFySummary(args: FySummaryArgs): FySummary {
     dispatchCount: scopedDispatches.length,
   }
 
-  // Programme breakdown
+  // Programme breakdown. Keyed by string to tolerate registry product names
+  // beyond the canonical four (MOU.programme widened to string); only the four
+  // canonical rows are pre-seeded and reported, so behaviour is unchanged.
   const progMap = new Map<
-    Programme,
+    string,
     {
       mouCount: number
       students: number

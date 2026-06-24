@@ -439,7 +439,8 @@ export interface TopOverdueRow {
   paymentId: string
   mouId: string
   schoolName: string
-  programme: Programme
+  /** Any registry product name (Payment.programme widened to string). */
+  programme: string
   piNumber: string | null
   instalmentLabel: string
   description: string
@@ -490,7 +491,8 @@ export function computeTopOverduePayments(args: {
 export interface RenewalRow {
   mouId: string
   schoolName: string
-  programme: Programme
+  /** Any registry product name (MOU.programme widened to string). */
+  programme: string
   status: MOU['status']
   endDate: string | null
   daysToExpiry: number | null
@@ -659,7 +661,8 @@ export function computeVexKitOrders(args: {
 // ===========================================================================
 
 export interface ProgrammeBreakdownRow {
-  programme: Programme
+  /** Any registry product name (MOU.programme widened to string). */
+  programme: string
   mouCount: number
   studentsCount: number
   contractValue: number
@@ -667,23 +670,20 @@ export interface ProgrammeBreakdownRow {
   barPct: number
 }
 
-const PROGRAMME_ORDER: ReadonlyArray<Programme> = [
-  'STEAM',
-  'Young Pioneers',
-  'Harvard HBPE',
-  'Robotics',
-]
-
 export function computeProgrammeBreakdown(
   filteredMous: MOU[],
 ): ProgrammeBreakdownRow[] {
-  const counts = new Map<Programme, { mouCount: number; students: number; value: number }>()
-  for (const p of PROGRAMME_ORDER) {
-    counts.set(p, { mouCount: 0, students: 0, value: 0 })
-  }
+  // Iterate the DISTINCT programmes actually present in the passed-in MOUs
+  // so new registry products (e.g. "Bootcamps (general)", "AIQ") appear in
+  // the breakdown, rather than a fixed 4-value list.
+  const counts = new Map<string, { mouCount: number; students: number; value: number }>()
   for (const m of filteredMous) {
-    const slot = counts.get(m.programme)
-    if (!slot) continue
+    const key = m.programme || 'Unspecified'
+    let slot = counts.get(key)
+    if (!slot) {
+      slot = { mouCount: 0, students: 0, value: 0 }
+      counts.set(key, slot)
+    }
     slot.mouCount += 1
     slot.students += m.studentsActual ?? m.studentsMou ?? 0
     slot.value += m.contractValue ?? 0
@@ -693,16 +693,18 @@ export function computeProgrammeBreakdown(
     if (slot.mouCount > maxCount) maxCount = slot.mouCount
   }
   const rows: ProgrammeBreakdownRow[] = []
-  for (const p of PROGRAMME_ORDER) {
-    const slot = counts.get(p)!
+  for (const [programme, slot] of Array.from(counts.entries())) {
     rows.push({
-      programme: p,
+      programme,
       mouCount: slot.mouCount,
       studentsCount: slot.students,
       contractValue: slot.value,
       barPct: maxCount > 0 ? Math.round((slot.mouCount / maxCount) * 100) : 0,
     })
   }
+  // Most MOUs first, then alphabetically for a stable order across new
+  // products with equal counts.
+  rows.sort((a, b) => (b.mouCount - a.mouCount) || a.programme.localeCompare(b.programme))
   return rows
 }
 

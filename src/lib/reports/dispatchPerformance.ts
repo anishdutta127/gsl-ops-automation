@@ -131,8 +131,11 @@ export function computeDispatchPerformance(
   let dispatchToDeliveredCount = 0
   let deliveredCount = 0
 
+  // Keyed by string to tolerate registry product names beyond the canonical
+  // four (MOU.programme widened to string); only the four canonical rows are
+  // pre-seeded and reported, so behaviour is unchanged.
   const progAcc = new Map<
-    Programme,
+    string,
     {
       count: number
       sSum: number

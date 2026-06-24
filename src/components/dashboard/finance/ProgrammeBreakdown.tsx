@@ -8,7 +8,6 @@
  */
 
 import { formatRs } from '@/lib/format'
-import type { Programme } from '@/lib/types'
 import type { ProgrammeBreakdownRow } from '@/lib/dashboard/financeDashboardData'
 
 interface Props {
@@ -16,14 +15,14 @@ interface Props {
   filterActive: boolean
 }
 
-const PROGRAMME_PILL_CLASS: Record<Programme, string> = {
+const PROGRAMME_PILL_CLASS: Record<string, string> = {
   STEAM: 'bg-brand-teal/15 text-brand-navy',
   'Young Pioneers': 'bg-violet-100 text-violet-700',
   'Harvard HBPE': 'bg-amber-100 text-amber-700',
   Robotics: 'bg-indigo-100 text-indigo-700',
 }
 
-function programmePillClass(programme: Programme): string {
+function programmePillClass(programme: string): string {
   return PROGRAMME_PILL_CLASS[programme] ?? 'bg-slate-100 text-slate-700'
 }
 

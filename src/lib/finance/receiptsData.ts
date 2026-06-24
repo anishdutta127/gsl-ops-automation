@@ -11,7 +11,7 @@
  * are paid or due in the future do not surface in aging.
  */
 
-import type { Payment, Programme } from '@/lib/types'
+import type { Payment } from '@/lib/types'
 import {
   applyFilters,
   type FinanceFilters,
@@ -23,7 +23,8 @@ export interface ReceiptRow {
   paymentId: string
   mouId: string
   schoolName: string
-  programme: Programme
+  /** Any registry product name (Payment.programme widened to string). */
+  programme: string
   instalmentLabel: string
   instalmentSeq: number
   expectedAmount: number

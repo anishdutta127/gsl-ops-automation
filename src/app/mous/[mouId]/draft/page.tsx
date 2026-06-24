@@ -24,6 +24,7 @@ import { PageHeader } from '@/components/ops/PageHeader'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canEditMOU } from '@/lib/access'
 import { getTemplate } from '@/lib/mouSystem/templates'
+import type { Programme } from '@/lib/mouSystem/types'
 import { DraftAnnexureEditor } from '@/components/mou-system/DraftAnnexureEditor'
 
 interface PageProps {
@@ -79,7 +80,7 @@ export default async function DraftAnnexurePage({ params }: PageProps) {
           <DraftAnnexureEditor
             mouId={mou.id}
             templateId={template.id}
-            programme={mou.programme}
+            programme={mou.programme as Programme}
             placeholders={template.placeholders}
             initialValues={mou.draftVariables ?? {}}
             initialAnnexureHtml={mou.draftVariables?._ANNEXURE_HTML ?? ''}

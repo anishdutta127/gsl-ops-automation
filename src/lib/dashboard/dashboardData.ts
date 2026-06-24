@@ -386,7 +386,8 @@ export interface RecentMouUpdate {
   mouId: string
   schoolId: string
   schoolName: string
-  programme: Programme
+  /** Any registry product name (MOU.programme widened to string). */
+  programme: string
   status: MOU['status']
   /** ISO yyyy-mm-dd of the most recent meaningful activity. */
   updateDate: string

@@ -183,7 +183,8 @@ export interface OpsWorkflowCard {
   mouId: string
   schoolId: string
   schoolName: string
-  programme: Programme
+  /** Any registry product name (MOU.programme widened to string). */
+  programme: string
   productSelection: string | null
   daysAtStatus: number
   /** True when daysAtStatus > OPS_WORKFLOW_RED_DAYS. */
@@ -436,7 +437,7 @@ export function applyKanbanFilters(args: {
 }): MOU[] {
   const { mous, filters } = args
   if (isKanbanFiltersEmpty(filters)) return mous
-  const allowedProgrammes = new Set(filters.programmes)
+  const allowedProgrammes = new Set<string>(filters.programmes)
   return mous.filter((m) => {
     if (filters.programmes.length > 0 && !allowedProgrammes.has(m.programme)) return false
     if (filters.fromDate && (!m.startDate || m.startDate < filters.fromDate)) return false

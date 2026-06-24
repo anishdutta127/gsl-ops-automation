@@ -25,7 +25,7 @@
 
 import Link from 'next/link'
 import { AlertTriangle, ArrowRight, Clock } from 'lucide-react'
-import type { MOU, Programme } from '@/lib/types'
+import type { MOU } from '@/lib/types'
 import {
   hasDrift,
   STAGE_NEXT_STEP,
@@ -53,7 +53,7 @@ interface ProgrammeAccent {
  * programmes (Harvard HBPE, VEX) render with no chip; this keeps
  * the kanban visually quiet for the rare programme cases.
  */
-const PROGRAMME_ACCENT: Record<Programme, ProgrammeAccent | null> = {
+const PROGRAMME_ACCENT: Record<string, ProgrammeAccent | null> = {
   STEAM: {
     className: 'bg-brand-teal/10 text-brand-navy border-brand-teal/40',
     label: 'STEAM',

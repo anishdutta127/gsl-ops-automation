@@ -848,14 +848,17 @@ describe('computeVexKitOrders', () => {
 // ---------------------------------------------------------------------------
 
 describe('computeProgrammeBreakdown', () => {
-  it('returns one row per programme, bar pct relative to the max MOU count', () => {
+  it('returns one row per DISTINCT programme present, sorted by count desc, bar pct relative to the max MOU count', () => {
     const mous = [
       mou({ id: 'a', programme: 'STEAM', contractValue: 100, studentsActual: 50 }),
       mou({ id: 'b', programme: 'STEAM', contractValue: 200, studentsActual: 60 }),
       mou({ id: 'c', programme: 'Robotics', contractValue: 50, studentsActual: 30 }),
     ]
     const rows = computeProgrammeBreakdown(mous)
-    expect(rows).toHaveLength(4)
+    // Only programmes actually present appear (no fixed 4-value list); STEAM
+    // first because it has the higher MOU count.
+    expect(rows).toHaveLength(2)
+    expect(rows.map((r) => r.programme)).toEqual(['STEAM', 'Robotics'])
     const steam = rows.find((r) => r.programme === 'STEAM')!
     expect(steam.mouCount).toBe(2)
     expect(steam.studentsCount).toBe(110)
@@ -863,8 +866,19 @@ describe('computeProgrammeBreakdown', () => {
     expect(steam.barPct).toBe(100)
     const robotics = rows.find((r) => r.programme === 'Robotics')!
     expect(robotics.barPct).toBe(50)
-    const yp = rows.find((r) => r.programme === 'Young Pioneers')!
-    expect(yp.barPct).toBe(0)
+  })
+
+  it('surfaces registry products beyond the canonical four', () => {
+    const mous = [
+      mou({ id: 'a', programme: 'STEAM' }),
+      mou({ id: 'b', programme: 'Bootcamps (general)' }),
+      mou({ id: 'c', programme: 'AIQ' }),
+    ]
+    const rows = computeProgrammeBreakdown(mous)
+    expect(rows).toHaveLength(3)
+    expect(rows.map((r) => r.programme).sort()).toEqual(
+      ['AIQ', 'Bootcamps (general)', 'STEAM'],
+    )
   })
 
   it('falls back to studentsMou when studentsActual is null', () => {

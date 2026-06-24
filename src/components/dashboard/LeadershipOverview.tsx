@@ -247,27 +247,28 @@ function DeliveryColumn({
       </div>
       <div className="mt-3 flex h-2 w-full overflow-hidden rounded-full bg-slate-100">
         {PROGRAMME_ORDER.map((p) => {
-          const segWidth = (bucket.byProgramme[p] / total) * 100
+          const count = bucket.byProgramme[p] ?? 0
+          const segWidth = (count / total) * 100
           if (segWidth === 0) return null
           return (
             <div
               key={p}
               className={PROGRAMME_PALETTE[p]}
               style={{ width: `${segWidth}%` }}
-              title={`${p}: ${bucket.byProgramme[p]}`}
+              title={`${p}: ${count}`}
             />
           )
         })}
       </div>
       <div className="mt-2 flex flex-wrap gap-2 text-[10px] text-slate-600">
         {PROGRAMME_ORDER.map((p) =>
-          bucket.byProgramme[p] > 0 ? (
+          (bucket.byProgramme[p] ?? 0) > 0 ? (
             <span key={p} className="inline-flex items-center gap-1">
               <span
                 className={`inline-block size-2 rounded-sm ${PROGRAMME_PALETTE[p]}`}
                 aria-hidden
               />
-              {p}: {bucket.byProgramme[p]}
+              {p}: {bucket.byProgramme[p] ?? 0}
             </span>
           ) : null,
         )}

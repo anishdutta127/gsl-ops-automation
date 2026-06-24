@@ -168,8 +168,10 @@ export interface DeliveryHealth {
 
 export interface SchoolBucket {
   count: number
-  /** Programme-wise breakdown for the stacked bar visualisation. */
-  byProgramme: Record<Programme, number>
+  /** Programme-wise breakdown for the stacked bar visualisation. Keyed by
+   *  any registry product name (MOU.programme widened to string); the four
+   *  canonical programmes are always present (initialised to zero). */
+  byProgramme: Record<string, number>
   /** Drill-down query string suffix to append to /schools (e.g. "?status=in-trouble"). */
   hrefQuery: string
 }
@@ -181,13 +183,22 @@ const PROGRAMMES: ReadonlyArray<Programme> = [
   'Robotics',
 ]
 
-function emptyByProgramme(): Record<Programme, number> {
+function emptyByProgramme(): Record<string, number> {
+  // The four canonical programmes are always present so the stacked bar
+  // (which iterates PROGRAMME_ORDER) renders unchanged; unknown registry
+  // products are added on first sight via bumpProgramme.
   return {
     STEAM: 0,
     'Young Pioneers': 0,
     'Harvard HBPE': 0,
     Robotics: 0,
   }
+}
+
+/** Increment a programme's count, tolerating a product name not in the
+ *  four canonical keys (avoids `undefined += 1` -> NaN). */
+function bumpProgramme(byProgramme: Record<string, number>, programme: string): void {
+  byProgramme[programme] = (byProgramme[programme] ?? 0) + 1
 }
 
 export function computeDeliveryHealth(args: {
@@ -254,7 +265,7 @@ export function computeDeliveryHealth(args: {
 
   const activeMous = mous.filter((m) => m.status === 'Active')
   const activeSchoolIds = new Set(activeMous.map((m) => m.schoolId))
-  const programmeBySchool = new Map<string, Programme>()
+  const programmeBySchool = new Map<string, string>()
   for (const m of activeMous) {
     if (!programmeBySchool.has(m.schoolId)) {
       programmeBySchool.set(m.schoolId, m.programme)
@@ -279,7 +290,7 @@ export function computeDeliveryHealth(args: {
 
   activeSchoolIds.forEach((schoolId) => {
     const programme = programmeBySchool.get(schoolId) ?? 'STEAM'
-    active.byProgramme[programme] += 1
+    bumpProgramme(active.byProgramme, programme)
 
     const isInTrouble =
       escalationOpenBySchool.has(schoolId) ||
@@ -289,10 +300,10 @@ export function computeDeliveryHealth(args: {
 
     if (isInTrouble) {
       inTrouble.count += 1
-      inTrouble.byProgramme[programme] += 1
+      bumpProgramme(inTrouble.byProgramme, programme)
     } else {
       healthy.count += 1
-      healthy.byProgramme[programme] += 1
+      bumpProgramme(healthy.byProgramme, programme)
     }
   })
 
@@ -420,12 +431,21 @@ export function computeAttentionItems(args: {
 // Helpers shared across surfaces
 // ===========================================================================
 
-/** Programme palette for stacked bars + cards. Tailwind classes. */
-export const PROGRAMME_PALETTE: Record<Programme, string> = {
+/** Programme palette for stacked bars + cards. Tailwind classes. Keyed by
+ *  any product name; an unknown name falls back to PROGRAMME_PALETTE_FALLBACK
+ *  via programmePalette() so the bar never renders an undefined class. */
+export const PROGRAMME_PALETTE: Record<string, string> = {
   STEAM: 'bg-brand-teal',
   'Young Pioneers': 'bg-amber-500',
   'Harvard HBPE': 'bg-violet-500',
   Robotics: 'bg-slate-500',
+}
+
+const PROGRAMME_PALETTE_FALLBACK = 'bg-slate-400'
+
+/** Tailwind colour class for a programme, tolerant of unknown product names. */
+export function programmePalette(programme: string): string {
+  return PROGRAMME_PALETTE[programme] ?? PROGRAMME_PALETTE_FALLBACK
 }
 
 export const PROGRAMME_ORDER = PROGRAMMES

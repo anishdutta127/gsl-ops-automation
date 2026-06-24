@@ -555,7 +555,13 @@ export interface MOU {
   id: string                       // 'MOU-STEAM-2627-001'
   schoolId: string
   schoolName: string               // denormalised for fast list rendering
-  programme: Programme
+  // Phase 2: widened from the 4-value `Programme` enum to free-text so a MOU can
+  // carry any registry product name (the products table is the source of truth;
+  // the mous.programme CHECK was dropped in migration 014). Existing values
+  // (STEAM, Young Pioneers, ...) still resolve via resolveProduct (name or a
+  // product's legacyProgrammes). The legacy `Programme` union is retained for
+  // back-compat in code that still references the four canonical names.
+  programme: string
   programmeSubType: string | null  // Update 1: 'GSLT-Cretile' under 'STEAM'; null otherwise
   schoolScope: SchoolScope         // 'SINGLE' default; 'GROUP' for chain MOUs (Q-I)
   schoolGroupId: string | null     // FK to SchoolGroup when schoolScope is 'GROUP'
@@ -1506,7 +1512,7 @@ export interface Payment {
   id: string                       // `${mouId}-i${instalmentSeq}`, stable across syncs
   mouId: string
   schoolName: string
-  programme: Programme
+  programme: string                // Phase 2: free-text product name (see MOU.programme)
   instalmentLabel: string          // '1 of 4'
   instalmentSeq: number
   totalInstalments: number

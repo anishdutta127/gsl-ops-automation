@@ -34,24 +34,41 @@ import { promises as fs } from 'node:fs'
 import path from 'node:path'
 import { getCurrentUser } from '@/lib/auth/session'
 import { canEditFinanceData } from '@/lib/access'
-import type { AuditEntry, MOU, Payment, Programme, School } from '@/lib/types'
+import type { AuditEntry, MOU, Payment, School } from '@/lib/types'
 import type { SalesChannel } from '@/lib/mouSystem/types'
 import { SALES_CHANNELS } from '@/lib/mouSystem/templates'
 import { mouRepo } from '@/lib/db/repos/mou'
 import { schoolRepo } from '@/lib/db/repos/school'
 import { paymentRepo } from '@/lib/db/repos/payment'
 import { salesTeamRepo } from '@/lib/db/repos/salesTeam'
+import { productRepo } from '@/lib/db/repos/product'
+import { resolveProduct } from '@/lib/products/resolveProduct'
 import { regionForSalesPerson } from '@/lib/regions'
 import { normaliseSchoolName } from '@/lib/importer/schoolMatcher'
 import { slugifySchoolId, INCOMPLETE_SCHOOL_MARKER } from '@/lib/mouSystem/entityWriters'
 import { currentBackend } from '@/lib/db/backend'
 
 const SIGNED_DIR = path.join(process.cwd(), 'public', 'signed-mous')
-const PROGRAMMES: Programme[] = ['STEAM', 'Young Pioneers', 'Harvard HBPE', 'Robotics']
-const PROG_CODE: Record<Programme, string> = {
-  STEAM: 'STEAM', 'Young Pioneers': 'YP', 'Harvard HBPE': 'HBPE', Robotics: 'ROBO',
-}
 const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/
+
+/**
+ * MOU id cohort code for a programme/product. The legacy cohort codes are
+ * preserved so existing id sequences continue (STEAM->STEAM, Young
+ * Pioneers->YP, Harvard HBPE->HBPE, Robotics->ROBO). Any other registry
+ * product derives a short uppercase alphanumeric code from its name
+ * (e.g. "Bootcamps (general)"->BOOTCAMP, "AIQ"->AIQ), never "undefined".
+ */
+function mouCodeForProgramme(programme: string): string {
+  const LEGACY: Record<string, string> = {
+    STEAM: 'STEAM',
+    'Young Pioneers': 'YP',
+    'Harvard HBPE': 'HBPE',
+    Robotics: 'ROBO',
+  }
+  if (LEGACY[programme]) return LEGACY[programme]
+  const code = programme.replace(/[^a-zA-Z0-9]/g, '').toUpperCase().slice(0, 8)
+  return code || 'PROD'
+}
 
 /** Human messages for every failure key. The page's redirect-fallback
  * map mirrors these; JSON responses carry them directly. */
@@ -92,8 +109,8 @@ function fyTag(academicYear: string): string {
 }
 
 /** Mint the next MOU id for this programme + FY, e.g. MOU-STEAM-2627-014. */
-function mintId(all: MOU[], programme: Programme, academicYear: string): string {
-  const prefix = `MOU-${PROG_CODE[programme]}-${fyTag(academicYear)}-`
+function mintId(all: MOU[], programme: string, academicYear: string): string {
+  const prefix = `MOU-${mouCodeForProgramme(programme)}-${fyTag(academicYear)}-`
   let max = 0
   for (const m of all) {
     if (!m.id.startsWith(prefix)) continue
@@ -179,7 +196,7 @@ export async function POST(request: Request) {
   const schoolNameInput = String(form.get('schoolName') ?? '').trim()
   const schoolAddress = String(form.get('schoolAddress') ?? '').trim()
   const existingSchoolId = String(form.get('existingSchoolId') ?? '').trim()
-  const programme = String(form.get('programme') ?? '') as Programme
+  const programme = String(form.get('programme') ?? '')
   const academicYear = String(form.get('academicYear') ?? '').trim()
   const students = Number(form.get('students'))
   const pricePerStudent = Number(form.get('pricePerStudent'))
@@ -195,7 +212,11 @@ export async function POST(request: Request) {
   // is a convenience, this is the boundary) ----
   if (!existingSchoolId && !schoolNameInput) return fail(request, 'missing-school-name')
   if (!existingSchoolId && !schoolAddress) return fail(request, 'missing-school-address')
-  if (!PROGRAMMES.includes(programme)) return fail(request, 'invalid-programme')
+  // Registry validation (migration 014 dropped the mous.programme CHECK):
+  // a programme is valid iff it resolves to a known product by name or
+  // legacyProgrammes. Replaces the hardcoded 4-value list.
+  const products = await productRepo.findAll()
+  if (!resolveProduct(programme, products)) return fail(request, 'invalid-programme')
   if (!/^\d{4}-\d{2}$/.test(academicYear)) return fail(request, 'invalid-year')
   if (!Number.isFinite(students) || students <= 0) return fail(request, 'invalid-students')
   if (!Number.isFinite(pricePerStudent) || pricePerStudent <= 0) return fail(request, 'invalid-price')

@@ -263,7 +263,7 @@ export interface Payment {
   id: string                       // `${mouId}-i${instalmentSeq}`, stable across syncs
   mouId: string
   schoolName: string
-  programme: Programme
+  programme: string                // any registry product name (widened from the 4-value Programme)
   instalmentLabel: string          // "1 of 4"
   instalmentSeq: number            // 1
   totalInstalments: number         // 4
