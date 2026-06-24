@@ -805,5 +805,26 @@
       ]
     },
     "retryCount": 0
+  },
+  {
+    "id": "c767691e-5ab1-4ab7-b457-346a8cde9bd2",
+    "queuedAt": "2026-06-24T11:57:32.550Z",
+    "queuedBy": "anita.c",
+    "entity": "paymentLog",
+    "operation": "create",
+    "payload": {
+      "id": "VEXPL-cbbd3d02",
+      "scope": "vex",
+      "vexPiId": "VEXPI-UP-26-27-020",
+      "date": "2026-06-24",
+      "bankAmount": 632931,
+      "tdsAmount": 0,
+      "total": 632931,
+      "mode": "Bank Transfer",
+      "reference": "NA",
+      "loggedBy": "Anita C.",
+      "loggedAt": "2026-06-24T11:57:32.546Z"
+    },
+    "retryCount": 0
   }
 ]
