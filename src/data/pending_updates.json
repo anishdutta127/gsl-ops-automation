@@ -1,1 +1,115 @@
-[]
+[
+  {
+    "id": "a5504c1c-42ff-4740-be5b-6c7fca8ff3b2",
+    "queuedAt": "2026-06-24T07:05:06.175Z",
+    "queuedBy": "misba.m",
+    "entity": "kitDispatch",
+    "operation": "create",
+    "payload": {
+      "id": "DISPATCH-MOU-STEAM-2627-085",
+      "mouId": "MOU-STEAM-2627-085",
+      "record": {
+        "id": "DISPATCH-MOU-STEAM-2627-085",
+        "mouId": "MOU-STEAM-2627-085",
+        "schoolId": "SCH-TAKSHILAH_GLOBAL_SCHOO",
+        "schoolName": "Takshilah Global School - Vellore",
+        "productSelected": "Cretile",
+        "dispatchStatus": "Not Started",
+        "allocations": [
+          {
+            "grade": 4,
+            "students": 10,
+            "kitsQty": 5,
+            "kitType": "Reusable",
+            "productName": "Cretile Grade-band kit"
+          },
+          {
+            "grade": 5,
+            "students": 10,
+            "kitsQty": 5,
+            "kitType": "Reusable",
+            "productName": "Cretile Grade-band kit"
+          },
+          {
+            "grade": 6,
+            "students": 10,
+            "kitsQty": 5,
+            "kitType": "Reusable",
+            "productName": "Cretile Grade-band kit"
+          },
+          {
+            "grade": 7,
+            "students": 10,
+            "kitsQty": 5,
+            "kitType": "Reusable",
+            "productName": "Cretile Grade-band kit"
+          }
+        ],
+        "salesApprovalStatus": "Pending",
+        "salesApprovedBy": null,
+        "salesApprovedAt": null,
+        "salesRejectionReason": null,
+        "dispatchSummary": null,
+        "shipmentTracking": null,
+        "pod": null,
+        "auditLog": [
+          {
+            "timestamp": "2026-06-24T07:05:06.174Z",
+            "user": "misba.m",
+            "action": "create",
+            "after": {
+              "id": "DISPATCH-MOU-STEAM-2627-085",
+              "mouId": "MOU-STEAM-2627-085",
+              "schoolId": "SCH-TAKSHILAH_GLOBAL_SCHOO",
+              "productSelected": "Cretile"
+            },
+            "notes": "KitDispatch record minted on first allocation submit."
+          },
+          {
+            "timestamp": "2026-06-24T07:05:06.174Z",
+            "user": "misba.m",
+            "action": "update",
+            "before": {
+              "allocations": []
+            },
+            "after": {
+              "allocations": [
+                {
+                  "grade": 4,
+                  "students": 10,
+                  "kitsQty": 5,
+                  "kitType": "Reusable",
+                  "productName": "Cretile Grade-band kit"
+                },
+                {
+                  "grade": 5,
+                  "students": 10,
+                  "kitsQty": 5,
+                  "kitType": "Reusable",
+                  "productName": "Cretile Grade-band kit"
+                },
+                {
+                  "grade": 6,
+                  "students": 10,
+                  "kitsQty": 5,
+                  "kitType": "Reusable",
+                  "productName": "Cretile Grade-band kit"
+                },
+                {
+                  "grade": 7,
+                  "students": 10,
+                  "kitsQty": 5,
+                  "kitType": "Reusable",
+                  "productName": "Cretile Grade-band kit"
+                }
+              ]
+            },
+            "notes": "sales-approval-pending; notified sales rep "
+          }
+        ],
+        "createdAt": "2026-06-24T07:05:06.174Z"
+      }
+    },
+    "retryCount": 0
+  }
+]
