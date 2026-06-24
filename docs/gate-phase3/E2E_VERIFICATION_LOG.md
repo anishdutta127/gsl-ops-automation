@@ -44,8 +44,18 @@ Dry-run (for the record):
   views; no orphans; no PI to unwind. Reversible via the backup.
 - Apply method on go: via the live cancel route (first real use of the capability).
 
-## GATED UNWIND 2/3 - St Paul's PL-CB850B8E: DRY-RUN (backup taken; NOT applied; awaiting go)
-Backup: .recovery-backup/stpauls-PL-CB850B8E-pre.json (gitignored).
+## GATED UNWIND 2/3 - St Paul's PL-CB850B8E: APPLIED + VERIFIED (owner go 2026-06-25)
+Backup: .recovery-backup/stpauls-PL-CB850B8E-pre.json (holds the FULL deleted log
+row -> reversible). Applied in ONE transaction: reverted i2 (received Rs 3,72,000
+-> null, status Partial -> Pending, cleared its PL-CB850B8E partial-payment so no
+dangling match) + deleted the duplicate payment_log PL-CB850B8E. The plain unmatch
+path alone would have left i2 Partial with a dangling partial-payment pointing at
+the deleted log; the partial-payment clear is the correction. **VERIFY PASS**: MOU
+received Rs 7,44,000 -> Rs 3,72,000; i1 unchanged (Rs 3,72,000, Partial); i2 ->
+Pending/null; PL-CB850B8E gone, PL-45348EE5 remains; exactly one payment_log
+removed (21 -> 20); nothing else moved.
+
+Dry-run (for the record):
 MOU **MOU-STEAM-2627-038** (St. Paul's Mission School). The ONE NEFT receipt
 `PUNBH26147595072` (Rs 3,72,000, 2026-05-27) was logged TWICE and matched to BOTH
 instalments:
@@ -62,8 +72,30 @@ instalments:
 - Note: mou.received is the stale denormalised field (shows 0); the live figure is
   the payments sum, which is what this corrects.
 
-## GATED UNWIND 3/3 - VEX over-count VEXPI-UP-26-27-020 (queued)
-Rs 31.6L vs Rs 6.3L, 5 dangling logIds; show the dangling-logId handling in its
-dry-run. Backup -> dry-run -> explicit go.
+## GATED UNWIND 3/3 - VEX over-count VEXPI-UP-26-27-020: DRY-RUN (backup taken; NOT applied; awaiting go)
+Backup: .recovery-backup/vex-VEXPI-UP-26-27-020-pre.json (gitignored; the VexPi row).
+CURRENT: total Rs 6,32,930.76, payment_received_amount **Rs 31,64,655 (= 5.00x)**,
+status Delivery Pending. payment_log_ids = 5 ids
+[VEXPL-910ba8b2, VEXPL-51e169b6, VEXPL-ef56e655, VEXPL-53474c88, VEXPL-cbbd3d02].
+Cause: 5 failed pre-fix retries, each ran recordVexPayment (+Rs 6,32,931 + appended
+a logId) then the enqueue threw, so NO payment_log persisted.
+
+DANGLING-LOGID HANDLING (explicit): all 5 payment_log_ids are **dangling** - each
+references **no** payment_logs row (verified: 0 present). So there is **nothing to
+delete in payment_logs**; the 5 ids are pure artifacts in the VexPi.payment_log_ids
+array. They are all **removed** from that array.
+
+ON APPLY (on go, one transaction):
+1. Drop all 5 dangling ids from payment_log_ids.
+2. Set payment_received_amount = **Rs 6,32,931** (the single real receipt: bank
+   Rs 6,32,931 + TDS Rs 0; the user's actual entry, logged once).
+3. Create ONE real payment_log (id e.g. VEXPL-RECOV-UP2627020, amount Rs 6,32,931,
+   mode Bank Transfer, reference 'NA', unmatched=false, narration noting the
+   recovery + the 5 removed retry-duplicates) and set payment_log_ids = [that id].
+4. Recompute status: received Rs 6,32,931 >= total -> stays Delivery Pending (paid,
+   awaiting delivery). Append a VexPi audit entry.
+RESULT: received Rs 31,64,655 -> Rs 6,32,931 (1x), one real payment_log, status
+unchanged. Reversible via the backup. NOTE: the broader gap (every VEX PI lacks
+payment_logs historically) is a separate optional backfill, not this unwind.
 
 Re-classification stays parked on Pranav's rows.
