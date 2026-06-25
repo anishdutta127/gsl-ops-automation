@@ -17,7 +17,6 @@ import {
 
 function school(over: Partial<School> & { id: string }): School {
   return {
-    id: over.id,
     name: over.name ?? 'School',
     legalEntity: null,
     city: 'Mumbai',

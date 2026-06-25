@@ -30,6 +30,25 @@ vi.mock('@/lib/auth/session', () => ({
   getCurrentUser: vi.fn(() => Promise.resolve(adminUser)),
   getCurrentSession: vi.fn(() => Promise.resolve({ sub: adminUser.id })),
 }))
+// BackButton (rendered inside the installments page tree) is a client
+// component that calls useRouter(); SSR-rendering it under vitest needs a
+// stub router. Keep the real notFound/redirect/etc. via importActual.
+vi.mock('next/navigation', async () => {
+  const actual = await vi.importActual<typeof import('next/navigation')>(
+    'next/navigation',
+  )
+  return {
+    ...actual,
+    useRouter: () => ({
+      back: () => {},
+      push: () => {},
+      replace: () => {},
+      refresh: () => {},
+      prefetch: () => {},
+      forward: () => {},
+    }),
+  }
+})
 vi.mock('@/components/ops/TopNav', () => ({ TopNav: () => null }))
 vi.mock('@/components/ops/PageHeader', () => ({ PageHeader: () => null }))
 

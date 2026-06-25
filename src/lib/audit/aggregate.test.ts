@@ -101,6 +101,15 @@ describe('collectAuditRows', () => {
       // launcher. Adding to the recognized set so audit-aggregate
       // staying clean does not block future Phase 3 send activity.
       'communication-sent',
+      // Phase 6E: one-off backfill that tagged each MOU's resolved
+      // product onto its auditLog (legacy free-text action).
+      'product-selection-backfill-phase-6e',
+      // Student-count change audit appended when actuals shift the
+      // schedule (AuditAction union member).
+      'student-count-changed',
+      // Import-flag audit appended by the MOU importer review path
+      // (AuditAction union member).
+      'import-flag',
     ])
     for (const row of mouRows) {
       expect(recognizedActions.has(row.entry.action)).toBe(true)

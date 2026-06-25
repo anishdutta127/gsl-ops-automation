@@ -576,7 +576,7 @@ describe('computeTopOverduePayments', () => {
     ]
     const rows = computeTopOverduePayments({ filteredPayments: payments, now })
     expect(rows.map((r) => r.paymentId)).toEqual(['p2', 'p1', 'p4'])
-    expect(rows[0].balance).toBe(5000)
+    expect(rows[0]!.balance).toBe(5000)
   })
 
   it('drops payments with status Paid or zero balance', () => {
@@ -599,7 +599,7 @@ describe('computeTopOverduePayments', () => {
     const now = new Date('2026-05-12T00:00:00Z')
     const payments = [payment({ dueDateIso: '2026-04-01', expectedAmount: 1000 })]
     const rows = computeTopOverduePayments({ filteredPayments: payments, now })
-    expect(rows[0].daysOverdue).toBe(41)
+    expect(rows[0]!.daysOverdue).toBe(41)
   })
 })
 

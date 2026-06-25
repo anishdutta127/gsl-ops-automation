@@ -68,6 +68,18 @@ function paymentStatusTone(s: Payment['status']): 'ok' | 'attention' | 'alert' |
   }
 }
 
+// PI-generation failures redirect here as ?error=<reason>
+// (src/app/api/pi/generate/route.ts). Surface a friendly banner so a
+// failed PI never lands the operator on a silent page. Shared codes
+// mirror the finance PI page's ERROR_COPY.
+const PI_ERROR_COPY: Record<string, string> = {
+  'parallel-build-locked': 'PI generation is locked during the parallel-build window.',
+  'template-missing': 'The PI template is missing on the server. Tell an admin; nothing was issued.',
+  'wrong-status': 'This instalment is not in a state where a PI can be generated.',
+  'invalid-instalment-seq': 'That instalment could not be found. Refresh and try again.',
+  permission: 'You do not have permission to generate PIs. Finance + Admin only.',
+}
+
 export default async function InstallmentsPage({ params, searchParams }: PageProps) {
   const { mouId } = await params
   const sp = (await searchParams) ?? {}
@@ -86,6 +98,10 @@ export default async function InstallmentsPage({ params, searchParams }: PagePro
   // installments page so back-nav lands on the same year filter on
   // the registry and the same year tab on the MOU detail.
   const fyParam = typeof sp.fy === 'string' ? sp.fy : null
+  const errorKey = typeof sp.error === 'string' ? sp.error : null
+  const errorMessage = errorKey
+    ? PI_ERROR_COPY[errorKey] ?? `PI generation failed: ${errorKey}`
+    : null
   const user = await getCurrentUser()
   const [allMous, allPayments, allSchools] = await Promise.all([
     mouRepo.findAll(),
@@ -130,6 +146,16 @@ export default async function InstallmentsPage({ params, searchParams }: PagePro
         />
         <div className="mx-auto flex max-w-screen-xl flex-col gap-4 px-4 py-6">
           <BackButton />
+          {errorMessage ? (
+            <p
+              role="alert"
+              className="flex items-start gap-2 rounded-md border border-signal-alert bg-card p-3 text-sm text-foreground"
+              data-testid="installment-pi-error"
+            >
+              <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-signal-alert" aria-hidden />
+              <span>{errorMessage}</span>
+            </p>
+          ) : null}
           {flashAction && flashId ? (
             <p
               role="status"

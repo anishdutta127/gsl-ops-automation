@@ -58,14 +58,17 @@ describe('Flow 1: Default registry load lands on current FY', () => {
     expect(html).not.toContain('Application error')
   }, 30000)
 
-  it('renders year-aware columns "FY <year> contract" in the table header', async () => {
+  it('renders year-aware columns "FY <year> contract" + the 4-bucket headers in the table', async () => {
     const { default: Page } = await import('../app/mous/page')
     const html = renderToStaticMarkup(
       await Page({ searchParams: Promise.resolve({}) }),
     )
+    // The list registry is the 4-bucket PI x Payment model
+    // (MouRegistryBucketsPanel). The year-scoped contract column stays
+    // year-aware; received/balance moved to the MOU detail page.
     expect(html).toMatch(/FY \d{4}-\d{2} contract/)
-    expect(html).toMatch(/FY \d{4}-\d{2} received/)
-    expect(html).toMatch(/FY \d{4}-\d{2} balance/)
+    expect(html).toContain('PI not raised, payment received')
+    expect(html).toContain('PI raised, payment received')
   }, 30000)
 })
 

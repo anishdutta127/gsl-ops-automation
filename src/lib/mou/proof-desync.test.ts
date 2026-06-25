@@ -64,19 +64,19 @@ describe('Bug 1 desync repair: re-confirm same count triggers recalc', () => {
     expect(paymentUpdates.length).toBe(2)
 
     // Each payment should now have expectedAmount = 372000 (372 x 2000 / 2)
-    const p1 = paymentUpdates.find(c => (c.payload as never).id === 'MOU-SANDIPANI-i1')
-    const p2 = paymentUpdates.find(c => (c.payload as never).id === 'MOU-SANDIPANI-i2')
-    expect((p1!.payload as never).expectedAmount).toBe(372000)
-    expect((p2!.payload as never).expectedAmount).toBe(372000)
+    const p1 = paymentUpdates.find(c => (c.payload as Payment).id === 'MOU-SANDIPANI-i1')
+    const p2 = paymentUpdates.find(c => (c.payload as Payment).id === 'MOU-SANDIPANI-i2')
+    expect((p1!.payload as Payment).expectedAmount).toBe(372000)
+    expect((p2!.payload as Payment).expectedAmount).toBe(372000)
 
     // Total should be exactly 744000
-    const totalCommitted = (p1!.payload as never).expectedAmount + (p2!.payload as never).expectedAmount
+    const totalCommitted = (p1!.payload as Payment).expectedAmount + (p2!.payload as Payment).expectedAmount
     expect(totalCommitted).toBe(744000)
     expect(totalCommitted).toBe(372 * 2000)
 
     console.log('BEFORE: i1=' + payment1.expectedAmount + ' i2=' + payment2.expectedAmount + ' total=' + (payment1.expectedAmount + payment2.expectedAmount))
-    console.log('AFTER:  i1=' + (p1!.payload as never).expectedAmount + ' i2=' + (p2!.payload as never).expectedAmount + ' total=' + totalCommitted)
-    console.log('Rs 19 drift check: 372 x 2000 = ' + (372*2000) + ', per inst = ' + (372*2000/2) + ', actual = ' + (p1!.payload as never).expectedAmount + ' -> ZERO DRIFT ✓')
+    console.log('AFTER:  i1=' + (p1!.payload as Payment).expectedAmount + ' i2=' + (p2!.payload as Payment).expectedAmount + ' total=' + totalCommitted)
+    console.log('Rs 19 drift check: 372 x 2000 = ' + (372*2000) + ', per inst = ' + (372*2000/2) + ', actual = ' + (p1!.payload as Payment).expectedAmount + ' -> ZERO DRIFT ✓')
   })
 
   it('does NOT cascade when payments ARE in sync (no desync)', async () => {

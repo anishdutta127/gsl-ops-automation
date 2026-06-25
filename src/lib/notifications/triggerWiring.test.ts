@@ -409,7 +409,7 @@ describe('W4-E.5 trigger wiring', () => {
         uuid: () => 'uuid1',
         appUrl: () => 'https://gsl-ops.example',
         now: () => NOW,
-        resolveCc: () => [],
+        resolveCc: () => Promise.resolve([] as string[]),
       },
     )
     expect(result.ok).toBe(true)

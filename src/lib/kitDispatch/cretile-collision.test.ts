@@ -13,7 +13,7 @@
  */
 
 import { describe, expect, it, vi } from 'vitest'
-import type { InventoryItem, KitAllocation, KitDispatch, MOU } from '@/lib/types'
+import type { InventoryItem, KitAllocation, KitDispatch, MOU, PendingUpdate } from '@/lib/types'
 import { allocateKits } from './allocate'
 import { CRETILE_GENERIC_SKU } from '@/lib/inventory/resolveSku'
 
@@ -96,7 +96,7 @@ function deps() {
     mous: [mou()],
     kitDispatches: [] as KitDispatch[],
     inventory,
-    enqueue: vi.fn(async () => {}),
+    enqueue: vi.fn(async () => ({}) as unknown as PendingUpdate),
     now: () => FIXED_NOW,
   }
 }

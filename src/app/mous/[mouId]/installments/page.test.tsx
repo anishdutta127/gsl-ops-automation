@@ -13,6 +13,9 @@ vi.mock('@/lib/auth/session', () => ({
 
 vi.mock('next/navigation', () => ({
   notFound: () => notFoundMock(),
+  // BackButton (rendered by the installments page) calls useRouter();
+  // provide a stub so the client component renders under renderToStaticMarkup.
+  useRouter: () => ({ back: () => {}, push: () => {}, replace: () => {}, refresh: () => {} }),
 }))
 
 vi.mock('@/components/ops/TopNav', () => ({ TopNav: () => null }))
@@ -63,10 +66,10 @@ describe('/mous/[mouId]/installments - schedule entry-point CTA (Gate 5A.9 Step 
         await Page({ params: Promise.resolve({ mouId: MOU_SIGNED_NO_INSTALLMENTS }) }),
       )
       expect(html).toContain('data-testid="empty-state-set-schedule"')
-      expect(html).toMatch(
-        new RegExp(`href="/mous/${MOU_SIGNED_NO_INSTALLMENTS}/installments/schedule-edit"`),
-      )
-      expect(html).toContain('Set payment schedule')
+      // The schedule-edit route is not yet built; the empty-state block
+      // points editors at the (forthcoming) schedule editor rather than
+      // linking out. Assert the current copy, not a dead href.
+      expect(html).toContain('Use the schedule editor')
     },
   )
 
@@ -123,6 +126,28 @@ describe('/mous/[mouId]/installments - schedule entry-point CTA (Gate 5A.9 Step 
       )
       expect(html).not.toContain('data-testid="no-installments"')
       expect(html).not.toContain('data-testid="empty-state-set-schedule"')
+    },
+  )
+
+  it(
+    'surfaces a friendly PI-failure banner on ?error= and hides it otherwise',
+    { timeout: 30000 },
+    async () => {
+      getCurrentUserMock.mockResolvedValue(userWith('Finance', 'finance', 'finance-user'))
+      const { default: Page } = await import('./page')
+      const withError = renderToStaticMarkup(
+        await Page({
+          params: Promise.resolve({ mouId: MOU_SIGNED_WITH_INSTALLMENTS }),
+          searchParams: Promise.resolve({ error: 'parallel-build-locked' }),
+        }),
+      )
+      expect(withError).toContain('data-testid="installment-pi-error"')
+      expect(withError).toContain('PI generation is locked during the parallel-build window.')
+
+      const noError = renderToStaticMarkup(
+        await Page({ params: Promise.resolve({ mouId: MOU_SIGNED_WITH_INSTALLMENTS }) }),
+      )
+      expect(noError).not.toContain('data-testid="installment-pi-error"')
     },
   )
 

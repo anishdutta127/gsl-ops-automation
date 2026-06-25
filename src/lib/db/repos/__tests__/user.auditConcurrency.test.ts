@@ -47,7 +47,7 @@ desc('userRepo.appendAudit concurrency (postgres)', () => {
     if (originalAuditLog !== null) {
       const sql = getSql()
       await sql`
-        UPDATE users SET audit_log = ${sql.json(originalAuditLog)}::jsonb
+        UPDATE users SET audit_log = ${sql.json(originalAuditLog as unknown as Parameters<typeof sql.json>[0])}::jsonb
         WHERE id = ${TEST_USER_ID}
       `
     }

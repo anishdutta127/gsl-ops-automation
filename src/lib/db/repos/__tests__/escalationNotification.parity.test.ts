@@ -17,7 +17,7 @@ import { escalationRepo } from '../escalation'
 import { notificationRepo } from '../notification'
 import { hasPostgres, withBackend, parityEqual } from '../../__test__/parity'
 import { closeSql, getSql } from '../../client'
-import type { Escalation, Notification } from '@/lib/types'
+import type { AuditEntry, Escalation, Notification } from '@/lib/types'
 
 const desc = hasPostgres() ? describe : describe.skip
 
@@ -91,7 +91,8 @@ desc('escalationRepo write-parity (postgres-only)', () => {
       comments: [...(original.comments ?? []), newComment],
       auditLog: [
         ...(original.auditLog ?? []),
-        { timestamp: '2026-05-23T10:00:00Z', user: 'parity-test', action: 'comment-added', notes: newComment.id },
+        // 'comment-added' is intentional parity test data; not in the AuditAction union.
+        { timestamp: '2026-05-23T10:00:00Z', user: 'parity-test', action: 'comment-added' as AuditEntry['action'], notes: newComment.id },
       ],
     }
     await escalationRepo.update(mutated)
@@ -161,7 +162,7 @@ desc('notificationRepo write-parity (postgres-only): create + JSONB round-trip',
       id: TEST_ID,
       recipientUserId: seedRecipient,
       senderUserId: 'system',
-      kind: 'intake-form-completed',
+      kind: 'intake-completed',
       title: 'Parity test',
       body: 'Round-trip body',
       actionUrl: '/intake/parity-test',

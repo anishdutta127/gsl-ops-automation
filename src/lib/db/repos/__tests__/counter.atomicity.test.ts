@@ -44,7 +44,7 @@ desc('counterRepo.bumpPiCounter atomicity (postgres)', () => {
       const sql = getSql()
       await sql`
         UPDATE counters
-        SET value = ${sql.json(originalCounter as Record<string, unknown>)}::jsonb,
+        SET value = ${sql.json(originalCounter as Record<string, unknown> as Parameters<typeof sql.json>[0])}::jsonb,
             updated_at = NOW()
         WHERE key = 'pi_counter_map'
       `
@@ -66,7 +66,7 @@ desc('counterRepo.bumpPiCounter atomicity (postgres)', () => {
     expect(set.size, `${N} parallel calls -> ${set.size} distinct seqs`).toBe(N)
 
     // Contiguous: max - min = N - 1 means every step is +1.
-    expect(seqs[N - 1] - seqs[0]).toBe(N - 1)
+    expect(seqs[N - 1]! - seqs[0]!).toBe(N - 1)
   }, 30_000)
 
   it('serial bumps produce sequential numbers', async () => {

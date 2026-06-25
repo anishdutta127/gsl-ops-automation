@@ -20,7 +20,8 @@
     "import:misba": "node scripts/import-fy2627.mjs --misba-only"
   },
   "simple-git-hooks": {
-    "pre-commit": "bash scripts/docs-lint.sh && npx --no-install next lint --quiet --max-warnings 0"
+    "pre-commit": "bash scripts/docs-lint.sh && npx --no-install next lint --quiet --max-warnings 0",
+    "pre-push": "npm test"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

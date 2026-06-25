@@ -82,31 +82,47 @@ describe('Flow 1: Create new MOU', () => {
 })
 
 describe('Flow 2: Generate PI for an instalment', () => {
-  it('GET /mous/[id]/pi renders the lock banner when locked (default state)', async () => {
+  // The retired /mous/[id]/pi page is now a redirect stub
+  // (commit 507aab5 merged instalment/schedule/PI into one page); the
+  // parallel-build lock banner + the friendly error banner moved to the
+  // finance PI view at /finance/pi/[paymentId]/page.tsx. These two tests
+  // now render that page. MOU-YP-2526-004-i1 is a fixture payment whose
+  // parent MOU + school both live in src/data/*.json so the page renders
+  // fully in json (test) mode.
+  const PI_PAYMENT_ID = 'MOU-YP-2526-004-i1'
+
+  it('GET /finance/pi/[paymentId] renders the lock banner when locked (default state)', async () => {
     delete process.env.PI_PARALLEL_BUILD_LOCK
-    const { default: Page } = await import('../app/mous/[mouId]/pi/page')
-    // Use a known Active MOU from the fixture so the page does not 404.
+    const { default: Page } = await import('../app/finance/pi/[paymentId]/page')
     const html = renderToStaticMarkup(
       await Page({
-        params: Promise.resolve({ mouId: 'MOU-STEAM-2627-001' }),
+        params: Promise.resolve({ paymentId: PI_PAYMENT_ID }),
         searchParams: Promise.resolve({}),
       }),
     )
+    // Lock banner heading + the parallelBuildLockMessage() body, which
+    // still carries the "Pranav continues..." copy.
     expect(html).toContain('Locked during parallel-build window')
+    expect(html).toContain('Pranav continues issuing PIs from gsl-mou-system')
     expect(html).not.toContain('Application error')
   }, 30000)
 
-  it('GET /mous/[id]/pi?error=parallel-build-locked renders the friendly redirect banner', async () => {
-    delete process.env.PI_PARALLEL_BUILD_LOCK
-    const { default: Page } = await import('../app/mous/[mouId]/pi/page')
+  it('GET /finance/pi/[paymentId]?error=parallel-build-locked renders the friendly error banner', async () => {
+    // With the lock OFF, the lock banner does not render; the friendly
+    // error banner fed by the ?error= param does. The finance page maps
+    // error=parallel-build-locked via ERROR_COPY to a role="alert"
+    // message (it does not reuse the retired page's pi-action-error
+    // testid / "Pranav" copy).
+    process.env.PI_PARALLEL_BUILD_LOCK = 'false'
+    const { default: Page } = await import('../app/finance/pi/[paymentId]/page')
     const html = renderToStaticMarkup(
       await Page({
-        params: Promise.resolve({ mouId: 'MOU-STEAM-2627-001' }),
+        params: Promise.resolve({ paymentId: PI_PAYMENT_ID }),
         searchParams: Promise.resolve({ error: 'parallel-build-locked' }),
       }),
     )
-    expect(html).toContain('data-testid="pi-action-error"')
-    expect(html).toContain('Pranav continues issuing PIs from gsl-mou-system')
+    expect(html).toContain('role="alert"')
+    expect(html).toContain('PI generation is locked during the parallel-build window.')
     expect(html).not.toContain('Application error')
   }, 30000)
 })

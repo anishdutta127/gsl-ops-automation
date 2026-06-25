@@ -67,11 +67,11 @@ describe('pendingUpdates smart-bridge (P2b)', () => {
     })
     expect(schoolMock.findById).toHaveBeenCalledWith('SCH-001')
     expect(schoolMock.updatePartial).toHaveBeenCalledTimes(1)
-    const partialPatch = schoolMock.updatePartial.mock.calls[0][1] as Record<string, unknown>
+    const partialPatch = schoolMock.updatePartial.mock.calls[0]![1] as Record<string, unknown>
     expect(partialPatch).toMatchObject({ id: 'SCH-001', name: 'New Name' })
     expect(partialPatch).not.toHaveProperty('auditLog')
     expect(schoolMock.appendAudit).toHaveBeenCalledTimes(1)
-    expect(schoolMock.appendAudit.mock.calls[0][1]).toMatchObject({
+    expect(schoolMock.appendAudit.mock.calls[0]![1]).toMatchObject({
       action: 'school-edited',
       user: 'tester',
     })

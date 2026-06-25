@@ -1,0 +1,42 @@
+name: ci
+
+# The gate that was missing: until now the only pre-commit hook ran
+# docs-lint + next lint, so 23 vitest failures sailed onto main invisibly.
+# This runs the FULL test suite + typecheck + lint on every push to main
+# and every PR. It runs in CI, so it cannot be bypassed with
+# `git push --no-verify` (which only skips the local hooks). A red run
+# here is the signal that something is actually broken.
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Typecheck
+        run: npx tsc --noEmit
+      - name: Lint
+        run: npm run lint
+      - name: Test (vitest)
+        run: npm test

@@ -23,7 +23,7 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest'
 import { mouRepo } from '../mou'
 import { hasPostgres, withBackend, parityEqual } from '../../__test__/parity'
 import { closeSql } from '../../client'
-import type { MOU } from '@/lib/types'
+import type { MOU, AuditEntry } from '@/lib/types'
 
 const desc = hasPostgres() ? describe : describe.skip
 
@@ -147,6 +147,9 @@ desc('mouRepo write-parity round-trip (postgres-only)', () => {
       studentCountEventIds: ['SCE-PARITY-TEST-001', 'SCE-PARITY-TEST-002'],
       auditLog: [
         ...(original.auditLog ?? []),
+        // Intentional parity test data: a synthetic action outside the
+        // AuditAction union exercises the raw JSONB round-trip. Cast keeps
+        // the union in types.ts unwidened.
         {
           timestamp: new Date().toISOString(),
           user: 'system-parity-test',
@@ -154,7 +157,7 @@ desc('mouRepo write-parity round-trip (postgres-only)', () => {
           before: { delayNotes: original.delayNotes ?? null },
           after: { delayNotes: 'phase-7-write-parity-test' },
           notes: 'JSONB round-trip assertion',
-        },
+        } as unknown as AuditEntry,
       ],
     }
     await mouRepo.update(mutated)
@@ -177,7 +180,10 @@ desc('mouRepo write-parity round-trip (postgres-only)', () => {
     const mutated: MOU = {
       ...original,
       gradewiseDistribution: null,
-      paymentSchedule: null,
+      // Intentional null-vs-undefined probe: MOU.paymentSchedule is typed
+      // `string`, but the test writes null to assert the nullable JSONB
+      // column reads back as null. Cast keeps types.ts unwidened.
+      paymentSchedule: null as unknown as string,
     }
     await mouRepo.update(mutated)
     const readBack = await mouRepo.findById(TEST_MOU_ID)

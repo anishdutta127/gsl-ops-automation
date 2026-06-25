@@ -252,7 +252,7 @@ describe('computeOpsProgrammeBreakdown', () => {
     const dispatches = [
       kitDispatch({ id: 'd1', mouId: 'a', dispatchStatus: 'In Transit' }),
       kitDispatch({ id: 'd2', mouId: 'b', dispatchStatus: 'Delivered' }),
-      kitDispatch({ id: 'd3', mouId: 'c', dispatchStatus: 'Requested' }),
+      kitDispatch({ id: 'd3', mouId: 'c', dispatchStatus: 'Pending' }),
     ]
     const rows = computeOpsProgrammeBreakdown({ mous, kitDispatches: dispatches })
     const steam = rows.find((r) => r.programme === 'STEAM')!

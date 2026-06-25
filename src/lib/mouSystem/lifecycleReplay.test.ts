@@ -31,11 +31,7 @@
  */
 
 import { describe, expect, it } from 'vitest'
-import {
-  computeRecalcWithAdjustments,
-  recalculatePaymentSchedule,
-  type ExistingInstallment,
-} from './recalc'
+import { recalculatePaymentSchedule } from './recalc'
 import { buildInstallmentsFromMou } from './installments'
 import { composePi, hsnFor } from './pi'
 import { formatPiNumber, getEntityForProgramme } from './company'
@@ -108,25 +104,6 @@ function school(overrides: Partial<School> = {}): School {
     notes: null,
     auditLog: [],
     ...overrides,
-  }
-}
-
-function existingInstallment(args: {
-  seq: number
-  pctDue: number
-  expectedAmount: number
-  paidAmount?: number
-  piSentDate?: string | null
-  freshExpectedAmount?: number
-}): ExistingInstallment & { piSentDate?: string | null } {
-  return {
-    id: `MOU-FIXTURE-i${args.seq}`,
-    seq: args.seq,
-    pctDue: args.pctDue,
-    expectedAmount: args.expectedAmount,
-    paidAmount: args.paidAmount ?? 0,
-    piSentDate: args.piSentDate ?? null,
-    freshExpectedAmount: args.freshExpectedAmount,
   }
 }
 
@@ -304,142 +281,10 @@ describe('Scenario 6: STEAM 3Y uniform pricing 200 students Rs 1000/student', ()
 })
 
 // ----------------------------------------------------------------------------
-// Scenario 7: Adjustment-as-line-item: drop BEFORE any payment
+// Scenarios 7-8 retired with computeRecalcWithAdjustments (Phase 6D Part 4);
+// spread-by-weight coverage now in studentCountRecalc.test.ts +
+// applyCountChange.test.ts.
 // ----------------------------------------------------------------------------
-
-describe('Scenario 7: drop students BEFORE payment rewrites all instalments', () => {
-  it('rewrites all 4 instalments in place; no Adjustment record', () => {
-    // Pranav scenario start: 500 students × Rs 1000/student × 4 × 25%
-    // = 4 PIs of Rs 1,25,000 each. Then drop to 450 BEFORE any payment:
-    // every PI rewrites to Rs 1,12,500 because none are locked.
-    const installments = [1, 2, 3, 4].map((seq) =>
-      existingInstallment({ seq, pctDue: 25, expectedAmount: 125000 }),
-    )
-    const result = computeRecalcWithAdjustments({
-      perStudentPrice: 1000,
-      newStudents: 450,
-      installments,
-      reason: 'students dropped before any PI sent',
-    })
-    expect(result.adjustments).toHaveLength(0)
-    expect(result.updates).toHaveLength(4)
-    expect(result.updates.every((u) => u.newExpectedAmount === 112500)).toBe(true)
-  })
-})
-
-// ----------------------------------------------------------------------------
-// Scenario 8: Adjustment-as-line-item: drop AFTER inst-1 paid (canonical)
-// ----------------------------------------------------------------------------
-
-describe('Scenario 8: Pranav Round 1 canonical (drop 500->400 after inst-1 paid)', () => {
-  it('preserves paid instalment 1 and creates Adjustment on instalment 2', () => {
-    // Setup: 4 instalments at Rs 1,12,500 each (after the drop to 450
-    // pre-payment in Scenario 7). Pay instalment 1 in full. Now drop
-    // students to 400. Locked: inst-1 (paidAmount > 0). Unlocked: inst
-    // 2/3/4. New expected per inst at 400 students = Rs 1,00,000.
-    //
-    //   inst 1: PRESERVED at Rs 1,12,500 (paid).
-    //   inst 2: rewritten in place to Rs 1,00,000 PLUS adjustment of
-    //           Rs -12,500 attached. Net due = Rs 87,500.
-    //   inst 3: rewritten in place to Rs 1,00,000.
-    //   inst 4: rewritten in place to Rs 1,00,000.
-    //
-    // The Adjustment row carries originalInstallmentId = inst-1
-    // (the paid one), appliedToInstallmentId = inst-2 (next unlocked),
-    // amountDelta = (1,00,000 - 1,12,500) = Rs -12,500 (credit).
-    const installments = [
-      existingInstallment({ seq: 1, pctDue: 25, expectedAmount: 112500, paidAmount: 112500 }),
-      existingInstallment({ seq: 2, pctDue: 25, expectedAmount: 112500 }),
-      existingInstallment({ seq: 3, pctDue: 25, expectedAmount: 112500 }),
-      existingInstallment({ seq: 4, pctDue: 25, expectedAmount: 112500 }),
-    ]
-    const result = computeRecalcWithAdjustments({
-      perStudentPrice: 1000,
-      newStudents: 400,
-      installments,
-      reason: 'students dropped after inst-1 paid',
-    })
-    // 3 instalments rewritten (2, 3, 4); 1 adjustment attached to inst 2.
-    expect(result.updates).toHaveLength(3)
-    expect(result.updates.map((u) => u.newExpectedAmount)).toEqual([100000, 100000, 100000])
-    expect(result.adjustments).toHaveLength(1)
-    const adj = result.adjustments[0]!
-    expect(adj.originalInstallmentId).toBe('MOU-FIXTURE-i1')
-    expect(adj.appliedToInstallmentId).toBe('MOU-FIXTURE-i2')
-    expect(adj.amountDelta).toBe(-12500)
-    expect(adj.beforeAmount).toBe(112500)
-    expect(adj.afterAmount).toBe(100000)
-  })
-
-  it('PI for instalment 2 surfaces the credit as balanceDuePreviousInstalments', () => {
-    const m = mou({
-      id: 'MOU-FIXTURE',
-      programme: 'STEAM',
-      studentsMou: 500,
-      studentsActual: 400,
-      spWithTax: 1000,
-      contractValue: 400000,
-      paymentSchedule: '25-25-25-25 quarterly',
-    })
-    const inst2: Payment = {
-      id: 'MOU-FIXTURE-i2',
-      mouId: 'MOU-FIXTURE',
-      schoolName: 'Fixture School',
-      programme: 'STEAM',
-      instalmentLabel: '2 of 4',
-      instalmentSeq: 2,
-      totalInstalments: 4,
-      description: 'Instalment 2',
-      dueDateRaw: '2026-07-01',
-      dueDateIso: '2026-07-01',
-      expectedAmount: 100000,
-      receivedAmount: 0,
-      receivedDate: null,
-      paymentMode: null,
-      bankReference: null,
-      piNumber: null,
-      taxInvoiceNumber: null,
-      status: 'Pending',
-      notes: null,
-      piSentDate: null,
-      piSentTo: null,
-      piGeneratedAt: null,
-      studentCountActual: 400,
-      partialPayments: [],
-      auditLog: [],
-    }
-    const adjustments: Adjustment[] = [
-      {
-        id: 'ADJ-001',
-        mouId: 'MOU-FIXTURE',
-        schoolId: 'SCH-FIXTURE',
-        triggeredByEvent: 'actuals_update',
-        triggeredAt: '2026-07-15T10:00:00Z',
-        triggeredBy: 'shubhangi.g',
-        originalInstallmentId: 'MOU-FIXTURE-i1',
-        appliedToInstallmentId: 'MOU-FIXTURE-i2',
-        amountDelta: -12500,
-        reason: 'students dropped 500 -> 400 after inst-1 paid',
-        beforeAmount: 112500,
-        afterAmount: 100000,
-        status: 'Active',
-      },
-    ]
-    const pi = composePi({
-      piNumber: 'MTPL/UP/26-27/0002',
-      issueDate: '2026-07-15',
-      installment: inst2,
-      mou: m,
-      school: school({ state: 'Uttar Pradesh' }),
-      gstPct: 0.18,
-      adjustments,
-    })
-    // Inst 2 rounded total Rs 1,00,000 (pre-adjustment). Adjustment Rs
-    // -12,500 (credit). netPaymentDue = 1,00,000 - 12,500 = Rs 87,500.
-    expect(pi.balanceDuePreviousInstalments).toBe(-12500)
-    expect(pi.netPaymentDue).toBe(87500)
-  })
-})
 
 // ----------------------------------------------------------------------------
 // Scenario 9: Adjustment reversal scenario

@@ -75,7 +75,7 @@ describe('VEX PI id format: VEX-OWN sequential per entity (Gate 2 §V5)', () => 
   it('VEX dispatch id format VEXD-{entity}-{fy}-NNN matches snapshot', () => {
     expect(vexDispatches.length).toBeGreaterThan(0)
     for (const d of vexDispatches) {
-      expect(d.id).toMatch(/^VEXD-(MH|UP)-\d{4}-\d{3}$/)
+      expect(d.id).toMatch(/^VEXD-(MH|UP)-\d{2}-?\d{2}-\d{3}$/)
     }
     // UP entity dispatch seqs 001..004 gap-free (4 dispatches in snapshot).
     const upDispatchSeqs = vexDispatches

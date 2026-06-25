@@ -105,14 +105,19 @@ describe('/mous/[mouId] detail page', () => {
     ).rejects.toThrow('NEXT_NOT_FOUND')
   })
 
-  it('W4-I.4 MM2: PI action button shows for Admin and Finance', async () => {
+  it('W4-I.4 MM2: detail page exposes the path to PI via the Instalments link', async () => {
+    // The PI affordance moved off the detail page; per-row Generate-PI
+    // (gated by canGeneratePI) now lives on the installments page. The
+    // detail action bar exposes the path to it via the Instalments link.
+    // Role-specific PI visibility is covered on the installments page test.
     for (const role of ['Admin', 'Finance'] as const) {
       getCurrentUserMock.mockResolvedValue(userWithRole(role, `${role}-user`))
       const { default: Page } = await import('./page')
       const html = renderToStaticMarkup(
         await Page({ params: Promise.resolve({ mouId: 'MOU-STEAM-2627-001' }) }),
       )
-      expect(html).toMatch(/href="\/mous\/MOU-STEAM-2627-001\/pi"/)
+      expect(html).toContain('data-testid="action-installments"')
+      expect(html).toMatch(/href="\/mous\/MOU-STEAM-2627-001\/installments"/)
     }
   })
 
@@ -128,24 +133,27 @@ describe('/mous/[mouId] detail page', () => {
   })
 
   it(
-    'Gate 5A.9 Step 1: shows Edit schedule when MOU has instalments and user can edit',
+    'Gate 5A.9 Step 1: detail page links to the installments page (where scheduling lives) for an MOU with instalments',
     { timeout: 30000 },
     async () => {
+      // Schedule editing moved off the detail page to the installments
+      // page. The detail action bar links there via the Instalments link.
+      // The removed inline action-edit-schedule / action-set-schedule
+      // buttons no longer render.
       getCurrentUserMock.mockResolvedValue(userWithDept('Finance', 'finance', 'finance-user'))
       const { default: Page } = await import('./page')
       const html = renderToStaticMarkup(
         await Page({ params: Promise.resolve({ mouId: 'MOU-STEAM-2627-001' }) }),
       )
-      expect(html).toContain('data-testid="action-edit-schedule"')
-      expect(html).toMatch(
-        /href="\/mous\/MOU-STEAM-2627-001\/installments\/schedule-edit"/,
-      )
+      expect(html).toContain('data-testid="action-installments"')
+      expect(html).toMatch(/href="\/mous\/MOU-STEAM-2627-001\/installments"/)
+      expect(html).not.toContain('data-testid="action-edit-schedule"')
       expect(html).not.toContain('data-testid="action-set-schedule"')
     },
   )
 
   it(
-    'Gate 5A.9 Step 1: shows Set schedule when MOU is signed + has zero instalments + user can edit',
+    'Gate 5A.9 Step 1: detail page links to the installments page for a signed MOU with zero instalments',
     { timeout: 30000 },
     async () => {
       getCurrentUserMock.mockResolvedValue(userWithDept('Finance', 'finance', 'finance-user'))
@@ -153,13 +161,15 @@ describe('/mous/[mouId] detail page', () => {
       const html = renderToStaticMarkup(
         await Page({ params: Promise.resolve({ mouId: 'MOU-STEAM-2526-028' }) }),
       )
-      expect(html).toContain('data-testid="action-set-schedule"')
+      expect(html).toContain('data-testid="action-installments"')
+      expect(html).toMatch(/href="\/mous\/MOU-STEAM-2526-028\/installments"/)
+      expect(html).not.toContain('data-testid="action-set-schedule"')
       expect(html).not.toContain('data-testid="action-edit-schedule"')
     },
   )
 
   it(
-    'Gate 5A.9 Step 1: hides schedule buttons for Ops department (no canEdit gate)',
+    'Gate 5A.9 Step 1: no inline schedule buttons render on the detail page (moved to installments)',
     { timeout: 30000 },
     async () => {
       getCurrentUserMock.mockResolvedValue(userWithDept('OpsEmployee', 'ops', 'ops-user'))

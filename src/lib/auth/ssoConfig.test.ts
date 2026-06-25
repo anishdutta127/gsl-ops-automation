@@ -78,7 +78,7 @@ describe('buildEntraProviderConfig (Phase 6G.3 dual-mode)', () => {
     const cfg = buildEntraProviderConfig({
       AUTH_MICROSOFT_ENTRA_ID_ID: 'client-abc',
       AUTH_MICROSOFT_ENTRA_ID_TENANT_ID: 'tenant-xyz',
-    } as NodeJS.ProcessEnv)
+    } as unknown as NodeJS.ProcessEnv)
     expect(cfg.clientId).toBe('client-abc')
     expect(cfg.clientSecret).toBeUndefined()
     expect(cfg.issuer).toBe('https://login.microsoftonline.com/tenant-xyz/v2.0')
@@ -90,7 +90,7 @@ describe('buildEntraProviderConfig (Phase 6G.3 dual-mode)', () => {
       AUTH_MICROSOFT_ENTRA_ID_ID: 'client-abc',
       AUTH_MICROSOFT_ENTRA_ID_TENANT_ID: 'tenant-xyz',
       AUTH_MICROSOFT_ENTRA_ID_SECRET: 'shhh-secret',
-    } as NodeJS.ProcessEnv)
+    } as unknown as NodeJS.ProcessEnv)
     expect(cfg.clientId).toBe('client-abc')
     expect(cfg.clientSecret).toBe('shhh-secret')
     expect(cfg.issuer).toBe('https://login.microsoftonline.com/tenant-xyz/v2.0')
@@ -101,18 +101,18 @@ describe('buildEntraProviderConfig (Phase 6G.3 dual-mode)', () => {
   })
 
   it('throws when client ID or tenant ID is missing', () => {
-    expect(() => buildEntraProviderConfig({} as NodeJS.ProcessEnv)).toThrow(
+    expect(() => buildEntraProviderConfig({} as unknown as NodeJS.ProcessEnv)).toThrow(
       /both be set/,
     )
     expect(() =>
       buildEntraProviderConfig({
         AUTH_MICROSOFT_ENTRA_ID_ID: 'x',
-      } as NodeJS.ProcessEnv),
+      } as unknown as NodeJS.ProcessEnv),
     ).toThrow()
     expect(() =>
       buildEntraProviderConfig({
         AUTH_MICROSOFT_ENTRA_ID_TENANT_ID: 'x',
-      } as NodeJS.ProcessEnv),
+      } as unknown as NodeJS.ProcessEnv),
     ).toThrow()
   })
 
@@ -120,7 +120,7 @@ describe('buildEntraProviderConfig (Phase 6G.3 dual-mode)', () => {
     const cfg = buildEntraProviderConfig({
       AUTH_MICROSOFT_ENTRA_ID_ID: 'c',
       AUTH_MICROSOFT_ENTRA_ID_TENANT_ID: 't',
-    } as NodeJS.ProcessEnv)
+    } as unknown as NodeJS.ProcessEnv)
     expect(cfg.issuer).toBe('https://login.microsoftonline.com/t/v2.0')
   })
 })

@@ -91,8 +91,8 @@ desc('paymentRepo write-parity (postgres-only)', () => {
     const mutated: Payment = {
       ...original,
       partialPayments: [
-        { receivedAt: '2026-05-25T00:00:00Z', amount: 1500, mode: 'NEFT', reference: 'TEST-001', notes: 'parity-test' },
-        { receivedAt: '2026-05-26T00:00:00Z', amount: 2500, mode: 'UPI', reference: null, notes: null },
+        { date: '2026-05-25T00:00:00Z', amount: 1500, mode: 'Bank Transfer', reference: 'TEST-001', notes: 'parity-test', paymentLogId: null },
+        { date: '2026-05-26T00:00:00Z', amount: 2500, mode: 'UPI', reference: null, notes: null, paymentLogId: null },
       ],
       auditLog: [
         ...(original.auditLog ?? []),
