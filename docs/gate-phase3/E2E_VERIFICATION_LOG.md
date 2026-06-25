@@ -72,9 +72,29 @@ instalments:
 - Note: mou.received is the stale denormalised field (shows 0); the live figure is
   the payments sum, which is what this corrects.
 
-## GATED UNWIND 3/3 - VEX over-count VEXPI-UP-26-27-020: DRY-RUN (backup taken; NOT applied; awaiting go)
-Backup: .recovery-backup/vex-VEXPI-UP-26-27-020-pre.json (gitignored; the VexPi row).
-CURRENT: total Rs 6,32,930.76, payment_received_amount **Rs 31,64,655 (= 5.00x)**,
+## GATED UNWIND 3/3 - VEX over-count VEXPI-UP-26-27-020: APPLIED + VERIFIED (owner go 2026-06-25)
+Backup: .recovery-backup/vex-VEXPI-UP-26-27-020-pre.json (gitignored; the full VexPi
+row) + .recovery-backup/vex-VEXPI-UP-26-27-020-pre-apply-*.json (re-snapshot taken at
+apply time). Applied via scripts/recover-vex-overcount.mjs --apply (dry-run default;
+hard pre-flight guards that abort on any drift from the reviewed pre-state; one
+transaction: INSERT the reconstructed payment_log + UPDATE the VexPi).
+
+**VERIFY PASS (13/13, direct against prod postgres ep-shiny-waterfall):**
+- payment_received_amount Rs 31,64,655 -> **Rs 6,32,931** (1x, not 5x).
+- payment_log_ids [5 dangling] -> **['VEXPL-RECOV-UP2627020']** (the 5 dangling ids
+  dropped; they referenced 0 payment_logs rows so nothing was deleted there).
+- Exactly ONE new payment_log created: VEXPL-RECOV-UP2627020 (amount Rs 6,32,931,
+  mode Bank Transfer, ref NA, unmatched=false); its narration documents the recovery
+  and names all 5 removed retry-duplicate ids.
+- status unchanged = Delivery Pending (Rs 6,32,931 >= total Rs 6,32,930.76 = paid,
+  awaiting delivery).
+- Nothing else moved: vex_pis count 31 -> 31; payment_logs 20 -> 21 (delta = only
+  +VEXPL-RECOV-UP2627020, no removals); SUM(payment_received_amount) across all VEX
+  PIs 45,62,072 -> 20,30,348 (dropped by exactly Rs 25,31,724 = the over-count); 0
+  other vex_pis rows changed.
+- Reversible via the backups (full pre-state row preserved).
+
+CURRENT (pre-apply): total Rs 6,32,930.76, payment_received_amount **Rs 31,64,655 (= 5.00x)**,
 status Delivery Pending. payment_log_ids = 5 ids
 [VEXPL-910ba8b2, VEXPL-51e169b6, VEXPL-ef56e655, VEXPL-53474c88, VEXPL-cbbd3d02].
 Cause: 5 failed pre-fix retries, each ran recordVexPayment (+Rs 6,32,931 + appended
