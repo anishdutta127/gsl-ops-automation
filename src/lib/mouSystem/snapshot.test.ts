@@ -1,3 +1,9 @@
+// @vitest-environment node
+// crypto.subtle.importKey strict-checks keyData `instanceof ArrayBuffer` against
+// its own realm. Under the repo-default jsdom environment the ArrayBuffer comes
+// from the jsdom realm while crypto.subtle is Node-native, so Node 20 rejects it
+// (ERR_INVALID_ARG_TYPE); Node 24 happens to be lenient. Prod runs this in pure
+// Node (same realm), so the node environment matches reality.
 import { describe, it, expect } from 'vitest'
 import { mintSnapshotToken, verifySnapshotToken } from './snapshot'
 
