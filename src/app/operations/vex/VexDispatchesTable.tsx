@@ -15,7 +15,8 @@ const STATUS_TONE: Record<string, StatusChipTone> = {
   Requested: 'attention',
   'Request Raised to Warehouse': 'navy',
   Invoiced: 'navy',
-  Shipped: 'ok',
+  Shipped: 'teal',
+  Delivered: 'ok',
 }
 
 export function VexDispatchesTable({

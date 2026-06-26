@@ -774,6 +774,8 @@ function vexDispatch(over: Partial<VexDispatch> = {}): VexDispatch {
     taxInvoiceNumber: null,
     taxInvoicePath: null,
     invoicedAt: null,
+    deliveredAt: null,
+    deliveredBy: null,
     notes: null,
     supportingDocPath: null,
     warehouseEmailSentAt: null,

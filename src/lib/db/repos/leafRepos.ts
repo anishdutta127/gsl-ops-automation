@@ -809,15 +809,16 @@ export const vexDispatchRepo = {
       await sql`
         INSERT INTO vex_dispatches (id, pi_id, items, freight, mode, status,
           requested_by, requested_at, tax_invoice_number, tax_invoice_path,
-          invoiced_at, notes, supporting_doc_path, warehouse_email_sent_at,
-          warehouse_email_sent_by, audit_log)
+          invoiced_at, delivered_at, delivered_by, notes, supporting_doc_path,
+          warehouse_email_sent_at, warehouse_email_sent_by, audit_log)
         VALUES (
           ${d.id}, ${d.piId},
           ${sql.json((d.items ?? []) as never)}::jsonb,
           ${d.freight ?? null}, ${d.mode ?? null}, ${d.status ?? null},
           ${d.requestedBy ?? null}, ${d.requestedAt ?? null},
           ${d.taxInvoiceNumber ?? null}, ${d.taxInvoicePath ?? null},
-          ${d.invoicedAt ?? null}, ${d.notes ?? null},
+          ${d.invoicedAt ?? null}, ${d.deliveredAt ?? null}, ${d.deliveredBy ?? null},
+          ${d.notes ?? null},
           ${d.supportingDocPath ?? null},
           ${d.warehouseEmailSentAt ?? null}, ${d.warehouseEmailSentBy ?? null},
           ${sql.json((d.auditLog ?? []) as never)}::jsonb
@@ -842,7 +843,10 @@ export const vexDispatchRepo = {
           status = ${d.status ?? null},
           tax_invoice_number = ${d.taxInvoiceNumber ?? null},
           tax_invoice_path = ${d.taxInvoicePath ?? null},
-          invoiced_at = ${d.invoicedAt ?? null}, notes = ${d.notes ?? null},
+          invoiced_at = ${d.invoicedAt ?? null},
+          delivered_at = ${d.deliveredAt ?? null},
+          delivered_by = ${d.deliveredBy ?? null},
+          notes = ${d.notes ?? null},
           supporting_doc_path = ${d.supportingDocPath ?? null},
           warehouse_email_sent_at = ${d.warehouseEmailSentAt ?? null},
           warehouse_email_sent_by = ${d.warehouseEmailSentBy ?? null},
@@ -914,6 +918,7 @@ export const vexDispatchRepo = {
         requestedBy: 'requested_by', requestedAt: 'requested_at',
         taxInvoiceNumber: 'tax_invoice_number',
         taxInvoicePath: 'tax_invoice_path', invoicedAt: 'invoiced_at',
+        deliveredAt: 'delivered_at', deliveredBy: 'delivered_by',
         notes: 'notes', supportingDocPath: 'supporting_doc_path',
         warehouseEmailSentAt: 'warehouse_email_sent_at',
         warehouseEmailSentBy: 'warehouse_email_sent_by',

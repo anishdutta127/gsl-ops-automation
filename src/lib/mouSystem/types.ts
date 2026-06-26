@@ -390,7 +390,8 @@ export type VexDispatchStatusV3 =
   | 'Requested'
   | 'Request Raised to Warehouse'   // Phase 3 Round 2: email-to-warehouse step
   | 'Invoiced'
-  | 'Shipped'
+  | 'Shipped'                        // out for delivery / delivery pending
+  | 'Delivered'                      // kit confirmed received (who + when captured)
 export type VexDispatchMode = 'Air' | 'Surface'
 
 export interface VexDispatch {
@@ -405,6 +406,9 @@ export interface VexDispatch {
   taxInvoiceNumber: string | null
   taxInvoicePath: string | null
   invoicedAt: string | null
+  /** Set when the dispatch is confirmed Delivered (kit received). */
+  deliveredAt: string | null
+  deliveredBy: string | null
   notes: string | null
   /** Phase 3 Round 2: optional supporting doc (school PO, internal approval). */
   supportingDocPath: string | null

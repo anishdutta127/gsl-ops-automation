@@ -45,6 +45,7 @@ export type AuditAction =
   | 'actuals-confirmed'
   | 'pi-issued'
   | 'dispatch-raised'
+  | 'tax-invoice-recorded'         // Finance records the VEX dispatch tax invoice (number + link)
   | 'delivery-acknowledged'
   | 'feedback-submitted'
   // P2 exception (Q-J)
@@ -2018,7 +2019,8 @@ export type VexDispatchStatus =
   | 'Requested'
   | 'Request Raised to Warehouse'
   | 'Invoiced'
-  | 'Shipped'
+  | 'Shipped'                           // out for delivery / delivery pending
+  | 'Delivered'                         // kit confirmed received (who + when captured)
 
 export type VexDispatchMode = 'Air' | 'Surface'
 
@@ -2034,6 +2036,8 @@ export interface VexDispatch {
   taxInvoiceNumber: string | null
   taxInvoicePath: string | null
   invoicedAt: string | null
+  deliveredAt: string | null            // set when confirmed Delivered
+  deliveredBy: string | null
   notes: string | null
   supportingDocPath: string | null
   warehouseEmailSentAt: string | null

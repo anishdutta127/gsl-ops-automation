@@ -34,6 +34,7 @@ import { VexPiStatusBar } from './VexPiStatusBar'
 import { VexPaymentsList } from './VexPaymentsList'
 import { VexPiVoidButton } from './VexPiVoidButton'
 import { DispatchRowActions } from './DispatchRowActions'
+import { DispatchTaxInvoice } from './DispatchTaxInvoice'
 
 const COMMITTED_DISPATCH = new Set<string>(['Invoiced', 'Shipped', 'Delivered'])
 
@@ -346,18 +347,11 @@ export default async function VexPiDetailPage({ params }: PageProps) {
                           />
                         </td>
                         <td className="px-3 py-2 text-xs">
-                          {d.taxInvoicePath ? (
-                            <a
-                              href={d.taxInvoicePath}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="font-semibold text-brand-navy hover:underline"
-                            >
-                              {d.taxInvoiceNumber ?? 'PDF'}
-                            </a>
-                          ) : (
-                            <span className="text-muted-foreground">awaiting upload</span>
-                          )}
+                          <DispatchTaxInvoice
+                            pi={pi}
+                            dispatch={d}
+                            canFinance={canFinance}
+                          />
                         </td>
                       </tr>
                     ))}

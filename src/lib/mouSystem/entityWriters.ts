@@ -1154,6 +1154,8 @@ export async function createVexDispatch(
         taxInvoiceNumber: null,
         taxInvoicePath: null,
         invoicedAt: null,
+        deliveredAt: null,
+        deliveredBy: null,
         notes: null,
         supportingDocPath: null,
         warehouseEmailSentAt: null,

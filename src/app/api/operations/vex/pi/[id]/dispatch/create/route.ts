@@ -199,6 +199,8 @@ export async function POST(request: Request, ctx: RouteContext) {
     taxInvoiceNumber: null,
     taxInvoicePath: null,
     invoicedAt: null,
+    deliveredAt: null,
+    deliveredBy: null,
     notes: null,
     supportingDocPath: null,
     warehouseEmailSentAt: null,

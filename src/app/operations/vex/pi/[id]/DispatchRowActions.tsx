@@ -6,11 +6,12 @@
  *     dispatch as Request Raised to Warehouse + records warehouse-
  *     email-sent-at audit metadata.
  *   - Advance status (Ops + Finance): Requested -> Request Raised to
- *     Warehouse -> Invoiced -> Shipped. Finance can flip to Invoiced
- *     after tax invoice is generated; Ops can mark Shipped.
- *   - Supporting doc upload: Phase 1 surfaces the existing path read-
- *     only. Upload UI lives on gsl-mou-system today; Ops adds it in
- *     Phase 1.1 (deferred).
+ *     Warehouse -> Invoiced -> Shipped -> Delivered. Finance flips to
+ *     Invoiced (the tax invoice control records the doc); Ops marks
+ *     Shipped (out for delivery) and Delivered (kit received, who +
+ *     when captured). Marking Delivered rolls the PI status up.
+ *   - Supporting doc (school PO): Phase 1 surfaces the existing path
+ *     read-only; that upload is a separate Phase 1.1 item.
  */
 
 import { useState } from 'react'
@@ -23,6 +24,7 @@ const STATUS_ORDER: VexDispatchStatusV3[] = [
   'Request Raised to Warehouse',
   'Invoiced',
   'Shipped',
+  'Delivered',
 ]
 
 interface Props {
@@ -185,6 +187,12 @@ export function DispatchRowActions({
           {dispatch.warehouseEmailSentBy
             ? ` by ${dispatch.warehouseEmailSentBy}`
             : ''}
+        </span>
+      ) : null}
+      {dispatch.deliveredAt ? (
+        <span className="text-[11px] text-emerald-700">
+          Delivered {new Date(dispatch.deliveredAt).toLocaleString('en-IN')}
+          {dispatch.deliveredBy ? ` by ${dispatch.deliveredBy}` : ''}
         </span>
       ) : null}
     </div>
