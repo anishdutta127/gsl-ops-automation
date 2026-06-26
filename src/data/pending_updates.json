@@ -1357,5 +1357,88 @@
       ]
     },
     "retryCount": 0
+  },
+  {
+    "id": "14a460cb-a7ac-4895-bae8-ddea9c0c04be",
+    "queuedAt": "2026-06-26T10:14:58.804Z",
+    "queuedBy": "anita.c",
+    "entity": "vexPi",
+    "operation": "update",
+    "payload": {
+      "id": "VEXPI-MH-2627-001",
+      "piNumber": "MTPL/MH/26-27/0001",
+      "entityKey": "MH",
+      "issueDate": "2026-04-29",
+      "schoolName": "Fountainhead School",
+      "shippingAddress": "Opp. Ambetha Water Tank, Kunkni Gam, Rander-Dani Road,Olpad, Surat, Gujarat - 395005",
+      "billingName": "Protego Services Private Limited",
+      "billingAddress": "Shop 406, Solitarie Quays, CNG Pump Dandi Road, Jahangirabad, Surat, Gujarat -395005 Ichchhapor,",
+      "schoolGstNumber": "24AAPCP7381R1ZD",
+      "contactPerson": "Arash",
+      "contactNo": "9321492629",
+      "lineItems": [
+        {
+          "total": 1069999.98,
+          "quantity": 3,
+          "unitPrice": 356666.66,
+          "partNumber": "228-8060",
+          "productName": "VEX IQ Small Classroom Bundle"
+        }
+      ],
+      "subtotal": 1069999.98,
+      "freightCharges": 2455,
+      "taxableValue": 1072454.98,
+      "gstPct": 0.18,
+      "gstAmount": 193041.9,
+      "total": 1265496.88,
+      "status": "Generated",
+      "generatedBy": "Pranav",
+      "generatedAt": "2026-04-29",
+      "paymentReceivedAmount": 1265497,
+      "paymentLogIds": [
+        "9ec4a28f-d8f7-405d-b722-c419670025ac",
+        "VEXPL-6b3b8047"
+      ],
+      "notes": null,
+      "auditLog": [
+        {
+          "user": "Pranav",
+          "action": "create",
+          "timestamp": "2026-04-29T07:11:19.672Z"
+        },
+        {
+          "user": "Pranav",
+          "notes": "payment 9ec4a28f for Rs 1",
+          "action": "update",
+          "timestamp": "2026-04-29T07:51:27.988Z"
+        },
+        {
+          "user": "Pranav B.",
+          "after": {
+            "status": "Delivery Pending",
+            "paymentReceivedAmount": 1265497
+          },
+          "notes": "Payment received Rs 1265496 (bank 1265496 + TDS 0) via Bank Transfer.",
+          "action": "update",
+          "before": {
+            "status": "Payment Pending",
+            "paymentReceivedAmount": 1
+          },
+          "timestamp": "2026-05-19T13:46:21.387Z"
+        },
+        {
+          "timestamp": "2026-06-26T10:14:58.804Z",
+          "user": "Anita C.",
+          "action": "status_change",
+          "before": {
+            "status": "Delivery Pending"
+          },
+          "after": {
+            "status": "Generated"
+          }
+        }
+      ]
+    },
+    "retryCount": 0
   }
 ]
