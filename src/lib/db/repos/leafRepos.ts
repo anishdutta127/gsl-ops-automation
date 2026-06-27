@@ -503,6 +503,42 @@ export const paymentLogRepo = {
       `
     }
   },
+  // void: soft-delete tombstone (Pass 1, migration 020). Sets voided_at/by +
+  // reason and appends an audit entry. The row is KEPT; callers reverse the
+  // log's balance effect (decrement the VexPi / require the instalment
+  // unmatched) BEFORE calling this. Never a hard DELETE.
+  async void(
+    id: string,
+    args: { voidedAt: string; voidedBy: string; voidReason: string; audit: AuditEntry },
+  ): Promise<void> {
+    if (currentBackend() === 'postgres') {
+      const sql = getSql()
+      await sql`
+        UPDATE payment_logs SET
+          voided_at = ${args.voidedAt},
+          voided_by = ${args.voidedBy},
+          void_reason = ${args.voidReason},
+          audit_log = audit_log || ${sql.json([args.audit] as never)}::jsonb
+        WHERE id = ${id}
+      `
+      return
+    }
+    const log = (paymentLogsJson as unknown[] as PaymentLog[]).find((p) => p.id === id)
+    if (!log) return
+    const updated: PaymentLog = {
+      ...log,
+      voidedAt: args.voidedAt,
+      voidedBy: args.voidedBy,
+      voidReason: args.voidReason,
+      auditLog: [...(log.auditLog ?? []), args.audit],
+    }
+    await enqueueUpdate({
+      queuedBy: args.voidedBy,
+      entity: 'paymentLog',
+      operation: 'update',
+      payload: updated as unknown as Record<string, unknown>,
+    })
+  },
 }
 
 // adjustment: financial-ledger record. create() only (immutable except status).

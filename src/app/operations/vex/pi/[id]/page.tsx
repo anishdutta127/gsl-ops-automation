@@ -26,10 +26,12 @@ import { PageHeader } from '@/components/ops/PageHeader'
 import { formatDate, formatRs } from '@/lib/format'
 import { company } from '@/lib/mouSystem/company'
 import type { VexDispatch, VexPi } from '@/lib/mouSystem/types'
+import type { PaymentLog } from '@/lib/types'
 import { vexPiRepo } from '@/lib/db/repos/vexPi'
-import { vexDispatchRepo } from '@/lib/db/repos/leafRepos'
+import { vexDispatchRepo, paymentLogRepo } from '@/lib/db/repos/leafRepos'
 import { VexPiActions } from './VexPiActions'
 import { VexPiStatusBar } from './VexPiStatusBar'
+import { VexPaymentsList } from './VexPaymentsList'
 import { DispatchRowActions } from './DispatchRowActions'
 
 interface PageProps {
@@ -40,12 +42,18 @@ export default async function VexPiDetailPage({ params }: PageProps) {
   const { id } = await params
   const user = await getCurrentUser()
   if (!user) redirect(`/login?next=${encodeURIComponent(`/operations/vex/pi/${id}`)}`)
-  const [allPis, allDispatches] = await Promise.all([
+  const [allPis, allDispatches, allLogs] = await Promise.all([
     vexPiRepo.findAll() as unknown as Promise<VexPi[]>,
     vexDispatchRepo.findAll() as unknown as Promise<VexDispatch[]>,
+    paymentLogRepo.findAll() as unknown as Promise<PaymentLog[]>,
   ])
   const pi = allPis.find((p) => p.id === id)
   if (!pi) notFound()
+
+  // Recorded payments: the live (non-voided) logs referenced by this PI.
+  const piPayments = (pi.paymentLogIds ?? [])
+    .map((logId) => allLogs.find((l) => l.id === logId))
+    .filter((l): l is PaymentLog => !!l && !l.voidedAt)
   const dispatches = allDispatches
     .filter((d) => d.piId === pi.id)
     .slice()
@@ -229,6 +237,15 @@ export default async function VexPiDetailPage({ params }: PageProps) {
                 canFinance={canFinance}
                 canDispatch={canDispatch}
               />
+            </section>
+          ) : null}
+
+          {canFinance ? (
+            <section aria-label="Recorded payments">
+              <h2 className="mb-2 font-heading text-base font-semibold text-brand-navy">
+                Recorded payments
+              </h2>
+              <VexPaymentsList piId={pi.id} payments={piPayments} canFinance={canFinance} />
             </section>
           ) : null}
 

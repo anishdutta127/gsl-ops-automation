@@ -1655,6 +1655,13 @@ export interface PaymentLog {
   loggedAt: string                 // ISO
   notes: string | null
   auditLog?: AuditEntry[] | null
+  // Soft-delete tombstone (Pass 1 finance corrections, migration 020). A voided
+  // log is logically removed: its balance effect on the VexPi / instalment is
+  // reversed at void time, the id is dropped from the parent, and the row is
+  // KEPT for audit. Never hard-deleted. Absent/null on every active log.
+  voidedAt?: string | null
+  voidedBy?: string | null         // User.id who voided
+  voidReason?: string | null
 }
 
 // ============================================================================

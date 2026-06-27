@@ -106,7 +106,11 @@ export async function POST(request: Request, ctx: RouteContext) {
   // had NO dedup. The guard keys on reference+amount (NOT date), runs BEFORE any
   // balance mutation, and only applies to real (non-placeholder) references so
   // multiple cash/'NA' receipts stay allowed.
-  const existingLogs = (await paymentLogRepo.findAll()) as PaymentLog[]
+  // Exclude voided logs: a voided duplicate must not block re-logging the
+  // corrected receipt with the same reference.
+  const existingLogs = ((await paymentLogRepo.findAll()) as PaymentLog[]).filter(
+    (l) => !l.voidedAt,
+  )
   if (isDuplicateReceipt(existingLogs, { reference, amount: total })) {
     return NextResponse.json(
       {

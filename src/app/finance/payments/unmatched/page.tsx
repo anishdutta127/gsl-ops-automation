@@ -81,7 +81,7 @@ export default async function UnmatchedPaymentsPage({ searchParams }: PageProps)
     salesTeamRepo.findAll(),
   ])
 
-  const unmatched = sortLogs(allLogs.filter((l) => l.unmatched), sort)
+  const unmatched = sortLogs(allLogs.filter((l) => l.unmatched && !l.voidedAt), sort)
   const salesById = new Map(allSalesTeam.map((s) => [s.id, s]))
 
   return (
@@ -209,6 +209,15 @@ export default async function UnmatchedPaymentsPage({ searchParams }: PageProps)
                             >
                               Re-attempt PI match
                             </Link>
+                            {canLog ? (
+                              <Link
+                                href={`/finance/payments/log/${encodeURIComponent(p.id)}`}
+                                className="inline-flex min-h-9 items-center rounded-md border border-border bg-card px-2.5 py-1 text-xs font-medium hover:bg-muted"
+                                data-testid={`manage-log-${p.id}`}
+                              >
+                                Edit / void
+                              </Link>
+                            ) : null}
                           </div>
                         </td>
                       </tr>

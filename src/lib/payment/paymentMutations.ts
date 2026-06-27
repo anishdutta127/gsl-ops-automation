@@ -26,12 +26,14 @@ import type {
   AuditEntry,
   MOU,
   Payment,
+  PaymentLog,
   PaymentMode,
   User,
 } from '@/lib/types'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
 import { canEditFinanceData } from '@/lib/access'
 import { paymentRepo } from '@/lib/db/repos/payment'
+import { paymentLogRepo } from '@/lib/db/repos/leafRepos'
 import { userRepo } from '@/lib/db/repos/user'
 import { mouRepo } from '@/lib/db/repos/mou'
 
@@ -39,6 +41,10 @@ export interface PaymentMutationDeps {
   payments: Payment[]
   users: User[]
   mous: MOU[]
+  // Source payment_logs, so unmatch can reset the log that fed this instalment
+  // (Pass 1: closes the drift where an unmatched receipt stayed unmatched=false
+  // and could not be voided). Optional: absent -> no source-log reset.
+  paymentLogs?: PaymentLog[]
   enqueue: typeof enqueueUpdate
   now: () => Date
 }
@@ -48,6 +54,7 @@ async function defaultDeps(): Promise<PaymentMutationDeps> {
   payments: await paymentRepo.findAll() as Payment[],
   users: await userRepo.findAll() as User[],
   mous: await mouRepo.findAll() as MOU[],
+  paymentLogs: await paymentLogRepo.findAll() as PaymentLog[],
   enqueue: enqueueUpdate,
   now: () => new Date(),
 }
@@ -264,6 +271,36 @@ export async function unmatchPayment(
     operation: 'update',
     payload: next as unknown as Record<string, unknown>,
   })
+
+  // Reset the source payment_log(s) that fed this instalment so they return to
+  // the unmatched queue (and become voidable). A log split across several
+  // instalments only drops THIS instalment; it stays matched while others
+  // remain. This closes the drift the audit flagged and enables the St Paul's
+  // correction flow (unmatch the instalment, then void the duplicate log).
+  for (const log of deps.paymentLogs ?? []) {
+    if (!(log.matchedInstallmentIds ?? []).includes(payment.id)) continue
+    const remaining = (log.matchedInstallmentIds ?? []).filter((pid) => pid !== payment.id)
+    const logAudit: AuditEntry = {
+      timestamp: ts,
+      user: args.recordedBy,
+      action: 'update',
+      before: { matchedInstallmentIds: log.matchedInstallmentIds, unmatched: log.unmatched },
+      after: { matchedInstallmentIds: remaining, unmatched: remaining.length === 0 },
+      notes: `Instalment ${payment.id} unmatched from this receipt. Reason: ${reason}`,
+    }
+    const nextLog: PaymentLog = {
+      ...log,
+      matchedInstallmentIds: remaining,
+      unmatched: remaining.length === 0,
+      auditLog: [...(log.auditLog ?? []), logAudit],
+    }
+    await deps.enqueue({
+      queuedBy: args.recordedBy,
+      entity: 'paymentLog',
+      operation: 'update',
+      payload: nextLog as unknown as Record<string, unknown>,
+    })
+  }
 
   return { ok: true, payment: next }
 }

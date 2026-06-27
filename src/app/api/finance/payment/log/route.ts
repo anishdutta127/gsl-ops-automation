@@ -150,7 +150,9 @@ export async function POST(request: Request) {
   // one Rs 3,72,000 NEFT logged as two payment_logs matched to two instalments.
   // Dedup on reference+amount via the shared guard (NOT date: Funscholar proved
   // the same NEFT re-entered on a different day slips a date-keyed check).
-  const existingLogs = (await paymentLogRepo.findAll()) as PaymentLog[]
+  const existingLogs = ((await paymentLogRepo.findAll()) as PaymentLog[]).filter(
+    (l) => !l.voidedAt,
+  )
   if (isDuplicateReceipt(existingLogs, { reference: bankReference, amount: receivedAmount })) {
     return errorTo('duplicate-reference', { reference: bankReference })
   }
