@@ -1523,5 +1523,96 @@
       ]
     },
     "retryCount": 0
+  },
+  {
+    "id": "daad1552-8435-466c-bd48-36ec7f8cf73e",
+    "queuedAt": "2026-06-27T08:12:56.888Z",
+    "queuedBy": "anita.c",
+    "entity": "vexPi",
+    "operation": "update",
+    "payload": {
+      "id": "VEXPI-UP-26-27-013",
+      "piNumber": "MTPL/UP/26-27/0035",
+      "entityKey": "UP",
+      "issueDate": "2026-06-24",
+      "schoolName": "Funscholar Innovations Private Limited",
+      "shippingAddress": "59B, Chowranghee Road, 6th Floor,Kolkata, West Bengal: 700020",
+      "billingName": "Funscholar Innovations Private Limited",
+      "billingAddress": "59B, Chowranghee Road, 6th Floor,Kolkata, West Bengal: 700020",
+      "schoolGstNumber": "19AADCF7685E1ZA",
+      "contactPerson": "Mr. Gaurav Jain",
+      "contactNo": "9804171613",
+      "lineItems": [
+        {
+          "total": 347000,
+          "quantity": 1,
+          "unitPrice": 347000,
+          "partNumber": "228-8060",
+          "productName": "VEX IQ Small Classroom Bundle"
+        }
+      ],
+      "subtotal": 347000,
+      "freightCharges": 895,
+      "taxableValue": 347895,
+      "gstPct": 0.18,
+      "gstAmount": 62621.1,
+      "total": 410516.1,
+      "status": "Generated",
+      "generatedBy": "Anita C.",
+      "generatedAt": "2026-06-24",
+      "paymentReceivedAmount": 821032,
+      "paymentLogIds": [
+        "VEXPL-800ecbea",
+        "VEXPL-864a741b"
+      ],
+      "notes": null,
+      "auditLog": [
+        {
+          "user": "Anita C.",
+          "action": "create",
+          "timestamp": "2026-06-24T10:32:28.339Z"
+        },
+        {
+          "user": "Anita C.",
+          "after": {
+            "status": "Payment Pending",
+            "paymentReceivedAmount": 410516
+          },
+          "notes": "Payment received Rs 410516 (bank 410516 + TDS 0) via Bank Transfer.",
+          "action": "update",
+          "before": {
+            "status": "Generated",
+            "paymentReceivedAmount": 0
+          },
+          "timestamp": "2026-06-26T11:06:44.772Z"
+        },
+        {
+          "user": "Anita C.",
+          "after": {
+            "status": "Delivery Pending",
+            "paymentReceivedAmount": 821032
+          },
+          "notes": "Payment received Rs 410516 (bank 410516 + TDS 0) via Bank Transfer.",
+          "action": "update",
+          "before": {
+            "status": "Payment Pending",
+            "paymentReceivedAmount": 410516
+          },
+          "timestamp": "2026-06-27T08:11:15.120Z"
+        },
+        {
+          "timestamp": "2026-06-27T08:12:56.888Z",
+          "user": "Anita C.",
+          "action": "status_change",
+          "before": {
+            "status": "Delivery Pending"
+          },
+          "after": {
+            "status": "Generated"
+          }
+        }
+      ]
+    },
+    "retryCount": 0
   }
 ]
