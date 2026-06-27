@@ -53,12 +53,15 @@ export default async function OperationsVexPage() {
   const canCreatePi = canEditFinanceData(user)
   const canEditProducts = canManageInventory(user)
   // P4 batch 2 (2026-05-24): live repo reads.
-  const [vexProducts, vexPis, vexDispatches, vexOrders] = await Promise.all([
+  const [vexProducts, allVexPisRaw, allVexDispatchesRaw, vexOrders] = await Promise.all([
     vexProductRepo.findAll() as unknown as Promise<VexProduct[]>,
     vexPiRepo.findAll() as unknown as Promise<VexPi[]>,
     vexDispatchRepo.findAll() as Promise<VexDispatch[]>,
     vexOrderRepo.findAll() as Promise<VexOrder[]>,
   ])
+  // Voided PIs (and their cascade-voided dispatches) drop out of the active view.
+  const vexPis = allVexPisRaw.filter((p) => !p.voidedAt)
+  const vexDispatches = allVexDispatchesRaw.filter((d) => !d.voidedAt)
 
   // VEX PI rollups (Round 3 Step 10a/10c semantics).
   const totalReceived = vexPis.reduce(

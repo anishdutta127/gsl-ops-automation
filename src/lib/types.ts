@@ -1999,6 +1999,14 @@ export interface VexPi {
   paymentLogIds: string[]
   notes: string | null
   auditLog: AuditEntry[]
+  // Soft-delete tombstone (Pass 2 VEX PI void, migration 021). A voided PI is
+  // logically removed: its pre-ship dispatches + payment_logs are cascade-voided
+  // and its balance zeroed at void time, the row is KEPT for audit, and it is
+  // excluded from active lists/reports/dispatch-raising. Never hard-deleted
+  // (the dispatch FK is ON DELETE RESTRICT). Absent/null on every live PI.
+  voidedAt?: string | null
+  voidedBy?: string | null
+  voidReason?: string | null
 }
 
 export interface VexDispatchItem {
@@ -2031,6 +2039,11 @@ export interface VexDispatch {
   warehouseEmailSentAt: string | null
   warehouseEmailSentBy: string | null
   auditLog: AuditEntry[]
+  // Soft-delete tombstone (Pass 2, migration 021). Set when a dispatch is
+  // cascade-voided as part of voiding its parent PI (pre-ship dispatches only).
+  voidedAt?: string | null
+  voidedBy?: string | null
+  voidReason?: string | null
 }
 
 export type LegacyVexDispatchStatus =

@@ -84,6 +84,9 @@ export async function POST(request: Request, ctx: RouteContext) {
    // shape matches, only the AuditAction enum differs.
   const pi = (await vexPiRepo.findById(id)) as unknown as VexPi | null
   if (!pi) return NextResponse.json({ error: 'not-found' }, { status: 404 })
+  if ((pi as { voidedAt?: string | null }).voidedAt) {
+    return NextResponse.json({ error: 'pi-voided', message: 'This PI is voided; cannot raise a dispatch.' }, { status: 409 })
+  }
 
   let body: IncomingPayload
   try {

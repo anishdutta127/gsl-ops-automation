@@ -198,6 +198,49 @@ export const vexPiRepo = {
     })
   },
 
+  /**
+   * void: soft-delete tombstone (Pass 2, migration 021). Sets voided_at/by +
+   * reason, zeroes the balance, clears payment_log_ids, and appends an audit
+   * entry, in ONE UPDATE. Callers (voidVexPi) cascade-void the PI's pre-ship
+   * dispatches + payment_logs BEFORE this. Never a hard DELETE.
+   */
+  async void(
+    id: string,
+    args: { voidedAt: string; voidedBy: string; voidReason: string; audit: AuditEntry },
+  ): Promise<void> {
+    if (currentBackend() === 'postgres') {
+      const sql = getSql()
+      await sql`
+        UPDATE vex_pis SET
+          voided_at = ${args.voidedAt},
+          voided_by = ${args.voidedBy},
+          void_reason = ${args.voidReason},
+          payment_received_amount = 0,
+          payment_log_ids = ${sql.json([] as never)}::jsonb,
+          audit_log = audit_log || ${sql.json([args.audit] as never)}::jsonb
+        WHERE id = ${id}
+      `
+      return
+    }
+    const v = jsonVexPis.find((x) => x.id === id)
+    if (!v) return
+    const updated: VexPi = {
+      ...v,
+      voidedAt: args.voidedAt,
+      voidedBy: args.voidedBy,
+      voidReason: args.voidReason,
+      paymentReceivedAmount: 0,
+      paymentLogIds: [],
+      auditLog: [...(v.auditLog ?? []), args.audit],
+    }
+    await enqueueUpdate({
+      queuedBy: args.voidedBy,
+      entity: 'vexPi',
+      operation: 'update',
+      payload: updated as unknown as Record<string, unknown>,
+    })
+  },
+
   async appendAudit(id: string, entry: AuditEntry): Promise<void> {
     if (currentBackend() === 'postgres') {
       const sql = getSql()

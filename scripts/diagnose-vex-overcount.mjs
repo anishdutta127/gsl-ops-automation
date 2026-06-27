@@ -58,7 +58,8 @@ const isRealRef = (r) => !PLACEHOLDER_REFS.has(normRef(r))
 
 const sql = postgres(process.env.DATABASE_URL, { max: 1, onnotice: () => {} })
 try {
-  const pis = await sql`SELECT id, school_name, total, status, payment_received_amount, payment_log_ids FROM vex_pis ORDER BY id`
+  // Voided PIs (Pass 2) are excluded: their balance is zeroed + ids cleared.
+  const pis = await sql`SELECT id, school_name, total, status, payment_received_amount, payment_log_ids FROM vex_pis WHERE voided_at IS NULL ORDER BY id`
   const logs = await sql`SELECT id, amount, reference, date FROM payment_logs`
   const logById = new Map(logs.map(r => [r.id, { amount: n(r.amount), reference: r.reference, date: r.date }]))
 

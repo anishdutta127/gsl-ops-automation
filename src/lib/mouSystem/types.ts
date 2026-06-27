@@ -375,6 +375,10 @@ export interface VexPi {
   paymentLogIds: string[]
   notes: string | null
   auditLog: AuditEntry[]
+  // Soft-delete tombstone (Pass 2, migration 021). Mirrors @/lib/types VexPi.
+  voidedAt?: string | null
+  voidedBy?: string | null
+  voidReason?: string | null
 }
 
 export interface VexDispatchItem {
@@ -408,6 +412,10 @@ export interface VexDispatch {
   warehouseEmailSentAt: string | null
   warehouseEmailSentBy: string | null
   auditLog: AuditEntry[]
+  // Soft-delete tombstone (Pass 2, migration 021). Mirrors @/lib/types VexDispatch.
+  voidedAt?: string | null
+  voidedBy?: string | null
+  voidReason?: string | null
 }
 
 export interface VexOrder {

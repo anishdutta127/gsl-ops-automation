@@ -141,8 +141,9 @@ export default async function FinanceDashboard({
     windowTo,
   })
   const vexKitOrders = computeVexKitOrders({
-    vexPis: allVexPis,
-    vexDispatches: allVexDispatches,
+    // Voided PIs/dispatches (Pass 2) are excluded from finance rollups.
+    vexPis: allVexPis.filter((p) => !p.voidedAt),
+    vexDispatches: allVexDispatches.filter((d) => !d.voidedAt),
     windowFrom,
     windowTo,
   })

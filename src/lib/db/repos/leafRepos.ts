@@ -867,6 +867,41 @@ export const vexDispatchRepo = {
       `
     }
   },
+  // void: soft-delete tombstone (Pass 2, migration 021). Used by voidVexPi to
+  // cascade-void a PRE-SHIP dispatch when its parent PI is voided. Never a hard
+  // DELETE (the pi_id FK is ON DELETE RESTRICT).
+  async void(
+    id: string,
+    args: { voidedAt: string; voidedBy: string; voidReason: string; audit: AuditEntry },
+  ): Promise<void> {
+    if (currentBackend() === 'postgres') {
+      const sql = getSql()
+      await sql`
+        UPDATE vex_dispatches SET
+          voided_at = ${args.voidedAt},
+          voided_by = ${args.voidedBy},
+          void_reason = ${args.voidReason},
+          audit_log = audit_log || ${sql.json([args.audit] as never)}::jsonb
+        WHERE id = ${id}
+      `
+      return
+    }
+    const cur = (vexDispatchesJson as unknown[] as VexDispatch[]).find((d) => d.id === id)
+    if (!cur) return
+    const updated: VexDispatch = {
+      ...cur,
+      voidedAt: args.voidedAt,
+      voidedBy: args.voidedBy,
+      voidReason: args.voidReason,
+      auditLog: [...(cur.auditLog ?? []), args.audit],
+    }
+    await enqueueUpdate({
+      queuedBy: args.voidedBy,
+      entity: 'vexDispatch',
+      operation: 'update',
+      payload: updated as unknown as Record<string, unknown>,
+    })
+  },
   async updatePartial(
     id: string,
     patch: Partial<VexDispatch>,

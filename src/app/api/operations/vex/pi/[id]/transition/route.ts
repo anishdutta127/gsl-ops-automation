@@ -52,6 +52,9 @@ export async function POST(request: Request, ctx: RouteContext) {
   if (!pi) {
     return NextResponse.json({ error: 'not-found' }, { status: 404 })
   }
+  if ((pi as { voidedAt?: string | null }).voidedAt) {
+    return NextResponse.json({ error: 'pi-voided', message: 'This PI is voided.' }, { status: 409 })
+  }
   let body: { status?: unknown }
   try {
     body = (await request.json()) as { status?: unknown }

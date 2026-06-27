@@ -62,6 +62,9 @@ export async function POST(request: Request, ctx: RouteContext) {
   }
   const pi = await vexPiRepo.findById(id)
   if (!pi) return NextResponse.json({ error: 'not-found' }, { status: 404 })
+  if (pi.voidedAt) {
+    return NextResponse.json({ error: 'pi-voided', message: 'This PI is voided; cannot log a payment.' }, { status: 409 })
+  }
 
   let body: IncomingPayload
   try {

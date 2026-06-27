@@ -32,7 +32,10 @@ import { vexDispatchRepo, paymentLogRepo } from '@/lib/db/repos/leafRepos'
 import { VexPiActions } from './VexPiActions'
 import { VexPiStatusBar } from './VexPiStatusBar'
 import { VexPaymentsList } from './VexPaymentsList'
+import { VexPiVoidButton } from './VexPiVoidButton'
 import { DispatchRowActions } from './DispatchRowActions'
+
+const COMMITTED_DISPATCH = new Set<string>(['Invoiced', 'Shipped', 'Delivered'])
 
 interface PageProps {
   params: Promise<{ id: string }>
@@ -55,9 +58,18 @@ export default async function VexPiDetailPage({ params }: PageProps) {
     .map((logId) => allLogs.find((l) => l.id === logId))
     .filter((l): l is PaymentLog => !!l && !l.voidedAt)
   const dispatches = allDispatches
-    .filter((d) => d.piId === pi.id)
+    .filter((d) => d.piId === pi.id && !d.voidedAt)
     .slice()
     .sort((a, b) => a.requestedAt.localeCompare(b.requestedAt))
+
+  // Void cascade preview: committed dispatches block the void; pre-ship ones +
+  // the live payment_logs are what a void would cascade-void.
+  const committedDispatches = dispatches
+    .filter((d) => COMMITTED_DISPATCH.has(d.status as string))
+    .map((d) => `${d.id} (${d.status})`)
+  const preShipCount = dispatches.length - committedDispatches.length
+  const liveLogCount = piPayments.length
+  const isVoided = !!pi.voidedAt
 
   // Compute per-SKU dispatched qty + cumulative dispatched value.
   const dispatchedQtyByPart = new Map<string, number>()
@@ -99,6 +111,18 @@ export default async function VexPiDetailPage({ params }: PageProps) {
               Back to VEX orders
             </Link>
           </div>
+
+          {isVoided ? (
+            <div
+              role="alert"
+              className="rounded-md border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-800"
+            >
+              <span className="font-semibold">This PI is voided.</span>{' '}
+              {pi.voidReason ? `Reason: ${pi.voidReason}. ` : ''}
+              Its pre-ship dispatches and payments were cascade-voided and the balance zeroed. It is
+              excluded from active lists and reports. Kept for audit, not deleted.
+            </div>
+          ) : null}
 
           <section
             aria-label="PI summary"
@@ -216,7 +240,7 @@ export default async function VexPiDetailPage({ params }: PageProps) {
             </div>
           </section>
 
-          {canFinance ? (
+          {canFinance && !isVoided ? (
             <section aria-label="PI status">
               <h2 className="mb-2 font-heading text-base font-semibold text-brand-navy">
                 PI status
@@ -225,7 +249,7 @@ export default async function VexPiDetailPage({ params }: PageProps) {
             </section>
           ) : null}
 
-          {canFinance || canDispatch ? (
+          {(canFinance || canDispatch) && !isVoided ? (
             <section aria-label="Actions">
               <h2 className="mb-2 font-heading text-base font-semibold text-brand-navy">
                 Actions
@@ -240,12 +264,36 @@ export default async function VexPiDetailPage({ params }: PageProps) {
             </section>
           ) : null}
 
+          {canFinance && !isVoided ? (
+            <section aria-label="Manage PI" className="grid gap-4 lg:grid-cols-2">
+              <div className="rounded-md border border-border bg-card p-4">
+                <h3 className="font-heading text-sm font-semibold text-brand-navy">Edit PI</h3>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Correct line items, quantities, prices, billing, GST, or freight. Totals re-derive
+                  on save.
+                </p>
+                <Link
+                  href={`/operations/vex/pi/${pi.id}/edit`}
+                  className="mt-2 inline-flex min-h-9 items-center rounded-md border border-input px-3 py-1.5 text-xs font-semibold hover:bg-muted"
+                >
+                  Edit this PI
+                </Link>
+              </div>
+              <VexPiVoidButton
+                piId={pi.id}
+                preShipCount={preShipCount}
+                logCount={liveLogCount}
+                committed={committedDispatches}
+              />
+            </section>
+          ) : null}
+
           {canFinance ? (
             <section aria-label="Recorded payments">
               <h2 className="mb-2 font-heading text-base font-semibold text-brand-navy">
                 Recorded payments
               </h2>
-              <VexPaymentsList piId={pi.id} payments={piPayments} canFinance={canFinance} />
+              <VexPaymentsList piId={pi.id} payments={piPayments} canFinance={canFinance && !isVoided} />
             </section>
           ) : null}
 
