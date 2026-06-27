@@ -21,6 +21,11 @@ import vexPisJson from '@/data/vex_pis.json'
 
 vi.mock('@/lib/auth/session', () => ({ getCurrentUser: vi.fn() }))
 vi.mock('@/lib/pendingUpdates', () => ({ enqueueUpdate: vi.fn() }))
+// The route now reads existing payment_logs to dedup duplicate receipts; mock
+// the leaf repo so tests control what is "already logged".
+vi.mock('@/lib/db/repos/leafRepos', () => ({
+  paymentLogRepo: { findAll: vi.fn(async () => []) },
+}))
 
 const samplePi = (vexPisJson as unknown as VexPi[])[0]!
 
@@ -88,5 +93,38 @@ describe('POST /api/operations/vex/pi/[id]/payment (Gate 5A.5 persistence fix)',
     expect(paymentLogCall![0].payload.unmatched).toBe(false)
     expect(Array.isArray(paymentLogCall![0].payload.matchedInstallmentIds)).toBe(true)
     expect(String(paymentLogCall![0].payload.narration)).toContain(samplePi.id)
+  })
+
+  it('rejects a duplicate receipt (same reference + amount) with 409 and no writes', async () => {
+    const { getCurrentUser } = await import('@/lib/auth/session')
+    const { enqueueUpdate } = await import('@/lib/pendingUpdates')
+    const { paymentLogRepo } = await import('@/lib/db/repos/leafRepos')
+    ;(getCurrentUser as ReturnType<typeof vi.fn>).mockResolvedValue(FINANCE_USER)
+    // The same NEFT (reference + amount) is already logged. The Funscholar case:
+    // the operator re-enters it on a different day -> must be refused.
+    ;(paymentLogRepo.findAll as ReturnType<typeof vi.fn>).mockResolvedValue([
+      { id: 'VEXPL-existing', reference: 'INF/INFT/044632377521', amount: 410516, date: '2026-06-26' },
+    ])
+
+    const { POST } = await import('./route')
+    const res = await POST(
+      new Request(`http://localhost/api/operations/vex/pi/${samplePi.id}/payment`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          date: '2026-06-27', // different date, same receipt
+          bankAmount: 410516,
+          tdsAmount: 0,
+          mode: 'Bank Transfer',
+          reference: 'INF/INFT/044632377521',
+        }),
+      }),
+      { params: Promise.resolve({ id: samplePi.id }) },
+    )
+    expect(res.status).toBe(409)
+    const json = (await res.json()) as { error: string }
+    expect(json.error).toBe('duplicate-receipt')
+    // Crucially: no balance increment and no log create were enqueued.
+    expect(enqueueUpdate).not.toHaveBeenCalled()
   })
 })

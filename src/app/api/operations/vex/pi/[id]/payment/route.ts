@@ -16,7 +16,10 @@ import { getCurrentUser } from '@/lib/auth/session'
 import { canEditFinanceData } from '@/lib/access'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
 import { vexPiRepo } from '@/lib/db/repos/vexPi'
+import { paymentLogRepo } from '@/lib/db/repos/leafRepos'
+import { isDuplicateReceipt } from '@/lib/payment/duplicateReceipt'
 import { formatRs } from '@/lib/format'
+import type { PaymentLog } from '@/lib/types'
 import type {
   AuditEntry,
   PaymentMode,
@@ -96,6 +99,24 @@ export async function POST(request: Request, ctx: RouteContext) {
     )
   }
 
+  // ROOT-CAUSE GUARD (VEX over-count fix): a bank reference uniquely identifies
+  // one transaction, so refuse to log the same receipt twice. VEXPI-UP-26-27-013
+  // (Funscholar) was over-counted to 2x because the same NEFT was logged on two
+  // consecutive days (same reference + amount, different date) and this route
+  // had NO dedup. The guard keys on reference+amount (NOT date), runs BEFORE any
+  // balance mutation, and only applies to real (non-placeholder) references so
+  // multiple cash/'NA' receipts stay allowed.
+  const existingLogs = (await paymentLogRepo.findAll()) as PaymentLog[]
+  if (isDuplicateReceipt(existingLogs, { reference, amount: total })) {
+    return NextResponse.json(
+      {
+        error: 'duplicate-receipt',
+        message: `A payment with reference "${reference}" for ${formatRs(total)} is already logged. Refusing to double-count it.`,
+      },
+      { status: 409 },
+    )
+  }
+
   // The Gate 5A.5 fix mutates the parent VexPi (paymentReceivedAmount
   // + paymentLogIds + auditLog + derived status) and enqueues the
   // full record. The paymentLog row carries an id so the drain can
@@ -155,6 +176,20 @@ export async function POST(request: Request, ctx: RouteContext) {
   }
 
   try {
+    // ORDER MATTERS (VEX over-count fix): persist the durable payment_log
+    // FIRST, then increment the parent VexPi balance. The balance increment is
+    // the over-counting step; if it ran first and the log persist then threw
+    // (W2 now re-throws -> 500), the balance would already be inflated and a
+    // finance retry would re-increment (the historical VEXPI-UP-26-27-020
+    // dangling-id over-count). With the log persisted first, a thrown increment
+    // leaves the balance untouched, and a retry is caught by the reference
+    // dedup above before it can double-count.
+    await enqueueUpdate({
+      queuedBy: user.id,
+      entity: 'paymentLog',
+      operation: 'create',
+      payload: paymentLogRecord as unknown as Record<string, unknown>,
+    })
     // ATOMIC: the parent VexPi mutation (payment_log_ids append +
     // payment_received_amount increment + status recompute + audit
     // append) is one server-side UPDATE statement via
@@ -165,12 +200,6 @@ export async function POST(request: Request, ctx: RouteContext) {
       amount: total,
       audit: piAudit,
       queuedBy: user.id,
-    })
-    await enqueueUpdate({
-      queuedBy: user.id,
-      entity: 'paymentLog',
-      operation: 'create',
-      payload: paymentLogRecord as unknown as Record<string, unknown>,
     })
   } catch (e) {
     return NextResponse.json(

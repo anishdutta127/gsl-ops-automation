@@ -27,6 +27,7 @@ import { schoolRepo } from '@/lib/db/repos/school'
 import { mouRepo } from '@/lib/db/repos/mou'
 import { paymentRepo } from '@/lib/db/repos/payment'
 import { paymentLogRepo } from '@/lib/db/repos/leafRepos'
+import { isDuplicateReceipt } from '@/lib/payment/duplicateReceipt'
 
 const VALID_MODES: ReadonlyArray<PaymentMode> = [
   'Bank Transfer',
@@ -147,17 +148,12 @@ export async function POST(request: Request) {
   // BUG2 cause-fix: a bank reference is unique per transaction, so refuse to
   // log the same receipt twice (double-submit / double-import). St Paul's saw
   // one Rs 3,72,000 NEFT logged as two payment_logs matched to two instalments.
-  // Dedup on (reference, amount, date); the operator gets a clear duplicate
-  // error instead of a silent second row.
+  // Dedup on reference+amount via the shared guard (NOT date: Funscholar proved
+  // the same NEFT re-entered on a different day slips a date-keyed check).
   const existingLogs = (await paymentLogRepo.findAll()) as PaymentLog[]
-  const isDuplicate = existingLogs.some(
-    (l) =>
-      (l.reference ?? '').trim() !== '' &&
-      l.reference === bankReference &&
-      Math.abs((l.amount ?? 0) - receivedAmount) < 0.01 &&
-      l.date === receivedDate,
-  )
-  if (isDuplicate) return errorTo('duplicate-reference', { reference: bankReference })
+  if (isDuplicateReceipt(existingLogs, { reference: bankReference, amount: receivedAmount })) {
+    return errorTo('duplicate-reference', { reference: bankReference })
+  }
 
   // Branch 2 + 3: park as PaymentLog.
   const paymentLog: PaymentLog = {
