@@ -199,6 +199,59 @@ export const vexPiRepo = {
   },
 
   /**
+   * Atomic partial update: patches ONLY the columns present in `patch`
+   * (camelCase keys mapped to snake_case), leaving every other column
+   * untouched. Pairs with appendAudit() to satisfy the bridge's
+   * dispatchAuditedUpdate (RepoWithAtomic), which patches scalar fields
+   * here then atomically concats new audit entries via appendAudit. This
+   * is the path the dispatch->Delivered PI roll-up enqueues through.
+   * Mirrors vexDispatchRepo.updatePartial.
+   */
+  async updatePartial(
+    id: string,
+    patch: Partial<VexPi>,
+    opts?: { queuedBy?: string },
+  ): Promise<void> {
+    if (currentBackend() === 'postgres') {
+      const sql = getSql()
+      const CAMEL_TO_SNAKE: Record<string, string> = {
+        piNumber: 'pi_number', entityKey: 'entity_key', issueDate: 'issue_date',
+        schoolName: 'school_name', shippingAddress: 'shipping_address',
+        billingName: 'billing_name', billingAddress: 'billing_address',
+        schoolGstNumber: 'school_gst_number', contactPerson: 'contact_person',
+        contactNo: 'contact_no', lineItems: 'line_items', subtotal: 'subtotal',
+        freightCharges: 'freight_charges', taxableValue: 'taxable_value',
+        gstPct: 'gst_pct', gstAmount: 'gst_amount', total: 'total',
+        status: 'status', generatedBy: 'generated_by', generatedAt: 'generated_at',
+        paymentReceivedAmount: 'payment_received_amount',
+        paymentLogIds: 'payment_log_ids', notes: 'notes',
+        voidedAt: 'voided_at', voidedBy: 'voided_by', voidReason: 'void_reason',
+      }
+      const JSONB_COLS = new Set(['lineItems', 'paymentLogIds'])
+      const setObj: Record<string, unknown> = {}
+      for (const [k, v] of Object.entries(patch)) {
+        if (k === 'id' || k === 'auditLog') continue
+        const col = CAMEL_TO_SNAKE[k]
+        if (!col) continue
+        setObj[col] = JSONB_COLS.has(k)
+          ? (v == null ? null : sql.json(v as never))
+          : (v ?? null)
+      }
+      if (Object.keys(setObj).length === 0) return
+      await sql`UPDATE vex_pis SET ${sql(setObj)} WHERE id = ${id}`
+      return
+    }
+    const v = jsonVexPis.find((x) => x.id === id)
+    if (!v) return
+    await enqueueUpdate({
+      queuedBy: opts?.queuedBy ?? 'system',
+      entity: 'vexPi',
+      operation: 'update',
+      payload: { ...v, ...patch } as unknown as Record<string, unknown>,
+    })
+  },
+
+  /**
    * void: soft-delete tombstone (Pass 2, migration 021). Sets voided_at/by +
    * reason, zeroes the balance, clears payment_log_ids, and appends an audit
    * entry, in ONE UPDATE. Callers (voidVexPi) cascade-void the PI's pre-ship
