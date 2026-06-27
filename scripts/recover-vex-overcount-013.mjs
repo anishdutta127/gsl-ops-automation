@@ -55,9 +55,10 @@ const DROP_LOG_ID = 'VEXPL-864a741b' // duplicate re-entry, date 2026-06-27
 const REAL_RECEIPT = 410516 // the single real receipt
 const EXPECTED_RECEIVED = 821032 // current (over-counted) balance
 const EXPECTED_IDS = [KEEP_LOG_ID, DROP_LOG_ID]
-// Faithful single-payment status (mirrors the PI's own first-payment audit).
-// Owner may override to 'Delivery Pending' (see STATUS NOTE) before --apply.
-const TARGET_STATUS = 'Payment Pending'
+// Owner decision 2026-06-27: treat the Rs 0.10 shortfall as GST-rounding noise,
+// i.e. the invoice is effectively paid, so the PI stays 'Delivery Pending' (the
+// single real receipt fully covers it; dispatch remains unblocked). See STATUS NOTE.
+const TARGET_STATUS = 'Delivery Pending'
 
 // --- env + Windows DNS fallback (same pattern as recover-vex-overcount.mjs) ---
 for (const l of readFileSync('.env.local', 'utf8').split('\n')) {
