@@ -61,6 +61,9 @@ export async function POST(request: Request, ctx: RouteContext) {
   if (!dispatch || dispatch.piId !== id) {
     return NextResponse.json({ error: 'not-found' }, { status: 404 })
   }
+  if (dispatch.voidedAt) {
+    return NextResponse.json({ error: 'dispatch-voided', message: 'This dispatch is voided.' }, { status: 409 })
+  }
 
   let body: { taxInvoiceNumber?: unknown; taxInvoiceUrl?: unknown }
   try {

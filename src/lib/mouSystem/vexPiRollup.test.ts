@@ -54,6 +54,15 @@ describe('rollUpVexPiStatus', () => {
     expect(r).toBe('Partially Dispatched')
   })
 
+  it('excludes voided dispatches (Pass 2 cascade) from the roll-up', () => {
+    // A voided dispatch must not count: a single voided "Delivered" dispatch is
+    // as if it does not exist, so there is no roll-up.
+    const r = rollUpVexPiStatus(pi('Delivery Pending', [li('A', 5)]), [
+      { ...d('Delivered', [{ partNumber: 'A', qty: 5 }]), voidedAt: '2026-06-27T00:00:00Z' },
+    ])
+    expect(r).toBeNull()
+  })
+
   it('Partially Dispatched when one dispatch delivered and another still shipped', () => {
     const r = rollUpVexPiStatus(pi('Delivery Pending', [li('A', 5)]), [
       d('Delivered', [{ partNumber: 'A', qty: 2 }]),

@@ -31,6 +31,8 @@ interface DispatchProgress {
   piId: string
   status: string
   items: { partNumber: string; qty: number }[]
+  // A voided dispatch (Pass 2 cascade) never counts toward the roll-up.
+  voidedAt?: string | null
 }
 
 const PI_STATUS_ORDER: VexPiStatus[] = [
@@ -45,7 +47,7 @@ export function rollUpVexPiStatus(
   pi: Pick<VexPi, 'id' | 'status' | 'lineItems'>,
   allDispatches: DispatchProgress[],
 ): VexPiStatus | null {
-  const dispatches = allDispatches.filter((d) => d.piId === pi.id)
+  const dispatches = allDispatches.filter((d) => d.piId === pi.id && !d.voidedAt)
   if (dispatches.length === 0) return null
 
   const dispatchedQtyByPart = new Map<string, number>()
