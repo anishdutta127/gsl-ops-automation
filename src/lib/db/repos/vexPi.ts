@@ -11,6 +11,7 @@ import type { VexPi, AuditEntry } from '@/lib/types'
 import { currentBackend } from '../backend'
 import { getSql } from '../client'
 import { enqueueUpdate } from '@/lib/pendingUpdates'
+import { PAID_TOLERANCE, nudgeVexPiStatusOnPayment } from '@/lib/vex/vexPiStatus'
 import vexPisJson from '@/data/vex_pis.json'
 
 const jsonVexPis = vexPisJson as unknown as VexPi[]
@@ -333,11 +334,14 @@ export const vexPiRepo = {
    * showed vex_pis.payment_log_ids survived 1/10 parallel writes.
    * With this method: 10/10 (see verify-vex-payment-atomic.mjs).
    *
-   * Status transition rules mirror the route's pre-fix logic:
-   *   - If new_received >= total AND status was 'Completed': keep 'Completed'.
-   *   - If new_received >= total AND status was anything else: 'Delivery Pending'.
-   *   - If new_received < total AND status was 'Generated': 'Payment Pending'.
-   *   - Otherwise: preserve current status.
+   * Status transition mirrors nudgeVexPiStatusOnPayment (@/lib/vex/vexPiStatus),
+   * kept byte-for-byte in sync by a contract test:
+   *   - fully paid (received >= total - PAID_TOLERANCE): keep any status already
+   *     at/beyond Delivery Pending (Completed / Partially Dispatched); else
+   *     Delivery Pending. The tolerance stops a whole-rupee receipt against a
+   *     paise-carrying total stranding at Payment Pending.
+   *   - partial AND status was 'Generated': 'Payment Pending'.
+   *   - otherwise: preserve current status.
    */
   async recordVexPayment(
     id: string,
@@ -357,8 +361,11 @@ export const vexPiRepo = {
             (COALESCE(payment_received_amount, 0) + ${args.amount})::numeric, 2
           ),
           status = CASE
-            WHEN COALESCE(payment_received_amount, 0) + ${args.amount} >= total
-              THEN CASE WHEN status = 'Completed' THEN 'Completed' ELSE 'Delivery Pending' END
+            WHEN COALESCE(payment_received_amount, 0) + ${args.amount} >= total - ${PAID_TOLERANCE}
+              THEN CASE
+                WHEN status IN ('Delivery Pending', 'Partially Dispatched', 'Completed') THEN status
+                ELSE 'Delivery Pending'
+              END
             WHEN status = 'Generated' THEN 'Payment Pending'
             ELSE status
           END,
@@ -371,12 +378,7 @@ export const vexPiRepo = {
     const v = jsonVexPis.find((x) => x.id === id)
     if (!v) return
     const newAmount = Math.round((v.paymentReceivedAmount + args.amount) * 100) / 100
-    let newStatus: VexPi['status'] = v.status
-    if (newAmount >= v.total) {
-      newStatus = v.status === 'Completed' ? 'Completed' : 'Delivery Pending'
-    } else if (v.status === 'Generated') {
-      newStatus = 'Payment Pending'
-    }
+    const newStatus = nudgeVexPiStatusOnPayment(newAmount, v.total, v.status)
     const updated: VexPi = {
       ...v,
       paymentLogIds: [...(v.paymentLogIds ?? []), args.logId],

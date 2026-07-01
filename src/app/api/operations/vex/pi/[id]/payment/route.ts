@@ -18,6 +18,7 @@ import { enqueueUpdate } from '@/lib/pendingUpdates'
 import { vexPiRepo } from '@/lib/db/repos/vexPi'
 import { paymentLogRepo } from '@/lib/db/repos/leafRepos'
 import { isDuplicateReceipt } from '@/lib/payment/duplicateReceipt'
+import { nudgeVexPiStatusOnPayment } from '@/lib/vex/vexPiStatus'
 import { formatRs } from '@/lib/format'
 import type { PaymentLog } from '@/lib/types'
 import type {
@@ -133,12 +134,15 @@ export async function POST(request: Request, ctx: RouteContext) {
   const logId = `VEXPL-${crypto.randomUUID().slice(0, 8)}`
   const loggedAt = new Date().toISOString()
   const newPaymentReceived = pi.paymentReceivedAmount + total
-  const newStatus: VexPiStatus = (() => {
-    if (newPaymentReceived >= pi.total) {
-      return pi.status === 'Completed' ? pi.status : 'Delivery Pending'
-    }
-    return pi.status === 'Generated' ? 'Payment Pending' : pi.status
-  })()
+  // Audit's after-status MUST equal what vexPiRepo.recordVexPayment writes
+  // in-SQL; both go through the same forward-nudge derivation (incl. the
+  // GST-rounding tolerance) so a whole-rupee receipt against a paise-carrying
+  // total settles to Delivery Pending instead of stranding at Payment Pending.
+  const newStatus: VexPiStatus = nudgeVexPiStatusOnPayment(
+    newPaymentReceived,
+    pi.total,
+    pi.status,
+  )
   const piAudit: AuditEntry = {
     timestamp: loggedAt,
     user: user.name,

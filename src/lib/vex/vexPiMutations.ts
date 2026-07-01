@@ -29,6 +29,7 @@ import { canEditFinanceData } from '@/lib/access'
 import { vexPiRepo } from '@/lib/db/repos/vexPi'
 import { vexDispatchRepo, paymentLogRepo } from '@/lib/db/repos/leafRepos'
 import { userRepo } from '@/lib/db/repos/user'
+import { deriveVexPiStatusFromBalance } from '@/lib/vex/vexPiStatus'
 
 const round2 = (n: number) => Math.round(n * 100) / 100
 
@@ -247,13 +248,17 @@ export async function editVexPi(
     args.gstPct,
   )
 
+  // Editing the total changes the received-vs-total relationship, so re-derive
+  // status from the balance (never let an edited PI keep a stale status).
+  const status = deriveVexPiStatusFromBalance(pi.paymentReceivedAmount, derived.total, pi.status)
+
   const ts = deps.now().toISOString()
   const audit: AuditEntry = {
     timestamp: ts,
     user: args.recordedBy,
     action: 'update',
-    before: { lineItemCount: pi.lineItems.length, total: pi.total, subtotal: pi.subtotal, freightCharges: pi.freightCharges },
-    after: { lineItemCount: derived.lineItems.length, total: derived.total, subtotal: derived.subtotal, freightCharges: freight },
+    before: { lineItemCount: pi.lineItems.length, total: pi.total, subtotal: pi.subtotal, freightCharges: pi.freightCharges, status: pi.status },
+    after: { lineItemCount: derived.lineItems.length, total: derived.total, subtotal: derived.subtotal, freightCharges: freight, status },
     notes: `VEX PI edited; totals re-derived (total Rs ${pi.total} -> Rs ${derived.total}).`,
   }
   const next: VexPi = {
@@ -272,6 +277,7 @@ export async function editVexPi(
     taxableValue: derived.taxableValue,
     gstAmount: derived.gstAmount,
     total: derived.total,
+    status,
     auditLog: [...(pi.auditLog ?? []), audit],
   }
   await deps.updatePi(next, args.recordedBy)

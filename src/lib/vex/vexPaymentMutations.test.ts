@@ -114,6 +114,18 @@ describe('recomputeVexPiStatus', () => {
     expect(recomputeVexPiStatus(1000, 1000, 'Payment Pending')).toBe('Delivery Pending')
     expect(recomputeVexPiStatus(1200, 1000, 'Completed')).toBe('Completed')
   })
+  it('a whole-rupee receipt within Rs 1 of a paise-carrying total is fully paid', () => {
+    // the reported bug: total 1,14,284.18, bank remits 1,14,284 (0.18 short)
+    expect(recomputeVexPiStatus(114284, 114284.18, 'Payment Pending')).toBe('Delivery Pending')
+    expect(recomputeVexPiStatus(1149917, 1149917.08, 'Payment Pending')).toBe('Delivery Pending')
+  })
+  it('a genuine partial (short by more than Rs 1) stays Payment Pending', () => {
+    expect(recomputeVexPiStatus(1, 4.72, 'Payment Pending')).toBe('Payment Pending')
+    expect(recomputeVexPiStatus(99998, 100000, 'Generated')).toBe('Payment Pending')
+  })
+  it('fully paid never rewinds dispatch progress', () => {
+    expect(recomputeVexPiStatus(1000, 1000, 'Partially Dispatched')).toBe('Partially Dispatched')
+  })
 })
 
 describe('voidVexPayment (the Funscholar correction, as a button)', () => {
@@ -128,8 +140,10 @@ describe('voidVexPayment (the Funscholar correction, as a button)', () => {
     expect(piWrites).toHaveLength(1)
     expect(piWrites[0]!.paymentReceivedAmount).toBe(410516)
     expect(piWrites[0]!.paymentLogIds).toEqual(['LOG-A'])
-    // 410516 < total 410516.10 -> Payment Pending (the honest single-receipt state)
-    expect(piWrites[0]!.status).toBe('Payment Pending')
+    // 410516 is Rs 0.10 short of total 410516.10 = GST rounding -> effectively
+    // paid, so the surviving single receipt holds the PI at Delivery Pending
+    // (matches the owner's real Funscholar VEXPI-UP-26-27-013 adjudication).
+    expect(piWrites[0]!.status).toBe('Delivery Pending')
     expect(piWrites[0]!.auditLog.at(-1)?.notes).toContain('voided')
     expect(voids).toHaveLength(1)
     expect(voids[0]!.id).toBe('LOG-B')

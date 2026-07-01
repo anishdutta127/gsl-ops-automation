@@ -29,26 +29,23 @@ import { canEditFinanceData } from '@/lib/access'
 import { vexPiRepo } from '@/lib/db/repos/vexPi'
 import { paymentLogRepo } from '@/lib/db/repos/leafRepos'
 import { userRepo } from '@/lib/db/repos/user'
+import { deriveVexPiStatusFromBalance } from '@/lib/vex/vexPiStatus'
 
 const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/
 const round2 = (n: number) => Math.round(n * 100) / 100
 
 /**
- * Recompute a VexPi's status from a balance change. Mirrors the forward rule in
- * vexPiRepo.recordVexPayment, made symmetric so a decrement (void/edit-down)
- * rewinds correctly:
- *   received <= 0          -> Generated      (no payment stands)
- *   0 < received < total   -> Payment Pending
- *   received >= total      -> Delivery Pending (preserve Completed if set)
+ * Recompute a VexPi's status from a balance change (void / edit-down rewinds,
+ * edit-up advances). Thin alias for the canonical
+ * deriveVexPiStatusFromBalance so every payment path shares ONE derivation
+ * including the GST-rounding tolerance (see @/lib/vex/vexPiStatus).
  */
 export function recomputeVexPiStatus(
   received: number,
   total: number,
   current: VexPi['status'],
 ): VexPi['status'] {
-  if (received <= 0) return 'Generated'
-  if (received < total) return 'Payment Pending'
-  return current === 'Completed' ? 'Completed' : 'Delivery Pending'
+  return deriveVexPiStatusFromBalance(received, total, current)
 }
 
 export interface VexPaymentDeps {

@@ -156,6 +156,20 @@ describe('editVexPi', () => {
     expect(u.total).toBe(1239)
   })
 
+  it('recomputes status when the edited total moves past the balance', async () => {
+    // received 1180; edit raises total to 1239 (freight 50) -> now under-paid
+    const { deps, piUpdates } = makeDeps(makePi({ status: 'Delivery Pending' }), [], [makeLog()])
+    const res = await editVexPi({
+      piId: 'VEXPI-T', schoolName: 'S', shippingAddress: 'a', billingName: 'S', billingAddress: 'a',
+      schoolGstNumber: null, contactPerson: 'c', contactNo: 'n', freightCharges: 50, gstPct: 0.18,
+      lineItems: [{ partNumber: 'P1', productName: 'Kit', quantity: 5, unitPrice: 200 }],
+      recordedBy: 'fin1',
+    }, deps)
+    expect(res.ok).toBe(true)
+    expect(piUpdates[0]!.total).toBe(1239)
+    expect(piUpdates[0]!.status).toBe('Payment Pending')
+  })
+
   it('blocks a qty below what is already dispatched', async () => {
     const { deps, piUpdates } = makeDeps(makePi(), [makeDispatch({ items: [{ partNumber: 'P1', qty: 4 }] })], [makeLog()])
     const res = await editVexPi({
